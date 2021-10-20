@@ -15,9 +15,9 @@ import frc.robot.drive.MotorType;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static int DRIVE_MOTOR_1_ID = 1;
+    public static int DRIVE_MOTOR_1_ID = 11;
     public static MotorType DRIVE_MOTOR_1_TYPE = MotorType.TALON_SRX;
-    public static int DRIVE_MOTOR_2_ID = 1;
+    public static int DRIVE_MOTOR_2_ID = 12;
     public static MotorType DRIVE_MOTOR_2_TYPE = MotorType.TALON_SRX;
 
     public static int CLIMBER_ID = 2;
