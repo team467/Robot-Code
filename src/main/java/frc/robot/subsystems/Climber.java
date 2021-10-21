@@ -15,7 +15,7 @@ public class Climber extends SubsystemBase {
         super();
     }
 
-    public void unlock() {
+    public void enable() {
         enabled = true;
     }
 

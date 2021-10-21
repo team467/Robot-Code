@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberStopCMD;
-import frc.robot.commands.ClimberUnlockCMD;
+import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.controllers.XboxController467.Buttons;
 import frc.robot.controllers.CustomController2020;
@@ -74,7 +74,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     if (Constants.HAS_CLIMBER) {
-      climbLock.whenPressed(new ClimberUnlockCMD(climber));
+      climbLock.whenPressed(new ClimberEnableCMD(climber));
       climbUp.whenHeld(new ClimberUpCMD(climber));
       climbDown.whenHeld(new ClimberDownCMD(climber));
     }

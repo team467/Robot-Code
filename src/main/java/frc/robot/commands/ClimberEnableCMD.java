@@ -3,10 +3,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
 
-public class ClimberUnlockCMD extends CommandBase {
+public class ClimberEnableCMD extends CommandBase {
     private Climber climber;
 
-    public ClimberUnlockCMD(Climber climber) {
+    public ClimberEnableCMD(Climber climber) {
         this.climber = climber;
 
         addRequirements(climber);
@@ -20,7 +20,7 @@ public class ClimberUnlockCMD extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        climber.unlock();
+        climber.enable();
     }
 
     // Called once the command ends or is interrupted.
