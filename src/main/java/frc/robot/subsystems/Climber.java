@@ -9,18 +9,18 @@ import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
     CANSparkMax spark1 = new CANSparkMax(Constants.CLIMBER_MOTOR_ID, MotorType.kBrushless);
-    boolean lock = false;
+    boolean enabled = false;
 
     public Climber() {
         super();
     }
 
     public void unlock() {
-        lock = true;
+        enabled = true;
     }
 
-    public boolean getLock() {
-        return lock;
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public void up() {
