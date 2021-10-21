@@ -35,7 +35,7 @@ public class RobotContainer {
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   private final Drivetrain drivetrain = new Drivetrain();
-  private final Climber climber = new Climber();
+  private Climber climber = null;
 
   // User interface objects
   private final Joystick controller = new Joystick(0);
@@ -63,7 +63,10 @@ public class RobotContainer {
         () ->  controller.getRawAxis(Axes.RightX.value)
     ));
 
-    climber.setDefaultCommand(new ClimberStopCMD(climber));
+    if (Constants.HAS_CLIMBER) {
+      climber = new Climber();
+      climber.setDefaultCommand(new ClimberStopCMD(climber));
+    }
 
     // Configure the button bindings
     configureButtonBindings();
@@ -76,9 +79,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    climbLock.whenPressed(new ClimberUnlockCMD(climber));
-    climbUp.whenHeld(new ClimberUpCMD(climber));
-    climbDown.whenHeld(new ClimberDownCMD(climber));
+    if (Constants.HAS_CLIMBER) {
+      climbLock.whenPressed(new ClimberUnlockCMD(climber));
+      climbUp.whenHeld(new ClimberUpCMD(climber));
+      climbDown.whenHeld(new ClimberDownCMD(climber));
+    }
 
   }
 

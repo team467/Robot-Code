@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
-    CANSparkMax spark1 = new CANSparkMax(Constants.CLIMBER_ID, MotorType.kBrushless);
+    CANSparkMax spark1 = new CANSparkMax(Constants.CLIMBER_MOTOR_ID, MotorType.kBrushless);
     boolean lock = false;
 
     public Climber() {
