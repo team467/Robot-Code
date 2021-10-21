@@ -12,13 +12,11 @@ import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberUnlockCMD;
 import frc.robot.commands.ClimberUpCMD;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.controllers.XboxController467.Buttons;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467.Axes;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -30,10 +28,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
-
   private final Drivetrain drivetrain = new Drivetrain();
   private Climber climber = null;
 
@@ -93,7 +87,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return null;
   }
 }
