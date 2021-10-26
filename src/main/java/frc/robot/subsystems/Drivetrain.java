@@ -17,13 +17,31 @@ import frc.robot.Constants;
 import frc.robot.drive.MotorSpeedController;
 
 public class Drivetrain extends SubsystemBase {
-    MotorSpeedController motor1 = new MotorSpeedController(Constants.DRIVE_MOTOR_1_ID, Constants.DRIVE_MOTOR_1_TYPE);
-    MotorSpeedController motor2 = new MotorSpeedController(Constants.DRIVE_MOTOR_2_ID, Constants.DRIVE_MOTOR_2_TYPE);
+    SpeedControllerGroup leftMotorGroup;
+    MotorSpeedController leftMotorLeader;
+    MotorSpeedController leftMotorFollower = null;
+
+    SpeedControllerGroup rightMotorGroup;
+    MotorSpeedController rightMotorLeader;
+    MotorSpeedController rightMotorFollower = null;
     
-    DifferentialDrive diffDrive = new DifferentialDrive(motor1, motor2);
+    DifferentialDrive diffDrive;
 
     public Drivetrain() {
         super();
+
+        leftMotorLeader = new MotorSpeedController(Constants.DRIVE_MOTOR_LEFT_LEADER_ID, Constants.DRIVE_MOTOR_LEFT_LEADER_TYPE);
+        rightMotorLeader = new MotorSpeedController(Constants.DRIVE_MOTOR_RIGHT_LEADER_ID, Constants.DRIVE_MOTOR_RIGHT_LEADER_TYPE);
+
+        if (Constants.DRIVE_DUAL_MOTORS) {
+            leftMotorFollower = new MotorSpeedController(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_ID, Constants.DRIVE_MOTOR_LEFT_FOLLOWER_TYPE);
+            rightMotorFollower = new MotorSpeedController(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_ID, Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_TYPE);
+        }
+
+        leftMotorGroup = new SpeedControllerGroup(leftMotorLeader, leftMotorFollower);
+        rightMotorGroup = new SpeedControllerGroup(rightMotorLeader, rightMotorFollower);
+
+        diffDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
     }
 
     public void arcadeDrive(double speed, double rotation) {
@@ -34,9 +52,9 @@ public class Drivetrain extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty(".motor_1_position", () -> motor1.getPosition(), null);
-        builder.addDoubleProperty(".motor_1_speed", () -> motor2.getVelocity(), null);
-        builder.addDoubleProperty(".motor_2_position", () -> motor2.getPosition(), null);
-        builder.addDoubleProperty(".motor_2_speed", () -> motor2.getVelocity(), null);
+        builder.addDoubleProperty(".motor_left_position", () -> leftMotorLeader.getPosition(), null);
+        builder.addDoubleProperty(".motor_left_speed", () -> leftMotorLeader.getVelocity(), null);
+        builder.addDoubleProperty(".motor_right_position", () -> rightMotorLeader.getPosition(), null);
+        builder.addDoubleProperty(".motor_right_speed", () -> rightMotorLeader.getVelocity(), null);
     }
 }
