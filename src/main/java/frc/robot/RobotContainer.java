@@ -12,9 +12,8 @@ import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberUpCMD;
-import frc.robot.controllers.XboxController467.Buttons;
 import frc.robot.controllers.CustomController2020;
-import frc.robot.controllers.XboxController467.Axes;
+import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,29 +31,39 @@ public class RobotContainer {
   private Climber climber = null;
 
   // User interface objects
-  private final Joystick controller = new Joystick(0);
-  private final Joystick op = new Joystick(1);
-  private final JoystickButton buttonA = new JoystickButton(controller, Buttons.A.value);
-  private final JoystickButton buttonB = new JoystickButton(controller, Buttons.B.value);
-  private final JoystickButton buttonX = new JoystickButton(controller, Buttons.X.value);
-  private final JoystickButton buttonY = new JoystickButton(controller, Buttons.Y.value);
-  private final JoystickButton buttonBack = new JoystickButton(controller, Buttons.Back.value);
-  private final JoystickButton buttonStart = new JoystickButton(controller, Buttons.Start.value);
-  private final JoystickButton povUp = new JoystickButton(controller, Buttons.POVup.value);
-  private final JoystickButton povDown = new JoystickButton(controller, Buttons.POVdown.value);
-  private final JoystickButton povLeft = new JoystickButton(controller, Buttons.POVleft.value);
-  private final JoystickButton povRight = new JoystickButton(controller, Buttons.POVright.value);
-  private final JoystickButton leftBumper = new JoystickButton(controller, Buttons.BumperLeft.value);
-  private final JoystickButton rightBumper = new JoystickButton(controller, Buttons.BumperRight.value);
-  private final JoystickButton climbLock = new JoystickButton(op, CustomController2020.Buttons.CLIMB_LOCK.value);
-  private final JoystickButton climbUp = new JoystickButton(op, CustomController2020.Buttons.CLIMB_UP.value);
-  private final JoystickButton climbDown = new JoystickButton(op, CustomController2020.Buttons.CLIMB_DOWN.value);
+  private final Joystick driverJoystick = new Joystick(0);
+  private final JoystickButton driverButtonA = new JoystickButton(driverJoystick, XboxController467.Buttons.A.value);
+  private final JoystickButton driverButtonB = new JoystickButton(driverJoystick, XboxController467.Buttons.B.value);
+  private final JoystickButton driverButtonX = new JoystickButton(driverJoystick, XboxController467.Buttons.X.value);
+  private final JoystickButton driverButtonY = new JoystickButton(driverJoystick, XboxController467.Buttons.Y.value);
+  private final JoystickButton driverButtonBack = new JoystickButton(driverJoystick, XboxController467.Buttons.Back.value);
+  private final JoystickButton driverButtonStart = new JoystickButton(driverJoystick, XboxController467.Buttons.Start.value);
+  private final JoystickButton driverPovUp = new JoystickButton(driverJoystick, XboxController467.Buttons.POVup.value);
+  private final JoystickButton driverPovDown = new JoystickButton(driverJoystick, XboxController467.Buttons.POVdown.value);
+  private final JoystickButton driverPovLeft = new JoystickButton(driverJoystick, XboxController467.Buttons.POVleft.value);
+  private final JoystickButton driverPovRight = new JoystickButton(driverJoystick, XboxController467.Buttons.POVright.value);
+  private final JoystickButton driverLeftBumper = new JoystickButton(driverJoystick, XboxController467.Buttons.BumperLeft.value);
+  private final JoystickButton driverRightBumper = new JoystickButton(driverJoystick, XboxController467.Buttons.BumperRight.value);
+
+  private final Joystick operatorJoystick = new Joystick(1);
+  private final JoystickButton operatorInakeArm = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ARM.value);
+  private final JoystickButton operatorIntakeRollerForward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ROLLER_FORWARD.value);
+  private final JoystickButton operatorIntakeRollerBackward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ROLLER_BACKWARD.value);
+  private final JoystickButton operatorIndexAuto = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INDEX_AUTO.value);
+  private final JoystickButton operatorIndexRollerForward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INDEX_ROLLER_FORWARD.value);
+  private final JoystickButton operatorIndexRollerBackward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INDEX_ROLLER_BACKWARD.value);
+  private final JoystickButton operatorShooterAuto = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_AUTO.value);
+  private final JoystickButton operatorShooterFlywheel = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_FLYWHEEL.value);
+  private final JoystickButton operatorShooterShoot = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_SHOOT.value);
+  private final JoystickButton operatorClimberLock = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMB_LOCK.value);
+  private final JoystickButton operatorClimberUp = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMB_UP.value);
+  private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMB_DOWN.value);
 
   public RobotContainer() {
     // The default command is run when no other commands are active for the subsystem.
     drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
-        () -> -controller.getRawAxis(Axes.LeftY.value),
-        () ->  controller.getRawAxis(Axes.RightX.value)
+        () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
+        () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
     ));
 
     if (Constants.HAS_CLIMBER) {
@@ -74,9 +83,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     if (Constants.HAS_CLIMBER) {
-      climbLock.whenPressed(new ClimberEnableCMD(climber));
-      climbUp.whenHeld(new ClimberUpCMD(climber));
-      climbDown.whenHeld(new ClimberDownCMD(climber));
+      operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
+      operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
+      operatorClimberDown.whenHeld(new ClimberDownCMD(climber));
     }
 
   }
