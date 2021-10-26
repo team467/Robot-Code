@@ -34,5 +34,7 @@ public final class Constants {
 
     public static boolean HAS_CLIMBER2020 = false;
     public static int CLIMBER2020_MOTOR_ID = 2;
-    public static double CLIMBER2020_SPEED = 0.1;
+    public static boolean CLIMBER2020_MOTOR_INVERTED = false;
+    public static double CLIMBER2020_UP_SPEED = 0.1;
+    public static double CLIMBER2020_DOWN_SPEED = 0.1;
 }

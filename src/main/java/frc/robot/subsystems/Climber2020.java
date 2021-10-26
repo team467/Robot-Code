@@ -8,11 +8,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Climber2020 extends SubsystemBase {
-    CANSparkMax spark1 = new CANSparkMax(Constants.CLIMBER2020_MOTOR_ID, MotorType.kBrushless);
-    boolean enabled = false;
+    private CANSparkMax climberMotor = new CANSparkMax(Constants.CLIMBER2020_MOTOR_ID, MotorType.kBrushless);
+    private boolean enabled = false;
 
     public Climber2020() {
         super();
+
+        climberMotor.setInverted(Constants.CLIMBER2020_MOTOR_INVERTED);
     }
 
     public void enable() {
@@ -24,23 +26,23 @@ public class Climber2020 extends SubsystemBase {
     }
 
     public void up() {
-        spark1.set(Constants.CLIMBER2020_SPEED);
+        climberMotor.set(Constants.CLIMBER2020_UP_SPEED);
     }
 
     public void down() {
-        spark1.set(-Constants.CLIMBER2020_SPEED);
+        climberMotor.set(-Constants.CLIMBER2020_DOWN_SPEED);
     }
 
     public void stop() {
-        spark1.set(0);
+        climberMotor.set(0);
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty(".climber_position", () -> spark1.getEncoder().getPosition(), null);
-        builder.addDoubleProperty(".climber_speed", () -> spark1.getEncoder().getVelocity(), null);
+        builder.addDoubleProperty(".climber_position", () -> climberMotor.getEncoder().getPosition(), null);
+        builder.addDoubleProperty(".climber_speed", () -> climberMotor.getEncoder().getVelocity(), null);
     }
 }
 
