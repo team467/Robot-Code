@@ -32,7 +32,7 @@ public final class Constants {
     public static MotorType DRIVE_MOTOR_RIGHT_FOLLOWER_TYPE = MotorType.TALON_SRX;
     public static boolean DRIVE_MOTOR_RIGHT_FOLLOWER_INVERTED = false;
 
-    public static boolean HAS_CLIMBER = false;
-    public static int CLIMBER_MOTOR_ID = 2;
-    public static double CLIMBER_SPEED = 0.1;
+    public static boolean HAS_CLIMBER2020 = false;
+    public static int CLIMBER2020_MOTOR_ID = 2;
+    public static double CLIMBER2020_SPEED = 0.1;
 }

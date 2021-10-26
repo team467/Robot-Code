@@ -14,7 +14,7 @@ import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
-  private Climber climber = null;
+  private Climber2020 climber = null;
 
   // User interface objects
   private final Joystick driverJoystick = new Joystick(0);
@@ -66,8 +66,8 @@ public class RobotContainer {
         () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
     ));
 
-    if (Constants.HAS_CLIMBER) {
-      climber = new Climber();
+    if (Constants.HAS_CLIMBER2020) {
+      climber = new Climber2020();
       climber.setDefaultCommand(new ClimberStopCMD(climber));
     }
 
@@ -82,7 +82,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    if (Constants.HAS_CLIMBER) {
+    if (Constants.HAS_CLIMBER2020) {
       operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
       operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
       operatorClimberDown.whenHeld(new ClimberDownCMD(climber));

@@ -7,11 +7,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Climber extends SubsystemBase {
-    CANSparkMax spark1 = new CANSparkMax(Constants.CLIMBER_MOTOR_ID, MotorType.kBrushless);
+public class Climber2020 extends SubsystemBase {
+    CANSparkMax spark1 = new CANSparkMax(Constants.CLIMBER2020_MOTOR_ID, MotorType.kBrushless);
     boolean enabled = false;
 
-    public Climber() {
+    public Climber2020() {
         super();
     }
 
@@ -24,11 +24,11 @@ public class Climber extends SubsystemBase {
     }
 
     public void up() {
-        spark1.set(Constants.CLIMBER_SPEED);
+        spark1.set(Constants.CLIMBER2020_SPEED);
     }
 
     public void down() {
-        spark1.set(-Constants.CLIMBER_SPEED);
+        spark1.set(-Constants.CLIMBER2020_SPEED);
     }
 
     public void stop() {
