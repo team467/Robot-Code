@@ -31,6 +31,7 @@ public class RobotContainer {
   private Climber2020 climber = null;
 
   // User interface objects
+  // Xbox controller for driver
   private final Joystick driverJoystick = new Joystick(0);
   private final JoystickButton driverButtonA = new JoystickButton(driverJoystick, XboxController467.Buttons.A.value);
   private final JoystickButton driverButtonB = new JoystickButton(driverJoystick, XboxController467.Buttons.B.value);
@@ -45,6 +46,7 @@ public class RobotContainer {
   private final JoystickButton driverLeftBumper = new JoystickButton(driverJoystick, XboxController467.Buttons.BumperLeft.value);
   private final JoystickButton driverRightBumper = new JoystickButton(driverJoystick, XboxController467.Buttons.BumperRight.value);
 
+  // Custom controller for operator
   private final Joystick operatorJoystick = new Joystick(1);
   private final JoystickButton operatorInakeArm = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ARM.value);
   private final JoystickButton operatorIntakeRollerForward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ROLLER_FORWARD.value);
