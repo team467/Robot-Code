@@ -33,9 +33,15 @@ public class Drivetrain extends SubsystemBase {
         leftMotorLeader = new MotorSpeedController(Constants.DRIVE_MOTOR_LEFT_LEADER_ID, Constants.DRIVE_MOTOR_LEFT_LEADER_TYPE);
         rightMotorLeader = new MotorSpeedController(Constants.DRIVE_MOTOR_RIGHT_LEADER_ID, Constants.DRIVE_MOTOR_RIGHT_LEADER_TYPE);
 
+        leftMotorLeader.setInverted(Constants.DRIVE_MOTOR_LEFT_LEADER_INVERTED);
+        rightMotorLeader.setInverted(Constants.DRIVE_MOTOR_RIGHT_LEADER_INVERTED);
+
         if (Constants.DRIVE_DUAL_MOTORS) {
             leftMotorFollower = new MotorSpeedController(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_ID, Constants.DRIVE_MOTOR_LEFT_FOLLOWER_TYPE);
             rightMotorFollower = new MotorSpeedController(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_ID, Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_TYPE);
+            
+            leftMotorFollower.setInverted(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_INVERTED);
+            rightMotorFollower.setInverted(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_INVERTED);
         }
 
         leftMotorGroup = new SpeedControllerGroup(leftMotorLeader, leftMotorFollower);
