@@ -21,16 +21,22 @@ public class Climber2020 extends SubsystemBase {
         enabled = true;
     }
 
+    public void disable() {
+        enabled = false;
+    }
+
     public boolean isEnabled() {
         return enabled;
     }
 
     public void up() {
-        climberMotor.set(Constants.CLIMBER2020_UP_SPEED);
+        if (this.isEnabled())
+            climberMotor.set(Constants.CLIMBER2020_UP_SPEED);
     }
 
     public void down() {
-        climberMotor.set(-Constants.CLIMBER2020_DOWN_SPEED);
+        if (this.isEnabled())
+            climberMotor.set(-Constants.CLIMBER2020_DOWN_SPEED);
     }
 
     public void stop() {
