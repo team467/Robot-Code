@@ -84,12 +84,15 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    initializeClimberCommands();
+  }
+
+  private void initializeClimberCommands() {
     if (Constants.HAS_CLIMBER2020) {
       operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
       operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
       operatorClimberDown.whenHeld(new ClimberDownCMD(climber));
     }
-
   }
 
   /**
