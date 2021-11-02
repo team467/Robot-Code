@@ -15,15 +15,91 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.drive.MotorSpeedController;
+import frc.robot.drive.SparkMaxController;
+import frc.robot.drive.SpeedControllerEncoder;
+import frc.robot.drive.TalonController;
 
 public class Drivetrain extends SubsystemBase {
-    MotorSpeedController motor1 = new MotorSpeedController(Constants.DRIVE_MOTOR_1_ID, Constants.DRIVE_MOTOR_1_TYPE);
-    MotorSpeedController motor2 = new MotorSpeedController(Constants.DRIVE_MOTOR_2_ID, Constants.DRIVE_MOTOR_2_TYPE);
+    SpeedControllerGroup leftMotorGroup;
+    SpeedControllerEncoder leftMotorLeader;
+    SpeedControllerEncoder leftMotorFollower = null;
+
+    SpeedControllerGroup rightMotorGroup;
+    SpeedControllerEncoder rightMotorLeader;
+    SpeedControllerEncoder rightMotorFollower = null;
     
-    DifferentialDrive diffDrive = new DifferentialDrive(motor1, motor2);
+    DifferentialDrive diffDrive;
 
     public Drivetrain() {
         super();
+
+        switch (Constants.DRIVE_MOTOR_LEFT_LEADER_TYPE) {
+            case TALON_SRX:
+                leftMotorLeader = new TalonController(Constants.DRIVE_MOTOR_LEFT_LEADER_ID);
+                break;
+
+            case SPARK_MAX_BRUSHED:
+                leftMotorLeader = new SparkMaxController(Constants.DRIVE_MOTOR_LEFT_LEADER_ID, MotorType.kBrushed);
+                break;
+
+            case SPARK_MAX_BRUSHLESS:
+                leftMotorLeader = new SparkMaxController(Constants.DRIVE_MOTOR_LEFT_LEADER_ID, MotorType.kBrushless);
+                break;
+        }
+
+        switch (Constants.DRIVE_MOTOR_RIGHT_LEADER_TYPE) {
+            case TALON_SRX:
+                rightMotorLeader = new TalonController(Constants.DRIVE_MOTOR_RIGHT_LEADER_ID);
+                break;
+
+            case SPARK_MAX_BRUSHED:
+                rightMotorLeader = new SparkMaxController(Constants.DRIVE_MOTOR_RIGHT_LEADER_ID, MotorType.kBrushed);
+                break;
+
+            case SPARK_MAX_BRUSHLESS:
+                rightMotorLeader = new SparkMaxController(Constants.DRIVE_MOTOR_RIGHT_LEADER_ID, MotorType.kBrushless);
+                break;
+        }
+
+        leftMotorLeader.setInverted(Constants.DRIVE_MOTOR_LEFT_LEADER_INVERTED);
+        rightMotorLeader.setInverted(Constants.DRIVE_MOTOR_RIGHT_LEADER_INVERTED);
+
+        if (Constants.DRIVE_DUAL_MOTORS) {
+            switch (Constants.DRIVE_MOTOR_LEFT_FOLLOWER_TYPE) {
+                case TALON_SRX:
+                    leftMotorFollower = new TalonController(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_ID);
+                    break;
+    
+                case SPARK_MAX_BRUSHED:
+                    leftMotorFollower = new SparkMaxController(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_ID, MotorType.kBrushed);
+                    break;
+    
+                case SPARK_MAX_BRUSHLESS:
+                    leftMotorFollower = new SparkMaxController(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_ID, MotorType.kBrushless);
+                    break;
+            }
+    
+            switch (Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_TYPE) {
+                case TALON_SRX:
+                    rightMotorFollower = new TalonController(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_ID);
+                    break;
+    
+                case SPARK_MAX_BRUSHED:
+                    rightMotorFollower = new SparkMaxController(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_ID, MotorType.kBrushed);
+                    break;
+    
+                case SPARK_MAX_BRUSHLESS:
+                    rightMotorFollower = new SparkMaxController(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_ID, MotorType.kBrushless);
+                    break;
+            }
+            leftMotorFollower.setInverted(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_INVERTED);
+            rightMotorFollower.setInverted(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_INVERTED);
+        }
+
+        leftMotorGroup = new SpeedControllerGroup(leftMotorLeader, leftMotorFollower);
+        rightMotorGroup = new SpeedControllerGroup(rightMotorLeader, rightMotorFollower);
+
+        diffDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
     }
 
     public void arcadeDrive(double speed, double rotation) {
@@ -34,9 +110,9 @@ public class Drivetrain extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty(".motor_1_position", () -> motor1.getPosition(), null);
-        builder.addDoubleProperty(".motor_1_speed", () -> motor2.getVelocity(), null);
-        builder.addDoubleProperty(".motor_2_position", () -> motor2.getPosition(), null);
-        builder.addDoubleProperty(".motor_2_speed", () -> motor2.getVelocity(), null);
+        builder.addDoubleProperty(".motor_left_position", () -> leftMotorLeader.getPosition(), null);
+        builder.addDoubleProperty(".motor_left_speed", () -> leftMotorLeader.getVelocity(), null);
+        builder.addDoubleProperty(".motor_right_position", () -> rightMotorLeader.getPosition(), null);
+        builder.addDoubleProperty(".motor_right_speed", () -> rightMotorLeader.getVelocity(), null);
     }
 }

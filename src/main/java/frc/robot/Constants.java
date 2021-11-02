@@ -15,12 +15,26 @@ import frc.robot.drive.MotorType;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static int DRIVE_MOTOR_1_ID = 1;
-    public static MotorType DRIVE_MOTOR_1_TYPE = MotorType.TALON_SRX;
-    public static int DRIVE_MOTOR_2_ID = 3;
-    public static MotorType DRIVE_MOTOR_2_TYPE = MotorType.TALON_SRX;
+    public static boolean DRIVE_DUAL_MOTORS = true;
+    public static int DRIVE_MOTOR_LEFT_LEADER_ID = 1;
+    public static MotorType DRIVE_MOTOR_LEFT_LEADER_TYPE = MotorType.TALON_SRX;
+    public static boolean DRIVE_MOTOR_LEFT_LEADER_INVERTED = false;
 
-    public static boolean HAS_CLIMBER = false;
-    public static int CLIMBER_MOTOR_ID = 2;
-    public static double CLIMBER_SPEED = 0.1;
+    public static int DRIVE_MOTOR_LEFT_FOLLOWER_ID = 2;
+    public static MotorType DRIVE_MOTOR_LEFT_FOLLOWER_TYPE = MotorType.TALON_SRX;
+    public static boolean DRIVE_MOTOR_LEFT_FOLLOWER_INVERTED = false;
+
+    public static int DRIVE_MOTOR_RIGHT_LEADER_ID = 3;
+    public static MotorType DRIVE_MOTOR_RIGHT_LEADER_TYPE = MotorType.TALON_SRX;
+    public static boolean DRIVE_MOTOR_RIGHT_LEADER_INVERTED = false;
+
+    public static int DRIVE_MOTOR_RIGHT_FOLLOWER_ID = 4;
+    public static MotorType DRIVE_MOTOR_RIGHT_FOLLOWER_TYPE = MotorType.TALON_SRX;
+    public static boolean DRIVE_MOTOR_RIGHT_FOLLOWER_INVERTED = false;
+
+    public static boolean HAS_CLIMBER2020 = false;
+    public static int CLIMBER2020_MOTOR_ID = 2;
+    public static boolean CLIMBER2020_MOTOR_INVERTED = false;
+    public static double CLIMBER2020_UP_SPEED = 0.1;
+    public static double CLIMBER2020_DOWN_SPEED = 0.1;
 }
