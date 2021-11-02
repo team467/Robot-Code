@@ -1,57 +1,59 @@
 package frc.robot.drive;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-public class TalonController implements SpeedControllerEncoder {
-    WPI_TalonSRX talon;
+public class SparkMaxController implements SpeedControllerEncoder {
+    CANSparkMax spark;
     
-    public TalonController(int id) {
-        talon = new WPI_TalonSRX(id);
+    public SparkMaxController(int id, MotorType motorType) {
+        spark = new CANSparkMax(id, motorType);
     }
 
     @Override
     public void set(double speed) {
-        talon.set(speed);
+        spark.set(speed);
     }
 
     @Override
     public double get() {
-        return talon.get();
+        return spark.get();
     }
 
     @Override
     public void setInverted(boolean isInverted) {
-        talon.setInverted(isInverted);
+        spark.setInverted(isInverted);
     }
 
     @Override
     public boolean getInverted() {
-        return talon.getInverted();
+        return spark.getInverted();
     }
 
     @Override
     public void disable() {
-        talon.disable();
+        spark.disable();
     }
 
     @Override
     public void stopMotor() {
-        talon.stopMotor();
+        spark.stopMotor();
     }
 
     @Override
     public void pidWrite(double output) {
-        talon.pidWrite(output);
+        spark.pidWrite(output);
     }
 
     @Override
     public double getPosition() {
-        return talon.getSelectedSensorPosition();
+        return spark.getEncoder().getPosition();
     }
 
     @Override
     public double getVelocity() {
-        return talon.getSelectedSensorVelocity();
+        return spark.getEncoder().getVelocity();
     }
     
 }
