@@ -37,4 +37,8 @@ public final class Constants {
     public static boolean CLIMBER2020_MOTOR_INVERTED = false;
     public static double CLIMBER2020_UP_SPEED = 0.1;
     public static double CLIMBER2020_DOWN_SPEED = 0.1;
+
+    public static int GRABBER_POSITION_SETTER_ID = 999; //TODO: set to actual
+    public static int DRIVE_MOTOR_GRABBER_ID = 1000; //TODO: set to actual
+    public static double DRIVE_MOTOR_GRABBER_SPEED = 0.1; //TODO: set to actual
 }
