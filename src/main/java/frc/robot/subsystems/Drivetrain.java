@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.drive.MotorSpeedController;
+import frc.robot.RobotConstants;
 import frc.robot.drive.SparkMaxController;
 import frc.robot.drive.SpeedControllerEncoder;
 import frc.robot.drive.TalonController;
@@ -33,67 +33,67 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain() {
         super();
 
-        switch (Constants.DRIVE_MOTOR_LEFT_LEADER_TYPE) {
+        switch (RobotConstants.get().driveMotorLeftLeaderType()) {
             case TALON_SRX:
-                leftMotorLeader = new TalonController(Constants.DRIVE_MOTOR_LEFT_LEADER_ID);
+                leftMotorLeader = new TalonController(RobotConstants.get().driveMotorLeftLeaderId());
                 break;
 
             case SPARK_MAX_BRUSHED:
-                leftMotorLeader = new SparkMaxController(Constants.DRIVE_MOTOR_LEFT_LEADER_ID, MotorType.kBrushed);
+                leftMotorLeader = new SparkMaxController(RobotConstants.get().driveMotorLeftLeaderId(), MotorType.kBrushed);
                 break;
 
             case SPARK_MAX_BRUSHLESS:
-                leftMotorLeader = new SparkMaxController(Constants.DRIVE_MOTOR_LEFT_LEADER_ID, MotorType.kBrushless);
+                leftMotorLeader = new SparkMaxController(RobotConstants.get().driveMotorLeftLeaderId(), MotorType.kBrushless);
                 break;
         }
 
-        switch (Constants.DRIVE_MOTOR_RIGHT_LEADER_TYPE) {
+        switch (RobotConstants.get().driveMotorRightLeaderType()) {
             case TALON_SRX:
-                rightMotorLeader = new TalonController(Constants.DRIVE_MOTOR_RIGHT_LEADER_ID);
+                rightMotorLeader = new TalonController(RobotConstants.get().driveMotorRightLeaderId());
                 break;
 
             case SPARK_MAX_BRUSHED:
-                rightMotorLeader = new SparkMaxController(Constants.DRIVE_MOTOR_RIGHT_LEADER_ID, MotorType.kBrushed);
+                rightMotorLeader = new SparkMaxController(RobotConstants.get().driveMotorRightLeaderId(), MotorType.kBrushed);
                 break;
 
             case SPARK_MAX_BRUSHLESS:
-                rightMotorLeader = new SparkMaxController(Constants.DRIVE_MOTOR_RIGHT_LEADER_ID, MotorType.kBrushless);
+                rightMotorLeader = new SparkMaxController(RobotConstants.get().driveMotorRightLeaderId(), MotorType.kBrushless);
                 break;
         }
 
-        leftMotorLeader.setInverted(Constants.DRIVE_MOTOR_LEFT_LEADER_INVERTED);
-        rightMotorLeader.setInverted(Constants.DRIVE_MOTOR_RIGHT_LEADER_INVERTED);
+        leftMotorLeader.setInverted(RobotConstants.get().driveMotorLeftLeaderInverted());
+        rightMotorLeader.setInverted(RobotConstants.get().driveMotorRightLeaderInverted());
 
-        if (Constants.DRIVE_DUAL_MOTORS) {
-            switch (Constants.DRIVE_MOTOR_LEFT_FOLLOWER_TYPE) {
+        if (RobotConstants.get().driveDualMotors()) {
+            switch (RobotConstants.get().driveMotorLeftFollowerType()) {
                 case TALON_SRX:
-                    leftMotorFollower = new TalonController(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_ID);
+                    leftMotorFollower = new TalonController(RobotConstants.get().driveMotorLeftFollowerId());
                     break;
     
                 case SPARK_MAX_BRUSHED:
-                    leftMotorFollower = new SparkMaxController(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_ID, MotorType.kBrushed);
+                    leftMotorFollower = new SparkMaxController(RobotConstants.get().driveMotorLeftFollowerId(), MotorType.kBrushed);
                     break;
     
                 case SPARK_MAX_BRUSHLESS:
-                    leftMotorFollower = new SparkMaxController(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_ID, MotorType.kBrushless);
+                    leftMotorFollower = new SparkMaxController(RobotConstants.get().driveMotorLeftFollowerId(), MotorType.kBrushless);
                     break;
             }
     
-            switch (Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_TYPE) {
+            switch (RobotConstants.get().driveMotorRightFollowerType()) {
                 case TALON_SRX:
-                    rightMotorFollower = new TalonController(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_ID);
+                    rightMotorFollower = new TalonController(RobotConstants.get().driveMotorRightFollowerId());
                     break;
     
                 case SPARK_MAX_BRUSHED:
-                    rightMotorFollower = new SparkMaxController(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_ID, MotorType.kBrushed);
+                    rightMotorFollower = new SparkMaxController(RobotConstants.get().driveMotorRightFollowerId(), MotorType.kBrushed);
                     break;
     
                 case SPARK_MAX_BRUSHLESS:
-                    rightMotorFollower = new SparkMaxController(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_ID, MotorType.kBrushless);
+                    rightMotorFollower = new SparkMaxController(RobotConstants.get().driveMotorRightFollowerId(), MotorType.kBrushless);
                     break;
             }
-            leftMotorFollower.setInverted(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_INVERTED);
-            rightMotorFollower.setInverted(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_INVERTED);
+            leftMotorFollower.setInverted(RobotConstants.get().driveMotorLeftFollowerInverted());
+            rightMotorFollower.setInverted(RobotConstants.get().driveMotorRightFollowerInverted());
         }
 
         leftMotorGroup = new SpeedControllerGroup(leftMotorLeader, leftMotorFollower);

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -13,6 +14,8 @@ import java.io.IOException;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.BlankConstants;
+import frc.robot.constants.Robot2019Constants;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -27,25 +30,6 @@ public class Robot extends TimedRobot {
 
   public Constants constants;
 
-  private void initalizeConstants() throws IOException {
-    FileReader reader = new FileReader(System.getProperty("user.home") + "/robot");
-    BufferedReader br = new BufferedReader(reader);
-    String name = br.readLine().toLowerCase();
-    System.out.println("Name: " + name);
-    switch (name) {
-      case "turing":
-        
-        break;
-    
-      default:
-        // TODO: Yell at user with an error
-        break;
-    }
-
-
-    br.close();
-  }
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -54,12 +38,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    try {
-      initalizeConstants();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    
     m_robotContainer = new RobotContainer();
   }
 
