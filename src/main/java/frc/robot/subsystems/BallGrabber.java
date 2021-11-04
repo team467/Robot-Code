@@ -45,6 +45,10 @@ public class BallGrabber extends SubsystemBase {
       */
       //? how much speed and for how long does it lower?
 
+      /** PSEUDOCODE 
+       * 
+      */
+
     }
     
     public void raiseGrabber() {
@@ -56,6 +60,10 @@ public class BallGrabber extends SubsystemBase {
       turn off motor
       */
       //? how much speed and for how long does it rise?
+
+      /** PSEUDOCODE 
+       * 
+      */
 
     }
 
@@ -69,6 +77,10 @@ public class BallGrabber extends SubsystemBase {
       */
       //! not functional: grabber.set(Constants.DRIVE_MOTOR_GRABBER_SPEED);
       //? how do you configure a TalonSRX motor to move forward and backwards?
+
+      /** PSEUDOCODE 
+       * 
+      */
       
     }
 
@@ -81,6 +93,10 @@ public class BallGrabber extends SubsystemBase {
       */
       //! not functional: grabber.set(-Constants.DRIVE_MOTOR_GRABBER_SPEED);
       //? how do you configure a TalonSRX motor to move forward and backwards?
+
+      /** PSEUDOCODE 
+       * 
+      */
       
     }
 
@@ -93,6 +109,10 @@ public class BallGrabber extends SubsystemBase {
       */
       //! not functional: grabber.set(0);
       //? how do you configure a TalonSRX motor to move forward and backwards?
+
+      /** PSEUDOCODE 
+       * 
+      */
 
     }
 
