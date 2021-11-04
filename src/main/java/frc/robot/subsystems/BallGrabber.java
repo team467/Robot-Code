@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.drive.MotorSpeedController;
 import frc.robot.drive.TalonController;
 
 public class BallGrabber extends SubsystemBase {
@@ -62,7 +61,9 @@ public class BallGrabber extends SubsystemBase {
       //? how much speed and for how long does it rise?
 
       /** PSEUDOCODE 
-       * 
+       * MOTOR set speed (-optimal speed)
+       * delay(some time until it reaches right place)
+       * MOTOR set speed(0)
       */
 
     }
@@ -79,7 +80,7 @@ public class BallGrabber extends SubsystemBase {
       //? how do you configure a TalonSRX motor to move forward and backwards?
 
       /** PSEUDOCODE 
-       * 
+       * MOTOR set speed (optimal speed)
       */
       
     }
@@ -95,7 +96,7 @@ public class BallGrabber extends SubsystemBase {
       //? how do you configure a TalonSRX motor to move forward and backwards?
 
       /** PSEUDOCODE 
-       * 
+       * MOTOR set speed (-opimal speed)
       */
       
     }
@@ -111,7 +112,7 @@ public class BallGrabber extends SubsystemBase {
       //? how do you configure a TalonSRX motor to move forward and backwards?
 
       /** PSEUDOCODE 
-       * 
+       * MOTOR set speed (0)
       */
 
     }
