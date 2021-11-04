@@ -46,7 +46,9 @@ public class BallGrabber extends SubsystemBase {
       //? how much speed and for how long does it lower?
 
       /** PSEUDOCODE 
-       * 
+       * MOTOR set speed (optimial speed)
+       * delay (some time until it reaches the right speed)
+       * MOTOR set speed (0)
       */
 
     }
