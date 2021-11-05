@@ -31,43 +31,39 @@ public class BallGrabber extends SubsystemBase {
 
     //stage 1
 
-    public void lowerGrabber() {
+      /**
+       * set motor to max speed
+      */
+      public void lowerGrabber() {
 
       //TODO: configure the lowering of grabber to allow it to grab balls.
-      /*
-      set motor to speed to lower grabber
-      wait some time which is the optimal angle
-      turn off motor
-      */
       //? how much speed and for how long does it lower?
 
       /** PSEUDOCODE 
-       * MOTOR set speed (optimial speed)
-       * delay (some time until it reaches the right speed)
-       * MOTOR set speed (0)
+       * MOTOR set speed (max speed)
       */
 
     }
-    
+
+    /**
+    * set motor to -max speed
+    */
     public void raiseGrabber() {
 
       //TODO: configure the raising of grabber to allow it to be placed at the start of a competition.
-      /*
-      set motor to speed to raise grabber
-      wait some time which is the optmial angle
-      turn off motor
-      */
       //? how much speed and for how long does it rise?
 
       /** PSEUDOCODE 
-       * MOTOR set speed (-optimal speed)
-       * delay(some time until it reaches right place)
-       * MOTOR set speed(0)
+       * MOTOR set speed (-max speed)
       */
 
     }
 
     //stage 2
+    /**
+    * set grabber motor to regular speed
+    * set rubber motor to regular speed
+    */
     public void enableGrabber() {
 
       //TODO: set grabber speed so that it can grab balls and place them in storage
@@ -83,7 +79,10 @@ public class BallGrabber extends SubsystemBase {
       */
       
     }
-
+    /**
+    * set grabber motor to negative of regular speed
+    * set rubber motor to negative of regular speed
+    */
     public void reverseGrabber() {
 
       //TODO: set grabber speed to the reverse of DRIVE_MOTOR_GRABBER_SPEED so that it can unstuck any balls.
@@ -99,7 +98,10 @@ public class BallGrabber extends SubsystemBase {
       */
       
     }
-
+    /**
+    * turn off grabber motor
+    * turn off rubber motor
+    */
     public void disableGrabber() {
 
       //TODO: set grabber speed to 0 so that it does not grab balls
