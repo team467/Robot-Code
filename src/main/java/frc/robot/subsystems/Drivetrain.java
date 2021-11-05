@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.RobotConstants;
 import frc.robot.drive.SparkMaxController;
 import frc.robot.drive.SpeedControllerEncoder;
@@ -64,6 +63,9 @@ public class Drivetrain extends SubsystemBase {
         leftMotorLeader.setInverted(RobotConstants.get().driveMotorLeftLeaderInverted());
         rightMotorLeader.setInverted(RobotConstants.get().driveMotorRightLeaderInverted());
 
+        leftMotorGroup = new SpeedControllerGroup(leftMotorLeader);
+        rightMotorGroup = new SpeedControllerGroup(rightMotorLeader);
+
         if (RobotConstants.get().driveDualMotors()) {
             switch (RobotConstants.get().driveMotorLeftFollowerType()) {
                 case TALON_SRX:
@@ -94,10 +96,10 @@ public class Drivetrain extends SubsystemBase {
             }
             leftMotorFollower.setInverted(RobotConstants.get().driveMotorLeftFollowerInverted());
             rightMotorFollower.setInverted(RobotConstants.get().driveMotorRightFollowerInverted());
-        }
 
-        leftMotorGroup = new SpeedControllerGroup(leftMotorLeader, leftMotorFollower);
-        rightMotorGroup = new SpeedControllerGroup(rightMotorLeader, rightMotorFollower);
+            leftMotorGroup = new SpeedControllerGroup(leftMotorLeader, leftMotorFollower);
+            rightMotorGroup = new SpeedControllerGroup(rightMotorLeader, rightMotorFollower);
+        }
 
         diffDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
     }

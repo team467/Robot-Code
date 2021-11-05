@@ -69,7 +69,7 @@ public class RobotContainer {
         () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
     ));
 
-    if (Constants.HAS_CLIMBER2020) {
+    if (RobotConstants.get().hasClimber2020()) {
       climber = new Climber2020();
       climber.setDefaultCommand(new ClimberStopCMD(climber));
     }
@@ -89,7 +89,7 @@ public class RobotContainer {
   }
 
   private void initializeClimberCommands() {
-    if (Constants.HAS_CLIMBER2020) {
+    if (RobotConstants.get().hasClimber2020()) {
       operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
       operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
       operatorClimberDown.whenHeld(new ClimberDownCMD(climber));

@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import frc.robot.constants.BlankConstants;
+import frc.robot.constants.BriefcaseConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Robot2019Constants;
 
@@ -25,7 +26,7 @@ public class RobotConstants {
         System.out.println("Name: " + name);
         switch (name) {
           case "turing":
-            RobotConstants.set(new Robot2019Constants());
+            RobotConstants.set(new BriefcaseConstants());
             break;
     
           case "lovelace":
