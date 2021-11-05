@@ -24,6 +24,7 @@ public class BallGrabber extends SubsystemBase {
     * STAGE 2: Enable both motor 2(regular wheels that grab balls from ground) and 3(rubbery thingy that moves ball from roller section to indexer section) to begin grabbing balls
     * STAGE 3: Use the indexer motor to bring to shoot area
     */
+    Boolean up = true;
 
     public BallGrabber() {
       super();
@@ -54,9 +55,10 @@ public class BallGrabber extends SubsystemBase {
       //? how much speed and for how long does it rise?
 
       /** PSEUDOCODE 
-       * disable grabber()
-       * set motor to -max speed
-       * MOTOR set speed (-max speed)
+       * If up, then set false
+       * MOTOR set speed (-optimal speed)
+       * delay(some time until it reaches right place)
+       * MOTOR set speed(0)
       */
 
     }
@@ -116,6 +118,7 @@ public class BallGrabber extends SubsystemBase {
 
       /** PSEUDOCODE 
        * MOTOR set speed (0)
+       * If up is true, then set false
       */
 
     }
