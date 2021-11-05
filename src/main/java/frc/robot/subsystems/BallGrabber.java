@@ -32,7 +32,7 @@ public class BallGrabber extends SubsystemBase {
     //stage 1
 
       /**
-       * set motor to max speed
+       * Lowers the grabber so that it can pick up balls.
       */
       public void lowerGrabber() {
 
@@ -46,7 +46,7 @@ public class BallGrabber extends SubsystemBase {
     }
 
     /**
-    * set motor to -max speed
+    * Raises the grabber so that it's in the robot permeter for game start or when playing defense.
     */
     public void raiseGrabber() {
 
@@ -54,6 +54,8 @@ public class BallGrabber extends SubsystemBase {
       //? how much speed and for how long does it rise?
 
       /** PSEUDOCODE 
+       * disable grabber()
+       * set motor to -max speed
        * MOTOR set speed (-max speed)
       */
 
@@ -69,7 +71,7 @@ public class BallGrabber extends SubsystemBase {
       //TODO: set grabber speed so that it can grab balls and place them in storage
       /*
       set grabber motor to regular speed
-      set rubber motor to regular speed
+      set paracord motor to regular speed
       */
   
       //? how do you configure a TalonSRX motor to move forward and backwards?
