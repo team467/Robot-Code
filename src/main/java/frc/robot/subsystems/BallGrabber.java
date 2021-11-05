@@ -25,9 +25,6 @@ public class BallGrabber extends SubsystemBase {
     * STAGE 3: Use the indexer motor to bring to shoot area
     */
 
-  //! not functional: private TalonSRX grabberPositionChanger = new TalonSRX(Constants.DRIVE_MOTOR_GRABBER_POSITION_SETTER);
-  //! not functional: private TalonSRX grabber = new TalonSRX(Constants.DRIVE_MOTOR_GRABBER);
-
     public BallGrabber() {
       super();
     }
@@ -78,7 +75,7 @@ public class BallGrabber extends SubsystemBase {
       set grabber motor to regular speed
       set rubber motor to regular speed
       */
-      //! not functional: grabber.set(Constants.DRIVE_MOTOR_GRABBER_SPEED);
+  
       //? how do you configure a TalonSRX motor to move forward and backwards?
 
       /** PSEUDOCODE 
@@ -94,7 +91,7 @@ public class BallGrabber extends SubsystemBase {
       set grabber motor to negative of regular speed
       set rubber motor to negative of regular speed
       */
-      //! not functional: grabber.set(-Constants.DRIVE_MOTOR_GRABBER_SPEED);
+ 
       //? how do you configure a TalonSRX motor to move forward and backwards?
 
       /** PSEUDOCODE 
@@ -110,7 +107,7 @@ public class BallGrabber extends SubsystemBase {
       turn off grabber motor
       turn off rubber motor
       */
-      //! not functional: grabber.set(0);
+ 
       //? how do you configure a TalonSRX motor to move forward and backwards?
 
       /** PSEUDOCODE 
