@@ -11,9 +11,9 @@ public class CustomController2020 {
         SHOOTER_AUTO(7),
         SHOOTER_FLYWHEEL(8),
         SHOOTER_SHOOT(9),
-        CLIMBER_LOCK(10),
-        CLIMBER_UP(11),
-        CLIMBER_DOWN(12);
+        CLIMBER_LOCK_SWITCH(10),
+        CLIMBER_UP_BUTTON(11),
+        CLIMBER_DOWN_BUTTON(12);
     
         public final int value;
     
