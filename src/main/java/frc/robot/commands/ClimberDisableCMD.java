@@ -15,12 +15,12 @@ public class ClimberDisableCMD extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        climber.enable();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        climber.enable();
     }
 
     // Called once the command ends or is interrupted.
