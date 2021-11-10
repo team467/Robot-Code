@@ -4,20 +4,14 @@ import frc.robot.drive.MotorType;
 
 public interface Constants {
     public boolean driveDualMotors();
+    public MotorType driveMotorType();
     public int driveMotorLeftLeaderId();
-    public MotorType driveMotorLeftLeaderType();
     public boolean driveMotorLeftLeaderInverted();
-
     public int driveMotorLeftFollowerId();
-    public MotorType driveMotorLeftFollowerType();
     public boolean driveMotorLeftFollowerInverted();
-
     public int driveMotorRightLeaderId();
-    public MotorType driveMotorRightLeaderType();
     public boolean driveMotorRightLeaderInverted();
-
     public int driveMotorRightFollowerId();
-    public MotorType driveMotorRightFollowerType();
     public boolean driveMotorRightFollowerInverted();
 
     public boolean hasClimber2020();

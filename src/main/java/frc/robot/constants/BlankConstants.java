@@ -10,13 +10,13 @@ public class BlankConstants implements Constants {
     }
 
     @Override
-    public int driveMotorLeftLeaderId() {
-        return 0;
+    public MotorType driveMotorType() {
+        return MotorType.NONE;
     }
 
     @Override
-    public MotorType driveMotorLeftLeaderType() {
-        return MotorType.NONE;
+    public int driveMotorLeftLeaderId() {
+        return 0;
     }
 
     @Override
@@ -30,11 +30,6 @@ public class BlankConstants implements Constants {
     }
 
     @Override
-    public MotorType driveMotorLeftFollowerType() {
-        return MotorType.NONE;
-    }
-
-    @Override
     public boolean driveMotorLeftFollowerInverted() {
         return false;
     }
@@ -45,11 +40,6 @@ public class BlankConstants implements Constants {
     }
 
     @Override
-    public MotorType driveMotorRightLeaderType() {
-        return MotorType.NONE;
-    }
-
-    @Override
     public boolean driveMotorRightLeaderInverted() {
         return false;
     }
@@ -57,11 +47,6 @@ public class BlankConstants implements Constants {
     @Override
     public int driveMotorRightFollowerId() {
         return 0;
-    }
-
-    @Override
-    public MotorType driveMotorRightFollowerType() {
-        return MotorType.NONE;
     }
 
     @Override

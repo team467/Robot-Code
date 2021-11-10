@@ -10,13 +10,13 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public int driveMotorLeftLeaderId() {
-        return 11;
+    public MotorType driveMotorType() {
+        return MotorType.TALON_SRX;
     }
 
     @Override
-    public MotorType driveMotorLeftLeaderType() {
-        return MotorType.TALON_SRX;
+    public int driveMotorLeftLeaderId() {
+        return 11;
     }
 
     @Override
@@ -30,11 +30,6 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public MotorType driveMotorLeftFollowerType() {
-        return MotorType.NONE;
-    }
-
-    @Override
     public boolean driveMotorLeftFollowerInverted() {
         return false;
     }
@@ -45,11 +40,6 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public MotorType driveMotorRightLeaderType() {
-        return MotorType.TALON_SRX;
-    }
-
-    @Override
     public boolean driveMotorRightLeaderInverted() {
         return false;
     }
@@ -57,11 +47,6 @@ public class BriefcaseConstants implements Constants {
     @Override
     public int driveMotorRightFollowerId() {
         return 0;
-    }
-
-    @Override
-    public MotorType driveMotorRightFollowerType() {
-        return MotorType.NONE;
     }
 
     @Override

@@ -10,13 +10,13 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
-    public int driveMotorLeftLeaderId() {
-        return 1;
+    public MotorType driveMotorType() {
+        return MotorType.TALON_SRX;
     }
 
     @Override
-    public MotorType driveMotorLeftLeaderType() {
-        return MotorType.TALON_SRX;
+    public int driveMotorLeftLeaderId() {
+        return 1;
     }
 
     @Override
@@ -30,11 +30,6 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
-    public MotorType driveMotorLeftFollowerType() {
-        return MotorType.TALON_SRX;
-    }
-
-    @Override
     public boolean driveMotorLeftFollowerInverted() {
         return false;
     }
@@ -45,11 +40,6 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
-    public MotorType driveMotorRightLeaderType() {
-        return MotorType.TALON_SRX;
-    }
-
-    @Override
     public boolean driveMotorRightLeaderInverted() {
         return false;
     }
@@ -57,11 +47,6 @@ public class Robot2019Constants implements Constants {
     @Override
     public int driveMotorRightFollowerId() {
         return 4;
-    }
-
-    @Override
-    public MotorType driveMotorRightFollowerType() {
-        return MotorType.TALON_SRX;
     }
 
     @Override
