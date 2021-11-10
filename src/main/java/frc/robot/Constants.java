@@ -16,20 +16,18 @@ import frc.robot.drive.MotorType;
  */
 public final class Constants {
     public static boolean DRIVE_DUAL_MOTORS = true;
+    public static MotorType DRIVE_MOTOR_TYPE = MotorType.TALON_SRX;
+
     public static int DRIVE_MOTOR_LEFT_LEADER_ID = 1;
-    public static MotorType DRIVE_MOTOR_LEFT_LEADER_TYPE = MotorType.TALON_SRX;
     public static boolean DRIVE_MOTOR_LEFT_LEADER_INVERTED = false;
 
     public static int DRIVE_MOTOR_LEFT_FOLLOWER_ID = 2;
-    public static MotorType DRIVE_MOTOR_LEFT_FOLLOWER_TYPE = MotorType.TALON_SRX;
     public static boolean DRIVE_MOTOR_LEFT_FOLLOWER_INVERTED = false;
 
     public static int DRIVE_MOTOR_RIGHT_LEADER_ID = 3;
-    public static MotorType DRIVE_MOTOR_RIGHT_LEADER_TYPE = MotorType.TALON_SRX;
     public static boolean DRIVE_MOTOR_RIGHT_LEADER_INVERTED = false;
 
     public static int DRIVE_MOTOR_RIGHT_FOLLOWER_ID = 4;
-    public static MotorType DRIVE_MOTOR_RIGHT_FOLLOWER_TYPE = MotorType.TALON_SRX;
     public static boolean DRIVE_MOTOR_RIGHT_FOLLOWER_INVERTED = false;
 
     public static boolean HAS_CLIMBER2020 = false;
