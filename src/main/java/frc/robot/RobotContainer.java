@@ -58,9 +58,9 @@ public class RobotContainer {
   private final JoystickButton operatorShooterAuto = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_AUTO.value);
   private final JoystickButton operatorShooterFlywheel = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_FLYWHEEL.value);
   private final JoystickButton operatorShooterShoot = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_SHOOT.value);
-  private final JoystickButton operatorClimberLock = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_LOCK.value);
-  private final JoystickButton operatorClimberUp = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_UP.value);
-  private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_DOWN.value);
+  private final JoystickButton operatorClimberLock = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_LOCK_SWITCH.value);
+  private final JoystickButton operatorClimberUp = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_UP_BUTTON.value);
+  private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
 
   public RobotContainer() {
     // The default command is run when no other commands are active for the subsystem.
@@ -69,7 +69,7 @@ public class RobotContainer {
         () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
     ));
 
-    if (Constants.HAS_CLIMBER2020) {
+    if (RobotConstants.get().hasClimber2020()) {
       climber = new Climber2020();
       climber.setDefaultCommand(new ClimberStopCMD(climber));
     }
@@ -89,7 +89,7 @@ public class RobotContainer {
   }
 
   private void initializeClimberCommands() {
-    if (Constants.HAS_CLIMBER2020) {
+    if (RobotConstants.get().hasClimber2020()) {
       operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
       operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
       operatorClimberDown.whenHeld(new ClimberDownCMD(climber));
