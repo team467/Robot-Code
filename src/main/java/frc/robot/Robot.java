@@ -4,18 +4,9 @@
 
 package frc.robot;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.BlankConstants;
-import frc.robot.constants.Robot2019Constants;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to

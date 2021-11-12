@@ -4,15 +4,8 @@
 
 package frc.robot;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.logging.LogManager;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.constants.BlankConstants;
-import frc.robot.constants.Robot2019Constants;
 
 /**
  * Do NOT add any static variables to this class, or any initialization at all. Unless you know what
@@ -29,7 +22,7 @@ public final class Main {
    * <p>If you change your main robot class, change the parameter type.
    * @throws IOException
    */
-  public static void main(String... args) throws IOException {
+  public static void main(String... args) {
     RobotBase.startRobot(Robot::new);
   }
 }
