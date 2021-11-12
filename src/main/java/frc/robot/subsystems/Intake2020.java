@@ -76,5 +76,3 @@ public class Intake2020 extends SubsystemBase {
     }
 
 }
-
-    
