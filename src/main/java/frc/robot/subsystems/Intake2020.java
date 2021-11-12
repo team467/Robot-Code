@@ -33,7 +33,7 @@ public class Intake2020 extends SubsystemBase {
       /**
        * Lowers the arm so that it can pick up balls.
       */
-      public void lowerGrabber() {
+      public void lowerArm() {
 
       arm.set(Constants.INTAKE2020_ARM_DOWN_SPEED);
       down = true;
@@ -45,7 +45,7 @@ public class Intake2020 extends SubsystemBase {
     */
     public void raiseGrabber() {
 
-      this.disableGrabber();
+      this.stopRoller();
       arm.set(Constants.INTAKE2020_ARM_UP_SPEED);
       down = false;
 
@@ -77,7 +77,7 @@ public class Intake2020 extends SubsystemBase {
     /**
     * turn off roller motor so that it does not grab balls
     */
-    public void disableGrabber() {
+    public void stopRoller() {
       
       roller.set(0);
 
