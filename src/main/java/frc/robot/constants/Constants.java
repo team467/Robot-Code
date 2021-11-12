@@ -19,4 +19,11 @@ public interface Constants {
     public boolean climber2020MotorInverted();
     public double climber2020UpSpeed();
     public double climber2020DownSpeed();
+
+    public int intake2020RollerMotorID();
+    public int intake2020ArmMotorID();
+    public double intake2020RollerForwardSpeed();
+    public double intake2020RollerBackwardSpeed();
+    public double intake2020ArmDownSpeed();
+    public double intake2020ArmUpSpeed();
 }

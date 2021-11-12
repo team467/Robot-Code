@@ -1,31 +1,27 @@
 package frc.robot.subsystems;
-/*
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.PWMTalonSRX;
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
-*/
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.drive.TalonController;
+import frc.robot.RobotConstants;
+import frc.robot.drive.MotorType;
+import frc.robot.drive.SpeedControllerEncoder;
+import frc.robot.drive.SpeedControllerFactory;
+
 
 public class Intake2020 extends SubsystemBase {
 
-    TalonController arm = new TalonController(Constants.INTAKE2020_ARM_MOTOR_ID);
-    TalonController roller = new TalonController(Constants.INTAKE2020_ROLLER_MOTOR_ID);
+    private boolean enabled = false;
+
+    private SpeedControllerEncoder arm = SpeedControllerFactory.create(RobotConstants.get().intake2020ArmMotorID(), MotorType.TALON_SRX);
+    private SpeedControllerEncoder roller = SpeedControllerFactory.create(RobotConstants.get().intake2020RollerMotorID(), MotorType.TALON_SRX);
     
     Boolean down = false;
 
     public Intake2020() {
       super();
+    }
+
+    public boolean isEnabled() {
+      return enabled;
     }
 
     //stage 1
@@ -35,7 +31,7 @@ public class Intake2020 extends SubsystemBase {
       */
       public void lowerArm() {
 
-      arm.set(Constants.INTAKE2020_ARM_DOWN_SPEED);
+      arm.set(RobotConstants.get().intake2020ArmDownSpeed());
       down = true;
 
     }
@@ -46,7 +42,7 @@ public class Intake2020 extends SubsystemBase {
     public void raiseGrabber() {
 
       this.stopRoller();
-      arm.set(Constants.INTAKE2020_ARM_UP_SPEED);
+      arm.set(RobotConstants.get().intake2020ArmUpSpeed());
       down = false;
 
     }
@@ -58,7 +54,7 @@ public class Intake2020 extends SubsystemBase {
     public void forwardRoller() {
 
       if(down) {
-        roller.set(Constants.INTAKE2020_ROLLER_FORWARD_SPEED);  
+        roller.set(RobotConstants.get().intake2020RollerForwardSpeed());  
       }  
 
     }
@@ -69,7 +65,7 @@ public class Intake2020 extends SubsystemBase {
     public void reverseRoller() {
 
       if(down) {
-        roller.set(-Constants.INTAKE2020_ROLLER_BACKWARD_SPEED);
+        roller.set(-RobotConstants.get().intake2020RollerBackwardSpeed());
       }
 
     }
