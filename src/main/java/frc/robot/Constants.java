@@ -38,8 +38,8 @@ public final class Constants {
     public static double CLIMBER2020_UP_SPEED = 0.1;
     public static double CLIMBER2020_DOWN_SPEED = 0.1;
 
-    public static int INTAKE2020_ROLLER_MOTOR_ID = 0; //TODO: set to actual
-    public static int INTAKE2020_ARM_MOTOR_ID = 0; //TODO: set to actual
+    public static int INTAKE2020_ROLLER_MOTOR_ID = 9; //TODO: set to actual
+    public static int INTAKE2020_ARM_MOTOR_ID = 8; //TODO: set to actual
     public static double INTAKE2020_ROLLER_FORWARD_SPEED = 0.5; //TODO: set to actual
     public static double INTAKE2020_ROLLER_BACKWARD_SPEED = -0.25; //TODO: set to actual
     public static double INTAKE2020_ARM_DOWN_SPEED = 0.25; //TODO: set to actual
