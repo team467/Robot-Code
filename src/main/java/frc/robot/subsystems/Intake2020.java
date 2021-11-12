@@ -47,7 +47,7 @@ public class Intake2020 extends SubsystemBase {
     /**
     * set roller motor to regular speed so that it can pick up balls and place them into indexing
     */
-    public void forwardRoller() {
+    public void grabberIn() {
 
       if(down) {
         roller.set(RobotConstants.get().intake2020RollerForwardSpeed());  
@@ -58,7 +58,7 @@ public class Intake2020 extends SubsystemBase {
     /**
     * set roller motor to reverse so that it can unstuck any balls
     */
-    public void reverseRoller() {
+    public void grabberOut() {
 
       if(down) {
         roller.set(-RobotConstants.get().intake2020RollerBackwardSpeed());
@@ -69,7 +69,7 @@ public class Intake2020 extends SubsystemBase {
     /**
     * turn off roller motor so that it does not grab balls
     */
-    public void stopRoller() {
+    public void stopGrabber() {
       
       roller.set(0);
 
