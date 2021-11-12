@@ -13,8 +13,10 @@ public class SpeedControllerFactory {
 
             case SPARK_MAX_BRUSHLESS:
                 return new SparkMaxController(motorID, CANSparkMaxLowLevel.MotorType.kBrushless);
-        }
 
-        return null;
+            case NONE:
+            default:
+                throw new IllegalArgumentException("Illegal motor type " + type.name());
+        }
     }
 }
