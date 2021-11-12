@@ -24,11 +24,8 @@ public class Intake2020 extends SubsystemBase {
       return enabled;
     }
 
-    //stage 1
+    // Stage 1 - Lower the grabber arm so we're ready to bring balls into the robot
 
-      /**
-       * Lowers the arm so that it can pick up balls.
-      */
       public void lowerArm() {
 
       arm.set(RobotConstants.get().intake2020ArmDownSpeed());
@@ -37,9 +34,9 @@ public class Intake2020 extends SubsystemBase {
     }
 
     /**
-    * Raises the arm so that it's in the robot permeter for game start or when playing defense.
+    * Raises the arm so that it's in the robot perimeter for game start or when playing defense.
     */
-    public void raiseGrabber() {
+    public void raiseArm() {
 
       arm.set(RobotConstants.get().intake2020ArmUpSpeed());
       //down = false;
