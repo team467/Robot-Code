@@ -38,7 +38,10 @@ public final class Constants {
     public static double CLIMBER2020_UP_SPEED = 0.1;
     public static double CLIMBER2020_DOWN_SPEED = 0.1;
 
-    public static int GRABBER_POSITION_SETTER_ID = 999; //TODO: set to actual
-    public static int DRIVE_MOTOR_GRABBER_ID = 1000; //TODO: set to actual
-    public static double DRIVE_MOTOR_GRABBER_SPEED = 0.1; //TODO: set to actual
+    public static int INTAKE2020_ROLLER_MOTOR_ID = 0; //TODO: set to actual
+    public static int INTAKE2020_ARM_MOTOR_ID = 0; //TODO: set to actual
+    public static double INTAKE2020_ROLLER_FORWARD_SPEED = 0.5; //TODO: set to actual
+    public static double INTAKE2020_ROLLER_BACKWARD_SPEED = -0.25; //TODO: set to actual
+    public static double INTAKE2020_ARM_DOWN_SPEED = 0.25; //TODO: set to actual
+    public static double INTAKE2020_ARM_UP_SPEED = 0.2; //TODO: set to actual
 }
