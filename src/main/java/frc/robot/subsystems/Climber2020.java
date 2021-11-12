@@ -5,16 +5,16 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.RobotConstants;
 
 public class Climber2020 extends SubsystemBase {
-    private CANSparkMax climberMotor = new CANSparkMax(Constants.CLIMBER2020_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkMax climberMotor = new CANSparkMax(RobotConstants.get().climber2020MotorId(), MotorType.kBrushless);
     private boolean enabled = false;
 
     public Climber2020() {
         super();
 
-        climberMotor.setInverted(Constants.CLIMBER2020_MOTOR_INVERTED);
+        climberMotor.setInverted(RobotConstants.get().climber2020MotorInverted());
     }
 
     public void enable() {
@@ -31,12 +31,12 @@ public class Climber2020 extends SubsystemBase {
 
     public void up() {
         if (this.isEnabled())
-            climberMotor.set(Constants.CLIMBER2020_UP_SPEED);
+            climberMotor.set(RobotConstants.get().climber2020UpSpeed());
     }
 
     public void down() {
         if (this.isEnabled())
-            climberMotor.set(-Constants.CLIMBER2020_DOWN_SPEED);
+            climberMotor.set(-RobotConstants.get().climber2020DownSpeed());
     }
 
     public void stop() {

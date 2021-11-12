@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.RobotConstants;
 import frc.robot.drive.SparkMaxController;
 import frc.robot.drive.SpeedControllerEncoder;
 import frc.robot.drive.SpeedControllerFactory;
@@ -33,18 +33,18 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain() {
         super();
 
-        leftMotorLeader = SpeedControllerFactory.create(Constants.DRIVE_MOTOR_LEFT_LEADER_ID, Constants.DRIVE_MOTOR_TYPE);
-        rightMotorLeader = SpeedControllerFactory.create(Constants.DRIVE_MOTOR_RIGHT_LEADER_ID, Constants.DRIVE_MOTOR_TYPE);
+        leftMotorLeader = SpeedControllerFactory.create(RobotConstants.get().driveMotorLeftLeaderId(), RobotConstants.get().driveMotorType());
+        rightMotorLeader = SpeedControllerFactory.create(RobotConstants.get().driveMotorRightLeaderId(), RobotConstants.get().driveMotorType());
 
-        leftMotorLeader.setInverted(Constants.DRIVE_MOTOR_LEFT_LEADER_INVERTED);
-        rightMotorLeader.setInverted(Constants.DRIVE_MOTOR_RIGHT_LEADER_INVERTED);
+        leftMotorLeader.setInverted(RobotConstants.get().driveMotorLeftLeaderInverted());
+        rightMotorLeader.setInverted(RobotConstants.get().driveMotorRightLeaderInverted());
 
-        if (Constants.DRIVE_DUAL_MOTORS) {
-            leftMotorFollower = SpeedControllerFactory.create(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_ID, Constants.DRIVE_MOTOR_TYPE);
-            rightMotorFollower = SpeedControllerFactory.create(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_ID, Constants.DRIVE_MOTOR_TYPE);
+        if (RobotConstants.get().driveDualMotors()) {
+            leftMotorFollower = SpeedControllerFactory.create(RobotConstants.get().driveMotorLeftFollowerId(), RobotConstants.get().driveMotorType());
+            rightMotorFollower = SpeedControllerFactory.create(RobotConstants.get().driveMotorRightFollowerId(), RobotConstants.get().driveMotorType());
             
-            leftMotorFollower.setInverted(Constants.DRIVE_MOTOR_LEFT_FOLLOWER_INVERTED);
-            rightMotorFollower.setInverted(Constants.DRIVE_MOTOR_RIGHT_FOLLOWER_INVERTED);
+            leftMotorFollower.setInverted(RobotConstants.get().driveMotorLeftFollowerInverted());
+            rightMotorFollower.setInverted(RobotConstants.get().driveMotorRightFollowerInverted());
 
             leftMotorGroup = new SpeedControllerGroup(leftMotorLeader, leftMotorFollower);
             rightMotorGroup = new SpeedControllerGroup(rightMotorLeader, rightMotorFollower);
