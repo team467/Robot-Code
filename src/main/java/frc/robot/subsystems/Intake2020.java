@@ -22,7 +22,7 @@ public class Intake2020 extends SubsystemBase {
     TalonController arm = new TalonController(Constants.INTAKE2020_ARM_MOTOR_ID);
     TalonController roller = new TalonController(Constants.INTAKE2020_ROLLER_MOTOR_ID);
     
-    Boolean up = true;
+    Boolean down = false;
 
     public Intake2020() {
       super();
@@ -36,7 +36,7 @@ public class Intake2020 extends SubsystemBase {
       public void lowerGrabber() {
 
       arm.set(Constants.INTAKE2020_ARM_DOWN_SPEED);
-      up = false;
+      down = true;
 
     }
 
@@ -47,7 +47,7 @@ public class Intake2020 extends SubsystemBase {
 
       this.disableGrabber();
       arm.set(Constants.INTAKE2020_ARM_UP_SPEED);
-      up = true;
+      down = false;
 
     }
 
@@ -55,18 +55,22 @@ public class Intake2020 extends SubsystemBase {
     /**
     * set roller motor to regular speed so that it can pick up balls and place them into indexing
     */
-    public void enableGrabber() {
+    public void forwardRoller() {
 
-      if(!up) roller.set(Constants.INTAKE2020_ROLLER_FORWARD_SPEED);    
+      if(down) {
+        roller.set(Constants.INTAKE2020_ROLLER_FORWARD_SPEED);  
+      }  
 
     }
 
     /**
     * set roller motor to reverse so that it can unstuck any balls
     */
-    public void reverseGrabber() {
+    public void reverseRoller() {
 
-      if(!up) roller.set(Constants.INTAKE2020_ROLLER_BACKWARD_SPEED);
+      if(down) {
+        roller.set(-Constants.INTAKE2020_ROLLER_BACKWARD_SPEED);
+      }
 
     }
 
