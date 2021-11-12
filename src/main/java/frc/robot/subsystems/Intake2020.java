@@ -32,7 +32,7 @@ public class Intake2020 extends SubsystemBase {
       public void lowerArm() {
 
       arm.set(RobotConstants.get().intake2020ArmDownSpeed());
-      down = true;
+      //down = true;
 
     }
 
@@ -41,9 +41,8 @@ public class Intake2020 extends SubsystemBase {
     */
     public void raiseGrabber() {
 
-      this.stopRoller();
       arm.set(RobotConstants.get().intake2020ArmUpSpeed());
-      down = false;
+      //down = false;
 
     }
 
