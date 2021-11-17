@@ -24,8 +24,6 @@ public class Intake2020 extends SubsystemBase {
       return enabled;
     }
 
-    // Stage 1 - Lower the grabber arm so we're ready to bring balls into the robot
-
       public void lowerArm() {
 
       arm.set(RobotConstants.get().intake2020ArmDownSpeed());
@@ -43,7 +41,6 @@ public class Intake2020 extends SubsystemBase {
 
     }
 
-    //stage 2
     /**
     * set roller motor to regular speed so that it can pick up balls and place them into indexing
     */
