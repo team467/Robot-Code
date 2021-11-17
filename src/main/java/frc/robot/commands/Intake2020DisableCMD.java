@@ -30,7 +30,7 @@ public class Intake2020DisableCMD extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.enabled = false;
+    m_subsystem.enable(false);
   }
 
   // Called once the command ends or is interrupted.

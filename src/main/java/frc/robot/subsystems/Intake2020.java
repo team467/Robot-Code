@@ -9,15 +9,19 @@ import frc.robot.drive.SpeedControllerFactory;
 
 public class Intake2020 extends SubsystemBase {
 
-    public boolean enabled = false;
+    private boolean enabled = false;
 
     private SpeedControllerEncoder arm = SpeedControllerFactory.create(RobotConstants.get().intake2020ArmMotorID(), MotorType.TALON_SRX);
     private SpeedControllerEncoder roller = SpeedControllerFactory.create(RobotConstants.get().intake2020RollerMotorID(), MotorType.TALON_SRX);
     
-    public boolean down = false;
+    private boolean armIsDown = false;
 
     public Intake2020() {
       super();
+    }
+
+    public void enable (boolean enable) {
+      enabled = enable;
     }
 
     public boolean isEnabled() {
@@ -28,7 +32,7 @@ public class Intake2020 extends SubsystemBase {
 
       if(this.enabled) {
         arm.set(RobotConstants.get().intake2020ArmDownSpeed());
-        //down = true;
+        armIsDown = true;
       }
 
     }
@@ -40,7 +44,7 @@ public class Intake2020 extends SubsystemBase {
 
       if(this.enabled) {
         arm.set(RobotConstants.get().intake2020ArmUpSpeed());
-        //down = false;
+        armIsDown = false;
       }
 
     }
@@ -50,7 +54,7 @@ public class Intake2020 extends SubsystemBase {
     */
     public void grabberIn() {
       if(this.enabled) {
-        if(down) {
+        if(armIsDown) {
           roller.set(RobotConstants.get().intake2020RollerForwardSpeed());  
         }  
       }
@@ -63,7 +67,7 @@ public class Intake2020 extends SubsystemBase {
     public void grabberOut() {
 
       if(this.enabled) {
-        if(down) {
+        if(armIsDown) {
           roller.set(-RobotConstants.get().intake2020RollerBackwardSpeed());
         }
       }

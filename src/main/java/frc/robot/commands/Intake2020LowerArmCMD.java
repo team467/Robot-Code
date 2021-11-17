@@ -31,7 +31,6 @@ public class Intake2020LowerArmCMD extends CommandBase {
   @Override
   public void execute() {
     m_subsystem.lowerArm();
-    m_subsystem.down = true;
   }
 
   // Called once the command ends or is interrupted.
