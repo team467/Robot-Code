@@ -74,9 +74,7 @@ public class Intake2020 extends SubsystemBase {
     * turn off roller motor so that it does not grab balls
     */
     public void stopGrabber() {
-      if(this.enabled) {
-        roller.set(0);
-      }
+      roller.set(0);
 
 
     }
