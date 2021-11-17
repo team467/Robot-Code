@@ -9,12 +9,12 @@ import frc.robot.drive.SpeedControllerFactory;
 
 public class Intake2020 extends SubsystemBase {
 
-    private boolean enabled = false;
+    public boolean enabled = false;
 
     private SpeedControllerEncoder arm = SpeedControllerFactory.create(RobotConstants.get().intake2020ArmMotorID(), MotorType.TALON_SRX);
     private SpeedControllerEncoder roller = SpeedControllerFactory.create(RobotConstants.get().intake2020RollerMotorID(), MotorType.TALON_SRX);
     
-    Boolean down = false;
+    public boolean down = false;
 
     public Intake2020() {
       super();
@@ -24,10 +24,12 @@ public class Intake2020 extends SubsystemBase {
       return enabled;
     }
 
-      public void lowerArm() {
+    public void lowerArm() {
 
-      arm.set(RobotConstants.get().intake2020ArmDownSpeed());
-      //down = true;
+      if(this.enabled) {
+        arm.set(RobotConstants.get().intake2020ArmDownSpeed());
+        //down = true;
+      }
 
     }
 
@@ -36,8 +38,10 @@ public class Intake2020 extends SubsystemBase {
     */
     public void raiseArm() {
 
-      arm.set(RobotConstants.get().intake2020ArmUpSpeed());
-      //down = false;
+      if(this.enabled) {
+        arm.set(RobotConstants.get().intake2020ArmUpSpeed());
+        //down = false;
+      }
 
     }
 
@@ -45,10 +49,11 @@ public class Intake2020 extends SubsystemBase {
     * set roller motor to regular speed so that it can pick up balls and place them into indexing
     */
     public void grabberIn() {
-
-      if(down) {
-        roller.set(RobotConstants.get().intake2020RollerForwardSpeed());  
-      }  
+      if(this.enabled) {
+        if(down) {
+          roller.set(RobotConstants.get().intake2020RollerForwardSpeed());  
+        }  
+      }
 
     }
 
@@ -57,8 +62,10 @@ public class Intake2020 extends SubsystemBase {
     */
     public void grabberOut() {
 
-      if(down) {
-        roller.set(-RobotConstants.get().intake2020RollerBackwardSpeed());
+      if(this.enabled) {
+        if(down) {
+          roller.set(-RobotConstants.get().intake2020RollerBackwardSpeed());
+        }
       }
 
     }
@@ -67,8 +74,10 @@ public class Intake2020 extends SubsystemBase {
     * turn off roller motor so that it does not grab balls
     */
     public void stopGrabber() {
-      
-      roller.set(0);
+      if(this.enabled) {
+        roller.set(0);
+      }
+
 
     }
 
