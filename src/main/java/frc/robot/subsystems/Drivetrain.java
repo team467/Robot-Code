@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
-import frc.robot.drive.SparkMaxController;
-import frc.robot.drive.SpeedControllerEncoder;
-import frc.robot.drive.SpeedControllerFactory;
-import frc.robot.drive.TalonController;
+import frc.robot.motors.SparkMaxController;
+import frc.robot.motors.SpeedControllerEncoder;
+import frc.robot.motors.SpeedControllerFactory;
+import frc.robot.motors.TalonController;
 
 public class Drivetrain extends SubsystemBase {
     SpeedControllerGroup leftMotorGroup;

@@ -2,21 +2,21 @@ package frc.robot.constants;
 
 import frc.robot.motors.MotorType;
 
-public class BriefcaseConstants implements Constants {
+public class Robot2020Constants implements Constants {
 
     @Override
     public boolean driveDualMotors() {
-        return false;
+        return true;
     }
 
     @Override
     public MotorType driveMotorType() {
-        return MotorType.TALON_SRX;
+        return MotorType.SPARK_MAX_BRUSHLESS;
     }
 
     @Override
     public int driveMotorLeftLeaderId() {
-        return 11;
+        return 1;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int driveMotorLeftFollowerId() {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int driveMotorRightLeaderId() {
-        return 12;
+        return 3;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int driveMotorRightFollowerId() {
-        return 0;
+        return 4;
     }
 
     @Override
@@ -61,47 +61,47 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int climber2020MotorId() {
-        return 1;
+        return 5;
     }
 
     @Override
     public boolean climber2020MotorInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public double climber2020UpSpeed() {
-        return 0.3;
+        return 1.0;
     }
 
     @Override
     public double climber2020DownSpeed() {
-        return 0.1;
+        return 0.8;
     }
 
     @Override
     public boolean hasShooter2020() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean shooter2020FlywheelDualMotors() {
-        return false;
+        return true;
     }
 
     @Override
     public int shooter2020FlywheelLeaderMotorId() {
-        return 0;
+        return 5;
     }
 
     @Override
     public boolean shooter202FlywheelLeaderInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public int shooter2020FlywheelFollowerMotorId() {
-        return 0;
+        return 6;
     }
 
     @Override
@@ -111,17 +111,17 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int shooter2020TriggerMotorId() {
-        return 0;
+        return 7;
     }
 
     @Override
     public boolean shooter2020TriggerInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public int shooter2020LeftServoId() {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -136,7 +136,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int shooter2020RightServoId() {
-        return 0;
+        return 3;
     }
 
     @Override

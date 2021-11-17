@@ -1,4 +1,4 @@
-package frc.robot.drive;
+package frc.robot.motors;
 
 public enum MotorType {
     TALON_SRX,

@@ -3,9 +3,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
-import frc.robot.drive.MotorType;
-import frc.robot.drive.SpeedControllerEncoder;
-import frc.robot.drive.SpeedControllerFactory;
+import frc.robot.motors.MotorType;
+import frc.robot.motors.SpeedControllerEncoder;
+import frc.robot.motors.SpeedControllerFactory;
 
 public class Climber2020 extends SubsystemBase {
     private SpeedControllerEncoder climberMotor = SpeedControllerFactory.create(RobotConstants.get().climber2020MotorId(), MotorType.SPARK_MAX_BRUSHLESS);
