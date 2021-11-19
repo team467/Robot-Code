@@ -81,12 +81,12 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int intake2020RollerMotorID() {
-        return 9;
+        return 11; //left from staring thru the power switch
     }
 
     @Override
     public int intake2020ArmMotorID() {
-        return 8;
+        return 12; //right from staring thru the power switch
     }
 
     @Override
