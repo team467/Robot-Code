@@ -44,6 +44,10 @@ public class Shooter2020 extends SubsystemBase {
         flywheelMotorGroup.set(0.0);
     }
 
+    public void stopTrigger() {
+        triggerMotor.set(0.0);
+    }
+
     public void triggerForward() {
         triggerMotor.set(1.0);
     }

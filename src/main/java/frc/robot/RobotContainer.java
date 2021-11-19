@@ -15,6 +15,8 @@ import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
+import frc.robot.commands.ShooterTriggerForwardCMD;
+import frc.robot.commands.ShooterTriggerStopCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
@@ -103,8 +105,8 @@ public class RobotContainer {
       shooter = new Shooter2020();
       operatorShooterFlywheel.whenPressed(new ShooterRunFlywheelCMD(shooter));
       operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
-      // operatorShooterShoot.whenPressed(command)
-      // operatorShooterShoot.whenReleased(command)
+      operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
+      operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
     }
   }
 
