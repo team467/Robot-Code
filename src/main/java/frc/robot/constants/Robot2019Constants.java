@@ -115,6 +115,11 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
+    public double shooter2020FlywheelDefaultSpeed() {
+        return 0.0;
+    }
+
+    @Override
     public boolean shooter2020TriggerInverted() {
         return false;
     }

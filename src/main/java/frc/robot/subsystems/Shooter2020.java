@@ -36,6 +36,10 @@ public class Shooter2020 extends SubsystemBase {
         flywheelMotorGroup.set(speed); // TODO PIDS, all of them -_-
     }
 
+    public void setFlywheelDefault() {
+        setFlywheel(RobotConstants.get().shooter2020FlywheelDefaultSpeed());
+    }
+
     public void stopFlywheel() {
         flywheelMotorGroup.set(0.0);
     }

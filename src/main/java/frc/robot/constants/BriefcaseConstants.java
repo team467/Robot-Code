@@ -110,6 +110,11 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
+    public double shooter2020FlywheelDefaultSpeed() {
+        return 0.0;
+    }
+
+    @Override
     public int shooter2020TriggerMotorId() {
         return 0;
     }

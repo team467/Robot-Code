@@ -8,7 +8,9 @@ import java.io.IOException;
 import frc.robot.constants.BlankConstants;
 import frc.robot.constants.BriefcaseConstants;
 import frc.robot.constants.Constants;
+import frc.robot.constants.KitBot2022Constants;
 import frc.robot.constants.Robot2019Constants;
+import frc.robot.constants.Robot2020Constants;
 
 public class RobotConstants {
     private static Constants constants = null;
@@ -33,6 +35,14 @@ public class RobotConstants {
             RobotConstants.set(new Robot2019Constants());
             break;
         
+          case "von neumann":
+            RobotConstants.set(new Robot2020Constants());
+            break;
+          
+          case "hopper":
+            RobotConstants.set(new KitBot2022Constants());
+            break;
+
           default:
             System.err.println("No valid roborio name found");
             RobotConstants.set(new BlankConstants());

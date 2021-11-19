@@ -66,7 +66,7 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public boolean climber2020MotorInverted() {
-        return true;
+        return false;
     }
 
     @Override
@@ -110,6 +110,11 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
+    public double shooter2020FlywheelDefaultSpeed() {
+        return 0.4;
+    }
+
+    @Override
     public int shooter2020TriggerMotorId() {
         return 7;
     }
@@ -148,5 +153,4 @@ public class Robot2020Constants implements Constants {
     public double shooter2020RightServoMin() {
         return 0;
     }
-    
 }
