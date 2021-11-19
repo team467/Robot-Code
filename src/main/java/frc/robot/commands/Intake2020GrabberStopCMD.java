@@ -13,7 +13,7 @@ public class Intake2020GrabberStopCMD extends CommandBase {
   private final Intake2020 m_subsystem;
 
   /**
-   * Creates a new ExampleCommand.
+   * Creates a new Intake2020GrabberStopCMD.
    *
    * @param subsystem The subsystem used by this command.
    */
