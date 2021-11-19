@@ -75,8 +75,38 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public double climber2020DownSpeed() {
-        return 0.1;
+    public boolean hasIntake2020() {
+        return true;
+    }
+
+    @Override
+    public int intake2020RollerMotorID() {
+        return 9;
+    }
+
+    @Override
+    public int intake2020ArmMotorID() {
+        return 8;
+    }
+
+    @Override
+    public double intake2020RollerForwardSpeed() {
+        return 0.5;
+    }
+
+    @Override
+    public double intake2020RollerBackwardSpeed() {
+        return 0.25;
+    }
+
+    @Override
+    public double intake2020ArmDownSpeed() {
+        return 0.25;
+    }
+
+    @Override
+    public double intake2020ArmUpSpeed() {
+        return 0.25;
     }
     
 }

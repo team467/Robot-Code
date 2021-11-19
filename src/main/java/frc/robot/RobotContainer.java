@@ -13,10 +13,14 @@ import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
+import frc.robot.commands.Intake2020GrabberStopCMD;
+import frc.robot.commands.Intake2020GrabberInCMD;
+import frc.robot.commands.Intake2020GrabberOutCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake2020;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -30,6 +34,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
   private Climber2020 climber = null;
+  private Intake2020 intake = new Intake2020();
 
   // User interface objects
   // Xbox controller for driver
@@ -74,6 +79,11 @@ public class RobotContainer {
       climber.setDefaultCommand(new ClimberStopCMD(climber));
     }
 
+    if (RobotConstants.get().hasIntake2020()) {
+      intake = new Intake2020();
+      intake.setDefaultCommand(new Intake2020GrabberStopCMD(intake));
+    }
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -93,6 +103,25 @@ public class RobotContainer {
       operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
       operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
       operatorClimberDown.whenHeld(new ClimberDownCMD(climber));
+    }
+  }
+
+  private void initializeIntake2020Commands() {
+    if(RobotConstants.get().hasIntake2020()) {
+      /** 
+       * 2 button
+       * 1 for up 1 for down
+       * 
+       * arm has 3 modes
+       * forward
+       * backward
+       * off
+      */
+      
+      operatorIndexRollerForward.whenHeld(new Intake2020GrabberInCMD(intake));
+      
+
+      operatorIndexRollerBackward.whenHeld(new Intake2020GrabberOutCMD(intake));
     }
   }
 
