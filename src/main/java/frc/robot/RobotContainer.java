@@ -34,7 +34,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
   private Climber2020 climber = null;
-  private Intake2020 intake = new Intake2020();
+  private Intake2020 intake = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -79,11 +79,6 @@ public class RobotContainer {
       climber.setDefaultCommand(new ClimberStopCMD(climber));
     }
 
-    if (RobotConstants.get().hasIntake2020()) {
-      intake = new Intake2020();
-      intake.setDefaultCommand(new Intake2020GrabberStopCMD(intake));
-    }
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -96,6 +91,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     initializeClimberCommands();
+    initializeIntake2020Commands();
   }
 
   private void initializeClimberCommands() {
@@ -117,6 +113,8 @@ public class RobotContainer {
        * backward
        * off
       */
+      intake = new Intake2020();
+      intake.setDefaultCommand(new Intake2020GrabberStopCMD(intake));
       
       operatorIndexRollerForward.whenHeld(new Intake2020GrabberInCMD(intake));
       
