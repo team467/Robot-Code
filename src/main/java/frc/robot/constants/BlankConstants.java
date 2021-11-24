@@ -115,6 +115,36 @@ public class BlankConstants implements Constants {
     }
 
     @Override
+    public boolean shooter2020FlywheelUseVelocity() {
+        return false;
+    }
+
+    @Override
+    public double shooter2020FlywheelkP() {
+        return 0.0;
+    }
+
+    @Override
+    public double shooter2020FlywheelkI() {
+        return 0.0;
+    }
+
+    @Override
+    public double shooter2020FlywheelkD() {
+        return 0.0;
+    }
+
+    @Override
+    public double shooter2020FlywheelkF() {
+        return 0.0;
+    }
+
+    @Override
+    public double shooter2020FlywheelkMaxVelocity() {
+        return 0;
+    }
+
+    @Override
     public int shooter2020TriggerMotorId() {
         return 0;
     }

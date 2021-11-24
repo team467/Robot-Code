@@ -47,45 +47,7 @@ public class SparkMaxController implements SpeedControllerEncoder {
     public void pidWrite(double output) {
         spark.pidWrite(output);
     }
-
-    @Override
-    public void setP(double kP) {
-        pid.setP(kP);
-    }
-
-    @Override
-    public void setI(double kI) {
-        pid.setI(kI);        
-    }
-
-    @Override
-    public void setD(double kD) {
-        pid.setD(kD);        
-    }
-
-    @Override
-    public void setF(double kF) {
-        pid.setFF(kF);        
-    }
     
-    @Override
-    public void set(double value, ControlType controlType) {
-        switch (controlType) {
-        case Current:
-            pid.setReference(value, com.revrobotics.ControlType.kCurrent);
-            break;
-        case PercentOutput:
-            pid.setReference(value, com.revrobotics.ControlType.kDutyCycle);
-            break;
-        case Position:
-            pid.setReference(value, com.revrobotics.ControlType.kPosition);
-            break;
-        case Velocity:
-            pid.setReference(value, com.revrobotics.ControlType.kVelocity);
-            break;
-        }        
-    }
-
     @Override
     public double getPosition() {
         return spark.getEncoder().getPosition();

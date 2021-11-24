@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
@@ -12,6 +13,7 @@ public class Shooter2020 extends SubsystemBase {
     private SpeedControllerGroup flywheelMotorGroup;
     private SpeedControllerEncoder flywheelMotorLeader;
     private SpeedControllerEncoder flywheelMotorFollower;
+    private PIDController flywheelPIDController;
     private SpeedControllerEncoder triggerMotor;
 
     public Shooter2020() {
@@ -28,12 +30,23 @@ public class Shooter2020 extends SubsystemBase {
             flywheelMotorGroup = new SpeedControllerGroup(flywheelMotorLeader);
         }
 
+        flywheelPIDController = new PIDController(RobotConstants.get().shooter2020FlywheelkP(), RobotConstants.get().shooter2020FlywheelkI(), RobotConstants.get().shooter2020FlywheelkD());
+
         triggerMotor = SpeedControllerFactory.create(RobotConstants.get().shooter2020TriggerMotorId(), MotorType.TALON_SRX);
         triggerMotor.setInverted(RobotConstants.get().shooter2020TriggerInverted());
     }
 
     public void setFlywheel(double speed) {
-        flywheelMotorGroup.set(speed); // TODO PIDS, all of them -_-
+        if (RobotConstants.get().shooter2020FlywheelUseVelocity()) {
+        double velocity = speed * RobotConstants.get().shooter2020FlywheelkMaxVelocity();
+        flywheelMotorGroup.set(flywheelPIDController.calculate(flywheelMotorLeader.getVelocity(), velocity));
+        } else {
+            flywheelMotorGroup.set(speed); // TODO PIDS, all of them -_-
+        }
+    }
+
+    public void setFlywheelVelocity(double velocity) {
+        flywheelMotorGroup.set(flywheelPIDController.calculate(flywheelMotorLeader.getVelocity(), velocity));
     }
 
     public void setFlywheelDefault() {

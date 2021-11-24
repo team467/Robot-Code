@@ -46,45 +46,6 @@ public class TalonController implements SpeedControllerEncoder {
     }
 
     @Override
-    public void setP(double kP) {
-        talon.config_kP(0, kP);       
-    }
-
-    @Override
-    public void setI(double kI) {
-        talon.config_kI(0, kI);       
-    }
-
-    @Override
-    public void setD(double kD) {
-        talon.config_kD(0, kD);       
-        
-    }
-
-    @Override
-    public void setF(double kF) {
-        talon.config_kF(0, kF);       
-    }
-
-    @Override
-    public void set(double value, ControlType controlType) {
-        switch (controlType) {
-        case Current:
-            talon.set(ControlMode.Current, value);
-            break;
-        case PercentOutput:
-            talon.set(ControlMode.PercentOutput, value);
-            break;
-        case Position:
-            talon.set(ControlMode.Position, value);
-            break;
-        case Velocity:
-            talon.set(ControlMode.Velocity, value);
-            break;
-        }        
-    }
-
-    @Override
     public double getPosition() {
         return talon.getSelectedSensorPosition();
     }

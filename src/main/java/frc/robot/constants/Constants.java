@@ -27,6 +27,12 @@ public interface Constants {
     public int shooter2020FlywheelFollowerMotorId();
     public boolean shooter202FlywheelFollowerInverted();
     public double shooter2020FlywheelDefaultSpeed();
+    public boolean shooter2020FlywheelUseVelocity();
+    public double shooter2020FlywheelkP();
+    public double shooter2020FlywheelkI();
+    public double shooter2020FlywheelkD();
+    public double shooter2020FlywheelkF();
+    public double shooter2020FlywheelkMaxVelocity();
     public int shooter2020TriggerMotorId();
     public boolean shooter2020TriggerInverted();
     public int shooter2020LeftServoId();

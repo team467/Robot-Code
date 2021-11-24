@@ -115,6 +115,36 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
+    public boolean shooter2020FlywheelUseVelocity() {
+        return true;
+    }
+
+    @Override
+    public double shooter2020FlywheelkP() {
+        return 1.2;
+    }
+
+    @Override
+    public double shooter2020FlywheelkI() {
+        return 0.0;
+    }
+
+    @Override
+    public double shooter2020FlywheelkD() {
+        return 120.0;
+    }
+
+    @Override
+    public double shooter2020FlywheelkF() {
+        return 0.0;
+    }
+
+    @Override
+    public double shooter2020FlywheelkMaxVelocity() {
+        return 10000.0;
+    }
+
+    @Override
     public int shooter2020TriggerMotorId() {
         return 7;
     }
