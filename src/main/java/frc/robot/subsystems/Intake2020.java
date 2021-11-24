@@ -9,8 +9,6 @@ import frc.robot.drive.SpeedControllerFactory;
 
 public class Intake2020 extends SubsystemBase {
 
-    private boolean enabled = false;
-
     private SpeedControllerEncoder arm = SpeedControllerFactory.create(RobotConstants.get().intake2020ArmMotorID(), MotorType.TALON_SRX);
     private SpeedControllerEncoder roller = SpeedControllerFactory.create(RobotConstants.get().intake2020RollerMotorID(), MotorType.TALON_SRX);
     
@@ -20,20 +18,10 @@ public class Intake2020 extends SubsystemBase {
       super();
     }
 
-    public void enable (boolean enable) {
-      enabled = enable;
-    }
-
-    public boolean isEnabled() {
-      return enabled;
-    }
-
     public void lowerArm() {
 
-      if(this.enabled) {
-        arm.set(RobotConstants.get().intake2020ArmDownSpeed());
-        armIsDown = true;
-      }
+      arm.set(-RobotConstants.get().intake2020ArmDownSpeed());
+      armIsDown = true;
 
     }
 
@@ -42,10 +30,8 @@ public class Intake2020 extends SubsystemBase {
     */
     public void raiseArm() {
 
-      if(this.enabled) {
-        arm.set(RobotConstants.get().intake2020ArmUpSpeed());
-        armIsDown = false;
-      }
+      arm.set(RobotConstants.get().intake2020ArmUpSpeed());
+      armIsDown = false;
 
     }
 
@@ -53,11 +39,10 @@ public class Intake2020 extends SubsystemBase {
     * set roller motor to regular speed so that it can pick up balls and place them into indexing
     */
     public void grabberIn() {
-      if(this.enabled) {
-        if(armIsDown) {
-          roller.set(RobotConstants.get().intake2020RollerForwardSpeed());  
-        }  
-      }
+      System.out.println("Arm status: " + armIsDown);
+      if(armIsDown) {
+        roller.set(RobotConstants.get().intake2020RollerForwardSpeed());
+      } 
 
     }
 
@@ -65,11 +50,9 @@ public class Intake2020 extends SubsystemBase {
     * set roller motor to reverse so that it can unstuck any balls
     */
     public void grabberOut() {
-
-      if(this.enabled) {
-        if(armIsDown) {
-          roller.set(-RobotConstants.get().intake2020RollerBackwardSpeed());
-        }
+      System.out.println("Arm status: " + armIsDown);
+      if(armIsDown) {
+        roller.set(-RobotConstants.get().intake2020RollerBackwardSpeed());
       }
 
     }
@@ -80,6 +63,10 @@ public class Intake2020 extends SubsystemBase {
     public void stopGrabber() {
       roller.set(0);
 
+
+    }
+    @Override
+    public void periodic() {
 
     }
 

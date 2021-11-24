@@ -27,7 +27,6 @@ public class Intake2020GrabberOutCMD extends CommandBase {
   @Override
   public void initialize() {
     System.out.println("Starting Intake2020GrabberOutCMD");
-    m_subsystem.stopGrabber();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
