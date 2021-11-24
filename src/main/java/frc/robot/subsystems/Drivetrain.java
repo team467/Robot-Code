@@ -64,9 +64,9 @@ public class Drivetrain extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty(".motor_left_position", () -> leftMotorLeader.getPosition(), null);
-        builder.addDoubleProperty(".motor_left_speed", () -> leftMotorLeader.getVelocity(), null);
-        builder.addDoubleProperty(".motor_right_position", () -> rightMotorLeader.getPosition(), null);
-        builder.addDoubleProperty(".motor_right_speed", () -> rightMotorLeader.getVelocity(), null);
+        builder.addDoubleProperty("Motor Left Position", () -> leftMotorLeader.getPosition(), null);
+        builder.addDoubleProperty("Motor Left Velocity", () -> leftMotorLeader.getVelocity(), null);
+        builder.addDoubleProperty("Motor Right Position", () -> rightMotorLeader.getPosition(), null);
+        builder.addDoubleProperty("Motor Right Velocity", () -> rightMotorLeader.getVelocity(), null);
     }
 }

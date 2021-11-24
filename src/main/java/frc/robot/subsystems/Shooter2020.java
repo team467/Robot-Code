@@ -60,8 +60,8 @@ public class Shooter2020 extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty(".flywheel_speed", () -> flywheelMotorLeader.getVelocity(), null);
-        builder.addDoubleProperty(".trigger_speed", () -> triggerMotor.getVelocity(), null);
+        builder.addDoubleProperty("Flywheel Velocity", () -> flywheelMotorLeader.getVelocity(), null);
+        builder.addDoubleProperty("Trigger Velocity", () -> triggerMotor.getVelocity(), null);
     }
 }
 

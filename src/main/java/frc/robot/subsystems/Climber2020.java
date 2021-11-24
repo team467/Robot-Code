@@ -49,8 +49,8 @@ public class Climber2020 extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty(".climber_position", () -> climberMotor.getPosition(), null);
-        builder.addDoubleProperty(".climber_speed", () -> climberMotor.getVelocity(), null);
+        builder.addDoubleProperty("Climber Position", () -> climberMotor.getPosition(), null);
+        builder.addDoubleProperty("Climber Velocity", () -> climberMotor.getVelocity(), null);
     }
 }
 
