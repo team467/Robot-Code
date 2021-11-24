@@ -26,6 +26,7 @@ public class Intake2020RaiseArmCMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("Starting Intake2020RaiseArmCMD");
     m_subsystem.stopGrabber();
   }
 
