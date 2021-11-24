@@ -16,6 +16,8 @@ import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.Intake2020GrabberStopCMD;
 import frc.robot.commands.Intake2020GrabberInCMD;
 import frc.robot.commands.Intake2020GrabberOutCMD;
+import frc.robot.commands.Intake2020RaiseArmCMD;
+import frc.robot.commands.Intake2020LowerArmCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
@@ -54,7 +56,8 @@ public class RobotContainer {
 
   // Custom controller for operator
   private final Joystick operatorJoystick = new Joystick(1);
-  private final JoystickButton operatorInakeArm = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ARM.value);
+  private final JoystickButton operatorInakeArm = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ARM.value); 
+  // TODO rename to intake
   private final JoystickButton operatorIntakeRollerForward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ROLLER_FORWARD.value);
   private final JoystickButton operatorIntakeRollerBackward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ROLLER_BACKWARD.value);
   private final JoystickButton operatorIndexAuto = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INDEX_AUTO.value);
@@ -116,10 +119,12 @@ public class RobotContainer {
       intake = new Intake2020();
       intake.setDefaultCommand(new Intake2020GrabberStopCMD(intake));
       
-      operatorIndexRollerForward.whenHeld(new Intake2020GrabberInCMD(intake));
-      
+      operatorIntakeRollerForward.whenHeld(new Intake2020GrabberInCMD(intake));
+      operatorIntakeRollerBackward.whenHeld(new Intake2020GrabberOutCMD(intake));
 
-      operatorIndexRollerBackward.whenHeld(new Intake2020GrabberOutCMD(intake));
+
+      operatorInakeArm.whenPressed(new Intake2020RaiseArmCMD(intake)); //TODO: implement TODO
+      operatorInakeArm.whenReleased(new Intake2020LowerArmCMD(intake));
     }
   }
 
