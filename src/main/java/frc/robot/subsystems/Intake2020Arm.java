@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
+import frc.robot.subsystems.Intake2020Roller;
 import frc.robot.drive.MotorType;
 import frc.robot.drive.SpeedControllerEncoder;
 import frc.robot.drive.SpeedControllerFactory;
@@ -10,8 +11,6 @@ import frc.robot.drive.SpeedControllerFactory;
 public class Intake2020Arm extends SubsystemBase {
 
     private SpeedControllerEncoder arm = SpeedControllerFactory.create(RobotConstants.get().intake2020ArmMotorID(), MotorType.TALON_SRX);
-    
-    private boolean armIsDown = false;
 
     public Intake2020Arm() {
       super();
@@ -20,7 +19,7 @@ public class Intake2020Arm extends SubsystemBase {
     public void lowerArm() {
 
       arm.set(-RobotConstants.get().intake2020ArmDownSpeed());
-      armIsDown = true;
+      Intake2020Roller.armIsDown = true;
 
     }
 
@@ -30,7 +29,7 @@ public class Intake2020Arm extends SubsystemBase {
     public void raiseArm() {
 
       arm.set(RobotConstants.get().intake2020ArmUpSpeed());
-      armIsDown = false;
+      Intake2020Roller.armIsDown = false;
 
     }
 
