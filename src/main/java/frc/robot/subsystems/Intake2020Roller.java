@@ -11,7 +11,7 @@ public class Intake2020Roller extends SubsystemBase {
 
     private SpeedControllerEncoder roller = SpeedControllerFactory.create(RobotConstants.get().intake2020RollerMotorID(), MotorType.TALON_SRX);
     
-    public static boolean armIsDown = false;
+    public static boolean armIsDown = true;
 
     public Intake2020Roller() {
       super();
