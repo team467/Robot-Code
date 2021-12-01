@@ -13,16 +13,17 @@ import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
-import frc.robot.commands.Intake2020GrabberStopCMD;
-import frc.robot.commands.Intake2020GrabberInCMD;
-import frc.robot.commands.Intake2020GrabberOutCMD;
+import frc.robot.commands.Intake2020RollerStopCMD;
+import frc.robot.commands.Intake2020RollerInCMD;
+import frc.robot.commands.Intake2020RollerOutCMD;
 import frc.robot.commands.Intake2020RaiseArmCMD;
 import frc.robot.commands.Intake2020LowerArmCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake2020;
+import frc.robot.subsystems.Intake2020Arm;
+import frc.robot.subsystems.Intake2020Roller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -36,7 +37,8 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
   private Climber2020 climber = null;
-  private Intake2020 intake = null;
+  private Intake2020Arm intakeArm = null;
+  private Intake2020Roller intakeRoller = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -116,15 +118,16 @@ public class RobotContainer {
        * backward
        * off
       */
-      intake = new Intake2020();
-      intake.setDefaultCommand(new Intake2020GrabberStopCMD(intake));
+      intakeArm = new Intake2020Arm();
+      intakeRoller = new Intake2020Roller();
+      intakeRoller.setDefaultCommand(new Intake2020RollerStopCMD(intakeRoller));
       
-      operatorIntakeRollerForward.whenHeld(new Intake2020GrabberInCMD(intake));
-      operatorIntakeRollerBackward.whenHeld(new Intake2020GrabberOutCMD(intake));
+      operatorIntakeRollerForward.whenHeld(new Intake2020RollerInCMD(intakeRoller));
+      operatorIntakeRollerBackward.whenHeld(new Intake2020RollerOutCMD(intakeRoller));
 
 
-      operatorInakeArm.whenPressed(new Intake2020RaiseArmCMD(intake)); //TODO: implement TODO
-      operatorInakeArm.whenReleased(new Intake2020LowerArmCMD(intake));
+      operatorInakeArm.whenPressed(new Intake2020RaiseArmCMD(intakeArm)); //TODO: implement TODO
+      operatorInakeArm.whenReleased(new Intake2020LowerArmCMD(intakeArm));
     }
   }
 

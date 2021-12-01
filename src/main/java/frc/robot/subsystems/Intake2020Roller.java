@@ -7,38 +7,20 @@ import frc.robot.drive.SpeedControllerEncoder;
 import frc.robot.drive.SpeedControllerFactory;
 
 
-public class Intake2020 extends SubsystemBase {
+public class Intake2020Roller extends SubsystemBase {
 
-    private SpeedControllerEncoder arm = SpeedControllerFactory.create(RobotConstants.get().intake2020ArmMotorID(), MotorType.TALON_SRX);
     private SpeedControllerEncoder roller = SpeedControllerFactory.create(RobotConstants.get().intake2020RollerMotorID(), MotorType.TALON_SRX);
     
     private boolean armIsDown = false;
 
-    public Intake2020() {
+    public Intake2020Roller() {
       super();
-    }
-
-    public void lowerArm() {
-
-      arm.set(-RobotConstants.get().intake2020ArmDownSpeed());
-      armIsDown = true;
-
-    }
-
-    /**
-    * Raises the arm so that it's in the robot perimeter for game start or when playing defense.
-    */
-    public void raiseArm() {
-
-      arm.set(RobotConstants.get().intake2020ArmUpSpeed());
-      armIsDown = false;
-
     }
 
     /**
     * set roller motor to regular speed so that it can pick up balls and place them into indexing
     */
-    public void grabberIn() {
+    public void rollerIn() {
       System.out.println("Arm status: " + armIsDown);
       if(armIsDown) {
         roller.set(RobotConstants.get().intake2020RollerForwardSpeed());
@@ -49,7 +31,7 @@ public class Intake2020 extends SubsystemBase {
     /**
     * set roller motor to reverse so that it can unstuck any balls
     */
-    public void grabberOut() {
+    public void rollerOut() {
       System.out.println("Arm status: " + armIsDown);
       if(armIsDown) {
         roller.set(-RobotConstants.get().intake2020RollerBackwardSpeed());
@@ -60,7 +42,7 @@ public class Intake2020 extends SubsystemBase {
     /**
     * turn off roller motor so that it does not grab balls
     */
-    public void stopGrabber() {
+    public void rollerStop() {
       roller.set(0);
 
 

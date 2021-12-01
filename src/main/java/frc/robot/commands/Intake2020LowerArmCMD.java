@@ -4,20 +4,20 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Intake2020;
+import frc.robot.subsystems.Intake2020Arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
 public class Intake2020LowerArmCMD extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Intake2020 m_subsystem;
+  private final Intake2020Arm m_subsystem;
 
   /**
    * Creates a new Intake2020LowerArmCMD.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Intake2020LowerArmCMD(Intake2020 subsystem) {
+  public Intake2020LowerArmCMD(Intake2020Arm subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
