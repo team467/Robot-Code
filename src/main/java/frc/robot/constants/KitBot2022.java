@@ -86,32 +86,32 @@ public class KitBot2022  implements Constants {
 
     @Override
     public int intake2020RollerMotorID() {
-        return 11; //left from staring thru the power switch
+        return 9; //left from staring thru the power switch
     }
 
     @Override
     public int intake2020ArmMotorID() {
-        return 12; //right from staring thru the power switch
+        return 8; //right from staring thru the power switch
     }
 
     @Override
     public double intake2020RollerForwardSpeed() {
-        return 0.5;
+        return 0.30;
     }
 
     @Override
     public double intake2020RollerBackwardSpeed() {
-        return 0.25;
+        return 0.30;
     }
 
     @Override
     public double intake2020ArmDownSpeed() {
-        return 0.25;
+        return 0.30;
     }
 
     @Override
     public double intake2020ArmUpSpeed() {
-        return 0.25;
+        return 0.30;
     }
     
 }
