@@ -126,7 +126,7 @@ public class RobotContainer {
       operatorIntakeRollerBackward.whenHeld(new Intake2020RollerOutCMD(intakeRoller));
 
 
-      operatorInakeArm.whenPressed(new Intake2020RaiseArmCMD(intakeArm,intakeRoller)); //TODO: implement TODO
+      operatorInakeArm.whenPressed(new Intake2020RaiseArmCMD(intakeArm)); //TODO: implement TODO
       operatorInakeArm.whenReleased(new Intake2020LowerArmCMD(intakeArm));
     }
   }
