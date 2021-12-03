@@ -7,7 +7,6 @@ package frc.robot.commands;
 import frc.robot.subsystems.Intake2020Arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-/** An example command that uses an example subsystem. */
 public class Intake2020RaiseArmCMD extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Intake2020Arm intakeArm;

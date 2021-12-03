@@ -7,20 +7,19 @@ package frc.robot.commands;
 import frc.robot.subsystems.Intake2020Roller;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-/** An example command that uses an example subsystem. */
 public class Intake2020RollerStopCMD extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Intake2020Roller m_subsystem;
+  private final Intake2020Roller intakeRoller;
 
   /**
    * Creates a new Intake2020GrabberStopCMD.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Intake2020RollerStopCMD(Intake2020Roller subsystem) {
-    m_subsystem = subsystem;
+  public Intake2020RollerStopCMD(Intake2020Roller intakeRoller) {
+    this.intakeRoller = intakeRoller;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    addRequirements(intakeRoller);
   }
 
   // Called when the command is initially scheduled.
@@ -31,7 +30,7 @@ public class Intake2020RollerStopCMD extends CommandBase {
   @Override
   public void execute() {
     //System.out.println("Starting Intake2020GrabberStopCMD");
-    m_subsystem.rollerStop();
+    intakeRoller.rollerStop();
   }
 
   // Called once the command ends or is interrupted.
