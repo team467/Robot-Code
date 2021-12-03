@@ -5,39 +5,33 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Intake2020Arm;
-import frc.robot.subsystems.Intake2020Roller;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
 public class Intake2020RaiseArmCMD extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Intake2020Arm m_subsystemArm;
-  private final Intake2020Roller m_subsystemRoller;
+  private final Intake2020Arm intakeArm;
 
   /**
    * Creates a new Intake2020RaiseArmCMD.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Intake2020RaiseArmCMD(Intake2020Arm armsubsystem, Intake2020Roller rollersubsystem) {
-    m_subsystemArm = armsubsystem;
-    m_subsystemRoller = rollersubsystem;
+  public Intake2020RaiseArmCMD(Intake2020Arm intakeArm) {
+    this.intakeArm = intakeArm;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(armsubsystem);
-    addRequirements(rollersubsystem);
+    addRequirements(intakeArm);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Starting Intake2020RaiseArmCMD");
-    m_subsystemRoller.rollerStop();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystemArm.raiseArm();
+    intakeArm.raiseArm();
   }
 
   // Called once the command ends or is interrupted.
