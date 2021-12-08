@@ -8,13 +8,12 @@ import frc.robot.subsystems.Intake2020Arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class Intake2020LowerArmCMD extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Intake2020Arm intakeArm;
 
   /**
    * Creates a new Intake2020LowerArmCMD.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param intakeArm The subsystem used by this command.
    */
   public Intake2020LowerArmCMD(Intake2020Arm intakeArm) {
     this.intakeArm = intakeArm;

@@ -6,7 +6,9 @@ import frc.robot.drive.MotorType;
 import frc.robot.drive.SpeedControllerEncoder;
 import frc.robot.drive.SpeedControllerFactory;
 
-
+/** 
+ * A subsystem that deals with the roller of the intake system.
+*/
 public class Intake2020Roller extends SubsystemBase {
 
     private SpeedControllerEncoder roller = SpeedControllerFactory.create(RobotConstants.get().intake2020RollerMotorID(), MotorType.TALON_SRX);
