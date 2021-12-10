@@ -21,13 +21,11 @@ public class Shooter2020 extends SubsystemBase {
     public Shooter2020() {
         super();
 
-        // flywheelMotorLeader = SpeedControllerFactory.create(RobotConstants.get().shooter2020FlywheelLeaderMotorId(), MotorType.TALON_SRX);
-        flywheelMotorLeader = SpeedControllerFactory.create(RobotConstants.get().shooter2020FlywheelLeaderMotorId(), MotorType.SPARK_MAX_BRUSHLESS);
+        flywheelMotorLeader = SpeedControllerFactory.create(RobotConstants.get().shooter2020FlywheelLeaderMotorId(), RobotConstants.get().shooter2020MotorType());
         flywheelMotorLeader.setInverted(RobotConstants.get().shooter202FlywheelLeaderInverted());
 
         if (RobotConstants.get().shooter2020FlywheelDualMotors()) {
-            // flywheelMotorFollower = SpeedControllerFactory.create(RobotConstants.get().shooter2020FlywheelFollowerMotorId(), MotorType.TALON_SRX);
-            flywheelMotorFollower = SpeedControllerFactory.create(RobotConstants.get().shooter2020FlywheelFollowerMotorId(), MotorType.SPARK_MAX_BRUSHLESS);
+            flywheelMotorFollower = SpeedControllerFactory.create(RobotConstants.get().shooter2020FlywheelFollowerMotorId(), RobotConstants.get().shooter2020MotorType());
             flywheelMotorFollower.setInverted(RobotConstants.get().shooter202FlywheelFollowerInverted());
             flywheelMotorGroup = new SpeedControllerGroup(flywheelMotorLeader, flywheelMotorFollower);
         } else {
@@ -46,7 +44,6 @@ public class Shooter2020 extends SubsystemBase {
             double setpoint = speed * RobotConstants.get().shooter2020FlywheelkMaxVelocity();
             double output = flywheelPIDController.calculate(flywheelMotorLeader.getVelocity(), setpoint);
             double ff = flywheelFFController.calculate(setpoint/60);
-            System.err.println("OUTPUT: " + output + " | FF:" + ff);
             flywheelMotorGroup.setVoltage(output + ff);
         } else {
             setFlywheelRaw(speed);

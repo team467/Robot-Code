@@ -90,6 +90,11 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
+    public MotorType shooter2020MotorType() {
+        return MotorType.NONE;
+    }
+
+    @Override
     public boolean shooter2020FlywheelDualMotors() {
         return true;
     }

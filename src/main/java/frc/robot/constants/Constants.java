@@ -22,6 +22,7 @@ public interface Constants {
     public double climber2020DownSpeed();
 
     public boolean hasShooter2020();
+    public MotorType shooter2020MotorType();
     public boolean shooter2020FlywheelDualMotors();
     public int shooter2020FlywheelLeaderMotorId();
     public boolean shooter202FlywheelLeaderInverted();

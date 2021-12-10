@@ -90,6 +90,11 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
+    public MotorType shooter2020MotorType() {
+        return MotorType.NONE;
+    }
+
+    @Override
     public boolean shooter2020FlywheelDualMotors() {
         return false;
     }

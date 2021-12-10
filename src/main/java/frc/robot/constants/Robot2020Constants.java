@@ -6,7 +6,7 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public boolean hasDrivetrain() {
-        return false;
+        return true;
     }
 
     @Override
@@ -90,23 +90,28 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
+    public MotorType shooter2020MotorType() {
+        return MotorType.TALON_SRX;
+    }
+
+    @Override
     public boolean shooter2020FlywheelDualMotors() {
         return true;
     }
 
     @Override
     public int shooter2020FlywheelLeaderMotorId() {
-        return 1;
+        return 5;
     }
 
     @Override
     public boolean shooter202FlywheelLeaderInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public int shooter2020FlywheelFollowerMotorId() {
-        return 2;
+        return 6;
     }
 
     @Override
