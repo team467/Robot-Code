@@ -5,6 +5,11 @@ import frc.robot.motors.MotorType;
 public class BlankConstants implements Constants {
 
     @Override
+    public boolean hasDrivetrain() {
+        return false;
+    }
+
+    @Override
     public boolean driveDualMotors() {
         return false;
     }
@@ -183,5 +188,4 @@ public class BlankConstants implements Constants {
     public double shooter2020RightServoMin() {
         return 0;
     }
-    
 }

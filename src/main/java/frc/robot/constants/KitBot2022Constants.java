@@ -5,6 +5,11 @@ import frc.robot.motors.MotorType;
 public class KitBot2022Constants implements Constants {
 
     @Override
+    public boolean hasDrivetrain() {
+        return true;
+    }
+
+    @Override
     public boolean driveDualMotors() {
         return true;
     }

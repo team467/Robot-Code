@@ -3,6 +3,7 @@ package frc.robot.constants;
 import frc.robot.motors.MotorType;
 
 public interface Constants {
+    public boolean hasDrivetrain();
     public boolean driveDualMotors();
     public MotorType driveMotorType();
     public int driveMotorLeftLeaderId();

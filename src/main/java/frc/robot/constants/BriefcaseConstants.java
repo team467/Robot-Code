@@ -5,6 +5,11 @@ import frc.robot.motors.MotorType;
 public class BriefcaseConstants implements Constants {
 
     @Override
+    public boolean hasDrivetrain() {
+        return true;
+    }
+
+    @Override
     public boolean driveDualMotors() {
         return false;
     }

@@ -5,6 +5,11 @@ import frc.robot.motors.MotorType;
 public class Robot2020Constants implements Constants {
 
     @Override
+    public boolean hasDrivetrain() {
+        return false;
+    }
+
+    @Override
     public boolean driveDualMotors() {
         return true;
     }
@@ -91,17 +96,17 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public int shooter2020FlywheelLeaderMotorId() {
-        return 5;
+        return 1;
     }
 
     @Override
     public boolean shooter202FlywheelLeaderInverted() {
-        return true;
+        return false;
     }
 
     @Override
     public int shooter2020FlywheelFollowerMotorId() {
-        return 6;
+        return 2;
     }
 
     @Override
@@ -121,7 +126,7 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public double shooter2020FlywheelkP() {
-        return 1.2;
+        return 0.0;
     }
 
     @Override
@@ -131,17 +136,17 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public double shooter2020FlywheelkD() {
-        return 120.0;
-    }
-
-    @Override
-    public double shooter2020FlywheelkF() {
         return 0.0;
     }
 
     @Override
+    public double shooter2020FlywheelkF() {
+        return 0.123;
+    }
+
+    @Override
     public double shooter2020FlywheelkMaxVelocity() {
-        return 10000.0;
+        return 6000.0;
     }
 
     @Override

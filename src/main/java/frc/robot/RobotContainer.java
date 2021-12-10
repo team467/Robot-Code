@@ -14,6 +14,7 @@ import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
+import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
@@ -33,7 +34,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain drivetrain = new Drivetrain();
+  private Drivetrain drivetrain = null;
   private Climber2020 climber = null;
   private Shooter2020 shooter = null;
 
@@ -69,12 +70,6 @@ public class RobotContainer {
   private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
 
   public RobotContainer() {
-    // The default command is run when no other commands are active for the subsystem.
-    drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
-        () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
-        () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
-    ));
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -85,9 +80,21 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {
+  public void configureButtonBindings() {
+    initalizeDrivetrainCommands();
     initializeClimberCommands();
     initializeShooter2020Commands();
+  }
+
+  private void initalizeDrivetrainCommands() {
+    if (RobotConstants.get().hasDrivetrain()) {
+      drivetrain = new Drivetrain();
+      drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
+        () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
+        () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
+      ));
+
+    }
   }
 
   private void initializeClimberCommands() { // TODO change to climber 2020 dur refactor
@@ -103,6 +110,9 @@ public class RobotContainer {
   private void initializeShooter2020Commands() {
     if (RobotConstants.get().hasShooter2020()) {
       shooter = new Shooter2020();
+      // shooter.setDefaultCommand(new ShooterSetCMD(shooter,
+      //   () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
+      // ));
       operatorShooterFlywheel.whenPressed(new ShooterRunFlywheelCMD(shooter));
       operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
       operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));

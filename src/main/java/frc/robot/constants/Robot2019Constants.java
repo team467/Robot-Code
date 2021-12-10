@@ -5,6 +5,11 @@ import frc.robot.motors.MotorType;
 public class Robot2019Constants implements Constants {
 
     @Override
+    public boolean hasDrivetrain() {
+        return true;
+    }
+
+    @Override
     public boolean driveDualMotors() {
         return true;
     }
@@ -81,12 +86,12 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public boolean hasShooter2020() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean shooter2020FlywheelDualMotors() {
-        return false;
+        return true;
     }
 
     @Override
