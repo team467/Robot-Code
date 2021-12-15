@@ -15,7 +15,7 @@ import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterSetCMD;
-import frc.robot.commands.ShooterSetRawCMD;
+import frc.robot.commands.ShooterSetPercentOutputCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
@@ -82,12 +82,12 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   public void configureButtonBindings() {
-    initalizeDrivetrainCommands();
-    initializeClimberCommands();
-    initializeShooter2020Commands();
+    initDrivetrain();
+    initClimber2020();
+    initShooter2020();
   }
 
-  private void initalizeDrivetrainCommands() {
+  private void initDrivetrain() {
     if (RobotConstants.get().hasDrivetrain()) {
       drivetrain = new Drivetrain();
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
@@ -98,7 +98,7 @@ public class RobotContainer {
     }
   }
 
-  private void initializeClimberCommands() { // TODO change to climber 2020 dur refactor
+  private void initClimber2020() {
     if (RobotConstants.get().hasClimber2020()) {
       climber = new Climber2020();
       climber.setDefaultCommand(new ClimberStopCMD(climber));
@@ -108,7 +108,7 @@ public class RobotContainer {
     }
   }
 
-  private void initializeShooter2020Commands() {
+  private void initShooter2020() {
     if (RobotConstants.get().hasShooter2020()) {
       shooter = new Shooter2020();
       shooter.setDefaultCommand(new ShooterSetCMD(shooter,

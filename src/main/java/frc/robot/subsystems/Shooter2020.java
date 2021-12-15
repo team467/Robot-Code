@@ -46,12 +46,8 @@ public class Shooter2020 extends SubsystemBase {
             double ff = flywheelFFController.calculate(setpoint);
             flywheelMotorGroup.setVoltage(output + ff);
         } else {
-            setFlywheelRaw(speed);
+            flywheelMotorGroup.set(speed);
         }
-    }
-
-    public void setFlywheelRaw(double speed) {
-        flywheelMotorGroup.set(speed);
     }
  
     public void setFlywheelVelocity(double velocity) {
@@ -87,5 +83,3 @@ public class Shooter2020 extends SubsystemBase {
         builder.addDoubleProperty("Trigger Velocity", () -> triggerMotor.getVelocity(), null);
     }
 }
-
-
