@@ -55,7 +55,7 @@ public class SparkMaxController implements SpeedControllerEncoder {
 
     @Override
     public double getVelocity() {
-        return spark.getEncoder().getVelocity();
+        return spark.getEncoder().getVelocity() / 60; // Return value in rps not rpm
     }
 
     @Override

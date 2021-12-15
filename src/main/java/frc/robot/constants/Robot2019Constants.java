@@ -150,7 +150,17 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
-    public double shooter2020FlywheelkF() {
+    public double shooter2020FlywheelkS() {
+        return 0.0;
+    }
+
+    @Override
+    public double shooter2020FlywheelkV() {
+        return 0.0;
+    }
+
+    @Override
+    public double shooter2020FlywheelkA() {
         return 0.0;
     }
 

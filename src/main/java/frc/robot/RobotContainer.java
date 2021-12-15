@@ -14,6 +14,7 @@ import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
+import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterSetRawCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
@@ -110,13 +111,13 @@ public class RobotContainer {
   private void initializeShooter2020Commands() {
     if (RobotConstants.get().hasShooter2020()) {
       shooter = new Shooter2020();
-      // shooter.setDefaultCommand(new ShooterSetCMD(shooter,
-      //   () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
-      // ));
-      operatorShooterFlywheel.whenPressed(new ShooterRunFlywheelCMD(shooter));
-      operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
-      operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
-      operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
+      shooter.setDefaultCommand(new ShooterSetCMD(shooter,
+        () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
+      ));
+      // operatorShooterFlywheel.whenPressed(new ShooterRunFlywheelCMD(shooter));
+      // operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
+      // operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
+      // operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
     }
   }
 

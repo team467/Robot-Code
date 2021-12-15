@@ -33,7 +33,9 @@ public interface Constants {
     public double shooter2020FlywheelkP();
     public double shooter2020FlywheelkI();
     public double shooter2020FlywheelkD();
-    public double shooter2020FlywheelkF();
+    public double shooter2020FlywheelkS();
+    public double shooter2020FlywheelkV();
+    public double shooter2020FlywheelkA();
     public double shooter2020FlywheelkMaxVelocity();
     public int shooter2020TriggerMotorId();
     public boolean shooter2020TriggerInverted();

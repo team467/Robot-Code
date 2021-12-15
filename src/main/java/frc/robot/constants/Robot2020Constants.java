@@ -6,7 +6,7 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public boolean hasDrivetrain() {
-        return true;
+        return false;
     }
 
     @Override
@@ -91,7 +91,7 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public MotorType shooter2020MotorType() {
-        return MotorType.TALON_SRX;
+        return MotorType.SPARK_MAX_BRUSHLESS;
     }
 
     @Override
@@ -101,17 +101,17 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public int shooter2020FlywheelLeaderMotorId() {
-        return 5;
+        return 1;
     }
 
     @Override
     public boolean shooter202FlywheelLeaderInverted() {
-        return true;
+        return false;
     }
 
     @Override
     public int shooter2020FlywheelFollowerMotorId() {
-        return 6;
+        return 2;
     }
 
     @Override
@@ -131,7 +131,7 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public double shooter2020FlywheelkP() {
-        return 0.0;
+        return 0.0248;
     }
 
     @Override
@@ -145,13 +145,23 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
-    public double shooter2020FlywheelkF() {
-        return 0.123;
+    public double shooter2020FlywheelkS() {
+        return -0.143;
+    }
+
+    @Override
+    public double shooter2020FlywheelkV() {
+        return 0.13;
+    }
+
+    @Override
+    public double shooter2020FlywheelkA() {
+        return 0.0062;
     }
 
     @Override
     public double shooter2020FlywheelkMaxVelocity() {
-        return 6000.0;
+        return 80.0;
     }
 
     @Override
