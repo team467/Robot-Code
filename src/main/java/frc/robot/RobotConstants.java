@@ -13,6 +13,18 @@ import frc.robot.constants.Robot2019Constants;
 import frc.robot.constants.Robot2020Constants;
 
 public class RobotConstants {
+    /*
+      ------- Adding Robot File to New Roborio -------
+      ssh into the Roborio
+        This can be accomplished by opening git bash and running `$ sshadmin@roborio-467-frc.lan` 
+        or `$ ssh admin@10.4.67.2`
+      Create a text file with the rio name
+        This can be accomplished by running `echo "{Robot Name}" > /home/lvuser/robot`
+        The robot name should be surrounded by quotes and should be lower case
+      Then add the robot name to the code below and set the correct constants file
+    */
+
+
     private static Constants constants = null;
 
     private static void initalizeConstants() throws IOException {

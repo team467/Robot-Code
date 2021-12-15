@@ -4,6 +4,10 @@ import frc.robot.motors.MotorType;
 
 public class BlankConstants implements Constants {
 
+    // Blank constants file exists as we need to supply some sort of constants for the robot, otherwise it will crash.
+    // The BlankConstants file serves this purpose.
+    // This should never show up and throws an error when it does, however, it is here when we don't specify the rio name. 
+
     @Override
     public boolean hasDrivetrain() {
         return false;
