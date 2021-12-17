@@ -110,13 +110,15 @@ public class RobotContainer {
   private void initShooter2020() {
     if (RobotConstants.get().hasShooter2020()) {
       shooter = new Shooter2020();
-      shooter.setDefaultCommand(new ShooterSetCMD(shooter,
-        () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
-      ));
-      // operatorShooterFlywheel.whenPressed(new ShooterRunFlywheelCMD(shooter));
-      // operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
-      // operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
-      // operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
+      operatorShooterFlywheel.whenPressed(new ShooterRunFlywheelCMD(shooter));
+      operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
+      operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
+      operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
+
+      // This is test code used on the robot to spin the flywheel to a certian speed depedning on the joystick
+      // shooter.setDefaultCommand(new ShooterSetCMD(shooter,
+      //   () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
+      // ));
     }
   }
 

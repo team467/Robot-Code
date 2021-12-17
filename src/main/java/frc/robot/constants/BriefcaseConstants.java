@@ -76,7 +76,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public double climber2020UpSpeed() {
-        return 0.3;
+        return 0.1;
     }
 
     @Override
