@@ -1,15 +1,19 @@
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Climber2020;
+import frc.robot.subsystems.Shooter2020;
 
-public class ClimberUpCMD extends CommandBase {
-    private Climber2020 climber;
+public class ShooterSetCMD extends CommandBase {
+    private Shooter2020 shooter2020;
+    private Supplier<Double> speedSupplier;
 
-    public ClimberUpCMD(Climber2020 climber) {
-        this.climber = climber;
+    public ShooterSetCMD(Shooter2020 shooter2020, Supplier<Double> speedSupplier) {
+        this.shooter2020 = shooter2020;
+        this.speedSupplier = speedSupplier;
 
-        addRequirements(climber);
+        addRequirements(shooter2020);
     }
 
     // Called when the command is initially scheduled.
@@ -20,8 +24,7 @@ public class ClimberUpCMD extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (climber.isEnabled())
-            climber.up();
+        shooter2020.setFlywheel(speedSupplier.get());
     }
 
     // Called once the command ends or is interrupted.

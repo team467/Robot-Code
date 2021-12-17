@@ -1,11 +1,13 @@
-package frc.robot.drive;
+package frc.robot.motors;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class SparkMaxController implements SpeedControllerEncoder {
-    CANSparkMax spark;
+    private CANSparkMax spark;
+    private CANPIDController pid;
     
     public SparkMaxController(int id, MotorType motorType) {
         spark = new CANSparkMax(id, motorType);
@@ -45,7 +47,7 @@ public class SparkMaxController implements SpeedControllerEncoder {
     public void pidWrite(double output) {
         spark.pidWrite(output);
     }
-
+    
     @Override
     public double getPosition() {
         return spark.getEncoder().getPosition();
@@ -53,7 +55,12 @@ public class SparkMaxController implements SpeedControllerEncoder {
 
     @Override
     public double getVelocity() {
-        return spark.getEncoder().getVelocity();
+        // The SparkMax returns velocity in RPM. We want to work in revs per second instead.
+        return spark.getEncoder().getVelocity() / 60; 
     }
-    
+
+    @Override
+    public double getCurrent() {
+        return spark.getOutputCurrent();
+    }
 }
