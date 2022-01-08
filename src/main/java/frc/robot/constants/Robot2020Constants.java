@@ -5,6 +5,11 @@ import frc.robot.motors.MotorType;
 public class Robot2020Constants implements Constants {
 
     @Override
+    public String name() {
+        return "Robot 2020";
+    }
+
+    @Override
     public boolean hasDrivetrain() {
         return false;
     }

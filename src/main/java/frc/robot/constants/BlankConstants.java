@@ -9,6 +9,11 @@ public class BlankConstants implements Constants {
     // This should never show up and throws an error when it does, however, it is here when we don't specify the rio name. 
 
     @Override
+    public String name() {
+        return "blank";
+    }
+
+    @Override
     public boolean hasDrivetrain() {
         return false;
     }
