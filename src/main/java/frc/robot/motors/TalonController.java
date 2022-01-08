@@ -1,5 +1,6 @@
-package frc.robot.drive;
+package frc.robot.motors;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class TalonController implements SpeedControllerEncoder {
@@ -52,6 +53,11 @@ public class TalonController implements SpeedControllerEncoder {
     @Override
     public double getVelocity() {
         return talon.getSelectedSensorVelocity();
+    }
+
+    @Override
+    public double getCurrent() {
+        return talon.getStatorCurrent();
     }
     
 }

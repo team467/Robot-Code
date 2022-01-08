@@ -2,30 +2,26 @@ package frc.robot.constants;
 
 import frc.robot.motors.MotorType;
 
-public class BlankConstants implements Constants {
-
-    // Blank constants file exists as we need to supply some sort of constants for the robot, otherwise it will crash.
-    // The BlankConstants file serves this purpose.
-    // This should never show up and throws an error when it does, however, it is here when we don't specify the rio name. 
+public class KitBot2022Constants implements Constants {
 
     @Override
     public boolean hasDrivetrain() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean driveDualMotors() {
-        return false;
+        return true;
     }
 
     @Override
     public MotorType driveMotorType() {
-        return MotorType.NONE;
+        return MotorType.TALON_SRX;
     }
 
     @Override
     public int driveMotorLeftLeaderId() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -35,7 +31,7 @@ public class BlankConstants implements Constants {
 
     @Override
     public int driveMotorLeftFollowerId() {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -45,7 +41,7 @@ public class BlankConstants implements Constants {
 
     @Override
     public int driveMotorRightLeaderId() {
-        return 0;
+        return 3;
     }
 
     @Override
@@ -55,7 +51,7 @@ public class BlankConstants implements Constants {
 
     @Override
     public int driveMotorRightFollowerId() {
-        return 0;
+        return 4;
     }
 
     @Override
@@ -80,12 +76,12 @@ public class BlankConstants implements Constants {
 
     @Override
     public double climber2020UpSpeed() {
-        return 0;
+        return 0.3;
     }
 
     @Override
     public double climber2020DownSpeed() {
-        return 0;
+        return 0.1;
     }
 
     @Override
@@ -121,6 +117,11 @@ public class BlankConstants implements Constants {
     @Override
     public boolean shooter202FlywheelFollowerInverted() {
         return false;
+    }
+
+    @Override
+    public int shooter2020TriggerMotorId() {
+        return 0;
     }
 
     @Override
@@ -169,11 +170,6 @@ public class BlankConstants implements Constants {
     }
 
     @Override
-    public int shooter2020TriggerMotorId() {
-        return 0;
-    }
-
-    @Override
     public boolean shooter2020TriggerInverted() {
         return false;
     }
@@ -210,37 +206,37 @@ public class BlankConstants implements Constants {
 
     @Override
     public boolean hasIntake2020() {
-        return false;
+        return true;
     }
-
+    
     @Override
     public int intake2020RollerMotorID() {
-        return 0; //left from staring thru the power switch
+        return 9; //left from staring thru the power switch
     }
 
     @Override
     public int intake2020ArmMotorID() {
-        return 0; //right from staring thru the power switch
+        return 8; //right from staring thru the power switch
     }
 
     @Override
     public double intake2020RollerForwardSpeed() {
-        return 0;
+        return 0.30;
     }
 
     @Override
     public double intake2020RollerBackwardSpeed() {
-        return 0;
+        return 0.30;
     }
 
     @Override
     public double intake2020ArmDownSpeed() {
-        return 0;
+        return 0.30;
     }
 
     @Override
     public double intake2020ArmUpSpeed() {
-        return 0;
+        return 0.30;
     }
     
 }

@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
-import frc.robot.drive.SparkMaxController;
-import frc.robot.drive.SpeedControllerEncoder;
-import frc.robot.drive.SpeedControllerFactory;
-import frc.robot.drive.TalonController;
+import frc.robot.motors.SparkMaxController;
+import frc.robot.motors.SpeedControllerEncoder;
+import frc.robot.motors.SpeedControllerFactory;
+import frc.robot.motors.TalonController;
 
 public class Drivetrain extends SubsystemBase {
     SpeedControllerGroup leftMotorGroup;
@@ -64,9 +64,9 @@ public class Drivetrain extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty(".motor_left_position", () -> leftMotorLeader.getPosition(), null);
-        builder.addDoubleProperty(".motor_left_speed", () -> leftMotorLeader.getVelocity(), null);
-        builder.addDoubleProperty(".motor_right_position", () -> rightMotorLeader.getPosition(), null);
-        builder.addDoubleProperty(".motor_right_speed", () -> rightMotorLeader.getVelocity(), null);
+        builder.addDoubleProperty("Motor Left Position", () -> leftMotorLeader.getPosition(), null);
+        builder.addDoubleProperty("Motor Left Velocity", () -> leftMotorLeader.getVelocity(), null);
+        builder.addDoubleProperty("Motor Right Position", () -> rightMotorLeader.getPosition(), null);
+        builder.addDoubleProperty("Motor Right Velocity", () -> rightMotorLeader.getVelocity(), null);
     }
 }

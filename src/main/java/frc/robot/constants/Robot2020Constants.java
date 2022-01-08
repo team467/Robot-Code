@@ -2,11 +2,7 @@ package frc.robot.constants;
 
 import frc.robot.motors.MotorType;
 
-public class BlankConstants implements Constants {
-
-    // Blank constants file exists as we need to supply some sort of constants for the robot, otherwise it will crash.
-    // The BlankConstants file serves this purpose.
-    // This should never show up and throws an error when it does, however, it is here when we don't specify the rio name. 
+public class Robot2020Constants implements Constants {
 
     @Override
     public boolean hasDrivetrain() {
@@ -15,17 +11,17 @@ public class BlankConstants implements Constants {
 
     @Override
     public boolean driveDualMotors() {
-        return false;
+        return true;
     }
 
     @Override
     public MotorType driveMotorType() {
-        return MotorType.NONE;
+        return MotorType.SPARK_MAX_BRUSHLESS;
     }
 
     @Override
     public int driveMotorLeftLeaderId() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -35,7 +31,7 @@ public class BlankConstants implements Constants {
 
     @Override
     public int driveMotorLeftFollowerId() {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -45,7 +41,7 @@ public class BlankConstants implements Constants {
 
     @Override
     public int driveMotorRightLeaderId() {
-        return 0;
+        return 3;
     }
 
     @Override
@@ -55,7 +51,7 @@ public class BlankConstants implements Constants {
 
     @Override
     public int driveMotorRightFollowerId() {
-        return 0;
+        return 4;
     }
 
     @Override
@@ -65,12 +61,12 @@ public class BlankConstants implements Constants {
 
     @Override
     public boolean hasClimber2020() {
-        return false;
+        return true;
     }
 
     @Override
     public int climber2020MotorId() {
-        return 0;
+        return 5;
     }
 
     @Override
@@ -80,32 +76,32 @@ public class BlankConstants implements Constants {
 
     @Override
     public double climber2020UpSpeed() {
-        return 0;
+        return 1.0;
     }
 
     @Override
     public double climber2020DownSpeed() {
-        return 0;
+        return 0.8;
     }
 
     @Override
     public boolean hasShooter2020() {
-        return false;
+        return true;
     }
 
     @Override
     public MotorType shooter2020MotorType() {
-        return MotorType.NONE;
+        return MotorType.SPARK_MAX_BRUSHLESS;
     }
 
     @Override
     public boolean shooter2020FlywheelDualMotors() {
-        return false;
+        return true;
     }
 
     @Override
     public int shooter2020FlywheelLeaderMotorId() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -115,7 +111,7 @@ public class BlankConstants implements Constants {
 
     @Override
     public int shooter2020FlywheelFollowerMotorId() {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -125,17 +121,17 @@ public class BlankConstants implements Constants {
 
     @Override
     public double shooter2020FlywheelDefaultSpeed() {
-        return 0.0;
+        return 0.4;
     }
 
     @Override
     public boolean shooter2020FlywheelUseVelocity() {
-        return false;
+        return true;
     }
 
     @Override
     public double shooter2020FlywheelkP() {
-        return 0.0;
+        return 0.0248;
     }
 
     @Override
@@ -150,37 +146,37 @@ public class BlankConstants implements Constants {
 
     @Override
     public double shooter2020FlywheelkS() {
-        return 0.0;
+        return -0.143;
     }
 
     @Override
     public double shooter2020FlywheelkV() {
-        return 0.0;
+        return 0.13;
     }
 
     @Override
     public double shooter2020FlywheelkA() {
-        return 0.0;
+        return 0.0062;
     }
 
     @Override
     public double shooter2020FlywheelkMaxVelocity() {
-        return 0;
+        return 80.0;
     }
 
     @Override
     public int shooter2020TriggerMotorId() {
-        return 0;
+        return 7;
     }
 
     @Override
     public boolean shooter2020TriggerInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public int shooter2020LeftServoId() {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -195,7 +191,7 @@ public class BlankConstants implements Constants {
 
     @Override
     public int shooter2020RightServoId() {
-        return 0;
+        return 3;
     }
 
     @Override
@@ -207,40 +203,4 @@ public class BlankConstants implements Constants {
     public double shooter2020RightServoMin() {
         return 0;
     }
-
-    @Override
-    public boolean hasIntake2020() {
-        return false;
-    }
-
-    @Override
-    public int intake2020RollerMotorID() {
-        return 0; //left from staring thru the power switch
-    }
-
-    @Override
-    public int intake2020ArmMotorID() {
-        return 0; //right from staring thru the power switch
-    }
-
-    @Override
-    public double intake2020RollerForwardSpeed() {
-        return 0;
-    }
-
-    @Override
-    public double intake2020RollerBackwardSpeed() {
-        return 0;
-    }
-
-    @Override
-    public double intake2020ArmDownSpeed() {
-        return 0;
-    }
-
-    @Override
-    public double intake2020ArmUpSpeed() {
-        return 0;
-    }
-    
 }
