@@ -1,13 +1,11 @@
 package frc.robot.motors;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-public class SparkMaxController implements SpeedControllerEncoder {
+public class SparkMaxController implements MotorControllerEncoder {
     private CANSparkMax spark;
-    private CANPIDController pid;
     
     public SparkMaxController(int id, MotorType motorType) {
         spark = new CANSparkMax(id, motorType);
@@ -41,11 +39,6 @@ public class SparkMaxController implements SpeedControllerEncoder {
     @Override
     public void stopMotor() {
         spark.stopMotor();
-    }
-
-    @Override
-    public void pidWrite(double output) {
-        spark.pidWrite(output);
     }
     
     @Override

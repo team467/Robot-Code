@@ -5,6 +5,11 @@ import frc.robot.motors.MotorType;
 public class Robot2019Constants implements Constants {
 
     @Override
+    public String name() {
+        return "Robot 2019";
+    }
+
+    @Override
     public boolean hasDrivetrain() {
         return true;
     }
@@ -46,7 +51,7 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public boolean driveMotorRightLeaderInverted() {
-        return false;
+        return true;
     }
 
     @Override
@@ -56,7 +61,7 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public boolean driveMotorRightFollowerInverted() {
-        return false;
+        return true;
     }
 
     @Override
@@ -86,7 +91,7 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public boolean hasShooter2020() {
-        return true;
+        return false;
     }
 
     @Override

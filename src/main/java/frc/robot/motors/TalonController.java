@@ -3,7 +3,7 @@ package frc.robot.motors;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-public class TalonController implements SpeedControllerEncoder {
+public class TalonController implements MotorControllerEncoder {
     WPI_TalonSRX talon;
     
     public TalonController(int id) {
@@ -38,11 +38,6 @@ public class TalonController implements SpeedControllerEncoder {
     @Override
     public void stopMotor() {
         talon.stopMotor();
-    }
-
-    @Override
-    public void pidWrite(double output) {
-        talon.pidWrite(output);
     }
 
     @Override

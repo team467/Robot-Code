@@ -60,7 +60,7 @@ public class RobotConstants {
             RobotConstants.set(new BlankConstants());
             break;
         }
-    
+        System.out.println("Using constant file: " + RobotConstants.get().name());
     
         br.close();
       }
