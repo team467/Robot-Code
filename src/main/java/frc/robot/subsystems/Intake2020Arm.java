@@ -3,15 +3,15 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.motors.MotorType;
-import frc.robot.motors.SpeedControllerEncoder;
-import frc.robot.motors.SpeedControllerFactory;
+import frc.robot.motors.MotorControllerEncoder;
+import frc.robot.motors.MotorControllerFactory;
 
 /** 
  * A subsystem that deals with the arm of the intake system.
 */
 public class Intake2020Arm extends SubsystemBase {
 
-    private SpeedControllerEncoder arm = SpeedControllerFactory.create(RobotConstants.get().intake2020ArmMotorID(), MotorType.TALON_SRX);
+    private MotorControllerEncoder arm = MotorControllerFactory.create(RobotConstants.get().intake2020ArmMotorID(), MotorType.TALON_SRX);
 
     public Intake2020Arm() {
       super();
