@@ -2,9 +2,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
-import frc.robot.drive.MotorType;
-import frc.robot.drive.SpeedControllerEncoder;
-import frc.robot.drive.SpeedControllerFactory;
+import frc.robot.motors.MotorType;
+import frc.robot.motors.SpeedControllerEncoder;
+import frc.robot.motors.SpeedControllerFactory;
 
 /** 
  * A subsystem that deals with the roller of the intake system.

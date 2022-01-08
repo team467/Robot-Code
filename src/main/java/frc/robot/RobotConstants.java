@@ -9,7 +9,6 @@ import frc.robot.constants.BlankConstants;
 import frc.robot.constants.BriefcaseConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.KitBot2022Constants;
-import frc.robot.constants.KitBot2022;
 import frc.robot.constants.Robot2019Constants;
 import frc.robot.constants.Robot2020Constants;
 

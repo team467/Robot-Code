@@ -203,4 +203,39 @@ public class Robot2020Constants implements Constants {
     public double shooter2020RightServoMin() {
         return 0;
     }
+    
+    @Override
+    public boolean hasIntake2020() {
+        return true;
+    }
+
+    @Override
+    public int intake2020RollerMotorID() {
+        return 11; //left from staring thru the power switch
+    }
+
+    @Override
+    public int intake2020ArmMotorID() {
+        return 12; //right from staring thru the power switch
+    }
+
+    @Override
+    public double intake2020RollerForwardSpeed() {
+        return 0.5;
+    }
+
+    @Override
+    public double intake2020RollerBackwardSpeed() {
+        return 0.25;
+    }
+
+    @Override
+    public double intake2020ArmDownSpeed() {
+        return 0.25;
+    }
+
+    @Override
+    public double intake2020ArmUpSpeed() {
+        return 0.25;
+    }
 }
