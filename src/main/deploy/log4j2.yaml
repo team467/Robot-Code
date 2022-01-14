@@ -29,13 +29,13 @@ Configuration:
         level: debug
         AppenderRef:
           - ref: Console_Appender
-            level: debug
+            level: error
           - ref: Async_File_Appender
-            level: debug
+            level: error
       Logger:
         - name: frc.robot.Robot
-          level: debug
+          level: error
           AppenderRef:
           - ref: Async_File_Appender
-            level: debug
+            level: error
           - ref: Console_Appender
