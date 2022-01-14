@@ -26,9 +26,16 @@ Configuration:
           max: 50
   Loggers:
       Root:
-        level: info
+        level: debug
         AppenderRef:
           - ref: Console_Appender
-            level: info
+            level: debug
           - ref: Async_File_Appender
-            level: info
+            level: debug
+      Logger:
+        - name: frc.robot.Robot
+          level: debug
+          AppenderRef:
+          - ref: Async_File_Appender
+            level: debug
+          - ref: Console_Appender

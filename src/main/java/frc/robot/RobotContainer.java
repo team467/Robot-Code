@@ -26,6 +26,11 @@ import frc.robot.subsystems.Shooter2020;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
+import java.io.IOException;
+
+import frc.robot.logging.RobotLogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -33,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Robot.class.getName());
   // The robot's subsystems and commands are defined here...
   private Drivetrain drivetrain = null;
   private Climber2020 climber = null;
@@ -88,6 +94,7 @@ public class RobotContainer {
 
   private void initDrivetrain() {
     if (RobotConstants.get().hasDrivetrain()) {
+      LOGGER.error("initializing drivetrain!");
       drivetrain = new Drivetrain();
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
         () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),

@@ -39,6 +39,8 @@ public class Robot extends TimedRobot {
     
     m_robotContainer = new RobotContainer();
 
+    System.out.println("Class name: " + Robot.class.getName());
+
     // Mounting USB
     ProcessBuilder builder = new ProcessBuilder();
     builder.command("sudo", "mount", "/dev/sda1", "/media");
