@@ -79,7 +79,6 @@ public class RobotLogManager {
   /**
    * Initializes the log system if required, then returns the telemetry logger.
    * 
-   * @param className the class for subsetting the logger
    * @return the logger
    */
   public static Logger getTelemetryLogger() {
@@ -90,7 +89,6 @@ public class RobotLogManager {
   /**
    * Initializes the log system if required, then returns the appropriate class logger.
    * 
-   * @param className the class for subsetting the logger
    * @return the logger
    */
   public static Logger getPerfLogger() {
