@@ -18,7 +18,7 @@ public class Indexer2022 extends SubsystemBase {
 
     public Indexer2022() {
         super();
-        indexer = MotorControllerFactory.create(RobotConstants.get().indexer2022MotorID(), MotorType.TALON_SRX);
+        //indexer = MotorControllerFactory.create(RobotConstants.get().indexer2022MotorID(), MotorType.TALON_SRX);
     }
 
     public void setIsReversed(boolean isReversed) {
@@ -27,24 +27,24 @@ public class Indexer2022 extends SubsystemBase {
 
     public void indexerSlow() {
         //MAKE SURE SPEED IS PRETTY SLOW, apporximately 20
-        LOGGER.info("Starting indexer slowly");
-        indexer.set(RobotConstants.get().indexer2022SlowInSpeed());
+        LOGGER.info("Starting indexer slowly, setting speed to " + RobotConstants.get().indexer2022SlowInSpeed());
+        //indexer.set(RobotConstants.get().indexer2022SlowInSpeed());
 
     }
 
     public void indexerFast() {
-        LOGGER.info("Starting indexer quickly");
-        indexer.set(RobotConstants.get().indexer2022InSpeed());
+        LOGGER.info("Starting indexer quickly, setting speed to " + RobotConstants.get().indexer2022InSpeed());
+        //indexer.set(RobotConstants.get().indexer2022InSpeed());
     }
 
     public void indexerBackward() {
-        LOGGER.info("Reversing indexer");
-        indexer.set(-RobotConstants.get().indexer2022OutSpeed());
+        LOGGER.info("Reversing indexer, setting speed to " + RobotConstants.get().indexer2022OutSpeed());
+        //indexer.set(-RobotConstants.get().indexer2022OutSpeed());
     }
 
     public void indexerStop() {
-        LOGGER.info("Stopping indexer");
-        indexer.set(0);
+        LOGGER.info("Stopping indexer, setting speed to 0");
+        //indexer.set(0);
     }
 
 }

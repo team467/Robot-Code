@@ -18,7 +18,7 @@ public class LlamaNeck2022 extends SubsystemBase {
 
     public LlamaNeck2022() {
         super();
-        llamaNeck = MotorControllerFactory.create(RobotConstants.get().llamaNeck2022MotorID(), MotorType.TALON_SRX);
+        //llamaNeck = MotorControllerFactory.create(RobotConstants.get().llamaNeck2022MotorID(), MotorType.TALON_SRX);
     }
 
     public void setIsReversed(boolean isReversed) {
@@ -26,18 +26,18 @@ public class LlamaNeck2022 extends SubsystemBase {
     }
 
     public void llamaNeckForward() {
-        LOGGER.info("Starting llamaNeck");
-        llamaNeck.set(RobotConstants.get().llamaNeck2022InSpeed());
+        LOGGER.info("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022InSpeed());
+        //llamaNeck.set(RobotConstants.get().llamaNeck2022InSpeed());
     }
 
     public void llamaNeckBackward() {
-        LOGGER.info("Reversing index");
-        llamaNeck.set(-RobotConstants.get().llamaNeck2022OutSpeed());
+        LOGGER.info("Reversing index, setting speed to " + RobotConstants.get().llamaNeck2022OutSpeed());
+        //llamaNeck.set(-RobotConstants.get().llamaNeck2022OutSpeed());
     }
 
     public void llamaNeckStop() {
-        LOGGER.info("Stopping llamaNeck");
-        llamaNeck.set(0);
+        LOGGER.info("Stopping llamaNeck, setting speed to 0");
+        //llamaNeck.set(0);
     }
 
 }

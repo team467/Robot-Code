@@ -3,7 +3,7 @@ Configuration:
   Properties:
     Property:
       name: log-path
-      value: "/media/sda1/logging/logs"
+      value: "logs"
   Appenders:
     Console:
       name: Console_Appender

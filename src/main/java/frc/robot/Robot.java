@@ -13,6 +13,8 @@ import java.io.IOException;
 import frc.robot.logging.RobotLogManager;
 import org.apache.logging.log4j.Logger;
 
+import frc.robot.subsystems.*;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -105,6 +107,12 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    Indexer2022 indexer = new Indexer2022();
+    Intake2022 intake = new Intake2022();
+    LlamaNeck2022 llamaNeck = new LlamaNeck2022();
+    indexer.indexerFast();
+    intake.intakeIn();
+    llamaNeck.llamaNeckForward();
   }
 
   /** This function is called periodically during test mode. */
