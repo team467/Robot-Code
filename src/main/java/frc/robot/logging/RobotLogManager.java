@@ -53,11 +53,8 @@ public class RobotLogManager {
         ConfigurationSource source = new ConfigurationSource(
               new FileInputStream(configSourceFile), configSourceFile);
         ConfigurationFactory configurationFactory = YamlConfigurationFactory.getInstance();
-        System.out.println("config factory: " + configurationFactory);
         ConfigurationFactory.setConfigurationFactory(configurationFactory);
-        System.out.println("was configuratoinFactory done???");
         Configuration configuration = configurationFactory.getConfiguration(null, source);
-        System.out.println("it was :0 configuration was made");
         Configurator.initialize(configuration);
       } catch (IOException e) {
         e.printStackTrace();
