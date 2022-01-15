@@ -22,7 +22,7 @@ import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Shooter2022;
+import frc.robot.subsystems.Shooter2020;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -36,7 +36,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private Drivetrain drivetrain = null;
   private Climber2020 climber = null;
-  private Shooter2022 shooter = null;
+  private Shooter2020 shooter = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -109,7 +109,7 @@ public class RobotContainer {
 
   private void initShooter2020() {
     if (RobotConstants.get().hasShooter2020()) {
-      shooter = new Shooter2022();
+      shooter = new Shooter2020();
       operatorShooterFlywheel.whenPressed(new ShooterRunFlywheelCMD(shooter));
       operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
       operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
