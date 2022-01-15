@@ -19,7 +19,7 @@ public class RobotLogManager {
   private static File directory;
 
   private static String[] filepaths = { //File paths go in this array
-     "/media/sda1/logging/log4j2.yaml"
+     "/media/sda1/logging/log4j2.yaml",
     // "/media/sda2/logging/log4j2.yaml",
       "/media/sda1/logging/log4j2-test.yaml",
     // "/media/sda2/logging/log4j2-test.yaml",
