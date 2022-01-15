@@ -3,7 +3,7 @@ Configuration:
   Properties:
     Property:
       name: log-path
-      value: "logs"
+      value: "/media/sda1/logging/logs"
   Appenders:
     Console:
       name: Console_Appender
@@ -14,7 +14,7 @@ Configuration:
       - name: Async_File_Appender
         fileName: ${log-path}/app.log
         filePattern: ${log-path}/app-%d{yyyy-MM-dd-HH-mm-ss-SSS}.log
-        immediateFlush: false
+        immediateFlush: true
         append: true
         PatternLayout:
           pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
@@ -25,17 +25,19 @@ Configuration:
         DefaultRollOverStrategy:
           max: 50
   Loggers:
-      Root:
+    Root:
+      level: info
+      AppenderRef:
+        - ref: Console_Appender
+          level: info
+        - ref: Async_File_Appender
+          level: info
+    Logger:
+      - name: frc.robot.Robot
         level: debug
         AppenderRef:
-          - ref: Console_Appender
-            level: error
           - ref: Async_File_Appender
-            level: error
-      Logger:
-        - name: frc.robot.Robot
-          level: error
-          AppenderRef:
-          - ref: Async_File_Appender
-            level: error
+            level: debug
           - ref: Console_Appender
+            level: debug
+
