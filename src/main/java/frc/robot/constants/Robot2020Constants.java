@@ -208,4 +208,54 @@ public class Robot2020Constants implements Constants {
     public double shooter2020RightServoMin() {
         return 0;
     }
+
+    @Override
+    public int indexer2022MotorID() {
+        return 0;
+    }
+
+    @Override
+    public double indexer2022SlowInSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double indexer2022InSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double indexer2022OutSpeed() {
+        return 0;
+    }
+
+    @Override
+    public int llamaNeck2022MotorID() {
+        return 0;
+    }
+
+    @Override
+    public double llamaNeck2022InSpeed() {
+        return 0;
+    }
+    
+    @Override
+    public double llamaNeck2022OutSpeed() {
+     return 0;   
+    }
+    
+    @Override
+    public int intake2022MotorID() {
+        return 0;
+    }
+
+    @Override
+    public double intake2022InSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double intake2022OutSpeed() {
+        return 0;
+    }
 }
