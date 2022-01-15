@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.logging.RobotLogManager;
@@ -38,6 +39,14 @@ public class Intake2022 extends SubsystemBase {
     public void intakeStop() {
         LOGGER.info("Stopping intake setting speed to 0");
         intake.set(0);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+
+        builder.addDoubleProperty("Intake Position", () -> intake.getPosition(), null);
+        builder.addDoubleProperty("Intake Velocity", () -> intake.getVelocity(), null);
     }
 
 }

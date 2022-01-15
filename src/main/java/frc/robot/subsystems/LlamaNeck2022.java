@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.logging.RobotLogManager;
@@ -38,6 +39,14 @@ public class LlamaNeck2022 extends SubsystemBase {
     public void llamaNeckStop() {
         LOGGER.info("Stopping llamaNeck, setting speed to 0");
         //llamaNeck.set(0);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+
+        builder.addDoubleProperty("Llama Neck Position", () -> llamaNeck.getPosition(), null);
+        builder.addDoubleProperty("Llama Neck Velocity", () -> llamaNeck.getVelocity(), null);
     }
 
 }

@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.logging.RobotLogManager;
@@ -45,6 +46,14 @@ public class Indexer2022 extends SubsystemBase {
     public void indexerStop() {
         LOGGER.info("Stopping indexer, setting speed to 0");
         //indexer.set(0);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+
+        builder.addDoubleProperty("Indexer Position", () -> indexer.getPosition(), null);
+        builder.addDoubleProperty("Indexer Velocity", () -> indexer.getVelocity(), null);
     }
 
 }
