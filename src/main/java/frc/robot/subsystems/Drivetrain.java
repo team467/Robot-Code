@@ -10,15 +10,20 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.motors.SparkMaxController;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.TalonController;
+import frc.robot.tuning.SubsystemTuner;
+import frc.robot.tuning.TunerParameter;
+import frc.robot.tuning.TunerParamterFactory;
 
-public class Drivetrain extends SubsystemBase {
+public class Drivetrain extends SubsystemTuner {
     MotorControllerGroup leftMotorGroup;
     MotorControllerEncoder leftMotorLeader;
     MotorControllerEncoder leftMotorFollower = null;
@@ -68,5 +73,22 @@ public class Drivetrain extends SubsystemBase {
         builder.addDoubleProperty("Motor Left Velocity", () -> leftMotorLeader.getVelocity(), null);
         builder.addDoubleProperty("Motor Right Position", () -> rightMotorLeader.getPosition(), null);
         builder.addDoubleProperty("Motor Right Velocity", () -> rightMotorLeader.getVelocity(), null);
+    }
+
+    @Override
+    public TunerParameter[] getTunerParameters() {
+        return null;
+    }
+
+    @Override
+    public void tunerUpdate() {
+        arcadeDrive(getTunerParameter("speed").getValue().getDouble() , getTunerParameter("turn").getValue().getDouble());
+    }
+
+    @Override
+    public void initalizeTuner() {
+        addTunerParameter("speed", TunerParamterFactory.create("Driving Speed", this, NetworkTableType.kDouble));
+        addTunerParameter("turn", TunerParamterFactory.create("Turning Speed", this, NetworkTableType.kDouble));
+        // TODO TUNERS HAVE TO USE COMMANDS 
     }
 }
