@@ -12,9 +12,12 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
+import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.motors.SparkMaxController;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
@@ -81,14 +84,16 @@ public class Drivetrain extends SubsystemTuner {
     }
 
     @Override
-    public void tunerUpdate() {
-        arcadeDrive(getTunerParameter("speed").getValue().getDouble() , getTunerParameter("turn").getValue().getDouble());
+    public void initalizeTunerNetworkTables() {
+        addTunerParameter("speed", TunerParamterFactory.create("Driving Speed", this, NetworkTableType.kDouble));
+        addTunerParameter("turn", TunerParamterFactory.create("Turning Speed", this, NetworkTableType.kDouble));
     }
 
     @Override
     public void initalizeTuner() {
-        addTunerParameter("speed", TunerParamterFactory.create("Driving Speed", this, NetworkTableType.kDouble));
-        addTunerParameter("turn", TunerParamterFactory.create("Turning Speed", this, NetworkTableType.kDouble));
-        // TODO TUNERS HAVE TO USE COMMANDS 
+        new ArcadeDriveCMD(this, 
+            () -> getTunerParameter("speed").getValue().getDouble(), 
+            () -> getTunerParameter("turn").getValue().getDouble()
+        ).schedule();
     }
 }

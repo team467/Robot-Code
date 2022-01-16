@@ -6,12 +6,11 @@ import edu.wpi.first.networktables.NetworkTableType;
 
 public class TunerParamterFactory {
     public static TunerParameter create(String name, Tuner tuner, NetworkTableType type) {
-        return new TunerParameter() {
+        TunerParameter tunerParameter = new TunerParameter() {
             private String paramterName = name;
             private NetworkTableEntry parameterEntry = NetworkTableInstance.getDefault().getTable("tuining").getSubTable(tuner.getTunerName()).getEntry(name);
             private NetworkTableType parameterType = type;
-            private ParameterValue defaultValue = new ParameterValue() {
-            };
+            private ParameterValue defaultValue = new ParameterValue() {};
 
             @Override
             public String getName() {
@@ -186,5 +185,12 @@ public class TunerParamterFactory {
             }
 
         };
+
+        tunerParameter.setValue(new ParameterValue() {
+            public NetworkTableType getType() {
+                return type;
+            };
+        });
+        return tunerParameter;
     }
 }

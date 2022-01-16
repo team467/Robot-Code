@@ -8,6 +8,6 @@ public interface Tuner {
     public TunerParameter[] getTunerParameters();
     public void addTunerParameter(String tunerName, TunerParameter tunerParameter);
     public TunerParameter getTunerParameter(String tunerName);
-    public void tunerUpdate();
+    public void initalizeTunerNetworkTables();
     public void initalizeTuner();
 }

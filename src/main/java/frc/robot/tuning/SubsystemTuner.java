@@ -9,6 +9,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public abstract class SubsystemTuner extends SubsystemBase implements Tuner {
     HashMap<String, TunerParameter> tunerParameters = new HashMap<>();
 
+    public SubsystemTuner() {
+        super();
+
+        TunerManager.getTunerManager().registerTuner(this);
+    }
+
     @Override
     public String getTunerName() {
         return this.getName() + " Tuner";
