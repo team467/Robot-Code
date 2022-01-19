@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import frc.robot.motors.FeedbackConstant;
+import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
 
 public class Robot2019Constants implements Constants {
@@ -35,33 +37,43 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
-    public double drivekP() {
-        return 0.0;
+    public FeedforwardConstant driveForwardRightFF() {
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
     }
 
     @Override
-    public double drivekI() {
-        return 0.0;
+    public FeedbackConstant driveForwardRightFB() {
+        return new FeedbackConstant(0.0, 0.0, 0.0);
     }
 
     @Override
-    public double drivekD() {
-        return 0.0;
+    public FeedforwardConstant driveForwardLeftFF() {
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
     }
 
     @Override
-    public double drivekS() {
-        return 0.0;
+    public FeedbackConstant driveForwardLeftFB() {
+        return new FeedbackConstant(0.0, 0.0, 0.0);
     }
 
     @Override
-    public double drivekV() {
-        return 0.0;
+    public FeedforwardConstant driveBackwardRightFF() {
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
     }
 
     @Override
-    public double drivekA() {
-        return 0.0;
+    public FeedbackConstant driveBackwardRightFB() {
+        return new FeedbackConstant(0.0, 0.0, 0.0);
+    }
+
+    @Override
+    public FeedforwardConstant driveBackwardLeftFF() {
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardLeftFB() {
+        return new FeedbackConstant(0.0, 0.0, 0.0);
     }
 
     @Override

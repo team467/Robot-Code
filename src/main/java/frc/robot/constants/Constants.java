@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import frc.robot.motors.FeedbackConstant;
+import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
 
 public interface Constants {
@@ -9,12 +11,14 @@ public interface Constants {
     public boolean driveDualMotors();
     public MotorType driveMotorType();
     public boolean driveUseVelocity();
-    public double drivekP();
-    public double drivekI();
-    public double drivekD();
-    public double drivekS();
-    public double drivekV();
-    public double drivekA();
+    public FeedforwardConstant driveForwardRightFF();
+    public FeedbackConstant driveForwardRightFB();
+    public FeedforwardConstant driveForwardLeftFF();
+    public FeedbackConstant driveForwardLeftFB();
+    public FeedforwardConstant driveBackwardRightFF();
+    public FeedbackConstant driveBackwardRightFB();
+    public FeedforwardConstant driveBackwardLeftFF();
+    public FeedbackConstant driveBackwardLeftFB();
     public double drivekMaxVelocity();
     public int driveMotorLeftLeaderId();
     public boolean driveMotorLeftLeaderInverted();
