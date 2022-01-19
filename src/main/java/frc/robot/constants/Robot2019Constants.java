@@ -210,6 +210,11 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
+    public boolean hasIndexer2022() {
+        return false;
+    }
+
+    @Override
     public int indexer2022MotorID() {
         return 0;
     }
@@ -230,6 +235,11 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
+    public boolean hasLlamaNeck2022() {
+        return false;
+    }
+
+    @Override
     public int llamaNeck2022MotorID() {
         return 0;
     }
@@ -242,6 +252,11 @@ public class Robot2019Constants implements Constants {
     @Override
     public double llamaNeck2022OutSpeed() {
      return 0;   
+    }
+
+    @Override
+    public boolean hasIntake2022() {
+        return false;
     }
     
     @Override
