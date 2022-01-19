@@ -9,7 +9,7 @@ public class LlamaNeck2022StopCMD extends CommandBase {
   /**
    * Creates a new LlamaNeck2022StopCMD.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param llamaNeck The subsystem used by this command.
    */
   public LlamaNeck2022StopCMD(LlamaNeck2022 llamaNeck) {
     this.llamaNeck = llamaNeck;

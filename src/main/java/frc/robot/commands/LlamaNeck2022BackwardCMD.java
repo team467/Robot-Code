@@ -9,7 +9,7 @@ public class LlamaNeck2022BackwardCMD extends CommandBase {
   /**
    * Creates a new LlamaNeck2022BackwardCMD.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param llamaNeck The subsystem used by this command.
    */
   public LlamaNeck2022BackwardCMD(LlamaNeck2022 llamaNeck) {
     this.llamaNeck = llamaNeck;

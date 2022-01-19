@@ -9,7 +9,7 @@ public class Intake2022OutCMD extends CommandBase {
   /**
    * Creates a new Intake2022OutCMD.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param intake The subsystem used by this command.
    */
   public Intake2022OutCMD(Intake2022 intake) {
     this.intake = intake;

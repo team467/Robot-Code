@@ -9,7 +9,7 @@ public class Intake2022StopCMD extends CommandBase {
   /**
    * Creates a new Intake2022StopCMD.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param intake The subsystem used by this command.
    */
   public Intake2022StopCMD(Intake2022 intake) {
     this.intake = intake;
