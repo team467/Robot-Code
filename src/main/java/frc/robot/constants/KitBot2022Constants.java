@@ -15,6 +15,11 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
+    public double driveWheelDiameter() {
+        return 6.0;
+    }
+
+    @Override
     public boolean driveDualMotors() {
         return true;
     }
@@ -22,6 +27,46 @@ public class KitBot2022Constants implements Constants {
     @Override
     public MotorType driveMotorType() {
         return MotorType.SPARK_MAX_BRUSHLESS;
+    }
+
+    @Override
+    public boolean driveUseVelocity() {
+        return false;
+    }
+
+    @Override
+    public double drivekP() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekI() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekD() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekS() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekV() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekA() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekMaxVelocity() {
+        return 0;
     }
 
     @Override
@@ -208,5 +253,4 @@ public class KitBot2022Constants implements Constants {
     public double shooter2020RightServoMin() {
         return 0;
     }
-    
 }

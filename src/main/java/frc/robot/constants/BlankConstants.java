@@ -19,6 +19,11 @@ public class BlankConstants implements Constants {
     }
 
     @Override
+    public double driveWheelDiameter() {
+        return 0.0;
+    }
+
+    @Override
     public boolean driveDualMotors() {
         return false;
     }
@@ -26,6 +31,46 @@ public class BlankConstants implements Constants {
     @Override
     public MotorType driveMotorType() {
         return MotorType.NONE;
+    }
+
+    @Override
+    public boolean driveUseVelocity() {
+        return false;
+    }
+
+    @Override
+    public double drivekP() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekI() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekD() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekS() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekV() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekA() {
+        return 0.0;
+    }
+
+    @Override
+    public double drivekMaxVelocity() {
+        return 0;
     }
 
     @Override

@@ -5,8 +5,17 @@ import frc.robot.motors.MotorType;
 public interface Constants {
     public String name();
     public boolean hasDrivetrain();
+    public double driveWheelDiameter();
     public boolean driveDualMotors();
     public MotorType driveMotorType();
+    public boolean driveUseVelocity();
+    public double drivekP();
+    public double drivekI();
+    public double drivekD();
+    public double drivekS();
+    public double drivekV();
+    public double drivekA();
+    public double drivekMaxVelocity();
     public int driveMotorLeftLeaderId();
     public boolean driveMotorLeftLeaderInverted();
     public int driveMotorLeftFollowerId();
