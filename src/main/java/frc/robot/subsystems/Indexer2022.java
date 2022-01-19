@@ -27,7 +27,7 @@ public class Indexer2022 extends SubsystemBase {
     }
 
     public void indexerSlow() {
-        //MAKE SURE SPEED IS PRETTY SLOW, apporximately 20
+        //MAKE SURE SPEED IS PRETTY SLOW, apporximately 20%
         LOGGER.info("Starting indexer slowly, setting speed to " + RobotConstants.get().indexer2022SlowInSpeed());
         //indexer.set(RobotConstants.get().indexer2022SlowInSpeed());
 

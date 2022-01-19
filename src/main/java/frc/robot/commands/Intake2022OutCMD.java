@@ -7,7 +7,7 @@ public class Intake2022OutCMD extends CommandBase {
   private final Intake2022 intake;
 
   /**
-   * Creates a new Intake2022InCMD.
+   * Creates a new Intake2022OutCMD.
    *
    * @param subsystem The subsystem used by this command.
    */
