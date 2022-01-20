@@ -107,12 +107,6 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    Indexer2022 indexer = new Indexer2022();
-    Intake2022 intake = new Intake2022();
-    LlamaNeck2022 llamaNeck = new LlamaNeck2022();
-    indexer.indexerFast();
-    intake.intakeIn();
-    llamaNeck.llamaNeckForward();
   }
 
   /** This function is called periodically during test mode. */

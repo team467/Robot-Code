@@ -211,7 +211,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public boolean hasIndexer2022() {
-        return true;
+        return false;
     }
 
     @Override
@@ -236,7 +236,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public boolean hasLlamaNeck2022() {
-        return true;
+        return false;
     }
 
     @Override
@@ -256,7 +256,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public boolean hasIntake2022() {
-        return true;
+        return false;
     }
     
     @Override

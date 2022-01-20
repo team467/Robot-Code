@@ -13,6 +13,16 @@ import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
+import frc.robot.commands.Indexer2022BackwardCMD;
+import frc.robot.commands.Indexer2022FastCMD;
+import frc.robot.commands.Indexer2022SlowCMD;
+import frc.robot.commands.Indexer2022StopCMD;
+import frc.robot.commands.Intake2022InCMD;
+import frc.robot.commands.Intake2022OutCMD;
+import frc.robot.commands.Intake2022StopCMD;
+import frc.robot.commands.LlamaNeck2022BackwardCMD;
+import frc.robot.commands.LlamaNeck2022ForwardCMD;
+import frc.robot.commands.LlamaNeck2022StopCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
@@ -22,6 +32,9 @@ import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Indexer2022;
+import frc.robot.subsystems.Intake2022;
+import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -37,6 +50,9 @@ public class RobotContainer {
   private Drivetrain drivetrain = null;
   private Climber2020 climber = null;
   private Shooter2020 shooter = null;
+  private Intake2022 intake = null;
+  private LlamaNeck2022 llamaNeck = null;
+  private Indexer2022 indexer = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -119,6 +135,34 @@ public class RobotContainer {
       // shooter.setDefaultCommand(new ShooterSetCMD(shooter,
       //   () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
       // ));
+    }
+  }
+
+  private void initIntake2022() {
+    if (RobotConstants.get().hasIntake2022()) {
+      intake = new Intake2022();
+      intake.setDefaultCommand(new Intake2022StopCMD(intake));
+      driverPovUp.whenHeld(new Intake2022InCMD(intake));
+      driverPovDown.whenHeld(new Intake2022OutCMD(intake));
+    }
+  }
+
+  private void initLlamaNeck2022() {
+    if (RobotConstants.get().hasLlamaNeck2022()) {
+      llamaNeck = new LlamaNeck2022();
+      llamaNeck.setDefaultCommand(new LlamaNeck2022StopCMD(llamaNeck));
+      driverPovUp.whenHeld(new LlamaNeck2022ForwardCMD(llamaNeck));
+      driverPovDown.whenHeld(new LlamaNeck2022BackwardCMD(llamaNeck));
+    }
+  }
+
+  private void initIndexer2022() {
+    if (RobotConstants.get().hasIndexer2022()) {
+      indexer = new Indexer2022();
+      indexer.setDefaultCommand(new Indexer2022SlowCMD(indexer));
+      driverPovUp.whenHeld(new Indexer2022FastCMD(indexer));
+      driverButtonB.whenHeld(new Indexer2022StopCMD(indexer));
+      driverPovDown.whenHeld(new Indexer2022BackwardCMD(indexer));
     }
   }
 
