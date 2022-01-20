@@ -17,11 +17,6 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public double driveWheelDiameter() {
-        return 6.0;
-    }
-
-    @Override
     public boolean driveDualMotors() {
         return true;
     }
@@ -42,8 +37,13 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public FeedbackConstant driveForwardRightFB() {
-        return new FeedbackConstant(0.0, 0.0, 0.0);
+    public FeedbackConstant driveForwardRightVelocityFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveForwardRightPositionFB() {
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
@@ -52,8 +52,13 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public FeedbackConstant driveForwardLeftFB() {
-        return new FeedbackConstant(0.0, 0.0, 0.0);
+    public FeedbackConstant driveForwardLeftVelocityFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveForwardLeftPositionFB() {
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
@@ -62,8 +67,13 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public FeedbackConstant driveBackwardRightFB() {
-        return new FeedbackConstant(0.0, 0.0, 0.0);
+    public FeedbackConstant driveBackwardRightVelocityFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardRightPositionFB() {
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
@@ -72,8 +82,13 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public FeedbackConstant driveBackwardLeftFB() {
-        return new FeedbackConstant(0.0, 0.0, 0.0);
+    public FeedbackConstant driveBackwardLeftVelocityFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardLeftPositionFB() {
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override

@@ -7,18 +7,22 @@ import frc.robot.motors.MotorType;
 public interface Constants {
     public String name();
     public boolean hasDrivetrain();
-    public double driveWheelDiameter();
     public boolean driveDualMotors();
     public MotorType driveMotorType();
     public boolean driveUseVelocity();
+    // Inches
     public FeedforwardConstant driveForwardRightFF();
-    public FeedbackConstant driveForwardRightFB();
+    public FeedbackConstant driveForwardRightVelocityFB();
+    public FeedbackConstant driveForwardRightPositionFB();
     public FeedforwardConstant driveForwardLeftFF();
-    public FeedbackConstant driveForwardLeftFB();
+    public FeedbackConstant driveForwardLeftVelocityFB();
+    public FeedbackConstant driveForwardLeftPositionFB();
     public FeedforwardConstant driveBackwardRightFF();
-    public FeedbackConstant driveBackwardRightFB();
+    public FeedbackConstant driveBackwardRightVelocityFB();
+    public FeedbackConstant driveBackwardRightPositionFB();
     public FeedforwardConstant driveBackwardLeftFF();
-    public FeedbackConstant driveBackwardLeftFB();
+    public FeedbackConstant driveBackwardLeftVelocityFB();
+    public FeedbackConstant driveBackwardLeftPositionFB();
     public double drivekMaxVelocity();
     public int driveMotorLeftLeaderId();
     public boolean driveMotorLeftLeaderInverted();
