@@ -33,62 +33,62 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public FeedforwardConstant driveForwardRightFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
+        return new FeedforwardConstant(0.1105, 0.13191, 0.016748);
     }
 
     @Override
     public FeedbackConstant driveForwardRightVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
+        return new FeedbackConstant(0.16178, 0.0);
     }
 
     @Override
     public FeedbackConstant driveForwardRightPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
+        return new FeedbackConstant(26.727, 0.85732);
     }
 
     @Override
     public FeedforwardConstant driveForwardLeftFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
+        return new FeedforwardConstant(0.12149, 0.1279, 0.01641);
     }
 
     @Override
     public FeedbackConstant driveForwardLeftVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
+        return new FeedbackConstant(0.16326, 0.0);
     }
 
     @Override
     public FeedbackConstant driveForwardLeftPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
+        return new FeedbackConstant(26.488, 0.84657);
     }
 
     @Override
     public FeedforwardConstant driveBackwardRightFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
+        return new FeedforwardConstant(0.14347, 0.13096, 0.010268);
     }
 
     @Override
     public FeedbackConstant driveBackwardRightVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
+        return new FeedbackConstant(0.14205, 0.0);
     }
 
     @Override
     public FeedbackConstant driveBackwardRightPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
+        return new FeedbackConstant(22.371, 0.593);
     }
 
     @Override
     public FeedforwardConstant driveBackwardLeftFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
+        return new FeedforwardConstant(0.15753, 0.12827, 0.0055311);
     }
 
     @Override
     public FeedbackConstant driveBackwardLeftVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
+        return new FeedbackConstant(0.10653, 0.0);
     }
 
     @Override
     public FeedbackConstant driveBackwardLeftPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
+        return new FeedbackConstant(17.061, 0.35465);
     }
 
     @Override
