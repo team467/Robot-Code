@@ -19,7 +19,7 @@ public class LlamaNeck2022 extends SubsystemBase {
 
     public LlamaNeck2022() {
         super();
-        //llamaNeck = MotorControllerFactory.create(RobotConstants.get().llamaNeck2022MotorID(), MotorType.TALON_SRX);
+        llamaNeck = MotorControllerFactory.create(RobotConstants.get().llamaNeck2022MotorID(), MotorType.TALON_SRX);
     }
 
     public void setIsReversed(boolean isReversed) {

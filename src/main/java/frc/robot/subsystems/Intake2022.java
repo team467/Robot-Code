@@ -19,7 +19,7 @@ public class Intake2022 extends SubsystemBase {
 
     public Intake2022() {
         super();
-        //intake = MotorControllerFactory.create(RobotConstants.get().intake2022MotorID(), MotorType.TALON_SRX);
+        intake = MotorControllerFactory.create(RobotConstants.get().intake2022MotorID(), MotorType.TALON_SRX);
     }
 
     public void setIsReversed(boolean isReversed) {
@@ -27,17 +27,14 @@ public class Intake2022 extends SubsystemBase {
     }
 
     public void intakeIn() {
-        LOGGER.info("Starting intake, setting speed to " + RobotConstants.get().intake2022InSpeed());
-        //intake.set(RobotConstants.get().intake2022InSpeed());
+        intake.set(RobotConstants.get().intake2022InSpeed());
     }
 
     public void intakeOut() {
-        LOGGER.info("Reversing intake, setting speed to " + RobotConstants.get().intake2022OutSpeed());
-        //intake.set(-RobotConstants.get().intake2022OutSpeed());
+        intake.set(-RobotConstants.get().intake2022OutSpeed());
     }
 
     public void intakeStop() {
-        LOGGER.info("Stopping intake setting speed to 0");
         intake.set(0);
     }
 

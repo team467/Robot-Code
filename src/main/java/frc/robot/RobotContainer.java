@@ -100,6 +100,7 @@ public class RobotContainer {
     initDrivetrain();
     initClimber2020();
     initShooter2020();
+    initIntake2022();
   }
 
   private void initDrivetrain() {
@@ -142,8 +143,8 @@ public class RobotContainer {
     if (RobotConstants.get().hasIntake2022()) {
       intake = new Intake2022();
       intake.setDefaultCommand(new Intake2022StopCMD(intake));
-      driverPovUp.whenHeld(new Intake2022InCMD(intake));
-      driverPovDown.whenHeld(new Intake2022OutCMD(intake));
+      operatorClimberUp.whileHeld(new Intake2022InCMD(intake));
+      operatorClimberDown.whileHeld(new Intake2022OutCMD(intake));
     }
   }
 

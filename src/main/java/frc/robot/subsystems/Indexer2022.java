@@ -19,7 +19,7 @@ public class Indexer2022 extends SubsystemBase {
 
     public Indexer2022() {
         super();
-        //indexer = MotorControllerFactory.create(RobotConstants.get().indexer2022MotorID(), MotorType.TALON_SRX);
+        indexer = MotorControllerFactory.create(RobotConstants.get().indexer2022MotorID(), MotorType.TALON_SRX);
     }
 
     public void setIsReversed(boolean isReversed) {

@@ -11,7 +11,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasDrivetrain() {
-        return true;
+        return false;
     }
 
     @Override
@@ -256,22 +256,22 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasIntake2022() {
-        return false;
+        return true;
     }
     
     @Override
     public int intake2022MotorID() {
-        return 0;
+        return 11;
     }
 
     @Override
     public double intake2022InSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public double intake2022OutSpeed() {
-        return 0;
+        return 0.5;
     }
     
 }

@@ -1,10 +1,16 @@
 package frc.robot.commands;
 
+import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.Intake2022;
+
+import org.apache.logging.log4j.Logger;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class Intake2022InCMD extends CommandBase {
   private final Intake2022 intake;
+
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022InCMD.class.getName());
 
   /**
    * Creates a new Intake2022InCMD.
@@ -20,6 +26,7 @@ public class Intake2022InCMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    LOGGER.info("Setting intake forward");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
