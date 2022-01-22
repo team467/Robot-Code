@@ -1,14 +1,14 @@
 package frc.robot.commands;
 
 import frc.robot.logging.RobotLogManager;
-import frc.robot.subsystems.Indexer2022;
+import frc.robot.subsystems.Trigger2022;
 
 import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class Indexer2022BackwardCMD extends CommandBase {
-  private final Indexer2022 indexer;
+  private final Trigger2022 indexer;
 
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022OutCMD.class.getName());
 
@@ -18,7 +18,7 @@ public class Indexer2022BackwardCMD extends CommandBase {
    *
    * @param indexer The subsystem used by this command.
    */
-  public Indexer2022BackwardCMD(Indexer2022 indexer) {
+  public Indexer2022BackwardCMD(Trigger2022 indexer) {
     this.indexer = indexer;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(indexer);

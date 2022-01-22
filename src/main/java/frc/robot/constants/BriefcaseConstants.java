@@ -210,27 +210,27 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public boolean hasIndexer2022() {
+    public boolean hasTrigger2022() {
         return true;
     }
 
     @Override
-    public int indexer2022MotorID() {
+    public int trigger2022MotorID() {
         return 11;
     }
 
     @Override
-    public double indexer2022SlowInSpeed() {
+    public double trigger2022IdleSpeed() {
         return 0.25;
     }
 
     @Override
-    public double indexer2022InSpeed() {
+    public double trigger2022InSpeed() {
         return 0.5;
     }
 
     @Override
-    public double indexer2022OutSpeed() {
+    public double trigger2022OutSpeed() {
         return 0.5;
     }
 

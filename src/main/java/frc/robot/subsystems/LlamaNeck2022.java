@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.logging.RobotLogManager;
@@ -13,40 +14,47 @@ import org.apache.logging.log4j.Logger;
 public class LlamaNeck2022 extends SubsystemBase {
     private static final Logger LOGGER = RobotLogManager.getMainLogger(LlamaNeck2022.class.getName());
 
-    private MotorControllerEncoder llamaNeck;
-
-    private boolean isReversed = false;
+    private MotorControllerEncoder llamaNeckMotor;
+    private DigitalInput upperLimitSwitch;
+    private DigitalInput lowerLimitSwitch;
 
     public LlamaNeck2022() {
         super();
-        llamaNeck = MotorControllerFactory.create(RobotConstants.get().llamaNeck2022MotorID(), MotorType.TALON_SRX);
+
+        llamaNeckMotor = MotorControllerFactory.create(RobotConstants.get().llamaNeck2022MotorID(), MotorType.TALON_SRX);
+        upperLimitSwitch = new DigitalInput(RobotConstants.get().llamaNeck2022UpperLimitSwitchChannel());
+        lowerLimitSwitch = new DigitalInput(RobotConstants.get().llamaNeck2022LowerLimitSwitchChannel());
     }
 
-    public void setIsReversed(boolean isReversed) {
-        this.isReversed = isReversed;
+    public boolean getUpperLimitSwitch() {
+        return upperLimitSwitch.get();
     }
 
-    public void llamaNeckForward() {
+    public boolean getLowerLimitSwitch() {
+        return lowerLimitSwitch.get();
+    }
+
+    public void forward() {
         LOGGER.info("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022InSpeed());
-        //llamaNeck.set(RobotConstants.get().llamaNeck2022InSpeed());
+        llamaNeckMotor.set(RobotConstants.get().llamaNeck2022InSpeed());
     }
 
-    public void llamaNeckBackward() {
+    public void backward() {
         LOGGER.info("Reversing index, setting speed to " + RobotConstants.get().llamaNeck2022OutSpeed());
-        //llamaNeck.set(-RobotConstants.get().llamaNeck2022OutSpeed());
+        llamaNeckMotor.set(-RobotConstants.get().llamaNeck2022OutSpeed());
     }
 
-    public void llamaNeckStop() {
+    public void stop() {
         LOGGER.info("Stopping llamaNeck, setting speed to 0");
-        //llamaNeck.set(0);
+        llamaNeckMotor.set(0.0);
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty("Llama Neck Position", () -> llamaNeck.getPosition(), null);
-        builder.addDoubleProperty("Llama Neck Velocity", () -> llamaNeck.getVelocity(), null);
+        builder.addDoubleProperty("Position", () -> llamaNeckMotor.getPosition(), null);
+        builder.addDoubleProperty("Velocity", () -> llamaNeckMotor.getVelocity(), null);
     }
 
 }

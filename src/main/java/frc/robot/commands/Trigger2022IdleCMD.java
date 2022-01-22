@@ -1,14 +1,14 @@
 package frc.robot.commands;
 
 import frc.robot.logging.RobotLogManager;
-import frc.robot.subsystems.Indexer2022;
+import frc.robot.subsystems.Trigger2022;
 
 import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class Indexer2022SlowCMD extends CommandBase {
-  private final Indexer2022 indexer;
+public class Trigger2022IdleCMD extends CommandBase {
+  private final Trigger2022 trigger;
 
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022OutCMD.class.getName());
 
@@ -16,24 +16,24 @@ public class Indexer2022SlowCMD extends CommandBase {
   /**
    * Creates a new Indexer2022SlowCMD.
    *
-   * @param indexer The subsystem used by this command.
+   * @param trigger The subsystem used by this command.
    */
-  public Indexer2022SlowCMD(Indexer2022 indexer) {
-    this.indexer = indexer;
+  public Trigger2022IdleCMD(Trigger2022 trigger) {
+    this.trigger = trigger;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(indexer);
+    addRequirements(trigger);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.info("Setting Indexer Slow Forward");
+    LOGGER.info("Setting Trigger Slow Forward");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    indexer.indexerSlow();
+    trigger.idle();
   }
 
   // Called once the command ends or is interrupted.

@@ -47,16 +47,19 @@ public interface Constants {
     public double shooter2020RightServoMax();
     public double shooter2020RightServoMin();
 
-    public boolean hasIndexer2022();
-    public int indexer2022MotorID();
-    public double indexer2022SlowInSpeed();
-    public double indexer2022InSpeed();
-    public double indexer2022OutSpeed();
+    public boolean hasTrigger2022();
+    public int trigger2022MotorID();
+    public double trigger2022IdleSpeed();
+    public double trigger2022InSpeed();
+    public double trigger2022OutSpeed();
+    
 
     public boolean hasLlamaNeck2022();
     public int llamaNeck2022MotorID();
     public double llamaNeck2022InSpeed();
     public double llamaNeck2022OutSpeed();
+    public int llamaNeck2022UpperLimitSwitchChannel();
+    public int llamaNeck2022LowerLimitSwitchChannel();
     
     public boolean hasIntake2022();
     public int intake2022MotorID();

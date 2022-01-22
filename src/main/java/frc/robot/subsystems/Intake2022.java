@@ -13,37 +13,33 @@ import org.apache.logging.log4j.Logger;
 public class Intake2022 extends SubsystemBase {
     private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022.class.getName());
 
-    private MotorControllerEncoder intake;
+    private MotorControllerEncoder intakeMotor;
 
-    private boolean isReversed = false;
 
     public Intake2022() {
         super();
-        intake = MotorControllerFactory.create(RobotConstants.get().intake2022MotorID(), MotorType.TALON_SRX);
+        intakeMotor = MotorControllerFactory.create(RobotConstants.get().intake2022MotorID(), MotorType.TALON_SRX);
     }
 
-    public void setIsReversed(boolean isReversed) {
-        this.isReversed = isReversed;
+
+    public void in() {
+        intakeMotor.set(RobotConstants.get().intake2022InSpeed());
     }
 
-    public void intakeIn() {
-        intake.set(RobotConstants.get().intake2022InSpeed());
+    public void out() {
+        intakeMotor.set(-RobotConstants.get().intake2022OutSpeed());
     }
 
-    public void intakeOut() {
-        intake.set(-RobotConstants.get().intake2022OutSpeed());
-    }
-
-    public void intakeStop() {
-        intake.set(0);
+    public void stop() {
+        intakeMotor.set(0);
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty("Intake Position", () -> intake.getPosition(), null);
-        builder.addDoubleProperty("Intake Velocity", () -> intake.getVelocity(), null);
+        builder.addDoubleProperty("Intake Position", () -> intakeMotor.getPosition(), null);
+        builder.addDoubleProperty("Intake Velocity", () -> intakeMotor.getVelocity(), null);
     }
 
 }

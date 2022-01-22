@@ -210,27 +210,27 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public boolean hasIndexer2022() {
+    public boolean hasTrigger2022() {
         return false;
     }
 
     @Override
-    public int indexer2022MotorID() {
+    public int trigger2022MotorID() {
         return 0;
     }
 
     @Override
-    public double indexer2022SlowInSpeed() {
+    public double trigger2022IdleSpeed() {
         return 0;
     }
 
     @Override
-    public double indexer2022InSpeed() {
+    public double trigger2022InSpeed() {
         return 0;
     }
 
     @Override
-    public double indexer2022OutSpeed() {
+    public double trigger2022OutSpeed() {
         return 0;
     }
 
