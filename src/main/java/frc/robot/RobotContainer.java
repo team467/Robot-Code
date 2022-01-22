@@ -152,8 +152,8 @@ public class RobotContainer {
     if (RobotConstants.get().hasLlamaNeck2022()) {
       llamaNeck = new LlamaNeck2022();
       llamaNeck.setDefaultCommand(new LlamaNeck2022StopCMD(llamaNeck));
-      driverPovUp.whenHeld(new LlamaNeck2022ForwardCMD(llamaNeck));
-      driverPovDown.whenHeld(new LlamaNeck2022BackwardCMD(llamaNeck));
+      operatorIndexRollerForward.whenHeld(new LlamaNeck2022ForwardCMD(llamaNeck));
+      operatorIndexRollerBackward.whenHeld(new LlamaNeck2022BackwardCMD(llamaNeck));
     }
   }
 

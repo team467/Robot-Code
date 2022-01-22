@@ -1,10 +1,17 @@
 package frc.robot.commands;
 
+import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.Indexer2022;
+
+import org.apache.logging.log4j.Logger;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class Indexer2022BackwardCMD extends CommandBase {
   private final Indexer2022 indexer;
+
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022OutCMD.class.getName());
+
 
   /**
    * Creates a new LlamaNeck2022BackwardCMD.
@@ -20,6 +27,7 @@ public class Indexer2022BackwardCMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    LOGGER.info("Setting Indexer backwards");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

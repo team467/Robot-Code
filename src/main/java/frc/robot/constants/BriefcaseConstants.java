@@ -211,52 +211,52 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasIndexer2022() {
-        return false;
+        return true;
     }
 
     @Override
     public int indexer2022MotorID() {
-        return 0;
+        return 11;
     }
 
     @Override
     public double indexer2022SlowInSpeed() {
-        return 0;
+        return 0.25;
     }
 
     @Override
     public double indexer2022InSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public double indexer2022OutSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public boolean hasLlamaNeck2022() {
-        return false;
+        return true;
     }
 
     @Override
     public int llamaNeck2022MotorID() {
-        return 0;
+        return 12;
     }
 
     @Override
     public double llamaNeck2022InSpeed() {
-        return 0;
+        return 0.5;
     }
     
     @Override
     public double llamaNeck2022OutSpeed() {
-     return 0;   
+     return 0.5;   
     }
 
     @Override
     public boolean hasIntake2022() {
-        return true;
+        return false;
     }
     
     @Override

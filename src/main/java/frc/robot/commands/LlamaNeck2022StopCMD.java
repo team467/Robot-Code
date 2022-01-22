@@ -1,10 +1,17 @@
 package frc.robot.commands;
 
+import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.LlamaNeck2022;
+
+import org.apache.logging.log4j.Logger;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class LlamaNeck2022StopCMD extends CommandBase {
   private final LlamaNeck2022 llamaNeck;
+
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022StopCMD.class.getName());
+
 
   /**
    * Creates a new LlamaNeck2022StopCMD.
@@ -20,6 +27,7 @@ public class LlamaNeck2022StopCMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    LOGGER.info("Setting Llama Neck off");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

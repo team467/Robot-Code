@@ -1,10 +1,17 @@
 package frc.robot.commands;
 
+import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.LlamaNeck2022;
+
+import org.apache.logging.log4j.Logger;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class LlamaNeck2022ForwardCMD extends CommandBase {
   private final LlamaNeck2022 llamaNeck;
+
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022InCMD.class.getName());
+
 
   /**
    * Creates a new LlamaNeck2022ForwardCMD.
@@ -20,6 +27,7 @@ public class LlamaNeck2022ForwardCMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    LOGGER.info("Setting Llama Neck Forward");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
