@@ -1,14 +1,11 @@
-package frc.robot.subsystems;
-
-import java.nio.ByteBuffer;
+package frc.robot.controllers;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Joystick;
 
-public class CustomControllerData extends SubsystemBase {
+public abstract class CustomControllerBase extends Joystick {
     private NetworkTable controllerTable = NetworkTableInstance.getDefault().getTable("controller");
 
     private NetworkTableEntry robotConnectedEntry = controllerTable.getEntry("robotConnected"); // bool
@@ -19,8 +16,8 @@ public class CustomControllerData extends SubsystemBase {
     private NetworkTableEntry responseEntry = controllerTable.getEntry("response"); // raw bytes
     private NetworkTableEntry hasResponseEntry = controllerTable.getEntry("hasResponse"); // bool
 
-    public CustomControllerData() {
-        super();
+    public CustomControllerBase(int port) {
+        super(port);
         
         robotConnectedEntry.setBoolean(true);
         clientConnectedEntry.setBoolean(false);
@@ -56,13 +53,4 @@ public class CustomControllerData extends SubsystemBase {
     public byte[] getResponse() {
         return hasResponseEntry.getRaw(new byte[0]);
     }
-
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
-
-        // builder.addDoubleProperty("Climber Position", () -> climberMotor.getPosition(), null);
-        // builder.addDoubleProperty("Climber Velocity", () -> climberMotor.getVelocity(), null);
-    }
 }
-

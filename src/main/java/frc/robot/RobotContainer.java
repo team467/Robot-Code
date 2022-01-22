@@ -19,6 +19,8 @@ import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
 import frc.robot.controllers.CustomController2020;
+import frc.robot.controllers.CustomController2022;
+import frc.robot.controllers.CustomControllerBase;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
@@ -69,6 +71,8 @@ public class RobotContainer {
   private final JoystickButton operatorClimberUp = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_UP_BUTTON.value);
   private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
 
+
+  private final CustomControllerBase cc = new CustomController2022(2);
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
