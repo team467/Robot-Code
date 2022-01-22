@@ -161,9 +161,9 @@ public class RobotContainer {
     if (RobotConstants.get().hasIndexer2022()) {
       indexer = new Indexer2022();
       indexer.setDefaultCommand(new Indexer2022SlowCMD(indexer));
-      driverPovUp.whenHeld(new Indexer2022FastCMD(indexer));
-      driverButtonB.whenHeld(new Indexer2022StopCMD(indexer));
-      driverPovDown.whenHeld(new Indexer2022BackwardCMD(indexer));
+      operatorIndexRollerForward.whenHeld(new Indexer2022FastCMD(indexer));
+      operatorShooterShoot.whenHeld(new Indexer2022StopCMD(indexer));
+      operatorIndexRollerBackward.whenHeld(new Indexer2022BackwardCMD(indexer));
     }
   }
 
