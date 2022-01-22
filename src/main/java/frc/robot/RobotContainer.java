@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
@@ -95,7 +96,6 @@ public class RobotContainer {
         () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
         () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
       ));
-
     }
   }
 

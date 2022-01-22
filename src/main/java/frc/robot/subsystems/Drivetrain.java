@@ -23,6 +23,7 @@ import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.TalonController;
 import frc.robot.tuning.SubsystemTuner;
+import frc.robot.tuning.TunerButtonFactory;
 import frc.robot.tuning.TunerParameter;
 import frc.robot.tuning.TunerParamterFactory;
 
@@ -87,6 +88,7 @@ public class Drivetrain extends SubsystemTuner {
     public void initalizeTunerNetworkTables() {
         addTunerParameter("speed", TunerParamterFactory.create("Driving Speed", this, NetworkTableType.kDouble));
         addTunerParameter("turn", TunerParamterFactory.create("Turning Speed", this, NetworkTableType.kDouble));
+        addTunerButton("jump", TunerButtonFactory.create("Jump", this));
     }
 
     @Override

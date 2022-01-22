@@ -8,7 +8,7 @@ public class TunerParamterFactory {
     public static TunerParameter create(String name, Tuner tuner, NetworkTableType type) {
         TunerParameter tunerParameter = new TunerParameter() {
             private String paramterName = name;
-            private NetworkTableEntry parameterEntry = NetworkTableInstance.getDefault().getTable("tuining").getSubTable(tuner.getTunerName()).getEntry(name);
+            private NetworkTableEntry parameterEntry = NetworkTableInstance.getDefault().getTable("tuning").getSubTable(tuner.getTunerName()).getEntry(name);
             private NetworkTableType parameterType = type;
             private ParameterValue defaultValue = new ParameterValue() {};
 

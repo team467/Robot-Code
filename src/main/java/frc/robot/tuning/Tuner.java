@@ -6,8 +6,10 @@ public interface Tuner {
     public String getTunerName();
     public Subsystem[] getTunerSubsystems();
     public TunerParameter[] getTunerParameters();
-    public void addTunerParameter(String tunerName, TunerParameter tunerParameter);
-    public TunerParameter getTunerParameter(String tunerName);
+    public void addTunerParameter(String parameterName, TunerParameter tunerParameter);
+    public TunerParameter getTunerParameter(String parameterName);
+    public void addTunerButton(String buttonName, TunerButton tunerParameter);
+    public TunerButton getTunerButton(String buttonName);
     public void initalizeTunerNetworkTables();
     public void initalizeTuner();
 }

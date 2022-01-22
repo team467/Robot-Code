@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class SubsystemTuner extends SubsystemBase implements Tuner {
     HashMap<String, TunerParameter> tunerParameters = new HashMap<>();
+    HashMap<String, TunerButton> tunerButtons = new HashMap<>();
 
     public SubsystemTuner() {
         super();
@@ -33,12 +34,24 @@ public abstract class SubsystemTuner extends SubsystemBase implements Tuner {
     }
 
     @Override
-    public void addTunerParameter(String tunerName, TunerParameter tunerParameter) {
-        tunerParameters.put(tunerName, tunerParameter);
+    public void addTunerParameter(String parameterName, TunerParameter tunerParameter) {
+        tunerParameters.put(parameterName, tunerParameter);
+    }
+    
+
+    @Override
+    public TunerParameter getTunerParameter(String parameterName) {
+        return tunerParameters.get(parameterName);
     }
 
     @Override
-    public TunerParameter getTunerParameter(String tunerName) {
-        return tunerParameters.get(tunerName);
+    public void addTunerButton(String buttonName, TunerButton tunerButton) {
+        tunerButtons.put(buttonName, tunerButton);
+    }
+    
+
+    @Override
+    public TunerButton getTunerButton(String buttonName) {
+        return tunerButtons.get(buttonName);
     }
 }
