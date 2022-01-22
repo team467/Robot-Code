@@ -32,6 +32,11 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
+    public boolean driveUsePID() {
+        return false;
+    }
+
+    @Override
     public FeedforwardConstant driveForwardRightFF() {
         return new FeedforwardConstant(0.0, 0.0, 0.0);
     }
@@ -92,7 +97,7 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
-    public double drivekMaxVelocity() {
+    public double driveMaxVelocity() {
         return 0;
     }
 

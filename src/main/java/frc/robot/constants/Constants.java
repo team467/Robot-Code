@@ -10,6 +10,7 @@ public interface Constants {
     public boolean driveDualMotors();
     public MotorType driveMotorType();
     public boolean driveUseVelocity();
+    public boolean driveUsePID();
     // Inches
     public FeedforwardConstant driveForwardRightFF();
     public FeedbackConstant driveForwardRightVelocityFB();
@@ -23,7 +24,7 @@ public interface Constants {
     public FeedforwardConstant driveBackwardLeftFF();
     public FeedbackConstant driveBackwardLeftVelocityFB();
     public FeedbackConstant driveBackwardLeftPositionFB();
-    public double drivekMaxVelocity();
+    public double driveMaxVelocity();
     public int driveMotorLeftLeaderId();
     public boolean driveMotorLeftLeaderInverted();
     public int driveMotorLeftFollowerId();

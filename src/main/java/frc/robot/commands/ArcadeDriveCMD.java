@@ -21,17 +21,20 @@ public class ArcadeDriveCMD extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        System.out.println("Init Arcade");
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        System.out.println(String.format("Arcade speed: %f, Arcade rotate: %f", speedSupplier.get(), rotateSupplier.get()));
         drivetrain.arcadeDrive(speedSupplier.get(), rotateSupplier.get());
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        System.out.println("End Arcade");
     }
 
     // Returns true when the command should end.

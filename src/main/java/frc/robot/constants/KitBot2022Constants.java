@@ -28,6 +28,11 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public boolean driveUseVelocity() {
+        return true;
+    }
+
+    @Override
+    public boolean driveUsePID() {
         return false;
     }
 
@@ -92,8 +97,8 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public double drivekMaxVelocity() {
-        return 0;
+    public double driveMaxVelocity() {
+        return 80.0;
     }
 
     @Override

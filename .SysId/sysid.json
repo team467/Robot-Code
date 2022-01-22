@@ -1,7 +1,7 @@
 {
   "SysId": {
     "Analysis Type": "Drivetrain",
-    "AnalyzerJSONLocation": "C:\\Users\\team467\\Documents\\GitHub\\Robot-Code\\sysid\\drivetrain\\sysid_data20220119-184340.json",
+    "AnalyzerJSONLocation": "C:\\Users\\team467\\Documents\\GitHub\\Robot-Code\\sysid\\drivetrain\\sysid_data20220121-184451.json",
     "NetworkTables Settings": {
       "serverTeam": "467"
     },
