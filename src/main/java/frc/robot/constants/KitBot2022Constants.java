@@ -255,6 +255,16 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
+    public int llamaNeck2022UpperLimitSwitchChannel() {
+        return 0;
+    }
+
+    @Override
+    public int llamaNeck2022LowerLimitSwitchChannel() {
+        return 0;
+    }
+
+    @Override
     public boolean hasIntake2022() {
         return false;
     }
