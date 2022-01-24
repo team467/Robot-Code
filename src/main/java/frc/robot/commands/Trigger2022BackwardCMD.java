@@ -7,33 +7,33 @@ import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class Indexer2022FastCMD extends CommandBase {
-  private final Trigger2022 indexer;
+public class Trigger2022BackwardCMD extends CommandBase {
+  private final Trigger2022 trigger;
 
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022OutCMD.class.getName());
 
-  
+
   /**
-   * Creates a new Indexer2022FastCMD.
+   * Creates a new Trigger2022BackwardCMD.
    *
-   * @param indexer The subsystem used by this command.
+   * @param trigger The subsystem used by this command.
    */
-  public Indexer2022FastCMD(Trigger2022 indexer) {
-    this.indexer = indexer;
+  public Trigger2022BackwardCMD(Trigger2022 trigger) {
+    this.trigger = trigger;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(indexer);
+    addRequirements(trigger);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.info("Setting Indexer Fast Inward");
+    LOGGER.info("Setting Trigger backwards");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    indexer.indexerFast();
+    trigger.backward();
   }
 
   // Called once the command ends or is interrupted.

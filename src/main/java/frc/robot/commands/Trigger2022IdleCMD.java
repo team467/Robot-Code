@@ -14,7 +14,7 @@ public class Trigger2022IdleCMD extends CommandBase {
 
 
   /**
-   * Creates a new Indexer2022SlowCMD.
+   * Creates a new Trigger2022IdleCMD.
    *
    * @param trigger The subsystem used by this command.
    */

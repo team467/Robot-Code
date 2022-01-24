@@ -13,10 +13,10 @@ import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
-import frc.robot.commands.Indexer2022BackwardCMD;
-import frc.robot.commands.Indexer2022FastCMD;
+import frc.robot.commands.Trigger2022BackwardCMD;
+import frc.robot.commands.Trigger2022ForwardCMD;
 import frc.robot.commands.Trigger2022IdleCMD;
-import frc.robot.commands.Indexer2022StopCMD;
+import frc.robot.commands.Trigger2022StopCMD;
 import frc.robot.commands.Intake2022InCMD;
 import frc.robot.commands.Intake2022OutCMD;
 import frc.robot.commands.Intake2022StopCMD;
@@ -52,7 +52,7 @@ public class RobotContainer {
   private Shooter2020 shooter = null;
   private Intake2022 intake = null;
   private LlamaNeck2022 llamaNeck = null;
-  private Trigger2022 indexer = null;
+  private Trigger2022 trigger = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -101,6 +101,7 @@ public class RobotContainer {
     initClimber2020();
     initShooter2020();
     initIntake2022();
+    initTrigger2022();
   }
 
   private void initDrivetrain() {
@@ -157,13 +158,13 @@ public class RobotContainer {
     }
   }
 
-  private void initIndexer2022() {
+  private void initTrigger2022() {
     if (RobotConstants.get().hasTrigger2022()) {
-      indexer = new Trigger2022();
-      indexer.setDefaultCommand(new Trigger2022IdleCMD(indexer));
-      operatorIndexRollerForward.whenHeld(new Indexer2022FastCMD(indexer));
-      operatorShooterShoot.whenHeld(new Indexer2022StopCMD(indexer));
-      operatorIndexRollerBackward.whenHeld(new Indexer2022BackwardCMD(indexer));
+      trigger = new Trigger2022();
+      trigger.setDefaultCommand(new Trigger2022IdleCMD(trigger));
+      operatorIndexRollerForward.whenHeld(new Trigger2022ForwardCMD(trigger));
+      operatorShooterShoot.whenHeld(new Trigger2022StopCMD(trigger));
+      operatorIndexRollerBackward.whenHeld(new Trigger2022BackwardCMD(trigger));
     }
   }
 
