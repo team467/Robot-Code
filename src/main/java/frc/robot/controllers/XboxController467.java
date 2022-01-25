@@ -9,9 +9,34 @@ import frc.robot.utilities.MathUtils;
  * Button and axes assignments for an XInput Controller.
  */
 public final class XboxController467 extends XboxController {
+private double DEADZONE = 0.1;
+
     public XboxController467(int port) {
         super(port);
+    }
 
+    @Override
+    public double getLeftX() {
+        if (Math.abs(super.getLeftX()) < DEADZONE) return 0;
+        return super.getLeftX();
+    }
+
+    @Override
+    public double getLeftY() {
+        if (Math.abs(super.getLeftY()) < DEADZONE) return 0;
+        return super.getLeftY();
+    }
+
+    @Override
+    public double getRightX() {
+        if (Math.abs(super.getRightX()) < DEADZONE) return 0;
+        return super.getRightX();
+    }
+
+    @Override
+    public double getRightY() {
+        if (Math.abs(super.getRightY()) < DEADZONE) return 0;
+        return super.getRightY();
     }
 
     /**
