@@ -24,7 +24,14 @@ public interface Constants {
     public FeedforwardConstant driveBackwardLeftFF();
     public FeedbackConstant driveBackwardLeftVelocityFB();
     public FeedbackConstant driveBackwardLeftPositionFB();
+    public double driveUnitsPerRotation();
     public double driveMaxVelocity();
+    public double driveMaxAcceleration();
+    public double driveFastMaxSpeed();
+    public double driveNormalMaxSpeed();
+    public double driveSlowMaxSpeed();
+    public double driveNormalTurnMaxSpeed();
+    public double driveSlowTurnMaxSpeed();
     public int driveMotorLeftLeaderId();
     public boolean driveMotorLeftLeaderInverted();
     public int driveMotorLeftFollowerId();

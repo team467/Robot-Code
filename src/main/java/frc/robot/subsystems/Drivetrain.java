@@ -42,6 +42,9 @@ public class Drivetrain extends SubsystemBase {
         // No longer auto inverted by diff drive, you must invert it
         rightMotorLeader.setInverted(RobotConstants.get().driveMotorRightLeaderInverted());
 
+        leftMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+        rightMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+
         if (RobotConstants.get().driveDualMotors()) {
             leftMotorFollower = MotorControllerFactory.create(RobotConstants.get().driveMotorLeftFollowerId(),
                     RobotConstants.get().driveMotorType());
@@ -50,6 +53,9 @@ public class Drivetrain extends SubsystemBase {
 
             leftMotorFollower.setInverted(RobotConstants.get().driveMotorLeftFollowerInverted());
             rightMotorFollower.setInverted(RobotConstants.get().driveMotorRightFollowerInverted());
+
+            leftMotorFollower.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+            rightMotorFollower.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
 
             leftMotorGroup = new FeedMotorControllerEncoderGroup(leftMotorLeader, leftMotorFollower);
             rightMotorGroup = new FeedMotorControllerEncoderGroup(rightMotorLeader, rightMotorFollower);
@@ -60,9 +66,10 @@ public class Drivetrain extends SubsystemBase {
 
         if (RobotConstants.get().driveUseVelocity()) {
             leftMotorGroup.initFF(RobotConstants.get().driveForwardLeftFF(), RobotConstants.get().driveBackwardLeftFF(),
-                    RobotConstants.get().driveMaxVelocity());
+                    RobotConstants.get().driveMaxVelocity(), RobotConstants.get().driveMaxAcceleration());
             rightMotorGroup.initFF(RobotConstants.get().driveForwardRightFF(),
-                    RobotConstants.get().driveBackwardRightFF(), RobotConstants.get().driveMaxVelocity());
+                    RobotConstants.get().driveBackwardRightFF(), RobotConstants.get().driveMaxVelocity(),
+                    RobotConstants.get().driveMaxAcceleration());
 
             if (RobotConstants.get().driveUsePID()) {
                 leftMotorGroup.initFB(RobotConstants.get().driveForwardLeftVelocityFB(),

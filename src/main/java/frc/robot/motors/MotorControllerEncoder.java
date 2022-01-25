@@ -6,4 +6,5 @@ public interface MotorControllerEncoder extends MotorController {
     public double getPosition();
     public double getVelocity();
     public double getCurrent();
+    public void setUnitsPerRotation(double unitsPerRotation);
 }

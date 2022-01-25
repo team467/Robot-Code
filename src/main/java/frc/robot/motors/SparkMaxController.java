@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class SparkMaxController implements MotorControllerEncoder {
     private CANSparkMax spark;
+    private double unitsPerRotation = 1;
     
     public SparkMaxController(int id, MotorType motorType) {
         spark = new CANSparkMax(id, motorType);
@@ -43,17 +44,22 @@ public class SparkMaxController implements MotorControllerEncoder {
     
     @Override
     public double getPosition() {
-        return spark.getEncoder().getPosition();
+        return spark.getEncoder().getPosition() * unitsPerRotation;
     }
 
     @Override
     public double getVelocity() {
         // The SparkMax returns velocity in RPM. We want to work in revs per second instead.
-        return spark.getEncoder().getVelocity() / 60; 
+        return (spark.getEncoder().getVelocity() / 60) * unitsPerRotation; 
     }
 
     @Override
     public double getCurrent() {
         return spark.getOutputCurrent();
+    }
+
+    @Override
+    public void setUnitsPerRotation(double unitsPerRotation) {
+        this.unitsPerRotation = unitsPerRotation;
     }
 }

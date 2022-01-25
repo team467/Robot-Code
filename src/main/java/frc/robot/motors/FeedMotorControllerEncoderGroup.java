@@ -25,6 +25,7 @@ public class FeedMotorControllerEncoderGroup implements MotorController, Sendabl
     private PIDController forwardPositionFB;
     private PIDController backwardPositionFB;
     private double maxSpeed;
+    private double maxAcceleration;
 
     /**
      * Create a new MotorControllerGroup with the provided MotorControllers and feed
@@ -46,10 +47,11 @@ public class FeedMotorControllerEncoderGroup implements MotorController, Sendabl
         init();
     }
 
-    public void initFF(FeedforwardConstant forward, FeedforwardConstant backward, double maxSpeed) {
+    public void initFF(FeedforwardConstant forward, FeedforwardConstant backward, double maxSpeed, double maxAcceleration) {
         this.forwardFF = new SimpleMotorFeedforward(forward.getkS(), forward.getkV(), forward.getkA());
         this.backwardFF = new SimpleMotorFeedforward(backward.getkS(), backward.getkV(), backward.getkA());
         this.maxSpeed = maxSpeed;
+        this.maxAcceleration = maxAcceleration;
     }
 
     public void initFB(FeedbackConstant forwardVelocity, FeedbackConstant backwardVelocity,
@@ -77,7 +79,14 @@ public class FeedMotorControllerEncoderGroup implements MotorController, Sendabl
     public void set(double speed, boolean velocity) {
         double setpoint = (m_isInverted ? -speed : speed) * maxSpeed;
         boolean forward = setpoint >= 0;
-        double ffVoltage = forward ? forwardFF.calculate(setpoint) : backwardFF.calculate(setpoint, 10);
+        double currentVelocity = m_motorControllers[0].getVelocity();
+        double time = Math.abs(setpoint - currentVelocity)/maxAcceleration;
+        double ffVoltage = 0;
+        if (time >= 0.5) {
+            ffVoltage = forward ? forwardFF.calculate(currentVelocity, setpoint, time) : backwardFF.calculate(currentVelocity, setpoint, time);
+        } else {
+            ffVoltage = forward ? forwardFF.calculate(setpoint) : backwardFF.calculate(setpoint);
+        }
         PIDController selectedController = null;
         if (velocity) {
             if (forward) {

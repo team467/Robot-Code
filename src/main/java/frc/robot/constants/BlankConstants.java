@@ -101,8 +101,43 @@ public class BlankConstants implements Constants {
     }
 
     @Override
+    public double driveUnitsPerRotation() {
+        return 0.0;
+    }
+
+    @Override
     public double driveMaxVelocity() {
         return 0;
+    }
+
+    @Override
+    public double driveMaxAcceleration() {
+        return 0;
+    }
+
+    @Override
+    public double driveFastMaxSpeed() {
+        return 0.0;
+    }
+
+    @Override
+    public double driveNormalMaxSpeed() {
+        return 0.0;
+    }
+
+    @Override
+    public double driveSlowMaxSpeed() {
+        return 0.0;
+    }
+
+    @Override
+    public double driveNormalTurnMaxSpeed() {
+        return 0.0;
+    }
+
+    @Override
+    public double driveSlowTurnMaxSpeed() {
+        return 0.0;
     }
 
     @Override
