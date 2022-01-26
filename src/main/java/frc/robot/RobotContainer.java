@@ -90,10 +90,8 @@ public class RobotContainer {
     if (RobotConstants.get().hasDrivetrain()) {
       drivetrain = new Drivetrain();
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
-        // () -> - 0.8 * driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
         () -> driverJoystick.getAdjustedDriveSpeed(),
-        // () -> 0.8 * driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
-        () ->  driverJoystick.getAdjustedTurnSpeed()
+        () -> driverJoystick.getAdjustedTurnSpeed()
       ));
 
     }
