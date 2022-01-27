@@ -53,8 +53,8 @@ public class LlamaNeck2022 extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty("Llama Neck Position", () -> llamaNeckMotor.getPosition(), null);
-        builder.addDoubleProperty("Llama Neck Velocity", () -> llamaNeckMotor.getVelocity(), null);
+        builder.addBooleanProperty("Upper Limit Switch", () -> getUpperLimitSwitch(), null);
+        builder.addBooleanProperty("Lower Limit Switch", () -> getLowerLimitSwitch(), null);
     }
 
 }
