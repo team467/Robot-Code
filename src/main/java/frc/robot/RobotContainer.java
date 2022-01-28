@@ -20,11 +20,15 @@ import frc.robot.commands.Trigger2022StopCMD;
 import frc.robot.commands.LlamaNeck2022BackwardCMD;
 import frc.robot.commands.LlamaNeck2022ForwardCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
+import frc.robot.commands.Shooter2022FlushCMD;
+import frc.robot.commands.Shooter2022IdleCMD;
+import frc.robot.commands.Shooter2022ShootCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
+import frc.robot.commands.Spitter2022StopCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
@@ -32,6 +36,8 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Trigger2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
+import frc.robot.subsystems.Shooter2022;
+import frc.robot.subsystems.Spitter2022;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -48,6 +54,8 @@ public class RobotContainer {
   private Shooter2020 shooter = null;
   private LlamaNeck2022 llamaNeck = null;
   private Trigger2022 trigger = null;
+  private Spitter2022 spitter = null;
+  private Shooter2022 shooter2022 = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -151,6 +159,21 @@ public class RobotContainer {
       operatorShooterShoot.whenHeld(new Trigger2022StopCMD(trigger));
       operatorIndexRollerBackward.whenHeld(new Trigger2022BackwardCMD(trigger));
     }
+  }
+
+  private void initSpitter2022() {
+    if (RobotConstants.get().hasSpitter2022()) {
+      spitter = new Spitter2022();
+      spitter.setDefaultCommand(new Spitter2022StopCMD(spitter));
+    }
+  }
+
+  private void initShooter2022() {
+    shooter2022 = new Shooter2022();
+    shooter2022.setDefaultCommand(new Shooter2022IdleCMD(trigger, llamaNeck, spitter));
+    operatorShooterShoot.whenPressed(new Shooter2022ShootCMD(trigger, llamaNeck, spitter));
+    operatorIntakeRollerBackward.whenHeld(new Shooter2022FlushCMD(trigger, llamaNeck, spitter));
+
   }
 
   /**
