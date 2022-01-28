@@ -1,12 +1,17 @@
 package frc.robot.commands;
 
+import org.apache.logging.log4j.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Spitter2022;
 import frc.robot.subsystems.Trigger2022;
 
 public class Shooter2022FlushCMD extends CommandBase {
+
+    private static final Logger LOGGER = RobotLogManager.getMainLogger(Shooter2022FlushCMD.class.getName());
 
     private final Trigger2022 trigger;
     private final LlamaNeck2022 llamaNeck;
@@ -32,6 +37,7 @@ public class Shooter2022FlushCMD extends CommandBase {
 
     @Override
     public void initialize() {
+        LOGGER.info("Flushing system");
         llamaNeckBackward.schedule();
         triggerBackward.schedule();
         spitterStop.schedule();

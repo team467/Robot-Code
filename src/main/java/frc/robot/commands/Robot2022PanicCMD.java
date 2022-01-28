@@ -1,13 +1,18 @@
 package frc.robot.commands;
 
+import org.apache.logging.log4j.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Spitter2022;
 import frc.robot.subsystems.Trigger2022;
 
 public class Robot2022PanicCMD extends CommandBase {
+
+    private static final Logger LOGGER = RobotLogManager.getMainLogger(Robot2022PanicCMD.class.getName());
 
     private final Trigger2022 trigger;
     private final LlamaNeck2022 llamaNeck;
@@ -25,6 +30,7 @@ public class Robot2022PanicCMD extends CommandBase {
 
     @Override
     public void initialize() {
+        LOGGER.info("Panic button pressed, cancel commands!");
         trigger.getCurrentCommand().cancel();
         llamaNeck.getCurrentCommand().cancel();
         spitter.getCurrentCommand().cancel();

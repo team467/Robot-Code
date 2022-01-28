@@ -1,12 +1,17 @@
 package frc.robot.commands;
 
+import org.apache.logging.log4j.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Spitter2022;
 import frc.robot.subsystems.Trigger2022;
 
 public class Shooter2022IdleCMD extends CommandBase {
+
+    private static final Logger LOGGER = RobotLogManager.getMainLogger(Shooter2022IdleCMD.class.getName());
 
     private final Trigger2022 trigger;
     private final LlamaNeck2022 llamaNeck;
@@ -38,6 +43,7 @@ public class Shooter2022IdleCMD extends CommandBase {
 
     @Override
     public void initialize() {
+        LOGGER.info("Idling system...");
         triggerIdle.schedule();
         llamaNeckForward.schedule();
         spitterStop.schedule();
@@ -46,9 +52,11 @@ public class Shooter2022IdleCMD extends CommandBase {
     @Override
     public void execute() {
         if (llamaNeck.getUpperLimitSwitch()) {
+            LOGGER.info("Upper limit switch was activated. Stop trigger.");
             triggerStop.schedule();
 
             if (llamaNeck.getLowerLimitSwitch()) {
+                LOGGER.info("Lower limit switch was activated. Stop llama neck.");
                 llamaNeckStop.schedule();
             }
         } else {
