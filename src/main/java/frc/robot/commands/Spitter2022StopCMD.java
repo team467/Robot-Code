@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class Spitter2022StopCMD extends CommandBase {
   private final Spitter2022 spitter;
 
-  private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022StopCMD.class.getName());
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Spitter2022StopCMD.class.getName());
 
 
   /**

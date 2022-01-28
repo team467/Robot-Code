@@ -30,7 +30,6 @@ import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Trigger2022;
-import frc.robot.subsystems.Intake2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -47,7 +46,6 @@ public class RobotContainer {
   private Drivetrain drivetrain = null;
   private Climber2020 climber = null;
   private Shooter2020 shooter = null;
-  private Intake2022 intake = null;
   private LlamaNeck2022 llamaNeck = null;
   private Trigger2022 trigger = null;
 

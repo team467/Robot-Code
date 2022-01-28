@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class LlamaNeck2022ForwardCMD extends CommandBase {
   private final LlamaNeck2022 llamaNeck;
 
-  private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022InCMD.class.getName());
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(LlamaNeck2022ForwardCMD.class.getName());
 
 
   /**

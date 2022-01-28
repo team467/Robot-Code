@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class Trigger2022IdleCMD extends CommandBase {
   private final Trigger2022 trigger;
 
-  private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022OutCMD.class.getName());
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Trigger2022IdleCMD.class.getName());
 
 
   /**
