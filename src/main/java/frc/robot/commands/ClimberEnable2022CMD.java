@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.Climber2022;
-import frc.robot.subsystems.Intake2022;
 
 import org.apache.logging.log4j.Logger;
 
