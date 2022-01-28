@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 public class Configs {
   private static String config = "";
   // possible locations for the config
-  public static String[] configLocations = { "./csv.txt", "./csv.txt" };
+  public static String[] configLocations = { "./csv.txt" };
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Configs.class.getName());
 
   public static void init(){
