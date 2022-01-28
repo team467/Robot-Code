@@ -17,9 +17,6 @@ import frc.robot.commands.Trigger2022BackwardCMD;
 import frc.robot.commands.Trigger2022ForwardCMD;
 import frc.robot.commands.Trigger2022IdleCMD;
 import frc.robot.commands.Trigger2022StopCMD;
-import frc.robot.commands.Intake2022InCMD;
-import frc.robot.commands.Intake2022OutCMD;
-import frc.robot.commands.Intake2022StopCMD;
 import frc.robot.commands.LlamaNeck2022BackwardCMD;
 import frc.robot.commands.LlamaNeck2022ForwardCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
@@ -100,7 +97,6 @@ public class RobotContainer {
     initDrivetrain();
     initClimber2020();
     initShooter2020();
-    initIntake2022();
     initTrigger2022();
   }
 
@@ -137,15 +133,6 @@ public class RobotContainer {
       // shooter.setDefaultCommand(new ShooterSetCMD(shooter,
       //   () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
       // ));
-    }
-  }
-
-  private void initIntake2022() {
-    if (RobotConstants.get().hasIntake2022()) {
-      intake = new Intake2022();
-      intake.setDefaultCommand(new Intake2022StopCMD(intake));
-      operatorClimberUp.whileHeld(new Intake2022InCMD(intake));
-      operatorClimberDown.whileHeld(new Intake2022OutCMD(intake));
     }
   }
 

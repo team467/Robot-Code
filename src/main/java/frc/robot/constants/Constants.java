@@ -60,11 +60,6 @@ public interface Constants {
     public double llamaNeck2022OutSpeed();
     public int llamaNeck2022UpperLimitSwitchChannel();
     public int llamaNeck2022LowerLimitSwitchChannel();
-    
-    public boolean hasIntake2022();
-    public int intake2022MotorID();
-    public double intake2022InSpeed();
-    public double intake2022OutSpeed();
 
     public boolean hasSpitter2022();
     public int spitter2022MotorId();
