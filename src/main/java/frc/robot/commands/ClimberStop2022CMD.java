@@ -13,7 +13,7 @@ public class ClimberStop2022CMD extends CommandBase {
     private static final Logger LOGGER = RobotLogManager.getMainLogger(Climber2022.class.getName());
 
 
-public ClimberStop2022CMD(Climber2022 climber) {
+    public ClimberStop2022CMD(Climber2022 climber) {
     this.climber = climber;
 
     addRequirements(climber);
@@ -21,7 +21,7 @@ public ClimberStop2022CMD(Climber2022 climber) {
 
 @Override
 public void initialize() {  
-    LOGGER.info("Stopping climber") ;
+    LOGGER.info("Stopping climber");
 }
 
 
