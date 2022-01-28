@@ -18,7 +18,7 @@ public class Shooter2022IdleCMD extends CommandBase {
     private final Spitter2022 spitter;
 
     private final Command llamaNeckStop;
-    private final Command llamaNeckForward;
+    private final Command llamaNeckIdle;
 
     private final Command triggerStop;
     private final Command triggerIdle;
@@ -33,7 +33,7 @@ public class Shooter2022IdleCMD extends CommandBase {
         this.spitter = spitter;
 
         this.llamaNeckStop = new LlamaNeck2022StopCMD(llamaNeck);
-        this.llamaNeckForward = new LlamaNeck2022ForwardCMD(llamaNeck);
+        this.llamaNeckIdle = new LlamaNeck2022IdleCMD(llamaNeck);
 
         this.triggerStop = new Trigger2022StopCMD(trigger);
         this.triggerIdle = new Trigger2022IdleCMD(trigger);
@@ -45,7 +45,7 @@ public class Shooter2022IdleCMD extends CommandBase {
     public void initialize() {
         LOGGER.info("Idling system...");
         triggerIdle.schedule();
-        llamaNeckForward.schedule();
+        llamaNeckIdle.schedule();
         spitterStop.schedule();
     }
 
@@ -61,7 +61,7 @@ public class Shooter2022IdleCMD extends CommandBase {
             }
         } else {
             triggerIdle.schedule();
-            llamaNeckForward.schedule();
+            llamaNeckIdle.schedule();
         }
     }
 

@@ -249,6 +249,11 @@ public class BlankConstants implements Constants {
     }
 
     @Override
+    public double llamaNeck2022IdleSpeed() {
+        return 0;
+    }
+
+    @Override
     public double llamaNeck2022InSpeed() {
         return 0;
     }

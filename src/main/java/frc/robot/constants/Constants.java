@@ -56,6 +56,7 @@ public interface Constants {
 
     public boolean hasLlamaNeck2022();
     public int llamaNeck2022MotorID();
+    public double llamaNeck2022IdleSpeed();
     public double llamaNeck2022InSpeed();
     public double llamaNeck2022OutSpeed();
     public int llamaNeck2022UpperLimitSwitchChannel();

@@ -34,6 +34,11 @@ public class LlamaNeck2022 extends SubsystemBase {
         return lowerLimitSwitch.get();
     }
 
+    public void idle() {
+        LOGGER.info("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022IdleSpeed());
+        llamaNeckMotor.set(RobotConstants.get().llamaNeck2022IdleSpeed());
+    }
+
     public void forward() {
         LOGGER.info("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022InSpeed());
         llamaNeckMotor.set(RobotConstants.get().llamaNeck2022InSpeed());
