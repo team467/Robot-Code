@@ -65,5 +65,19 @@ public interface Constants {
     public int intake2022MotorID();
     public double intake2022InSpeed();
     public double intake2022OutSpeed();
+
+    public boolean hasSpitter2022();
+    public int spitter2022MotorId();
+    public MotorType spitter2022MotorType();
+    public boolean spitter2022MotorInverted();
+    public double spitter2022kP();
+    public double spitter2022kI();
+    public double spitter2022kD();
+    public double spitter2022kS();
+    public double spitter2022kV();
+    public double spitter2022kA();
+    public boolean spitter2022UsePID();
+    public double spitter2022ForwardSpeed();
+    public double spitter2022BackwardSpeed();
     
 }

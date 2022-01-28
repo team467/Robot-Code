@@ -283,4 +283,70 @@ public class Robot2020Constants implements Constants {
     public double intake2022OutSpeed() {
         return 0;
     }
+
+    @Override
+    public boolean hasSpitter2022() {
+        return false;
+    }
+
+    @Override 
+    public int spitter2022MotorId() {
+        return 0;
+    }
+
+    @Override
+    public MotorType spitter2022MotorType() {
+        return MotorType.TALON_SRX;
+    }
+
+    @Override
+    public boolean spitter2022MotorInverted() {
+        return false;
+    }
+
+    @Override
+    public double spitter2022kP() {
+        return 0;
+    }
+
+    @Override
+    public double spitter2022kI() {
+        return 0;
+    }
+
+    @Override
+    public double spitter2022kD() {
+        return 0;
+    }
+
+    @Override
+    public double spitter2022kS() {
+        return 0;
+    }
+
+    @Override
+    public double spitter2022kV() {
+        return 0;
+    }
+
+    @Override
+    public double spitter2022kA() {
+        return 0;
+    }
+
+    @Override
+    public boolean spitter2022UsePID() {
+        return false;
+    }
+
+    @Override
+    public double spitter2022ForwardSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double spitter2022BackwardSpeed() {
+        return 0;
+    }
+
 }
