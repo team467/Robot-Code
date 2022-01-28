@@ -7,18 +7,18 @@ import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class Spitter2022ForwardCMD extends CommandBase {
+public class Spitter2022StopCMD extends CommandBase {
   private final Spitter2022 spitter;
 
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022StopCMD.class.getName());
 
 
   /**
-   * Creates a new Spitter2022ForwardCMD.
+   * Creates a new Spitter2022StopCMD.
    *
    * @param spitter The subsystem used by this command.
    */
-  public Spitter2022ForwardCMD(Spitter2022 spitter) {
+  public Spitter2022StopCMD(Spitter2022 spitter) {
     this.spitter = spitter;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(spitter);
@@ -27,7 +27,7 @@ public class Spitter2022ForwardCMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.info("Setting spitter forward");
+    LOGGER.info("Setting spitter stopped");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

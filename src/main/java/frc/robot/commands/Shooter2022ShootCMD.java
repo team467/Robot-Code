@@ -40,7 +40,7 @@ public class Shooter2022ShootCMD extends CommandBase {
         this.triggerForward = new Trigger2022ForwardCMD(trigger);
         this.triggerIdle = new Trigger2022IdleCMD(trigger);
 
-        this.spitterForward = new Spitter2022Forward(spitter);
+        this.spitterForward = new Spitter2022ForwardCMD(spitter);
 
         this.timer = new Timer();
     }
