@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
+import frc.robot.motors.MotorType;
 
 public class Spitter2022 extends SubsystemBase {
     private final double THRESHOLD = 10;
@@ -19,7 +20,7 @@ public class Spitter2022 extends SubsystemBase {
         super();
 
         spitterMotor = MotorControllerFactory.create(RobotConstants.get().spitter2022MotorId(),
-                RobotConstants.get().spitter2022MotorType());
+                MotorType.SPARK_MAX_BRUSHLESS);
         spitterMotor.setInverted(RobotConstants.get().spitter2022MotorInverted());
 
         spitterPIDController = new PIDController(RobotConstants.get().spitter2022kP(),

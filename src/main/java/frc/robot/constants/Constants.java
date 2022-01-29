@@ -64,7 +64,6 @@ public interface Constants {
 
     public boolean hasSpitter2022();
     public int spitter2022MotorId();
-    public MotorType spitter2022MotorType();
     public boolean spitter2022MotorInverted();
     public double spitter2022kP();
     public double spitter2022kI();

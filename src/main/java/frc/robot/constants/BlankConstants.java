@@ -284,11 +284,6 @@ public class BlankConstants implements Constants {
     }
 
     @Override
-    public MotorType spitter2022MotorType() {
-        return MotorType.TALON_SRX;
-    }
-
-    @Override
     public boolean spitter2022MotorInverted() {
         return false;
     }

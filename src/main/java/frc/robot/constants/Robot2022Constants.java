@@ -2,11 +2,11 @@ package frc.robot.constants;
 
 import frc.robot.motors.MotorType;
 
-public class KitBot2022Constants implements Constants {
+public class Robot2022Constants implements Constants {
 
     @Override
     public String name() {
-        return "KitBot 2022";
+        return "Robot 2022";
     }
 
     @Override
@@ -21,7 +21,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public MotorType driveMotorType() {
-        return MotorType.TALON_SRX;
+        return MotorType.SPARK_MAX_BRUSHLESS;
     }
 
     @Override
@@ -216,47 +216,47 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public int trigger2022MotorID() {
-        return 0;
+        return 9;
     }
 
     @Override
     public double trigger2022IdleSpeed() {
-        return 0;
+        return 0.2;
     }
 
     @Override
     public double trigger2022InSpeed() {
-        return 0;
+        return 1.0;
     }
 
     @Override
     public double trigger2022OutSpeed() {
-        return 0;
+        return 1.0;
     }
 
     @Override
     public boolean hasLlamaNeck2022() {
-        return false;
+        return true;
     }
 
     @Override
     public int llamaNeck2022MotorID() {
-        return 0;
+        return 8;
     }
 
     @Override
     public double llamaNeck2022IdleSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public double llamaNeck2022InSpeed() {
-        return 0;
+        return 1.0;
     }
     
     @Override
     public double llamaNeck2022OutSpeed() {
-     return 0;   
+     return 1.0;   
     }
 
     @Override
@@ -266,7 +266,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public int llamaNeck2022LowerLimitSwitchChannel() {
-        return 0;
+        return 1;
     }
     
     @Override
@@ -276,7 +276,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override 
     public int spitter2022MotorId() {
-        return 0;
+        return 5;
     }
 
     @Override
@@ -321,11 +321,11 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public double spitter2022ForwardSpeed() {
-        return 0;
+        return 1.0;
     }
 
     @Override
     public double spitter2022BackwardSpeed() {
-        return 0;
+        return -1.0;
     }
 }
