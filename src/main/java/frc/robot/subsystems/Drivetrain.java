@@ -88,14 +88,15 @@ public class Drivetrain extends SubsystemTuner {
     public void initalizeTunerNetworkTables() {
         addTunerParameter("speed", TunerParamterFactory.create("Driving Speed", this, NetworkTableType.kDouble));
         addTunerParameter("turn", TunerParamterFactory.create("Turning Speed", this, NetworkTableType.kDouble));
-        addTunerButton("jump", TunerButtonFactory.create("Jump", this));
+        addTunerButton("run", TunerButtonFactory.create("Run", this));
     }
 
     @Override
     public void initalizeTuner() {
+        getTunerButton("run").whileActiveContinuous(
         new ArcadeDriveCMD(this, 
             () -> getTunerParameter("speed").getValue().getDouble(), 
             () -> getTunerParameter("turn").getValue().getDouble()
-        ).schedule();
+        ));
     }
 }

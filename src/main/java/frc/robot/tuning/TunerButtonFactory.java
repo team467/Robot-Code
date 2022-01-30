@@ -13,7 +13,7 @@ import frc.robot.commands.ArcadeDriveCMD;
 
 public class TunerButtonFactory {
     public static TunerButton create(String name, Tuner tuner) {
-        return new TunerButton() {
+        TunerButton tunerButton = new TunerButton() {
             private String buttonName = name;
             private NetworkTableEntry tableEntry = NetworkTableInstance.getDefault().getTable("tuning").getSubTable(tuner.getTunerName()).getEntry(getName());
             
@@ -27,5 +27,8 @@ public class TunerButtonFactory {
                 return tableEntry;
             }
         };
+
+        tunerButton.unpress();
+        return tunerButton;
     }
 }
