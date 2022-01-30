@@ -24,12 +24,12 @@ public class ClimberEnable2022CMD extends CommandBase {
 
     @Override 
     public void initialize() {
+        climber.enable();
         LOGGER.info("Climber enabled");
     }
 
     @Override 
     public void execute(){
-        climber.enable();
     }
 
 
@@ -39,6 +39,6 @@ public class ClimberEnable2022CMD extends CommandBase {
 
     @Override 
     public boolean isFinished() {
-        return false;
+        return true;
     }
 }

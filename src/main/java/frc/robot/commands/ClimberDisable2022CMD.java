@@ -15,20 +15,19 @@ public class ClimberDisable2022CMD extends CommandBase{
 
     public ClimberDisable2022CMD(Climber2022 climber) {
         this.climber = climber;
-
         addRequirements(climber);
     }
     
 
     @Override 
     public void initialize() {
+        climber.disable();
         LOGGER.info("Climber disabled");
     }
 
 
     @Override 
     public void execute() {
-        climber.disable();
     }
 
     @Override 
@@ -37,6 +36,6 @@ public class ClimberDisable2022CMD extends CommandBase{
 
     @Override 
     public boolean isFinished() {
-        return false;
+        return true;
     }
 }

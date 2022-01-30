@@ -21,7 +21,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public MotorType driveMotorType() {
-        return MotorType.TALON_SRX;
+        return MotorType.SPARK_MAX_BRUSHLESS;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public boolean hasClimber2022() {
-        return false;
+        return true;
     }
 
     @Override

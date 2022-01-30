@@ -65,27 +65,27 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
-    public boolean hasClimber2020() {
+    public boolean hasClimber2022() {
         return false;
     }
 
     @Override
-    public int climber2020MotorId() {
+    public int climber2022MotorId() {
         return 0;
     }
 
     @Override
-    public boolean climber2020MotorInverted() {
+    public boolean climber2022MotorInverted() {
         return false;
     }
 
     @Override
-    public double climber2020UpSpeed() {
+    public double climber2022UpSpeed() {
         return 0.3;
     }
 
     @Override
-    public double climber2020DownSpeed() {
+    public double climber2022DownSpeed() {
         return 0.1;
     }
 

@@ -8,11 +8,16 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ArcadeDriveCMD;
-import frc.robot.commands.ClimberDownCMD;
-import frc.robot.commands.ClimberEnableCMD;
-import frc.robot.commands.ClimberStopCMD;
-import frc.robot.commands.ClimberDisableCMD;
-import frc.robot.commands.ClimberUpCMD;
+import frc.robot.commands.ClimberDisable2022CMD;
+//import frc.robot.commands.ClimberDownCMD;
+import frc.robot.commands.ClimberEnable2022CMD;
+//import frc.robot.commands.ClimberEnableCMD;
+import frc.robot.commands.ClimberStop2022CMD;
+//import frc.robot.commands.ClimberStopCMD;
+import frc.robot.commands.ClimberUp2022CMD;
+//import frc.robot.commands.ClimberDisableCMD;
+import frc.robot.commands.ClimberDown2022CMD;
+//import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.Trigger2022BackwardCMD;
 import frc.robot.commands.Trigger2022ForwardCMD;
 import frc.robot.commands.Trigger2022IdleCMD;
@@ -30,12 +35,13 @@ import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
-import frc.robot.subsystems.Climber2020;
+//import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Trigger2022;
 import frc.robot.subsystems.Intake2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
+import frc.robot.subsystems.Climber2022;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -48,11 +54,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private Drivetrain drivetrain = null;
-  private Climber2020 climber = null;
+  //private Climber2020 climber = null;
   private Shooter2020 shooter = null;
   private Intake2022 intake = null;
   private LlamaNeck2022 llamaNeck = null;
   private Trigger2022 trigger = null;
+  private Climber2022 climber = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -98,10 +105,11 @@ public class RobotContainer {
    */
   public void configureButtonBindings() {
     initDrivetrain();
-    initClimber2020();
+    //initClimber2020();
     initShooter2020();
     initIntake2022();
     initTrigger2022();
+    initClimber2022();
   }
 
   private void initDrivetrain() {
@@ -112,16 +120,6 @@ public class RobotContainer {
         () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
       ));
 
-    }
-  }
-
-  private void initClimber2020() {
-    if (RobotConstants.get().hasClimber2020()) {
-      climber = new Climber2020();
-      climber.setDefaultCommand(new ClimberStopCMD(climber));
-      operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
-      operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
-      operatorClimberDown.whenHeld(new ClimberDownCMD(climber));
     }
   }
 
@@ -165,6 +163,17 @@ public class RobotContainer {
       operatorIndexRollerForward.whenHeld(new Trigger2022ForwardCMD(trigger));
       operatorShooterShoot.whenHeld(new Trigger2022StopCMD(trigger));
       operatorIndexRollerBackward.whenHeld(new Trigger2022BackwardCMD(trigger));
+    }
+  }
+
+  private void initClimber2022() {
+    if (RobotConstants.get().hasClimber2022()) {
+      climber = new Climber2022();
+      climber.setDefaultCommand(new ClimberStop2022CMD(climber));
+      operatorClimberLock.whenPressed(new ClimberEnable2022CMD(climber));
+      operatorClimberLock.whenReleased(new ClimberDisable2022CMD(climber));
+      operatorClimberUp.whileHeld(new ClimberUp2022CMD(climber));
+      operatorClimberDown.whileHeld(new ClimberDown2022CMD(climber));
     }
   }
 

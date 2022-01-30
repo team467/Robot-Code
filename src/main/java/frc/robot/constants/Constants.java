@@ -16,11 +16,11 @@ public interface Constants {
     public int driveMotorRightFollowerId();
     public boolean driveMotorRightFollowerInverted();
 
-    public boolean hasClimber2020();
-    public int climber2020MotorId();
-    public boolean climber2020MotorInverted();
-    public double climber2020UpSpeed();
-    public double climber2020DownSpeed();
+    public boolean hasClimber2022();
+    public int climber2022MotorId();
+    public boolean climber2022MotorInverted();
+    public double climber2022UpSpeed();
+    public double climber2022DownSpeed();
 
     public boolean hasShooter2020();
     public MotorType shooter2020MotorType();

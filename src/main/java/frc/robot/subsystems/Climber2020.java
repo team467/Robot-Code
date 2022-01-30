@@ -8,13 +8,13 @@ import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 
 public class Climber2020 extends SubsystemBase {
-    private MotorControllerEncoder climberMotor = MotorControllerFactory.create(RobotConstants.get().climber2020MotorId(), MotorType.SPARK_MAX_BRUSHLESS);
+    private MotorControllerEncoder climberMotor = MotorControllerFactory.create(RobotConstants.get().climber2022MotorId(), MotorType.SPARK_MAX_BRUSHLESS);
     private boolean enabled = false;
 
     public Climber2020() {
         super();
 
-        climberMotor.setInverted(RobotConstants.get().climber2020MotorInverted());
+        climberMotor.setInverted(RobotConstants.get().climber2022MotorInverted());
     }
 
     public void enable() {
@@ -31,13 +31,13 @@ public class Climber2020 extends SubsystemBase {
 
     public void up() {
         if (this.isEnabled()) {
-            climberMotor.set(RobotConstants.get().climber2020UpSpeed());
+            climberMotor.set(RobotConstants.get().climber2022UpSpeed());
         }
     }
 
     public void down() {
         if (this.isEnabled()) {
-            climberMotor.set(-RobotConstants.get().climber2020DownSpeed());
+            climberMotor.set(RobotConstants.get().climber2022DownSpeed());
         }
     }
 
