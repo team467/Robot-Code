@@ -1,39 +1,39 @@
 package frc.robot.commands;
 
 import frc.robot.logging.RobotLogManager;
-import frc.robot.subsystems.Trigger2022;
+import frc.robot.subsystems.Indexer2022;
 
 import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class Trigger2022ForwardCMD extends CommandBase {
-  private final Trigger2022 trigger;
+public class Indexer2022ForwardCMD extends CommandBase {
+  private final Indexer2022 indexer;
 
-  private static final Logger LOGGER = RobotLogManager.getMainLogger(Trigger2022ForwardCMD.class.getName());
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Indexer2022ForwardCMD.class.getName());
 
   
   /**
-   * Creates a new Trigger2022ForwardCMD.
+   * Creates a new Indexer2022ForwardCMD.
    *
-   * @param trigger The subsystem used by this command.
+   * @param indexer The subsystem used by this command.
    */
-  public Trigger2022ForwardCMD(Trigger2022 trigger) {
-    this.trigger = trigger;
+  public Indexer2022ForwardCMD(Indexer2022 indexer) {
+    this.indexer = indexer;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(trigger);
+    addRequirements(indexer);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.debug("Setting Trigger Fast Forward");
+    LOGGER.debug("Setting indexer Fast Forward");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    trigger.forward();
+    indexer.forward();
   }
 
   // Called once the command ends or is interrupted.

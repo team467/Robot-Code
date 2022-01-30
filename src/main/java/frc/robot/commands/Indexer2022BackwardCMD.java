@@ -1,39 +1,39 @@
 package frc.robot.commands;
 
 import frc.robot.logging.RobotLogManager;
-import frc.robot.subsystems.Trigger2022;
+import frc.robot.subsystems.Indexer2022;
 
 import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class Trigger2022StopCMD extends CommandBase {
-  private final Trigger2022 trigger;
+public class Indexer2022BackwardCMD extends CommandBase {
+  private final Indexer2022 indexer;
 
-  private static final Logger LOGGER = RobotLogManager.getMainLogger(Trigger2022StopCMD.class.getName());
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Indexer2022BackwardCMD.class.getName());
 
 
   /**
-   * Creates a new Trigger2022StopCMD.
+   * Creates a new Indexer2022BackwardCMD.
    *
-   * @param trigger The subsystem used by this command.
+   * @param indexer The subsystem used by this command.
    */
-  public Trigger2022StopCMD(Trigger2022 trigger) {
-    this.trigger = trigger;
+  public Indexer2022BackwardCMD(Indexer2022 indexer) {
+    this.indexer = indexer;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(trigger);
+    addRequirements(indexer);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.debug("Setting Trigger stop");
+    LOGGER.debug("Setting indexer backwards");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    trigger.stop();
+    indexer.backward();
   }
 
   // Called once the command ends or is interrupted.

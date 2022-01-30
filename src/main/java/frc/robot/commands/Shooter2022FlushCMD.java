@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Spitter2022;
-import frc.robot.subsystems.Trigger2022;
+import frc.robot.subsystems.Indexer2022;
 
 public class Shooter2022FlushCMD extends CommandBase {
 
@@ -15,15 +15,15 @@ public class Shooter2022FlushCMD extends CommandBase {
 
     private final Command llamaNeckBackward;
 
-    private final Command triggerBackward;
+    private final Command indexerBackward;
 
     private final Command spitterStop;
 
-    public Shooter2022FlushCMD(Trigger2022 trigger, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
+    public Shooter2022FlushCMD(Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
         super();
 
         this.llamaNeckBackward = new LlamaNeck2022BackwardCMD(llamaNeck);
-        this.triggerBackward = new Trigger2022BackwardCMD(trigger);
+        this.indexerBackward = new Indexer2022BackwardCMD(indexer);
         this.spitterStop = new Spitter2022StopCMD(spitter);
     }
 
@@ -31,7 +31,7 @@ public class Shooter2022FlushCMD extends CommandBase {
     public void initialize() {
         LOGGER.debug("Flushing system");
         llamaNeckBackward.schedule();
-        triggerBackward.schedule();
+        indexerBackward.schedule();
         spitterStop.schedule();
     }
 

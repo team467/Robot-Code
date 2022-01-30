@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Spitter2022;
-import frc.robot.subsystems.Trigger2022;
+import frc.robot.subsystems.Indexer2022;
 
 public class Shooter2022IdleCMD extends CommandBase {
 
@@ -18,12 +18,12 @@ public class Shooter2022IdleCMD extends CommandBase {
     private final Command llamaNeckStop;
     private final Command llamaNeckIdle;
 
-    private final Command triggerStop;
-    private final Command triggerIdle;
+    private final Command indexerStop;
+    private final Command indexerIdle;
 
     private final Command spitterStop;
 
-    public Shooter2022IdleCMD(Trigger2022 trigger, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
+    public Shooter2022IdleCMD(Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
         super();
 
         this.llamaNeck = llamaNeck;
@@ -31,8 +31,8 @@ public class Shooter2022IdleCMD extends CommandBase {
         this.llamaNeckStop = new LlamaNeck2022StopCMD(llamaNeck);
         this.llamaNeckIdle = new LlamaNeck2022IdleCMD(llamaNeck);
 
-        this.triggerStop = new Trigger2022StopCMD(trigger);
-        this.triggerIdle = new Trigger2022IdleCMD(trigger);
+        this.indexerStop = new Indexer2022StopCMD(indexer);
+        this.indexerIdle = new Indexer2022IdleCMD(indexer);
 
         this.spitterStop = new Spitter2022StopCMD(spitter);
     }
@@ -40,7 +40,7 @@ public class Shooter2022IdleCMD extends CommandBase {
     @Override
     public void initialize() {
         LOGGER.debug("Idling system...");
-        triggerIdle.schedule();
+        indexerIdle.schedule();
         llamaNeckIdle.schedule();
         spitterStop.schedule();
     }
@@ -48,15 +48,15 @@ public class Shooter2022IdleCMD extends CommandBase {
     @Override
     public void execute() {
         if (llamaNeck.getUpperLimitSwitch()) {
-            LOGGER.debug("Upper limit switch was activated. Stop trigger.");
-            triggerStop.schedule();
+            LOGGER.debug("Upper limit switch was activated. Stop indexer.");
+            indexerStop.schedule();
 
             if (llamaNeck.getLowerLimitSwitch()) {
                 LOGGER.debug("Lower limit switch was activated. Stop llama neck.");
                 llamaNeckStop.schedule();
             }
         } else {
-            triggerIdle.schedule();
+            indexerIdle.schedule();
             llamaNeckIdle.schedule();
         }
     }

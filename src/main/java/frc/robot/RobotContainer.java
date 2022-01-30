@@ -13,10 +13,10 @@ import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
-import frc.robot.commands.Trigger2022BackwardCMD;
-import frc.robot.commands.Trigger2022ForwardCMD;
-import frc.robot.commands.Trigger2022IdleCMD;
-import frc.robot.commands.Trigger2022StopCMD;
+import frc.robot.commands.Indexer2022BackwardCMD;
+import frc.robot.commands.Indexer2022ForwardCMD;
+import frc.robot.commands.Indexer2022IdleCMD;
+import frc.robot.commands.Indexer2022StopCMD;
 import frc.robot.commands.LlamaNeck2022BackwardCMD;
 import frc.robot.commands.LlamaNeck2022ForwardCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
@@ -33,7 +33,7 @@ import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Trigger2022;
+import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
 import frc.robot.subsystems.Shooter2022;
@@ -53,7 +53,7 @@ public class RobotContainer {
   private Climber2020 climber = null;
   private Shooter2020 shooter = null;
   private LlamaNeck2022 llamaNeck = null;
-  private Trigger2022 trigger = null;
+  private Indexer2022 indexer = null;
   private Spitter2022 spitter = null;
   private Shooter2022 shooter2022 = null;
 
@@ -103,7 +103,7 @@ public class RobotContainer {
     initDrivetrain();
     initClimber2020();
     initShooter2020();
-    initTrigger2022();
+    initIndexer2022();
   }
 
   private void initDrivetrain() {
@@ -151,13 +151,13 @@ public class RobotContainer {
     }
   }
 
-  private void initTrigger2022() {
-    if (RobotConstants.get().hasTrigger2022()) {
-      trigger = new Trigger2022();
-      trigger.setDefaultCommand(new Trigger2022IdleCMD(trigger));
-      operatorIndexRollerForward.whenHeld(new Trigger2022ForwardCMD(trigger));
-      operatorShooterShoot.whenHeld(new Trigger2022StopCMD(trigger));
-      operatorIndexRollerBackward.whenHeld(new Trigger2022BackwardCMD(trigger));
+  private void initIndexer2022() {
+    if (RobotConstants.get().hasIndexer2022()) {
+      indexer = new Indexer2022();
+      indexer.setDefaultCommand(new Indexer2022IdleCMD(indexer));
+      operatorIndexRollerForward.whenHeld(new Indexer2022ForwardCMD(indexer));
+      operatorShooterShoot.whenHeld(new Indexer2022StopCMD(indexer));
+      operatorIndexRollerBackward.whenHeld(new Indexer2022BackwardCMD(indexer));
     }
   }
 
@@ -170,9 +170,9 @@ public class RobotContainer {
 
   private void initShooter2022() {
     shooter2022 = new Shooter2022();
-    shooter2022.setDefaultCommand(new Shooter2022IdleCMD(trigger, llamaNeck, spitter));
-    operatorShooterShoot.whenPressed(new Shooter2022ShootCMD(trigger, llamaNeck, spitter));
-    operatorIntakeRollerBackward.whenHeld(new Shooter2022FlushCMD(trigger, llamaNeck, spitter));
+    shooter2022.setDefaultCommand(new Shooter2022IdleCMD(indexer, llamaNeck, spitter));
+    operatorShooterShoot.whenPressed(new Shooter2022ShootCMD(indexer, llamaNeck, spitter));
+    operatorIntakeRollerBackward.whenHeld(new Shooter2022FlushCMD(indexer, llamaNeck, spitter));
 
   }
 

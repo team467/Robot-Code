@@ -210,27 +210,27 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
-    public boolean hasTrigger2022() {
+    public boolean hasIndexer2022() {
         return false;
     }
 
     @Override
-    public int trigger2022MotorID() {
+    public int indexer2022MotorID() {
         return 0;
     }
 
     @Override
-    public double trigger2022IdleSpeed() {
+    public double indexer2022IdleSpeed() {
         return 0;
     }
 
     @Override
-    public double trigger2022InSpeed() {
+    public double indexer2022InSpeed() {
         return 0;
     }
 
     @Override
-    public double trigger2022OutSpeed() {
+    public double indexer2022OutSpeed() {
         return 0;
     }
 

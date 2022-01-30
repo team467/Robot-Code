@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Spitter2022;
-import frc.robot.subsystems.Trigger2022;
+import frc.robot.subsystems.Indexer2022;
 
 public class Shooter2022ShootCMD extends CommandBase {
 
@@ -17,14 +17,14 @@ public class Shooter2022ShootCMD extends CommandBase {
     private final Command llamaNeckStop;
     private final Command llamaNeckForward;
 
-    private final Command triggerStop;
-    private final Command triggerForward;
+    private final Command indexerStop;
+    private final Command indexerForward;
 
     private final Command spitterForward;
 
     private final Timer timer;
 
-    public Shooter2022ShootCMD(Trigger2022 trigger, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
+    public Shooter2022ShootCMD(Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
         super();
 
         this.llamaNeck = llamaNeck;
@@ -33,8 +33,8 @@ public class Shooter2022ShootCMD extends CommandBase {
         this.llamaNeckStop = new LlamaNeck2022StopCMD(llamaNeck);
         this.llamaNeckForward = new LlamaNeck2022ForwardCMD(llamaNeck);
 
-        this.triggerStop = new Trigger2022StopCMD(trigger);
-        this.triggerForward = new Trigger2022ForwardCMD(trigger);
+        this.indexerStop = new Indexer2022StopCMD(indexer);
+        this.indexerForward = new Indexer2022ForwardCMD(indexer);
 
         this.spitterForward = new Spitter2022ForwardCMD(spitter);
 
@@ -43,7 +43,7 @@ public class Shooter2022ShootCMD extends CommandBase {
 
     @Override
     public void initialize() {
-        triggerStop.schedule();
+        indexerStop.schedule();
         llamaNeckStop.schedule();
         spitterForward.schedule();
 
@@ -53,7 +53,7 @@ public class Shooter2022ShootCMD extends CommandBase {
     @Override
     public void execute() {
         if (spitter.atSpeed()) {
-            triggerForward.schedule();
+            indexerForward.schedule();
             llamaNeckForward.schedule();
         }
     }
