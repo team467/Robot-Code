@@ -13,28 +13,24 @@ import org.apache.logging.log4j.Logger;
 
 // down, up, enable, stop
 public class Climber2022 extends SubsystemBase {
-
+    private MotorControllerEncoder climberMotor =MotorControllerFactory.create(RobotConstants.get().climber2022MotorId(),MotorType.SPARK_MAX_BRUSHLESS);
+    private boolean enabled = false;
     private static final Logger LOGGER = RobotLogManager.getMainLogger(Climber2022.class.getName());
 
-
-    //private MotorControllerEncoder climberMotor = MotorControllerFactory.create(RobotConstants.get().climber2022MotorID(), MotorType.);
-    private boolean enabled = false;
 
     public Climber2022() {
         super();
 
-        //climberMotor.setInverted(RobotConstants.get().climber) what
+        climberMotor.setInverted(RobotConstants.get().climber2022MotorInverted());
     }
 
     public void enable() {
         enabled = true;
-        //LOGGER.info("Climber enabled");
     }
 
     public void disable() {
         enabled = false;
         stop();
-        //LOGGER.info("Climber disabled");
     }
 
     public boolean isEnabled() {
@@ -42,13 +38,27 @@ public class Climber2022 extends SubsystemBase {
     }
 
     public void up() {
+        if(this.isEnabled()) {
+            climberMotor.set(RobotConstants.get().climber2022UpSpeed());
+        }
     }
 
     public void down() {
+        if (this.isEnabled()){
+            climberMotor.set(RobotConstants.get().climber2022DownSpeed());
+        }
     }
 
     public void stop () {
-        //climberMotor.set(0);
+        climberMotor.set(0);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+
+        builder.addDoubleProperty("Climber Position", () -> climberMotor.getPosition(),null);
+        builder.addDoubleProperty("Climber Velocity", () -> climberMotor.getVelocity(), null);
     }
 }
 

@@ -71,7 +71,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public int climber2022MotorId() {
-        return 0;
+        return 6;
     }
 
     @Override
