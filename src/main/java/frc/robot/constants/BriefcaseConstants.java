@@ -208,5 +208,20 @@ public class BriefcaseConstants implements Constants {
     public double shooter2020RightServoMin() {
         return 0;
     }
+
+    @Override
+    public boolean hasLEDTower2022() {
+        return false;
+    }
+
+    @Override
+    public int ledTower2022LEDCount() {
+        return 0;
+    }
+
+    @Override
+    public int ledTower2022LEDChannel() {
+        return 0;
+    }
     
 }

@@ -21,7 +21,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public MotorType driveMotorType() {
-        return MotorType.TALON_SRX;
+        return MotorType.SPARK_MAX_BRUSHLESS;
     }
 
     @Override
@@ -208,5 +208,19 @@ public class KitBot2022Constants implements Constants {
     public double shooter2020RightServoMin() {
         return 0;
     }
-    
+
+    @Override
+    public boolean hasLEDTower2022() {
+        return true;
+    }
+
+    @Override
+    public int ledTower2022LEDCount() {
+        return 10;
+    }
+
+    @Override
+    public int ledTower2022LEDChannel() {
+        return 0;
+    }
 }

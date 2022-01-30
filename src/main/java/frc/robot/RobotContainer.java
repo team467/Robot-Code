@@ -13,6 +13,8 @@ import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
+import frc.robot.commands.LEDTower2022ColorCycleCMD;
+import frc.robot.commands.LEDTower2022FoundBallCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
@@ -22,14 +24,18 @@ import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.LEDTower2022;
 import frc.robot.subsystems.Shooter2020;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -37,6 +43,7 @@ public class RobotContainer {
   private Drivetrain drivetrain = null;
   private Climber2020 climber = null;
   private Shooter2020 shooter = null;
+  private LEDTower2022 ledTower2022 = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -45,29 +52,48 @@ public class RobotContainer {
   private final JoystickButton driverButtonB = new JoystickButton(driverJoystick, XboxController467.Buttons.B.value);
   private final JoystickButton driverButtonX = new JoystickButton(driverJoystick, XboxController467.Buttons.X.value);
   private final JoystickButton driverButtonY = new JoystickButton(driverJoystick, XboxController467.Buttons.Y.value);
-  private final JoystickButton driverButtonBack = new JoystickButton(driverJoystick, XboxController467.Buttons.Back.value);
-  private final JoystickButton driverButtonStart = new JoystickButton(driverJoystick, XboxController467.Buttons.Start.value);
+  private final JoystickButton driverButtonBack = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.Back.value);
+  private final JoystickButton driverButtonStart = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.Start.value);
   private final JoystickButton driverPovUp = new JoystickButton(driverJoystick, XboxController467.Buttons.POVup.value);
-  private final JoystickButton driverPovDown = new JoystickButton(driverJoystick, XboxController467.Buttons.POVdown.value);
-  private final JoystickButton driverPovLeft = new JoystickButton(driverJoystick, XboxController467.Buttons.POVleft.value);
-  private final JoystickButton driverPovRight = new JoystickButton(driverJoystick, XboxController467.Buttons.POVright.value);
-  private final JoystickButton driverLeftBumper = new JoystickButton(driverJoystick, XboxController467.Buttons.BumperLeft.value);
-  private final JoystickButton driverRightBumper = new JoystickButton(driverJoystick, XboxController467.Buttons.BumperRight.value);
+  private final JoystickButton driverPovDown = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.POVdown.value);
+  private final JoystickButton driverPovLeft = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.POVleft.value);
+  private final JoystickButton driverPovRight = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.POVright.value);
+  private final JoystickButton driverLeftBumper = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.BumperLeft.value);
+  private final JoystickButton driverRightBumper = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.BumperRight.value);
 
   // Custom controller for operator
   private final GenericHID operatorJoystick = new Joystick(1);
-  private final JoystickButton operatorInakeArm = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ARM.value);
-  private final JoystickButton operatorIntakeRollerForward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ROLLER_FORWARD.value);
-  private final JoystickButton operatorIntakeRollerBackward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ROLLER_BACKWARD.value);
-  private final JoystickButton operatorIndexAuto = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INDEX_AUTO.value);
-  private final JoystickButton operatorIndexRollerForward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INDEX_ROLLER_FORWARD.value);
-  private final JoystickButton operatorIndexRollerBackward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INDEX_ROLLER_BACKWARD.value);
-  private final JoystickButton operatorShooterAuto = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_AUTO.value);
-  private final JoystickButton operatorShooterFlywheel = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_FLYWHEEL.value);
-  private final JoystickButton operatorShooterShoot = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_SHOOT.value);
-  private final JoystickButton operatorClimberLock = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_LOCK_SWITCH.value);
-  private final JoystickButton operatorClimberUp = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_UP_BUTTON.value);
-  private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
+  private final JoystickButton operatorInakeArm = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INTAKE_ARM.value);
+  private final JoystickButton operatorIntakeRollerForward = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INTAKE_ROLLER_FORWARD.value);
+  private final JoystickButton operatorIntakeRollerBackward = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INTAKE_ROLLER_BACKWARD.value);
+  private final JoystickButton operatorIndexAuto = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INDEX_AUTO.value);
+  private final JoystickButton operatorIndexRollerForward = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INDEX_ROLLER_FORWARD.value);
+  private final JoystickButton operatorIndexRollerBackward = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INDEX_ROLLER_BACKWARD.value);
+  private final JoystickButton operatorShooterAuto = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.SHOOTER_AUTO.value);
+  private final JoystickButton operatorShooterFlywheel = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.SHOOTER_FLYWHEEL.value);
+  private final JoystickButton operatorShooterShoot = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.SHOOTER_SHOOT.value);
+  private final JoystickButton operatorClimberLock = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.CLIMBER_LOCK_SWITCH.value);
+  private final JoystickButton operatorClimberUp = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.CLIMBER_UP_BUTTON.value);
+  private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
 
   public RobotContainer() {
     // Configure the button bindings
@@ -75,24 +101,26 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your button to command mappings. Buttons can be created by
+   * Use this method to define your button to command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   public void configureButtonBindings() {
     initDrivetrain();
     initClimber2020();
     initShooter2020();
+    initLEDTower2022();
   }
 
   private void initDrivetrain() {
     if (RobotConstants.get().hasDrivetrain()) {
       drivetrain = new Drivetrain();
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
-        () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
-        () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
-      ));
+          () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
+          () -> driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)));
 
     }
   }
@@ -115,10 +143,18 @@ public class RobotContainer {
       operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
       operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
 
-      // This is test code used on the robot to spin the flywheel to a certian speed depedning on the joystick
+      // This is test code used on the robot to spin the flywheel to a certian speed
+      // depedning on the joystick
       // shooter.setDefaultCommand(new ShooterSetCMD(shooter,
-      //   () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
+      // () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
       // ));
+    }
+  }
+
+  private void initLEDTower2022() {
+    if (RobotConstants.get().hasLEDTower2022()) {
+      ledTower2022 = new LEDTower2022();
+      ledTower2022.setDefaultCommand(new LEDTower2022ColorCycleCMD(ledTower2022));
     }
   }
 
