@@ -43,7 +43,7 @@ public class Shooter2022IdleCMD extends CommandBase {
 
     @Override
     public void initialize() {
-        LOGGER.info("Idling system...");
+        LOGGER.debug("Idling system...");
         triggerIdle.schedule();
         llamaNeckIdle.schedule();
         spitterStop.schedule();
@@ -52,11 +52,11 @@ public class Shooter2022IdleCMD extends CommandBase {
     @Override
     public void execute() {
         if (llamaNeck.getUpperLimitSwitch()) {
-            LOGGER.info("Upper limit switch was activated. Stop trigger.");
+            LOGGER.debug("Upper limit switch was activated. Stop trigger.");
             triggerStop.schedule();
 
             if (llamaNeck.getLowerLimitSwitch()) {
-                LOGGER.info("Lower limit switch was activated. Stop llama neck.");
+                LOGGER.debug("Lower limit switch was activated. Stop llama neck.");
                 llamaNeckStop.schedule();
             }
         } else {

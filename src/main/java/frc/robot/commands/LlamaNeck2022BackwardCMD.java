@@ -26,7 +26,7 @@ public class LlamaNeck2022BackwardCMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.info("Setting Llama Neck backward");
+    LOGGER.debug("Setting Llama Neck backward");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

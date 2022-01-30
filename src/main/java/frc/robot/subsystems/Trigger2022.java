@@ -22,23 +22,23 @@ public class Trigger2022 extends SubsystemBase {
 
     public void idle() {
         //MAKE SURE SPEED IS PRETTY SLOW, apporximately 20%
-        LOGGER.info("Starting indexer slowly, setting speed to " + RobotConstants.get().trigger2022IdleSpeed());
+        LOGGER.debug("Starting indexer slowly, setting speed to " + RobotConstants.get().trigger2022IdleSpeed());
         triggerMotor.set(RobotConstants.get().trigger2022IdleSpeed());
 
     }
 
     public void forward() {
-        LOGGER.info("Starting indexer quickly, setting speed to " + RobotConstants.get().trigger2022InSpeed());
+        LOGGER.debug("Starting indexer quickly, setting speed to " + RobotConstants.get().trigger2022InSpeed());
         triggerMotor.set(RobotConstants.get().trigger2022InSpeed());
     }
 
     public void backward() {
-        LOGGER.info("Reversing indexer, setting speed to " + RobotConstants.get().trigger2022OutSpeed());
+        LOGGER.debug("Reversing indexer, setting speed to " + RobotConstants.get().trigger2022OutSpeed());
         triggerMotor.set(-RobotConstants.get().trigger2022OutSpeed());
     }
 
     public void stop() {
-        LOGGER.info("Stopping indexer, setting speed to 0");
+        LOGGER.debug("Stopping indexer, setting speed to 0");
         triggerMotor.set(0);
     }
 

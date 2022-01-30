@@ -30,7 +30,7 @@ public class Robot2022PanicCMD extends CommandBase {
 
     @Override
     public void initialize() {
-        LOGGER.info("Panic button pressed, cancel commands!");
+        LOGGER.debug("Panic button pressed, cancel commands!");
         trigger.getCurrentCommand().cancel();
         llamaNeck.getCurrentCommand().cancel();
         spitter.getCurrentCommand().cancel();

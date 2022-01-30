@@ -27,7 +27,7 @@ public class Spitter2022ForwardCMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.info("Setting spitter forward");
+    LOGGER.debug("Setting spitter forward");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -27,7 +27,7 @@ public class Spitter2022StopCMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.info("Setting spitter stopped");
+    LOGGER.debug("Setting spitter stopped");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -27,7 +27,7 @@ public class Spitter2022BackwardCMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.info("Setting spitter backward");
+    LOGGER.debug("Setting spitter backward");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

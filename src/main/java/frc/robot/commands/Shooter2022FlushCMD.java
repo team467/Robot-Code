@@ -37,7 +37,7 @@ public class Shooter2022FlushCMD extends CommandBase {
 
     @Override
     public void initialize() {
-        LOGGER.info("Flushing system");
+        LOGGER.debug("Flushing system");
         llamaNeckBackward.schedule();
         triggerBackward.schedule();
         spitterStop.schedule();

@@ -27,7 +27,7 @@ public class Trigger2022ForwardCMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.info("Setting Trigger Fast Forward");
+    LOGGER.debug("Setting Trigger Fast Forward");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

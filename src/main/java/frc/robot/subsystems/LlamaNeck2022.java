@@ -35,22 +35,22 @@ public class LlamaNeck2022 extends SubsystemBase {
     }
 
     public void idle() {
-        LOGGER.info("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022IdleSpeed());
+        LOGGER.debug("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022IdleSpeed());
         llamaNeckMotor.set(RobotConstants.get().llamaNeck2022IdleSpeed());
     }
 
     public void forward() {
-        LOGGER.info("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022InSpeed());
+        LOGGER.debug("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022InSpeed());
         llamaNeckMotor.set(RobotConstants.get().llamaNeck2022InSpeed());
     }
 
     public void backward() {
-        LOGGER.info("Reversing index, setting speed to " + RobotConstants.get().llamaNeck2022OutSpeed());
+        LOGGER.debug("Reversing index, setting speed to " + RobotConstants.get().llamaNeck2022OutSpeed());
         llamaNeckMotor.set(-RobotConstants.get().llamaNeck2022OutSpeed());
     }
 
     public void stop() {
-        LOGGER.info("Stopping llamaNeck, setting speed to 0");
+        LOGGER.debug("Stopping llamaNeck, setting speed to 0");
         llamaNeckMotor.set(0.0);
     }
 
