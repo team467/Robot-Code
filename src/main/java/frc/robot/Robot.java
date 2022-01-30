@@ -9,6 +9,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.tuning.TunerManager;
 
+import java.io.IOException;
+
+import frc.robot.logging.RobotLogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -16,6 +21,9 @@ import frc.robot.tuning.TunerManager;
  * project.
  */
 public class Robot extends TimedRobot {
+
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Robot.class.getName());
+
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
@@ -30,6 +38,15 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     
     m_robotContainer = new RobotContainer();
+
+    // Mounting USB
+    ProcessBuilder builder = new ProcessBuilder();
+    builder.command("sudo", "mount", "/dev/sda1", "/media");
+    try {
+      builder.start();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }  
   }
 
   /**
