@@ -13,9 +13,7 @@ public class Shooter2022IdleCMD extends CommandBase {
 
     private static final Logger LOGGER = RobotLogManager.getMainLogger(Shooter2022IdleCMD.class.getName());
 
-    private final Trigger2022 trigger;
     private final LlamaNeck2022 llamaNeck;
-    private final Spitter2022 spitter;
 
     private final Command llamaNeckStop;
     private final Command llamaNeckIdle;
@@ -28,9 +26,7 @@ public class Shooter2022IdleCMD extends CommandBase {
     public Shooter2022IdleCMD(Trigger2022 trigger, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
         super();
 
-        this.trigger = trigger;
         this.llamaNeck = llamaNeck;
-        this.spitter = spitter;
 
         this.llamaNeckStop = new LlamaNeck2022StopCMD(llamaNeck);
         this.llamaNeckIdle = new LlamaNeck2022IdleCMD(llamaNeck);
