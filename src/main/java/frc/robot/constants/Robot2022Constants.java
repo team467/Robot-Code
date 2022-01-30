@@ -51,7 +51,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean driveMotorRightLeaderInverted() {
-        return false;
+        return true;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean driveMotorRightFollowerInverted() {
-        return false;
+        return true;
     }
 
     @Override
