@@ -9,15 +9,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.ClimberDisable2022CMD;
-//import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnable2022CMD;
-//import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStop2022CMD;
-//import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberUp2022CMD;
-//import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberDown2022CMD;
-//import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.Trigger2022BackwardCMD;
 import frc.robot.commands.Trigger2022ForwardCMD;
 import frc.robot.commands.Trigger2022IdleCMD;
@@ -35,7 +30,6 @@ import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
-//import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Trigger2022;
 import frc.robot.subsystems.Intake2022;
@@ -105,7 +99,6 @@ public class RobotContainer {
    */
   public void configureButtonBindings() {
     initDrivetrain();
-    //initClimber2020();
     initShooter2020();
     initIntake2022();
     initTrigger2022();

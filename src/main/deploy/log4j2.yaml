@@ -10,16 +10,34 @@ Configuration:
       target: SYSTEM_OUT
       PatternLayout:
         pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+    RollingRandomAccessFile:
+      - name: Async_File_Appender
+        fileName: ${log-path}/app.log
+        filePattern: ${log-path}/app-%d{yyyy-MM-dd-HH-mm-ss-SSS}.log
+        immediateFlush: true
+        append: true
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        Policies:
+          OnStartupTriggeringPolicy: {} 
+          SizeBasedTriggeringPolicy:
+            size: 10 MB
+        DefaultRollOverStrategy:
+          max: 50
   Loggers:
     Root:
       level: info
       AppenderRef:
         - ref: Console_Appender
           level: info
+        - ref: Async_File_Appender
+          level: info
     Logger:
       - name: frc.robot.Robot
         level: debug
         AppenderRef:
+          - ref: Async_File_Appender
+            level: debug
           - ref: Console_Appender
-            level: info
+            level: debug
 
