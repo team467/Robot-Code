@@ -46,4 +46,12 @@ public interface Constants {
     public int shooter2020RightServoId();
     public double shooter2020RightServoMax();
     public double shooter2020RightServoMin();
+
+    public boolean hasIntake2020();
+    public int intake2020RollerMotorID();
+    public int intake2020ArmMotorID();
+    public double intake2020RollerForwardSpeed();
+    public double intake2020RollerBackwardSpeed();
+    public double intake2020ArmDownSpeed();
+    public double intake2020ArmUpSpeed();
 }
