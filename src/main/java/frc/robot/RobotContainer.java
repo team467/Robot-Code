@@ -15,6 +15,7 @@ import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.LEDTower2022ColorCycleCMD;
 import frc.robot.commands.LEDTower2022FoundBallCMD;
+import frc.robot.commands.LEDTower2022RainbowCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
@@ -154,7 +155,7 @@ public class RobotContainer {
   private void initLEDTower2022() {
     if (RobotConstants.get().hasLEDTower2022()) {
       ledTower2022 = new LEDTower2022();
-      ledTower2022.setDefaultCommand(new LEDTower2022ColorCycleCMD(ledTower2022));
+      ledTower2022.setDefaultCommand(new LEDTower2022RainbowCMD(ledTower2022));
     }
   }
 

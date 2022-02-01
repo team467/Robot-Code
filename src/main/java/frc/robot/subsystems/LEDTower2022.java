@@ -18,8 +18,8 @@ public class LEDTower2022 extends SubsystemBase{
         RAINBOW
     };
 
-    private AddressableLEDBuffer ledBuffer;
-    private AddressableLED ledStrip;
+    public AddressableLEDBuffer ledBuffer;
+    public AddressableLED ledStrip;
 
 
     public LEDTower2022() {
@@ -30,6 +30,10 @@ public class LEDTower2022 extends SubsystemBase{
         ledStrip.setLength(ledBuffer.getLength());
         ledStrip.setData(ledBuffer);
         ledStrip.start();
+
+        for (int i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i, 0, 0, 0);
+        }
     }
 
     public void setLeftLED(int index, Color color) {
@@ -82,6 +86,34 @@ public class LEDTower2022 extends SubsystemBase{
     public void setHSV(int index, int h, int s, int v) {
         setLeftHSV(index, h, s, v);
         setRightHSV(index, h, s, v);
+    }
+
+    public void setLeftHSB(int index, float h, float s, float b) {
+        java.awt.Color outColor = java.awt.Color.getHSBColor(h, s, b);
+        ledBuffer.setRGB(index, outColor.getRed(), outColor.getGreen(), outColor.getBlue());
+    }
+
+    public void setRightHSB(int index, float h, float s, float b) {
+        java.awt.Color outColor = java.awt.Color.getHSBColor(h, s, b);
+        ledBuffer.setRGB((ledBuffer.getLength() - 1) - index, outColor.getRed(), outColor.getGreen(), outColor.getBlue());
+    }
+
+    public void setHSB(int index, float h, float s, float b) {
+        setLeftHSB(index, h, s, b);
+        setRightHSB(index, h, s, b);
+        System.out.println(String.format("leftIndex: %d, rightIndex: %d", index, (ledBuffer.getLength() - 1) - index));
+    }
+
+    public void setLeftHSB(int index, int h, int s, int b) {
+        setLeftHSB(index, h/360f, s/255f, b/255f);
+    }
+
+    public void setRightHSB(int index, int h, int s, int b) {
+        setRightHSB(index, h/360f, s/255f, b/255f);
+    }
+
+    public void setHSB(int index, int h, int s, int b) {
+        setHSB(index, h/360f, s/255f, b/255f);
     }
 
     public void sendData() {
