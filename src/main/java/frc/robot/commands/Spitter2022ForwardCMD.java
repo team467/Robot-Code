@@ -1,38 +1,39 @@
 package frc.robot.commands;
 
 import frc.robot.logging.RobotLogManager;
-import frc.robot.subsystems.Intake2022;
+import frc.robot.subsystems.Spitter2022;
 
 import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class Intake2022InCMD extends CommandBase {
-  private final Intake2022 intake;
+public class Spitter2022ForwardCMD extends CommandBase {
+  private final Spitter2022 spitter;
 
-  private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022InCMD.class.getName());
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Spitter2022ForwardCMD.class.getName());
+
 
   /**
-   * Creates a new Intake2022InCMD.
+   * Creates a new Spitter2022ForwardCMD.
    *
-   * @param intake The subsystem used by this command.
+   * @param spitter The subsystem used by this command.
    */
-  public Intake2022InCMD(Intake2022 intake) {
-    this.intake = intake;
+  public Spitter2022ForwardCMD(Spitter2022 spitter) {
+    this.spitter = spitter;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake);
+    addRequirements(spitter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.info("Setting intake forward");
+    LOGGER.debug("Setting spitter forward");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      intake.in();
+    spitter.forward();
   }
 
   // Called once the command ends or is interrupted.

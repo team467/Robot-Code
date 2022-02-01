@@ -1,38 +1,39 @@
 package frc.robot.commands;
 
 import frc.robot.logging.RobotLogManager;
-import frc.robot.subsystems.Intake2022;
+import frc.robot.subsystems.Indexer2022;
 
 import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class Intake2022OutCMD extends CommandBase {
-  private final Intake2022 intake;
+public class Indexer2022IdleCMD extends CommandBase {
+  private final Indexer2022 indexer;
 
-  private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022OutCMD.class.getName());
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Indexer2022IdleCMD.class.getName());
+
 
   /**
-   * Creates a new Intake2022OutCMD.
+   * Creates a new Indexer2022IdleCMD.
    *
-   * @param intake The subsystem used by this command.
+   * @param trigger The subsystem used by this command.
    */
-  public Intake2022OutCMD(Intake2022 intake) {
-    this.intake = intake;
+  public Indexer2022IdleCMD(Indexer2022 indexer) {
+    this.indexer = indexer;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake);
+    addRequirements(indexer);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.info("Setting intake backwards");
+    LOGGER.debug("Setting indexer Slow Forward");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      intake.out();
+    indexer.idle();
   }
 
   // Called once the command ends or is interrupted.

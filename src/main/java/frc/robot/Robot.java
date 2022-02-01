@@ -13,8 +13,6 @@ import java.io.IOException;
 import frc.robot.logging.RobotLogManager;
 import org.apache.logging.log4j.Logger;
 
-import frc.robot.subsystems.*;
-
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or

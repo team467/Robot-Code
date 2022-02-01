@@ -1,39 +1,39 @@
 package frc.robot.commands;
 
 import frc.robot.logging.RobotLogManager;
-import frc.robot.subsystems.Trigger2022;
+import frc.robot.subsystems.Spitter2022;
 
 import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class Trigger2022ForwardCMD extends CommandBase {
-  private final Trigger2022 trigger;
+public class Spitter2022StopCMD extends CommandBase {
+  private final Spitter2022 spitter;
 
-  private static final Logger LOGGER = RobotLogManager.getMainLogger(Intake2022OutCMD.class.getName());
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Spitter2022StopCMD.class.getName());
 
-  
+
   /**
-   * Creates a new Trigger2022ForwardCMD.
+   * Creates a new Spitter2022StopCMD.
    *
-   * @param trigger The subsystem used by this command.
+   * @param spitter The subsystem used by this command.
    */
-  public Trigger2022ForwardCMD(Trigger2022 trigger) {
-    this.trigger = trigger;
+  public Spitter2022StopCMD(Spitter2022 spitter) {
+    this.spitter = spitter;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(trigger);
+    addRequirements(spitter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LOGGER.info("Setting Trigger Fast Forward");
+    LOGGER.debug("Setting spitter stopped");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    trigger.forward();
+    spitter.forward();
   }
 
   // Called once the command ends or is interrupted.

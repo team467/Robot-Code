@@ -21,7 +21,7 @@ public class LlamaNeck2022 extends SubsystemBase {
     public LlamaNeck2022() {
         super();
 
-        llamaNeckMotor = MotorControllerFactory.create(RobotConstants.get().llamaNeck2022MotorID(), MotorType.TALON_SRX);
+        llamaNeckMotor = MotorControllerFactory.create(RobotConstants.get().llamaNeck2022MotorID(), MotorType.SPARK_MAX_BRUSHLESS);
         upperLimitSwitch = new DigitalInput(RobotConstants.get().llamaNeck2022UpperLimitSwitchChannel());
         lowerLimitSwitch = new DigitalInput(RobotConstants.get().llamaNeck2022LowerLimitSwitchChannel());
     }
@@ -34,18 +34,23 @@ public class LlamaNeck2022 extends SubsystemBase {
         return lowerLimitSwitch.get();
     }
 
+    public void idle() {
+        LOGGER.debug("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022IdleSpeed());
+        llamaNeckMotor.set(RobotConstants.get().llamaNeck2022IdleSpeed());
+    }
+
     public void forward() {
-        LOGGER.info("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022InSpeed());
+        LOGGER.debug("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022InSpeed());
         llamaNeckMotor.set(RobotConstants.get().llamaNeck2022InSpeed());
     }
 
     public void backward() {
-        LOGGER.info("Reversing index, setting speed to " + RobotConstants.get().llamaNeck2022OutSpeed());
+        LOGGER.debug("Reversing index, setting speed to " + RobotConstants.get().llamaNeck2022OutSpeed());
         llamaNeckMotor.set(-RobotConstants.get().llamaNeck2022OutSpeed());
     }
 
     public void stop() {
-        LOGGER.info("Stopping llamaNeck, setting speed to 0");
+        LOGGER.debug("Stopping llamaNeck, setting speed to 0");
         llamaNeckMotor.set(0.0);
     }
 
@@ -53,8 +58,8 @@ public class LlamaNeck2022 extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty("Llama Neck Position", () -> llamaNeckMotor.getPosition(), null);
-        builder.addDoubleProperty("Llama Neck Velocity", () -> llamaNeckMotor.getVelocity(), null);
+        builder.addBooleanProperty("Upper Limit Switch", () -> getUpperLimitSwitch(), null);
+        builder.addBooleanProperty("Lower Limit Switch", () -> getLowerLimitSwitch(), null);
     }
 
 }

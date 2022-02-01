@@ -2,35 +2,31 @@ package frc.robot.constants;
 
 import frc.robot.motors.MotorType;
 
-public class BlankConstants implements Constants {
-
-    // Blank constants file exists as we need to supply some sort of constants for the robot, otherwise it will crash.
-    // The BlankConstants file serves this purpose.
-    // This should never show up and throws an error when it does, however, it is here when we don't specify the rio name. 
+public class Robot2022Constants implements Constants {
 
     @Override
     public String name() {
-        return "blank";
+        return "Robot 2022";
     }
 
     @Override
     public boolean hasDrivetrain() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean driveDualMotors() {
-        return false;
+        return true;
     }
 
     @Override
     public MotorType driveMotorType() {
-        return MotorType.NONE;
+        return MotorType.SPARK_MAX_BRUSHLESS;
     }
 
     @Override
     public int driveMotorLeftLeaderId() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -40,7 +36,7 @@ public class BlankConstants implements Constants {
 
     @Override
     public int driveMotorLeftFollowerId() {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -50,47 +46,47 @@ public class BlankConstants implements Constants {
 
     @Override
     public int driveMotorRightLeaderId() {
-        return 0;
+        return 3;
     }
 
     @Override
     public boolean driveMotorRightLeaderInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public int driveMotorRightFollowerId() {
-        return 0;
+        return 4;
     }
 
     @Override
     public boolean driveMotorRightFollowerInverted() {
+        return true;
+    }
+
+    @Override
+    public boolean hasClimber2020() {
         return false;
     }
 
     @Override
-    public boolean hasClimber2022() {
+    public int climber2020MotorId() {
+        return 0;
+    }
+
+    @Override
+    public boolean climber2020MotorInverted() {
         return false;
     }
 
     @Override
-    public int climber2022MotorId() {
-        return 0;
+    public double climber2020UpSpeed() {
+        return 0.3;
     }
 
     @Override
-    public boolean climber2022MotorInverted() {
-        return false;
-    }
-
-    @Override
-    public double climber2022UpSpeed() {
-        return 0;
-    }
-
-    @Override
-    public double climber2022DownSpeed() {
-        return 0;
+    public double climber2020DownSpeed() {
+        return 0.1;
     }
 
     @Override
@@ -126,6 +122,11 @@ public class BlankConstants implements Constants {
     @Override
     public boolean shooter202FlywheelFollowerInverted() {
         return false;
+    }
+
+    @Override
+    public int shooter2020TriggerMotorId() {
+        return 0;
     }
 
     @Override
@@ -174,11 +175,6 @@ public class BlankConstants implements Constants {
     }
 
     @Override
-    public int shooter2020TriggerMotorId() {
-        return 0;
-    }
-
-    @Override
     public boolean shooter2020TriggerInverted() {
         return false;
     }
@@ -220,47 +216,47 @@ public class BlankConstants implements Constants {
 
     @Override
     public int indexer2022MotorID() {
-        return 0;
+        return 9;
     }
 
     @Override
     public double indexer2022IdleSpeed() {
-        return 0;
+        return 0.2;
     }
 
     @Override
     public double indexer2022InSpeed() {
-        return 0;
+        return 1.0;
     }
 
     @Override
     public double indexer2022OutSpeed() {
-        return 0;
+        return 1.0;
     }
 
     @Override
     public boolean hasLlamaNeck2022() {
-        return false;
+        return true;
     }
 
     @Override
     public int llamaNeck2022MotorID() {
-        return 0;
+        return 8;
     }
 
     @Override
     public double llamaNeck2022IdleSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public double llamaNeck2022InSpeed() {
-        return 0;
+        return 1.0;
     }
     
     @Override
     public double llamaNeck2022OutSpeed() {
-     return 0;   
+     return 1.0;   
     }
 
     @Override
@@ -270,7 +266,7 @@ public class BlankConstants implements Constants {
 
     @Override
     public int llamaNeck2022LowerLimitSwitchChannel() {
-        return 0;
+        return 1;
     }
     
     @Override
@@ -280,7 +276,7 @@ public class BlankConstants implements Constants {
 
     @Override 
     public int spitter2022MotorId() {
-        return 0;
+        return 5;
     }
 
     @Override
@@ -325,12 +321,11 @@ public class BlankConstants implements Constants {
 
     @Override
     public double spitter2022ForwardSpeed() {
-        return 0;
+        return 1.0;
     }
 
     @Override
     public double spitter2022BackwardSpeed() {
-        return 0;
+        return -1.0;
     }
-
 }

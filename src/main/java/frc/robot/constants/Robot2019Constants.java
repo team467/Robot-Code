@@ -210,27 +210,27 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
-    public boolean hasTrigger2022() {
+    public boolean hasIndexer2022() {
         return false;
     }
 
     @Override
-    public int trigger2022MotorID() {
+    public int indexer2022MotorID() {
         return 0;
     }
 
     @Override
-    public double trigger2022IdleSpeed() {
+    public double indexer2022IdleSpeed() {
         return 0;
     }
 
     @Override
-    public double trigger2022InSpeed() {
+    public double indexer2022InSpeed() {
         return 0;
     }
 
     @Override
-    public double trigger2022OutSpeed() {
+    public double indexer2022OutSpeed() {
         return 0;
     }
 
@@ -241,6 +241,11 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public int llamaNeck2022MotorID() {
+        return 0;
+    }
+
+    @Override
+    public double llamaNeck2022IdleSpeed() {
         return 0;
     }
 
@@ -265,22 +270,63 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
-    public boolean hasIntake2022() {
+    public boolean hasSpitter2022() {
         return false;
     }
-    
-    @Override
-    public int intake2022MotorID() {
+
+    @Override 
+    public int spitter2022MotorId() {
         return 0;
     }
 
     @Override
-    public double intake2022InSpeed() {
+    public boolean spitter2022MotorInverted() {
+        return false;
+    }
+
+    @Override
+    public double spitter2022kP() {
         return 0;
     }
 
     @Override
-    public double intake2022OutSpeed() {
+    public double spitter2022kI() {
         return 0;
     }
+
+    @Override
+    public double spitter2022kD() {
+        return 0;
+    }
+
+    @Override
+    public double spitter2022kS() {
+        return 0;
+    }
+
+    @Override
+    public double spitter2022kV() {
+        return 0;
+    }
+
+    @Override
+    public double spitter2022kA() {
+        return 0;
+    }
+
+    @Override
+    public boolean spitter2022UsePID() {
+        return false;
+    }
+
+    @Override
+    public double spitter2022ForwardSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double spitter2022BackwardSpeed() {
+        return 0;
+    }
+
 }
