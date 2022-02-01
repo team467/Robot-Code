@@ -25,7 +25,7 @@ public class LEDTower2022 extends SubsystemBase{
     public LEDTower2022() {
         super();
 
-        ledBuffer = new AddressableLEDBuffer(RobotConstants.get().ledTower2022LEDCount() * 2);
+        ledBuffer = new AddressableLEDBuffer(RobotConstants.get().ledTower2022LEDCount() * 2); // TODO Wait for #3944 to be merged in wpilib
         ledStrip = new AddressableLED(RobotConstants.get().ledTower2022LEDChannel());
         ledStrip.setLength(ledBuffer.getLength());
         ledStrip.setData(ledBuffer);
@@ -101,7 +101,6 @@ public class LEDTower2022 extends SubsystemBase{
     public void setHSB(int index, float h, float s, float b) {
         setLeftHSB(index, h, s, b);
         setRightHSB(index, h, s, b);
-        System.out.println(String.format("leftIndex: %d, rightIndex: %d", index, (ledBuffer.getLength() - 1) - index));
     }
 
     public void setLeftHSB(int index, int h, int s, int b) {

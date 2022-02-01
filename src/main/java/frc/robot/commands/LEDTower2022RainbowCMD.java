@@ -36,6 +36,8 @@ public class LEDTower2022RainbowCMD extends CommandBase {
         for (int i = 0; i < RobotConstants.get().ledTower2022LEDCount(); i++) {
             ledTower.setHSB(i, (color + (i * 360/RobotConstants.get().ledTower2022LEDCount())) % 360, 255, 127);
         }
+
+        ledTower.sendData();
     }
 
     @Override
