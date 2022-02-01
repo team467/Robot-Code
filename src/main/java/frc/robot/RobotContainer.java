@@ -50,7 +50,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private Drivetrain drivetrain = null;
-  //private Climber2020 climber = null;
   private Shooter2020 shooter = null;
   private LlamaNeck2022 llamaNeck = null;
   private Indexer2022 indexer = null;

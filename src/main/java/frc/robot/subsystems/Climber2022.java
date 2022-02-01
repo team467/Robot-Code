@@ -45,11 +45,11 @@ public class Climber2022 extends SubsystemBase {
 
     public void down() {
         if (this.isEnabled()){
-            climberMotor.set(RobotConstants.get().climber2022DownSpeed());
+            climberMotor.set(-RobotConstants.get().climber2022DownSpeed());
         }
     }
 
-    public void stop () {
+    public void stop() {
         climberMotor.set(0);
     }
 
