@@ -28,6 +28,7 @@ import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
+import frc.robot.commands.Spitter2022ForwardCMD;
 import frc.robot.commands.Spitter2022StopCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
@@ -104,6 +105,8 @@ public class RobotContainer {
     initClimber2020();
     initShooter2020();
     initIndexer2022();
+    initSpitter2022();
+    initLlamaNeck2022();
   }
 
   private void initDrivetrain() {
@@ -154,10 +157,8 @@ public class RobotContainer {
   private void initIndexer2022() {
     if (RobotConstants.get().hasIndexer2022()) {
       indexer = new Indexer2022();
-      indexer.setDefaultCommand(new Indexer2022IdleCMD(indexer));
-      operatorIndexRollerForward.whenHeld(new Indexer2022ForwardCMD(indexer));
-      operatorShooterShoot.whenHeld(new Indexer2022StopCMD(indexer));
-      operatorIndexRollerBackward.whenHeld(new Indexer2022BackwardCMD(indexer));
+      indexer.setDefaultCommand(new Indexer2022StopCMD(indexer));
+      operatorShooterShoot.whileHeld(new Indexer2022ForwardCMD(indexer));
     }
   }
 
@@ -165,6 +166,7 @@ public class RobotContainer {
     if (RobotConstants.get().hasSpitter2022()) {
       spitter = new Spitter2022();
       spitter.setDefaultCommand(new Spitter2022StopCMD(spitter));
+      operatorShooterFlywheel.whileHeld(new Spitter2022ForwardCMD(spitter));
     }
   }
 
