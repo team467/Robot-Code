@@ -94,7 +94,7 @@ public class RobotContainer {
         () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
         () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
       ));
-      operatorShooterShoot.whenPressed(new PuppyModeCMD(drivetrain));
+      operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
 
     }
   }

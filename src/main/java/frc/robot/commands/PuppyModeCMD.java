@@ -5,12 +5,16 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
 public class PuppyModeCMD extends CommandBase {
+    private final double BALL_TIMEOUT = 0.1;
+
     private Drivetrain drivetrain;
+    private Timer timer;
     private NetworkTableEntry hasBallEntry; // bool
     private NetworkTableEntry distanceEntry; // double
     private NetworkTableEntry angleEntry; // double
@@ -18,23 +22,25 @@ public class PuppyModeCMD extends CommandBase {
     public PuppyModeCMD(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        NetworkTable table = inst.getTable("ballTracking");
+        NetworkTable table = inst.getTable("BallTracking");
         NetworkTable colorTable;
+        timer = new Timer();
+        timer.start();
         switch(DriverStation.getAlliance()) {
             case Blue:
-                colorTable = table.getSubTable("blue");
+                colorTable = table.getSubTable("Blue");
                 break;
             case Invalid:
             case Red:
             default:
-                colorTable = table.getSubTable("red");
+                colorTable = table.getSubTable("Red");
                 break;
 
         }
 
-        hasBallEntry = colorTable.getEntry("hasBall");
-        distanceEntry = colorTable.getEntry("distance");
-        angleEntry = colorTable.getEntry("angle");
+        hasBallEntry = colorTable.getEntry("HasBall");
+        distanceEntry = colorTable.getEntry("Distance");
+        angleEntry = colorTable.getEntry("Angle");
 
         hasBallEntry.setBoolean(false);
         distanceEntry.setDouble(0);
@@ -46,6 +52,7 @@ public class PuppyModeCMD extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        timer.reset();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -56,8 +63,7 @@ public class PuppyModeCMD extends CommandBase {
             double speed = MathUtil.clamp(distanceEntry.getDouble(0) / 120, 0.1, 0.5); // 120 inches max distance
 
             drivetrain.curvatureDrive(speed, angle);
-        } else {
-            drivetrain.arcadeDrive(0, 0);
+            timer.reset();
         }
     }
 
@@ -70,6 +76,6 @@ public class PuppyModeCMD extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return timer.hasElapsed(BALL_TIMEOUT);
     }
 }
