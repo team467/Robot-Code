@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
@@ -58,6 +59,14 @@ public class Drivetrain extends SubsystemBase {
 
     public void arcadeDrive(double speed, double rotation) {
         diffDrive.arcadeDrive(speed, rotation);
+    }
+
+    public void curvatureDrive(double speed, double rotation, boolean turnInPlace) {
+        diffDrive.curvatureDrive(speed, rotation, turnInPlace);
+    }
+
+    public void curvatureDrive(double speed, double rotation) {
+        curvatureDrive(speed, rotation, true);
     }
 
     @Override
