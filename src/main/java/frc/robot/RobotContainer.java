@@ -13,6 +13,7 @@ import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
+import frc.robot.commands.PuppyModeCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
@@ -93,6 +94,7 @@ public class RobotContainer {
         () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
         () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
       ));
+      operatorShooterShoot.whenPressed(new PuppyModeCMD(drivetrain));
 
     }
   }

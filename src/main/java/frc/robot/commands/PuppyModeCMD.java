@@ -36,6 +36,10 @@ public class PuppyModeCMD extends CommandBase {
         distanceEntry = colorTable.getEntry("distance");
         angleEntry = colorTable.getEntry("angle");
 
+        hasBallEntry.setBoolean(false);
+        distanceEntry.setDouble(0);
+        angleEntry.setDouble(0);
+
         addRequirements(drivetrain);
     }
 
