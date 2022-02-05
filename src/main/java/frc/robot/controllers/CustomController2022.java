@@ -7,6 +7,10 @@ public class CustomController2022 extends CustomControllerBase {
 
     public CustomController2022(int port) {
         super(port);
-        sendCommand(new byte[]{0x06, 0x04, 0x03, 0x03});
+
+        for (byte i = 0; i < 6; i++) {
+            addCommandToQueue(new byte[]{0x06, 0x01, i, 0x01, (byte) (i * 20), (byte) (i * 10), 0x05});
+        }
+        
     }
 }

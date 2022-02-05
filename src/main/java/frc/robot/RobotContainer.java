@@ -18,6 +18,7 @@ import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
+import frc.robot.controllers.ControllerQueue;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.CustomController2022;
 import frc.robot.controllers.CustomControllerBase;
@@ -57,7 +58,7 @@ public class RobotContainer {
   private final JoystickButton driverRightBumper = new JoystickButton(driverJoystick, XboxController467.Buttons.BumperRight.value);
 
   // Custom controller for operator
-  private final GenericHID operatorJoystick = new Joystick(1);
+  private final CustomControllerBase operatorJoystick = new CustomController2022(1);
   private final JoystickButton operatorInakeArm = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ARM.value);
   private final JoystickButton operatorIntakeRollerForward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ROLLER_FORWARD.value);
   private final JoystickButton operatorIntakeRollerBackward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ROLLER_BACKWARD.value);
@@ -72,10 +73,10 @@ public class RobotContainer {
   private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
 
 
-  private final CustomControllerBase cc = new CustomController2022(2);
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    ControllerQueue.getInstance().addController(operatorJoystick);
   }
 
   /**

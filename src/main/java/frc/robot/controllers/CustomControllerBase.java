@@ -63,7 +63,7 @@ public abstract class CustomControllerBase extends Joystick {
     }
 
     public void updateQueue() {
-        if (!hasCommand()) {
+        if (!hasCommand() && !commandList.isEmpty()) {
             sendCommand(commandList.get(0));
             commandList.remove(0);
         }
