@@ -12,7 +12,6 @@ public class Spitter2022ForwardCMD extends CommandBase {
 
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Spitter2022ForwardCMD.class.getName());
 
-
   /**
    * Creates a new Spitter2022ForwardCMD.
    *
@@ -38,7 +37,8 @@ public class Spitter2022ForwardCMD extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override

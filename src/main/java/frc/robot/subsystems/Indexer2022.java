@@ -23,7 +23,7 @@ public class Indexer2022 extends SubsystemBase {
     }
 
     public void idle() {
-        //MAKE SURE SPEED IS PRETTY SLOW, apporximately 20%
+        // MAKE SURE SPEED IS PRETTY SLOW, apporximately 20%
         LOGGER.debug("Starting indexer slowly, setting speed to " + RobotConstants.get().indexer2022IdleSpeed());
         indexerMotor.set(RobotConstants.get().indexer2022IdleSpeed());
 

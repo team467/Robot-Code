@@ -38,7 +38,7 @@ public class Robot2022PanicCMD extends CommandBase {
 
     @Override
     public void execute() {
-        
+
     }
 
     @Override

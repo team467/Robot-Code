@@ -39,7 +39,7 @@ public class Spitter2022 extends SubsystemBase {
         if (RobotConstants.get().spitter2022UsePID()) {
             output += spitterPIDController.calculate(spitterMotor.getVelocity());
         }
-        spitterMotor.setVoltage(output); 
+        spitterMotor.setVoltage(output);
     }
 
     public void forward() {
