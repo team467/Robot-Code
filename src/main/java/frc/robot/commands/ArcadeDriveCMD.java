@@ -21,7 +21,6 @@ public class ArcadeDriveCMD extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        System.out.println("Init Arcade");
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -33,7 +32,6 @@ public class ArcadeDriveCMD extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        System.out.println("End Arcade");
     }
 
     // Returns true when the command should end.
