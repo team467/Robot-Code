@@ -1,6 +1,5 @@
 package frc.robot.tuning;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.wpi.first.wpilibj2.command.Subsystem;
