@@ -25,7 +25,7 @@ public class LEDTower2022 extends SubsystemBase{
     public LEDTower2022() {
         super();
 
-        ledBuffer = new AddressableLEDBuffer(RobotConstants.get().ledTower2022LEDCount() * 2); // TODO Wait for #3944 to be merged in wpilib
+        ledBuffer = new AddressableLEDBuffer(RobotConstants.get().ledTower2022LEDCount() * 2);
         ledStrip = new AddressableLED(RobotConstants.get().ledTower2022LEDChannel());
         ledStrip.setLength(ledBuffer.getLength());
         ledStrip.setData(ledBuffer);
