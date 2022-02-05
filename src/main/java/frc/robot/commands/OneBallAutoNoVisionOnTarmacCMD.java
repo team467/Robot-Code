@@ -1,3 +1,5 @@
+// Autonomous, shoots pre-loaded ball, and stays on tarmac.
+
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
