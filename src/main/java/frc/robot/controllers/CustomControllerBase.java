@@ -1,5 +1,7 @@
 package frc.robot.controllers;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -15,6 +17,8 @@ public abstract class CustomControllerBase extends Joystick {
     private NetworkTableEntry hasCommandEntry = controllerTable.getEntry("hasCommand"); // bool
     private NetworkTableEntry responseEntry = controllerTable.getEntry("response"); // raw bytes
     private NetworkTableEntry hasResponseEntry = controllerTable.getEntry("hasResponse"); // bool
+
+    private ArrayList<byte[]> commandList = new ArrayList<>();
 
     public CustomControllerBase(int port) {
         super(port);
@@ -52,5 +56,16 @@ public abstract class CustomControllerBase extends Joystick {
 
     public byte[] getResponse() {
         return hasResponseEntry.getRaw(new byte[0]);
+    }
+
+    public void addCommandToQueue(byte[] command) {
+        commandList.add(command);
+    }
+
+    public void updateQueue() {
+        if (!hasCommand()) {
+            sendCommand(commandList.get(0));
+            commandList.remove(0);
+        }
     }
 }
