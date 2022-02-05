@@ -22,4 +22,8 @@ public class ControllerQueue {
             controller.updateQueue();
         });
     }
+
+    public CustomControllerBase get(int index) {
+        return controllers.get(index);
+    }
 }
