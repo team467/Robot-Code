@@ -2,6 +2,7 @@ package frc.robot.motors;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class SparkMaxController implements MotorControllerEncoder {
@@ -61,5 +62,9 @@ public class SparkMaxController implements MotorControllerEncoder {
     @Override
     public void setUnitsPerRotation(double unitsPerRotation) {
         this.unitsPerRotation = unitsPerRotation;
+    }
+
+    public void setIdleMode(IdleMode idleMode) {
+        spark.setIdleMode(idleMode);
     }
 }

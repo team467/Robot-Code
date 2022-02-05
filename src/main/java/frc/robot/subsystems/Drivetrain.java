@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
@@ -17,6 +17,7 @@ import frc.robot.motors.SparkMaxController;
 import frc.robot.motors.FeedMotorControllerEncoderGroup;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
+import frc.robot.motors.MotorType;
 import frc.robot.motors.TalonController;
 
 public class Drivetrain extends SubsystemBase {
@@ -45,6 +46,11 @@ public class Drivetrain extends SubsystemBase {
         leftMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
         rightMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
 
+        if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
+            ((SparkMaxController) leftMotorLeader).setIdleMode(IdleMode.kBrake);
+            ((SparkMaxController) rightMotorLeader).setIdleMode(IdleMode.kBrake);
+        }
+
         if (RobotConstants.get().driveDualMotors()) {
             leftMotorFollower = MotorControllerFactory.create(RobotConstants.get().driveMotorLeftFollowerId(),
                     RobotConstants.get().driveMotorType());
@@ -59,6 +65,11 @@ public class Drivetrain extends SubsystemBase {
 
             leftMotorGroup = new FeedMotorControllerEncoderGroup(leftMotorLeader, leftMotorFollower);
             rightMotorGroup = new FeedMotorControllerEncoderGroup(rightMotorLeader, rightMotorFollower);
+
+            if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
+                ((SparkMaxController) leftMotorFollower).setIdleMode(IdleMode.kBrake);
+                ((SparkMaxController) rightMotorFollower).setIdleMode(IdleMode.kBrake);
+            }
         } else {
             leftMotorGroup = new FeedMotorControllerEncoderGroup(leftMotorLeader);
             rightMotorGroup = new FeedMotorControllerEncoderGroup(rightMotorLeader);

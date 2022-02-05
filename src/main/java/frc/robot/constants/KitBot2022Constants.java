@@ -98,17 +98,18 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public double driveUnitsPerRotation() {
-        return 18.85;
+        // Already in inches
+        return 1;
     }
 
     @Override
     public double driveMaxVelocity() {
-        return 60.0;
+        return 80.0;
     }
 
     @Override
     public double driveMaxAcceleration() {
-        return 60.0;
+        return 1600.0;
     }
 
     @Override

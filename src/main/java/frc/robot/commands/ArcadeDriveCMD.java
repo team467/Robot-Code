@@ -27,7 +27,6 @@ public class ArcadeDriveCMD extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        System.out.println(String.format("Arcade speed: %f, Arcade rotate: %f", speedSupplier.get(), rotateSupplier.get()));
         drivetrain.arcadeDrive(speedSupplier.get(), rotateSupplier.get());
     }
 
