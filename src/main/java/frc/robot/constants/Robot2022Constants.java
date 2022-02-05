@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import frc.robot.motors.FeedbackConstant;
+import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
 
 public class Robot2022Constants implements Constants {
@@ -22,6 +24,116 @@ public class Robot2022Constants implements Constants {
     @Override
     public MotorType driveMotorType() {
         return MotorType.SPARK_MAX_BRUSHLESS;
+    }
+
+    @Override
+    public boolean driveUseVelocity() {
+        return false;
+    }
+
+    @Override
+    public boolean driveUsePID() {
+        return false;
+    }
+
+    @Override
+    public FeedforwardConstant driveForwardRightFF() {
+        return null;
+    }
+
+    @Override
+    public FeedbackConstant driveForwardRightVelocityFB() {
+        return null;
+    }
+
+    @Override
+    public FeedbackConstant driveForwardRightPositionFB() {
+        return null;
+    }
+
+    @Override
+    public FeedforwardConstant driveForwardLeftFF() {
+        return null;
+    }
+
+    @Override
+    public FeedbackConstant driveForwardLeftVelocityFB() {
+        return null;
+    }
+
+    @Override
+    public FeedbackConstant driveForwardLeftPositionFB() {
+        return null;
+    }
+
+    @Override
+    public FeedforwardConstant driveBackwardRightFF() {
+        return null;
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardRightVelocityFB() {
+        return null;
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardRightPositionFB() {
+        return null;
+    }
+
+    @Override
+    public FeedforwardConstant driveBackwardLeftFF() {
+        return null;
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardLeftVelocityFB() {
+        return null;
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardLeftPositionFB() {
+        return null;
+    }
+
+    @Override
+    public double driveUnitsPerRotation() {
+        return 0;
+    }
+
+    @Override
+    public double driveMaxVelocity() {
+        return 0;
+    }
+
+    @Override
+    public double driveMaxAcceleration() {
+        return 0;
+    }
+
+    @Override
+    public double driveFastMaxSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double driveNormalMaxSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double driveSlowMaxSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double driveNormalTurnMaxSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double driveSlowTurnMaxSpeed() {
+        return 0;
     }
 
     @Override
