@@ -235,6 +235,11 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
+    public boolean indexer2022MotorInverted() {
+        return false;
+    }
+
+    @Override
     public boolean hasLlamaNeck2022() {
         return false;
     }

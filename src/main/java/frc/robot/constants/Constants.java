@@ -52,6 +52,7 @@ public interface Constants {
     public double indexer2022IdleSpeed();
     public double indexer2022InSpeed();
     public double indexer2022OutSpeed();
+    public boolean indexer2022MotorInverted();
     
 
     public boolean hasLlamaNeck2022();
