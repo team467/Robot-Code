@@ -79,24 +79,24 @@ public class FeedMotorControllerEncoderGroup implements MotorController, Sendabl
     public void set(double speed, boolean velocity) {
         double setpoint = (m_isInverted ? -speed : speed) * maxSpeed;
         double currentVelocity = m_motorControllers[0].getVelocity();
-        boolean forward = setpoint >= currentVelocity;
+        boolean isForward = setpoint >= currentVelocity;
         double ffVoltage = 0;
 
         if (Math.abs(setpoint - currentVelocity) >= maxAcceleration * 0.02) {
-            setpoint = forward ? currentVelocity + (maxAcceleration * 0.02) : currentVelocity  - (maxAcceleration * 0.02);
+            setpoint = isForward ? currentVelocity + (maxAcceleration * 0.02) : currentVelocity  - (maxAcceleration * 0.02);
         }
 
-        ffVoltage = forward ? forwardFF.calculate(setpoint) : backwardFF.calculate(setpoint);
+        ffVoltage = isForward ? forwardFF.calculate(setpoint) : backwardFF.calculate(setpoint);
 
         PIDController selectedController = null;
         if (velocity) {
-            if (forward) {
+            if (isForward) {
                 selectedController = forwardVelocityFB;
             } else {
                 selectedController = backwardVelocityFB;
             }
         } else {
-            if (forward) {
+            if (isForward) {
                 selectedController = forwardPositionFB;
             } else {
                 selectedController = backwardPositionFB;
