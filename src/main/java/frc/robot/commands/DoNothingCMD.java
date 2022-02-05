@@ -1,3 +1,5 @@
+// For doing nothing during autonomous.
+
 // package frc.robot.commands;
 
 // public class DoNothingCMD {
