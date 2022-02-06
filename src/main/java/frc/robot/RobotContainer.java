@@ -107,6 +107,7 @@ public class RobotContainer {
     initIndexer2022();
     initSpitter2022();
     initLlamaNeck2022();
+    initShooter2022();
   }
 
   private void initDrivetrain() {
@@ -149,8 +150,8 @@ public class RobotContainer {
     if (RobotConstants.get().hasLlamaNeck2022()) {
       llamaNeck = new LlamaNeck2022();
       llamaNeck.setDefaultCommand(new LlamaNeck2022StopCMD(llamaNeck));
-      operatorIndexRollerForward.whenHeld(new LlamaNeck2022ForwardCMD(llamaNeck));
-      operatorIndexRollerBackward.whenHeld(new LlamaNeck2022BackwardCMD(llamaNeck));
+      // operatorIndexRollerForward.whenHeld(new LlamaNeck2022ForwardCMD(llamaNeck));
+      // operatorIndexRollerBackward.whenHeld(new LlamaNeck2022BackwardCMD(llamaNeck));
     }
   }
 
@@ -158,7 +159,7 @@ public class RobotContainer {
     if (RobotConstants.get().hasIndexer2022()) {
       indexer = new Indexer2022();
       indexer.setDefaultCommand(new Indexer2022StopCMD(indexer));
-      operatorShooterShoot.whileHeld(new Indexer2022ForwardCMD(indexer));
+      // operatorShooterShoot.whileHeld(new Indexer2022ForwardCMD(indexer));
     }
   }
 
@@ -166,15 +167,15 @@ public class RobotContainer {
     if (RobotConstants.get().hasSpitter2022()) {
       spitter = new Spitter2022();
       spitter.setDefaultCommand(new Spitter2022StopCMD(spitter));
-      operatorShooterFlywheel.whileHeld(new Spitter2022ForwardCMD(spitter));
+      // operatorShooterFlywheel.whileHeld(new Spitter2022ForwardCMD(spitter));
     }
   }
 
   private void initShooter2022() {
     shooter2022 = new Shooter2022();
-    shooter2022.setDefaultCommand(new Shooter2022IdleCMD(indexer, llamaNeck, spitter));
-    operatorShooterShoot.whenPressed(new Shooter2022ShootCMD(indexer, llamaNeck, spitter));
-    operatorIntakeRollerBackward.whenHeld(new Shooter2022FlushCMD(indexer, llamaNeck, spitter));
+    shooter2022.setDefaultCommand(new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter));
+    operatorShooterShoot.whenPressed(new Shooter2022ShootCMD(shooter2022, indexer, llamaNeck, spitter));
+    operatorIntakeRollerBackward.whenHeld(new Shooter2022FlushCMD(shooter2022, indexer, llamaNeck, spitter));
 
   }
 

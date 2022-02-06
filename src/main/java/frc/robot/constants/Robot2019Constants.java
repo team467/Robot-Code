@@ -362,6 +362,11 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
+    public boolean llamaNeck2022MotorInverted() {
+        return false;
+    }
+
+    @Override
     public double llamaNeck2022IdleSpeed() {
         return 0;
     }

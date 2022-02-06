@@ -4,12 +4,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LlamaNeck2022;
+import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
 import frc.robot.subsystems.Indexer2022;
 
 public class Shooter2022ShootCMD extends CommandBase {
 
-    private final double TIME_UNTIL_FINISHED = 0.1;
+    //private final double TIME_UNTIL_FINISHED = 0.1;
+    private final double TIME_UNTIL_FINISHED = 2;
 
     private final LlamaNeck2022 llamaNeck;
     private final Spitter2022 spitter;
@@ -24,7 +26,7 @@ public class Shooter2022ShootCMD extends CommandBase {
 
     private final Timer timer;
 
-    public Shooter2022ShootCMD(Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
+    public Shooter2022ShootCMD(Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
         super();
 
         this.llamaNeck = llamaNeck;
@@ -39,6 +41,9 @@ public class Shooter2022ShootCMD extends CommandBase {
         this.spitterForward = new Spitter2022ForwardCMD(spitter);
 
         this.timer = new Timer();
+        timer.start();
+
+        addRequirements(shooter);
     }
 
     @Override
@@ -47,7 +52,7 @@ public class Shooter2022ShootCMD extends CommandBase {
         llamaNeckStop.schedule();
         spitterForward.schedule();
 
-        timer.start();
+        timer.reset();
     }
 
     @Override

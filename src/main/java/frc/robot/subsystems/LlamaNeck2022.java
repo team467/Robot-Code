@@ -23,16 +23,17 @@ public class LlamaNeck2022 extends SubsystemBase {
 
         llamaNeckMotor = MotorControllerFactory.create(RobotConstants.get().llamaNeck2022MotorID(),
                 MotorType.SPARK_MAX_BRUSHLESS);
+        llamaNeckMotor.setInverted(RobotConstants.get().llamaNeck2022MotorInverted());
         upperLimitSwitch = new DigitalInput(RobotConstants.get().llamaNeck2022UpperLimitSwitchChannel());
         lowerLimitSwitch = new DigitalInput(RobotConstants.get().llamaNeck2022LowerLimitSwitchChannel());
     }
 
     public boolean getUpperLimitSwitch() {
-        return upperLimitSwitch.get();
+        return !upperLimitSwitch.get();
     }
 
     public boolean getLowerLimitSwitch() {
-        return lowerLimitSwitch.get();
+        return !lowerLimitSwitch.get();
     }
 
     public void idle() {

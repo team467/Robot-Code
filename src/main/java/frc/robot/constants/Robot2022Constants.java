@@ -38,62 +38,62 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public FeedforwardConstant driveForwardRightFF() {
-        return null;
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
     }
 
     @Override
     public FeedbackConstant driveForwardRightVelocityFB() {
-        return null;
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
     public FeedbackConstant driveForwardRightPositionFB() {
-        return null;
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
     public FeedforwardConstant driveForwardLeftFF() {
-        return null;
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
     }
 
     @Override
     public FeedbackConstant driveForwardLeftVelocityFB() {
-        return null;
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
     public FeedbackConstant driveForwardLeftPositionFB() {
-        return null;
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
     public FeedforwardConstant driveBackwardRightFF() {
-        return null;
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
     }
 
     @Override
     public FeedbackConstant driveBackwardRightVelocityFB() {
-        return null;
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
     public FeedbackConstant driveBackwardRightPositionFB() {
-        return null;
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
     public FeedforwardConstant driveBackwardLeftFF() {
-        return null;
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
     }
 
     @Override
     public FeedbackConstant driveBackwardLeftVelocityFB() {
-        return null;
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
     public FeedbackConstant driveBackwardLeftPositionFB() {
-        return null;
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
@@ -113,27 +113,27 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double driveFastMaxSpeed() {
-        return 0;
+        return 1.0;
     }
 
     @Override
     public double driveNormalMaxSpeed() {
-        return 0;
+        return 0.8;
     }
 
     @Override
     public double driveSlowMaxSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public double driveNormalTurnMaxSpeed() {
-        return 0;
+        return 1.0;
     }
 
     @Override
     public double driveSlowTurnMaxSpeed() {
-        return 0;
+        return 0.8;
     }
 
     @Override
@@ -143,7 +143,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean driveMotorLeftLeaderInverted() {
-        return false;
+        return true;
     }
 
     @Override
@@ -153,7 +153,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean driveMotorLeftFollowerInverted() {
-        return false;
+        return true;
     }
 
     @Override
@@ -163,7 +163,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean driveMotorRightLeaderInverted() {
-        return true;
+        return false;
     }
 
     @Override
@@ -173,7 +173,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean driveMotorRightFollowerInverted() {
-        return true;
+        return false;
     }
 
     @Override
@@ -323,7 +323,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean hasIndexer2022() {
-        return false;
+        return true;
     }
 
     @Override
@@ -338,17 +338,17 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double indexer2022InSpeed() {
-        return 1.0;
+        return 0.5;
     }
 
     @Override
     public double indexer2022OutSpeed() {
-        return 1.0;
+        return 0.3;
     }
 
     @Override
     public boolean indexer2022MotorInverted() {
-        return false;
+        return true;
     }
 
     @Override
@@ -362,18 +362,23 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
+    public boolean llamaNeck2022MotorInverted() {
+        return true;
+    }
+
+    @Override
     public double llamaNeck2022IdleSpeed() {
         return 0.5;
     }
 
     @Override
     public double llamaNeck2022InSpeed() {
-        return 1.0;
+        return 0.5;
     }
     
     @Override
     public double llamaNeck2022OutSpeed() {
-     return 1.0;   
+     return 0.5;   
     }
 
     @Override
@@ -388,7 +393,7 @@ public class Robot2022Constants implements Constants {
     
     @Override
     public boolean hasSpitter2022() {
-        return false;
+        return true;
     }
 
     @Override 
@@ -398,7 +403,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean spitter2022MotorInverted() {
-        return false;
+        return true;
     }
 
     @Override
@@ -438,11 +443,11 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double spitter2022ForwardSpeed() {
-        return 1.0;
+        return 0.4;
     }
 
     @Override
     public double spitter2022BackwardSpeed() {
-        return -1.0;
+        return 0.1;
     }
 }

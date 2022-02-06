@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.LlamaNeck2022;
+import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
 import frc.robot.subsystems.Indexer2022;
 
@@ -23,7 +24,7 @@ public class Shooter2022IdleCMD extends CommandBase {
 
     private final Command spitterStop;
 
-    public Shooter2022IdleCMD(Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
+    public Shooter2022IdleCMD(Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
         super();
 
         this.llamaNeck = llamaNeck;
@@ -35,6 +36,8 @@ public class Shooter2022IdleCMD extends CommandBase {
         this.indexerIdle = new Indexer2022IdleCMD(indexer);
 
         this.spitterStop = new Spitter2022StopCMD(spitter);
+
+        addRequirements(shooter);
     }
 
     @Override
