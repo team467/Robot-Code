@@ -1,15 +1,13 @@
 // For doing nothing during autonomous.
 
-// package frc.robot.commands;
+package frc.robot.commands;
 
-// public class DoNothingCMD {
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+
+public class DoNothingCMD extends InstantCommand {
+
 //    @Override
 //    public void initialize() {
 
 //  }
-
-//    @Override
-//  public boolean isFinished() {
-//  return true;
-//  }
-// }
+}
