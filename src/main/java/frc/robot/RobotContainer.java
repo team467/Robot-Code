@@ -23,6 +23,7 @@ import frc.robot.commands.LlamaNeck2022StopCMD;
 import frc.robot.commands.Shooter2022FlushCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
 import frc.robot.commands.Shooter2022ShootCMD;
+import frc.robot.commands.Shooter2022StopCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
@@ -173,7 +174,8 @@ public class RobotContainer {
 
   private void initShooter2022() {
     shooter2022 = new Shooter2022();
-    shooter2022.setDefaultCommand(new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter));
+    //shooter2022.setDefaultCommand(new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter));
+    shooter2022.setDefaultCommand(new Shooter2022StopCMD(shooter2022, llamaNeck, spitter, indexer));
     operatorShooterShoot.whenPressed(new Shooter2022ShootCMD(shooter2022, indexer, llamaNeck, spitter));
     operatorIntakeRollerBackward.whenHeld(new Shooter2022FlushCMD(shooter2022, indexer, llamaNeck, spitter));
 
