@@ -42,7 +42,7 @@ public class RobotContainer {
 
   // User interface objects
   // Xbox controller for driver
-  private final GenericHID driverJoystick = new Joystick(0);
+  private final XboxController467 driverJoystick = new XboxController467(0);
   private final JoystickButton driverButtonA = new JoystickButton(driverJoystick, XboxController467.Buttons.A.value);
   private final JoystickButton driverButtonB = new JoystickButton(driverJoystick, XboxController467.Buttons.B.value);
   private final JoystickButton driverButtonX = new JoystickButton(driverJoystick, XboxController467.Buttons.X.value);
@@ -93,8 +93,8 @@ public class RobotContainer {
     if (RobotConstants.get().hasDrivetrain()) {
       drivetrain = new Drivetrain();
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
-        () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
-        () ->  driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)
+        () -> driverJoystick.getAdjustedDriveSpeed(),
+        () -> driverJoystick.getAdjustedTurnSpeed()
       ));
     }
   }
