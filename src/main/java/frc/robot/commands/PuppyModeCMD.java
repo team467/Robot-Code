@@ -59,10 +59,11 @@ public class PuppyModeCMD extends CommandBase {
     @Override
     public void execute() {
         if (hasBallEntry.getBoolean(false)) {
-            double angle = angleEntry.getDouble(0)/30; // 30deg range
+            double angle = angleEntry.getDouble(0)/120; // 30deg range
             double speed = MathUtil.clamp(distanceEntry.getDouble(0) / 120, 0.1, 0.5); // 120 inches max distance
 
-            drivetrain.curvatureDrive(speed, angle);
+            // drivetrain.curvatureDrive(speed, angle);
+            drivetrain.curvatureDrive(0, angle);
             timer.reset();
         }
     }
