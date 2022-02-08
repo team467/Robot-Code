@@ -13,7 +13,11 @@ import org.apache.logging.log4j.Logger;
 
 // down, up, enable, stop
 public class Climber2022 extends SubsystemBase {
-    private MotorControllerEncoder climberMotor =MotorControllerFactory.create(RobotConstants.get().climber2022MotorId(),MotorType.SPARK_MAX_BRUSHLESS);
+//Okay, so basically the right motor's id is 6 and the left motor's id is 11 as of now. The "front" of the robot is the side where the top of the llamma neck opens up for now, but apparently drivers like it to be the other way around (not too sure about this, it's just what some mechanical kid said). However, from a building perspective the way the llama neck's opening is facing is the front.
+
+    private MotorControllerEncoder climberMotorRight =MotorControllerFactory.create(RobotConstants.get().climber2022MotorIdRight(),MotorType.SPARK_MAX_BRUSHLESS);
+    private MotorControllerEncoder climberMotorLeft =MotorControllerFactory.create(RobotConstants.get().climber2022MotorIdLeft(),MotorType.SPARK_MAX_BRUSHLESS);
+
     private boolean enabled = false;
     private static final Logger LOGGER = RobotLogManager.getMainLogger(Climber2022.class.getName());
 
@@ -21,7 +25,8 @@ public class Climber2022 extends SubsystemBase {
     public Climber2022() {
         super();
 
-        climberMotor.setInverted(RobotConstants.get().climber2022MotorInverted());
+        climberMotorRight.setInverted(RobotConstants.get().climber2022MotorInvertedRight());
+        climberMotorLeft.setInverted(RobotConstants.get().climber2022MotorInvertedLeft());
     }
 
     public void enable() {
@@ -39,26 +44,32 @@ public class Climber2022 extends SubsystemBase {
 
     public void up() {
         if(this.isEnabled()) {
-            climberMotor.set(RobotConstants.get().climber2022UpSpeed());
+            climberMotorRight.set(RobotConstants.get().climber2022UpSpeed());
+            climberMotorLeft.set(RobotConstants.get().climber2022UpSpeed());
         }
     }
 
     public void down() {
         if (this.isEnabled()){
-            climberMotor.set(-RobotConstants.get().climber2022DownSpeed());
+            climberMotorRight.set(-RobotConstants.get().climber2022DownSpeed());
+            climberMotorLeft.set(-RobotConstants.get().climber2022DownSpeed());
         }
     }
 
     public void stop() {
-        climberMotor.set(0);
+        climberMotorRight.set(0);
+        climberMotorLeft.set(0);
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty("Climber Position", () -> climberMotor.getPosition(),null);
-        builder.addDoubleProperty("Climber Velocity", () -> climberMotor.getVelocity(), null);
+        builder.addDoubleProperty("Climber 1 Position", () -> climberMotorRight.getPosition(),null);
+        builder.addDoubleProperty("Climber 1 Velocity", () -> climberMotorRight.getVelocity(), null);
+
+        builder.addDoubleProperty("Climber 2 Position", () -> climberMotorLeft.getPosition(),null);
+        builder.addDoubleProperty("Climber 2 Velocity", () -> climberMotorLeft.getVelocity(), null);
     }
 }
 

@@ -70,12 +70,22 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public int climber2022MotorId() {
+    public int climber2022MotorIdRight() {
         return 1;
     }
 
     @Override
-    public boolean climber2022MotorInverted() {
+    public int climber2022MotorIdLeft() {
+        return 1;
+    }
+
+    @Override
+    public boolean climber2022MotorInvertedLeft() {
+        return false;
+    }
+
+    @Override
+    public boolean climber2022MotorInvertedRight() {
         return false;
     }
 
@@ -86,6 +96,31 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public double climber2022DownSpeed() {
+        return 0.1;
+    }
+
+    @Override
+    public boolean hasClimber2020() {
+        return true;
+    }
+
+    @Override
+    public int climber2020MotorId() {
+        return 1;
+    }
+
+    @Override
+    public boolean climber2020MotorInverted() {
+        return false;
+    }
+
+    @Override
+    public double climber2020UpSpeed() {
+        return 0.1;
+    }
+
+    @Override
+    public double climber2020DownSpeed() {
         return 0.1;
     }
 

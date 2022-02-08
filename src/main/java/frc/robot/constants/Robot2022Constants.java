@@ -90,6 +90,41 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
+    public boolean hasClimber2022() {
+        return false;
+    }
+
+    @Override
+    public int climber2022MotorIdRight() {
+        return 6;
+    }
+
+    @Override
+    public int climber2022MotorIdLeft() {
+        return 11;
+    }
+
+    @Override
+    public boolean climber2022MotorInvertedLeft() {
+        return false;
+    }
+
+    @Override
+    public boolean climber2022MotorInvertedRight() {
+        return false;
+    }
+
+    @Override
+    public double climber2022UpSpeed() {
+        return 0.3;
+    }
+
+    @Override
+    public double climber2022DownSpeed() {
+        return 0.1;
+    }
+
+    @Override
     public boolean hasShooter2020() {
         return false;
     }
