@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -9,6 +11,9 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -16,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.NetworkButton;
 import frc.robot.RobotConstants;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.motors.SparkMaxController;
@@ -25,9 +31,6 @@ import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
 import frc.robot.motors.TalonController;
 import frc.robot.tuning.SubsystemTuner;
-import frc.robot.tuning.TunerButtonFactory;
-import frc.robot.tuning.TunerParameter;
-import frc.robot.tuning.TunerParamterFactory;
 
 public class Drivetrain extends SubsystemTuner {
     FeedMotorControllerEncoderGroup leftMotorGroup;
@@ -121,23 +124,18 @@ public class Drivetrain extends SubsystemTuner {
     }
 
     @Override
-    public TunerParameter[] getTunerParameters() {
-        return null;
-    }
-
-    @Override
-    public void initalizeTunerNetworkTables() {
-        addTunerParameter("speed", TunerParamterFactory.create("Driving Speed", this, NetworkTableType.kDouble));
-        addTunerParameter("turn", TunerParamterFactory.create("Turning Speed", this, NetworkTableType.kDouble));
-        addTunerButton("run", TunerButtonFactory.create("Run", this));
+    public void initalizeTunerNetworkTables(ShuffleboardTab tab) {
+        addEntry("speed", tab.add("Driving Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 1).withProperties(Map.of("min", -1, "max", 1)).getEntry());
+        addEntry("turn", tab.add("Turning Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 2).withProperties(Map.of("min", -1, "max", 1)).getEntry());
+        addEntry("run", tab.add("Run", false).withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(4, 3).getEntry());
     }
 
     @Override
     public void initalizeTuner() {
-        getTunerButton("run").whileActiveContinuous(
+        new NetworkButton(getEntry("run")).whileActiveContinuous(
         new ArcadeDriveCMD(this, 
-            () -> getTunerParameter("speed").getValue().getDouble(), 
-            () -> getTunerParameter("turn").getValue().getDouble()
+            () -> getEntry("speed").getDouble(0), 
+            () -> getEntry("turn").getDouble(0)
         ));
     }
 }

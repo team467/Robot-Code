@@ -3,12 +3,12 @@ package frc.robot.tuning;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public abstract class CompositeTuner implements Tuner {
-    HashMap<String, TunerParameter> tunerParameters = new HashMap<>();
-    HashMap<String, TunerButton> tunerButtons = new HashMap<>();
     ArrayList<Subsystem> subsystems = new ArrayList<>();
+    private HashMap<String, NetworkTableEntry> entries = new HashMap<>();
 
     public CompositeTuner() {
         super();
@@ -32,33 +32,14 @@ public abstract class CompositeTuner implements Tuner {
     public void addSubsystem(Subsystem subsystem) {
         subsystems.add(subsystem);
     }
-    
+
     @Override
-    public TunerParameter[] getTunerParameters() {
-        TunerParameter[] tunerArray = new TunerParameter[tunerParameters.size()];
-        tunerArray = tunerParameters.values().toArray(tunerArray);
-        return tunerArray;
+    public void addEntry(String name, NetworkTableEntry entry) {
+        entries.put(name, entry);
     }
 
     @Override
-    public void addTunerParameter(String parameterName, TunerParameter tunerParameter) {
-        tunerParameters.put(parameterName, tunerParameter);
-    }
-    
-
-    @Override
-    public TunerParameter getTunerParameter(String parameterName) {
-        return tunerParameters.get(parameterName);
-    }
-
-    @Override
-    public void addTunerButton(String buttonName, TunerButton tunerButton) {
-        tunerButtons.put(buttonName, tunerButton);
-    }
-    
-
-    @Override
-    public TunerButton getTunerButton(String buttonName) {
-        return tunerButtons.get(buttonName);
+    public NetworkTableEntry getEntry(String name) {
+        return entries.get(name);
     }
 }
