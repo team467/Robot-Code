@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import frc.robot.RobotConstants;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class LEDManager {
     private static LEDManager instance = null;
