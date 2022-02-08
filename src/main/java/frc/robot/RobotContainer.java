@@ -83,6 +83,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+
+   // TODO: Split creation of subsystem with creating of button bindings so they can be cleaned on test mode start/end
   public void configureButtonBindings() {
     initDrivetrain();
     initClimber2020();
