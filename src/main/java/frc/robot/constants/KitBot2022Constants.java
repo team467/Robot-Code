@@ -210,6 +210,11 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
+    public int ledChannel() {
+        return 0;
+    }
+
+    @Override
     public boolean hasLEDTower2022() {
         return true;
     }
@@ -219,8 +224,4 @@ public class KitBot2022Constants implements Constants {
         return 8;
     }
 
-    @Override
-    public int ledTower2022LEDChannel() {
-        return 0;
-    }
 }
