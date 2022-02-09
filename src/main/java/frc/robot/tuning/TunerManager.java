@@ -1,18 +1,15 @@
 package frc.robot.tuning;
 
 import java.util.ArrayList;
-import java.util.Map;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TunerManager {
     private static TunerManager instance = null;
-    private ArrayList<Tuner> tuners = new ArrayList<>();
-    private SendableChooser<Tuner> tunerChooser = new SendableChooser<>();
+    private final ArrayList<Tuner> tuners = new ArrayList<>();
+    private final SendableChooser<Tuner> tunerChooser = new SendableChooser<>();
 
     private TunerManager() {
     }
@@ -23,7 +20,7 @@ public class TunerManager {
                 .withSize(2, 1)
                 .withPosition(0, 0);
         tuners.add(tuner);
-        tuner.initalizeTunerNetworkTables(Shuffleboard.getTab(tuner.getTunerName()));
+        tuner.initializeTunerNetworkTables(Shuffleboard.getTab(tuner.getTunerName()));
         tunerChooser.addOption(tuner.getTunerName(), tuner);
     }
 

@@ -124,14 +124,14 @@ public class Drivetrain extends SubsystemTuner {
     }
 
     @Override
-    public void initalizeTunerNetworkTables(ShuffleboardTab tab) {
+    public void initializeTunerNetworkTables(ShuffleboardTab tab) {
         addEntry("speed", tab.add("Driving Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 1).withProperties(Map.of("min", -1, "max", 1)).getEntry());
         addEntry("turn", tab.add("Turning Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 2).withProperties(Map.of("min", -1, "max", 1)).getEntry());
         addEntry("run", tab.add("Run", false).withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(4, 3).getEntry());
     }
 
     @Override
-    public void initalizeTuner() {
+    public void initializeTuner() {
         new NetworkButton(getEntry("run")).whileActiveContinuous(
         new ArcadeDriveCMD(this, 
             () -> getEntry("speed").getDouble(0), 

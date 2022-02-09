@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
 
     // You need to enable the command scheduler in test mode
     CommandScheduler.getInstance().enable();
-    TunerManager.getTunerManager().getTunerChoice().initalizeTuner();
+    TunerManager.getTunerManager().getTunerChoice().initializeTuner();
   }
 
   /** This function is called periodically during test mode. */
