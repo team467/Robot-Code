@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.NetworkButton;
 import frc.robot.RobotConstants;
 import frc.robot.commands.ArcadeDriveCMD;
+import frc.robot.commands.DrivetrainStopCMD;
 import frc.robot.motors.SparkMaxController;
 import frc.robot.motors.FeedMotorControllerEncoderGroup;
 import frc.robot.motors.MotorControllerEncoder;
@@ -113,6 +114,10 @@ public class Drivetrain extends SubsystemTuner {
         diffDrive.arcadeDrive(speed, rotation);
     }
 
+    public void stop() {
+        diffDrive.tankDrive(0, 0);
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
@@ -133,7 +138,11 @@ public class Drivetrain extends SubsystemTuner {
     @Override
     public void initializeTuner() {
         super.initializeTuner();
+        getEntry("speed").setDouble(0);
+        getEntry("turn").setDouble(0);
+        getEntry("run").setBoolean(false);
 
+        this.setDefaultCommand(new DrivetrainStopCMD(this));
         new NetworkButton(getEntry("run")).whileActiveContinuous(
         new ArcadeDriveCMD(this, 
             () -> getEntry("speed").getDouble(0), 
