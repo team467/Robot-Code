@@ -24,10 +24,6 @@ public class TunerManager {
         tunerChooser.addOption(tuner.getTunerName(), tuner);
     }
 
-    public void addChooserToNT() {
-        
-    }
-
     public Tuner getTunerChoice() {
         return tunerChooser.getSelected();
     }
@@ -39,4 +35,6 @@ public class TunerManager {
 
         return instance;
     }
+
+
 }

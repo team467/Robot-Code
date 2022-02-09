@@ -3,6 +3,7 @@ package frc.robot.tuning;
 import java.util.HashMap;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -33,5 +34,10 @@ public abstract class SubsystemTuner extends SubsystemBase implements Tuner {
     @Override
     public NetworkTableEntry getEntry(String name) {
         return entries.get(name);
+    }
+
+    @Override
+    public void initializeTuner() {
+        CommandScheduler.getInstance().clearButtons();
     }
 }

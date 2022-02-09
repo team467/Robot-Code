@@ -132,6 +132,8 @@ public class Drivetrain extends SubsystemTuner {
 
     @Override
     public void initializeTuner() {
+        super.initializeTuner();
+
         new NetworkButton(getEntry("run")).whileActiveContinuous(
         new ArcadeDriveCMD(this, 
             () -> getEntry("speed").getDouble(0), 
