@@ -7,15 +7,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
-import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
-import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
@@ -24,7 +22,6 @@ import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Shooter2020;
-import frc.robot.tuning.TunerManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -72,9 +69,9 @@ public class RobotContainer {
   private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
 
   public RobotContainer() {
+    initializeSubsystems();
     // Configure the button bindings
     configureButtonBindings();
-    TunerManager.getTunerManager().addChooserToNT();
   }
 
   /**
@@ -84,19 +81,30 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
 
-   // TODO: Split creation of subsystem with creating of button bindings so they can be cleaned on test mode start/end
-  public void configureButtonBindings() {
+  private void initializeSubsystems() {
     initDrivetrain();
     initClimber2020();
     initShooter2020();
   }
 
+  public void configureButtonBindings() {
+    CommandScheduler.getInstance().clearButtons();
+    configureDrivetrain();
+    configureClimber2020();
+    configureShooter2020();
+  }
+
   private void initDrivetrain() {
     if (RobotConstants.get().hasDrivetrain()) {
       drivetrain = new Drivetrain();
+    }
+  }
+
+  private void configureDrivetrain() {
+    if (RobotConstants.get().hasDrivetrain()) {
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
-        () -> driverJoystick.getAdjustedDriveSpeed(),
-        () -> driverJoystick.getAdjustedTurnSpeed()
+              driverJoystick::getAdjustedDriveSpeed,
+              driverJoystick::getAdjustedTurnSpeed
       ));
     }
   }
@@ -104,6 +112,11 @@ public class RobotContainer {
   private void initClimber2020() {
     if (RobotConstants.get().hasClimber2020()) {
       climber = new Climber2020();
+    }
+  }
+
+  private void configureClimber2020() {
+    if (RobotConstants.get().hasClimber2020()) {
       climber.setDefaultCommand(new ClimberStopCMD(climber));
       operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
       operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
@@ -114,15 +127,15 @@ public class RobotContainer {
   private void initShooter2020() {
     if (RobotConstants.get().hasShooter2020()) {
       shooter = new Shooter2020();
+    }
+  }
+
+  private void configureShooter2020() {
+    if (RobotConstants.get().hasShooter2020()) {
       operatorShooterFlywheel.whenPressed(new ShooterRunFlywheelCMD(shooter));
       operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
       operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
       operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
-
-      // This is test code used on the robot to spin the flywheel to a certian speed depedning on the joystick
-      // shooter.setDefaultCommand(new ShooterSetCMD(shooter,
-      //   () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
-      // ));
     }
   }
 
