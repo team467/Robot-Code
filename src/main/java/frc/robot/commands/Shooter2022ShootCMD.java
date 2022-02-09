@@ -1,3 +1,4 @@
+// Turns everything to max and sends it to the spitter.
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
