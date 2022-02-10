@@ -11,25 +11,18 @@ import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
-import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
-import frc.robot.commands.Indexer2022BackwardCMD;
-import frc.robot.commands.Indexer2022ForwardCMD;
-import frc.robot.commands.Indexer2022IdleCMD;
 import frc.robot.commands.Indexer2022StopCMD;
-import frc.robot.commands.LlamaNeck2022BackwardCMD;
-import frc.robot.commands.LlamaNeck2022ForwardCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
 import frc.robot.commands.Shooter2022FlushCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
+import frc.robot.commands.Shooter2022SetDefaultCMD;
 import frc.robot.commands.Shooter2022ShootCMD;
 import frc.robot.commands.Shooter2022StopCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
-import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
-import frc.robot.commands.Spitter2022ForwardCMD;
 import frc.robot.commands.Spitter2022StopCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
@@ -175,7 +168,12 @@ public class RobotContainer {
   private void initShooter2022() {
     shooter2022 = new Shooter2022();
     shooter2022.setDefaultCommand(new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter));
-    operatorClimberLock.whileHeld(new Shooter2022StopCMD(shooter2022, llamaNeck, spitter, indexer));
+    operatorClimberLock.whenPressed(
+          new Shooter2022SetDefaultCMD(shooter2022,
+            new Shooter2022StopCMD(shooter2022, indexer, llamaNeck, spitter)))
+        .whenReleased(
+          new Shooter2022SetDefaultCMD(shooter2022,
+            new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter)));
     operatorShooterShoot.whenPressed(new Shooter2022ShootCMD(shooter2022, indexer, llamaNeck, spitter));
     operatorIntakeRollerBackward.whenHeld(new Shooter2022FlushCMD(shooter2022, indexer, llamaNeck, spitter));
 

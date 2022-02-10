@@ -21,7 +21,7 @@ public class Shooter2022StopCMD extends CommandBase {
   private final Command indexerStop;
 
   /** Creates a new Shooter2022Stop. */
-  public Shooter2022StopCMD(Shooter2022 shooter, LlamaNeck2022 llamaNeck, Spitter2022 spitter, Indexer2022 indexer) {
+  public Shooter2022StopCMD(Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
     super();
 
     this.llamaNeck = llamaNeck;
@@ -37,7 +37,8 @@ public class Shooter2022StopCMD extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
