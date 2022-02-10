@@ -429,7 +429,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public double spitter2022MaxVelocity() {
-        return 90;
+        return 0;
     }
 
     @Override

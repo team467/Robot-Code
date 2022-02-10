@@ -11,7 +11,7 @@ import frc.robot.motors.MotorType;
 
 public class Spitter2022 extends SubsystemBase {
 
-  private final double THRESHOLD = 10;
+  private final double THRESHOLD = 2;
   private MotorControllerEncoder spitterMotor;
   private PIDController spitterPIDController;
   private SimpleMotorFeedforward spitterFFController;
