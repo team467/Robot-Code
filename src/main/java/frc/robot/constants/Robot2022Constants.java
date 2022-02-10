@@ -408,7 +408,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean spitter2022UseVelocity() {
-        return false;
+        return true;
     }
 
     @Override
@@ -418,12 +418,12 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public FeedforwardConstant spitter2022FF() {
-        return new FeedforwardConstant(0, 0, 0);
+        return new FeedforwardConstant(-72.598, 0.56084, 4.3958);
     }
 
     @Override
     public FeedbackConstant spitter2022FB() {
-        return new FeedbackConstant(0, 0);
+        return new FeedbackConstant(4.0954, 0);
     }
 
     @Override
