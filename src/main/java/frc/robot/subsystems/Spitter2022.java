@@ -32,6 +32,7 @@ public class Spitter2022 extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
+    //TODO: test with velocity
     if (RobotConstants.get().spitter2022UseVelocity()) {
       setVelocity(speed * RobotConstants.get().spitter2022MaxVelocity());
     } else {
