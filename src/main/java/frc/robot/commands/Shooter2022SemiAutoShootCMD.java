@@ -35,4 +35,22 @@ public class Shooter2022SemiAutoShootCMD extends CommandBase {
   public boolean isFinished() {
     return false;
   }
+
+  // Vision Network tables?
+  // @Override
+  // public void robotInit() {
+  //   table = NetworkTableInstance.getDefault().getTable("GRIP/mycontoursReport");
+  // }
+
+  // @Override
+  // public void teleopPeriodic() {
+  //     double x = table.getEntry("X");
+  //     double y = table.getEntry("Y");
+  //     double angle = table.getEntry("Angle");
+  // Values will be used for driving hopefully.
+
+
+  //     double[] areas = table.getEntry("area").getDoubleArray(defaultValue);
+
+  // }
 }
