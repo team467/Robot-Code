@@ -72,7 +72,7 @@ public interface Constants {
     public double shooter2020RightServoMax();
     public double shooter2020RightServoMin();
 
+    public int ledChannel();
     public boolean hasLEDTower2022();
     public int ledTower2022LEDCount();
-    public int ledTower2022LEDChannel();
 }

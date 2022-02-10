@@ -24,6 +24,7 @@ import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
+import frc.robot.led.LEDManager;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LEDTower2022;
@@ -101,6 +102,7 @@ public class RobotContainer {
     initializeSubsystems();
     // Configure the button bindings
     configureButtonBindings();
+    LEDManager.getInstance().init();
   }
 
   /**

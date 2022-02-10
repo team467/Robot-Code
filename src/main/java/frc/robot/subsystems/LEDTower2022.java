@@ -7,41 +7,29 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
+import frc.robot.led.LEDManager;
+import frc.robot.led.LEDStrip;
 
 public class LEDTower2022 extends SubsystemBase{
-    public enum Status {
-        OFF,
-        FOUND_BALL,
-        CHASING_BALL,
-        TEAM467,
-        COLOR_CYCLE,
-        RAINBOW
-    };
-
-    public AddressableLEDBuffer ledBuffer;
-    public AddressableLED ledStrip;
+    public LEDStrip ledStrip;
 
 
     public LEDTower2022() {
         super();
 
-        ledBuffer = new AddressableLEDBuffer(RobotConstants.get().ledTower2022LEDCount() * 2);
-        ledStrip = new AddressableLED(RobotConstants.get().ledTower2022LEDChannel());
-        ledStrip.setLength(ledBuffer.getLength());
-        ledStrip.setData(ledBuffer);
-        ledStrip.start();
+        ledStrip = LEDManager.getInstance().createStrip(RobotConstants.get().ledTower2022LEDCount() * 2);
 
-        for (int i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i, 0, 0, 0);
+        for (int i = 0; i < ledStrip.getLength(); i++) {
+            ledStrip.setRGB(i, 0, 0, 0);
         }
     }
 
     public void setLeftLED(int index, Color color) {
-        ledBuffer.setLED(index, color);
+        ledStrip.setLED(index, color);
     }
 
     public void setRightLED(int index, Color color) {
-        ledBuffer.setLED((ledBuffer.getLength() - 1) - index, color);
+        ledStrip.setLED((ledStrip.getLength() - 1) - index, color);
     }
 
     public void setLED(int index, Color color) {
@@ -50,11 +38,11 @@ public class LEDTower2022 extends SubsystemBase{
     }
 
     public void setLeftLED(int index, Color8Bit color) {
-        ledBuffer.setLED(index, color);
+        ledStrip.setLED(index, color);
     }
 
     public void setRightLED(int index, Color8Bit color) {
-        ledBuffer.setLED((ledBuffer.getLength() - 1) - index, color);
+        ledStrip.setLED((ledStrip.getLength() - 1) - index, color);
     }
 
     public void setLED(int index, Color8Bit color) {
@@ -63,11 +51,11 @@ public class LEDTower2022 extends SubsystemBase{
     }
 
     public void setLeftRGB(int index, int r, int g, int b) {
-        ledBuffer.setRGB(index, r, g, b);
+        ledStrip.setRGB(index, r, g, b);
     }
 
     public void setRightRGB(int index, int r, int g, int b) {
-        ledBuffer.setRGB((ledBuffer.getLength() - 1) - index, r, g, b);
+        ledStrip.setRGB((ledStrip.getLength() - 1) - index, r, g, b);
     }
 
     public void setRGB(int index, int r, int g, int b) {
@@ -76,11 +64,11 @@ public class LEDTower2022 extends SubsystemBase{
     }
 
     public void setLeftHSV(int index, int h, int s, int v) {
-        ledBuffer.setHSV(index, h, s, v);
+        ledStrip.setHSV(index, h, s, v);
     }
 
     public void setRightHSV(int index, int h, int s, int v) {
-        ledBuffer.setHSV((ledBuffer.getLength() - 1) - index, h, s, v);
+        ledStrip.setHSV((ledStrip.getLength() - 1) - index, h, s, v);
     }
 
     public void setHSV(int index, int h, int s, int v) {
@@ -89,13 +77,11 @@ public class LEDTower2022 extends SubsystemBase{
     }
 
     public void setLeftHSB(int index, float h, float s, float b) {
-        java.awt.Color outColor = java.awt.Color.getHSBColor(h, s, b);
-        ledBuffer.setRGB(index, outColor.getRed(), outColor.getGreen(), outColor.getBlue());
+        ledStrip.setHSB(index, h, s, b);
     }
 
     public void setRightHSB(int index, float h, float s, float b) {
-        java.awt.Color outColor = java.awt.Color.getHSBColor(h, s, b);
-        ledBuffer.setRGB((ledBuffer.getLength() - 1) - index, outColor.getRed(), outColor.getGreen(), outColor.getBlue());
+        ledStrip.setHSB((ledStrip.getLength() - 1) - index, h, s, b);
     }
 
     public void setHSB(int index, float h, float s, float b) {
@@ -116,7 +102,7 @@ public class LEDTower2022 extends SubsystemBase{
     }
 
     public void sendData() {
-        ledStrip.setData(ledBuffer);
+        ledStrip.update();
     }
 
     @Override
