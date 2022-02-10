@@ -7,11 +7,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
-import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.LEDTower2022ChaseBallCMD;
 import frc.robot.commands.LEDTower2022ColorCycleCMD;
@@ -19,7 +19,6 @@ import frc.robot.commands.LEDTower2022FoundBallCMD;
 import frc.robot.commands.LEDTower2022OffCMD;
 import frc.robot.commands.LEDTower2022RainbowCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
-import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
@@ -50,7 +49,7 @@ public class RobotContainer {
 
   // User interface objects
   // Xbox controller for driver
-  private final GenericHID driverJoystick = new Joystick(0);
+  private final XboxController467 driverJoystick = new XboxController467(0);
   private final JoystickButton driverButtonA = new JoystickButton(driverJoystick, XboxController467.Buttons.A.value);
   private final JoystickButton driverButtonB = new JoystickButton(driverJoystick, XboxController467.Buttons.B.value);
   private final JoystickButton driverButtonX = new JoystickButton(driverJoystick, XboxController467.Buttons.X.value);
@@ -99,6 +98,7 @@ public class RobotContainer {
       CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
 
   public RobotContainer() {
+    initializeSubsystems();
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -111,26 +111,50 @@ public class RobotContainer {
    * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  public void configureButtonBindings() {
+
+  private void initializeSubsystems() {
     initDrivetrain();
     initClimber2020();
     initShooter2020();
     initLEDTower2022();
   }
 
+  public void configureButtonBindings() {
+    CommandScheduler.getInstance().clearButtons();
+    configureDrivetrain();
+    configureClimber2020();
+    configureShooter2020();
+  }
+
   private void initDrivetrain() {
     if (RobotConstants.get().hasDrivetrain()) {
       drivetrain = new Drivetrain();
+    }
+  }
+
+  private void configureDrivetrain() {
+    if (RobotConstants.get().hasDrivetrain()) {
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
+<<<<<<< HEAD
           () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
           () -> driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)));
 
+=======
+              driverJoystick::getAdjustedDriveSpeed,
+              driverJoystick::getAdjustedTurnSpeed
+      ));
+>>>>>>> 387357d019da393d1720a547ad79a5c264921647
     }
   }
 
   private void initClimber2020() {
     if (RobotConstants.get().hasClimber2020()) {
       climber = new Climber2020();
+    }
+  }
+
+  private void configureClimber2020() {
+    if (RobotConstants.get().hasClimber2020()) {
       climber.setDefaultCommand(new ClimberStopCMD(climber));
       operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
       operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
@@ -141,16 +165,24 @@ public class RobotContainer {
   private void initShooter2020() {
     if (RobotConstants.get().hasShooter2020()) {
       shooter = new Shooter2020();
+    }
+  }
+
+  private void configureShooter2020() {
+    if (RobotConstants.get().hasShooter2020()) {
       operatorShooterFlywheel.whenPressed(new ShooterRunFlywheelCMD(shooter));
       operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
       operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
       operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
+<<<<<<< HEAD
 
       // This is test code used on the robot to spin the flywheel to a certian speed
       // depedning on the joystick
       // shooter.setDefaultCommand(new ShooterSetCMD(shooter,
       // () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
       // ));
+=======
+>>>>>>> 387357d019da393d1720a547ad79a5c264921647
     }
   }
 
