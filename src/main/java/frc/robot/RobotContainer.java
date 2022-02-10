@@ -135,15 +135,9 @@ public class RobotContainer {
   private void configureDrivetrain() {
     if (RobotConstants.get().hasDrivetrain()) {
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
-<<<<<<< HEAD
-          () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value),
-          () -> driverJoystick.getRawAxis(XboxController467.Axes.RightX.value)));
-
-=======
               driverJoystick::getAdjustedDriveSpeed,
               driverJoystick::getAdjustedTurnSpeed
       ));
->>>>>>> 387357d019da393d1720a547ad79a5c264921647
     }
   }
 
@@ -174,15 +168,6 @@ public class RobotContainer {
       operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
       operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
       operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
-<<<<<<< HEAD
-
-      // This is test code used on the robot to spin the flywheel to a certian speed
-      // depedning on the joystick
-      // shooter.setDefaultCommand(new ShooterSetCMD(shooter,
-      // () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
-      // ));
-=======
->>>>>>> 387357d019da393d1720a547ad79a5c264921647
     }
   }
 
