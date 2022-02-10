@@ -406,39 +406,29 @@ public class Robot2019Constants implements Constants {
         return false;
     }
 
-    @Override
-    public double spitter2022kP() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kI() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kD() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kS() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kV() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kA() {
-        return 0;
-    }
+  @Override
+  public boolean spitter2022UseVelocity() {
+    return false;
+  }
 
     @Override
     public boolean spitter2022UsePID() {
         return false;
+    }
+
+    @Override
+    public FeedforwardConstant spitter2022FF() {
+        return new FeedforwardConstant(0, 0, 0);
+    }
+
+    @Override
+    public FeedbackConstant spitter2022FB() {
+        return new FeedbackConstant(0, 0);
+    }
+
+    @Override
+    public double spitter2022MaxVelocity() {
+        return 0;
     }
 
     @Override

@@ -92,13 +92,11 @@ public interface Constants {
     public boolean hasSpitter2022();
     public int spitter2022MotorId();
     public boolean spitter2022MotorInverted();
-    public double spitter2022kP();
-    public double spitter2022kI();
-    public double spitter2022kD();
-    public double spitter2022kS();
-    public double spitter2022kV();
-    public double spitter2022kA();
+    public boolean spitter2022UseVelocity();
     public boolean spitter2022UsePID();
+    public FeedforwardConstant spitter2022FF();
+    public FeedbackConstant spitter2022FB();
+    public double spitter2022MaxVelocity();
     public double spitter2022ForwardSpeed();
     public double spitter2022BackwardSpeed();
     
