@@ -12,9 +12,9 @@ import frc.robot.motors.MotorType;
 public class Spitter2022 extends SubsystemBase {
 
   private final double THRESHOLD = 2;
-  private MotorControllerEncoder spitterMotor;
-  private PIDController spitterPIDController;
-  private SimpleMotorFeedforward spitterFFController;
+  private final MotorControllerEncoder spitterMotor;
+  private final PIDController spitterPIDController;
+  private final SimpleMotorFeedforward spitterFFController;
 
   public Spitter2022() {
     super();
@@ -24,15 +24,16 @@ public class Spitter2022 extends SubsystemBase {
     spitterMotor.setInverted(RobotConstants.get().spitter2022MotorInverted());
 
     spitterPIDController = new PIDController(
-        RobotConstants.get().spitter2022FB().getkP(), 0,
+        RobotConstants.get().spitter2022FB().getkP(),
+        0,
         RobotConstants.get().spitter2022FB().getkD());
     spitterFFController = new SimpleMotorFeedforward(
-        RobotConstants.get().spitter2022FF().getkS(), RobotConstants.get().spitter2022FF().getkV(),
+        RobotConstants.get().spitter2022FF().getkS(),
+        RobotConstants.get().spitter2022FF().getkV(),
         RobotConstants.get().spitter2022FF().getkA());
   }
 
   public void setSpeed(double speed) {
-    //TODO: test with velocity
     if (RobotConstants.get().spitter2022UseVelocity()) {
       setVelocity(speed * RobotConstants.get().spitter2022MaxVelocity());
     } else {
@@ -50,11 +51,11 @@ public class Spitter2022 extends SubsystemBase {
   }
 
   public void forward() {
-    spitterMotor.set(RobotConstants.get().spitter2022ForwardSpeed());
+    setSpeed(RobotConstants.get().spitter2022ForwardSpeed());
   }
 
   public void backward() {
-    spitterMotor.set(-RobotConstants.get().spitter2022BackwardSpeed());
+    setSpeed(-RobotConstants.get().spitter2022BackwardSpeed());
   }
 
   public void stop() {
