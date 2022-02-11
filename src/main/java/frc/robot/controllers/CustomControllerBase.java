@@ -8,54 +8,24 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 
 public abstract class CustomControllerBase extends Joystick {
-    private NetworkTable controllerTable = NetworkTableInstance.getDefault().getTable("controller");
+    private NetworkTable controllerTable = NetworkTableInstance.getDefault().getTable("Controller");
 
-    private NetworkTableEntry robotConnectedEntry = controllerTable.getEntry("robotConnected"); // bool
-    private NetworkTableEntry clientConnectedEntry = controllerTable.getEntry("clientConnected"); // bool
-
-    private NetworkTableEntry commandEntry = controllerTable.getEntry("command"); // raw bytes
-    private NetworkTableEntry hasCommandEntry = controllerTable.getEntry("hasCommand"); // bool
-    private NetworkTableEntry responseEntry = controllerTable.getEntry("response"); // raw bytes
-    private NetworkTableEntry hasResponseEntry = controllerTable.getEntry("hasResponse"); // bool
+    private NetworkTableEntry commandQueueEntry = controllerTable.getEntry("CommandQueue"); // raw bytes
+    private NetworkTableEntry commandQueueLengthEntry = controllerTable.getEntry("CommandQueueLength"); // double array
+    private NetworkTableEntry hasCommandEntry = controllerTable.getEntry("HasCommand"); // bool
 
     private ArrayList<byte[]> commandList = new ArrayList<>();
 
     public CustomControllerBase(int port) {
         super(port);
-        
-        robotConnectedEntry.setBoolean(true);
-        clientConnectedEntry.setBoolean(false);
 
-        commandEntry.setRaw(new byte[0]);
+        commandQueueEntry.setRaw(new byte[0]);
+        commandQueueLengthEntry.setDoubleArray(new double[0]);
         hasCommandEntry.setBoolean(false);
-        responseEntry.setRaw(new byte[0]);
-        hasResponseEntry.setBoolean(false);
-    }
-
-    public boolean isRobotConnected() {
-        return robotConnectedEntry.getBoolean(false);
-    }
-
-    public boolean isClientConnected() {
-        return clientConnectedEntry.getBoolean(false);
-    }
-
-    public void sendCommand(byte[] command) {
-        commandEntry.setRaw(command);
-        hasCommandEntry.setBoolean(true);
     }
 
     public boolean hasCommand() {
         return hasCommandEntry.getBoolean(false);
-    }
-
-
-    public boolean hasReponse() {
-        return hasResponseEntry.getBoolean(false);
-    }
-
-    public byte[] getResponse() {
-        return hasResponseEntry.getRaw(new byte[0]);
     }
 
     public void addCommandToQueue(byte[] command) {
@@ -64,8 +34,28 @@ public abstract class CustomControllerBase extends Joystick {
 
     public void updateQueue() {
         if (!hasCommand() && !commandList.isEmpty()) {
-            sendCommand(commandList.get(0));
-            commandList.remove(0);
+            int totalQueueLength = 0;
+            double[] queueLength = new double[commandList.size()];
+
+            for (int i = 0; i < commandList.size(); i++) {
+                queueLength[i] = commandList.get(i).length;
+                totalQueueLength += commandList.get(i).length;
+            }
+
+            byte[] commandQueue = new byte[totalQueueLength];
+            int commandPointer = 0;
+            for (byte[] bytes : commandList) {
+                for (byte b : bytes) {
+                    commandQueue[commandPointer] = b;
+                    commandPointer += 1;
+                }
+
+            }
+
+            commandQueueEntry.setRaw(commandQueue);
+            commandQueueLengthEntry.setDoubleArray(queueLength);
+            hasCommandEntry.setBoolean(true);
+            commandList.clear();
         }
     }
 }
