@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import frc.robot.motors.FeedbackConstant;
+import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
 
 public class BlankConstants implements Constants {
@@ -26,6 +28,116 @@ public class BlankConstants implements Constants {
     @Override
     public MotorType driveMotorType() {
         return MotorType.NONE;
+    }
+
+    @Override
+    public boolean driveUseVelocity() {
+        return false;
+    }
+
+    @Override
+    public boolean driveUsePID() {
+        return false;
+    }
+
+    @Override
+    public FeedforwardConstant driveForwardRightFF() {
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveForwardRightVelocityFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveForwardRightPositionFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedforwardConstant driveForwardLeftFF() {
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveForwardLeftVelocityFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveForwardLeftPositionFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedforwardConstant driveBackwardRightFF() {
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardRightVelocityFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardRightPositionFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedforwardConstant driveBackwardLeftFF() {
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardLeftVelocityFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardLeftPositionFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public double driveUnitsPerRotation() {
+        return 0.0;
+    }
+
+    @Override
+    public double driveMaxVelocity() {
+        return 0;
+    }
+
+    @Override
+    public double driveMaxAcceleration() {
+        return 0;
+    }
+
+    @Override
+    public double driveFastMaxSpeed() {
+        return 0.0;
+    }
+
+    @Override
+    public double driveNormalMaxSpeed() {
+        return 0.0;
+    }
+
+    @Override
+    public double driveSlowMaxSpeed() {
+        return 0.0;
+    }
+
+    @Override
+    public double driveNormalTurnMaxSpeed() {
+        return 0.0;
+    }
+
+    @Override
+    public double driveSlowTurnMaxSpeed() {
+        return 0.0;
     }
 
     @Override
