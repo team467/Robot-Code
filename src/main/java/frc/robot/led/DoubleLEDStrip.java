@@ -10,8 +10,8 @@ public class DoubleLEDStrip extends LEDStrip {
     }
 
     @Override
-    public int getLength() {
-        return super.getLength() / 2;
+    public int getSize() {
+        return getLength() / 2;
     }
 
     public void setLeftLED(int index, Color color) {
