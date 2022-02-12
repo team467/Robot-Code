@@ -9,6 +9,7 @@ import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
 
+/** The spitter subsystem, contains the flywheel and its motor only. */
 public class Spitter2022 extends SubsystemBase {
 
   private final double THRESHOLD = 2;
@@ -16,23 +17,34 @@ public class Spitter2022 extends SubsystemBase {
   private final PIDController spitterPIDController;
   private final SimpleMotorFeedforward spitterFFController;
 
+  /** The spitter subsystem, contains the flywheel and its motor only. */
   public Spitter2022() {
     super();
 
-    spitterMotor = MotorControllerFactory.create(RobotConstants.get().spitter2022MotorId(),
-        MotorType.SPARK_MAX_BRUSHLESS);
+    spitterMotor =
+        MotorControllerFactory.create(
+            RobotConstants.get().spitter2022MotorId(), MotorType.SPARK_MAX_BRUSHLESS);
     spitterMotor.setInverted(RobotConstants.get().spitter2022MotorInverted());
 
-    spitterPIDController = new PIDController(
-        RobotConstants.get().spitter2022FB().getkP(),
-        0,
-        RobotConstants.get().spitter2022FB().getkD());
-    spitterFFController = new SimpleMotorFeedforward(
-        RobotConstants.get().spitter2022FF().getkS(),
-        RobotConstants.get().spitter2022FF().getkV(),
-        RobotConstants.get().spitter2022FF().getkA());
+    // Feedback controller
+    spitterPIDController =
+        new PIDController(
+            RobotConstants.get().spitter2022FB().getkP(),
+            0,
+            RobotConstants.get().spitter2022FB().getkD());
+    // Feedforward controller
+    spitterFFController =
+        new SimpleMotorFeedforward(
+            RobotConstants.get().spitter2022FF().getkS(),
+            RobotConstants.get().spitter2022FF().getkV(),
+            RobotConstants.get().spitter2022FF().getkA());
   }
 
+  /**
+   * Sets the speed of the motor, using velocity if it is enabled in the constants.
+   *
+   * @param speed the speed to set the motor to.
+   */
   public void setSpeed(double speed) {
     if (RobotConstants.get().spitter2022UseVelocity()) {
       setVelocity(speed * RobotConstants.get().spitter2022MaxVelocity());
@@ -41,6 +53,11 @@ public class Spitter2022 extends SubsystemBase {
     }
   }
 
+  /**
+   * Sets the velocity for the motor, using the velocity controllers
+   *
+   * @param velocity the velocity to set the motor to.
+   */
   public void setVelocity(double velocity) {
     double output = spitterFFController.calculate(velocity);
     spitterPIDController.setSetpoint(velocity);
@@ -50,24 +67,33 @@ public class Spitter2022 extends SubsystemBase {
     spitterMotor.setVoltage(output);
   }
 
+  /** Start spinning the flywheel. */
   public void forward() {
     setSpeed(RobotConstants.get().spitter2022ForwardSpeed());
   }
 
+  /** Start spinning the flywheel backwards. */
   public void backward() {
     setSpeed(-RobotConstants.get().spitter2022BackwardSpeed());
   }
 
+  /** Stop the flywheel. */
   public void stop() {
     spitterMotor.set(0.0);
   }
 
+  /**
+   * Checks if the flywheel speed has reached the threshold.
+   *
+   * <p>If velocity is not used, return true as atSpeed can not be used.
+   *
+   * @return if the threshold has been met
+   */
   public boolean atSpeed() {
     if (!RobotConstants.get().spitter2022UseVelocity()) {
       return true;
     }
     return Math.abs(spitterMotor.getVelocity() - spitterPIDController.getSetpoint()) <= THRESHOLD;
-
   }
 
   @Override
@@ -75,7 +101,9 @@ public class Spitter2022 extends SubsystemBase {
     super.initSendable(builder);
 
     builder.addDoubleProperty("Flywheel Velocity", () -> spitterMotor.getVelocity(), null);
-    builder.addDoubleProperty("Flywheel Velocity Error",
-        () -> spitterPIDController.getSetpoint() - spitterMotor.getVelocity(), null);
+    builder.addDoubleProperty(
+        "Flywheel Velocity Error",
+        () -> spitterPIDController.getSetpoint() - spitterMotor.getVelocity(),
+        null);
   }
 }

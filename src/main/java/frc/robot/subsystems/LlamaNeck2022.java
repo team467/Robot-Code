@@ -8,60 +8,86 @@ import frc.robot.logging.RobotLogManager;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
-
 import org.apache.logging.log4j.Logger;
 
+/** The llama neck subsystem, contains the llama neck motors and the limit switches. */
 public class LlamaNeck2022 extends SubsystemBase {
-    private static final Logger LOGGER = RobotLogManager.getMainLogger(LlamaNeck2022.class.getName());
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(LlamaNeck2022.class.getName());
 
-    private MotorControllerEncoder llamaNeckMotor;
-    private DigitalInput upperLimitSwitch;
-    private DigitalInput lowerLimitSwitch;
+  private final MotorControllerEncoder llamaNeckMotor;
+  private final DigitalInput upperLimitSwitch;
+  private final DigitalInput lowerLimitSwitch;
 
-    public LlamaNeck2022() {
-        super();
+  /** The llama neck subsystem, contains the llama neck motors and the limit switches. */
+  public LlamaNeck2022() {
+    super();
 
-        llamaNeckMotor = MotorControllerFactory.create(RobotConstants.get().llamaNeck2022MotorID(),
-                MotorType.SPARK_MAX_BRUSHLESS);
-        llamaNeckMotor.setInverted(RobotConstants.get().llamaNeck2022MotorInverted());
-        upperLimitSwitch = new DigitalInput(RobotConstants.get().llamaNeck2022UpperLimitSwitchChannel());
-        lowerLimitSwitch = new DigitalInput(RobotConstants.get().llamaNeck2022LowerLimitSwitchChannel());
-    }
+    llamaNeckMotor =
+        MotorControllerFactory.create(
+            RobotConstants.get().llamaNeck2022MotorID(), MotorType.SPARK_MAX_BRUSHLESS);
+    llamaNeckMotor.setInverted(RobotConstants.get().llamaNeck2022MotorInverted());
+    // upper switch, near the indexer wheel
+    upperLimitSwitch =
+        new DigitalInput(RobotConstants.get().llamaNeck2022UpperLimitSwitchChannel());
+    // lower switch, gives upper ball enough breathing room
+    lowerLimitSwitch =
+        new DigitalInput(RobotConstants.get().llamaNeck2022LowerLimitSwitchChannel());
+  }
 
-    public boolean getUpperLimitSwitch() {
-        return !upperLimitSwitch.get();
-    }
+  /**
+   * Gets the status of the upper limit switch.
+   *
+   * @return true if pressed, false if not pressed
+   */
+  public boolean getUpperLimitSwitch() {
+    return !upperLimitSwitch.get();
+  }
 
-    public boolean getLowerLimitSwitch() {
-        return !lowerLimitSwitch.get();
-    }
+  /**
+   * Gets the status of the lower limit switch.
+   *
+   * @return true if pressed, false if not pressed
+   */
+  public boolean getLowerLimitSwitch() {
+    return !lowerLimitSwitch.get();
+  }
 
-    public void idle() {
-        LOGGER.debug("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022IdleSpeed());
-        llamaNeckMotor.set(RobotConstants.get().llamaNeck2022IdleSpeed());
-    }
+  /**
+   * Idles the llama neck wheels.
+   *
+   * <p>Keeps the wheels at a slow speed, so it can pick up balls without eating a hand.
+   */
+  public void idle() {
+    LOGGER.debug(
+        "Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022IdleSpeed());
+    llamaNeckMotor.set(RobotConstants.get().llamaNeck2022IdleSpeed());
+  }
 
-    public void forward() {
-        LOGGER.debug("Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022InSpeed());
-        llamaNeckMotor.set(RobotConstants.get().llamaNeck2022InSpeed());
-    }
+  /** Moves the llama neck wheels at a faster rate. */
+  public void forward() {
+    LOGGER.debug(
+        "Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022InSpeed());
+    llamaNeckMotor.set(RobotConstants.get().llamaNeck2022InSpeed());
+  }
 
-    public void backward() {
-        LOGGER.debug("Reversing index, setting speed to " + RobotConstants.get().llamaNeck2022OutSpeed());
-        llamaNeckMotor.set(-RobotConstants.get().llamaNeck2022OutSpeed());
-    }
+  /** Moves the llama neck wheels backwards. */
+  public void backward() {
+    LOGGER.debug(
+        "Reversing index, setting speed to " + RobotConstants.get().llamaNeck2022OutSpeed());
+    llamaNeckMotor.set(-RobotConstants.get().llamaNeck2022OutSpeed());
+  }
 
-    public void stop() {
-        LOGGER.debug("Stopping llamaNeck, setting speed to 0");
-        llamaNeckMotor.set(0.0);
-    }
+  /** Stops the llama neck wheels. */
+  public void stop() {
+    LOGGER.debug("Stopping llamaNeck, setting speed to 0");
+    llamaNeckMotor.set(0.0);
+  }
 
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
 
-        builder.addBooleanProperty("Upper Limit Switch", () -> getUpperLimitSwitch(), null);
-        builder.addBooleanProperty("Lower Limit Switch", () -> getLowerLimitSwitch(), null);
-    }
-
+    builder.addBooleanProperty("Upper Limit Switch", () -> getUpperLimitSwitch(), null);
+    builder.addBooleanProperty("Lower Limit Switch", () -> getLowerLimitSwitch(), null);
+  }
 }
