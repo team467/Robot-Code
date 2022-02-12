@@ -27,6 +27,24 @@ public class LEDManager {
         return new LEDStrip(length, offsets.size() - 1);
     }
 
+    public LEDStrip createSingleStrip(int length) {
+        return createStrip(length);
+    }
+
+    public LEDStrip createInvertedStrip(int length) {
+        offsets.add(this.length);
+        this.length += length;
+
+        return new InvertedLEDStrip(length, offsets.size() - 1);
+    }
+
+    public LEDStrip createDoubleStrip(int length) {
+        offsets.add(this.length);
+        this.length += length*2;
+
+        return new DoubleLEDStrip(length, offsets.size() - 1);
+    }
+
     public void init() {
         ledBuffer = new AddressableLEDBuffer(length);
         ledStrip = new AddressableLED(RobotConstants.get().ledChannel());

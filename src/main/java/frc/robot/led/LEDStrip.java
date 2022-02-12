@@ -10,6 +10,10 @@ public class LEDStrip extends AddressableLEDBuffer {
         this.id = id;
     }
 
+    public int getLEDCount() {
+        return getLength();
+    }
+
     public int getId() {
         return id;
     }
