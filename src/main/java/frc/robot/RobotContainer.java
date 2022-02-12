@@ -47,6 +47,7 @@ public class RobotContainer {
   private Climber2020 climber = null;
   private Shooter2020 shooter = null;
   private LEDTower2022 ledTower2022 = null;
+  private LEDTower2022 ledTower20222 = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -100,9 +101,9 @@ public class RobotContainer {
 
   public RobotContainer() {
     initializeSubsystems();
+    LEDManager.getInstance().init();
     // Configure the button bindings
     configureButtonBindings();
-    LEDManager.getInstance().init();
   }
 
   /**
@@ -126,6 +127,7 @@ public class RobotContainer {
     configureDrivetrain();
     configureClimber2020();
     configureShooter2020();
+    configureLEDTower2022();
   }
 
   private void initDrivetrain() {
@@ -176,9 +178,18 @@ public class RobotContainer {
   private void initLEDTower2022() {
     if (RobotConstants.get().hasLEDTower2022()) {
       ledTower2022 = new LEDTower2022();
-      ledTower2022.setDefaultCommand(new LEDTower2022OffCMD(ledTower2022));
+      ledTower20222 = new LEDTower2022();
     }
   }
+
+  private void configureLEDTower2022() {
+    if (RobotConstants.get().hasLEDTower2022()) {
+      ledTower2022.setDefaultCommand(new LEDTower2022ChaseBallCMD(ledTower2022));
+      ledTower20222.setDefaultCommand(new LEDTower2022RainbowCMD(ledTower20222));
+    }
+  }
+
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

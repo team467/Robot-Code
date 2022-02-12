@@ -334,7 +334,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public int ledTower2022LEDCount() {
-        return 8;
+        return 4;
     }
 
 }

@@ -15,6 +15,7 @@ public class LEDStrip extends AddressableLEDBuffer {
     }
 
     public void update() {
+        System.out.println("update strip");
         LEDManager.getInstance().update(this);
     }
 
