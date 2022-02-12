@@ -19,10 +19,12 @@ import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
+import frc.robot.commands.TurnAngleCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.Shooter2020;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -36,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private Drivetrain drivetrain = null;
+  private Gyro gyro = null;
   private Climber2020 climber = null;
   private Shooter2020 shooter = null;
 
@@ -82,6 +85,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   public void configureButtonBindings() {
+    gyro = new Gyro();
     initDrivetrain();
     initClimber2020();
     initShooter2020();
@@ -95,6 +99,7 @@ public class RobotContainer {
         () -> driverJoystick.getAdjustedTurnSpeed()
       ));
       operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
+      operatorClimberUp.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
 
     }
   }
