@@ -328,12 +328,12 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public boolean hasLEDTower2022() {
-        return false;
+        return true;
     }
 
     @Override
     public int ledTower2022LEDCount() {
-        return 0;
+        return 8;
     }
 
 }

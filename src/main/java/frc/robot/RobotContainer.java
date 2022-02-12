@@ -182,7 +182,7 @@ public class RobotContainer {
 
   private void configureLEDTower2022() {
     if (RobotConstants.get().hasLEDTower2022()) {
-      ledTower2022.setDefaultCommand(new LEDTower2022OffCMD(ledTower2022));
+      ledTower2022.setDefaultCommand(new LEDTower2022RainbowCMD(ledTower2022));
     }
   }
 
