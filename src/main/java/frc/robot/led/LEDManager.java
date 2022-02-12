@@ -21,7 +21,7 @@ public class LEDManager {
     private LEDManager() {}
 
     public LEDStrip createStrip(int length) {
-        offsets.add(length);
+        offsets.add(this.length);
         this.length += length;
 
         return new LEDStrip(length, offsets.size() - 1);
