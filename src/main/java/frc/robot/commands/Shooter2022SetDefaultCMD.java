@@ -25,5 +25,4 @@ public class Shooter2022SetDefaultCMD extends InstantCommand {
   public void initialize() {
     shooter.setDefaultCommand(defaultCommand);
   }
-
 }

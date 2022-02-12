@@ -168,12 +168,12 @@ public class RobotContainer {
   private void initShooter2022() {
     shooter2022 = new Shooter2022();
     shooter2022.setDefaultCommand(new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter));
-    operatorClimberLock.whenPressed(
+    operatorShooterFlywheel.whileActiveOnce(
           new Shooter2022SetDefaultCMD(shooter2022,
-            new Shooter2022StopCMD(shooter2022, indexer, llamaNeck, spitter)))
-        .whenReleased(
+            new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter)))
+        .negate().whileActiveOnce(
           new Shooter2022SetDefaultCMD(shooter2022,
-            new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter)));
+            new Shooter2022StopCMD(shooter2022, indexer, llamaNeck, spitter)));
     operatorShooterShoot.whenPressed(new Shooter2022ShootCMD(shooter2022, indexer, llamaNeck, spitter));
     operatorIntakeRollerBackward.whenHeld(new Shooter2022FlushCMD(shooter2022, indexer, llamaNeck, spitter));
 
