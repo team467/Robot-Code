@@ -31,14 +31,14 @@ public class LEDManager {
         return createStrip(length);
     }
 
-    public LEDStrip createInvertedStrip(int length) {
+    public InvertedLEDStrip createInvertedStrip(int length) {
         offsets.add(this.length);
         this.length += length;
 
         return new InvertedLEDStrip(length, offsets.size() - 1);
     }
 
-    public LEDStrip createDoubleStrip(int length) {
+    public DoubleLEDStrip createDoubleStrip(int length) {
         offsets.add(this.length);
         this.length += length*2;
 
