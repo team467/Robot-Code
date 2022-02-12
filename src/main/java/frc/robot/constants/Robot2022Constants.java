@@ -91,7 +91,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean hasClimber2022() {
-        return false;
+        return true;
     }
 
     @Override
@@ -111,17 +111,17 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean climber2022MotorInvertedRight() {
-        return false;
+        return true;
     }
 
     @Override
     public double climber2022UpSpeed() {
-        return 0.3;
+        return 0.5;
     }
 
     @Override
     public double climber2022DownSpeed() {
-        return 0.1;
+        return 0.3;
     }
 
     @Override
@@ -271,7 +271,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean hasLlamaNeck2022() {
-        return true;
+        return false;
     }
 
     @Override
