@@ -1,18 +1,8 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,7 +12,6 @@ import frc.robot.motors.FeedMotorControllerEncoderGroup;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
-import frc.robot.motors.TalonController;
 
 public class Drivetrain extends SubsystemBase {
     FeedMotorControllerEncoderGroup leftMotorGroup;
@@ -47,8 +36,8 @@ public class Drivetrain extends SubsystemBase {
         // No longer auto inverted by diff drive, you must invert it
         rightMotorLeader.setInverted(RobotConstants.get().driveMotorRightLeaderInverted());
 
-        leftMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
-        rightMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+        leftMotorLeader.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
+        rightMotorLeader.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
 
         if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
             ((SparkMaxController) leftMotorLeader).setIdleMode(IdleMode.kBrake);
@@ -64,8 +53,8 @@ public class Drivetrain extends SubsystemBase {
             leftMotorFollower.setInverted(RobotConstants.get().driveMotorLeftFollowerInverted());
             rightMotorFollower.setInverted(RobotConstants.get().driveMotorRightFollowerInverted());
 
-            leftMotorFollower.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
-            rightMotorFollower.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+            leftMotorFollower.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
+            rightMotorFollower.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
 
             leftMotorGroup = new FeedMotorControllerEncoderGroup(leftMotorLeader, leftMotorFollower);
             rightMotorGroup = new FeedMotorControllerEncoderGroup(rightMotorLeader, rightMotorFollower);
@@ -80,21 +69,10 @@ public class Drivetrain extends SubsystemBase {
         }
 
         if (RobotConstants.get().driveUseVelocity()) {
-            leftMotorGroup.initFF(RobotConstants.get().driveForwardLeftFF(), RobotConstants.get().driveBackwardLeftFF(),
-                    RobotConstants.get().driveMaxVelocity(), RobotConstants.get().driveMaxAcceleration());
-            rightMotorGroup.initFF(RobotConstants.get().driveForwardRightFF(),
-                    RobotConstants.get().driveBackwardRightFF(), RobotConstants.get().driveMaxVelocity(),
-                    RobotConstants.get().driveMaxAcceleration());
+
 
             if (RobotConstants.get().driveUsePID()) {
-                leftMotorGroup.initFB(RobotConstants.get().driveForwardLeftVelocityFB(),
-                        RobotConstants.get().driveBackwardLeftVelocityFB(),
-                        RobotConstants.get().driveForwardLeftPositionFB(),
-                        RobotConstants.get().driveBackwardLeftPositionFB());
-                rightMotorGroup.initFB(RobotConstants.get().driveForwardRightVelocityFB(),
-                        RobotConstants.get().driveBackwardRightVelocityFB(),
-                        RobotConstants.get().driveForwardRightPositionFB(),
-                        RobotConstants.get().driveBackwardRightPositionFB());
+                // TODO NEW PID
             }
         }
 

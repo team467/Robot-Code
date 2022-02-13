@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
@@ -37,68 +38,28 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
-    public FeedforwardConstant driveForwardRightFF() {
+    public FeedforwardConstant driveFF() {
         return new FeedforwardConstant(0.0, 0.0, 0.0);
     }
 
     @Override
-    public FeedbackConstant driveForwardRightVelocityFB() {
+    public FeedbackConstant driveVelocityFB() {
         return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
-    public FeedbackConstant driveForwardRightPositionFB() {
+    public FeedbackConstant drivePositionFB() {
         return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
-    public FeedforwardConstant driveForwardLeftFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveForwardLeftVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveForwardLeftPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedforwardConstant driveBackwardRightFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardRightVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardRightPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedforwardConstant driveBackwardLeftFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardLeftVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardLeftPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public double driveUnitsPerRotation() {
+    public double driveMetersPerRotation() {
         return 1.0;
+    }
+
+    @Override
+    public DifferentialDriveKinematics driveKinematics() {
+        return new DifferentialDriveKinematics(0);
     }
 
     @Override

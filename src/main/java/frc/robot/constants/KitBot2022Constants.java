@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
@@ -37,69 +38,29 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public FeedforwardConstant driveForwardRightFF() {
+    public FeedforwardConstant driveFF() {
         return new FeedforwardConstant(0.15959, 0.26352, 0.044259);
     }
 
     @Override
-    public FeedbackConstant driveForwardRightVelocityFB() {
+    public FeedbackConstant driveVelocityFB() {
         return new FeedbackConstant(0.12316, 0.0);
     }
 
     @Override
-    public FeedbackConstant driveForwardRightPositionFB() {
+    public FeedbackConstant drivePositionFB() {
         return new FeedbackConstant(35.842, 1.5815);
     }
 
     @Override
-    public FeedforwardConstant driveForwardLeftFF() {
-        return new FeedforwardConstant(0.12149, 0.1279, 0.01641);
-    }
-
-    @Override
-    public FeedbackConstant driveForwardLeftVelocityFB() {
-        return new FeedbackConstant(0.16326, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveForwardLeftPositionFB() {
-        return new FeedbackConstant(26.488, 0.84657);
-    }
-
-    @Override
-    public FeedforwardConstant driveBackwardRightFF() {
-        return new FeedforwardConstant(0.14347, 0.13096, 0.010268);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardRightVelocityFB() {
-        return new FeedbackConstant(0.14205, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardRightPositionFB() {
-        return new FeedbackConstant(22.371, 0.593);
-    }
-
-    @Override
-    public FeedforwardConstant driveBackwardLeftFF() {
-        return new FeedforwardConstant(0.15753, 0.12827, 0.0055311);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardLeftVelocityFB() {
-        return new FeedbackConstant(0.10653, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardLeftPositionFB() {
-        return new FeedbackConstant(17.061, 0.35465);
-    }
-
-    @Override
-    public double driveUnitsPerRotation() {
+    public double driveMetersPerRotation() {
         // Already in inches
         return 1;
+    }
+
+    @Override
+    public DifferentialDriveKinematics driveKinematics() {
+        return new DifferentialDriveKinematics(0.58);
     }
 
     @Override

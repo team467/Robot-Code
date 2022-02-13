@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
@@ -11,20 +12,11 @@ public interface Constants {
     public MotorType driveMotorType();
     public boolean driveUseVelocity();
     public boolean driveUsePID();
-    // Inches
-    public FeedforwardConstant driveForwardRightFF();
-    public FeedbackConstant driveForwardRightVelocityFB();
-    public FeedbackConstant driveForwardRightPositionFB();
-    public FeedforwardConstant driveForwardLeftFF();
-    public FeedbackConstant driveForwardLeftVelocityFB();
-    public FeedbackConstant driveForwardLeftPositionFB();
-    public FeedforwardConstant driveBackwardRightFF();
-    public FeedbackConstant driveBackwardRightVelocityFB();
-    public FeedbackConstant driveBackwardRightPositionFB();
-    public FeedforwardConstant driveBackwardLeftFF();
-    public FeedbackConstant driveBackwardLeftVelocityFB();
-    public FeedbackConstant driveBackwardLeftPositionFB();
-    public double driveUnitsPerRotation();
+    public FeedforwardConstant driveFF();
+    public FeedbackConstant driveVelocityFB();
+    public FeedbackConstant drivePositionFB();
+    public double driveMetersPerRotation();
+    public DifferentialDriveKinematics driveKinematics();
     public double driveMaxVelocity();
     public double driveMaxAcceleration();
     public double driveFastMaxSpeed();
