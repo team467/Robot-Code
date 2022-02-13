@@ -24,6 +24,7 @@ public class Robot2022CancelAllCMD extends InstantCommand {
     this.llamaNeck = llamaNeck;
     this.spitter = spitter;
     this.drivetrain = drivetrain;
+    addRequirements(indexer, llamaNeck, spitter, drivetrain);
   }
 
   @Override
