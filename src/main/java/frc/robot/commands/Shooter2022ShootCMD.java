@@ -11,8 +11,7 @@ import frc.robot.subsystems.Spitter2022;
 
 public class Shooter2022ShootCMD extends CommandBase {
 
-  // private final double TIME_UNTIL_FINISHED = 0.1;
-  private final double TIME_UNTIL_FINISHED = 2;
+  private final double TIME_UNTIL_FINISHED = 0.1;
 
   private final LlamaNeck2022 llamaNeck;
   private final Spitter2022 spitter;
@@ -59,7 +58,7 @@ public class Shooter2022ShootCMD extends CommandBase {
 
   @Override
   public void execute() {
-    if (spitter.atSpeed()) {
+    if (spitter.isAtShootingSpeed()) {
       indexerForward.schedule();
       llamaNeckForward.schedule();
     }
@@ -70,9 +69,11 @@ public class Shooter2022ShootCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    if (llamaNeck.getUpperLimitSwitch() || llamaNeck.getLowerLimitSwitch()) {
+    if (llamaNeck.upperLimitSwitchIsPressed() || llamaNeck.lowerLimitSwitchIsPressed()) {
+      // any switch still pressed, continue shooting.
       timer.reset();
     }
+    // has TIME_UNTIL_FINISHED seconds occurred since no balls have touched any limit switch?
     return timer.hasElapsed(TIME_UNTIL_FINISHED);
   }
 }

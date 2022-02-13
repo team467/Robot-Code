@@ -39,7 +39,7 @@ public class LlamaNeck2022 extends SubsystemBase {
    *
    * @return true if pressed, false if not pressed
    */
-  public boolean getUpperLimitSwitch() {
+  public boolean upperLimitSwitchIsPressed() {
     return !upperLimitSwitch.get();
   }
 
@@ -48,15 +48,11 @@ public class LlamaNeck2022 extends SubsystemBase {
    *
    * @return true if pressed, false if not pressed
    */
-  public boolean getLowerLimitSwitch() {
+  public boolean lowerLimitSwitchIsPressed() {
     return !lowerLimitSwitch.get();
   }
 
-  /**
-   * Idles the llama neck wheels.
-   *
-   * <p>Keeps the wheels at a slow speed, so it can pick up balls without eating a hand.
-   */
+  /** Idles the llama neck wheels. */
   public void idle() {
     LOGGER.debug(
         "Starting llamaNeck, setting speed to " + RobotConstants.get().llamaNeck2022IdleSpeed());
@@ -87,7 +83,7 @@ public class LlamaNeck2022 extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
 
-    builder.addBooleanProperty("Upper Limit Switch", () -> getUpperLimitSwitch(), null);
-    builder.addBooleanProperty("Lower Limit Switch", () -> getLowerLimitSwitch(), null);
+    builder.addBooleanProperty("Upper Limit Switch", () -> upperLimitSwitchIsPressed(), null);
+    builder.addBooleanProperty("Lower Limit Switch", () -> lowerLimitSwitchIsPressed(), null);
   }
 }

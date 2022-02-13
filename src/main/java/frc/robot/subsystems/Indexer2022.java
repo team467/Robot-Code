@@ -25,11 +25,7 @@ public class Indexer2022 extends SubsystemBase {
     indexerMotor.setInverted(RobotConstants.get().indexer2022MotorInverted());
   }
 
-  /**
-   * Idles the indexer wheel.
-   *
-   * <p>Keeps the wheel at a slow speed so that it can grab a ball once it reaches one.
-   */
+  /** Idles the indexer wheel. */
   public void idle() {
     LOGGER.debug(
         "Starting indexer slowly, setting speed to " + RobotConstants.get().indexer2022IdleSpeed());

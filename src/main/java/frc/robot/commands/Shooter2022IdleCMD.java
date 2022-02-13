@@ -51,11 +51,11 @@ public class Shooter2022IdleCMD extends CommandBase {
 
   @Override
   public void execute() {
-    if (llamaNeck.getUpperLimitSwitch()) {
+    if (llamaNeck.upperLimitSwitchIsPressed()) {
       LOGGER.debug("Upper limit switch was activated. Stop indexer.");
       indexerStop.schedule();
 
-      if (llamaNeck.getLowerLimitSwitch()) {
+      if (llamaNeck.lowerLimitSwitchIsPressed()) {
         LOGGER.debug("Lower limit switch was activated. Stop llama neck.");
         llamaNeckStop.schedule();
       }

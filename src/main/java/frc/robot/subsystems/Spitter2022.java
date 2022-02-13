@@ -12,7 +12,7 @@ import frc.robot.motors.MotorType;
 /** The spitter subsystem, contains the flywheel and its motor only. */
 public class Spitter2022 extends SubsystemBase {
 
-  private final double THRESHOLD = 2;
+  private final double SHOOTING_SPEED_TOLERANCE = 2.0;
   private final MotorControllerEncoder spitterMotor;
   private final PIDController spitterPIDController;
   private final SimpleMotorFeedforward spitterFFController;
@@ -89,11 +89,11 @@ public class Spitter2022 extends SubsystemBase {
    *
    * @return if the threshold has been met
    */
-  public boolean atSpeed() {
+  public boolean isAtShootingSpeed() {
     if (!RobotConstants.get().spitter2022UseVelocity()) {
       return true;
     }
-    return Math.abs(spitterMotor.getVelocity() - spitterPIDController.getSetpoint()) <= THRESHOLD;
+    return Math.abs(spitterMotor.getVelocity() - spitterPIDController.getSetpoint()) <= SHOOTING_SPEED_TOLERANCE;
   }
 
   @Override

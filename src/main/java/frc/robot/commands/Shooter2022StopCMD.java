@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -12,10 +8,6 @@ import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
 
 public class Shooter2022StopCMD extends CommandBase {
-  private final LlamaNeck2022 llamaNeck;
-  private final Spitter2022 spitter;
-  private final Indexer2022 indexer;
-
   private final Command llamaNeckStop;
   private final Command spitterStop;
   private final Command indexerStop;
@@ -24,10 +16,6 @@ public class Shooter2022StopCMD extends CommandBase {
   public Shooter2022StopCMD(
       Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
     super();
-
-    this.llamaNeck = llamaNeck;
-    this.spitter = spitter;
-    this.indexer = indexer;
 
     this.llamaNeckStop = new LlamaNeck2022StopCMD(llamaNeck);
     this.spitterStop = new Spitter2022StopCMD(spitter);

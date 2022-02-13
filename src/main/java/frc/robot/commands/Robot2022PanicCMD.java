@@ -1,6 +1,6 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer2022;
@@ -8,7 +8,7 @@ import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Spitter2022;
 import org.apache.logging.log4j.Logger;
 
-public class Robot2022PanicCMD extends CommandBase {
+public class Robot2022PanicCMD extends InstantCommand {
 
   private static final Logger LOGGER =
       RobotLogManager.getMainLogger(Robot2022PanicCMD.class.getName());
@@ -20,8 +20,6 @@ public class Robot2022PanicCMD extends CommandBase {
 
   public Robot2022PanicCMD(
       Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter, Drivetrain drivetrain) {
-    super();
-
     this.indexer = indexer;
     this.llamaNeck = llamaNeck;
     this.spitter = spitter;
@@ -38,13 +36,5 @@ public class Robot2022PanicCMD extends CommandBase {
   }
 
   @Override
-  public void execute() {}
-
-  @Override
   public void end(boolean interrupted) {}
-
-  @Override
-  public boolean isFinished() {
-    return true;
-  }
 }
