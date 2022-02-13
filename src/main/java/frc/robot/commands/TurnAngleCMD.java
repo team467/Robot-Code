@@ -83,6 +83,7 @@ public void initialize() {
         config
     );
 
+    // TODO ONLY ONE CONSTANTS
     command = new RamseteCommand(
         turnTrajectory,
         diffDriveOdometry::getPoseMeters,
