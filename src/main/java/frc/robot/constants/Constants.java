@@ -12,9 +12,12 @@ public interface Constants {
     public MotorType driveMotorType();
     public boolean driveUseVelocity();
     public boolean driveUsePID();
-    public SimpleFeedforwardConstant driveFF();
-    public FeedbackConstant driveVelocityFB();
-    public FeedbackConstant drivePositionFB();
+    public SimpleFeedforwardConstant driveDriveFF();
+    public FeedbackConstant driveDriveVelocityPID();
+    public FeedbackConstant driveDrivePositionPID();
+    public SimpleFeedforwardConstant driveTurnFF();
+    public FeedbackConstant driveTurnVelocityPID();
+    public FeedbackConstant driveTurnPositionPID();
     public double driveMetersPerRotation();
     public DifferentialDriveKinematics driveKinematics();
     public double driveMaxVelocity();

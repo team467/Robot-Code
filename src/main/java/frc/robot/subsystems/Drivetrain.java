@@ -2,7 +2,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -24,7 +26,8 @@ public class Drivetrain extends SubsystemBase {
     MotorControllerEncoder rightMotorFollower = null;
 
     SimpleMotorFeedforward driveFF;
-    SimpleMotorFeedforward driveFB;
+    PIDController leftDrivePID;
+    PIDController rightDrivePID;
 
     DifferentialDrive diffDrive;
 
@@ -73,10 +76,11 @@ public class Drivetrain extends SubsystemBase {
         }
 
         if (RobotConstants.get().driveUseVelocity()) {
-
+            driveFF = RobotConstants.get().driveDriveFF().getFeedforward();
 
             if (RobotConstants.get().driveUsePID()) {
-                // TODO NEW PID
+                leftDrivePID = RobotConstants.get().driveDriveVelocityPID().getPIDController();
+                rightDrivePID = RobotConstants.get().driveDriveVelocityPID().getPIDController();
             }
         }
 
@@ -84,7 +88,23 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void arcadeDrive(double speed, double rotation) {
-        diffDrive.arcadeDrive(speed, rotation);
+        if (RobotConstants.get().driveUseVelocity()) {
+            DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, true);
+            double leftVelocity =  speeds.left * RobotConstants.get().driveMaxVelocity();
+            double rightVelocity =  speeds.right * RobotConstants.get().driveMaxVelocity();
+            double leftVoltage = driveFF.calculate(leftVelocity);
+            double rightVoltage = driveFF.calculate(rightVelocity);
+
+            if (RobotConstants.get().driveUsePID()) {
+                leftVoltage += leftDrivePID.calculate(getLeftVelocity(), leftVelocity);
+                rightVoltage += rightDrivePID.calculate(getRightVelocity(), rightVelocity);
+            }
+
+            leftMotorGroup.setVoltage(leftVoltage);
+            rightMotorGroup.setVoltage(rightVoltage);
+        } else {
+            diffDrive.arcadeDrive(speed, rotation);
+        }
     }
 
     public void curvatureDrive(double speed, double rotation, boolean turnInPlace) {
@@ -95,9 +115,9 @@ public class Drivetrain extends SubsystemBase {
         curvatureDrive(speed, rotation, true);
     }
 
-    public void tankDriveVolts(double leftVolt, double rightVolt) {
-        leftMotorGroup.setVoltage(leftVolt);
-        rightMotorGroup.setVoltage(rightVolt);
+    public void tankDriveVolts(double leftVolts, double rightVolts) {
+        leftMotorGroup.setVoltage(leftVolts);
+        rightMotorGroup.setVoltage(rightVolts);
     }
 
     public double getLeftPosition() {
@@ -122,6 +142,14 @@ public class Drivetrain extends SubsystemBase {
 
     public void resetLeftPosition() {
         leftMotorLeader.resetPosition();
+    }
+
+    public void resetLeftPID() {
+        leftDrivePID.reset();
+    }
+
+    public void resetRightPID() {
+        rightDrivePID.reset();
     }
 
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {

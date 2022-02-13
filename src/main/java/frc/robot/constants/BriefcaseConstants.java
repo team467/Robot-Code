@@ -38,18 +38,33 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public SimpleFeedforwardConstant driveFF() {
+    public SimpleFeedforwardConstant driveDriveFF() {
         return new SimpleFeedforwardConstant(0.0, 0.0, 0.0);
     }
 
     @Override
-    public FeedbackConstant driveVelocityFB() {
+    public FeedbackConstant driveDriveVelocityPID() {
         return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
-    public FeedbackConstant drivePositionFB() {
+    public FeedbackConstant driveDrivePositionPID() {
         return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public SimpleFeedforwardConstant driveTurnFF() {
+        return null;
+    }
+
+    @Override
+    public FeedbackConstant driveTurnVelocityPID() {
+        return null;
+    }
+
+    @Override
+    public FeedbackConstant driveTurnPositionPID() {
+        return null;
     }
 
     @Override
