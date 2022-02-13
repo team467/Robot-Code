@@ -98,6 +98,8 @@ public void initialize() {
         // RamseteCommand passes volts to the callback
         drivetrain::tankDriveVolts
     );
+
+    command.schedule();
 }
 
 @Override
