@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
@@ -112,6 +113,11 @@ public class Drivetrain extends SubsystemBase {
         curvatureDrive(speed, rotation, true);
     }
 
+    public void tankDriveVolts(double leftVolt, double rightVolt) {
+        leftMotorGroup.setVoltage(leftVolt);
+        rightMotorGroup.setVoltage(rightVolt);
+    }
+
     public double getLeftPosition() {
         return leftMotorLeader.getPosition();
     }
@@ -134,6 +140,10 @@ public class Drivetrain extends SubsystemBase {
 
     public void resetLeftPosition() {
         leftMotorLeader.resetPosition();
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(getLeftVelocity(), getRightVelocity());
     }
 
     @Override
