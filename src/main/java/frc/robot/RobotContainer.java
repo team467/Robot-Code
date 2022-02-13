@@ -14,7 +14,7 @@ import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.Indexer2022StopCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
-import frc.robot.commands.Shooter2022FlushCMD;
+import frc.robot.commands.Shooter2022FlushBallCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
 import frc.robot.commands.Shooter2022SetDefaultCMD;
 import frc.robot.commands.Shooter2022ShootCMD;
@@ -180,7 +180,7 @@ public class RobotContainer {
           new Shooter2022SetDefaultCMD(shooter2022,
             new Shooter2022StopCMD(shooter2022, indexer, llamaNeck, spitter)));
     operatorShooterShoot.whenPressed(new Shooter2022ShootCMD(shooter2022, indexer, llamaNeck, spitter));
-    operatorIntakeRollerBackward.whenHeld(new Shooter2022FlushCMD(shooter2022, indexer, llamaNeck, spitter));
+    operatorIntakeRollerBackward.whenHeld(new Shooter2022FlushBallCMD(shooter2022, indexer, llamaNeck, spitter));
 
   }
 

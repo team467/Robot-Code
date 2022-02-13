@@ -9,10 +9,10 @@ import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
 import org.apache.logging.log4j.Logger;
 
-public class Shooter2022FlushCMD extends CommandBase {
+public class Shooter2022FlushBallCMD extends CommandBase {
 
   private static final Logger LOGGER =
-      RobotLogManager.getMainLogger(Shooter2022FlushCMD.class.getName());
+      RobotLogManager.getMainLogger(Shooter2022FlushBallCMD.class.getName());
 
   private final Command llamaNeckBackward;
 
@@ -20,7 +20,7 @@ public class Shooter2022FlushCMD extends CommandBase {
 
   private final Command spitterStop;
 
-  public Shooter2022FlushCMD(
+  public Shooter2022FlushBallCMD(
       Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
     super();
 

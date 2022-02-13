@@ -8,17 +8,17 @@ import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Spitter2022;
 import org.apache.logging.log4j.Logger;
 
-public class Robot2022PanicCMD extends InstantCommand {
+public class Robot2022CancelAllCMD extends InstantCommand {
 
   private static final Logger LOGGER =
-      RobotLogManager.getMainLogger(Robot2022PanicCMD.class.getName());
+      RobotLogManager.getMainLogger(Robot2022CancelAllCMD.class.getName());
 
   private final Indexer2022 indexer;
   private final LlamaNeck2022 llamaNeck;
   private final Spitter2022 spitter;
   private final Drivetrain drivetrain;
 
-  public Robot2022PanicCMD(
+  public Robot2022CancelAllCMD(
       Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter, Drivetrain drivetrain) {
     this.indexer = indexer;
     this.llamaNeck = llamaNeck;
