@@ -2,9 +2,7 @@ package frc.robot.commands;
 
 import java.util.List;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -32,7 +30,7 @@ public class TurnAngleCMD extends CommandBase {
         diffDriveOdometry = new DifferentialDriveOdometry(gyro.getRotation2d());
 
         DifferentialDriveVoltageConstraint autDriveVoltageConstraint = new DifferentialDriveVoltageConstraint(
-                RobotConstants.get().driveFF().getSimpleMotorFeedforward(),
+                RobotConstants.get().driveFF().getFeedforward(),
                 RobotConstants.get().driveKinematics(),
                 10);
 
@@ -69,7 +67,7 @@ public class TurnAngleCMD extends CommandBase {
                 turnTrajectory,
                 diffDriveOdometry::getPoseMeters,
                 new RamseteController(),
-                RobotConstants.get().driveFF().getSimpleMotorFeedforward(),
+                RobotConstants.get().driveFF().getFeedforward(),
                 RobotConstants.get().driveKinematics(),
                 drivetrain::getWheelSpeeds,
                 RobotConstants.get().driveVelocityFB().getPIDController(),

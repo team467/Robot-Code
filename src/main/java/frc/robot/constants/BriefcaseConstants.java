@@ -2,7 +2,7 @@ package frc.robot.constants;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
-import frc.robot.motors.FeedforwardConstant;
+import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
 
 public class BriefcaseConstants implements Constants {
@@ -38,8 +38,8 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public FeedforwardConstant driveFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
+    public SimpleFeedforwardConstant driveFF() {
+        return new SimpleFeedforwardConstant(0.0, 0.0, 0.0);
     }
 
     @Override

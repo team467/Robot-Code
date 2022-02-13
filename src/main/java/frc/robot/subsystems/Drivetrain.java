@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.motors.SparkMaxController;
-import frc.robot.motors.FeedMotorControllerEncoderGroup;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;

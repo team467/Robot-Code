@@ -2,7 +2,7 @@ package frc.robot.constants;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
-import frc.robot.motors.FeedforwardConstant;
+import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
 
 public interface Constants {
@@ -12,7 +12,7 @@ public interface Constants {
     public MotorType driveMotorType();
     public boolean driveUseVelocity();
     public boolean driveUsePID();
-    public FeedforwardConstant driveFF();
+    public SimpleFeedforwardConstant driveFF();
     public FeedbackConstant driveVelocityFB();
     public FeedbackConstant drivePositionFB();
     public double driveMetersPerRotation();
