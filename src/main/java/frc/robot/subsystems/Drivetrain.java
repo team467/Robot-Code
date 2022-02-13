@@ -2,9 +2,11 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.motors.SparkMaxController;
@@ -14,13 +16,16 @@ import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
 
 public class Drivetrain extends SubsystemBase {
-    FeedMotorControllerEncoderGroup leftMotorGroup;
+    MotorControllerGroup leftMotorGroup;
     MotorControllerEncoder leftMotorLeader;
     MotorControllerEncoder leftMotorFollower = null;
 
-    FeedMotorControllerEncoderGroup rightMotorGroup;
+    MotorControllerGroup rightMotorGroup;
     MotorControllerEncoder rightMotorLeader;
     MotorControllerEncoder rightMotorFollower = null;
+
+    SimpleMotorFeedforward driveFF;
+    SimpleMotorFeedforward driveFB;
 
     DifferentialDrive diffDrive;
 
@@ -56,16 +61,16 @@ public class Drivetrain extends SubsystemBase {
             leftMotorFollower.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
             rightMotorFollower.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
 
-            leftMotorGroup = new FeedMotorControllerEncoderGroup(leftMotorLeader, leftMotorFollower);
-            rightMotorGroup = new FeedMotorControllerEncoderGroup(rightMotorLeader, rightMotorFollower);
+            leftMotorGroup = new MotorControllerGroup(leftMotorLeader, leftMotorFollower);
+            rightMotorGroup = new MotorControllerGroup(rightMotorLeader, rightMotorFollower);
 
             if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
                 ((SparkMaxController) leftMotorFollower).setIdleMode(IdleMode.kBrake);
                 ((SparkMaxController) rightMotorFollower).setIdleMode(IdleMode.kBrake);
             }
         } else {
-            leftMotorGroup = new FeedMotorControllerEncoderGroup(leftMotorLeader);
-            rightMotorGroup = new FeedMotorControllerEncoderGroup(rightMotorLeader);
+            leftMotorGroup = new MotorControllerGroup(leftMotorLeader);
+            rightMotorGroup = new MotorControllerGroup(rightMotorLeader);
         }
 
         if (RobotConstants.get().driveUseVelocity()) {

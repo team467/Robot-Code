@@ -32,9 +32,7 @@ public class TurnAngleCMD extends CommandBase {
         diffDriveOdometry = new DifferentialDriveOdometry(gyro.getRotation2d());
 
         DifferentialDriveVoltageConstraint autDriveVoltageConstraint = new DifferentialDriveVoltageConstraint(
-                new SimpleMotorFeedforward(RobotConstants.get().driveFF().getkS(),
-                        RobotConstants.get().driveFF().getkV(),
-                        RobotConstants.get().driveFF().getkA()),
+                RobotConstants.get().driveFF().getSimpleMotorFeedforward(),
                 RobotConstants.get().driveKinematics(),
                 10);
 
@@ -71,13 +69,11 @@ public class TurnAngleCMD extends CommandBase {
                 turnTrajectory,
                 diffDriveOdometry::getPoseMeters,
                 new RamseteController(),
-                new SimpleMotorFeedforward(RobotConstants.get().driveFF().getkS(),
-                        RobotConstants.get().driveFF().getkV(),
-                        RobotConstants.get().driveFF().getkA()),
+                RobotConstants.get().driveFF().getSimpleMotorFeedforward(),
                 RobotConstants.get().driveKinematics(),
                 drivetrain::getWheelSpeeds,
-                new PIDController(RobotConstants.get().driveVelocityFB().getkP(), 0, 0),
-                new PIDController(RobotConstants.get().driveVelocityFB().getkP(), 0, 0),
+                RobotConstants.get().driveVelocityFB().getPIDController(),
+                RobotConstants.get().driveVelocityFB().getPIDController(),
                 // RamseteCommand passes volts to the callback
                 drivetrain::tankDriveVolts,
                 drivetrain
