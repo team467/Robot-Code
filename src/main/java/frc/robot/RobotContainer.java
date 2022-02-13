@@ -100,6 +100,7 @@ public class RobotContainer {
       ));
       operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
       operatorClimberUp.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
+      operatorClimberDown.whenPressed(new TurnAngleCMD(drivetrain, gyro, -90));
 
     }
   }

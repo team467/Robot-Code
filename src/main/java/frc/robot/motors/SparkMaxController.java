@@ -55,6 +55,11 @@ public class SparkMaxController implements MotorControllerEncoder {
     }
 
     @Override
+    public void resetPosition() {
+        spark.getEncoder().setPosition(0);
+    }
+
+    @Override
     public double getCurrent() {
         return spark.getOutputCurrent();
     }

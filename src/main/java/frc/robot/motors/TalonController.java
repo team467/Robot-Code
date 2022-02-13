@@ -52,6 +52,11 @@ public class TalonController implements MotorControllerEncoder {
     }
 
     @Override
+    public void resetPosition() {
+        talon.setSelectedSensorPosition(0);
+    }
+
+    @Override
     public double getCurrent() {
         return talon.getStatorCurrent();
     }
