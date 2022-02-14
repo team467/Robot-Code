@@ -13,7 +13,7 @@ public class Indexer2022StopCMD extends CommandBase {
   /**
    * Creates a new Indexer2022StopCMD.
    *
-   * @param trigger The subsystem used by this command.
+   * @param indexer The subsystem used by this command.
    */
   public Indexer2022StopCMD(Indexer2022 indexer) {
     this.indexer = indexer;
