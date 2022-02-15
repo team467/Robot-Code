@@ -5,12 +5,16 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
+import frc.robot.logging.RobotLogManager;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
+import org.apache.logging.log4j.Logger;
 
 /** The spitter subsystem, contains the flywheel and its motor only. */
 public class Spitter2022 extends SubsystemBase {
+
+  private static final Logger LOGGER = RobotLogManager.getMainLogger(Spitter2022.class.getName());
 
   private final double SHOOTING_SPEED_TOLERANCE = 2.0;
   private final MotorControllerEncoder spitterMotor;
@@ -47,8 +51,14 @@ public class Spitter2022 extends SubsystemBase {
    */
   public void setSpeed(double speed) {
     if (RobotConstants.get().spitter2022UseVelocity()) {
+      LOGGER.debug(
+          "Setting speed to "
+              + speed
+              + " using velocity, setting velocity to "
+              + speed * RobotConstants.get().spitter2022MaxVelocity());
       setVelocity(speed * RobotConstants.get().spitter2022MaxVelocity());
     } else {
+      LOGGER.debug("Setting speed to " + speed + " without using velocity");
       spitterMotor.set(speed);
     }
   }
@@ -64,6 +74,7 @@ public class Spitter2022 extends SubsystemBase {
     if (RobotConstants.get().spitter2022UsePID()) {
       output += spitterPIDController.calculate(spitterMotor.getVelocity());
     }
+    LOGGER.debug("Setting voltage to {}", output);
     spitterMotor.setVoltage(output);
   }
 
@@ -93,14 +104,21 @@ public class Spitter2022 extends SubsystemBase {
     if (!RobotConstants.get().spitter2022UseVelocity()) {
       return true;
     }
-    return Math.abs(spitterMotor.getVelocity() - spitterPIDController.getSetpoint()) <= SHOOTING_SPEED_TOLERANCE;
+    LOGGER.debug(
+        "is "
+            + Math.abs(spitterMotor.getVelocity() - spitterPIDController.getSetpoint())
+            + " less than "
+            + SHOOTING_SPEED_TOLERANCE
+            + "?");
+    return Math.abs(spitterMotor.getVelocity() - spitterPIDController.getSetpoint())
+        <= SHOOTING_SPEED_TOLERANCE;
   }
 
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
 
-    builder.addDoubleProperty("Flywheel Velocity", () -> spitterMotor.getVelocity(), null);
+    builder.addDoubleProperty("Flywheel Velocity", spitterMotor::getVelocity, null);
     builder.addDoubleProperty(
         "Flywheel Velocity Error",
         () -> spitterPIDController.getSetpoint() - spitterMotor.getVelocity(),

@@ -2,12 +2,18 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
+import org.apache.logging.log4j.Logger;
 
 public class Shooter2022StopCMD extends CommandBase {
+
+  private static final Logger LOGGER =
+      RobotLogManager.getMainLogger(Shooter2022StopCMD.class.getName());
+
   private final Command llamaNeckStop;
   private final Command spitterStop;
   private final Command indexerStop;
@@ -26,7 +32,9 @@ public class Shooter2022StopCMD extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    LOGGER.debug("Stopping shooter system.");
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

@@ -83,7 +83,7 @@ public class LlamaNeck2022 extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
 
-    builder.addBooleanProperty("Upper Limit Switch", () -> upperLimitSwitchIsPressed(), null);
-    builder.addBooleanProperty("Lower Limit Switch", () -> lowerLimitSwitchIsPressed(), null);
+    builder.addBooleanProperty("Upper Limit Switch", this::upperLimitSwitchIsPressed, null);
+    builder.addBooleanProperty("Lower Limit Switch", this::lowerLimitSwitchIsPressed, null);
   }
 }

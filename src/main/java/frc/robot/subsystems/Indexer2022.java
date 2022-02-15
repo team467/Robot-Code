@@ -56,7 +56,7 @@ public class Indexer2022 extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
 
-    builder.addDoubleProperty("Indexer Position", () -> indexerMotor.getPosition(), null);
-    builder.addDoubleProperty("Indexer Velocity", () -> indexerMotor.getVelocity(), null);
+    builder.addDoubleProperty("Indexer Position", indexerMotor::getPosition, null);
+    builder.addDoubleProperty("Indexer Velocity", indexerMotor::getVelocity, null);
   }
 }
