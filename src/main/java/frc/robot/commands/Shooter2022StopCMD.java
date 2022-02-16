@@ -18,7 +18,6 @@ public class Shooter2022StopCMD extends CommandBase {
   private final Command spitterStop;
   private final Command indexerStop;
 
-  /** Creates a new Shooter2022Stop. */
   public Shooter2022StopCMD(
       Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
     super();
@@ -30,13 +29,11 @@ public class Shooter2022StopCMD extends CommandBase {
     addRequirements(shooter);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     LOGGER.debug("Stopping shooter system.");
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     llamaNeckStop.schedule();
@@ -44,11 +41,9 @@ public class Shooter2022StopCMD extends CommandBase {
     indexerStop.schedule();
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {}
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

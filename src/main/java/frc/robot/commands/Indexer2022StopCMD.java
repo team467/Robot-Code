@@ -12,7 +12,6 @@ public class Indexer2022StopCMD extends CommandBase {
 
   public Indexer2022StopCMD(Indexer2022 indexer) {
     this.indexer = indexer;
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(indexer);
   }
 

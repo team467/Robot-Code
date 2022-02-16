@@ -10,34 +10,24 @@ public class Spitter2022StopCMD extends CommandBase {
       RobotLogManager.getMainLogger(Spitter2022StopCMD.class.getName());
   private final Spitter2022 spitter;
 
-  /**
-   * Creates a new Spitter2022StopCMD.
-   *
-   * @param spitter The subsystem used by this command.
-   */
   public Spitter2022StopCMD(Spitter2022 spitter) {
     this.spitter = spitter;
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(spitter);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     LOGGER.debug("Setting spitter stopped");
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     spitter.stop();
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
+  
   @Override
   public boolean isFinished() {
     return false;

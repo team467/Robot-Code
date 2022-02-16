@@ -10,34 +10,24 @@ public class Spitter2022BackwardCMD extends CommandBase {
       RobotLogManager.getMainLogger(Spitter2022BackwardCMD.class.getName());
   private final Spitter2022 spitter;
 
-  /**
-   * Creates a new Spitter2022BackwardCMD.
-   *
-   * @param spitter The subsystem used by this command.
-   */
   public Spitter2022BackwardCMD(Spitter2022 spitter) {
     this.spitter = spitter;
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(spitter);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     LOGGER.debug("Setting spitter backward");
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     spitter.backward();
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {}
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
