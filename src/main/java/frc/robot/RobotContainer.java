@@ -19,7 +19,8 @@ import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
-import frc.robot.commands.TurnAngleCMD;
+import frc.robot.commands.TurnToAngleCMD;
+import frc.robot.commands.GoToTrajectoryCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
@@ -99,8 +100,9 @@ public class RobotContainer {
         () -> driverJoystick.getAdjustedTurnSpeed()
       ));
       operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
-      operatorClimberUp.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
-      operatorClimberDown.whenPressed(new TurnAngleCMD(drivetrain, gyro, -90));
+      operatorClimberUp.whenPressed(new TurnToAngleCMD(drivetrain, gyro, 90));
+      operatorClimberDown.whenPressed(new TurnToAngleCMD(drivetrain, gyro, -90));
+      driverButtonA.whenPressed(new TurnToAngleCMD(drivetrain, gyro, 0));
 
     }
   }

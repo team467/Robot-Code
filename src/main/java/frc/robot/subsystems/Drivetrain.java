@@ -43,12 +43,15 @@ public class Drivetrain extends SubsystemBase {
         // No longer auto inverted by diff drive, you must invert it
         rightMotorLeader.setInverted(RobotConstants.get().driveMotorRightLeaderInverted());
 
+        leftMotorLeader.resetPosition();
+        rightMotorLeader.resetPosition();
+
         leftMotorLeader.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
         rightMotorLeader.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
 
         if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
-            ((SparkMaxController) leftMotorLeader).setIdleMode(IdleMode.kBrake);
-            ((SparkMaxController) rightMotorLeader).setIdleMode(IdleMode.kBrake);
+            ((SparkMaxController) leftMotorLeader).setIdleMode(IdleMode.kCoast);
+            ((SparkMaxController) rightMotorLeader).setIdleMode(IdleMode.kCoast);
         }
 
         if (RobotConstants.get().driveDualMotors()) {
@@ -60,6 +63,9 @@ public class Drivetrain extends SubsystemBase {
             leftMotorFollower.setInverted(RobotConstants.get().driveMotorLeftFollowerInverted());
             rightMotorFollower.setInverted(RobotConstants.get().driveMotorRightFollowerInverted());
 
+            leftMotorFollower.resetPosition();
+            rightMotorFollower.resetPosition();
+
             leftMotorFollower.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
             rightMotorFollower.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
 
@@ -67,8 +73,8 @@ public class Drivetrain extends SubsystemBase {
             rightMotorGroup = new MotorControllerGroup(rightMotorLeader, rightMotorFollower);
 
             if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
-                ((SparkMaxController) leftMotorFollower).setIdleMode(IdleMode.kBrake);
-                ((SparkMaxController) rightMotorFollower).setIdleMode(IdleMode.kBrake);
+                ((SparkMaxController) leftMotorFollower).setIdleMode(IdleMode.kCoast);
+                ((SparkMaxController) rightMotorFollower).setIdleMode(IdleMode.kCoast);
             }
         } else {
             leftMotorGroup = new MotorControllerGroup(leftMotorLeader);
