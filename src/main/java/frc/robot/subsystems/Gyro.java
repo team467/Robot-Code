@@ -7,35 +7,41 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Gyro extends SubsystemBase {
+public class Gyro extends SubsystemBase implements edu.wpi.first.wpilibj.interfaces.Gyro{
     ADIS16470_IMU gyro = new ADIS16470_IMU();
 
     public Gyro() {
         super();
     
-        gyro.calibrate();
         gyro.setYawAxis(IMUAxis.kY);
+        gyro.calibrate();
+        
         Shuffleboard.getTab("Main").add("asd", gyro);
     }
 
+    @Override
     public void calibrate() {
         gyro.calibrate();
     }
 
+    @Override
     public void reset() {
         gyro.reset();
     }
 
-    public Rotation2d getRotation2d() {
-        return Rotation2d.fromDegrees(getAngle());
-    }
-
+    @Override
     public double getAngle() {
-        return -gyro.getAngle();
+        return gyro.getAngle();
     }
 
+    @Override
     public double getRate() {
-        return -gyro.getRate();
+        return gyro.getRate();
+    }
+
+    @Override
+    public void close() throws Exception {
+        gyro.close();
     }
 
     @Override

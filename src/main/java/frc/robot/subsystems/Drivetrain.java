@@ -106,8 +106,7 @@ public class Drivetrain extends SubsystemBase {
                 rightVoltage += rightDrivePID.calculate(getRightVelocity(), rightVelocity);
             }
 
-            leftMotorGroup.setVoltage(leftVoltage);
-            rightMotorGroup.setVoltage(rightVoltage);
+            tankDriveVolts(leftVoltage, rightVoltage);
         } else {
             diffDrive.arcadeDrive(speed, rotation);
         }
@@ -124,6 +123,7 @@ public class Drivetrain extends SubsystemBase {
     public void tankDriveVolts(double leftVolts, double rightVolts) {
         leftMotorGroup.setVoltage(leftVolts);
         rightMotorGroup.setVoltage(rightVolts);
+        diffDrive.feed();
     }
 
     public double getLeftPosition() {
