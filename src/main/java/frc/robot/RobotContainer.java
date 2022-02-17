@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -19,7 +20,7 @@ import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
-import frc.robot.commands.TurnToAngleCMD;
+import frc.robot.commands.GoToDistanceAngleCMD;
 import frc.robot.commands.GoToTrajectoryCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
@@ -100,9 +101,9 @@ public class RobotContainer {
         () -> driverJoystick.getAdjustedTurnSpeed()
       ));
       operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
-      operatorClimberUp.whenPressed(new TurnToAngleCMD(drivetrain, gyro, 90));
-      operatorClimberDown.whenPressed(new TurnToAngleCMD(drivetrain, gyro, -90));
-      driverButtonA.whenPressed(new TurnToAngleCMD(drivetrain, gyro, 0));
+      // operatorClimberUp.whenPressed(new GoToDistanceAngleCMD(drivetrain, gyro, 90));
+      // operatorClimberDown.whenPressed(new GoToDistanceAngleCMD(drivetrain, gyro, -90));
+      driverButtonA.whenPressed(new GoToDistanceAngleCMD(drivetrain, gyro, Units.feetToMeters(16), 20));
 
     }
   }
