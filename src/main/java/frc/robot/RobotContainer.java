@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
@@ -33,8 +35,6 @@ import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
 import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -144,8 +144,6 @@ public class RobotContainer {
     if (RobotConstants.get().hasLlamaNeck2022()) {
       llamaNeck = new LlamaNeck2022();
       llamaNeck.setDefaultCommand(new LlamaNeck2022StopCMD(llamaNeck));
-      // operatorIndexRollerForward.whenHeld(new LlamaNeck2022ForwardCMD(llamaNeck));
-      // operatorIndexRollerBackward.whenHeld(new LlamaNeck2022BackwardCMD(llamaNeck));
     }
   }
 
@@ -153,7 +151,6 @@ public class RobotContainer {
     if (RobotConstants.get().hasIndexer2022()) {
       indexer = new Indexer2022();
       indexer.setDefaultCommand(new Indexer2022StopCMD(indexer));
-      // operatorShooterShoot.whileHeld(new Indexer2022ForwardCMD(indexer));
     }
   }
 
@@ -161,27 +158,34 @@ public class RobotContainer {
     if (RobotConstants.get().hasSpitter2022()) {
       spitter = new Spitter2022();
       spitter.setDefaultCommand(new Spitter2022StopCMD(spitter));
-      // operatorShooterFlywheel.whileHeld(new Spitter2022ForwardCMD(spitter));
     }
   }
 
   private void initShooter2022() {
-    shooter2022 = new Shooter2022();
-    if (operatorShooterFlywheel.get()) {
-      shooter2022.setDefaultCommand(new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter));
-    } else {
-      shooter2022.setDefaultCommand(new Shooter2022StopCMD(shooter2022, indexer, llamaNeck, spitter));
-    }
-    
-    operatorShooterFlywheel.whenPressed(
-          new Shooter2022SetDefaultCMD(shooter2022,
-            new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter)))
-        .whenReleased(
-          new Shooter2022SetDefaultCMD(shooter2022,
-            new Shooter2022StopCMD(shooter2022, indexer, llamaNeck, spitter)));
-    operatorShooterShoot.whenPressed(new Shooter2022ShootCMD(shooter2022, indexer, llamaNeck, spitter));
-    operatorIntakeRollerBackward.whenHeld(new Shooter2022FlushBallCMD(shooter2022, indexer, llamaNeck, spitter));
+    if (RobotConstants.get().hasLlamaNeck2022()
+        && RobotConstants.get().hasIndexer2022()
+        && RobotConstants.get().hasSpitter2022()) {
+      shooter2022 = new Shooter2022();
+      if (operatorShooterFlywheel.get()) {
+        shooter2022.setDefaultCommand(
+            new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter));
+      } else {
+        shooter2022.setDefaultCommand(
+            new Shooter2022StopCMD(shooter2022, indexer, llamaNeck, spitter));
+      }
 
+      operatorShooterFlywheel
+          .whenPressed(
+              new Shooter2022SetDefaultCMD(
+                  shooter2022, new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter)))
+          .whenReleased(
+              new Shooter2022SetDefaultCMD(
+                  shooter2022, new Shooter2022StopCMD(shooter2022, indexer, llamaNeck, spitter)));
+      operatorShooterShoot.whenPressed(
+          new Shooter2022ShootCMD(shooter2022, indexer, llamaNeck, spitter));
+      operatorIntakeRollerBackward.whenHeld(
+          new Shooter2022FlushBallCMD(shooter2022, indexer, llamaNeck, spitter));
+    }
   }
 
   /**
