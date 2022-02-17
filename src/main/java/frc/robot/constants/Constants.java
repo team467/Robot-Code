@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import frc.robot.motors.FeedbackConstant;
+import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
 
 public interface Constants {
@@ -7,6 +9,29 @@ public interface Constants {
     public boolean hasDrivetrain();
     public boolean driveDualMotors();
     public MotorType driveMotorType();
+    public boolean driveUseVelocity();
+    public boolean driveUsePID();
+    // Inches
+    public FeedforwardConstant driveForwardRightFF();
+    public FeedbackConstant driveForwardRightVelocityFB();
+    public FeedbackConstant driveForwardRightPositionFB();
+    public FeedforwardConstant driveForwardLeftFF();
+    public FeedbackConstant driveForwardLeftVelocityFB();
+    public FeedbackConstant driveForwardLeftPositionFB();
+    public FeedforwardConstant driveBackwardRightFF();
+    public FeedbackConstant driveBackwardRightVelocityFB();
+    public FeedbackConstant driveBackwardRightPositionFB();
+    public FeedforwardConstant driveBackwardLeftFF();
+    public FeedbackConstant driveBackwardLeftVelocityFB();
+    public FeedbackConstant driveBackwardLeftPositionFB();
+    public double driveUnitsPerRotation();
+    public double driveMaxVelocity();
+    public double driveMaxAcceleration();
+    public double driveFastMaxSpeed();
+    public double driveNormalMaxSpeed();
+    public double driveSlowMaxSpeed();
+    public double driveNormalTurnMaxSpeed();
+    public double driveSlowTurnMaxSpeed();
     public int driveMotorLeftLeaderId();
     public boolean driveMotorLeftLeaderInverted();
     public int driveMotorLeftFollowerId();

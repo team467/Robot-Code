@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
@@ -14,43 +14,84 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.motors.SparkMaxController;
+import frc.robot.motors.FeedMotorControllerEncoderGroup;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
+import frc.robot.motors.MotorType;
 import frc.robot.motors.TalonController;
 
 public class Drivetrain extends SubsystemBase {
-    MotorControllerGroup leftMotorGroup;
+    FeedMotorControllerEncoderGroup leftMotorGroup;
     MotorControllerEncoder leftMotorLeader;
     MotorControllerEncoder leftMotorFollower = null;
 
-    MotorControllerGroup rightMotorGroup;
+    FeedMotorControllerEncoderGroup rightMotorGroup;
     MotorControllerEncoder rightMotorLeader;
     MotorControllerEncoder rightMotorFollower = null;
-    
+
     DifferentialDrive diffDrive;
 
     public Drivetrain() {
         super();
 
-        leftMotorLeader = MotorControllerFactory.create(RobotConstants.get().driveMotorLeftLeaderId(), RobotConstants.get().driveMotorType());
-        rightMotorLeader = MotorControllerFactory.create(RobotConstants.get().driveMotorRightLeaderId(), RobotConstants.get().driveMotorType());
+        leftMotorLeader = MotorControllerFactory.create(RobotConstants.get().driveMotorLeftLeaderId(),
+                RobotConstants.get().driveMotorType());
+        rightMotorLeader = MotorControllerFactory.create(RobotConstants.get().driveMotorRightLeaderId(),
+                RobotConstants.get().driveMotorType());
 
         leftMotorLeader.setInverted(RobotConstants.get().driveMotorLeftLeaderInverted());
         // No longer auto inverted by diff drive, you must invert it
         rightMotorLeader.setInverted(RobotConstants.get().driveMotorRightLeaderInverted());
 
+        leftMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+        rightMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+
+        if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
+            ((SparkMaxController) leftMotorLeader).setIdleMode(IdleMode.kBrake);
+            ((SparkMaxController) rightMotorLeader).setIdleMode(IdleMode.kBrake);
+        }
+
         if (RobotConstants.get().driveDualMotors()) {
-            leftMotorFollower = MotorControllerFactory.create(RobotConstants.get().driveMotorLeftFollowerId(), RobotConstants.get().driveMotorType());
-            rightMotorFollower = MotorControllerFactory.create(RobotConstants.get().driveMotorRightFollowerId(), RobotConstants.get().driveMotorType());
-            
+            leftMotorFollower = MotorControllerFactory.create(RobotConstants.get().driveMotorLeftFollowerId(),
+                    RobotConstants.get().driveMotorType());
+            rightMotorFollower = MotorControllerFactory.create(RobotConstants.get().driveMotorRightFollowerId(),
+                    RobotConstants.get().driveMotorType());
+
             leftMotorFollower.setInverted(RobotConstants.get().driveMotorLeftFollowerInverted());
             rightMotorFollower.setInverted(RobotConstants.get().driveMotorRightFollowerInverted());
 
-            leftMotorGroup = new MotorControllerGroup(leftMotorLeader, leftMotorFollower);
-            rightMotorGroup = new MotorControllerGroup(rightMotorLeader, rightMotorFollower);
+            leftMotorFollower.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+            rightMotorFollower.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+
+            leftMotorGroup = new FeedMotorControllerEncoderGroup(leftMotorLeader, leftMotorFollower);
+            rightMotorGroup = new FeedMotorControllerEncoderGroup(rightMotorLeader, rightMotorFollower);
+
+            if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
+                ((SparkMaxController) leftMotorFollower).setIdleMode(IdleMode.kBrake);
+                ((SparkMaxController) rightMotorFollower).setIdleMode(IdleMode.kBrake);
+            }
         } else {
-            leftMotorGroup = new MotorControllerGroup(leftMotorLeader);
-            rightMotorGroup = new MotorControllerGroup(rightMotorLeader);
+            leftMotorGroup = new FeedMotorControllerEncoderGroup(leftMotorLeader);
+            rightMotorGroup = new FeedMotorControllerEncoderGroup(rightMotorLeader);
+        }
+
+        if (RobotConstants.get().driveUseVelocity()) {
+            leftMotorGroup.initFF(RobotConstants.get().driveForwardLeftFF(), RobotConstants.get().driveBackwardLeftFF(),
+                    RobotConstants.get().driveMaxVelocity(), RobotConstants.get().driveMaxAcceleration());
+            rightMotorGroup.initFF(RobotConstants.get().driveForwardRightFF(),
+                    RobotConstants.get().driveBackwardRightFF(), RobotConstants.get().driveMaxVelocity(),
+                    RobotConstants.get().driveMaxAcceleration());
+
+            if (RobotConstants.get().driveUsePID()) {
+                leftMotorGroup.initFB(RobotConstants.get().driveForwardLeftVelocityFB(),
+                        RobotConstants.get().driveBackwardLeftVelocityFB(),
+                        RobotConstants.get().driveForwardLeftPositionFB(),
+                        RobotConstants.get().driveBackwardLeftPositionFB());
+                rightMotorGroup.initFB(RobotConstants.get().driveForwardRightVelocityFB(),
+                        RobotConstants.get().driveBackwardRightVelocityFB(),
+                        RobotConstants.get().driveForwardRightPositionFB(),
+                        RobotConstants.get().driveBackwardRightPositionFB());
+            }
         }
 
         diffDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);

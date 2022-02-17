@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class TalonController implements MotorControllerEncoder {
     WPI_TalonSRX talon;
+    private double unitsPerRotation = 1;
     
     public TalonController(int id) {
         talon = new WPI_TalonSRX(id);
@@ -42,12 +43,12 @@ public class TalonController implements MotorControllerEncoder {
 
     @Override
     public double getPosition() {
-        return talon.getSelectedSensorPosition();
+        return talon.getSelectedSensorPosition() * unitsPerRotation;
     }
 
     @Override
     public double getVelocity() {
-        return talon.getSelectedSensorVelocity();
+        return talon.getSelectedSensorVelocity() * unitsPerRotation;
     }
 
     @Override
@@ -55,4 +56,8 @@ public class TalonController implements MotorControllerEncoder {
         return talon.getStatorCurrent();
     }
     
+    @Override
+    public void setUnitsPerRotation(double unitsPerRotation) {
+        this.unitsPerRotation = unitsPerRotation;
+    }
 }
