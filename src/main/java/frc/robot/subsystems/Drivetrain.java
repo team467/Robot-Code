@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -95,7 +96,7 @@ public class Drivetrain extends SubsystemBase {
 
     public void arcadeDrive(double speed, double rotation) {
         if (RobotConstants.get().driveUseVelocity()) {
-            DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, true);
+            DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(MathUtil.applyDeadband(speed, 0.02), MathUtil.applyDeadband(rotation, 0.02), true);
             double leftVelocity =  speeds.left * RobotConstants.get().driveMaxVelocity();
             double rightVelocity =  speeds.right * RobotConstants.get().driveMaxVelocity();
             double leftVoltage = driveFF.calculate(leftVelocity);
