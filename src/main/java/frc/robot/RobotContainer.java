@@ -101,8 +101,7 @@ public class RobotContainer {
         () -> driverJoystick.getAdjustedTurnSpeed()
       ));
       operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
-      // operatorClimberUp.whenPressed(new GoToDistanceAngleCMD(drivetrain, gyro, 90));
-      // operatorClimberDown.whenPressed(new GoToDistanceAngleCMD(drivetrain, gyro, -90));
+      // operatorClimberUp.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
       driverButtonA.whenPressed(new GoToDistanceAngleCMD(drivetrain, gyro, Units.feetToMeters(16), 20));
 
     }
