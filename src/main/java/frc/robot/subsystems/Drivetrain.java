@@ -94,27 +94,40 @@ public class Drivetrain extends SubsystemBase {
         diffDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
     }
 
-    public void arcadeDrive(double speed, double rotation) {
+    public void arcadeDrive(double speed, double rotation, boolean squareInputs) {
         if (RobotConstants.get().driveUseVelocity()) {
-            DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(MathUtil.applyDeadband(speed, 0.02), MathUtil.applyDeadband(rotation, 0.02), true);
-            double leftVelocity =  speeds.left * RobotConstants.get().driveMaxVelocity();
-            double rightVelocity =  speeds.right * RobotConstants.get().driveMaxVelocity();
-            double leftVoltage = driveFF.calculate(leftVelocity);
-            double rightVoltage = driveFF.calculate(rightVelocity);
-
-            if (RobotConstants.get().driveUsePID()) {
-                leftVoltage += leftDrivePID.calculate(getLeftVelocity(), leftVelocity);
-                rightVoltage += rightDrivePID.calculate(getRightVelocity(), rightVelocity);
-            }
-
-            tankDriveVolts(leftVoltage, rightVoltage);
+            DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(MathUtil.applyDeadband(speed, 0.02), MathUtil.applyDeadband(rotation, 0.02), squareInputs);
+            setVelocityFromWheelSpeeds(speeds);
         } else {
-            diffDrive.arcadeDrive(speed, rotation);
+            diffDrive.arcadeDrive(speed, rotation, squareInputs);
         }
     }
 
+    public void arcadeDrive(double speed, double rotation) {
+        arcadeDrive(speed, rotation, true);
+    }
+
     public void curvatureDrive(double speed, double rotation, boolean turnInPlace) {
-        diffDrive.curvatureDrive(speed, rotation, turnInPlace);
+        if (RobotConstants.get().driveUseVelocity()) {
+            DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.curvatureDriveIK(MathUtil.applyDeadband(speed, 0.02), MathUtil.applyDeadband(rotation, 0.02), turnInPlace);
+            setVelocityFromWheelSpeeds(speeds);
+        } else {
+            diffDrive.curvatureDrive(speed, rotation, turnInPlace);
+        }
+    }
+
+    private void setVelocityFromWheelSpeeds(DifferentialDrive.WheelSpeeds speeds) {
+        double leftVelocity =  speeds.left * RobotConstants.get().driveMaxVelocity();
+        double rightVelocity =  speeds.right * RobotConstants.get().driveMaxVelocity();
+        double leftVoltage = driveFF.calculate(leftVelocity);
+        double rightVoltage = driveFF.calculate(rightVelocity);
+
+        if (RobotConstants.get().driveUsePID()) {
+            leftVoltage += leftDrivePID.calculate(getLeftVelocity(), leftVelocity);
+            rightVoltage += rightDrivePID.calculate(getRightVelocity(), rightVelocity);
+        }
+
+        tankDriveVolts(leftVoltage, rightVoltage);
     }
 
     public void curvatureDrive(double speed, double rotation) {
