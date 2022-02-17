@@ -9,6 +9,6 @@ public class OffTarmacCMD extends SequentialCommandGroup {
 
   public OffTarmacCMD(Drivetrain drivetrain) {
 
-    super(new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE));
+    addCommands(new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE));
   }
 }
