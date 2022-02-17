@@ -39,17 +39,17 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public SimpleFeedforwardConstant driveDriveFF() {
-        return new SimpleFeedforwardConstant(0.18364, 2.8482, 0.29876);
+        return new SimpleFeedforwardConstant(0.17049, 2.8417, 0.3788);
     }
 
     @Override
     public FeedbackConstant driveDriveVelocityPID() {
-        return new FeedbackConstant(0.58902/4, 0.0);
+        return new FeedbackConstant(3.0553/2, 0.0);
     }
 
     @Override
     public FeedbackConstant driveDrivePositionPID() {
-        return new FeedbackConstant(90.478, 6.3209);
+        return new FeedbackConstant(93.347, 7.2826);
     }
 
     @Override
@@ -79,14 +79,12 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public double driveMaxVelocity() {
-        // return 2.03;
-        return 2.03/4;
+        return 3.00;
     }
 
     @Override
     public double driveMaxAcceleration() {
-        // return 2.03;
-        return 2.03/4;
+        return 3.00;
     }
 
     @Override

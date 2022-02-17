@@ -40,6 +40,12 @@ public class Gyro extends SubsystemBase implements edu.wpi.first.wpilibj.interfa
     }
 
     @Override
+    public Rotation2d getRotation2d() {
+        // What the hell, the angle should be negative, but only works when it isn't
+        return Rotation2d.fromDegrees(getAngle());
+    }
+
+    @Override
     public void close() throws Exception {
         gyro.close();
     }
