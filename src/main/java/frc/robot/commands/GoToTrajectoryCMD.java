@@ -27,8 +27,7 @@ public class GoToTrajectoryCMD extends CommandBase {
     public GoToTrajectoryCMD(Drivetrain drivetrain, Gyro gyro, Pose2d initalPose, List<Translation2d> interiorWaypoints, Pose2d endingPose) {
         this.drivetrain = drivetrain;
         this.gyro = gyro;
-
-        diffDriveOdometry = new DifferentialDriveOdometry(gyro.getRotation2d());
+        this.diffDriveOdometry = new DifferentialDriveOdometry(gyro.getRotation2d());
 
         DifferentialDriveVoltageConstraint autDriveVoltageConstraint = new DifferentialDriveVoltageConstraint(
                 RobotConstants.get().driveDriveFF().getFeedforward(),
@@ -38,7 +37,8 @@ public class GoToTrajectoryCMD extends CommandBase {
         // Add kinematics to ensure max speed is actually obeyed
         // Apply the voltage constraint
         TrajectoryConfig config = new TrajectoryConfig(
-                RobotConstants.get().driveMaxVelocity(),
+                // RobotConstants.get().driveMaxVelocity(),
+                1,
                 RobotConstants.get().driveMaxAcceleration())
                 // Add kinematics to ensure max speed is actually obeyed
                 .setKinematics(RobotConstants.get().driveKinematics())
@@ -50,7 +50,7 @@ public class GoToTrajectoryCMD extends CommandBase {
         // Pass through these two interior waypoints, making an 's' curve path
         // End 3 meters straight ahead of where we started, facing forward
         // Pass config
-        trajectory = TrajectoryGenerator.generateTrajectory(
+        this.trajectory = TrajectoryGenerator.generateTrajectory(
             
             // initalPose,
             // interiorWaypoints,
@@ -59,16 +59,39 @@ public class GoToTrajectoryCMD extends CommandBase {
                 new Pose2d(0, 0, new Rotation2d(0)),
                 // Pass through these two interior waypoints, making an 's' curve path
                 List.of(
-                        new Translation2d(1, 0.5),
-                        new Translation2d(2, -0.5)
+                        // new Translation2d(4, 2),
+                        // new Translation2d(2, -1)
                 ),
                 // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(3, 0, new Rotation2d(1)),
+                new Pose2d(4, -2, new Rotation2d(0)),
                 // Pass config
                 config
         );
 
-        command = new RamseteCommand(
+        this.command = new RamseteCommand(
+                trajectory,
+                diffDriveOdometry::getPoseMeters,
+                new RamseteController(),
+                RobotConstants.get().driveDriveFF().getFeedforward(),
+                RobotConstants.get().driveKinematics(),
+                drivetrain::getWheelSpeeds,
+                RobotConstants.get().driveDriveVelocityPID().getPIDController(),
+                RobotConstants.get().driveDriveVelocityPID().getPIDController(),
+                // RamseteCommand passes volts to the callback
+                drivetrain::tankDriveVolts,
+                drivetrain
+        );
+
+        addRequirements(gyro);
+    }
+
+    public GoToTrajectoryCMD(Drivetrain drivetrain, Gyro gyro, Trajectory trajectory) {
+        this.drivetrain = drivetrain;
+        this.gyro = gyro;
+        this.trajectory = trajectory;
+        this.diffDriveOdometry = new DifferentialDriveOdometry(gyro.getRotation2d());
+
+        this.command = new RamseteCommand(
                 trajectory,
                 diffDriveOdometry::getPoseMeters,
                 new RamseteController(),
@@ -92,16 +115,18 @@ public class GoToTrajectoryCMD extends CommandBase {
         drivetrain.resetRightPosition();
         diffDriveOdometry.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
 
-        command.schedule();
+        command.initialize();
     }
 
     @Override
     public void execute() {
         diffDriveOdometry.update(gyro.getRotation2d(), drivetrain.getLeftPosition(), drivetrain.getRightPosition());
+        command.execute();
     }
 
     @Override
     public void end(boolean interrupted) {
+        command.end(interrupted);
         drivetrain.tankDriveVolts(0, 0);
     }
 
