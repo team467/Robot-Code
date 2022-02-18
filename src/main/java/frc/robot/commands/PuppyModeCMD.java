@@ -22,7 +22,7 @@ public class PuppyModeCMD extends CommandBase {
     public PuppyModeCMD(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        NetworkTable table = inst.getTable("BallTracking");
+        NetworkTable table = inst.getTable("Vision").getSubTable("BallTracking");
         NetworkTable colorTable;
         timer = new Timer();
         timer.start();
