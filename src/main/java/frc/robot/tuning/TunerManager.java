@@ -15,7 +15,7 @@ public class TunerManager {
     }
 
     public void registerTuner(Tuner tuner) {
-        // System.out.println("Reigstered tuner: " + tuner.getTunerName());
+        // System.out.println("Registered tuner: " + tuner.getTunerName());
         Shuffleboard.getTab(tuner.getTunerName()).add("Tuner Selection", tunerChooser).withWidget(BuiltInWidgets.kComboBoxChooser)
                 .withSize(2, 1)
                 .withPosition(0, 0);

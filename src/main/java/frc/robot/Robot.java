@@ -107,6 +107,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
+    CommandScheduler.getInstance().clearButtons();
     CommandScheduler.getInstance().cancelAll();
 
     // You need to enable the command scheduler in test mode

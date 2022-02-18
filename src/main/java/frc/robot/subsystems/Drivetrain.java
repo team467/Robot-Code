@@ -137,7 +137,6 @@ public class Drivetrain extends SubsystemTuner {
 
     @Override
     public void initializeTuner() {
-        super.initializeTuner();
         getEntry("speed").setDouble(0);
         getEntry("turn").setDouble(0);
         getEntry("run").setBoolean(false);

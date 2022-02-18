@@ -35,9 +35,4 @@ public abstract class SubsystemTuner extends SubsystemBase implements Tuner {
     public NetworkTableEntry getEntry(String name) {
         return entries.get(name);
     }
-
-    @Override
-    public void initializeTuner() {
-        CommandScheduler.getInstance().clearButtons();
-    }
 }
