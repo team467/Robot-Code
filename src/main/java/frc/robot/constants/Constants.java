@@ -1,9 +1,13 @@
 package frc.robot.constants;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.ADIS16448_IMU;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
+import frc.robot.utilities.IMUAxis;
+import frc.robot.utilities.IMUType;
 
 public interface Constants {
     public String name();
@@ -18,7 +22,7 @@ public interface Constants {
     public SimpleFeedforwardConstant driveTurnFF();
     public FeedbackConstant driveTurnVelocityPID();
     public FeedbackConstant driveTurnPositionPID();
-    public double driveMetersPerRotation();
+    public double driveUnitsPerRotation();
     public DifferentialDriveKinematics driveKinematics();
     public double driveMaxVelocity();
     public double driveMaxAcceleration();
@@ -35,6 +39,10 @@ public interface Constants {
     public boolean driveMotorRightLeaderInverted();
     public int driveMotorRightFollowerId();
     public boolean driveMotorRightFollowerInverted();
+
+    public boolean hasGyro();
+    public IMUType gyroIMUType();
+    public IMUAxis gyroYawAxis();
 
     public boolean hasClimber2020();
     public int climber2020MotorId();

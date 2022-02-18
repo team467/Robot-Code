@@ -5,9 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.*;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
@@ -87,10 +87,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   public void configureButtonBindings() {
-    gyro = new Gyro();
+    initGyro();
     initDrivetrain();
     initClimber2020();
     initShooter2020();
+  }
+
+  private void initGyro() {
+    if (RobotConstants.get().hasGyro()) {
+      gyro = new Gyro();
+    }
   }
 
   private void initDrivetrain() {
@@ -103,6 +109,23 @@ public class RobotContainer {
       operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
       // operatorClimberUp.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
       driverButtonA.whenPressed(new GoToDistanceAngleCMD(drivetrain, gyro, Units.feetToMeters(16), 20));
+      driverButtonX.whenPressed(() -> {
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking");
+        NetworkTable colorTable;
+        switch(DriverStation.getAlliance()) {
+          case Blue:
+            colorTable = table.getSubTable("Blue");
+            break;
+          case Invalid:
+          case Red:
+          default:
+            colorTable = table.getSubTable("Red");
+            break;
+
+        }
+
+        new GoToDistanceAngleCMD(drivetrain, gyro, colorTable.getEntry("Distance").getDouble(0), colorTable.getEntry("Angle").getDouble(0)).schedule();
+      });
 
     }
   }

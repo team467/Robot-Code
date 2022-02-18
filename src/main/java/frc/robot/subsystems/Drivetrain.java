@@ -5,7 +5,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -47,8 +46,8 @@ public class Drivetrain extends SubsystemBase {
         leftMotorLeader.resetPosition();
         rightMotorLeader.resetPosition();
 
-        leftMotorLeader.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
-        rightMotorLeader.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
+        leftMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+        rightMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
 
         if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
             ((SparkMaxController) leftMotorLeader).setIdleMode(IdleMode.kCoast);
@@ -67,8 +66,8 @@ public class Drivetrain extends SubsystemBase {
             leftMotorFollower.resetPosition();
             rightMotorFollower.resetPosition();
 
-            leftMotorFollower.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
-            rightMotorFollower.setUnitsPerRotation(RobotConstants.get().driveMetersPerRotation());
+            leftMotorFollower.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+            rightMotorFollower.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
 
             leftMotorGroup = new MotorControllerGroup(leftMotorLeader, leftMotorFollower);
             rightMotorGroup = new MotorControllerGroup(rightMotorLeader, rightMotorFollower);

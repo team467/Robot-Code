@@ -6,16 +6,16 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotConstants;
+import frc.robot.gyro.GyroFactory;
 
 public class Gyro extends SubsystemBase implements edu.wpi.first.wpilibj.interfaces.Gyro{
-    ADIS16470_IMU gyro = new ADIS16470_IMU();
+    edu.wpi.first.wpilibj.interfaces.Gyro gyro;
 
     public Gyro() {
         super();
-    
-        gyro.setYawAxis(IMUAxis.kY);
-        gyro.calibrate();
-        
+        gyro = GyroFactory.create(RobotConstants.get().gyroIMUType(), RobotConstants.get().gyroYawAxis());
+
         Shuffleboard.getTab("Main").add("asd", gyro);
     }
 

@@ -4,6 +4,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
+import frc.robot.utilities.IMUAxis;
+import frc.robot.utilities.IMUType;
 
 public class KitBot2022Constants implements Constants {
 
@@ -68,7 +70,7 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public double driveMetersPerRotation() {
+    public double driveUnitsPerRotation() {
         return 0.4788 / 10.71;
     }
 
@@ -150,6 +152,21 @@ public class KitBot2022Constants implements Constants {
     @Override
     public boolean driveMotorRightFollowerInverted() {
         return true;
+    }
+
+    @Override
+    public boolean hasGyro() {
+        return false;
+    }
+
+    @Override
+    public IMUType gyroIMUType() {
+        return IMUType.ADIS16470;
+    }
+
+    @Override
+    public IMUAxis gyroYawAxis() {
+        return IMUAxis.kY;
     }
 
     @Override
