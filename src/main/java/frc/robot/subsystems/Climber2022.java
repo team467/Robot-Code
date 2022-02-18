@@ -4,6 +4,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Direction;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.logging.RobotLogManager;
@@ -30,16 +31,16 @@ public class Climber2022 extends SubsystemBase {
 
         climberMotorRight.setInverted(RobotConstants.get().climber2022MotorInvertedRight());
         climberMotorLeft.setInverted(RobotConstants.get().climber2022MotorInvertedLeft());
-        climberLock.setDirection(Direction.kReverse);
+        climberLock.set(Value.kForward);
     }
 
     public void enable() {
-        climberLock.setDirection(Direction.kForward);
+        climberLock.set(Value.kReverse);
         enabled = true;
     }
 
     public void disable() {
-        climberLock.setDirection(Direction.kReverse);
+        climberLock.set(Value.kForward);
         stop();
         enabled = false;
     }
