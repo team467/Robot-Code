@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.logging.RobotLogManager;
@@ -17,6 +19,7 @@ public class Climber2022 extends SubsystemBase {
 
     private MotorControllerEncoder climberMotorRight =MotorControllerFactory.create(RobotConstants.get().climber2022MotorIdRight(),MotorType.SPARK_MAX_BRUSHLESS);
     private MotorControllerEncoder climberMotorLeft =MotorControllerFactory.create(RobotConstants.get().climber2022MotorIdLeft(),MotorType.SPARK_MAX_BRUSHLESS);
+    private Relay climberLock =new Relay(RobotConstants.get().climber2022SolenoidChannel());
 
     private boolean enabled = false;
     private static final Logger LOGGER = RobotLogManager.getMainLogger(Climber2022.class.getName());
@@ -27,15 +30,18 @@ public class Climber2022 extends SubsystemBase {
 
         climberMotorRight.setInverted(RobotConstants.get().climber2022MotorInvertedRight());
         climberMotorLeft.setInverted(RobotConstants.get().climber2022MotorInvertedLeft());
+        climberLock.setDirection(Direction.kReverse);
     }
 
     public void enable() {
+        climberLock.setDirection(Direction.kForward);
         enabled = true;
     }
 
     public void disable() {
-        enabled = false;
+        climberLock.setDirection(Direction.kReverse);
         stop();
+        enabled = false;
     }
 
     public boolean isEnabled() {

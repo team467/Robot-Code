@@ -237,6 +237,11 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
+    public int climber2022SolenoidChannel() {
+        return 1;
+    }
+
+    @Override
     public boolean hasShooter2020() {
         return false;
     }

@@ -54,6 +54,7 @@ public interface Constants {
     public boolean climber2022MotorInvertedRight();
     public double climber2022UpSpeed();
     public double climber2022DownSpeed();
+    public int climber2022SolenoidChannel();
 
     public boolean hasShooter2020();
     public MotorType shooter2020MotorType();

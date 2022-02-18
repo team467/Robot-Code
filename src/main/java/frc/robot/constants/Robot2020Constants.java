@@ -236,6 +236,12 @@ public class Robot2020Constants implements Constants {
     public double climber2022DownSpeed() {
         return 0;
     }
+
+    @Override
+    public int climber2022SolenoidChannel() {
+        return 0;
+    }
+    
     @Override
     public boolean hasShooter2020() {
         return true;

@@ -238,6 +238,11 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
+    public int climber2022SolenoidChannel() {
+        return 0;
+    }
+
+    @Override
     public boolean hasShooter2020() {
         return false;
     }

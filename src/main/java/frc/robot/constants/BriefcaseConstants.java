@@ -235,6 +235,11 @@ public class BriefcaseConstants implements Constants {
     public double climber2020DownSpeed() {
         return 0.1;
     }
+    
+    @Override
+    public int climber2022SolenoidChannel() {
+        return 0;
+    }
 
     @Override
     public boolean hasShooter2020() {
