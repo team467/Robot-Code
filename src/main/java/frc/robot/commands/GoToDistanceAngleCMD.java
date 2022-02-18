@@ -13,12 +13,9 @@ public class GoToDistanceAngleCMD extends CommandBase {
     GoToTrajectoryCMD command;
 
     public GoToDistanceAngleCMD(Drivetrain drivetrain, Gyro gyro, double distance, double angle) {
-        // Angle should be negative because ccw positve
-        // Translation angle is most likely off of horiztonal 
-        // TODO, fix to it off vertical
-        Translation2d output = new Translation2d(distance, Rotation2d.fromDegrees(angle));
-        System.out.println(String.format("x: %f, y:%f", output.getX(), output.getY()));
-        command = new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(), new Pose2d(output.getY(), -output.getX(), Rotation2d.fromDegrees(angle)));
+        Translation2d output = new Translation2d(distance, Rotation2d.fromDegrees(90 - angle));
+        System.out.printf("x: %f, y:%f%n", output.getX(), output.getY());
+        command = new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(), new Pose2d(output.getX(), -output.getY(), Rotation2d.fromDegrees(angle)));
     }
 
     @Override
@@ -30,5 +27,5 @@ public class GoToDistanceAngleCMD extends CommandBase {
     public boolean isFinished() {
         return command.isFinished();
     }
-    
+
 }
