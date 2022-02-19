@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.logging.RobotLogManager;
@@ -32,6 +33,9 @@ public class LlamaNeck2022 extends SubsystemBase {
     // lower switch, gives upper ball enough breathing room
     lowerLimitSwitch =
         new DigitalInput(RobotConstants.get().llamaNeck2022LowerLimitSwitchChannel());
+
+        Shuffleboard.getTab("Main").addBoolean("Has First Ball", this::hasUpperBall).withPosition(12, 0).withSize(3, 3);
+        Shuffleboard.getTab("Main").addBoolean("Has Second Ball", this::hasLowerBall).withPosition(15, 0).withSize(3, 3);
   }
 
   /**
@@ -50,6 +54,14 @@ public class LlamaNeck2022 extends SubsystemBase {
    */
   public boolean lowerLimitSwitchIsPressed() {
     return !lowerLimitSwitch.get();
+  }
+
+  public boolean hasUpperBall() {
+    return upperLimitSwitchIsPressed();
+  }
+
+  public boolean hasLowerBall() {
+    return upperLimitSwitchIsPressed() && lowerLimitSwitchIsPressed();
   }
 
   /** Idles the llama neck wheels. */

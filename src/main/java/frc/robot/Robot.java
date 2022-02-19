@@ -4,11 +4,16 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+import java.awt.Color;
 import java.io.IOException;
+import java.util.Map;
 
 import frc.robot.logging.RobotLogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,6 +51,12 @@ public class Robot extends TimedRobot {
     } catch (IOException e) {
       e.printStackTrace();
     }  
+
+    Shuffleboard.getTab("Main").addBoolean("Sees Red Ball", () -> NetworkTableInstance.getDefault().getTable("Vision").getSubTable("Red").getEntry("HasBall").getBoolean(false)).withPosition(12, 3).withSize(3, 3).withProperties(Map.of("Color when true", "#FF0000", "Color when false", "#000000"));
+    Shuffleboard.getTab("Main").addBoolean("Sees Blue Ball", () -> NetworkTableInstance.getDefault().getTable("Vision").getSubTable("Blue").getEntry("HasBall").getBoolean(false)).withPosition(15, 3).withSize(3, 3).withProperties(Map.of("Color when true", "#0000FF", "Color when false", "#000000"));
+
+    Shuffleboard.getTab("Main").addBoolean("Sees Target", () -> NetworkTableInstance.getDefault().getTable("Vision").getSubTable("Target").getEntry("HasTarget").getBoolean(false)).withPosition(12, 6).withSize(6, 2).withProperties(Map.of("Color when true", "#00FF00", "Color when false", "#000000"));
+ 
   }
 
   /**
