@@ -15,9 +15,10 @@ public class Shooter2022ShootCMD extends CommandBase {
   private static final Logger LOGGER =
       RobotLogManager.getMainLogger(Shooter2022ShootCMD.class.getName());
 
-  private final double TIME_UNTIL_FINISHED = 0.1;
+  private final double TIME_UNTIL_FINISHED = 0.5;
 
   private final LlamaNeck2022 llamaNeck;
+  private final Indexer2022 indexer;
   private final Spitter2022 spitter;
 
   private final Command llamaNeckStop;
@@ -31,11 +32,12 @@ public class Shooter2022ShootCMD extends CommandBase {
   private final Timer timer;
 
   public Shooter2022ShootCMD(
-      Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
+      Shooter2022 shooter) {
     super();
 
-    this.llamaNeck = llamaNeck;
-    this.spitter = spitter;
+    this.llamaNeck = shooter.llamaNeck2022;
+    this.spitter = shooter.spitter2022;
+    this.indexer = shooter.indexer2022;
 
     this.llamaNeckStop = new LlamaNeck2022StopCMD(llamaNeck);
     this.llamaNeckForward = new LlamaNeck2022ForwardCMD(llamaNeck);

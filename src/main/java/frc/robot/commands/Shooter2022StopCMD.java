@@ -17,14 +17,22 @@ public class Shooter2022StopCMD extends CommandBase {
   private final Command llamaNeckStop;
   private final Command spitterStop;
   private final Command indexerStop;
+  
+  private final LlamaNeck2022 llamaNeck;
+  private final Indexer2022 indexer;
+  private final Spitter2022 spitter;
 
-  public Shooter2022StopCMD(
-      Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
+  public Shooter2022StopCMD(Shooter2022 shooter) {
     super();
+    this.llamaNeck = shooter.llamaNeck2022;
+    this.spitter = shooter.spitter2022;
+    this.indexer = shooter.indexer2022;
 
     this.llamaNeckStop = new LlamaNeck2022StopCMD(llamaNeck);
     this.spitterStop = new Spitter2022StopCMD(spitter);
     this.indexerStop = new Indexer2022StopCMD(indexer);
+
+
 
     addRequirements(shooter);
   }

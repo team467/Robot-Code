@@ -433,7 +433,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double spitter2022ForwardSpeed() {
-        return 0.6;
+        return 0.5;
     }
 
     @Override

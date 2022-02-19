@@ -16,7 +16,7 @@ public class Spitter2022 extends SubsystemBase {
 
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Spitter2022.class.getName());
 
-  private final double SHOOTING_SPEED_TOLERANCE = 2.0;
+  private final double SHOOTING_SPEED_TOLERANCE = 5.0;
   private final MotorControllerEncoder spitterMotor;
   private final PIDController spitterPIDController;
   private final SimpleMotorFeedforward spitterFFController;

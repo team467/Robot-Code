@@ -165,26 +165,26 @@ public class RobotContainer {
     if (RobotConstants.get().hasLlamaNeck2022()
         && RobotConstants.get().hasIndexer2022()
         && RobotConstants.get().hasSpitter2022()) {
-      shooter2022 = new Shooter2022();
+      shooter2022 = new Shooter2022(indexer, llamaNeck, spitter);
       if (operatorShooterFlywheel.get()) {
         shooter2022.setDefaultCommand(
-            new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter));
+            new Shooter2022IdleCMD(shooter2022));
       } else {
         shooter2022.setDefaultCommand(
-            new Shooter2022StopCMD(shooter2022, indexer, llamaNeck, spitter));
+            new Shooter2022StopCMD(shooter2022));
       }
 
       operatorShooterFlywheel
           .whenPressed(
               new Shooter2022SetDefaultCMD(
-                  shooter2022, new Shooter2022IdleCMD(shooter2022, indexer, llamaNeck, spitter)))
+                  shooter2022, new Shooter2022IdleCMD(shooter2022)))
           .whenReleased(
               new Shooter2022SetDefaultCMD(
-                  shooter2022, new Shooter2022StopCMD(shooter2022, indexer, llamaNeck, spitter)));
+                  shooter2022, new Shooter2022StopCMD(shooter2022)));
       operatorShooterShoot.whenPressed(
-          new Shooter2022ShootCMD(shooter2022, indexer, llamaNeck, spitter));
+          new Shooter2022ShootCMD(shooter2022));
       operatorIntakeRollerBackward.whenHeld(
-          new Shooter2022FlushBallCMD(shooter2022, indexer, llamaNeck, spitter));
+          new Shooter2022FlushBallCMD(shooter2022));
     }
   }
 

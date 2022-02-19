@@ -20,9 +20,16 @@ public class Shooter2022FlushBallCMD extends CommandBase {
 
   private final Command spitterStop;
 
-  public Shooter2022FlushBallCMD(
-      Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
+  private final LlamaNeck2022 llamaNeck;
+  private final Indexer2022 indexer;
+  private final Spitter2022 spitter;
+
+  public Shooter2022FlushBallCMD(Shooter2022 shooter) {
     super();
+
+    this.llamaNeck = shooter.llamaNeck2022;
+    this.spitter = shooter.spitter2022;
+    this.indexer = shooter.indexer2022;
 
     this.llamaNeckBackward = new LlamaNeck2022BackwardCMD(llamaNeck);
     this.indexerBackward = new Indexer2022BackwardCMD(indexer);
