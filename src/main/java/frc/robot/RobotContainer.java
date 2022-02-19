@@ -7,24 +7,34 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
-import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
+import frc.robot.commands.Indexer2022StopCMD;
+import frc.robot.commands.LlamaNeck2022StopCMD;
+import frc.robot.commands.Shooter2022FlushBallCMD;
+import frc.robot.commands.Shooter2022IdleCMD;
+import frc.robot.commands.Shooter2022SetDefaultCMD;
+import frc.robot.commands.Shooter2022ShootCMD;
+import frc.robot.commands.Shooter2022StopCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
-import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
+import frc.robot.commands.Spitter2022StopCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Indexer2022;
+import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.Shooter2022;
+import frc.robot.subsystems.Spitter2022;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -37,6 +47,10 @@ public class RobotContainer {
   private Drivetrain drivetrain = null;
   private Climber2020 climber = null;
   private Shooter2020 shooter = null;
+  private LlamaNeck2022 llamaNeck = null;
+  private Indexer2022 indexer = null;
+  private Spitter2022 spitter = null;
+  private Shooter2022 shooter2022 = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -84,6 +98,10 @@ public class RobotContainer {
     initDrivetrain();
     initClimber2020();
     initShooter2020();
+    initIndexer2022();
+    initSpitter2022();
+    initLlamaNeck2022();
+    initShooter2022();
   }
 
   private void initDrivetrain() {
@@ -119,6 +137,54 @@ public class RobotContainer {
       // shooter.setDefaultCommand(new ShooterSetCMD(shooter,
       //   () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
       // ));
+    }
+  }
+
+  private void initLlamaNeck2022() {
+    if (RobotConstants.get().hasLlamaNeck2022()) {
+      llamaNeck = new LlamaNeck2022();
+      llamaNeck.setDefaultCommand(new LlamaNeck2022StopCMD(llamaNeck));
+    }
+  }
+
+  private void initIndexer2022() {
+    if (RobotConstants.get().hasIndexer2022()) {
+      indexer = new Indexer2022();
+      indexer.setDefaultCommand(new Indexer2022StopCMD(indexer));
+    }
+  }
+
+  private void initSpitter2022() {
+    if (RobotConstants.get().hasSpitter2022()) {
+      spitter = new Spitter2022();
+      spitter.setDefaultCommand(new Spitter2022StopCMD(spitter));
+    }
+  }
+
+  private void initShooter2022() {
+    if (RobotConstants.get().hasLlamaNeck2022()
+        && RobotConstants.get().hasIndexer2022()
+        && RobotConstants.get().hasSpitter2022()) {
+      shooter2022 = new Shooter2022(indexer, llamaNeck, spitter);
+      if (operatorShooterFlywheel.get()) {
+        shooter2022.setDefaultCommand(
+            new Shooter2022IdleCMD(shooter2022));
+      } else {
+        shooter2022.setDefaultCommand(
+            new Shooter2022StopCMD(shooter2022));
+      }
+
+      operatorShooterFlywheel
+          .whenPressed(
+              new Shooter2022SetDefaultCMD(
+                  shooter2022, new Shooter2022IdleCMD(shooter2022)))
+          .whenReleased(
+              new Shooter2022SetDefaultCMD(
+                  shooter2022, new Shooter2022StopCMD(shooter2022)));
+      operatorShooterShoot.whenPressed(
+          new Shooter2022ShootCMD(shooter2022));
+      operatorIntakeRollerBackward.whenHeld(
+          new Shooter2022FlushBallCMD(shooter2022));
     }
   }
 

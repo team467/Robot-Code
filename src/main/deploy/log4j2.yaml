@@ -3,7 +3,7 @@ Configuration:
   Properties:
     Property:
       name: log-path
-      value: "/media/sda1/logging/logs"
+      value: "logs"
   Appenders:
     Console:
       name: Console_Appender
@@ -12,14 +12,14 @@ Configuration:
         pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
   Loggers:
     Root:
-      level: info
+      level: debug
       AppenderRef:
         - ref: Console_Appender
-          level: info
+          level: debug
     Logger:
       - name: frc.robot.Robot
         level: debug
         AppenderRef:
           - ref: Console_Appender
-            level: info
+            level: debug
 
