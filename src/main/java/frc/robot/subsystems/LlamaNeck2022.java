@@ -9,6 +9,10 @@ import frc.robot.logging.RobotLogManager;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
+
+import java.awt.Color;
+import java.util.Map;
+
 import org.apache.logging.log4j.Logger;
 
 /** The llama neck subsystem, contains the llama neck motors and the limit switches. */
@@ -34,8 +38,8 @@ public class LlamaNeck2022 extends SubsystemBase {
     lowerLimitSwitch =
         new DigitalInput(RobotConstants.get().llamaNeck2022LowerLimitSwitchChannel());
 
-        Shuffleboard.getTab("Main").addBoolean("Has First Ball", this::hasUpperBall).withPosition(12, 0).withSize(3, 3);
-        Shuffleboard.getTab("Main").addBoolean("Has Second Ball", this::hasLowerBall).withPosition(15, 0).withSize(3, 3);
+        Shuffleboard.getTab("Main").addBoolean("Has First Ball", this::hasUpperBall).withPosition(12, 0).withSize(3, 3).withProperties(Map.of("Color when true", "#FFCCFF", "Color when false", "#000000"));
+        Shuffleboard.getTab("Main").addBoolean("Has Second Ball", this::hasLowerBall).withPosition(15, 0).withSize(3, 3).withProperties(Map.of("Color when true", "#FFCCFF", "Color when false", "#000000"));
   }
 
   /**
