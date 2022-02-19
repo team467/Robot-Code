@@ -211,23 +211,23 @@ public class BlankConstants implements Constants {
     }
 
     @Override
-    public int climber2022MotorIdRight() {
+    public int climber2022RightMotorId() {
         return 0;
     }
 
     
     @Override
-    public int climber2022MotorIdLeft() {
+    public int climber2022LeftMotorId() {
         return 0;
     }
 
     @Override
-    public boolean climber2022MotorInvertedLeft() {
+    public boolean climber2022LeftMotorInverted() {
         return false;
     }
 
     @Override
-    public boolean climber2022MotorInvertedRight() {
+    public boolean climber2022RightMotorInverted() {
         return false;
     }
 
@@ -238,6 +238,26 @@ public class BlankConstants implements Constants {
 
     @Override
     public double climber2022DownSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double climber2022LeftLowerLimit() {
+        return 0;
+    }
+
+    @Override
+    public double climber2022RightLowerLimit() {
+        return 0;
+    }
+
+    @Override
+    public double climber2022LeftUpperLimit() {
+        return 0;
+    }
+
+    @Override
+    public double climber2022RightUpperLimit() {
         return 0;
     }
 
