@@ -7,7 +7,7 @@ import frc.robot.subsystems.Drivetrain;
 public class OffTarmacCMD extends SequentialCommandGroup {
   int TARMAC_DISTANCE = 0;
 
-  public OffTarmacCMD(Drivetrain drivetrain) {
+  public OffTarmacCMD(Drivetrain drivetrain, Gyro gyro) {
 
     addCommands(new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE));
   }

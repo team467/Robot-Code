@@ -13,12 +13,12 @@ public class TwoBallVisionOffTarmac extends SequentialCommandGroup{
     int GET_BALL_DISTANCE = 0;
 
     public OneBallAutoNoVisionOffTarmacCMD(
-        Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
+        Shooter2022 shooter, Drivetrain drive, Gyro gyro) {
       addCommands(
           // These will also change due to vision.
           new Shooter2022ShootCMD(shooter),
           new DriveDistanceCMD(drivetrain, gyro, GET_BALL_DISTANCE),
-          new Indexer2022ForwardCMD(indexer),
+          new Shotter2022ShootCMD (shooter);
           new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE),
       )
 
