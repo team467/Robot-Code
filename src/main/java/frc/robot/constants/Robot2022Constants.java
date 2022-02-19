@@ -183,7 +183,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public int climber2020MotorId() {
-        return 0;
+        return 11;
     }
 
     @Override
@@ -363,7 +363,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean hasIndexer2022() {
-        return false;
+        return true;
     }
 
     @Override
@@ -378,12 +378,17 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double indexer2022InSpeed() {
-        return 1.0;
+        return 0.5;
     }
 
     @Override
     public double indexer2022OutSpeed() {
-        return 1.0;
+        return 0.3;
+    }
+
+    @Override
+    public boolean indexer2022MotorInverted() {
+        return true;
     }
 
     @Override
@@ -397,18 +402,23 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
+    public boolean llamaNeck2022MotorInverted() {
+        return true;
+    }
+
+    @Override
     public double llamaNeck2022IdleSpeed() {
         return 0.5;
     }
 
     @Override
     public double llamaNeck2022InSpeed() {
-        return 1.0;
+        return 0.5;
     }
     
     @Override
     public double llamaNeck2022OutSpeed() {
-     return 1.0;   
+     return 0.5;   
     }
 
     @Override
@@ -423,7 +433,7 @@ public class Robot2022Constants implements Constants {
     
     @Override
     public boolean hasSpitter2022() {
-        return false;
+        return true;
     }
 
     @Override 
@@ -433,37 +443,12 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean spitter2022MotorInverted() {
-        return false;
+        return true;
     }
 
     @Override
-    public double spitter2022kP() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kI() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kD() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kS() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kV() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kA() {
-        return 0;
+    public boolean spitter2022UseVelocity() {
+        return true;
     }
 
     @Override
@@ -472,12 +457,27 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
+    public FeedforwardConstant spitter2022FF() {
+        return new FeedforwardConstant(-0.86235, 0.14126, 0.053813);
+    }
+
+    @Override
+    public FeedbackConstant spitter2022FB() {
+        return new FeedbackConstant(0.18428, 0);
+    }
+
+    @Override
+    public double spitter2022MaxVelocity() {
+        return 90;
+    }
+
+    @Override
     public double spitter2022ForwardSpeed() {
-        return 1.0;
+        return 0.5;
     }
 
     @Override
     public double spitter2022BackwardSpeed() {
-        return -1.0;
+        return 0.1;
     }
 }

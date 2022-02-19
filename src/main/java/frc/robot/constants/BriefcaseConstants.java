@@ -213,7 +213,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasClimber2020() {
-        return true;
+        return false;
     }
 
     @Override
@@ -387,13 +387,23 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
+    public boolean indexer2022MotorInverted() {
+        return false;
+    }
+    
+    @Override
     public boolean hasLlamaNeck2022() {
         return true;
     }
 
     @Override
     public int llamaNeck2022MotorID() {
-        return 12;
+        return 2;
+    }
+
+    @Override
+    public boolean llamaNeck2022MotorInverted() {
+        return false;
     }
 
     @Override
@@ -413,7 +423,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int llamaNeck2022UpperLimitSwitchChannel() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -423,48 +433,23 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasSpitter2022() {
-        return false;
+        return true;
     }
 
     @Override 
     public int spitter2022MotorId() {
-        return 0;
+        return 1;
     }
 
     @Override
     public boolean spitter2022MotorInverted() {
-        return false;
+        return true;
     }
 
-    @Override
-    public double spitter2022kP() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kI() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kD() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kS() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kV() {
-        return 0;
-    }
-
-    @Override
-    public double spitter2022kA() {
-        return 0;
-    }
+  @Override
+  public boolean spitter2022UseVelocity() {
+    return false;
+  }
 
     @Override
     public boolean spitter2022UsePID() {
@@ -472,13 +457,28 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public double spitter2022ForwardSpeed() {
+    public FeedforwardConstant spitter2022FF() {
+        return new FeedforwardConstant(0, 0, 0);
+    }
+
+    @Override
+    public FeedbackConstant spitter2022FB() {
+        return new FeedbackConstant(0, 0);
+    }
+
+    @Override
+    public double spitter2022MaxVelocity() {
         return 0;
     }
 
     @Override
+    public double spitter2022ForwardSpeed() {
+        return 0.7;
+    }
+
+    @Override
     public double spitter2022BackwardSpeed() {
-        return 0;
+        return 0.5;
     }
     
 }
