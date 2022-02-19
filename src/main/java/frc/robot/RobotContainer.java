@@ -15,13 +15,16 @@ import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.GoDistanceCMD;
+import frc.robot.commands.GoToBallCMD;
 import frc.robot.commands.PuppyModeCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterSetCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
+import frc.robot.commands.TurnAngleCMD;
 import frc.robot.commands.GoToDistanceAngleCMD;
+import frc.robot.commands.GoToTargetCMD;
 import frc.robot.commands.GoToTrajectoryCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
@@ -108,27 +111,11 @@ public class RobotContainer {
         () -> driverJoystick.getAdjustedTurnSpeed()
       ));
       operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
-      // operatorClimberUp.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
+      driverButtonB.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
       driverRightBumper.whenPressed(new GoDistanceCMD(drivetrain, Units.feetToMeters(1)));
       driverLeftBumper.whenPressed(new GoDistanceCMD(drivetrain, Units.feetToMeters(-1)));
-      driverButtonA.whenPressed(new GoToDistanceAngleCMD(drivetrain, gyro, Units.feetToMeters(16), 20));
-      driverButtonX.whenPressed(() -> {
-        NetworkTable table = NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking");
-        NetworkTable colorTable;
-        switch(DriverStation.getAlliance()) {
-          case Blue:
-            colorTable = table.getSubTable("Blue");
-            break;
-          case Invalid:
-          case Red:
-          default:
-            colorTable = table.getSubTable("Red");
-            break;
-
-        }
-
-        new GoToDistanceAngleCMD(drivetrain, gyro, colorTable.getEntry("Distance").getDouble(0), colorTable.getEntry("Angle").getDouble(0)).schedule();
-      });
+      driverButtonX.whileHeld(new GoToBallCMD(drivetrain, gyro));
+      driverButtonY.whileHeld(new GoToTargetCMD(drivetrain, gyro));
 
     }
   }

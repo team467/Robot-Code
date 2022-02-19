@@ -13,10 +13,10 @@ public class GoToDistanceAngleCMD extends CommandBase {
     GoToTrajectoryCMD command;
     boolean finished = false;
 
-    public GoToDistanceAngleCMD(Drivetrain drivetrain, Gyro gyro, double distance, double angle) {
+    public GoToDistanceAngleCMD(Drivetrain drivetrain, Gyro gyro, double distance, double angle, boolean maintainAngle) {
         Translation2d output = new Translation2d(distance, Rotation2d.fromDegrees(angle));
         if (distance > 0) {
-            command = new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(), new Pose2d(output.getX(), -output.getY(), Rotation2d.fromDegrees(-angle)));
+            command = new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(), new Pose2d(output.getX(), -output.getY(), Rotation2d.fromDegrees(maintainAngle? -angle: 0)));
         } else {
             finished = true;
         }
