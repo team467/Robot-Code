@@ -1,6 +1,8 @@
 package frc.robot.motors;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class FeedbackConstant {
     private final double kP;
@@ -26,5 +28,9 @@ public class FeedbackConstant {
 
     public PIDController getPIDController() {
         return new PIDController(kP, 0, kD);
+    }
+
+    public ProfiledPIDController getProfiledPIDController(TrapezoidProfile.Constraints constraint) {
+        return new ProfiledPIDController(kP, 0, kD, constraint);
     }
 }

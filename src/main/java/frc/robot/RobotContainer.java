@@ -14,6 +14,7 @@ import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberDisableCMD;
 import frc.robot.commands.ClimberUpCMD;
+import frc.robot.commands.GoDistanceCMD;
 import frc.robot.commands.PuppyModeCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterSetCMD;
@@ -108,6 +109,8 @@ public class RobotContainer {
       ));
       operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
       // operatorClimberUp.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
+      driverRightBumper.whenPressed(new GoDistanceCMD(drivetrain, Units.feetToMeters(1)));
+      driverLeftBumper.whenPressed(new GoDistanceCMD(drivetrain, Units.feetToMeters(-1)));
       driverButtonA.whenPressed(new GoToDistanceAngleCMD(drivetrain, gyro, Units.feetToMeters(16), 20));
       driverButtonX.whenPressed(() -> {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking");

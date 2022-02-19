@@ -15,8 +15,6 @@ public class Gyro extends SubsystemBase implements edu.wpi.first.wpilibj.interfa
     public Gyro() {
         super();
         gyro = GyroFactory.create(RobotConstants.get().gyroIMUType(), RobotConstants.get().gyroYawAxis());
-
-        Shuffleboard.getTab("Main").add("asd", gyro);
     }
 
     @Override

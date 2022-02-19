@@ -51,7 +51,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public FeedbackConstant driveDrivePositionPID() {
-        return new FeedbackConstant(93.347, 7.2826);
+        return new FeedbackConstant(93.347/2, 7.2826);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public boolean hasGyro() {
-        return false;
+        return true;
     }
 
     @Override
