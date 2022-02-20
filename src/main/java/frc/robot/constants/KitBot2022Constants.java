@@ -337,4 +337,14 @@ public class KitBot2022Constants implements Constants {
         return 4;
     }
 
+    @Override 
+    public boolean hasLEDClimber2022() {
+        return false;
+    }
+
+    @Override 
+    public int ledClimber2022LEDCount() {
+        return 0;
+    }
+
 }

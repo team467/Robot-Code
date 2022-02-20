@@ -335,5 +335,15 @@ public class Robot2020Constants implements Constants {
     public int ledTower2022LEDCount() {
         return 8;
     }
+    
+    @Override 
+    public boolean hasLEDClimber2022() {
+        return false;
+    }
+
+    @Override 
+    public int ledClimber2022LEDCount() {
+        return 0;
+    }
 
 }

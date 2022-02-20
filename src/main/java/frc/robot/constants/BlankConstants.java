@@ -340,4 +340,14 @@ public class BlankConstants implements Constants {
         return 0;
     }
 
+    @Override 
+    public boolean hasLEDClimber2022() {
+        return false;
+    }
+
+    @Override 
+    public int ledClimber2022LEDCount() {
+        return 0;
+    }
+
 }

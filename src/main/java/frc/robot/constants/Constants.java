@@ -75,4 +75,7 @@ public interface Constants {
     public int ledChannel();
     public boolean hasLEDTower2022();
     public int ledTower2022LEDCount();
+
+    public boolean hasLEDClimber2022();
+    public int ledClimber2022LEDCount();
 }

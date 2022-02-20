@@ -28,6 +28,7 @@ import frc.robot.led.LEDManager;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LEDTower2022;
+import frc.robot.subsystems.LEDClimber2022;
 import frc.robot.subsystems.Shooter2020;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -47,6 +48,7 @@ public class RobotContainer {
   private Climber2020 climber = null;
   private Shooter2020 shooter = null;
   private LEDTower2022 ledTower2022 = null;
+  private LEDClimber2022 ledClimber2022 = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -119,6 +121,7 @@ public class RobotContainer {
     initClimber2020();
     initShooter2020();
     initLEDTower2022();
+    initLEDClimber2022();
   }
 
   public void configureButtonBindings() {
@@ -127,6 +130,7 @@ public class RobotContainer {
     configureClimber2020();
     configureShooter2020();
     configureLEDTower2022();
+    //configureLEDClimber2022();
   }
 
   private void initDrivetrain() {
@@ -186,6 +190,17 @@ public class RobotContainer {
     }
   }
 
+  private void initLEDCLimber2022() {
+    if (RobotConstants.get().hasLEDClimber2022()) {
+      ledClimber2022 = new LEDClimber2022();
+    }
+  }
+
+  // private void configureLEDClimber2022() {
+  //   if (RobotConstants.get().hasLEDClimber2022()) {
+  //     ledClimber2022.setDefaultCommand(new (ledClimber2022));
+    }
+  }
   
 
   /**
