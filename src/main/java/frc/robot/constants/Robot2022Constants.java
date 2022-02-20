@@ -1,22 +1,19 @@
 package frc.robot.constants;
 
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
-import frc.robot.motors.SimpleFeedforwardConstant;
+import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
-import frc.robot.utilities.IMUAxis;
-import frc.robot.utilities.IMUType;
 
-public class Robot2020Constants implements Constants {
+public class Robot2022Constants implements Constants {
 
     @Override
     public String name() {
-        return "Robot 2020";
+        return "Robot 2022";
     }
 
     @Override
     public boolean hasDrivetrain() {
-        return false;
+        return true;
     }
 
     @Override
@@ -31,7 +28,7 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public boolean driveUseVelocity() {
-        return false;
+        return true;
     }
 
     @Override
@@ -40,53 +37,78 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
-    public SimpleFeedforwardConstant driveDriveFF() {
-        return new SimpleFeedforwardConstant(0.0, 0.0, 0.0);
+    public FeedforwardConstant driveForwardRightFF() {
+        return new FeedforwardConstant(0.16745, 2.8243, 0.49144);
     }
 
     @Override
-    public FeedbackConstant driveDriveVelocityPID() {
+    public FeedbackConstant driveForwardRightVelocityFB() {
+        return new FeedbackConstant(3.1939, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveForwardRightPositionFB() {
+        return new FeedbackConstant(96.073, 8.4843);
+    }
+
+    @Override
+    public FeedforwardConstant driveForwardLeftFF() {
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveForwardLeftVelocityFB() {
         return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
-    public FeedbackConstant driveDrivePositionPID() {
+    public FeedbackConstant driveForwardLeftPositionFB() {
         return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
-    public SimpleFeedforwardConstant driveTurnFF() {
-        return null;
+    public FeedforwardConstant driveBackwardRightFF() {
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
     }
 
     @Override
-    public FeedbackConstant driveTurnVelocityPID() {
-        return null;
+    public FeedbackConstant driveBackwardRightVelocityFB() {
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
-    public FeedbackConstant driveTurnPositionPID() {
-        return null;
+    public FeedbackConstant driveBackwardRightPositionFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedforwardConstant driveBackwardLeftFF() {
+        return new FeedforwardConstant(0.0, 0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardLeftVelocityFB() {
+        return new FeedbackConstant(0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveBackwardLeftPositionFB() {
+        return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
     public double driveUnitsPerRotation() {
-        return 1.0;
-    }
-
-    @Override
-    public DifferentialDriveKinematics driveKinematics() {
-        return new DifferentialDriveKinematics(0);
+        return 0.4788 / 10.71;
     }
 
     @Override
     public double driveMaxVelocity() {
-        return 0;
+        return 3.0;
     }
 
     @Override
     public double driveMaxAcceleration() {
-        return 100000;
+        return 3.0;
     }
 
     @Override
@@ -141,7 +163,7 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public boolean driveMotorRightLeaderInverted() {
-        return false;
+        return true;
     }
 
     @Override
@@ -151,32 +173,17 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public boolean driveMotorRightFollowerInverted() {
-        return false;
-    }
-
-    @Override
-    public boolean hasGyro() {
-        return false;
-    }
-
-    @Override
-    public IMUType gyroIMUType() {
-        return IMUType.NONE;
-    }
-
-    @Override
-    public IMUAxis gyroYawAxis() {
-        return IMUAxis.NA;
-    }
-
-    @Override
-    public boolean hasClimber2020() {
         return true;
     }
 
     @Override
+    public boolean hasClimber2020() {
+        return false;
+    }
+
+    @Override
     public int climber2020MotorId() {
-        return 5;
+        return 11;
     }
 
     @Override
@@ -186,32 +193,32 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public double climber2020UpSpeed() {
-        return 1.0;
+        return 0.3;
     }
 
     @Override
     public double climber2020DownSpeed() {
-        return 0.8;
+        return 0.1;
     }
 
     @Override
     public boolean hasShooter2020() {
-        return true;
+        return false;
     }
 
     @Override
     public MotorType shooter2020MotorType() {
-        return MotorType.SPARK_MAX_BRUSHLESS;
+        return MotorType.NONE;
     }
 
     @Override
     public boolean shooter2020FlywheelDualMotors() {
-        return true;
+        return false;
     }
 
     @Override
     public int shooter2020FlywheelLeaderMotorId() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -221,7 +228,7 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public int shooter2020FlywheelFollowerMotorId() {
-        return 2;
+        return 0;
     }
 
     @Override
@@ -230,18 +237,23 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
+    public int shooter2020TriggerMotorId() {
+        return 0;
+    }
+
+    @Override
     public double shooter2020FlywheelDefaultSpeed() {
-        return 0.4;
+        return 0.0;
     }
 
     @Override
     public boolean shooter2020FlywheelUseVelocity() {
-        return true;
+        return false;
     }
 
     @Override
     public double shooter2020FlywheelkP() {
-        return 0.0248;
+        return 0.0;
     }
 
     @Override
@@ -256,37 +268,32 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public double shooter2020FlywheelkS() {
-        return -0.143;
+        return 0.0;
     }
 
     @Override
     public double shooter2020FlywheelkV() {
-        return 0.13;
+        return 0.0;
     }
 
     @Override
     public double shooter2020FlywheelkA() {
-        return 0.0062;
+        return 0.0;
     }
 
     @Override
     public double shooter2020FlywheelkMaxVelocity() {
-        return 80.0;
-    }
-
-    @Override
-    public int shooter2020TriggerMotorId() {
-        return 7;
+        return 0;
     }
 
     @Override
     public boolean shooter2020TriggerInverted() {
-        return true;
+        return false;
     }
 
     @Override
     public int shooter2020LeftServoId() {
-        return 2;
+        return 0;
     }
 
     @Override
@@ -301,7 +308,7 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public int shooter2020RightServoId() {
-        return 3;
+        return 0;
     }
 
     @Override
@@ -316,62 +323,62 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public boolean hasIndexer2022() {
-        return false;
+        return true;
     }
 
     @Override
     public int indexer2022MotorID() {
-        return 0;
+        return 9;
     }
 
     @Override
     public double indexer2022IdleSpeed() {
-        return 0;
+        return 0.2;
     }
 
     @Override
     public double indexer2022InSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public double indexer2022OutSpeed() {
-        return 0;
+        return 0.3;
     }
 
     @Override
     public boolean indexer2022MotorInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean hasLlamaNeck2022() {
-        return false;
+        return true;
     }
 
     @Override
     public int llamaNeck2022MotorID() {
-        return 0;
+        return 8;
     }
 
     @Override
     public boolean llamaNeck2022MotorInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public double llamaNeck2022IdleSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public double llamaNeck2022InSpeed() {
-        return 0;
+        return 0.5;
     }
     
     @Override
     public double llamaNeck2022OutSpeed() {
-     return 0;   
+     return 0.5;   
     }
 
     @Override
@@ -381,28 +388,28 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public int llamaNeck2022LowerLimitSwitchChannel() {
-        return 0;
+        return 1;
     }
-
+    
     @Override
     public boolean hasSpitter2022() {
-        return false;
+        return true;
     }
 
     @Override 
     public int spitter2022MotorId() {
-        return 0;
+        return 5;
     }
 
     @Override
     public boolean spitter2022MotorInverted() {
-        return false;
+        return true;
     }
 
-  @Override
-  public boolean spitter2022UseVelocity() {
-    return false;
-  }
+    @Override
+    public boolean spitter2022UseVelocity() {
+        return true;
+    }
 
     @Override
     public boolean spitter2022UsePID() {
@@ -411,27 +418,26 @@ public class Robot2020Constants implements Constants {
 
     @Override
     public FeedforwardConstant spitter2022FF() {
-        return new FeedforwardConstant(0, 0, 0);
+        return new FeedforwardConstant(0.23723, 0.12724, 0.0039966);
     }
 
     @Override
     public FeedbackConstant spitter2022FB() {
-        return new FeedbackConstant(0, 0);
+        return new FeedbackConstant(0.14261, 0);
     }
 
     @Override
     public double spitter2022MaxVelocity() {
-        return 0;
+        return 90;
     }
 
     @Override
     public double spitter2022ForwardSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public double spitter2022BackwardSpeed() {
-        return 0;
+        return 0.1;
     }
-
 }
