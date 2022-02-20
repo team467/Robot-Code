@@ -28,7 +28,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean driveUseVelocity() {
-        return false;
+        return true;
     }
 
     @Override
@@ -38,17 +38,17 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public FeedforwardConstant driveForwardRightFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
+        return new FeedforwardConstant(0.16745, 2.8243, 0.49144);
     }
 
     @Override
     public FeedbackConstant driveForwardRightVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
+        return new FeedbackConstant(3.1939, 0.0);
     }
 
     @Override
     public FeedbackConstant driveForwardRightPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
+        return new FeedbackConstant(96.073, 8.4843);
     }
 
     @Override
@@ -98,17 +98,17 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double driveUnitsPerRotation() {
-        return 0;
+        return 0.4788 / 10.71;
     }
 
     @Override
     public double driveMaxVelocity() {
-        return 0;
+        return 3.0;
     }
 
     @Override
     public double driveMaxAcceleration() {
-        return 0;
+        return 3.0;
     }
 
     @Override
