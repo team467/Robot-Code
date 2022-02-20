@@ -137,6 +137,7 @@ public class RobotContainer {
       driverLeftBumper.whenPressed(new GoDistanceCMD(drivetrain, Units.feetToMeters(-1)));
       driverButtonX.whileHeld(new GoToBallCMD(drivetrain, gyro));
       driverButtonY.whileHeld(new GoToTargetCMD(drivetrain, gyro));
+      driverButtonA.whileHeld(new GoToDistanceAngleCMD(drivetrain, gyro, 2.0, 45.0, false));
 
     }
   }

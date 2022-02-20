@@ -8,6 +8,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotConstants;
+import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Gyro;
 
@@ -21,6 +22,7 @@ public class TurnAngleCMD extends CommandBase {
     private final Drivetrain drivetrain;
     private final Gyro gyro;
     private final double angle;
+    private final SimpleMotorFeedforward turnFF;
     private final ProfiledPIDController turnPID;
     private final Timer timer;
 
@@ -28,7 +30,8 @@ public class TurnAngleCMD extends CommandBase {
         this.drivetrain = drivetrain;
         this.gyro = gyro;
         this.angle = angle;
-        this.turnPID = RobotConstants.get().driveDriveVelocityPID()
+        this.turnFF = RobotConstants.get().driveTurnFF().getFeedforward();
+        this.turnPID = RobotConstants.get().driveTurnVelocityPID()
                 .getProfiledPIDController(constraints);
         timer = new Timer();
         timer.reset();
