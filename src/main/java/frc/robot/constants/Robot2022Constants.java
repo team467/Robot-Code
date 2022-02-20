@@ -243,12 +243,12 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double climber2022LeftLowerLimit() {
-        return 30;
+        return 20;
     }
 
     @Override
     public double climber2022RightLowerLimit() {
-        return 30;
+        return 20;
     }
 
     @Override
