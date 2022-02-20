@@ -410,8 +410,8 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public FeedforwardConstant spitter2022FF() {
-        return new FeedforwardConstant(0, 0, 0);
+    public SimpleFeedforwardConstant spitter2022FF() {
+        return new SimpleFeedforwardConstant(0, 0, 0);
     }
 
     @Override

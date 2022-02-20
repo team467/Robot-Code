@@ -31,17 +31,9 @@ public class Spitter2022 extends SubsystemBase {
     spitterMotor.setInverted(RobotConstants.get().spitter2022MotorInverted());
 
     // Feedback controller
-    spitterPIDController =
-        new PIDController(
-            RobotConstants.get().spitter2022FB().getkP(),
-            0,
-            RobotConstants.get().spitter2022FB().getkD());
+    spitterPIDController = RobotConstants.get().spitter2022FB().getPIDController();
     // Feedforward controller
-    spitterFFController =
-        new SimpleMotorFeedforward(
-            RobotConstants.get().spitter2022FF().getkS(),
-            RobotConstants.get().spitter2022FF().getkV(),
-            RobotConstants.get().spitter2022FF().getkA());
+    spitterFFController = RobotConstants.get().spitter2022FF().getFeedforward();
   }
 
   /**

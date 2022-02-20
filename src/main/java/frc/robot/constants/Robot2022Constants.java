@@ -1,8 +1,11 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
-import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
+import frc.robot.motors.SimpleFeedforwardConstant;
+import frc.robot.utilities.IMUAxis;
+import frc.robot.utilities.IMUType;
 
 public class Robot2022Constants implements Constants {
 
@@ -37,68 +40,43 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
-    public FeedforwardConstant driveForwardRightFF() {
-        return new FeedforwardConstant(0.16745, 2.8243, 0.49144);
+    public SimpleFeedforwardConstant driveDriveFF() {
+        return new SimpleFeedforwardConstant(0.16745, 2.8243, 0.49144);
     }
 
     @Override
-    public FeedbackConstant driveForwardRightVelocityFB() {
+    public FeedbackConstant driveDriveVelocityPID() {
         return new FeedbackConstant(3.1939, 0.0);
     }
 
     @Override
-    public FeedbackConstant driveForwardRightPositionFB() {
+    public FeedbackConstant driveDrivePositionPID() {
         return new FeedbackConstant(96.073, 8.4843);
     }
 
     @Override
-    public FeedforwardConstant driveForwardLeftFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
+    public SimpleFeedforwardConstant driveTurnFF() {
+        return null;
     }
 
     @Override
-    public FeedbackConstant driveForwardLeftVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
+    public FeedbackConstant driveTurnVelocityPID() {
+        return null;
     }
 
     @Override
-    public FeedbackConstant driveForwardLeftPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedforwardConstant driveBackwardRightFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardRightVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardRightPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedforwardConstant driveBackwardLeftFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardLeftVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardLeftPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
+    public FeedbackConstant driveTurnPositionPID() {
+        return null;
     }
 
     @Override
     public double driveUnitsPerRotation() {
         return 0.4788 / 10.71;
+    }
+
+    @Override
+    public DifferentialDriveKinematics driveKinematics() {
+        return new DifferentialDriveKinematics(0.656);
     }
 
     @Override
@@ -174,6 +152,21 @@ public class Robot2022Constants implements Constants {
     @Override
     public boolean driveMotorRightFollowerInverted() {
         return true;
+    }
+
+    @Override
+    public boolean hasGyro() {
+        return true;
+    }
+
+    @Override
+    public IMUType gyroIMUType() {
+        return IMUType.ADIS16470;
+    }
+
+    @Override
+    public IMUAxis gyroYawAxis() {
+        return IMUAxis.kY;
     }
 
     @Override
@@ -417,8 +410,8 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
-    public FeedforwardConstant spitter2022FF() {
-        return new FeedforwardConstant(0.23723, 0.12724, 0.0039966);
+    public SimpleFeedforwardConstant spitter2022FF() {
+        return new SimpleFeedforwardConstant(0.23723, 0.12724, 0.0039966);
     }
 
     @Override
