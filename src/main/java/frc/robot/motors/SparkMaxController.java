@@ -10,6 +10,7 @@ public class SparkMaxController implements MotorControllerEncoder {
 
     public SparkMaxController(int id, MotorType motorType) {
         spark = new CANSparkMax(id, motorType);
+        setUnitsPerRotation(1);
     }
 
     @Override

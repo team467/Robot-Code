@@ -444,4 +444,14 @@ public class Robot2020Constants implements Constants {
         return 0;
     }
 
+    @Override
+    public boolean hasHubCameraLED() {
+        return false;
+    }
+
+    @Override
+    public int hubCameraLEDChannel() {
+        return 0;
+    }
+
 }

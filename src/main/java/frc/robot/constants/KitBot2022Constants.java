@@ -443,4 +443,14 @@ public class KitBot2022Constants implements Constants {
     public double spitter2022BackwardSpeed() {
         return 0;
     }
+
+    @Override
+    public boolean hasHubCameraLED() {
+        return false;
+    }
+
+    @Override
+    public int hubCameraLEDChannel() {
+        return 0;
+    }
 }

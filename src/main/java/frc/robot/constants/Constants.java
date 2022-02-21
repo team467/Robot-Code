@@ -105,4 +105,6 @@ public interface Constants {
     public double spitter2022ForwardSpeed();
     public double spitter2022BackwardSpeed();
     
+    public boolean hasHubCameraLED();
+    public int hubCameraLEDChannel();
 }

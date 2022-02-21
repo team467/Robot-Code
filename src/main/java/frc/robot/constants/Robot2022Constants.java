@@ -66,7 +66,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public FeedbackConstant driveTurnPositionPID() {
-        return new FeedbackConstant(97.973, 9.4138);
+        return new FeedbackConstant(0.5, 0.01);
     }
 
     @Override
@@ -436,11 +436,21 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double spitter2022ForwardSpeed() {
-        return 0.5;
+        return 0.46;
     }
 
     @Override
     public double spitter2022BackwardSpeed() {
         return 0.1;
+    }
+
+    @Override
+    public boolean hasHubCameraLED() {
+        return true;
+    }
+
+    @Override
+    public int hubCameraLEDChannel() {
+        return 0;
     }
 }

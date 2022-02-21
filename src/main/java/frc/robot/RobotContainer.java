@@ -4,6 +4,14 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.Path;
+import java.util.HashMap;
+
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -42,6 +50,7 @@ import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Gyro;
+import frc.robot.subsystems.HubCameraLED;
 import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
@@ -55,6 +64,8 @@ import frc.robot.subsystems.Spitter2022;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  HashMap<String, Trajectory> trajectories = new HashMap<>();
+
   // The robot's subsystems and commands are defined here...
   private Drivetrain drivetrain = null;
   private Gyro gyro = null;
@@ -64,6 +75,7 @@ public class RobotContainer {
   private Indexer2022 indexer = null;
   private Spitter2022 spitter = null;
   private Shooter2022 shooter2022 = null;
+  private HubCameraLED hubCameraLED = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -97,8 +109,21 @@ public class RobotContainer {
   private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
 
   public RobotContainer() {
+    getTrajectories();
+
     // Configure the button bindings
     configureButtonBindings();
+  }
+
+  public void getTrajectories() {
+    for (File file : Filesystem.getDeployDirectory().toPath().resolve("paths").resolve(RobotConstants.get().name().toLowerCase().replace(" ", "")).resolve("output").toFile().listFiles()) {
+      System.out.println(file.getName().replace(".json", ""));
+      try {
+        trajectories.put(file.getName().replace(".json", ""), TrajectoryUtil.fromPathweaverJson(file.toPath()));
+      } catch (IOException e) {
+        e.printStackTrace();
+     }
+    }
   }
 
   /**
@@ -116,6 +141,7 @@ public class RobotContainer {
     initSpitter2022();
     initLlamaNeck2022();
     initShooter2022();
+    initHubCameraLED();
   }
 
   private void initGyro() {
@@ -215,12 +241,19 @@ public class RobotContainer {
     }
   }
 
+  private void initHubCameraLED() {
+    if (RobotConstants.get().hasHubCameraLED()) {
+      hubCameraLED = new HubCameraLED();
+      hubCameraLED.enable();
+    }
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
+    return new GoToTrajectoryCMD(drivetrain, gyro, trajectories.get("Forward"));
   }
 }
