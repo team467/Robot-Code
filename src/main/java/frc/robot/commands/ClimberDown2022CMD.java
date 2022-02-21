@@ -3,6 +3,8 @@ package frc.robot.commands;
 import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.Climber2022;
 
+import java.util.function.Supplier;
+
 import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -10,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ClimberDown2022CMD extends CommandBase {
     private final Climber2022 climber;
+    private final Supplier<Boolean> fullDown;
 
     private static final Logger LOGGER = RobotLogManager.getMainLogger(ClimberDown2022CMD.class.getName());
 
@@ -17,8 +20,9 @@ public class ClimberDown2022CMD extends CommandBase {
 
     //@param????
 
-    public ClimberDown2022CMD(Climber2022 climber) {
+    public ClimberDown2022CMD(Climber2022 climber, Supplier<Boolean> fullDown) {
         this.climber = climber;
+        this.fullDown = fullDown;
 
         addRequirements(climber);
     }
@@ -30,8 +34,12 @@ public class ClimberDown2022CMD extends CommandBase {
     }
 
 
-    public void execute(){
-        climber.down();
+    public void execute() {
+        if (fullDown.get()) {
+            climber.downFull();
+        } else {
+            climber.downSafe();
+        }
     }
 
 

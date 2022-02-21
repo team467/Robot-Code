@@ -64,7 +64,7 @@ public class Climber2022 extends SubsystemBase {
         }
     }
 
-    public void down() {
+    public void downSafe() {
         if (enabled){
             if (climberMotorLeft.getPosition() > RobotConstants.get().climber2022LeftLowerLimit()) {
                 climberMotorLeft.set(-RobotConstants.get().climber2022DownSpeed());
@@ -72,6 +72,22 @@ public class Climber2022 extends SubsystemBase {
                 climberMotorLeft.set(0);
             }
             if (climberMotorRight.getPosition() > RobotConstants.get().climber2022RightLowerLimit()) {
+                climberMotorRight.set(-RobotConstants.get().climber2022DownSpeed());
+            } else {
+                climberMotorRight.set(0);
+            }
+
+        }
+    }
+
+    public void downFull() {
+        if (enabled){
+            if (climberMotorLeft.getPosition() > 2) {
+                climberMotorLeft.set(-RobotConstants.get().climber2022DownSpeed());
+            } else {
+                climberMotorLeft.set(0);
+            }
+            if (climberMotorRight.getPosition() > 2) {
                 climberMotorRight.set(-RobotConstants.get().climber2022DownSpeed());
             } else {
                 climberMotorRight.set(0);

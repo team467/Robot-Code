@@ -162,7 +162,7 @@ public class RobotContainer {
       operatorClimberLock.whenPressed(new ClimberEnable2022CMD(climber));
       operatorClimberLock.whenReleased(new ClimberDisable2022CMD(climber));
       operatorClimberUp.whileHeld(new ClimberUp2022CMD(climber));
-      operatorClimberDown.whileHeld(new ClimberDown2022CMD(climber));
+      operatorClimberDown.whileHeld(new ClimberDown2022CMD(climber, operatorIndexAuto::get));
     }
   }
 
