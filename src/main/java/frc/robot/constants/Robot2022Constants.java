@@ -86,7 +86,17 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double driveMaxAcceleration() {
-        return 1.5;
+        return 3;
+    }
+
+    @Override
+    public double driveAutoMaxVelocity() {
+        return 2;
+    }
+
+    @Override
+    public double driveAutoMaxAcceleration() {
+        return 1.0;
     }
 
     @Override

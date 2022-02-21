@@ -90,6 +90,16 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
+    public double driveAutoMaxVelocity() {
+        return 0;
+    }
+
+    @Override
+    public double driveAutoMaxAcceleration() {
+        return 0;
+    }
+
+    @Override
     public double driveFastMaxSpeed() {
         return 1.0;
     }

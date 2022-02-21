@@ -14,10 +14,8 @@ import frc.robot.subsystems.Gyro;
 
 public class TurnAngleCMD extends CommandBase {
     private final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-            // RobotConstants.get().driveMaxVelocity(),
-            1,
-            // RobotConstants.get().driveMaxAcceleration());
-            1);
+             RobotConstants.get().driveAutoMaxVelocity(),
+             RobotConstants.get().driveAutoMaxAcceleration());
 
     private final Drivetrain drivetrain;
     private final Gyro gyro;

@@ -26,6 +26,8 @@ public interface Constants {
     public DifferentialDriveKinematics driveKinematics();
     public double driveMaxVelocity();
     public double driveMaxAcceleration();
+    public double driveAutoMaxVelocity();
+    public double driveAutoMaxAcceleration();
     public double driveFastMaxSpeed();
     public double driveNormalMaxSpeed();
     public double driveSlowMaxSpeed();

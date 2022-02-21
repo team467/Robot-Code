@@ -11,12 +11,6 @@ import frc.robot.RobotConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class GoDistanceCMD extends CommandBase {
-    private final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-            // RobotConstants.get().driveMaxVelocity(),
-            1,
-            // RobotConstants.get().driveMaxAcceleration());
-            1);
-
     private final Drivetrain drivetrain;
     private final double distance;
     private final ProfiledPIDController leftPID;
@@ -31,6 +25,9 @@ public class GoDistanceCMD extends CommandBase {
     public GoDistanceCMD(Drivetrain drivetrain, double distance) {
         this.drivetrain = drivetrain;
         this.distance = distance;
+        TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
+                RobotConstants.get().driveAutoMaxVelocity(),
+                RobotConstants.get().driveAutoMaxAcceleration());
         this.leftPID = RobotConstants.get().driveDrivePositionPID()
                 .getProfiledPIDController(constraints);
         this.rightPID = RobotConstants.get().driveDrivePositionPID()

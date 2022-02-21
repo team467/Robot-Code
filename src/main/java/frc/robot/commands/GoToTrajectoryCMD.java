@@ -37,9 +37,8 @@ public class GoToTrajectoryCMD extends CommandBase {
         // Add kinematics to ensure max speed is actually obeyed
         // Apply the voltage constraint
         TrajectoryConfig config = new TrajectoryConfig(
-                // RobotConstants.get().driveMaxVelocity(),
-                1,
-                RobotConstants.get().driveMaxAcceleration())
+                RobotConstants.get().driveAutoMaxVelocity(),
+                RobotConstants.get().driveAutoMaxAcceleration())
                 // Add kinematics to ensure max speed is actually obeyed
                 .setKinematics(RobotConstants.get().driveKinematics())
                 // Apply the voltage constraint
