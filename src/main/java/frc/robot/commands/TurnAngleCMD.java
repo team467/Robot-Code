@@ -29,7 +29,7 @@ public class TurnAngleCMD extends CommandBase {
         this.gyro = gyro;
         this.angle = angle;
         this.turnFF = RobotConstants.get().driveTurnFF().getFeedforward();
-        this.turnPID = RobotConstants.get().driveTurnVelocityPID()
+        this.turnPID = RobotConstants.get().driveTurnPositionPID()
                 .getProfiledPIDController(constraints);
         timer = new Timer();
         timer.reset();
