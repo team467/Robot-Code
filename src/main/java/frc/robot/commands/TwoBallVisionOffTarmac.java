@@ -1,6 +1,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.Indexer2022;
+import frc.robot.subsystems.LlamaNeck2022;
+import frc.robot.subsystems.Shooter2022;
+import frc.robot.subsystems.Spitter2022;
 
 /** Autonomous mode:
  * 1. The robot shoots the pre-loaded ball.
