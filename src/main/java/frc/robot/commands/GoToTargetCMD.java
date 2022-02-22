@@ -24,7 +24,7 @@ public class GoToTargetCMD extends CommandBase {
         isValid = table.getEntry("isValid").getBoolean(false);
 
         if (isValid) {
-            command = new GoToDistanceAngleCMD(drivetrain, gyro, Units.feetToMeters(table.getEntry("distance").getDouble(0)) - 0.5, table.getEntry("angle").getDouble(0), true);
+            command = new GoToDistanceAngleCMD(drivetrain, gyro, -(Units.feetToMeters(table.getEntry("distance").getDouble(0)) - 1.0), table.getEntry("angle").getDouble(0), true);
             command.schedule();
         }
     }

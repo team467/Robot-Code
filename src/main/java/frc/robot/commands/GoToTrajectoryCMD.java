@@ -24,7 +24,7 @@ public class GoToTrajectoryCMD extends CommandBase {
     private final RamseteCommand command;
     private final Trajectory trajectory;
 
-    public GoToTrajectoryCMD(Drivetrain drivetrain, Gyro gyro, Pose2d initalPose, List<Translation2d> interiorWaypoints, Pose2d endingPose) {
+    public GoToTrajectoryCMD(Drivetrain drivetrain, Gyro gyro, Pose2d initalPose, List<Translation2d> interiorWaypoints, Pose2d endingPose, boolean reversed) {
         this.drivetrain = drivetrain;
         this.gyro = gyro;
         this.diffDriveOdometry = new DifferentialDriveOdometry(gyro.getRotation2d());
@@ -42,7 +42,8 @@ public class GoToTrajectoryCMD extends CommandBase {
                 // Add kinematics to ensure max speed is actually obeyed
                 .setKinematics(RobotConstants.get().driveKinematics())
                 // Apply the voltage constraint
-                .addConstraint(autDriveVoltageConstraint);
+                .addConstraint(autDriveVoltageConstraint)
+                .setReversed(reversed);
 
 
         // Start at the origin facing the +X direction
@@ -104,18 +105,21 @@ public class GoToTrajectoryCMD extends CommandBase {
         diffDriveOdometry.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
 
         command.initialize();
+        System.out.println("INIT");
     }
 
     @Override
     public void execute() {
         diffDriveOdometry.update(gyro.getRotation2d(), drivetrain.getLeftPosition(), drivetrain.getRightPosition());
         command.execute();
+        System.out.println("EXE");
     }
 
     @Override
     public void end(boolean interrupted) {
         command.end(interrupted);
         drivetrain.tankDriveVolts(0, 0);
+        System.out.println("END");
     }
 
     // Returns true when the command should end.
