@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
@@ -144,6 +145,7 @@ public class RobotContainer {
   public RobotContainer() {
     getTrajectories();
 
+    initializeSubsystems();
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -167,7 +169,8 @@ public class RobotContainer {
    * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  public void configureButtonBindings() {
+  
+  private void initializeSubsystems() {
     initGyro();
     initDrivetrain();
     initClimber2020();
@@ -186,12 +189,24 @@ public class RobotContainer {
     }
   }
 
+  public void configureButtonBindings() {
+    CommandScheduler.getInstance().clearButtons();
+    configureDrivetrain();
+    configureClimber2020();
+    configureShooter2020();
+  }
+
   private void initDrivetrain() {
     if (RobotConstants.get().hasDrivetrain()) {
       drivetrain = new Drivetrain();
+    }
+  }
+
+  private void configureDrivetrain() {
+    if (RobotConstants.get().hasDrivetrain()) {
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
-          () -> driverJoystick.getAdjustedDriveSpeed(),
-          () -> driverJoystick.getAdjustedTurnSpeed()));
+              driverJoystick::getAdjustedDriveSpeed,
+              driverJoystick::getAdjustedTurnSpeed));
       operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
       // driverButtonB.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
       driverRightBumper.whenPressed(new GoDistanceCMD(drivetrain, Units.feetToMeters(1)));
@@ -206,13 +221,17 @@ public class RobotContainer {
           new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true));
       driverButtonB.whenPressed(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
           new Pose2d(2, 0, Rotation2d.fromDegrees(0)), false));
-
     }
   }
 
   private void initClimber2020() {
     if (RobotConstants.get().hasClimber2020()) {
       climber = new Climber2020();
+    }
+  }
+
+  private void configureClimber2020() {
+    if (RobotConstants.get().hasClimber2020()) {
       climber.setDefaultCommand(new ClimberStopCMD(climber));
       operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
       operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
@@ -223,16 +242,15 @@ public class RobotContainer {
   private void initShooter2020() {
     if (RobotConstants.get().hasShooter2020()) {
       shooter = new Shooter2020();
+    }
+  }
+
+  private void configureShooter2020() {
+    if (RobotConstants.get().hasShooter2020()) {
       operatorShooterFlywheel.whenPressed(new ShooterRunFlywheelCMD(shooter));
       operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
       operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
       operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
-
-      // This is test code used on the robot to spin the flywheel to a certian speed
-      // depedning on the joystick
-      // shooter.setDefaultCommand(new ShooterSetCMD(shooter,
-      // () -> -driverJoystick.getRawAxis(XboxController467.Axes.LeftY.value)
-      // ));
     }
   }
 
