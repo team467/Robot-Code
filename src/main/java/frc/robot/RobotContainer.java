@@ -44,6 +44,7 @@ import frc.robot.commands.Indexer2022StopCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
 import frc.robot.commands.Shooter2022FlushBallCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
+import frc.robot.commands.Shooter2022IdleSpinupCMD;
 import frc.robot.commands.Shooter2022SetDefaultCMD;
 import frc.robot.commands.Shooter2022ShootCMD;
 import frc.robot.commands.Shooter2022ShootSpeedCMD;
@@ -180,7 +181,6 @@ public class RobotContainer {
     initLlamaNeck2022();
     initShooter2022();
     initHubCameraLED();
-    driverButtonX.whenPressed(getAutonomousCommand());
   }
 
   private void initGyro() {
@@ -194,6 +194,11 @@ public class RobotContainer {
     configureDrivetrain();
     configureClimber2020();
     configureShooter2020();
+    configureLlamaNeck2022();
+    configureIndexer2022();
+    configureSpitter2022();
+    configureShooter2022();
+    driverButtonX.whenPressed(getAutonomousCommand());
   }
 
   private void initDrivetrain() {
@@ -207,20 +212,17 @@ public class RobotContainer {
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
               driverJoystick::getAdjustedDriveSpeed,
               driverJoystick::getAdjustedTurnSpeed));
-      operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
-      // driverButtonB.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
-      driverRightBumper.whenPressed(new GoDistanceCMD(drivetrain, Units.feetToMeters(1)));
-      driverLeftBumper.whenPressed(new GoDistanceCMD(drivetrain, Units.feetToMeters(-1)));
+      // operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
       // driverButtonX.whileHeld(new GoToBallCMD(drivetrain, gyro));
       driverButtonY.whileHeld(new GoToTargetCMD(drivetrain, gyro));
       // driverButtonY.whileHeld(new GoToTrajectoryCMD(drivetrain, gyro,
       // trajectories.get("Reverse")));
       // driverButtonA.whileHeld(new GoToDistanceAngleCMD(drivetrain, gyro, 2.0, 0.0,
       // true));
-      driverButtonA.whenPressed(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-          new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true));
-      driverButtonB.whenPressed(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-          new Pose2d(2, 0, Rotation2d.fromDegrees(0)), false));
+      // driverButtonA.whenPressed(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
+      //     new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true));
+      // driverButtonB.whenPressed(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
+      //     new Pose2d(2, 0, Rotation2d.fromDegrees(0)), false));
     }
   }
 
@@ -257,6 +259,11 @@ public class RobotContainer {
   private void initLlamaNeck2022() {
     if (RobotConstants.get().hasLlamaNeck2022()) {
       llamaNeck = new LlamaNeck2022();
+    }
+  }
+
+  private void configureLlamaNeck2022() {
+    if (RobotConstants.get().hasLlamaNeck2022()) {
       llamaNeck.setDefaultCommand(new LlamaNeck2022StopCMD(llamaNeck));
     }
   }
@@ -264,6 +271,11 @@ public class RobotContainer {
   private void initIndexer2022() {
     if (RobotConstants.get().hasIndexer2022()) {
       indexer = new Indexer2022();
+    }
+  }
+
+  private void configureIndexer2022() {
+    if (RobotConstants.get().hasIndexer2022()) {
       indexer.setDefaultCommand(new Indexer2022StopCMD(indexer));
     }
   }
@@ -271,6 +283,11 @@ public class RobotContainer {
   private void initSpitter2022() {
     if (RobotConstants.get().hasSpitter2022()) {
       spitter = new Spitter2022();
+    }
+  }
+
+  private void configureSpitter2022() {
+    if (RobotConstants.get().hasSpitter2022()) {
       spitter.setDefaultCommand(new Spitter2022StopCMD(spitter));
     }
   }
@@ -280,6 +297,13 @@ public class RobotContainer {
         && RobotConstants.get().hasIndexer2022()
         && RobotConstants.get().hasSpitter2022()) {
       shooter2022 = new Shooter2022(indexer, llamaNeck, spitter);
+        }
+  }
+
+  private void configureShooter2022() {
+    if (RobotConstants.get().hasLlamaNeck2022()
+        && RobotConstants.get().hasIndexer2022()
+        && RobotConstants.get().hasSpitter2022()) {
       if (operatorShooterFlywheel.get()) {
         shooter2022.setDefaultCommand(
             new Shooter2022IdleCMD(shooter2022));
@@ -316,15 +340,16 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
-        new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022),
+        new ParallelRaceGroup(new Shooter2022IdleSpinupCMD(shooter2022, () -> 0.7),
+        // new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022),
             new SequentialCommandGroup(
                 new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-                    new Pose2d(2, 0, Rotation2d.fromDegrees(0)), false)//,
+                    new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)//,
                 // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
                 //     new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true)
                     )
                 ),
-        new Shooter2022ShootSpeedCMD(shooter2022, () -> 1.0));
+        new Shooter2022ShootSpeedCMD(shooter2022, () -> 0.85));
     // return new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022), new
     // SequentialCommandGroup(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0,
     // 0, new Rotation2d()), List.of(), new Pose2d(2, 0, Rotation2d.fromDegrees(0)),

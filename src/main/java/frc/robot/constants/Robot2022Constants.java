@@ -341,7 +341,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double indexer2022InSpeed() {
-        return 0.5;
+        return 0.8;
     }
 
     @Override
