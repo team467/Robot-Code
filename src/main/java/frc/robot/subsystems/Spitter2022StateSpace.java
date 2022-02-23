@@ -84,7 +84,7 @@ public class Spitter2022StateSpace extends Spitter2022 {
      * @param speed the speed to set the motor to.
      */
     public void setSpeed(double speed) {
-        setVelocity(speed * RobotConstants.get().spitter2022MaxVelocity() * 2.0 * Math.PI);
+        setVelocity(speed * RobotConstants.get().spitter2022MaxVelocity());
     }
 
     /**
