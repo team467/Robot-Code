@@ -9,6 +9,7 @@ import frc.robot.logging.RobotLogManager;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
+import frc.robot.vision.HubTarget;
 import org.apache.logging.log4j.Logger;
 
 /** The spitter subsystem, contains the flywheel and its motor only. */
@@ -78,6 +79,10 @@ public class Spitter2022 extends SubsystemBase {
   /** Start spinning the flywheel backwards. */
   public void backward() {
     setSpeed(-RobotConstants.get().spitter2022BackwardSpeed());
+  }
+
+  public void setSpitterToTarget() {
+    setVelocity(HubTarget.getFlywheelVelocity() / (2.0 * Math.PI));
   }
 
   /** Stop the flywheel. */

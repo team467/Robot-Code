@@ -19,6 +19,7 @@ import frc.robot.logging.RobotLogManager;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
+import frc.robot.vision.HubTarget;
 import org.apache.logging.log4j.Logger;
 
 public class Spitter2022StateSpace extends Spitter2022 {
@@ -108,6 +109,10 @@ public class Spitter2022StateSpace extends Spitter2022 {
     /** Start spinning the flywheel backwards. */
     public void backward() {
         setSpeed(-RobotConstants.get().spitter2022BackwardSpeed());
+    }
+
+    public void setSpitterToTarget() {
+        setVelocity(HubTarget.getFlywheelVelocity());
     }
 
     /** Stop the flywheel. */
