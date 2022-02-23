@@ -1,5 +1,7 @@
 package frc.robot.vision;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -37,6 +39,20 @@ public class HubTarget {
      */
     public static double getAngle() {
         return table.getEntry("angle").getDouble(0);
+    }
+
+    /**
+     * @return Rotation2d to target
+     */
+    public static Rotation2d getRotation2d() {
+        return Rotation2d.fromDegrees(getAngle());
+    }
+
+    /**
+     * @return Translation2d to target
+     */
+    public static Translation2d getTranslation2d() {
+        return new Translation2d(getDistance(), getRotation2d());
     }
 
 
