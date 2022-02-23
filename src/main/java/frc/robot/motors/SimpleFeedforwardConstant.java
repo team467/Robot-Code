@@ -1,6 +1,10 @@
 package frc.robot.motors;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 
 public class SimpleFeedforwardConstant {
     private final double kS;
@@ -33,5 +37,13 @@ public class SimpleFeedforwardConstant {
 
     public SimpleMotorFeedforward getFeedforward() {
         return new SimpleMotorFeedforward(kS, kV, kA);
+    }
+
+    public LinearSystem<N1, N1, N1> getVelocityPlant() {
+        return LinearSystemId.identifyVelocitySystem(kV, kA);
+    }
+
+    public LinearSystem<N2, N1, N1> getPositionPlant() {
+        return LinearSystemId.identifyPositionSystem(kV, kA);
     }
 }
