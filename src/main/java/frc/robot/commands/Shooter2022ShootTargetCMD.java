@@ -8,6 +8,7 @@ import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
+import frc.robot.vision.HubTarget;
 import org.apache.logging.log4j.Logger;
 
 public class Shooter2022ShootTargetCMD extends CommandBase {
@@ -28,6 +29,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
   private final Command indexerForward;
 
   private final Command spitterTarget;
+  private final Command spitterSpeed;
 
   private final Timer timer;
 
@@ -46,6 +48,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
     this.indexerForward = new Indexer2022ForwardCMD(indexer);
 
     this.spitterTarget = new Spitter2022TargetCMD(spitter);
+    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, () -> HubTarget.getFlywheelVelocity(1));
 
     this.timer = new Timer();
     timer.start();
@@ -65,6 +68,12 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
 
   @Override
   public void execute() {
+    if (HubTarget.hasTarget()) {
+      spitterTarget.schedule();
+    } else {
+      spitterSpeed.schedule();
+    }
+
     if (spitter.isAtShootingSpeed()) {
       LOGGER.debug("Spitter is at shooting speed! Throwing balls into flywheel.");
       indexerForward.schedule();
