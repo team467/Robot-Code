@@ -10,6 +10,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -152,8 +153,8 @@ public class RobotContainer {
   }
 
   public void getTrajectories() {
-    for (File file : Filesystem.getDeployDirectory().toPath().resolve("paths")
-        .resolve(RobotConstants.get().name().toLowerCase().replace(" ", "")).resolve("output").toFile().listFiles()) {
+    for (File file : Objects.requireNonNull(Filesystem.getDeployDirectory().toPath().resolve("paths")
+            .resolve(RobotConstants.get().name().toLowerCase().replace(" ", "")).resolve("output").toFile().listFiles())) {
       try {
         trajectories.put(file.getName().replace(".wpilib.json", ""), TrajectoryUtil.fromPathweaverJson(file.toPath()));
       } catch (IOException e) {
