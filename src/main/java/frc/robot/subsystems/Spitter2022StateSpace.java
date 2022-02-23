@@ -73,6 +73,8 @@ public class Spitter2022StateSpace extends Spitter2022 {
 
         spitterLoop =
                 new LinearSystemLoop<>(spitterPlant, spitterController, spitterObserver, 12.0, 0.020);
+
+        spitterLoop.reset(VecBuilder.fill(spitterMotor.getVelocity()));
     }
 
     /**
@@ -92,6 +94,10 @@ public class Spitter2022StateSpace extends Spitter2022 {
     public void setVelocity(double velocity) {
         spitterLoop.setNextR(VecBuilder.fill(velocity));
 //        LOGGER.debug("Setting voltage to {}", output);
+    }
+
+    public void reset() {
+        spitterLoop.reset(VecBuilder.fill(spitterMotor.getVelocity()));
     }
 
     /** Start spinning the flywheel. */
