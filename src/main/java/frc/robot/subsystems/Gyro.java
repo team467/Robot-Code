@@ -11,6 +11,7 @@ import frc.robot.gyro.GyroFactory;
 
 public class Gyro extends SubsystemBase implements edu.wpi.first.wpilibj.interfaces.Gyro{
     edu.wpi.first.wpilibj.interfaces.Gyro gyro;
+    Runnable callback;
 
     public Gyro() {
         super();
@@ -24,23 +25,37 @@ public class Gyro extends SubsystemBase implements edu.wpi.first.wpilibj.interfa
 
     @Override
     public void reset() {
+        if (callback != null) {
+            callback.run();
+        }
+
         gyro.reset();
     }
 
+    public void setDrivetrainCallback(Runnable callback) {
+        this.callback = callback;
+    }
+
+    // CW Positive
     @Override
     public double getAngle() {
-        return gyro.getAngle();
+        return -gyro.getAngle();
     }
 
+    // CW Positive
     @Override
     public double getRate() {
-        return gyro.getRate();
+        return -gyro.getRate();
     }
 
+    // CCW Positive
     @Override
     public Rotation2d getRotation2d() {
-        // What the hell, the angle should be negative, but only works when it isn't
-        return Rotation2d.fromDegrees(getAngle());
+        return Rotation2d.fromDegrees(gyro.getAngle());
+    }
+
+    public double getHeading() {
+        return getRotation2d().getDegrees();
     }
 
     @Override
