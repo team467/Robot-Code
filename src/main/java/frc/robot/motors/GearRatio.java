@@ -1,31 +1,31 @@
 package frc.robot.motors;
 
 public class GearRatio {
-  private final double driven;
-  private final double driving;
+  private final double output;
+  private final double input;
 
-  public GearRatio(double driven, double driving) {
-    this.driven = driven;
-    this.driving = driving;
+  public GearRatio(double output, double input) {
+    this.output = output;
+    this.input = input;
   }
 
   public GearRatio() {
     this(1, 1);
   }
 
-  public double getDriven() {
-    return driven;
+  public double getOutput() {
+    return output;
   }
 
-  public double getDriving() {
-    return driving;
+  public double getInput() {
+    return input;
   }
 
-  public double getRotationsPerDriven() {
-    return driven/driving;
+  public double getRotationsPerOutput() {
+    return output / input;
   }
 
-  public double getRotationsPerDriving() {
-    return driving/driven;
+  public double getRotationsPerInput() {
+    return input / output;
   }
 }

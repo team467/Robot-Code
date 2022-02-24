@@ -77,8 +77,13 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
-    public double driveUnitsPerRotation() {
+    public double driveWheelDiameter() {
         return 1.0;
+    }
+
+    @Override
+    public GearRatio driveGearRatio() {
+        return new GearRatio();
     }
 
     @Override

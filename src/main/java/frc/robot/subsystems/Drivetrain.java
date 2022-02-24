@@ -11,25 +11,8 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import java.util.Map;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.networktables.NetworkTableType;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.NetworkButton;
 import frc.robot.RobotConstants;
 import frc.robot.commands.ArcadeDriveCMD;
@@ -38,7 +21,6 @@ import frc.robot.motors.SparkMaxController;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
-import frc.robot.motors.TalonController;
 import frc.robot.tuning.SubsystemTuner;
 
 public class Drivetrain extends SubsystemTuner {
@@ -71,8 +53,8 @@ public class Drivetrain extends SubsystemTuner {
         leftMotorLeader.resetPosition();
         rightMotorLeader.resetPosition();
 
-        leftMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
-        rightMotorLeader.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+        leftMotorLeader.setUnitsPerRotation(Math.PI * RobotConstants.get().driveWheelDiameter() * RobotConstants.get().driveGearRatio().getRotationsPerInput());
+        rightMotorLeader.setUnitsPerRotation(Math.PI * RobotConstants.get().driveWheelDiameter() * RobotConstants.get().driveGearRatio().getRotationsPerInput());
 
         if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
             ((SparkMaxController) leftMotorLeader).setIdleMode(IdleMode.kCoast);
@@ -91,8 +73,8 @@ public class Drivetrain extends SubsystemTuner {
             leftMotorFollower.resetPosition();
             rightMotorFollower.resetPosition();
 
-            leftMotorFollower.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
-            rightMotorFollower.setUnitsPerRotation(RobotConstants.get().driveUnitsPerRotation());
+            leftMotorFollower.setUnitsPerRotation(Math.PI * RobotConstants.get().driveWheelDiameter() * RobotConstants.get().driveGearRatio().getRotationsPerInput());
+            rightMotorFollower.setUnitsPerRotation(Math.PI * RobotConstants.get().driveWheelDiameter() * RobotConstants.get().driveGearRatio().getRotationsPerInput());
 
             leftMotorGroup = new MotorControllerGroup(leftMotorLeader, leftMotorFollower);
             rightMotorGroup = new MotorControllerGroup(rightMotorLeader, rightMotorFollower);

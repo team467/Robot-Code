@@ -1,6 +1,7 @@
 package frc.robot.constants;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.util.Units;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.GearRatio;
 import frc.robot.motors.RamseteConstant;
@@ -77,8 +78,13 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public double driveUnitsPerRotation() {
-        return 0.4788 / 10.71;
+    public double driveWheelDiameter() {
+        return Units.inchesToMeters(6);
+    }
+
+    @Override
+    public GearRatio driveGearRatio() {
+        return new GearRatio(10.71, 1);
     }
 
     @Override

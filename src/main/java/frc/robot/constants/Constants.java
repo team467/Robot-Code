@@ -23,7 +23,8 @@ public interface Constants {
     public SimpleFeedforwardConstant driveTurnFF();
     public FeedbackConstant driveTurnVelocityPID();
     public FeedbackConstant driveTurnPositionPID();
-    public double driveUnitsPerRotation();
+    public double driveWheelDiameter();
+    public GearRatio driveGearRatio();
     public DifferentialDriveKinematics driveKinematics();
     public double driveMaxVelocity();
     public double driveMaxAcceleration();

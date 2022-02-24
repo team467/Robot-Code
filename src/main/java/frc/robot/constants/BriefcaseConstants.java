@@ -77,11 +77,16 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public double driveUnitsPerRotation() {
+    public double driveWheelDiameter() {
         return 1.0;
     }
 
-    @Override
+  @Override
+  public GearRatio driveGearRatio() {
+    return new GearRatio();
+  }
+
+  @Override
     public DifferentialDriveKinematics driveKinematics() {
         return new DifferentialDriveKinematics(0);
     }
