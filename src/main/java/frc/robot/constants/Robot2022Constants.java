@@ -461,6 +461,16 @@ public class Robot2022Constants implements Constants {
         return 0.1;
     }
 
+  @Override
+  public double spitter2022DistanceLinearM() {
+    return 141.8090384;
+  }
+
+    @Override
+    public double spitter2022DistanceLinearB() {
+        return 108.5792974;
+    }
+
     @Override
     public boolean hasHubCameraLED() {
         return true;

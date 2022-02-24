@@ -461,6 +461,16 @@ public class KitBot2022Constants implements Constants {
         return 0;
     }
 
+  @Override
+  public double spitter2022DistanceLinearM() {
+    return 0;
+  }
+
+    @Override
+    public double spitter2022DistanceLinearB() {
+        return 0;
+    }
+
     @Override
     public boolean hasHubCameraLED() {
         return false;
