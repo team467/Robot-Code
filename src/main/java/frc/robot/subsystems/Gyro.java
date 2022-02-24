@@ -11,7 +11,6 @@ import frc.robot.gyro.GyroFactory;
 
 public class Gyro extends SubsystemBase implements edu.wpi.first.wpilibj.interfaces.Gyro{
     edu.wpi.first.wpilibj.interfaces.Gyro gyro;
-    Runnable callback;
 
     public Gyro() {
         super();
@@ -25,15 +24,7 @@ public class Gyro extends SubsystemBase implements edu.wpi.first.wpilibj.interfa
 
     @Override
     public void reset() {
-        if (callback != null) {
-            callback.run();
-        }
-
         gyro.reset();
-    }
-
-    public void setDrivetrainCallback(Runnable callback) {
-        this.callback = callback;
     }
 
     // CW Positive
