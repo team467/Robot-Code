@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.GearRatio;
@@ -35,7 +36,12 @@ public class BlankConstants implements Constants {
         return MotorType.NONE;
     }
 
-    @Override
+  @Override
+  public IdleMode driveIdleMode() {
+    return IdleMode.kCoast;
+  }
+
+  @Override
     public boolean driveUseVelocity() {
         return false;
     }

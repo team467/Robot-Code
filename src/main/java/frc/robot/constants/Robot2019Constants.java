@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.GearRatio;
@@ -31,7 +32,12 @@ public class Robot2019Constants implements Constants {
         return MotorType.TALON_SRX;
     }
 
-    @Override
+  @Override
+  public IdleMode driveIdleMode() {
+    return IdleMode.kCoast;
+  }
+
+  @Override
     public boolean driveUseVelocity() {
         return false;
     }

@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.GearRatio;
@@ -14,6 +15,7 @@ public interface Constants {
     public boolean hasDrivetrain();
     public boolean driveDualMotors();
     public MotorType driveMotorType();
+    public IdleMode driveIdleMode();
     public boolean driveUseVelocity();
     public boolean driveUsePID();
     public RamseteConstant driveRamsete();

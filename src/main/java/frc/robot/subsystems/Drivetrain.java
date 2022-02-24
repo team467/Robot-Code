@@ -57,8 +57,8 @@ public class Drivetrain extends SubsystemTuner {
         rightMotorLeader.setUnitsPerRotation(Math.PI * RobotConstants.get().driveWheelDiameter() * RobotConstants.get().driveGearRatio().getRotationsPerInput());
 
         if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
-            ((SparkMaxController) leftMotorLeader).setIdleMode(IdleMode.kCoast);
-            ((SparkMaxController) rightMotorLeader).setIdleMode(IdleMode.kCoast);
+            ((SparkMaxController) leftMotorLeader).setIdleMode(RobotConstants.get().driveIdleMode());
+            ((SparkMaxController) rightMotorLeader).setIdleMode(RobotConstants.get().driveIdleMode());
         }
 
         if (RobotConstants.get().driveDualMotors()) {
@@ -80,8 +80,8 @@ public class Drivetrain extends SubsystemTuner {
             rightMotorGroup = new MotorControllerGroup(rightMotorLeader, rightMotorFollower);
 
             if (RobotConstants.get().driveMotorType() == MotorType.SPARK_MAX_BRUSHLESS) {
-                ((SparkMaxController) leftMotorFollower).setIdleMode(IdleMode.kCoast);
-                ((SparkMaxController) rightMotorFollower).setIdleMode(IdleMode.kCoast);
+                ((SparkMaxController) leftMotorFollower).setIdleMode(RobotConstants.get().driveIdleMode());
+                ((SparkMaxController) rightMotorFollower).setIdleMode(RobotConstants.get().driveIdleMode());
             }
         } else {
             leftMotorGroup = new MotorControllerGroup(leftMotorLeader);

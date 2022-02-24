@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.robot.motors.FeedbackConstant;
@@ -30,6 +31,11 @@ public class KitBot2022Constants implements Constants {
     @Override
     public MotorType driveMotorType() {
         return MotorType.SPARK_MAX_BRUSHLESS;
+    }
+
+    @Override
+    public IdleMode driveIdleMode() {
+        return IdleMode.kCoast;
     }
 
     @Override
