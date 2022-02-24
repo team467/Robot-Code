@@ -38,18 +38,17 @@ public class TurnAngleCMD extends CommandBase {
 
     @Override
     public void initialize() {
-        gyro.reset();
-        drivetrain.resetLeftPosition();
-        drivetrain.resetRightPosition();
-        turnPID.reset(0);
+        // TODO check without reset
+        drivetrain.resetPositions();
+        turnPID.reset(gyro.getAngle());
         turnPID.enableContinuousInput(-180, 180);
         turnPID.setTolerance(0.1, 1.2);
-        turnPID.setGoal(angle);
+        turnPID.setGoal(angle + gyro.getAngle());
     }
 
     @Override
     public void execute() {
-        drivetrain.arcadeDrive(0, MathUtil.clamp(turnPID.calculate(gyro.getAngle(), angle), -0.5, 0.5));
+        drivetrain.arcadeDrive(0, MathUtil.clamp(turnPID.calculate(gyro.getAngle(), turnPID.getGoal()), -0.5, 0.5));
     }
 
     @Override

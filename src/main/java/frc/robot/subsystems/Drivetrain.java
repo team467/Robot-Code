@@ -2,13 +2,23 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.vision.HubTarget;
 import java.util.Map;
 
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -24,19 +34,24 @@ import frc.robot.motors.MotorType;
 import frc.robot.tuning.SubsystemTuner;
 
 public class Drivetrain extends SubsystemTuner {
-    MotorControllerGroup leftMotorGroup;
-    MotorControllerEncoder leftMotorLeader;
-    MotorControllerEncoder leftMotorFollower = null;
+    private MotorControllerGroup leftMotorGroup;
+    private MotorControllerEncoder leftMotorLeader;
+    private MotorControllerEncoder leftMotorFollower = null;
 
-    MotorControllerGroup rightMotorGroup;
-    MotorControllerEncoder rightMotorLeader;
-    MotorControllerEncoder rightMotorFollower = null;
+    private MotorControllerGroup rightMotorGroup;
+    private MotorControllerEncoder rightMotorLeader;
+    private MotorControllerEncoder rightMotorFollower = null;
 
-    SimpleMotorFeedforward driveFF;
-    PIDController leftDrivePID;
-    PIDController rightDrivePID;
+    private SimpleMotorFeedforward driveFF;
+    private PIDController leftDrivePID;
+    private PIDController rightDrivePID;
 
-    DifferentialDrive diffDrive;
+    private DifferentialDrive diffDrive;
+
+    private Gyro gyro;
+    private Rotation2d gyroOffset = new Rotation2d();
+    private DifferentialDrivePoseEstimator estimator;
+    private Field2d field;
 
     public Drivetrain() {
         super();
@@ -98,6 +113,39 @@ public class Drivetrain extends SubsystemTuner {
         }
 
         diffDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
+
+        estimator = new DifferentialDrivePoseEstimator(new Rotation2d(), new Pose2d(),
+            new MatBuilder<>(Nat.N5(), Nat.N1()).fill(0.02, 0.02, 0.01, 0.02, 0.02), // State measurement standard deviations. X, Y, theta.
+            new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // Local measurement standard deviations. Left encoder, right encoder, gyro.
+            new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Global measurement standard deviations. X, Y, and theta.
+
+    }
+
+    public void resetPose() {
+        estimator.resetPosition(estimator.getEstimatedPosition(), gyro.getRotation2d());
+    }
+
+    public void enableGyro(Gyro gyro) {
+        this.gyro = gyro;
+        gyro.reset();
+        resetLeftPosition();
+        resetRightPosition();
+        estimator.resetPosition(new Pose2d(getLeftPosition(), getRightPosition(), gyro.getRotation2d()), gyro.getRotation2d());
+        field = new Field2d();
+        Shuffleboard.getTab("Field").add(field).withPosition(0, 0).withSize(5, 4);
+    }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+
+        estimator.update(gyro.getRotation2d().plus(gyroOffset), getWheelSpeeds(), getLeftPosition(), getRightPosition());
+        if (HubTarget.hasTarget()) {
+            // TODO: vision measurement for hub
+//            estimator.addVisionMeasurement();
+        }
+
+        field.setRobotPose(estimator.getEstimatedPosition());
     }
 
     public void arcadeDrive(double speed, double rotation, boolean squareInputs) {
@@ -162,12 +210,18 @@ public class Drivetrain extends SubsystemTuner {
         return rightMotorLeader.getVelocity();
     }
 
-    public void resetRightPosition() {
+    private void resetLeftPosition() {
+        leftMotorLeader.resetPosition();
+    }
+
+    private void resetRightPosition() {
         rightMotorLeader.resetPosition();
     }
 
-    public void resetLeftPosition() {
-        leftMotorLeader.resetPosition();
+    public void resetPositions() {
+        resetLeftPosition();
+        resetRightPosition();
+        resetPose();
     }
 
     public void resetLeftPID() {

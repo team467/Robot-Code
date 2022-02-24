@@ -99,9 +99,8 @@ public class GoToTrajectoryCMD extends CommandBase {
 
     @Override
     public void initialize() {
-        gyro.reset();
-        drivetrain.resetLeftPosition();
-        drivetrain.resetRightPosition();
+        // TODO check without gyro reset
+        drivetrain.resetPositions();
         diffDriveOdometry.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
 
         command.initialize();

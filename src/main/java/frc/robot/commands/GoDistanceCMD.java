@@ -42,8 +42,7 @@ public class GoDistanceCMD extends CommandBase {
 
     @Override
     public void initialize() {
-        drivetrain.resetLeftPosition();
-        drivetrain.resetRightPosition();
+        drivetrain.resetPositions();
         leftPID.reset(0);
         rightPID.reset(0);
         leftPID.setGoal(distance);
