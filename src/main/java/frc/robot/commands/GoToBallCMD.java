@@ -4,14 +4,16 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Gyro;
 
 public class GoToBallCMD extends CommandBase {
+    // TODO: Create ball detection class
     private final Drivetrain drivetrain;
     private final Gyro gyro;
-    private GoToDistanceAngleCMD command;
+    private Command command;
 
     public GoToBallCMD(Drivetrain drivetrain, Gyro gyro) {
         this.drivetrain = drivetrain;

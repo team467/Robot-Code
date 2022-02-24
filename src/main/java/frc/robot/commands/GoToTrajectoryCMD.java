@@ -83,7 +83,7 @@ public class GoToTrajectoryCMD extends CommandBase {
         this.command = new RamseteCommand(
                 trajectory,
                 diffDriveOdometry::getPoseMeters,
-                new RamseteController(),
+                RobotConstants.get().driveRamsete().getController(),
                 RobotConstants.get().driveDriveFF().getFeedforward(),
                 RobotConstants.get().driveKinematics(),
                 drivetrain::getWheelSpeeds,
