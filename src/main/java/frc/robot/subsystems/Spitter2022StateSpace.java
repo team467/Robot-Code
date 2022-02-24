@@ -112,7 +112,7 @@ public class Spitter2022StateSpace extends Spitter2022 {
     }
 
     public void setSpitterToTarget() {
-        setVelocity(HubTarget.getFlywheelVelocity());
+        setVelocity(getFlywheelVelocity());
     }
 
     /** Stop the flywheel. */

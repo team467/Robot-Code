@@ -7,24 +7,12 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class HubTarget {
     private static final NetworkTable table = NetworkTableInstance.getDefault().getTable("Vision").getSubTable("HubTarget");
-
     /**
-     * Returns calculated flywheel speed in rad/s from any distance in meters
-     * @param distance Distance in meters
-     * @return Calculated flywheel speed in rad/s
+     * @return If the camera sees the target
      */
-    public static double getFlywheelVelocity(double distance) {
-        return 108.5792974 + (141.8090384 * distance);
+    public static boolean hasTarget() {
+        return table.getEntry("isValid").getBoolean(false);
     }
-
-    /**
-     * Returns calculated flywheel speed in rad/s from the distance to the target
-     * @return Calculated flywheel speed in rad/s
-     */
-    public static double getFlywheelVelocity() {
-        return getFlywheelVelocity(getDistance());
-    }
-
 
     /**
      * @return Distance to the target in meters
@@ -53,13 +41,5 @@ public class HubTarget {
      */
     public static Translation2d getTranslation2d() {
         return new Translation2d(getDistance(), getRotation2d());
-    }
-
-
-    /**
-     * @return If the camera sees the target
-     */
-    public static boolean hasTarget() {
-        return table.getEntry("isValid").getBoolean(false);
     }
 }

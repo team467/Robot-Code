@@ -22,6 +22,23 @@ public class Spitter2022 extends SubsystemBase {
   private final PIDController spitterPIDController;
   private final SimpleMotorFeedforward spitterFFController;
 
+  /**
+   * Returns calculated flywheel speed in rad/s from any distance in meters
+   * @param distance Distance in meters
+   * @return Calculated flywheel speed in rad/s
+   */
+  public static double getFlywheelVelocity(double distance) {
+    return 108.5792974 + (141.8090384 * distance);
+  }
+
+  /**
+   * Returns calculated flywheel speed in rad/s from the distance to the target
+   * @return Calculated flywheel speed in rad/s
+   */
+  public static double getFlywheelVelocity() {
+    return getFlywheelVelocity(HubTarget.getDistance());
+  }
+
   /** The spitter subsystem, contains the flywheel and its motor only. */
   public Spitter2022() {
     super();
@@ -82,7 +99,7 @@ public class Spitter2022 extends SubsystemBase {
   }
 
   public void setSpitterToTarget() {
-    setVelocity(HubTarget.getFlywheelVelocity() / (2.0 * Math.PI));
+    setVelocity(getFlywheelVelocity() / (2.0 * Math.PI));
   }
 
   /** Stop the flywheel. */
