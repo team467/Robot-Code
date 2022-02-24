@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Gyro;
+import frc.robot.vision.BallTracking;
 
 public class GoToBallCMD extends CommandBase {
     // TODO: Create ball detection class
@@ -22,21 +23,8 @@ public class GoToBallCMD extends CommandBase {
 
     @Override
     public void initialize() {
-        NetworkTable table = NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking");
-        NetworkTable colorTable;
-        switch(DriverStation.getAlliance()) {
-          case Blue:
-            colorTable = table.getSubTable("Blue");
-            break;
-          case Invalid:
-          case Red:
-          default:
-            colorTable = table.getSubTable("Red");
-            break;
-
-        }
-
-        command = new GoToDistanceAngleCMD(drivetrain, gyro, colorTable.getEntry("Distance").getDouble(0), colorTable.getEntry("Angle").getDouble(0), false);
+        command = new GoToDistanceAngleCMD(drivetrain, gyro,
+            BallTracking.getDistance(), BallTracking.getAngle(), false);
         command.schedule();
     }
 
