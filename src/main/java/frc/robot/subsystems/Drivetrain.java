@@ -121,8 +121,14 @@ public class Drivetrain extends SubsystemTuner {
 
     }
 
-    public void resetPose() {
+    private void resetPose() {
         estimator.resetPosition(estimator.getEstimatedPosition(), gyro.getRotation2d());
+    }
+
+    public void setPose(Pose2d pose) {
+        resetLeftPosition();
+        resetRightPosition();
+        estimator.resetPosition(pose, gyro.getRotation2d());
     }
 
     public void enableGyro(Gyro gyro) {
