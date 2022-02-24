@@ -67,7 +67,7 @@ public class Gyro extends SubsystemBase implements edu.wpi.first.wpilibj.interfa
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty("Angle", () -> gyro.getAngle(), null);
-        builder.addDoubleProperty("Rate", () -> gyro.getRate(), null);
+        builder.addDoubleProperty("Angle", gyro::getAngle, null);
+        builder.addDoubleProperty("Rate", gyro::getRate, null);
     }
 }
