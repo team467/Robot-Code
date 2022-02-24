@@ -49,7 +49,6 @@ public class Drivetrain extends SubsystemTuner {
     private DifferentialDrive diffDrive;
 
     private Gyro gyro;
-    private Rotation2d gyroOffset = new Rotation2d();
     private DifferentialDrivePoseEstimator estimator;
     private Field2d field;
 
@@ -145,7 +144,7 @@ public class Drivetrain extends SubsystemTuner {
     public void periodic() {
         super.periodic();
 
-        estimator.update(gyro.getRotation2d().plus(gyroOffset), getWheelSpeeds(), getLeftPosition(), getRightPosition());
+        estimator.update(gyro.getRotation2d(), getWheelSpeeds(), getLeftPosition(), getRightPosition());
         if (HubTarget.hasTarget()) {
             // TODO: vision measurement for hub
 //            estimator.addVisionMeasurement();
