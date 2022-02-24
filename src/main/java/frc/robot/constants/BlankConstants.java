@@ -2,6 +2,7 @@ package frc.robot.constants;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
+import frc.robot.motors.RamseteConstant;
 import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
 import frc.robot.utilities.IMUAxis;
@@ -41,6 +42,11 @@ public class BlankConstants implements Constants {
     @Override
     public boolean driveUsePID() {
         return false;
+    }
+
+    @Override
+    public RamseteConstant driveRamsete() {
+        return new RamseteConstant();
     }
 
     @Override

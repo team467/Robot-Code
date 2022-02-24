@@ -1,14 +1,13 @@
 package frc.robot.constants;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.wpilibj.ADIS16448_IMU;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import frc.robot.motors.FeedbackConstant;
+import frc.robot.motors.RamseteConstant;
 import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
 import frc.robot.utilities.IMUAxis;
 import frc.robot.utilities.IMUType;
-
+// TODO: ramsete values, moment of inertia, and hub target equation
 public interface Constants {
     public String name();
     public boolean hasDrivetrain();
@@ -16,6 +15,7 @@ public interface Constants {
     public MotorType driveMotorType();
     public boolean driveUseVelocity();
     public boolean driveUsePID();
+    public RamseteConstant driveRamsete();
     public SimpleFeedforwardConstant driveDriveFF();
     public FeedbackConstant driveDriveVelocityPID();
     public FeedbackConstant driveDrivePositionPID();

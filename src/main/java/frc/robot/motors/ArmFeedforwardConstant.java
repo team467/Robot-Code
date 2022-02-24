@@ -16,10 +16,7 @@ public class ArmFeedforwardConstant {
     }
 
     public ArmFeedforwardConstant(double kS, double kCos, double kV) {
-        this.kS = kS;
-        this.kCos = kCos;
-        this.kV = kV;
-        this.kA = 0;
+        this(kS, kCos, kV, 0);
     }
 
     public double getkS() {

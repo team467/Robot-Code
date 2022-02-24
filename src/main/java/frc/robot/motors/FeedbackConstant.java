@@ -14,8 +14,7 @@ public class FeedbackConstant {
     }
 
     public FeedbackConstant(double kP) {
-        this.kP = kP;
-        this.kD = 0;
+        this(kP, 0);
     }
     
     public double getkP() {

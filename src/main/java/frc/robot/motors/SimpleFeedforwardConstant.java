@@ -18,9 +18,7 @@ public class SimpleFeedforwardConstant {
     }
 
     public SimpleFeedforwardConstant(double kS, double kV) {
-        this.kS = kS;
-        this.kV = kV;
-        this.kA = 0;
+        this(kS, kV, 0);
     }
 
     public double getkS() {

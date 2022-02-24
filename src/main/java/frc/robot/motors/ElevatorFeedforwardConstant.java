@@ -16,10 +16,7 @@ public class ElevatorFeedforwardConstant {
     }
 
     public ElevatorFeedforwardConstant(double kS, double kG, double kV) {
-        this.kS = kS;
-        this.kG = kG;
-        this.kV = kV;
-        this.kA = 0;
+        this(kS, kG, kV, 0);
     }
 
     public double getkS() {
