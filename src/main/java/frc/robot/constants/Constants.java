@@ -2,12 +2,13 @@ package frc.robot.constants;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
+import frc.robot.motors.GearRatio;
 import frc.robot.motors.RamseteConstant;
 import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
 import frc.robot.utilities.IMUAxis;
 import frc.robot.utilities.IMUType;
-// TODO: ramsete values, moment of inertia, and hub target equation
+// TODO: moment of inertia, and hub target equation
 public interface Constants {
     public String name();
     public boolean hasDrivetrain();
@@ -83,7 +84,7 @@ public interface Constants {
     public double indexer2022InSpeed();
     public double indexer2022OutSpeed();
     public boolean indexer2022MotorInverted();
-    
+
 
     public boolean hasLlamaNeck2022();
     public int llamaNeck2022MotorID();
@@ -100,11 +101,13 @@ public interface Constants {
     public boolean spitter2022UseVelocity();
     public boolean spitter2022UsePID();
     public SimpleFeedforwardConstant spitter2022FF();
+    public double spitter2022MomentOfInertia();
+    public GearRatio spitter2022GearRatio();
     public FeedbackConstant spitter2022FB();
     public double spitter2022MaxVelocity();
     public double spitter2022ForwardSpeed();
     public double spitter2022BackwardSpeed();
-    
+
     public boolean hasHubCameraLED();
     public int hubCameraLEDChannel();
 }

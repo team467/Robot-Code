@@ -2,6 +2,7 @@ package frc.robot.constants;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
+import frc.robot.motors.GearRatio;
 import frc.robot.motors.RamseteConstant;
 import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
@@ -428,6 +429,16 @@ public class Robot2019Constants implements Constants {
     @Override
     public SimpleFeedforwardConstant spitter2022FF() {
         return new SimpleFeedforwardConstant(0, 0, 0);
+    }
+
+  @Override
+  public double spitter2022MomentOfInertia() {
+    return 0;
+  }
+
+    @Override
+    public GearRatio spitter2022GearRatio() {
+        return new GearRatio();
     }
 
     @Override
