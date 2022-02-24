@@ -29,7 +29,6 @@ public class Spitter2022StateSpace extends Spitter2022 {
     private final double SHOOTING_SPEED_TOLERANCE = 1.0;
     private final MotorControllerEncoder spitterMotor;
 
-    // TODO: Switch to flywheel plant
     private final LinearSystem<N1, N1, N1> spitterPlant;
     private final KalmanFilter<N1, N1, N1> spitterObserver;
     private final LinearQuadraticRegulator<N1, N1, N1> spitterController;
@@ -47,9 +46,10 @@ public class Spitter2022StateSpace extends Spitter2022 {
         spitterMotor.setUnitsPerRotation(2.0 * Math.PI);
 
         spitterPlant = RobotConstants.get().spitter2022FF().getVelocityPlant();
+        // TODO: Switch to flywheel plant, after gearing and moment of inertia are calculated
 //        spitterPlant =
 //                LinearSystemId.createFlywheelSystem(
-//                        DCMotor.getNEO(1), kFlywheelMomentOfInertia, kFlywheelGearing);
+//                        DCMotor.getNEO(1), RobotConstants.get().spitter2022MomentOfInertia(), RobotConstants.get().spitter2022GearRatio().getDriven());
         spitterObserver =
             new KalmanFilter<>(
                     Nat.N1(),
