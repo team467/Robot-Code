@@ -121,13 +121,17 @@ public class Drivetrain extends SubsystemTuner {
     }
 
     private void resetPose() {
-        estimator.resetPosition(estimator.getEstimatedPosition(), gyro.getRotation2d());
+        if (gyro != null) {
+            estimator.resetPosition(estimator.getEstimatedPosition(), gyro.getRotation2d());
+        }
     }
 
     public void setPose(Pose2d pose) {
         resetLeftPosition();
         resetRightPosition();
-        estimator.resetPosition(pose, gyro.getRotation2d());
+        if (gyro != null) {
+            estimator.resetPosition(pose, gyro.getRotation2d());
+        }
     }
 
     public void enableGyro(Gyro gyro) {
@@ -142,15 +146,17 @@ public class Drivetrain extends SubsystemTuner {
 
     @Override
     public void periodic() {
-        super.periodic();
+        if (gyro != null) {
+            estimator.update(gyro.getRotation2d(), getWheelSpeeds(), getLeftPosition(),
+                getRightPosition());
+            if (HubTarget.hasTarget()) {
+                // TODO: vision measurement for hub
+                estimator.addVisionMeasurement(new Pose2d(HubTarget.getRobotTranslation(),
+                    estimator.getEstimatedPosition().getRotation()), HubTarget.getTimestamp());
+            }
 
-        estimator.update(gyro.getRotation2d(), getWheelSpeeds(), getLeftPosition(), getRightPosition());
-        if (HubTarget.hasTarget()) {
-            // TODO: vision measurement for hub
-//            estimator.addVisionMeasurement();
+            field.setRobotPose(estimator.getEstimatedPosition());
         }
-
-        field.setRobotPose(estimator.getEstimatedPosition());
     }
 
     public void arcadeDrive(double speed, double rotation, boolean squareInputs) {

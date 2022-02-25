@@ -1,6 +1,8 @@
 package frc.robot.constants;
 
 import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.GearRatio;
@@ -115,4 +117,5 @@ public interface Constants {
 
     public boolean hasHubCameraLED();
     public int hubCameraLEDChannel();
+    public Translation2d hubCameraOffset();
 }
