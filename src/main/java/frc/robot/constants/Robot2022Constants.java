@@ -1,6 +1,7 @@
 package frc.robot.constants;
 
 import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.robot.motors.FeedbackConstant;
@@ -492,4 +493,10 @@ public class Robot2022Constants implements Constants {
     public int hubCameraLEDChannel() {
         return 0;
     }
+
+    // TODO: Pester cad into giving me the offset for the hub camera
+  @Override
+  public Translation2d hubCameraOffset() {
+    return new Translation2d(1, 0);
+  }
 }

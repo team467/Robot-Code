@@ -11,7 +11,6 @@ import frc.robot.subsystems.Gyro;
 import frc.robot.vision.BallTracking;
 
 public class GoToBallCMD extends CommandBase {
-    // TODO: Create ball detection class
     private final Drivetrain drivetrain;
     private final Gyro gyro;
     private Command command;

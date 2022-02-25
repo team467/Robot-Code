@@ -1,6 +1,7 @@
 package frc.robot.constants;
 
 import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.GearRatio;
@@ -495,5 +496,10 @@ public class BlankConstants implements Constants {
     public int hubCameraLEDChannel() {
         return 0;
     }
+
+  @Override
+  public Translation2d hubCameraOffset() {
+    return new Translation2d();
+  }
 
 }

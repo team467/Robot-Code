@@ -68,7 +68,7 @@ public class HubTarget {
      * @return Timestamp of frame
      */
     public static double getTimestamp() {
-        // todo, get frame offset
+        // TODO get frame timestamp / time offset
         double offset = 0;
         return Timer.getFPGATimestamp() + offset;
     }

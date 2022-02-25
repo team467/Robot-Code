@@ -1,6 +1,7 @@
 package frc.robot.constants;
 
 import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.robot.motors.FeedbackConstant;
@@ -492,4 +493,9 @@ public class KitBot2022Constants implements Constants {
     public int hubCameraLEDChannel() {
         return 0;
     }
+
+  @Override
+  public Translation2d hubCameraOffset() {
+    return new Translation2d();
+  }
 }

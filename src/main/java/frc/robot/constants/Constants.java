@@ -11,7 +11,7 @@ import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
 import frc.robot.utilities.IMUAxis;
 import frc.robot.utilities.IMUType;
-// TODO: moment of inertia, and hub target equation
+
 public interface Constants {
     public String name();
     public boolean hasDrivetrain();
