@@ -48,7 +48,7 @@ public class TurnAngleCMD extends CommandBase {
 
     @Override
     public void execute() {
-        drivetrain.arcadeDrive(0, MathUtil.clamp(turnPID.calculate(gyro.getAngle(), turnPID.getGoal()), -0.5, 0.5));
+        drivetrain.arcadeDrive(0, MathUtil.clamp(turnPID.calculate(gyro.getAngle()), -0.5, 0.5));
     }
 
     @Override
