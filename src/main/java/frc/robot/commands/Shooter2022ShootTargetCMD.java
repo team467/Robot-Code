@@ -32,6 +32,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
   private final Command spitterSpeed;
 
   private final Timer timer;
+  private final Timer shotTimer;
 
   public Shooter2022ShootTargetCMD(
       Shooter2022 shooter) {
@@ -52,6 +53,9 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
 
     this.timer = new Timer();
     timer.start();
+
+    this.shotTimer = new Timer();
+    shotTimer.start();
 
     addRequirements(shooter);
   }
@@ -74,10 +78,14 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
       spitterSpeed.schedule();
     }
 
-    if (spitter.isAtShootingSpeed()) {
+    if (spitter.isAtShootingSpeed() && shotTimer.hasElapsed(1)) {
       LOGGER.debug("Spitter is at shooting speed! Throwing balls into flywheel.");
       indexerForward.schedule();
       llamaNeckForward.schedule();
+      if (shotTimer.hasElapsed(1.5)) shotTimer.reset();
+    } else {
+      indexerStop.schedule();
+      llamaNeckStop.schedule();
     }
   }
 

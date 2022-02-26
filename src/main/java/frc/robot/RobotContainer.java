@@ -296,7 +296,7 @@ public class RobotContainer {
               new Shooter2022SetDefaultCMD(
                   shooter2022, new Shooter2022StopCMD(shooter2022)));
       operatorShooterShoot.whenPressed(
-          new Shooter2022ShootCMD(shooter2022));
+          new Shooter2022ShootTargetCMD(shooter2022));
       operatorIntakeRollerBackward.whenHeld(
           new Shooter2022FlushBallCMD(shooter2022));
     }
@@ -305,7 +305,7 @@ public class RobotContainer {
   private void initHubCameraLED() {
     if (RobotConstants.get().hasHubCameraLED()) {
       hubCameraLED = new HubCameraLED();
-      hubCameraLED.enable();
+      hubCameraLED.setDefaultCommand(new HubCameraLEDEnable(hubCameraLED));
     }
   }
 
