@@ -78,4 +78,32 @@ public interface Constants {
 
     public boolean hasLEDClimber2022();
     public int ledClimber2022LEDCount();
+    public boolean hasIndexer2022();
+    public int indexer2022MotorID();
+    public double indexer2022IdleSpeed();
+    public double indexer2022InSpeed();
+    public double indexer2022OutSpeed();
+    public boolean indexer2022MotorInverted();
+    
+
+    public boolean hasLlamaNeck2022();
+    public int llamaNeck2022MotorID();
+    public boolean llamaNeck2022MotorInverted();
+    public double llamaNeck2022IdleSpeed();
+    public double llamaNeck2022InSpeed();
+    public double llamaNeck2022OutSpeed();
+    public int llamaNeck2022UpperLimitSwitchChannel();
+    public int llamaNeck2022LowerLimitSwitchChannel();
+
+    public boolean hasSpitter2022();
+    public int spitter2022MotorId();
+    public boolean spitter2022MotorInverted();
+    public boolean spitter2022UseVelocity();
+    public boolean spitter2022UsePID();
+    public FeedforwardConstant spitter2022FF();
+    public FeedbackConstant spitter2022FB();
+    public double spitter2022MaxVelocity();
+    public double spitter2022ForwardSpeed();
+    public double spitter2022BackwardSpeed();
+    
 }

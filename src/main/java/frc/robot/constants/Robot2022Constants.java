@@ -4,11 +4,11 @@ import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
 
-public class Robot2019Constants implements Constants {
+public class Robot2022Constants implements Constants {
 
     @Override
     public String name() {
-        return "Robot 2019";
+        return "Robot 2022";
     }
 
     @Override
@@ -23,7 +23,7 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public MotorType driveMotorType() {
-        return MotorType.TALON_SRX;
+        return MotorType.SPARK_MAX_BRUSHLESS;
     }
 
     @Override
@@ -98,7 +98,7 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public double driveUnitsPerRotation() {
-        return 1.0;
+        return 0;
     }
 
     @Override
@@ -108,7 +108,7 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public double driveMaxAcceleration() {
-        return 100000;
+        return 0;
     }
 
     @Override
@@ -183,7 +183,7 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public int climber2020MotorId() {
-        return 0;
+        return 11;
     }
 
     @Override
@@ -213,7 +213,7 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public boolean shooter2020FlywheelDualMotors() {
-        return true;
+        return false;
     }
 
     @Override
@@ -322,74 +322,63 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
-    public int ledChannel() {
-        return 0;
-    }
-
-    @Override
-    public boolean hasLEDTower2022() {
     public boolean hasIndexer2022() {
-        return false;
+        return true;
     }
 
     @Override
-    public int ledTower2022LEDCount() {
-        return 0;
-    }
-    @Override 
-    public boolean hasLEDClimber2022() {
     public int indexer2022MotorID() {
-        return 0;
+        return 9;
     }
 
     @Override
     public double indexer2022IdleSpeed() {
-        return 0;
+        return 0.2;
     }
 
     @Override
     public double indexer2022InSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public double indexer2022OutSpeed() {
-        return 0;
+        return 0.3;
     }
 
     @Override
     public boolean indexer2022MotorInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean hasLlamaNeck2022() {
-        return false;
+        return true;
     }
 
     @Override
     public int llamaNeck2022MotorID() {
-        return 0;
+        return 8;
     }
 
     @Override
     public boolean llamaNeck2022MotorInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public double llamaNeck2022IdleSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public double llamaNeck2022InSpeed() {
-        return 0;
+        return 0.5;
     }
     
     @Override
     public double llamaNeck2022OutSpeed() {
-     return 0;   
+     return 0.5;   
     }
 
     @Override
@@ -399,29 +388,28 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public int llamaNeck2022LowerLimitSwitchChannel() {
-        return 0;
+        return 1;
     }
-
+    
     @Override
     public boolean hasSpitter2022() {
-        return false;
+        return true;
     }
 
     @Override 
-    public int ledClimber2022LEDCount() {
     public int spitter2022MotorId() {
-        return 0;
+        return 5;
     }
 
     @Override
     public boolean spitter2022MotorInverted() {
-        return false;
+        return true;
     }
 
-  @Override
-  public boolean spitter2022UseVelocity() {
-    return false;
-  }
+    @Override
+    public boolean spitter2022UseVelocity() {
+        return true;
+    }
 
     @Override
     public boolean spitter2022UsePID() {
@@ -430,27 +418,26 @@ public class Robot2019Constants implements Constants {
 
     @Override
     public FeedforwardConstant spitter2022FF() {
-        return new FeedforwardConstant(0, 0, 0);
+        return new FeedforwardConstant(-0.86235, 0.14126, 0.053813);
     }
 
     @Override
     public FeedbackConstant spitter2022FB() {
-        return new FeedbackConstant(0, 0);
+        return new FeedbackConstant(0.18428, 0);
     }
 
     @Override
     public double spitter2022MaxVelocity() {
-        return 0;
+        return 90;
     }
 
     @Override
     public double spitter2022ForwardSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
     public double spitter2022BackwardSpeed() {
-        return 0;
+        return 0.1;
     }
-
 }
