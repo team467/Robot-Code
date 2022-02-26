@@ -10,5 +10,10 @@ public class OffTarmacAutoCMD extends SequentialCommandGroup {
   public OffTarmacAutoCMD(Drivetrain drivetrain, Gyro gyro) {
 
     addCommands(new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE));
+<<<<<<< Updated upstream
+=======
+
+    // DriveDistanceAngle(0, );
+>>>>>>> Stashed changes
   }
 }
