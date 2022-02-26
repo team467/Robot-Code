@@ -52,6 +52,14 @@ public class LlamaNeck2022 extends SubsystemBase {
     return !lowerLimitSwitch.get();
   }
 
+  public boolean hasUpperBall() {
+    return upperLimitSwitchIsPressed();
+  }
+
+  public boolean hasLowerBall() {
+    return upperLimitSwitchIsPressed() && lowerLimitSwitchIsPressed();
+  }
+
   /** Idles the llama neck wheels. */
   public void idle() {
     LOGGER.debug(
