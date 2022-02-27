@@ -29,7 +29,7 @@ public class Climber2022 extends SubsystemBase {
 
         climberMotorLeft.setInverted(RobotConstants.get().climber2022LeftMotorInverted());
         climberMotorRight.setInverted(RobotConstants.get().climber2022RightMotorInverted());
-        climberLock.set(Value.kForward);
+        climberLock.set(Value.kOff);
     }
 
     public void enable() {
@@ -38,7 +38,7 @@ public class Climber2022 extends SubsystemBase {
     }
 
     public void disable() {
-        climberLock.set(Value.kForward);
+        climberLock.set(Value.kOff);
         stop();
         enabled = false;
     }
