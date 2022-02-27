@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.tuning.TunerManager;
 
 import java.io.IOException;
 
@@ -66,7 +67,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_robotContainer.configureButtonBindings();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -104,7 +107,12 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
+    CommandScheduler.getInstance().clearButtons();
     CommandScheduler.getInstance().cancelAll();
+
+    // You need to enable the command scheduler in test mode
+    CommandScheduler.getInstance().enable();
+    TunerManager.getTunerManager().getTunerChoice().initializeTuner();
   }
 
   /** This function is called periodically during test mode. */
