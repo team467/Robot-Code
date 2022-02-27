@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -9,18 +11,29 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.NetworkButton;
 import frc.robot.RobotConstants;
+import frc.robot.commands.ArcadeDriveCMD;
+import frc.robot.commands.DrivetrainStopCMD;
 import frc.robot.motors.SparkMaxController;
 import frc.robot.motors.FeedMotorControllerEncoderGroup;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
 import frc.robot.motors.TalonController;
+import frc.robot.tuning.SubsystemTuner;
 
-public class Drivetrain extends SubsystemBase {
+public class Drivetrain extends SubsystemTuner {
     FeedMotorControllerEncoderGroup leftMotorGroup;
     MotorControllerEncoder leftMotorLeader;
     MotorControllerEncoder leftMotorFollower = null;
@@ -101,6 +114,10 @@ public class Drivetrain extends SubsystemBase {
         diffDrive.arcadeDrive(speed, rotation);
     }
 
+    public void stop() {
+        diffDrive.tankDrive(0, 0);
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
@@ -109,5 +126,26 @@ public class Drivetrain extends SubsystemBase {
         builder.addDoubleProperty("Motor Left Velocity", () -> leftMotorLeader.getVelocity(), null);
         builder.addDoubleProperty("Motor Right Position", () -> rightMotorLeader.getPosition(), null);
         builder.addDoubleProperty("Motor Right Velocity", () -> rightMotorLeader.getVelocity(), null);
+    }
+
+    @Override
+    public void initializeTunerNetworkTables(ShuffleboardTab tab) {
+        addEntry("speed", tab.add("Driving Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 1).withProperties(Map.of("min", -1, "max", 1)).getEntry());
+        addEntry("turn", tab.add("Turning Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 2).withProperties(Map.of("min", -1, "max", 1)).getEntry());
+        addEntry("run", tab.add("Run", false).withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(4, 3).getEntry());
+    }
+
+    @Override
+    public void initializeTuner() {
+        getEntry("speed").setDouble(0);
+        getEntry("turn").setDouble(0);
+        getEntry("run").setBoolean(false);
+
+        this.setDefaultCommand(new DrivetrainStopCMD(this));
+        new NetworkButton(getEntry("run")).whileActiveContinuous(
+        new ArcadeDriveCMD(this, 
+            () -> getEntry("speed").getDouble(0), 
+            () -> getEntry("turn").getDouble(0)
+        ));
     }
 }
