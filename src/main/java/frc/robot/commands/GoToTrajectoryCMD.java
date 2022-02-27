@@ -104,21 +104,18 @@ public class GoToTrajectoryCMD extends CommandBase {
         diffDriveOdometry.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
 
         command.initialize();
-        System.out.println("INIT");
     }
 
     @Override
     public void execute() {
         diffDriveOdometry.update(gyro.getRotation2d(), drivetrain.getLeftPosition(), drivetrain.getRightPosition());
         command.execute();
-        System.out.println("EXE");
     }
 
     @Override
     public void end(boolean interrupted) {
         command.end(interrupted);
         drivetrain.tankDriveVolts(0, 0);
-        System.out.println("END");
     }
 
     // Returns true when the command should end.
