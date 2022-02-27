@@ -200,14 +200,6 @@ public class Drivetrain extends SubsystemTuner {
     }
 
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-        System.out.printf("TD1, leftVolt: %f, rightVolt: %f%n", leftVolts, rightVolts);
-        leftMotorGroup.setVoltage(leftVolts);
-        rightMotorGroup.setVoltage(rightVolts);
-        diffDrive.feed();
-    }
-
-    public void tankDriveVolts2(double leftVolts, double rightVolts) {
-        System.out.printf("TD2, leftVolt: %f, rightVolt: %f%n", leftVolts, rightVolts);
         leftMotorGroup.setVoltage(leftVolts);
         rightMotorGroup.setVoltage(rightVolts);
         diffDrive.feed();

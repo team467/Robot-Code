@@ -175,7 +175,9 @@ public class RobotContainer {
     configureIndexer2022();
     configureSpitter2022();
     configureShooter2022();
-    driverButtonX.whenPressed(getAutonomousCommand());
+    if (shooter != null) {
+      driverButtonX.whenPressed(getAutonomousCommand());
+    }
   }
 
   private void initDrivetrain() {
@@ -186,6 +188,7 @@ public class RobotContainer {
 
   private void configureDrivetrain() {
     if (RobotConstants.get().hasDrivetrain()) {
+      drivetrain.setDefaultCommand(new DrivetrainNoneCMD(drivetrain));
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
               driverJoystick::getAdjustedDriveSpeed,
               driverJoystick::getAdjustedTurnSpeed));
@@ -317,18 +320,28 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new SequentialCommandGroup(
-        new ParallelRaceGroup(new Shooter2022IdleTargetCMD(shooter2022),
-        // new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022),
-            new SequentialCommandGroup(
-                new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-                    new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)//,
-                // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-                //     new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true)
-                    )
-                ),
-        // new Shooter2022ShootTargetCMD(shooter2022));
-        new Shooter2022ShootSpeedCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(Units.feetToMeters(9))));
+    if (shooter != null) {
+      return new RunCommand(() -> {
+        drivetrain.setDefaultCommand(new DrivetrainNoneCMD(drivetrain));
+      }, drivetrain).andThen(new SequentialCommandGroup(
+          new ParallelRaceGroup(new Shooter2022IdleTargetCMD(shooter2022),
+          // new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022),
+              new SequentialCommandGroup(
+                  new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
+                      new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)//,
+                  // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
+                  //     new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true)
+                      )
+                  ),
+          // new Shooter2022ShootTargetCMD(shooter2022));
+          new Shooter2022ShootSpeedCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(Units.feetToMeters(9))))).andThen(() -> {
+
+      drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
+              driverJoystick::getAdjustedDriveSpeed,
+              driverJoystick::getAdjustedTurnSpeed));
+          });
+    }
+    return new GoToDistanceAngleCMD(drivetrain, gyro, 1, 0, false);
     // return new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022), new
     // SequentialCommandGroup(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0,
     // 0, new Rotation2d()), List.of(), new Pose2d(2, 0, Rotation2d.fromDegrees(0)),
