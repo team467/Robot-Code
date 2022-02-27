@@ -1,6 +1,9 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Shooter2022;
 
 /** Autonomous, shoots preloaded ball, and drives off tarmac. */
 public class OneBallAutoNoVisionOffTarmacCMD extends SequentialCommandGroup {
@@ -10,6 +13,8 @@ public class OneBallAutoNoVisionOffTarmacCMD extends SequentialCommandGroup {
       Shooter2022 shooter, Drivetrain drivetrain, Gyro gyro) {
     addCommands(
         new Shooter2022ShootCMD(shooter),
-        new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE));
+        //new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE));
+        new ArcadeDriveCMD (drivetrain, () -> 0.2, () -> 3.0));
+
   }
 }

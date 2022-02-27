@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.Shooter2022;
 
 /** Autonomous, shoots pre-loaded ball, and stays on tarmac. */
 public class OneBallAutoNoVisionOnTarmacCMD extends SequentialCommandGroup {

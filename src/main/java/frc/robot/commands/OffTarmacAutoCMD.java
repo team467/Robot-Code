@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drivetrain;
 
@@ -9,11 +10,8 @@ public class OffTarmacAutoCMD extends SequentialCommandGroup {
 
   public OffTarmacAutoCMD(Drivetrain drivetrain, Gyro gyro) {
 
-    addCommands(new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE));
-<<<<<<< Updated upstream
-=======
-
-    // DriveDistanceAngle(0, );
->>>>>>> Stashed changes
+    addCommands(
+      //new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE));
+      new ArcadeDriveCMD (drivetrain, () -> 0.2, () -> 3.0));
   }
 }

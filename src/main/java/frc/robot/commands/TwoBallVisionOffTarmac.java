@@ -5,6 +5,7 @@ import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
+import frc.robot.subsystems.Drivetrain;
 
 /** Autonomous mode:
  * 1. The robot shoots the pre-loaded ball.
@@ -17,14 +18,15 @@ public class TwoBallVisionOffTarmac extends SequentialCommandGroup{
     int GET_BALL_DISTANCE = 0;
 
     public TwoBallVisionOffTarmac(
-        Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter) {
+        Shooter2022 shooter, Indexer2022 indexer, LlamaNeck2022 llamaNeck, Spitter2022 spitter, Drivetrain drivetrain) {
       addCommands(
           // These will also change due to vision.
           new Shooter2022ShootCMD(shooter),
-          new DriveDistanceCMD(drivetrain, gyro, GET_BALL_DISTANCE),
-          new Shotter2022ShootCMD (shooter);
-          new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE),
-      )
+          //new DriveDistanceCMD(drivetrain, gyro, GET_BALL_DISTANCE),
+          new ArcadeDriveCMD (drivetrain, () -> 0.2, () -> 3.0));
+          new Shooter2022ShootCMD (shooter);
+          //new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE),
+          new ArcadeDriveCMD (drivetrain, () -> 0.2, () -> 3.0);
 
     }
     
