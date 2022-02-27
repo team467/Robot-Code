@@ -67,7 +67,7 @@ public class GoToTrajectoryCMD extends CommandBase {
                 RobotConstants.get().driveDriveVelocityPID().getPIDController(),
                 RobotConstants.get().driveDriveVelocityPID().getPIDController(),
                 // RamseteCommand passes volts to the callback
-                drivetrain::tankDriveVolts,
+                drivetrain::tankDriveVolts2,
                 drivetrain
         );
 
@@ -90,7 +90,7 @@ public class GoToTrajectoryCMD extends CommandBase {
                 RobotConstants.get().driveDriveVelocityPID().getPIDController(),
                 RobotConstants.get().driveDriveVelocityPID().getPIDController(),
                 // RamseteCommand passes volts to the callback
-                drivetrain::tankDriveVolts,
+                drivetrain::tankDriveVolts2,
                 drivetrain
         );
 

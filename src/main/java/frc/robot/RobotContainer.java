@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -191,6 +192,7 @@ public class RobotContainer {
       // operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
       // driverButtonX.whileHeld(new GoToBallCMD(drivetrain, gyro));
       driverButtonY.whileHeld(new GoToTargetCMD(drivetrain, gyro));
+      // driverButtonA.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
       // driverButtonY.whileHeld(new GoToTrajectoryCMD(drivetrain, gyro,
       // trajectories.get("Reverse")));
       // driverButtonA.whileHeld(new GoToDistanceAngleCMD(drivetrain, gyro, 2.0, 0.0,
@@ -325,7 +327,8 @@ public class RobotContainer {
                 //     new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true)
                     )
                 ),
-        new Shooter2022ShootTargetCMD(shooter2022));
+        // new Shooter2022ShootTargetCMD(shooter2022));
+        new Shooter2022ShootSpeedCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(Units.feetToMeters(9))));
     // return new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022), new
     // SequentialCommandGroup(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0,
     // 0, new Rotation2d()), List.of(), new Pose2d(2, 0, Rotation2d.fromDegrees(0)),

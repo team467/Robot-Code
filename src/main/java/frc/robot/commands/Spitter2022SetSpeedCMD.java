@@ -28,7 +28,7 @@ public class Spitter2022SetSpeedCMD extends CommandBase {
 
   @Override
   public void execute() {
-    spitter.setSpeed(speed.get());
+    spitter.setVelocity(speed.get());
   }
 
   @Override

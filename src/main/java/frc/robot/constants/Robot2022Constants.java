@@ -81,7 +81,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public FeedbackConstant driveTurnPositionPID() {
-        return new FeedbackConstant(0.5, 0.01);
+        return new FeedbackConstant(0.1, 0.1);
     }
 
     @Override

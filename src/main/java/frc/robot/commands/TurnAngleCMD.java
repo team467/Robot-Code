@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -14,23 +15,18 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Gyro;
 
 public class TurnAngleCMD extends CommandBase {
-    private final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-            //  RobotConstants.get().driveAutoMaxVelocity(),
-            //  RobotConstants.get().driveAutoMaxAcceleration());
-             0.8,
-             1);
 
     private final Drivetrain drivetrain;
     private final Gyro gyro;
     private final double angle;
-    private final ProfiledPIDController turnPID;
+    private final PIDController turnPID;
 
     public TurnAngleCMD(Drivetrain drivetrain, Gyro gyro, double angle) {
         this.drivetrain = drivetrain;
         this.gyro = gyro;
         this.angle = angle;
         this.turnPID= RobotConstants.get().driveTurnPositionPID()
-                .getProfiledPIDController(constraints);
+                .getPIDController();
 
         addRequirements(drivetrain);
         addRequirements(gyro);
@@ -40,10 +36,10 @@ public class TurnAngleCMD extends CommandBase {
     public void initialize() {
         // TODO check without reset
         drivetrain.resetPositions();
-        turnPID.reset(gyro.getAngle());
-        turnPID.enableContinuousInput(-180, 180);
+        turnPID.reset();
+        // turnPID.enableContinuousInput(-180, 180);
         turnPID.setTolerance(0.1, 1.2);
-        turnPID.setGoal(angle + gyro.getAngle());
+        turnPID.setSetpoint(angle + gyro.getAngle());
     }
 
     @Override
@@ -59,6 +55,6 @@ public class TurnAngleCMD extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return turnPID.atGoal();
+        return turnPID.atSetpoint();
     }
 }

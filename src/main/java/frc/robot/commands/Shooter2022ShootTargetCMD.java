@@ -16,7 +16,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
   private static final Logger LOGGER =
       RobotLogManager.getMainLogger(Shooter2022ShootTargetCMD.class.getName());
 
-  private final double TIME_UNTIL_FINISHED = 0.5;
+  private final double TIME_UNTIL_FINISHED = 0.7;
 
   private final LlamaNeck2022 llamaNeck;
   private final Indexer2022 indexer;
@@ -35,7 +35,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
   private final Timer shotTimer;
 
   public Shooter2022ShootTargetCMD(
-      Shooter2022 shooter) {
+      Shooter2022 shooter,  double defaultDistance) {
     super();
 
     this.llamaNeck = shooter.llamaNeck2022;
@@ -49,7 +49,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
     this.indexerForward = new Indexer2022ForwardCMD(indexer);
 
     this.spitterTarget = new Spitter2022TargetCMD(spitter);
-    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, () -> Spitter2022.getFlywheelVelocity(1));
+    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, () -> Spitter2022.getFlywheelVelocity(defaultDistance));
 
     this.timer = new Timer();
     timer.start();
@@ -58,6 +58,10 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
     shotTimer.start();
 
     addRequirements(shooter);
+  }
+
+  public Shooter2022ShootTargetCMD(Shooter2022 shooter) {
+    this(shooter, 0.6);
   }
 
   @Override
@@ -78,14 +82,23 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
       spitterSpeed.schedule();
     }
 
-    if (spitter.isAtShootingSpeed() && shotTimer.hasElapsed(1)) {
+
+
+    if (spitter.isAtShootingSpeed()) {
       LOGGER.debug("Spitter is at shooting speed! Throwing balls into flywheel.");
       indexerForward.schedule();
-      llamaNeckForward.schedule();
-      if (shotTimer.hasElapsed(1.5)) shotTimer.reset();
     } else {
       indexerStop.schedule();
-      llamaNeckStop.schedule();
+    }
+
+    if (llamaNeck.upperLimitSwitchIsPressed()) {
+      shotTimer.reset();
+    } else {
+      if (shotTimer.hasElapsed(0.2)) {
+        llamaNeckForward.schedule();
+      } else {
+        llamaNeckStop.schedule();
+      }
     }
   }
 
@@ -94,7 +107,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    if (llamaNeck.upperLimitSwitchIsPressed() || llamaNeck.lowerLimitSwitchIsPressed()) {
+    if (llamaNeck.upperLimitSwitchIsPressed() || llamaNeck.lowerLimitSwitchIsPressed() || !shotTimer.hasElapsed(0.2)) {
       // any switch still pressed, continue shooting.
       timer.reset();
     }

@@ -116,7 +116,6 @@ public class Spitter2022 extends SubsystemBase {
      */
     public void setVelocity(double velocity) {
         spitterLoop.setNextR(VecBuilder.fill(velocity));
-       System.out.printf("Setting velocity to %f%n", velocity);
     }
 
     public void reset() {

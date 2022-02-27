@@ -71,17 +71,17 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public SimpleFeedforwardConstant driveTurnFF() {
-        return null;
+        return new SimpleFeedforwardConstant(0, 0, 0);
     }
 
     @Override
     public FeedbackConstant driveTurnVelocityPID() {
-        return null;
+        return new FeedbackConstant(0, 0);
     }
 
     @Override
     public FeedbackConstant driveTurnPositionPID() {
-        return null;
+        return new FeedbackConstant(0, 0);
     }
 
     @Override
@@ -111,12 +111,12 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public double driveAutoMaxVelocity() {
-        return 0;
+        return 1;
     }
 
     @Override
     public double driveAutoMaxAcceleration() {
-        return 0;
+        return 2;
     }
 
     @Override
