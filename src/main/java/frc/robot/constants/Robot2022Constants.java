@@ -4,26 +4,26 @@ import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.FeedforwardConstant;
 import frc.robot.motors.MotorType;
 
-public class BriefcaseConstants implements Constants {
+public class Robot2022Constants implements Constants {
 
     @Override
     public String name() {
-        return "Briefcase";
+        return "Robot 2022";
     }
 
     @Override
     public boolean hasDrivetrain() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean driveDualMotors() {
-        return false;
+        return true;
     }
 
     @Override
     public MotorType driveMotorType() {
-        return MotorType.TALON_SRX;
+        return MotorType.SPARK_MAX_BRUSHLESS;
     }
 
     @Override
@@ -98,7 +98,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public double driveUnitsPerRotation() {
-        return 1.0;
+        return 0;
     }
 
     @Override
@@ -108,7 +108,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public double driveMaxAcceleration() {
-        return 100000;
+        return 0;
     }
 
     @Override
@@ -138,7 +138,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int driveMotorLeftLeaderId() {
-        return 11;
+        return 1;
     }
 
     @Override
@@ -148,7 +148,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int driveMotorLeftFollowerId() {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -158,22 +158,22 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int driveMotorRightLeaderId() {
-        return 12;
+        return 3;
     }
 
     @Override
     public boolean driveMotorRightLeaderInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public int driveMotorRightFollowerId() {
-        return 0;
+        return 4;
     }
 
     @Override
     public boolean driveMotorRightFollowerInverted() {
-        return false;
+        return true;
     }
 
     @Override
@@ -183,7 +183,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int climber2020MotorId() {
-        return 1;
+        return 11;
     }
 
     @Override
@@ -193,7 +193,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public double climber2020UpSpeed() {
-        return 0.1;
+        return 0.3;
     }
 
     @Override
@@ -234,6 +234,11 @@ public class BriefcaseConstants implements Constants {
     @Override
     public boolean shooter202FlywheelFollowerInverted() {
         return false;
+    }
+
+    @Override
+    public int shooter2020TriggerMotorId() {
+        return 0;
     }
 
     @Override
@@ -282,11 +287,6 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public int shooter2020TriggerMotorId() {
-        return 0;
-    }
-
-    @Override
     public boolean shooter2020TriggerInverted() {
         return false;
     }
@@ -328,12 +328,12 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int indexer2022MotorID() {
-        return 11;
+        return 9;
     }
 
     @Override
     public double indexer2022IdleSpeed() {
-        return 0.25;
+        return 0.2;
     }
 
     @Override
@@ -343,14 +343,14 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public double indexer2022OutSpeed() {
-        return 0.5;
+        return 0.3;
     }
 
     @Override
     public boolean indexer2022MotorInverted() {
-        return false;
+        return true;
     }
-    
+
     @Override
     public boolean hasLlamaNeck2022() {
         return true;
@@ -358,17 +358,17 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int llamaNeck2022MotorID() {
-        return 2;
+        return 8;
     }
 
     @Override
     public boolean llamaNeck2022MotorInverted() {
-        return false;
+        return true;
     }
 
     @Override
     public double llamaNeck2022IdleSpeed() {
-        return 0;
+        return 0.5;
     }
 
     @Override
@@ -383,14 +383,14 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public int llamaNeck2022UpperLimitSwitchChannel() {
-        return 1;
+        return 0;
     }
 
     @Override
     public int llamaNeck2022LowerLimitSwitchChannel() {
-        return 0;
+        return 1;
     }
-
+    
     @Override
     public boolean hasSpitter2022() {
         return true;
@@ -398,7 +398,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override 
     public int spitter2022MotorId() {
-        return 1;
+        return 5;
     }
 
     @Override
@@ -406,10 +406,10 @@ public class BriefcaseConstants implements Constants {
         return true;
     }
 
-  @Override
-  public boolean spitter2022UseVelocity() {
-    return false;
-  }
+    @Override
+    public boolean spitter2022UseVelocity() {
+        return true;
+    }
 
     @Override
     public boolean spitter2022UsePID() {
@@ -418,27 +418,26 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public FeedforwardConstant spitter2022FF() {
-        return new FeedforwardConstant(0, 0, 0);
+        return new FeedforwardConstant(-0.86235, 0.14126, 0.053813);
     }
 
     @Override
     public FeedbackConstant spitter2022FB() {
-        return new FeedbackConstant(0, 0);
+        return new FeedbackConstant(0.18428, 0);
     }
 
     @Override
     public double spitter2022MaxVelocity() {
-        return 0;
+        return 90;
     }
 
     @Override
     public double spitter2022ForwardSpeed() {
-        return 0.7;
+        return 0.5;
     }
 
     @Override
     public double spitter2022BackwardSpeed() {
-        return 0.5;
+        return 0.1;
     }
-    
 }
