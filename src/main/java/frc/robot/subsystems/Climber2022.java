@@ -13,6 +13,7 @@ import frc.robot.motors.MotorType;
 import org.apache.logging.log4j.Logger;
 
 public class Climber2022 extends SubsystemBase {
+    // TODO make climber into state space and use real position control, after granite state
     private final MotorControllerEncoder climberMotorLeft = MotorControllerFactory.create(RobotConstants.get().climber2022LeftMotorId(),MotorType.SPARK_MAX_BRUSHLESS);
     private final MotorControllerEncoder climberMotorRight = MotorControllerFactory.create(RobotConstants.get().climber2022RightMotorId(),MotorType.SPARK_MAX_BRUSHLESS);
     private final Relay climberLock = new Relay(RobotConstants.get().climber2022SolenoidChannel());
@@ -44,58 +45,100 @@ public class Climber2022 extends SubsystemBase {
         return enabled;
     }
 
-    public void up() {
+    public void upLeft() {
         if(enabled) {
             if (climberMotorLeft.getPosition() < RobotConstants.get().climber2022LeftUpperLimit()) {
                 climberMotorLeft.set(RobotConstants.get().climber2022UpSpeed());
             } else {
-                climberMotorLeft.set(0);
+                stopLeft();
             }
+        }
+    }
 
+    public void upRight() {
+        if(enabled) {
             if (climberMotorRight.getPosition() < RobotConstants.get().climber2022RightUpperLimit()) {
                 climberMotorRight.set(RobotConstants.get().climber2022UpSpeed());
             } else {
-                climberMotorRight.set(0);
+                stopRight();
             }
+        }
+    }
 
+    public void up() {
+        upLeft();
+        upRight();
+    }
+
+    public void downSafeLeft() {
+        if (enabled) {
+            if (climberMotorLeft.getPosition() > RobotConstants.get().climber2022LeftLowerLimit()) {
+                climberMotorLeft.set(-RobotConstants.get().climber2022DownSpeed());
+            } else {
+                stopLeft();
+            }
+        }
+    }
+
+    public void downSafeRight() {
+        if (enabled) {
+            if (climberMotorRight.getPosition() > RobotConstants.get().climber2022RightLowerLimit()) {
+                climberMotorRight.set(-RobotConstants.get().climber2022DownSpeed());
+            } else {
+                stopRight();
+            }
         }
     }
 
     public void downSafe() {
-        if (enabled){
-            if (climberMotorLeft.getPosition() > RobotConstants.get().climber2022LeftLowerLimit()) {
+        downSafeLeft();
+        downSafeRight();
+    }
+
+    public void downFullLeft() {
+        if (enabled) {
+            if (climberMotorLeft.getPosition() > 2) {
                 climberMotorLeft.set(-RobotConstants.get().climber2022DownSpeed());
             } else {
-                climberMotorLeft.set(0);
+                stopLeft();
             }
-            if (climberMotorRight.getPosition() > RobotConstants.get().climber2022RightLowerLimit()) {
+        }
+    }
+
+    public void downFullRight() {
+        if (enabled) {
+            if (climberMotorRight.getPosition() > 2) {
                 climberMotorRight.set(-RobotConstants.get().climber2022DownSpeed());
             } else {
-                climberMotorRight.set(0);
+                stopRight();
             }
-
         }
     }
 
     public void downFull() {
-        if (enabled){
-            if (climberMotorLeft.getPosition() > 2) {
-                climberMotorLeft.set(-RobotConstants.get().climber2022DownSpeed());
-            } else {
-                climberMotorLeft.set(0);
-            }
-            if (climberMotorRight.getPosition() > 2) {
-                climberMotorRight.set(-RobotConstants.get().climber2022DownSpeed());
-            } else {
-                climberMotorRight.set(0);
-            }
+        downFullLeft();
+        downFullRight();
+    }
 
-        }
+    public void stopLeft() {
+        climberMotorLeft.set(0);
+    }
+
+    public void stopRight() {
+        climberMotorRight.set(0);
     }
 
     public void stop() {
-        climberMotorLeft.set(0);
-        climberMotorRight.set(0);
+        stopLeft();
+        stopRight();
+    }
+
+    public void setLeftSpeed(double speed) {
+        climberMotorLeft.set(speed);
+    }
+
+    public void setRightSpeed(double speed) {
+        climberMotorRight.set(speed);
     }
 
     @Override
