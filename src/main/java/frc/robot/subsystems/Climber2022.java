@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.NetworkButton;
 import frc.robot.RobotConstants;
+import frc.robot.commands.Climber2022EnableCMD;
+import frc.robot.commands.Climber2022DisableCMD;
 import frc.robot.commands.Climber2022SetLeftSpeed;
 import frc.robot.commands.Climber2022SetRightSpeed;
 import frc.robot.commands.Climber2022StopCMD;
@@ -206,6 +208,9 @@ public class Climber2022 extends SubsystemTuner {
     ).whenActive(() -> {
       getEntry("runLeft").setBoolean(false);
     });
+
+
+    new NetworkButton(getEntry("runLeft")).or(new NetworkButton(getEntry("runRight"))).whenActive(new Climber2022EnableCMD(this)).whenInactive(new Climber2022DisableCMD(this));
   }
 }
 

@@ -39,6 +39,7 @@ import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
 import frc.robot.subsystems.Shooter2022;
+import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Climber2022;
 import frc.robot.subsystems.Spitter2022;
 
@@ -56,7 +57,8 @@ public class RobotContainer {
   private Indexer2022 indexer = null;
   private Spitter2022 spitter = null;
   private Shooter2022 shooter2022 = null;
-  private Climber2022 climber = null;
+  private Climber2020 climber2020 = null;
+  private Climber2022 climber2022 = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -116,6 +118,7 @@ public class RobotContainer {
     CommandScheduler.getInstance().clearButtons();
     configureDrivetrain();
     configureClimber2020();
+    configureClimber2022();
     configureShooter2020();
   }
 
@@ -136,16 +139,16 @@ public class RobotContainer {
 
   private void initClimber2020() {
     if (RobotConstants.get().hasClimber2020()) {
-      climber = new Climber2020();
+      climber2020 = new Climber2020();
     }
   }
 
   private void configureClimber2020() {
     if (RobotConstants.get().hasClimber2020()) {
-      climber.setDefaultCommand(new ClimberStopCMD(climber));
-      operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
-      operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
-      operatorClimberDown.whenHeld(new ClimberDownCMD(climber));
+      climber2022.setDefaultCommand(new ClimberStopCMD(climber2020));
+      operatorClimberLock.whenPressed(new ClimberEnableCMD(climber2020));
+      operatorClimberUp.whenHeld(new ClimberUpCMD(climber2020));
+      operatorClimberDown.whenHeld(new ClimberDownCMD(climber2020));
     }
   }
 
@@ -180,12 +183,17 @@ public class RobotContainer {
 
   private void initClimber2022() {
     if (RobotConstants.get().hasClimber2022()) {
-      climber = new Climber2022();
-      climber.setDefaultCommand(new Climber2022StopCMD(climber));
-      operatorClimberLock.whenPressed(new Climber2022EnableCMD(climber));
-      operatorClimberLock.whenReleased(new Climber2022DisableCMD(climber));
-      operatorClimberUp.whileHeld(new Climber2022UpCMD(climber));
-      operatorClimberDown.whileHeld(new Climber2022DownCMD(climber, operatorIndexAuto::get));
+      climber2022 = new Climber2022();
+      climber2022.setDefaultCommand(new Climber2022StopCMD(climber2022));
+    }
+  }
+
+  private void configureClimber2022() {
+    if (RobotConstants.get().hasClimber2022()) {
+      operatorClimberLock.whenPressed(new Climber2022EnableCMD(climber2022));
+      operatorClimberLock.whenReleased(new Climber2022DisableCMD(climber2022));
+      operatorClimberUp.whileHeld(new Climber2022UpCMD(climber2022));
+      operatorClimberDown.whileHeld(new Climber2022DownCMD(climber2022, operatorIndexAuto::get));
     }
   }
 
