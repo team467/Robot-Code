@@ -413,7 +413,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean hasLlamaNeck2022() {
-        return false;
+        return true;
     }
 
     @Override
