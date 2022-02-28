@@ -7,13 +7,13 @@ import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class ClimberStop2022CMD extends CommandBase {
+public class Climber2022StopCMD extends CommandBase {
     private final Climber2022 climber;
 
-    private static final Logger LOGGER = RobotLogManager.getMainLogger(ClimberStop2022CMD.class.getName());
+    private static final Logger LOGGER = RobotLogManager.getMainLogger(Climber2022StopCMD.class.getName());
 
 
-    public ClimberStop2022CMD(Climber2022 climber) {
+    public Climber2022StopCMD(Climber2022 climber) {
     this.climber = climber;
 
     addRequirements(climber);

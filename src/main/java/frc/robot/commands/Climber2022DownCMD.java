@@ -10,17 +10,17 @@ import org.apache.logging.log4j.Logger;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 
-public class ClimberDown2022CMD extends CommandBase {
+public class Climber2022DownCMD extends CommandBase {
     private final Climber2022 climber;
     private final Supplier<Boolean> fullDown;
 
-    private static final Logger LOGGER = RobotLogManager.getMainLogger(ClimberDown2022CMD.class.getName());
+    private static final Logger LOGGER = RobotLogManager.getMainLogger(Climber2022DownCMD.class.getName());
 
 
 
     //@param????
 
-    public ClimberDown2022CMD(Climber2022 climber, Supplier<Boolean> fullDown) {
+    public Climber2022DownCMD(Climber2022 climber, Supplier<Boolean> fullDown) {
         this.climber = climber;
         this.fullDown = fullDown;
 

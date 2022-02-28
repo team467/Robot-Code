@@ -7,28 +7,31 @@ import org.apache.logging.log4j.Logger;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class ClimberDisable2022CMD extends CommandBase{
+public class Climber2022EnableCMD extends CommandBase {
     private final Climber2022 climber;
 
-    private static final Logger LOGGER = RobotLogManager.getMainLogger(ClimberDisable2022CMD.class.getName());
+    private static final Logger LOGGER = RobotLogManager.getMainLogger(Climber2022EnableCMD.class.getName());
 
 
-    public ClimberDisable2022CMD(Climber2022 climber) {
+
+
+    public Climber2022EnableCMD(Climber2022 climber) {
         this.climber = climber;
+
         addRequirements(climber);
     }
-    
+
 
     @Override 
     public void initialize() {
-        climber.disable();
-        LOGGER.info("Climber disabled");
+        climber.enable();
+        LOGGER.info("Climber enabled");
     }
-
 
     @Override 
-    public void execute() {
+    public void execute(){
     }
+
 
     @Override 
     public void end(boolean interrupted) {}

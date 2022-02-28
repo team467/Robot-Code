@@ -11,22 +11,16 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ArcadeDriveCMD;
-import frc.robot.commands.Indexer2022BackwardCMD;
-import frc.robot.commands.Indexer2022ForwardCMD;
-import frc.robot.commands.Indexer2022IdleCMD;
 import frc.robot.commands.Indexer2022StopCMD;
-import frc.robot.commands.ClimberDisable2022CMD;
-import frc.robot.commands.ClimberEnable2022CMD;
-import frc.robot.commands.ClimberStop2022CMD;
-import frc.robot.commands.ClimberUp2022CMD;
-import frc.robot.commands.ClimberDown2022CMD;
-import frc.robot.commands.LlamaNeck2022BackwardCMD;
-import frc.robot.commands.LlamaNeck2022ForwardCMD;
+import frc.robot.commands.Climber2022DisableCMD;
+import frc.robot.commands.Climber2022EnableCMD;
+import frc.robot.commands.Climber2022StopCMD;
+import frc.robot.commands.Climber2022UpCMD;
+import frc.robot.commands.Climber2022DownCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberUpCMD;
-import frc.robot.commands.Indexer2022StopCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
 import frc.robot.commands.Shooter2022FlushBallCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
@@ -187,11 +181,11 @@ public class RobotContainer {
   private void initClimber2022() {
     if (RobotConstants.get().hasClimber2022()) {
       climber = new Climber2022();
-      climber.setDefaultCommand(new ClimberStop2022CMD(climber));
-      operatorClimberLock.whenPressed(new ClimberEnable2022CMD(climber));
-      operatorClimberLock.whenReleased(new ClimberDisable2022CMD(climber));
-      operatorClimberUp.whileHeld(new ClimberUp2022CMD(climber));
-      operatorClimberDown.whileHeld(new ClimberDown2022CMD(climber, operatorIndexAuto::get));
+      climber.setDefaultCommand(new Climber2022StopCMD(climber));
+      operatorClimberLock.whenPressed(new Climber2022EnableCMD(climber));
+      operatorClimberLock.whenReleased(new Climber2022DisableCMD(climber));
+      operatorClimberUp.whileHeld(new Climber2022UpCMD(climber));
+      operatorClimberDown.whileHeld(new Climber2022DownCMD(climber, operatorIndexAuto::get));
     }
   }
 

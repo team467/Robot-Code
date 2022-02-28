@@ -12,10 +12,7 @@ import frc.robot.motors.MotorType;
 
 import org.apache.logging.log4j.Logger;
 
-// down, up, enable, stop
 public class Climber2022 extends SubsystemBase {
-//Okay, so basically the right motor's id is 6 and the left motor's id is 11 as of now. The "front" of the robot is the side where the top of the llamma neck opens up for now, but apparently drivers like it to be the other way around (not too sure about this, it's just what some mechanical kid said). However, from a building perspective the way the llama neck's opening is facing is the front.
-
     private final MotorControllerEncoder climberMotorLeft = MotorControllerFactory.create(RobotConstants.get().climber2022LeftMotorId(),MotorType.SPARK_MAX_BRUSHLESS);
     private final MotorControllerEncoder climberMotorRight = MotorControllerFactory.create(RobotConstants.get().climber2022RightMotorId(),MotorType.SPARK_MAX_BRUSHLESS);
     private final Relay climberLock = new Relay(RobotConstants.get().climber2022SolenoidChannel());
