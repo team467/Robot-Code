@@ -1,32 +1,39 @@
 package frc.robot.constants;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
-import frc.robot.motors.FeedforwardConstant;
+import frc.robot.motors.GearRatio;
+import frc.robot.motors.RamseteConstant;
+import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
+import frc.robot.utilities.IMUAxis;
+import frc.robot.utilities.IMUType;
 
 public interface Constants {
     public String name();
     public boolean hasDrivetrain();
     public boolean driveDualMotors();
     public MotorType driveMotorType();
+    public IdleMode driveIdleMode();
     public boolean driveUseVelocity();
     public boolean driveUsePID();
-    // Inches
-    public FeedforwardConstant driveForwardRightFF();
-    public FeedbackConstant driveForwardRightVelocityFB();
-    public FeedbackConstant driveForwardRightPositionFB();
-    public FeedforwardConstant driveForwardLeftFF();
-    public FeedbackConstant driveForwardLeftVelocityFB();
-    public FeedbackConstant driveForwardLeftPositionFB();
-    public FeedforwardConstant driveBackwardRightFF();
-    public FeedbackConstant driveBackwardRightVelocityFB();
-    public FeedbackConstant driveBackwardRightPositionFB();
-    public FeedforwardConstant driveBackwardLeftFF();
-    public FeedbackConstant driveBackwardLeftVelocityFB();
-    public FeedbackConstant driveBackwardLeftPositionFB();
-    public double driveUnitsPerRotation();
+    public RamseteConstant driveRamsete();
+    public SimpleFeedforwardConstant driveDriveFF();
+    public FeedbackConstant driveDriveVelocityPID();
+    public FeedbackConstant driveDrivePositionPID();
+    public SimpleFeedforwardConstant driveTurnFF();
+    public FeedbackConstant driveTurnVelocityPID();
+    public FeedbackConstant driveTurnPositionPID();
+    public double driveWheelDiameter();
+    public GearRatio driveGearRatio();
+    public DifferentialDriveKinematics driveKinematics();
     public double driveMaxVelocity();
     public double driveMaxAcceleration();
+    public double driveAutoMaxVelocity();
+    public double driveAutoMaxAcceleration();
     public double driveFastMaxSpeed();
     public double driveNormalMaxSpeed();
     public double driveSlowMaxSpeed();
@@ -40,6 +47,10 @@ public interface Constants {
     public boolean driveMotorRightLeaderInverted();
     public int driveMotorRightFollowerId();
     public boolean driveMotorRightFollowerInverted();
+
+    public boolean hasGyro();
+    public IMUType gyroIMUType();
+    public IMUAxis gyroYawAxis();
 
     public boolean hasClimber2020();
     public int climber2020MotorId();
@@ -78,7 +89,7 @@ public interface Constants {
     public double indexer2022InSpeed();
     public double indexer2022OutSpeed();
     public boolean indexer2022MotorInverted();
-    
+
 
     public boolean hasLlamaNeck2022();
     public int llamaNeck2022MotorID();
@@ -94,10 +105,17 @@ public interface Constants {
     public boolean spitter2022MotorInverted();
     public boolean spitter2022UseVelocity();
     public boolean spitter2022UsePID();
-    public FeedforwardConstant spitter2022FF();
+    public SimpleFeedforwardConstant spitter2022FF();
+    public double spitter2022MomentOfInertia();
+    public GearRatio spitter2022GearRatio();
     public FeedbackConstant spitter2022FB();
     public double spitter2022MaxVelocity();
     public double spitter2022ForwardSpeed();
     public double spitter2022BackwardSpeed();
-    
+    public double spitter2022DistanceLinearM();
+    public double spitter2022DistanceLinearB();
+
+    public boolean hasHubCameraLED();
+    public int hubCameraLEDChannel();
+    public Translation2d hubCameraOffset();
 }
