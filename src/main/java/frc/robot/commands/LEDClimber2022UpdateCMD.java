@@ -7,18 +7,25 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotConstants;
 import frc.robot.subsystems.LEDClimber2022;
+import frc.robot.subsystems.LlamaNeck2022;
+import frc.robot.subsystems.Spitter2022;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class LEDClimber2022UpdateCMD extends CommandBase {
-    private final double TIMER_SPEED = 0.006;
+    private final double TIMER_SPEED = 0.35;
 
     private LEDClimber2022 ledClimber;
+    private LlamaNeck2022 llamaNeck2022;
+    private Spitter2022 spitter2022;
     private Color teamColor = Color.kBlue;
     private int color = 0;
     private Timer timer = new Timer();
 
 
-    public LEDClimber2022UpdateCMD(LEDClimber2022 ledClimber) {
+    public LEDClimber2022UpdateCMD(Spitter2022 spitter2022, LlamaNeck2022 llamaNeck2022, LEDClimber2022 ledClimber) {
         this.ledClimber = ledClimber;
+        this.spitter2022 = spitter2022;
+        this.llamaNeck2022 = llamaNeck2022;
         timer.start();
 
         addRequirements(ledClimber);
@@ -41,71 +48,93 @@ public class LEDClimber2022UpdateCMD extends CommandBase {
     public void execute() { 
        
 // note: look at chasing ball code to see how to tell robot our alliance; use for when seeing blue or red ball
+// might need to make something that says if the lower limit switch isnt "held" then dont condsider it pressed (for when theres one ball which goes over the bottom switch)
 
-        if (lowerlimitswitchispressed==true) {
+        if (llamaNeck2022.hasUpperBall()) { 
+            //has only one ball
             setBottomPink();
         } else {
             setBottomOff();
         }
 
-        if (upperlimitswitchispressed==true) {
-            // setBottomPink();
+        if (llamaNeck2022.hasLowerBall()) {
+            //has two balls
+            setBottomPink();
             setTopPink();
         } else {
             setTopOff();
         }
  
-        if (has zero balls, alliance is red, sees red ball) {
+        if (DriverStation.getAlliance() == Alliance.Red && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Red").getEntry("HasBall").getBoolean(false)) {
+           //has no balls but sees a red ball when the alliance is red
+           //has no balls
             setBottomRed();
             setTopRed();
         }
 
-        if (has one ball, alliance is red, sees red ball) {
+        if (llamaNeck2022.hasUpperBall() && DriverStation.getAlliance() == Alliance.Red && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Red").getEntry("HasBall").getBoolean(false)) {
+          //has one ball and alliance is red, sees red ball
             setBottomPink();
             setTopRed();
         }
 
-        if (has zero balls, alliance is blue, sees blue ball) {
+        if (DriverStation.getAlliance() == Alliance.Blue && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Blue").getEntry("HasBall").getBoolean(false)) {
+            //has zero balls and alliance is blue + sees a blue ball
+            //has zero balls
+            //NetworkTableInstance.getDefault().getTable("Vision").getSubTable("Red").getEntry("HasBall").getBoolean(false))
             setBottomBlue();
             setTopBlue();
         }
 
-        if (has one ball, alliance is blue, sees blue ball) {
+        if (llamaNeck2022.hasUpperBall() && DriverStation.getAlliance() == Alliance.Blue && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Blue").getEntry("HasBall").getBoolean(false)) {
+            //has one ball, alliance is blue, and robot see's a blue ball
             setBottomPink();
             setTopBlue();
         }
 
-        if (has one ball, sees target) {
+        if (llamaNeck2022.hasUpperBall() && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("HubTarget").getEntry("isValid").getBoolean(false)) {
+            //robot has one ball and sees a target 
             setBottomPink();
-            setTopGreen(); //need to make flash for only two seconds
+            setTopGreen(); 
         }
 
-        if (has two balls, sees target) {
-            setBottomPink();
-            setTopPink();
-            //make following code only flash for 2 seconds then go back to pink 
+        if (llamaNeck2022.hasLowerBall() && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("HubTarget").getEntry("isValid").getBoolean(false)) {
+            //robot already has two balls and sees target
             setBottomGreen();
             setTopGreen();
         }
 
-        if (has one ball, sees ball of alliance, sees target) {
-            setBottomPink();
-            //set top color of alliance AKA ignore target ();   
-        }
+        // e
 
-        if (has two balls, sees ball of alliance) {
-            setBottomPink();
-            setTopPink();
-            //ignore balls it sees, focuses on finding target 
-        }
+        // if (llamaNeck2022.hasUpperBall()) {
+        //     //idk
+        //     //has one ball and sees ball of alliance, but sees target
+        //     setBottomPink();
+        //     //set top color of alliance AKA ignore target ();   
+        // }
 
-        if (shooting one or two balls) {
+        // if (llamaNeck2022.hasLowerBall()) {
+        //     //robot has two balls and sees ball of alliance
+
+        //     //random note: ball tracking red valid 
+
+        //     setBottomPink();
+        //     setTopPink();
+        //     //ignore balls it sees, focuses on finding target 
+        // }
+
+        // e
+
+        if (spitter2022.getCurrentCommand() instanceof Spitter2022ForwardCMD) {
+            //fix boolean?
+
             setPurpleMovingUp();
         }
 
-        if (climbing up) {
+        if (climber2022.getcurrentcmd) {
+            //probably will have to import Climber2022 branch; its not in this branch for some reason???
             setRainbowMovingUp();
-            m_led.setData(m_ledBuffer);
+           // m_led.setData(m_ledBuffer);
         }
 
         ledClimber.sendData();
@@ -181,7 +210,6 @@ public class LEDClimber2022UpdateCMD extends CommandBase {
     }
 
     public void setPurpleMovingUp() {
-    //??? need to fix
         if (timer.hasElapsed(TIMER_SPEED * (RobotConstants.get().ledClimber2022LEDCount() + 1))) {
             timer.reset();
         }
@@ -191,23 +219,23 @@ public class LEDClimber2022UpdateCMD extends CommandBase {
                 double timeUntilOff = Math.max(0, (TIMER_SPEED * (i + 1)) - timer.get());
                 int brightness = (int) (255 * timeUntilOff);
 
-                ledClimber.setRGB(i, 128 * brightness,0 * brightness,128 * brightness);
+                ledClimber.setRGB(i, 1 * brightness,0 * brightness, 1 * brightness);
              }
         }
     }
 
     public void setRainbowMovingUp() {
-        if (timer.hasElapsed(TIMER_SPEED * (RobotConstants.get().ledClimber2022LEDCount() + 1))) {
+        if (timer.hasElapsed(TIMER_SPEED)) {
+            color += 1;
+
+            if (color > 360) color = 0;
             timer.reset();
         }
-
-        for (var i = 0; i < RobotConstants.get().ledClimber2022LEDCount(); i++) {
-            if (timer.hasElapsed(TIMER_SPEED * i)) {
-                double timeUntilOff = Math.max(0, (TIMER_SPEED * (i + 1)) - timer.get());
-                int brightness = (int) (255 * timeUntilOff);
-
-                ledClimber.setRGB(i, 128 * brightness,0 * brightness,128 * brightness);
-             }
+        
+        for (int i = 0; i < RobotConstants.get().ledTower2022LEDCount(); i++) {
+            ledClimber.setHSB(i, (color + (i * 360/RobotConstants.get().ledTower2022LEDCount())) % 360, 255, 127);
         }
+
+        ledClimber.sendData();
     }
 }

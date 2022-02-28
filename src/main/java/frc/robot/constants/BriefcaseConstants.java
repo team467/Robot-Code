@@ -13,7 +13,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasDrivetrain() {
-        return true;
+        return false;
     }
 
     @Override
@@ -178,7 +178,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasClimber2020() {
-        return true;
+        return false;
     }
 
     @Override
@@ -328,6 +328,47 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasLEDTower2022() {
+    public boolean hasIndexer2022() {
+        return true;
+    }
+
+    @Override
+    public int indexer2022MotorID() {
+        return 11;
+    }
+
+    @Override
+    public double indexer2022IdleSpeed() {
+        return 0.25;
+    }
+
+    @Override
+    public double indexer2022InSpeed() {
+        return 0.5;
+    }
+
+    @Override
+    public double indexer2022OutSpeed() {
+        return 0.5;
+    }
+
+    @Override
+    public boolean indexer2022MotorInverted() {
+        return false;
+    }
+    
+    @Override
+    public boolean hasLlamaNeck2022() {
+        return true;
+    }
+
+    @Override
+    public int llamaNeck2022MotorID() {
+        return 2;
+    }
+
+    @Override
+    public boolean llamaNeck2022MotorInverted() {
         return false;
     }
 
@@ -346,4 +387,78 @@ public class BriefcaseConstants implements Constants {
         return 0;
     }
 
+    public double llamaNeck2022IdleSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double llamaNeck2022InSpeed() {
+        return 0.5;
+    }
+    
+    @Override
+    public double llamaNeck2022OutSpeed() {
+     return 0.5;   
+    }
+
+    @Override
+    public int llamaNeck2022UpperLimitSwitchChannel() {
+        return 1;
+    }
+
+    @Override
+    public int llamaNeck2022LowerLimitSwitchChannel() {
+        return 0;
+    }
+
+    @Override
+    public boolean hasSpitter2022() {
+        return true;
+    }
+
+    @Override 
+    public int spitter2022MotorId() {
+        return 1;
+    }
+
+    @Override
+    public boolean spitter2022MotorInverted() {
+        return true;
+    }
+
+  @Override
+  public boolean spitter2022UseVelocity() {
+    return false;
+  }
+
+    @Override
+    public boolean spitter2022UsePID() {
+        return false;
+    }
+
+    @Override
+    public FeedforwardConstant spitter2022FF() {
+        return new FeedforwardConstant(0, 0, 0);
+    }
+
+    @Override
+    public FeedbackConstant spitter2022FB() {
+        return new FeedbackConstant(0, 0);
+    }
+
+    @Override
+    public double spitter2022MaxVelocity() {
+        return 0;
+    }
+
+    @Override
+    public double spitter2022ForwardSpeed() {
+        return 0.7;
+    }
+
+    @Override
+    public double spitter2022BackwardSpeed() {
+        return 0.5;
+    }
+    
 }
