@@ -3,16 +3,24 @@ package frc.robot.subsystems;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.NetworkButton;
 import frc.robot.RobotConstants;
+import frc.robot.commands.Climber2022SetLeftSpeed;
+import frc.robot.commands.Climber2022SetRightSpeed;
+import frc.robot.commands.Climber2022StopCMD;
 import frc.robot.logging.RobotLogManager;
 import frc.robot.motors.MotorControllerEncoder;
 import frc.robot.motors.MotorControllerFactory;
 import frc.robot.motors.MotorType;
 
+import frc.robot.tuning.SubsystemTuner;
+import java.util.Map;
 import org.apache.logging.log4j.Logger;
 
-public class Climber2022 extends SubsystemBase {
+public class Climber2022 extends SubsystemTuner {
     // TODO make climber into state space and use real position control, after granite state
     private final MotorControllerEncoder climberMotorLeft = MotorControllerFactory.create(RobotConstants.get().climber2022LeftMotorId(),MotorType.SPARK_MAX_BRUSHLESS);
     private final MotorControllerEncoder climberMotorRight = MotorControllerFactory.create(RobotConstants.get().climber2022RightMotorId(),MotorType.SPARK_MAX_BRUSHLESS);
@@ -150,6 +158,42 @@ public class Climber2022 extends SubsystemBase {
 
         builder.addDoubleProperty("Right Climber Position", climberMotorRight::getPosition,null);
         builder.addDoubleProperty("Right Climber Velocity", climberMotorRight::getVelocity, null);
+    }
+
+    @Override
+    public void initializeTunerNetworkTables(ShuffleboardTab tab) {
+        addEntry("leftSpeed", tab.add("Left Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(3, 1).withProperties(
+            Map.of("min", -1, "max", 1)).getEntry());
+        addEntry("runLeft", tab.add("Run Left", false).withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(3, 2).getEntry());
+
+        addEntry("rightSpeed", tab.add("Right Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(5, 1).withProperties(Map.of("min", -1, "max", 1)).getEntry());
+        addEntry("runRight", tab.add("Run Right", false).withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(5, 2).getEntry());
+    }
+
+    @Override
+    public void initializeTuner() {
+        getEntry("leftSpeed").setDouble(0);
+        getEntry("runLeft").setBoolean(false);
+
+        getEntry("rightSpeed").setDouble(0);
+        getEntry("runRight").setBoolean(false);
+
+        this.setDefaultCommand(new Climber2022StopCMD(this));
+        new NetworkButton(getEntry("runLeft")).whileActiveContinuous(
+            new Climber2022SetLeftSpeed(this,
+                () -> getEntry("leftSpeed").getDouble(0)
+            )
+        ).whenActive(() -> {
+            getEntry("runRight").setBoolean(false);
+        });
+
+        new NetworkButton(getEntry("runRight")).whileActiveContinuous(
+            new Climber2022SetRightSpeed(this,
+                () -> getEntry("rightSpeed").getDouble(0)
+            )
+        ).whenActive(() -> {
+            getEntry("runLeft").setBoolean(false);
+        });
     }
 }
 
