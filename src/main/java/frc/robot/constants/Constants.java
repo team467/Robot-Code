@@ -47,6 +47,19 @@ public interface Constants {
     public double climber2020UpSpeed();
     public double climber2020DownSpeed();
 
+    public boolean hasClimber2022();
+    public int climber2022RightMotorId();
+    public int climber2022LeftMotorId();
+    public boolean climber2022LeftMotorInverted();
+    public boolean climber2022RightMotorInverted();
+    public double climber2022UpSpeed();
+    public double climber2022DownSpeed();
+    public int climber2022SolenoidChannel();
+    public double climber2022LeftLowerLimit();
+    public double climber2022RightLowerLimit();
+    public double climber2022LeftUpperLimit();
+    public double climber2022RightUpperLimit();
+
     public boolean hasShooter2020();
     public MotorType shooter2020MotorType();
     public boolean shooter2020FlywheelDualMotors();
@@ -78,7 +91,7 @@ public interface Constants {
     public double indexer2022InSpeed();
     public double indexer2022OutSpeed();
     public boolean indexer2022MotorInverted();
-    
+
 
     public boolean hasLlamaNeck2022();
     public int llamaNeck2022MotorID();
