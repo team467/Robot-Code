@@ -1,8 +1,15 @@
 package frc.robot.constants;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
-import frc.robot.motors.FeedforwardConstant;
+import frc.robot.motors.GearRatio;
+import frc.robot.motors.RamseteConstant;
+import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
+import frc.robot.utilities.IMUAxis;
+import frc.robot.utilities.IMUType;
 
 public class BlankConstants implements Constants {
 
@@ -30,7 +37,12 @@ public class BlankConstants implements Constants {
         return MotorType.NONE;
     }
 
-    @Override
+  @Override
+  public IdleMode driveIdleMode() {
+    return IdleMode.kCoast;
+  }
+
+  @Override
     public boolean driveUseVelocity() {
         return false;
     }
@@ -41,68 +53,53 @@ public class BlankConstants implements Constants {
     }
 
     @Override
-    public FeedforwardConstant driveForwardRightFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
+    public RamseteConstant driveRamsete() {
+        return new RamseteConstant();
     }
 
     @Override
-    public FeedbackConstant driveForwardRightVelocityFB() {
+    public SimpleFeedforwardConstant driveDriveFF() {
+        return new SimpleFeedforwardConstant(0.0, 0.0, 0.0);
+    }
+
+    @Override
+    public FeedbackConstant driveDriveVelocityPID() {
         return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
-    public FeedbackConstant driveForwardRightPositionFB() {
+    public FeedbackConstant driveDrivePositionPID() {
         return new FeedbackConstant(0.0, 0.0);
     }
 
     @Override
-    public FeedforwardConstant driveForwardLeftFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
+    public SimpleFeedforwardConstant driveTurnFF() {
+        return null;
     }
 
     @Override
-    public FeedbackConstant driveForwardLeftVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
+    public FeedbackConstant driveTurnVelocityPID() {
+        return null;
     }
 
     @Override
-    public FeedbackConstant driveForwardLeftPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
+    public FeedbackConstant driveTurnPositionPID() {
+        return null;
     }
 
     @Override
-    public FeedforwardConstant driveBackwardRightFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardRightVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardRightPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedforwardConstant driveBackwardLeftFF() {
-        return new FeedforwardConstant(0.0, 0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardLeftVelocityFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardLeftPositionFB() {
-        return new FeedbackConstant(0.0, 0.0);
-    }
-
-    @Override
-    public double driveUnitsPerRotation() {
+    public double driveWheelDiameter() {
         return 0.0;
+    }
+
+  @Override
+  public GearRatio driveGearRatio() {
+    return new GearRatio();
+  }
+
+  @Override
+    public DifferentialDriveKinematics driveKinematics() {
+        return new DifferentialDriveKinematics(0);
     }
 
     @Override
@@ -112,6 +109,16 @@ public class BlankConstants implements Constants {
 
     @Override
     public double driveMaxAcceleration() {
+        return 0;
+    }
+
+    @Override
+    public double driveAutoMaxVelocity() {
+        return 0;
+    }
+
+    @Override
+    public double driveAutoMaxAcceleration() {
         return 0;
     }
 
@@ -178,6 +185,21 @@ public class BlankConstants implements Constants {
     @Override
     public boolean driveMotorRightFollowerInverted() {
         return false;
+    }
+
+    @Override
+    public boolean hasGyro() {
+        return false;
+    }
+
+    @Override
+    public IMUType gyroIMUType() {
+        return IMUType.NONE;
+    }
+
+    @Override
+    public IMUAxis gyroYawAxis() {
+        return IMUAxis.NA;
     }
 
     @Override
@@ -482,11 +504,21 @@ public class BlankConstants implements Constants {
     }
 
     @Override
-    public FeedforwardConstant spitter2022FF() {
-        return new FeedforwardConstant(0, 0, 0);
+    public SimpleFeedforwardConstant spitter2022FF() {
+        return new SimpleFeedforwardConstant(0, 0, 0);
     }
 
-    @Override
+  @Override
+  public double spitter2022MomentOfInertia() {
+    return 0;
+  }
+
+  @Override
+  public GearRatio spitter2022GearRatio() {
+    return new GearRatio();
+  }
+
+  @Override
     public FeedbackConstant spitter2022FB() {
         return new FeedbackConstant(0, 0);
     }
@@ -505,5 +537,30 @@ public class BlankConstants implements Constants {
     public double spitter2022BackwardSpeed() {
         return 0;
     }
+
+  @Override
+  public double spitter2022DistanceLinearM() {
+    return 0;
+  }
+
+    @Override
+    public double spitter2022DistanceLinearB() {
+        return 0;
+    }
+
+    @Override
+    public boolean hasHubCameraLED() {
+        return false;
+    }
+
+    @Override
+    public int hubCameraLEDChannel() {
+        return 0;
+    }
+
+  @Override
+  public Translation2d hubCameraOffset() {
+    return new Translation2d();
+  }
 
 }

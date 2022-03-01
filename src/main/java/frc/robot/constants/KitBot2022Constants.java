@@ -1,8 +1,16 @@
 package frc.robot.constants;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.util.Units;
 import frc.robot.motors.FeedbackConstant;
-import frc.robot.motors.FeedforwardConstant;
+import frc.robot.motors.GearRatio;
+import frc.robot.motors.RamseteConstant;
+import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
+import frc.robot.utilities.IMUAxis;
+import frc.robot.utilities.IMUType;
 
 public class KitBot2022Constants implements Constants {
 
@@ -27,6 +35,11 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
+    public IdleMode driveIdleMode() {
+        return IdleMode.kCoast;
+    }
+
+    @Override
     public boolean driveUseVelocity() {
         return true;
     }
@@ -37,79 +50,73 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public FeedforwardConstant driveForwardRightFF() {
-        return new FeedforwardConstant(0.1105, 0.13191, 0.016748);
+    public RamseteConstant driveRamsete() {
+        return new RamseteConstant();
     }
 
     @Override
-    public FeedbackConstant driveForwardRightVelocityFB() {
-        return new FeedbackConstant(0.16178, 0.0);
+    public SimpleFeedforwardConstant driveDriveFF() {
+        return new SimpleFeedforwardConstant(0.17049, 2.8417, 0.3788);
     }
 
     @Override
-    public FeedbackConstant driveForwardRightPositionFB() {
-        return new FeedbackConstant(26.727, 0.85732);
+    public FeedbackConstant driveDriveVelocityPID() {
+        return new FeedbackConstant(3.0553/2, 0.0);
     }
 
     @Override
-    public FeedforwardConstant driveForwardLeftFF() {
-        return new FeedforwardConstant(0.12149, 0.1279, 0.01641);
+    public FeedbackConstant driveDrivePositionPID() {
+        return new FeedbackConstant(93.347/2, 7.2826);
     }
 
     @Override
-    public FeedbackConstant driveForwardLeftVelocityFB() {
-        return new FeedbackConstant(0.16326, 0.0);
+    public SimpleFeedforwardConstant driveTurnFF() {
+        return new SimpleFeedforwardConstant(0, 0, 0);
     }
 
     @Override
-    public FeedbackConstant driveForwardLeftPositionFB() {
-        return new FeedbackConstant(26.488, 0.84657);
+    public FeedbackConstant driveTurnVelocityPID() {
+        return new FeedbackConstant(0, 0);
     }
 
     @Override
-    public FeedforwardConstant driveBackwardRightFF() {
-        return new FeedforwardConstant(0.14347, 0.13096, 0.010268);
+    public FeedbackConstant driveTurnPositionPID() {
+        return new FeedbackConstant(0, 0);
     }
 
     @Override
-    public FeedbackConstant driveBackwardRightVelocityFB() {
-        return new FeedbackConstant(0.14205, 0.0);
+    public double driveWheelDiameter() {
+        return Units.inchesToMeters(6);
     }
 
     @Override
-    public FeedbackConstant driveBackwardRightPositionFB() {
-        return new FeedbackConstant(22.371, 0.593);
+    public GearRatio driveGearRatio() {
+        return new GearRatio(10.71, 1);
     }
 
     @Override
-    public FeedforwardConstant driveBackwardLeftFF() {
-        return new FeedforwardConstant(0.15753, 0.12827, 0.0055311);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardLeftVelocityFB() {
-        return new FeedbackConstant(0.10653, 0.0);
-    }
-
-    @Override
-    public FeedbackConstant driveBackwardLeftPositionFB() {
-        return new FeedbackConstant(17.061, 0.35465);
-    }
-
-    @Override
-    public double driveUnitsPerRotation() {
-        // Already in inches
-        return 1;
+    public DifferentialDriveKinematics driveKinematics() {
+        return new DifferentialDriveKinematics(0.58);
     }
 
     @Override
     public double driveMaxVelocity() {
-        return 80.0;
+        return 3.00;
     }
 
     @Override
     public double driveMaxAcceleration() {
-        return 1600.0;
+        return 3.00;
+    }
+
+    @Override
+    public double driveAutoMaxVelocity() {
+        return 1;
+    }
+
+    @Override
+    public double driveAutoMaxAcceleration() {
+        return 2;
     }
 
     @Override
@@ -178,6 +185,20 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
+    public boolean hasGyro() {
+        return true;
+    }
+
+    @Override
+    public IMUType gyroIMUType() {
+        return IMUType.ADIS16470;
+    }
+
+    @Override
+    public IMUAxis gyroYawAxis() {
+        return IMUAxis.kY;
+    }
+    
     public boolean hasClimber2022() {
         return false;
     }
@@ -478,8 +499,18 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
-    public FeedforwardConstant spitter2022FF() {
-        return new FeedforwardConstant(0, 0, 0);
+    public SimpleFeedforwardConstant spitter2022FF() {
+        return new SimpleFeedforwardConstant(0, 0, 0);
+    }
+
+  @Override
+  public double spitter2022MomentOfInertia() {
+    return 0;
+  }
+
+    @Override
+    public GearRatio spitter2022GearRatio() {
+        return new GearRatio();
     }
 
     @Override
@@ -501,4 +532,29 @@ public class KitBot2022Constants implements Constants {
     public double spitter2022BackwardSpeed() {
         return 0;
     }
+
+  @Override
+  public double spitter2022DistanceLinearM() {
+    return 0;
+  }
+
+    @Override
+    public double spitter2022DistanceLinearB() {
+        return 0;
+    }
+
+    @Override
+    public boolean hasHubCameraLED() {
+        return false;
+    }
+
+    @Override
+    public int hubCameraLEDChannel() {
+        return 0;
+    }
+
+  @Override
+  public Translation2d hubCameraOffset() {
+    return new Translation2d();
+  }
 }
