@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -35,9 +36,30 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.*;
+import frc.robot.commands.ArcadeDriveCMD;
+import frc.robot.commands.Indexer2022StopCMD;
+import frc.robot.commands.Climber2022DisableCMD;
+import frc.robot.commands.Climber2022EnableCMD;
+import frc.robot.commands.Climber2022StopCMD;
+import frc.robot.commands.Climber2022UpCMD;
+import frc.robot.commands.Climber2022DownCMD;
+import frc.robot.commands.ClimberDownCMD;
+import frc.robot.commands.ClimberEnableCMD;
+import frc.robot.commands.ClimberStopCMD;
+import frc.robot.commands.ClimberUpCMD;
+import frc.robot.commands.LlamaNeck2022StopCMD;
+import frc.robot.commands.Shooter2022FlushBallCMD;
+import frc.robot.commands.Shooter2022IdleCMD;
+import frc.robot.commands.Shooter2022SetDefaultCMD;
+import frc.robot.commands.Shooter2022ShootCMD;
+import frc.robot.commands.Shooter2022StopCMD;
+import frc.robot.commands.ShooterRunFlywheelCMD;
+import frc.robot.commands.ShooterStopFlywheelCMD;
+import frc.robot.commands.ShooterTriggerForwardCMD;
+import frc.robot.commands.ShooterTriggerStopCMD;
+import frc.robot.commands.Spitter2022StopCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
-import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.HubCameraLED;
@@ -45,6 +67,8 @@ import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
 import frc.robot.subsystems.Shooter2022;
+import frc.robot.subsystems.Climber2020;
+import frc.robot.subsystems.Climber2022;
 import frc.robot.subsystems.Spitter2022;
 
 /**
@@ -62,13 +86,14 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private Drivetrain drivetrain = null;
   private Gyro gyro = null;
-  private Climber2020 climber = null;
   private Shooter2020 shooter = null;
   private LlamaNeck2022 llamaNeck = null;
   private Indexer2022 indexer = null;
   private Spitter2022 spitter = null;
   private Shooter2022 shooter2022 = null;
   private HubCameraLED hubCameraLED = null;
+  private Climber2020 climber2020 = null;
+  private Climber2022 climber2022 = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -151,9 +176,9 @@ public class RobotContainer {
   private void initializeSubsystems() {
     initGyro();
     initDrivetrain();
-    initClimber2020();
     initShooter2020();
     initIndexer2022();
+    initClimber2022();
     initSpitter2022();
     initLlamaNeck2022();
     initShooter2022();
@@ -170,6 +195,7 @@ public class RobotContainer {
     CommandScheduler.getInstance().clearButtons();
     configureDrivetrain();
     configureClimber2020();
+    configureClimber2022();
     configureShooter2020();
     configureLlamaNeck2022();
     configureIndexer2022();
@@ -210,16 +236,16 @@ public class RobotContainer {
 
   private void initClimber2020() {
     if (RobotConstants.get().hasClimber2020()) {
-      climber = new Climber2020();
+      climber2020 = new Climber2020();
     }
   }
 
   private void configureClimber2020() {
     if (RobotConstants.get().hasClimber2020()) {
-      climber.setDefaultCommand(new ClimberStopCMD(climber));
-      operatorClimberLock.whenPressed(new ClimberEnableCMD(climber));
-      operatorClimberUp.whenHeld(new ClimberUpCMD(climber));
-      operatorClimberDown.whenHeld(new ClimberDownCMD(climber));
+      climber2022.setDefaultCommand(new ClimberStopCMD(climber2020));
+      operatorClimberLock.whenPressed(new ClimberEnableCMD(climber2020));
+      operatorClimberUp.whenHeld(new ClimberUpCMD(climber2020));
+      operatorClimberDown.whenHeld(new ClimberDownCMD(climber2020));
     }
   }
 
@@ -260,6 +286,22 @@ public class RobotContainer {
   private void configureIndexer2022() {
     if (RobotConstants.get().hasIndexer2022()) {
       indexer.setDefaultCommand(new Indexer2022StopCMD(indexer));
+    }
+  }
+
+  private void initClimber2022() {
+    if (RobotConstants.get().hasClimber2022()) {
+      climber2022 = new Climber2022();
+      climber2022.setDefaultCommand(new Climber2022StopCMD(climber2022));
+    }
+  }
+
+  private void configureClimber2022() {
+    if (RobotConstants.get().hasClimber2022()) {
+      operatorClimberLock.whenPressed(new Climber2022EnableCMD(climber2022));
+      operatorClimberLock.whenReleased(new Climber2022DisableCMD(climber2022));
+      operatorClimberUp.whileHeld(new Climber2022UpCMD(climber2022));
+      operatorClimberDown.whileHeld(new Climber2022DownCMD(climber2022, operatorIndexAuto::get));
     }
   }
 

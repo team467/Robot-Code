@@ -198,6 +198,59 @@ public class Robot2019Constants implements Constants {
         return IMUAxis.NA;
     }
 
+    public boolean hasClimber2022() {
+        return false;
+    }
+
+    @Override
+    public int climber2022RightMotorId() {
+        return 0;
+    }
+
+    @Override
+    public int climber2022LeftMotorId() {
+        return 0;
+    }
+
+    @Override
+    public boolean climber2022LeftMotorInverted() {
+        return false;
+    }
+    @Override
+    public boolean climber2022RightMotorInverted() {
+        return false;
+    }
+
+    @Override
+    public double climber2022UpSpeed() {
+        return 0.3;
+    }
+
+    @Override
+    public double climber2022DownSpeed() {
+        return 0.1;
+    }
+
+    @Override
+    public double climber2022LeftLowerLimit() {
+        return 0;
+    }
+
+    @Override
+    public double climber2022RightLowerLimit() {
+        return 0;
+    }
+
+    @Override
+    public double climber2022LeftUpperLimit() {
+        return 0;
+    }
+
+    @Override
+    public double climber2022RightUpperLimit() {
+        return 0;
+    }
+
     @Override
     public boolean hasClimber2020() {
         return false;
@@ -221,6 +274,11 @@ public class Robot2019Constants implements Constants {
     @Override
     public double climber2020DownSpeed() {
         return 0.1;
+    }
+
+    @Override
+    public int climber2022SolenoidChannel() {
+        return 0;
     }
 
     @Override
