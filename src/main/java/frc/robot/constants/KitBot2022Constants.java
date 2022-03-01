@@ -324,6 +324,9 @@ public class KitBot2022Constants implements Constants {
 
     @Override
     public int ledChannel() {
+        return 2;
+    }
+
     public boolean hasIndexer2022() {
         return false;
     }
@@ -345,6 +348,10 @@ public class KitBot2022Constants implements Constants {
 
     @Override 
     public boolean hasLEDClimber2022() {
+        return true;
+    }
+
+    @Override
     public double indexer2022IdleSpeed() {
         return 0;
     }

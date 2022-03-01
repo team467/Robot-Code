@@ -328,6 +328,10 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasLEDTower2022() {
+        return false;
+    }
+
+    @Override
     public boolean hasIndexer2022() {
         return true;
     }

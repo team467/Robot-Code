@@ -15,12 +15,8 @@ import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberUpCMD;
-import frc.robot.commands.LEDTower2022ChaseBallCMD;
-import frc.robot.commands.LEDTower2022ColorCycleCMD;
-import frc.robot.commands.LEDTower2022FoundBallCMD;
-import frc.robot.commands.LEDTower2022OffCMD;
-import frc.robot.commands.LEDTower2022RainbowCMD;
 import frc.robot.commands.Indexer2022StopCMD;
+import frc.robot.commands.LEDClimber2022UpdateCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
 import frc.robot.commands.Shooter2022FlushBallCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
@@ -37,7 +33,6 @@ import frc.robot.controllers.XboxController467;
 import frc.robot.led.LEDManager;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.LEDTower2022;
 import frc.robot.subsystems.LEDClimber2022;
 import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
@@ -59,7 +54,6 @@ public class RobotContainer {
   private Drivetrain drivetrain = null;
   private Climber2020 climber = null;
   private Shooter2020 shooter = null;
-  private LEDTower2022 ledTower2022 = null;
   private LEDClimber2022 ledClimber2022 = null;
   private LlamaNeck2022 llamaNeck = null;
   private Indexer2022 indexer = null;
@@ -136,8 +130,7 @@ public class RobotContainer {
     initDrivetrain();
     initClimber2020();
     initShooter2020();
-    initLEDTower2022();
-    // initLEDClimber2022();
+    initLEDClimber2022();
   }
 
   public void configureButtonBindings() {
@@ -145,8 +138,7 @@ public class RobotContainer {
     configureDrivetrain();
     configureClimber2020();
     configureShooter2020();
-    configureLEDTower2022();
-    //configureLEDClimber2022();
+    configureLEDClimber2022();
     initIndexer2022();
     initSpitter2022();
     initLlamaNeck2022();
@@ -198,27 +190,15 @@ public class RobotContainer {
     }
   }
 
-  private void initLEDTower2022() {
-    if (RobotConstants.get().hasLEDTower2022()) {
-      ledTower2022 = new LEDTower2022();
-    }
-  }
-
-  private void configureLEDTower2022() {
-    if (RobotConstants.get().hasLEDTower2022()) {
-      ledTower2022.setDefaultCommand(new LEDTower2022RainbowCMD(ledTower2022));
-    }
-  }
-
-  private void initLEDCLimber2022() {
+  private void initLEDClimber2022() {
     if (RobotConstants.get().hasLEDClimber2022()) {
       ledClimber2022 = new LEDClimber2022();
     }
   }
 
-  // private void configureLEDClimber2022() {
-  //   if (RobotConstants.get().hasLEDClimber2022()) {
-  //     ledClimber2022.setDefaultCommand(new (ledClimber2022));
+  private void configureLEDClimber2022() {
+    if (RobotConstants.get().hasLEDClimber2022()) {
+      ledClimber2022.setDefaultCommand(new LEDClimber2022UpdateCMD(spitter, llamaNeck, ledClimber2022));
     }
   }
   

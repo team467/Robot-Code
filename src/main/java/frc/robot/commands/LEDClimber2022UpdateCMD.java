@@ -48,61 +48,67 @@ public class LEDClimber2022UpdateCMD extends CommandBase {
     public void execute() { 
        
 // note: look at chasing ball code to see how to tell robot our alliance; use for when seeing blue or red ball
-// might need to make something that says if the lower limit switch isnt "held" then dont condsider it pressed (for when theres one ball which goes over the bottom switch)
+// might need to make something that says if the lower limit switch isn't "held" then dont consider it pressed (for when theres one ball which goes over the bottom switch)
 
-        if (llamaNeck2022.hasUpperBall()) { 
-            //has only one ball
-            setBottomPink();
-        } else {
-            setBottomOff();
-        }
 
-        if (llamaNeck2022.hasLowerBall()) {
-            //has two balls
-            setBottomPink();
-            setTopPink();
-        } else {
-            setTopOff();
-        }
+        setBottomGold();
+        setTopGold();
+
+        // if (llamaNeck2022.hasUpperBall()) { 
+        //     //has only one ball
+        //     setBottomPink();
+        // } else {
+        //     setBottomOff();
+        // }
+
+        // if (llamaNeck2022.hasLowerBall()) {
+        //     //has two balls
+        //     setBottomPink();
+        //     setTopPink();
+        // } else {
+        //     setTopOff();
+        // }
  
-        if (DriverStation.getAlliance() == Alliance.Red && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Red").getEntry("HasBall").getBoolean(false)) {
-           //has no balls but sees a red ball when the alliance is red
-           //has no balls
-            setBottomRed();
-            setTopRed();
-        }
+        // if (DriverStation.getAlliance() == Alliance.Red && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Red").getEntry("HasBall").getBoolean(false)) {
+        //    //has no balls but sees a red ball when the alliance is red
+        //    //has no balls
+        //     setBottomRed();
+        //     setTopRed();
+        // }
 
-        if (llamaNeck2022.hasUpperBall() && DriverStation.getAlliance() == Alliance.Red && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Red").getEntry("HasBall").getBoolean(false)) {
-          //has one ball and alliance is red, sees red ball
-            setBottomPink();
-            setTopRed();
-        }
+        // if (llamaNeck2022.hasUpperBall() && DriverStation.getAlliance() == Alliance.Red && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Red").getEntry("HasBall").getBoolean(false)) {
+        //   //has one ball and alliance is red, sees red ball
+        //     setBottomPink();
+        //     setTopRed();
+        // }
 
-        if (DriverStation.getAlliance() == Alliance.Blue && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Blue").getEntry("HasBall").getBoolean(false)) {
-            //has zero balls and alliance is blue + sees a blue ball
-            //has zero balls
-            //NetworkTableInstance.getDefault().getTable("Vision").getSubTable("Red").getEntry("HasBall").getBoolean(false))
-            setBottomBlue();
-            setTopBlue();
-        }
+        // if (DriverStation.getAlliance() == Alliance.Blue && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Blue").getEntry("HasBall").getBoolean(false)) {
+        //     //has zero balls and alliance is blue + sees a blue ball
+        //     //has zero balls
+        //     //NetworkTableInstance.getDefault().getTable("Vision").getSubTable("Red").getEntry("HasBall").getBoolean(false))
+        //     setBottomBlue();
+        //     setTopBlue();
+        // }
 
-        if (llamaNeck2022.hasUpperBall() && DriverStation.getAlliance() == Alliance.Blue && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Blue").getEntry("HasBall").getBoolean(false)) {
-            //has one ball, alliance is blue, and robot see's a blue ball
-            setBottomPink();
-            setTopBlue();
-        }
+        // if (llamaNeck2022.hasUpperBall() && DriverStation.getAlliance() == Alliance.Blue && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking").getSubTable("Blue").getEntry("HasBall").getBoolean(false)) {
+        //     //has one ball, alliance is blue, and robot see's a blue ball
+        //     setBottomPink();
+        //     setTopBlue();
+        // }
 
-        if (llamaNeck2022.hasUpperBall() && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("HubTarget").getEntry("isValid").getBoolean(false)) {
-            //robot has one ball and sees a target 
-            setBottomPink();
-            setTopGreen(); 
-        }
+        // if (llamaNeck2022.hasUpperBall() && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("HubTarget").getEntry("isValid").getBoolean(false)) {
+        //     //robot has one ball and sees a target 
+        //     setBottomPink();
+        //     setTopGreen(); 
+        // }
 
-        if (llamaNeck2022.hasLowerBall() && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("HubTarget").getEntry("isValid").getBoolean(false)) {
-            //robot already has two balls and sees target
-            setBottomGreen();
-            setTopGreen();
-        }
+        // if (llamaNeck2022.hasLowerBall() && NetworkTableInstance.getDefault().getTable("Vision").getSubTable("HubTarget").getEntry("isValid").getBoolean(false)) {
+        //     //robot already has two balls and sees target
+        //     setBottomGreen();
+        //     setTopGreen();
+        // }
+
+        ///_______
 
         // e
 
@@ -131,11 +137,11 @@ public class LEDClimber2022UpdateCMD extends CommandBase {
             setPurpleMovingUp();
         }
 
-        if (climber2022.getcurrentcmd) {
-            //probably will have to import Climber2022 branch; its not in this branch for some reason???
-            setRainbowMovingUp();
-           // m_led.setData(m_ledBuffer);
-        }
+        // if (climber2022.getcurrentcmd) {
+        //     //probably will have to import Climber2022 branch; its not in this branch for some reason???
+        //     setRainbowMovingUp();
+        //    // m_led.setData(m_ledBuffer);
+        // }
 
         ledClimber.sendData();
     }
@@ -194,6 +200,18 @@ public class LEDClimber2022UpdateCMD extends CommandBase {
     public void setBottomGreen() {
         for (int i = 0; i < RobotConstants.get().ledClimber2022LEDCount()/2; i++) {
             ledClimber.setRGB(i,0,128,0);
+        }
+    }
+
+    public void setTopGold() {
+        for (int i = RobotConstants.get().ledClimber2022LEDCount()/2 +1; i < RobotConstants.get().ledClimber2022LEDCount(); i++) {
+            ledClimber.setRGB(i,255,215,0);
+        }
+    }
+
+    public void setBottomGold() {
+        for (int i = 0; i < RobotConstants.get().ledClimber2022LEDCount()/2; i++) {
+            ledClimber.setRGB(i,255,215,0);
         }
     }
 

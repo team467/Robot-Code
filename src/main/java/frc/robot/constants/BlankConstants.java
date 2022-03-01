@@ -332,6 +332,10 @@ public class BlankConstants implements Constants {
 
     @Override
     public boolean hasLEDTower2022() {
+        return false;
+    }
+
+    @Override
     public boolean hasIndexer2022() {
         return false;
     }
@@ -343,6 +347,10 @@ public class BlankConstants implements Constants {
 
     @Override 
     public boolean hasLEDClimber2022() {
+        return false;
+    }
+
+    @Override
     public int indexer2022MotorID() {
         return 0;
     }
@@ -414,6 +422,10 @@ public class BlankConstants implements Constants {
 
     @Override 
     public int ledClimber2022LEDCount() {
+        return 0;
+    }
+
+    @Override
     public int spitter2022MotorId() {
         return 0;
     }

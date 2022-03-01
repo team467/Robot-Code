@@ -28,6 +28,8 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private CommandScheduler commandScheduler;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -38,6 +40,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     
     m_robotContainer = new RobotContainer();
+    commandScheduler = CommandScheduler.getInstance();
 
     // Mounting USB
     ProcessBuilder builder = new ProcessBuilder();
@@ -62,7 +65,7 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
+    commandScheduler.run();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
