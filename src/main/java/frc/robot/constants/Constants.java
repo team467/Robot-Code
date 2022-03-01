@@ -71,13 +71,9 @@ public interface Constants {
     public int shooter2020RightServoId();
     public double shooter2020RightServoMax();
     public double shooter2020RightServoMin();
-
     public int ledChannel();
-    public boolean hasLEDTower2022();
-    public int ledTower2022LEDCount();
-
-    public boolean hasLEDClimber2022();
-    public int ledClimber2022LEDCount();
+    public boolean hasLed2022();
+    public int led2022LedCount();
     public boolean hasIndexer2022();
     public int indexer2022MotorID();
     public double indexer2022IdleSpeed();

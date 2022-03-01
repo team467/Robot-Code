@@ -322,16 +322,6 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
-    public int ledChannel() {
-        return 0;
-    }
-
-    @Override
-    public boolean hasLEDTower2022() {
-        return false;
-    }
-
-    @Override
     public boolean hasIndexer2022() {
         return true;
     }
@@ -376,19 +366,19 @@ public class BriefcaseConstants implements Constants {
         return false;
     }
 
+    @Override 
+    public boolean hasLed2022() {
+        return true;
+    }
+
     @Override
-    public int ledTower2022LEDCount() {
-        return 0;
+    public int ledChannel() {
+        return 2;
     }
 
     @Override 
-    public boolean hasLEDClimber2022() {
-        return false;
-    }
-
-    @Override 
-    public int ledClimber2022LEDCount() {
-        return 0;
+    public int led2022LedCount() {
+        return 10;
     }
 
     public double llamaNeck2022IdleSpeed() {

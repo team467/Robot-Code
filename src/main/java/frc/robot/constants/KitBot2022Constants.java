@@ -336,18 +336,8 @@ public class KitBot2022Constants implements Constants {
         return 0;
     }
 
-    @Override
-    public boolean hasLEDTower2022() {
-        return true;
-    }
-
-    @Override
-    public int ledTower2022LEDCount() {
-        return 4;
-    }
-
     @Override 
-    public boolean hasLEDClimber2022() {
+    public boolean hasLed2022() {
         return true;
     }
 
@@ -417,7 +407,7 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override 
-    public int ledClimber2022LEDCount() {
+    public int led2022LedCount() {
         return 0;
     }
 

@@ -8,14 +8,14 @@ import frc.robot.RobotConstants;
 import frc.robot.led.DoubleLEDStrip;
 import frc.robot.led.LEDManager;
 
-public class LEDClimber2022 extends SubsystemBase{
+public class Led2022 extends SubsystemBase{
     public DoubleLEDStrip ledStrip;
 
 
-    public LEDClimber2022() {
+    public Led2022() {
         super();
 
-        ledStrip = LEDManager.getInstance().createDoubleStrip(RobotConstants.get().ledTower2022LEDCount());
+        ledStrip = LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2022LedCount());
 
         for (int i = 0; i < ledStrip.getLength(); i++) {
             ledStrip.setRGB(i, 0, 0, 0);
