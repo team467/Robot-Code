@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotConstants;
-import frc.robot.subsystems.Climber2020;
+import frc.robot.subsystems.Climber2022;
 import frc.robot.subsystems.Led2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Spitter2022;
@@ -28,7 +28,7 @@ public class Led2022UpdateCMD extends CommandBase {
     private Led2022 ledClimber;
     private LlamaNeck2022 llamaNeck = null;
     private Spitter2022 spitter = null;
-    private Climber2020 climber = null;
+    private Climber2022 climber = null;
     
     private Color teamColor = Color.kBlue;
     private int color = 0;
@@ -39,7 +39,7 @@ public class Led2022UpdateCMD extends CommandBase {
         Led2022 ledClimber,
         Spitter2022 spitter, 
         LlamaNeck2022 llamaNeck, 
-        Climber2020 climber) {
+        Climber2022 climber) {
         this.ledClimber = ledClimber;
         this.spitter = spitter;
         this.llamaNeck = llamaNeck;
