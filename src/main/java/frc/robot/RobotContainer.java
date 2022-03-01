@@ -189,7 +189,7 @@ public class RobotContainer {
     configureIndexer2022();
     configureSpitter2022();
     configureShooter2022();
-    configureShooter2022();
+    
     if (shooter2022 != null) {
       driverButtonX.whenPressed(getAutonomousCommand());
     }
@@ -331,11 +331,11 @@ public class RobotContainer {
   }
 
   public void clearDefaultCommands() {
-    drivetrain.setDefaultCommand(new BlankDefaultCMD(drivetrain));
-        shooter2022.setDefaultCommand(new BlankDefaultCMD(shooter2022));
-        spitter.setDefaultCommand(new BlankDefaultCMD(spitter));
-        llamaNeck.setDefaultCommand(new BlankDefaultCMD(llamaNeck));
-        indexer.setDefaultCommand(new BlankDefaultCMD(indexer));
+    if (drivetrain != null) drivetrain.setDefaultCommand(new BlankDefaultCMD(drivetrain));
+    if (shooter2022 != null) shooter2022.setDefaultCommand(new BlankDefaultCMD(shooter2022));
+    if (spitter != null) spitter.setDefaultCommand(new BlankDefaultCMD(spitter));
+    if (llamaNeck!= null) llamaNeck.setDefaultCommand(new BlankDefaultCMD(llamaNeck));
+    if (indexer != null) indexer.setDefaultCommand(new BlankDefaultCMD(indexer));
   }
 
   /**
