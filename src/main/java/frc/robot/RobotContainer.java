@@ -234,7 +234,6 @@ public class RobotContainer {
 
   private void configureDrivetrain() {
     if (RobotConstants.get().hasDrivetrain()) {
-      drivetrain.setDefaultCommand(new DrivetrainNoneCMD(drivetrain));
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
               driverJoystick::getAdjustedDriveSpeed,
               driverJoystick::getAdjustedTurnSpeed));
