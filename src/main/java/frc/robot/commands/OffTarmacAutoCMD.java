@@ -1,17 +1,17 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.interfaces.Gyro;
+import frc.robot.subsystems.Gyro;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drivetrain;
 
+
 /** Autonomous Move backwards off the tarmac until bumpers clear the area (2 points). */
 public class OffTarmacAutoCMD extends SequentialCommandGroup {
-  int TARMAC_DISTANCE = 0;
-
+  
   public OffTarmacAutoCMD(Drivetrain drivetrain, Gyro gyro) {
 
     addCommands(
-      //new DriveDistanceCMD(drivetrain, gyro, TARMAC_DISTANCE));
-      new ArcadeDriveCMD (drivetrain, () -> 0.2, () -> 3.0));
+      new GoToDistanceAngleCMD(drivetrain, gyro, 2.15, 0.0, true)
+    );
   }
 }

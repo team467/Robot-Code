@@ -28,7 +28,7 @@ public class TunerManager {
         return tunerChooser.getSelected();
     }
 
-    public static TunerManager getTunerManager() {
+    public static synchronized TunerManager getTunerManager() {
         if (instance == null) {
             instance = new TunerManager();
         }

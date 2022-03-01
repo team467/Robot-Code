@@ -4,54 +4,45 @@
 
 package frc.robot;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.ClimberDownCMD;
+import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberUpCMD;
+import frc.robot.commands.DrivetrainNoneCMD;
+import frc.robot.commands.GoToDistanceAngleCMD;
+import frc.robot.commands.GoToTargetCMD;
+import frc.robot.commands.GoToTrajectoryCMD;
+import frc.robot.commands.HubCameraLEDEnable;
 import frc.robot.commands.Indexer2022StopCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
 import frc.robot.commands.Shooter2022FlushBallCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
+import frc.robot.commands.Shooter2022IdleTargetCMD;
 import frc.robot.commands.Shooter2022SetDefaultCMD;
-import frc.robot.commands.Shooter2022ShootCMD;
+import frc.robot.commands.Shooter2022ShootSpeedCMD;
+import frc.robot.commands.Shooter2022ShootTargetCMD;
 import frc.robot.commands.Shooter2022StopCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
 import frc.robot.commands.Spitter2022StopCMD;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.*;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.subsystems.Climber2020;
@@ -63,6 +54,11 @@ import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
 import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -338,25 +334,39 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     if (shooter != null) {
-      return new RunCommand(() -> {
-        drivetrain.setDefaultCommand(new DrivetrainNoneCMD(drivetrain));
-      }, drivetrain).andThen(new SequentialCommandGroup(
-          new ParallelRaceGroup(new Shooter2022IdleTargetCMD(shooter2022),
-          // new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022),
+      return new RunCommand(
+              () -> {
+                drivetrain.setDefaultCommand(new DrivetrainNoneCMD(drivetrain));
+              },
+              drivetrain)
+          .andThen(
               new SequentialCommandGroup(
-                  new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-                      new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)//,
-                  // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-                  //     new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true)
-                      )
-                  ),
-          // new Shooter2022ShootTargetCMD(shooter2022));
-          new Shooter2022ShootSpeedCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(Units.feetToMeters(9))))).andThen(() -> {
-
-      drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
-              driverJoystick::getAdjustedDriveSpeed,
-              driverJoystick::getAdjustedTurnSpeed));
-          });
+                  new ParallelRaceGroup(
+                      new Shooter2022IdleTargetCMD(shooter2022),
+                      // new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022),
+                      new SequentialCommandGroup(
+                          new GoToTrajectoryCMD(
+                              drivetrain,
+                              gyro,
+                              new Pose2d(0, 0, new Rotation2d()),
+                              List.of(),
+                              new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)),
+                              false) // ,
+                          // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new
+                          // Rotation2d()), List.of(),
+                          //     new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true)
+                          )),
+                  // new Shooter2022ShootTargetCMD(shooter2022));
+                  new Shooter2022ShootSpeedCMD(
+                      shooter2022, () -> Spitter2022.getFlywheelVelocity(Units.feetToMeters(9)))))
+          .andThen(
+              () -> {
+                drivetrain.setDefaultCommand(
+                    new ArcadeDriveCMD(
+                        drivetrain,
+                        driverJoystick::getAdjustedDriveSpeed,
+                        driverJoystick::getAdjustedTurnSpeed));
+              });
     }
     return new GoToDistanceAngleCMD(drivetrain, gyro, 1, 0, false);
     // return new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022), new
