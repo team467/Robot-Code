@@ -21,7 +21,6 @@ public class LEDClimber2022UpdateCMD extends CommandBase {
     private int color = 0;
     private Timer timer = new Timer();
 
-
     public LEDClimber2022UpdateCMD(Spitter2022 spitter2022, LlamaNeck2022 llamaNeck2022, LEDClimber2022 ledClimber) {
         this.ledClimber = ledClimber;
         this.spitter2022 = spitter2022;
@@ -42,12 +41,17 @@ public class LEDClimber2022UpdateCMD extends CommandBase {
 
         timer.reset();
 
+        setBottomOff();
+        setTopOff();
+
     }
 
     @Override
     public void execute() { 
        
-// note: look at chasing ball code to see how to tell robot our alliance; use for when seeing blue or red ball
+        setBottomOff();
+        setTopOff();
+        
 // might need to make something that says if the lower limit switch isnt "held" then dont condsider it pressed (for when theres one ball which goes over the bottom switch)
 
         if (llamaNeck2022.hasUpperBall()) { 
@@ -132,9 +136,9 @@ public class LEDClimber2022UpdateCMD extends CommandBase {
         }
 
         if (climber2022.getcurrentcmd) {
-            //probably will have to import Climber2022 branch; its not in this branch for some reason???
+            //waiting for Climber2022 subsystem to be fixed; its not in this branch
             setRainbowMovingUp();
-           // m_led.setData(m_ledBuffer);
+
         }
 
         ledClimber.sendData();
