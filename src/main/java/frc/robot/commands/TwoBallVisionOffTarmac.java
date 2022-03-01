@@ -11,6 +11,7 @@ import frc.robot.subsystems.Drivetrain;
  * 1. The robot shoots the pre-loaded ball.
  * 2. It drives to get the second ball.
  * 3. It then drives up and shoots it.
+ * 4. Then drives off the tarmac.
  */
 
 public class TwoBallVisionOffTarmac extends SequentialCommandGroup{
