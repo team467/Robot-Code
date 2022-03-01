@@ -322,11 +322,22 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override
+    public int ledChannel() {
+        return 0;
+    }
+
+    @Override
+    public boolean hasLEDTower2022() {
     public boolean hasIndexer2022() {
         return false;
     }
 
     @Override
+    public int ledTower2022LEDCount() {
+        return 0;
+    }
+    @Override 
+    public boolean hasLEDClimber2022() {
     public int indexer2022MotorID() {
         return 0;
     }
@@ -397,6 +408,7 @@ public class Robot2019Constants implements Constants {
     }
 
     @Override 
+    public int ledClimber2022LEDCount() {
     public int spitter2022MotorId() {
         return 0;
     }

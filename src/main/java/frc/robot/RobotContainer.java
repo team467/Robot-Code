@@ -15,6 +15,11 @@ import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberUpCMD;
+import frc.robot.commands.LEDTower2022ChaseBallCMD;
+import frc.robot.commands.LEDTower2022ColorCycleCMD;
+import frc.robot.commands.LEDTower2022FoundBallCMD;
+import frc.robot.commands.LEDTower2022OffCMD;
+import frc.robot.commands.LEDTower2022RainbowCMD;
 import frc.robot.commands.Indexer2022StopCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
 import frc.robot.commands.Shooter2022FlushBallCMD;
@@ -29,8 +34,11 @@ import frc.robot.commands.ShooterTriggerStopCMD;
 import frc.robot.commands.Spitter2022StopCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
+import frc.robot.led.LEDManager;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.LEDTower2022;
+import frc.robot.subsystems.LEDClimber2022;
 import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
@@ -38,9 +46,12 @@ import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -48,6 +59,8 @@ public class RobotContainer {
   private Drivetrain drivetrain = null;
   private Climber2020 climber = null;
   private Shooter2020 shooter = null;
+  private LEDTower2022 ledTower2022 = null;
+  private LEDClimber2022 ledClimber2022 = null;
   private LlamaNeck2022 llamaNeck = null;
   private Indexer2022 indexer = null;
   private Spitter2022 spitter = null;
@@ -60,40 +73,62 @@ public class RobotContainer {
   private final JoystickButton driverButtonB = new JoystickButton(driverJoystick, XboxController467.Buttons.B.value);
   private final JoystickButton driverButtonX = new JoystickButton(driverJoystick, XboxController467.Buttons.X.value);
   private final JoystickButton driverButtonY = new JoystickButton(driverJoystick, XboxController467.Buttons.Y.value);
-  private final JoystickButton driverButtonBack = new JoystickButton(driverJoystick, XboxController467.Buttons.Back.value);
-  private final JoystickButton driverButtonStart = new JoystickButton(driverJoystick, XboxController467.Buttons.Start.value);
+  private final JoystickButton driverButtonBack = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.Back.value);
+  private final JoystickButton driverButtonStart = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.Start.value);
   private final JoystickButton driverPovUp = new JoystickButton(driverJoystick, XboxController467.Buttons.POVup.value);
-  private final JoystickButton driverPovDown = new JoystickButton(driverJoystick, XboxController467.Buttons.POVdown.value);
-  private final JoystickButton driverPovLeft = new JoystickButton(driverJoystick, XboxController467.Buttons.POVleft.value);
-  private final JoystickButton driverPovRight = new JoystickButton(driverJoystick, XboxController467.Buttons.POVright.value);
-  private final JoystickButton driverLeftBumper = new JoystickButton(driverJoystick, XboxController467.Buttons.BumperLeft.value);
-  private final JoystickButton driverRightBumper = new JoystickButton(driverJoystick, XboxController467.Buttons.BumperRight.value);
+  private final JoystickButton driverPovDown = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.POVdown.value);
+  private final JoystickButton driverPovLeft = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.POVleft.value);
+  private final JoystickButton driverPovRight = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.POVright.value);
+  private final JoystickButton driverLeftBumper = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.BumperLeft.value);
+  private final JoystickButton driverRightBumper = new JoystickButton(driverJoystick,
+      XboxController467.Buttons.BumperRight.value);
 
   // Custom controller for operator
   private final GenericHID operatorJoystick = new Joystick(1);
-  private final JoystickButton operatorInakeArm = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ARM.value);
-  private final JoystickButton operatorIntakeRollerForward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ROLLER_FORWARD.value);
-  private final JoystickButton operatorIntakeRollerBackward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INTAKE_ROLLER_BACKWARD.value);
-  private final JoystickButton operatorIndexAuto = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INDEX_AUTO.value);
-  private final JoystickButton operatorIndexRollerForward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INDEX_ROLLER_FORWARD.value);
-  private final JoystickButton operatorIndexRollerBackward = new JoystickButton(operatorJoystick, CustomController2020.Buttons.INDEX_ROLLER_BACKWARD.value);
-  private final JoystickButton operatorShooterAuto = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_AUTO.value);
-  private final JoystickButton operatorShooterFlywheel = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_FLYWHEEL.value);
-  private final JoystickButton operatorShooterShoot = new JoystickButton(operatorJoystick, CustomController2020.Buttons.SHOOTER_SHOOT.value);
-  private final JoystickButton operatorClimberLock = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_LOCK_SWITCH.value);
-  private final JoystickButton operatorClimberUp = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_UP_BUTTON.value);
-  private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick, CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
+  private final JoystickButton operatorInakeArm = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INTAKE_ARM.value);
+  private final JoystickButton operatorIntakeRollerForward = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INTAKE_ROLLER_FORWARD.value);
+  private final JoystickButton operatorIntakeRollerBackward = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INTAKE_ROLLER_BACKWARD.value);
+  private final JoystickButton operatorIndexAuto = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INDEX_AUTO.value);
+  private final JoystickButton operatorIndexRollerForward = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INDEX_ROLLER_FORWARD.value);
+  private final JoystickButton operatorIndexRollerBackward = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.INDEX_ROLLER_BACKWARD.value);
+  private final JoystickButton operatorShooterAuto = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.SHOOTER_AUTO.value);
+  private final JoystickButton operatorShooterFlywheel = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.SHOOTER_FLYWHEEL.value);
+  private final JoystickButton operatorShooterShoot = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.SHOOTER_SHOOT.value);
+  private final JoystickButton operatorClimberLock = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.CLIMBER_LOCK_SWITCH.value);
+  private final JoystickButton operatorClimberUp = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.CLIMBER_UP_BUTTON.value);
+  private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick,
+      CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
 
   public RobotContainer() {
     initializeSubsystems();
+    LEDManager.getInstance().init();
     // Configure the button bindings
     configureButtonBindings();
   }
 
   /**
-   * Use this method to define your button to command mappings. Buttons can be created by
+   * Use this method to define your button to command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
 
@@ -101,10 +136,8 @@ public class RobotContainer {
     initDrivetrain();
     initClimber2020();
     initShooter2020();
-    initIndexer2022();
-    initSpitter2022();
-    initLlamaNeck2022();
-    initShooter2022();
+    initLEDTower2022();
+    // initLEDClimber2022();
   }
 
   public void configureButtonBindings() {
@@ -112,6 +145,12 @@ public class RobotContainer {
     configureDrivetrain();
     configureClimber2020();
     configureShooter2020();
+    configureLEDTower2022();
+    //configureLEDClimber2022();
+    initIndexer2022();
+    initSpitter2022();
+    initLlamaNeck2022();
+    initShooter2022();
   }
 
   private void initDrivetrain() {
@@ -159,6 +198,30 @@ public class RobotContainer {
     }
   }
 
+  private void initLEDTower2022() {
+    if (RobotConstants.get().hasLEDTower2022()) {
+      ledTower2022 = new LEDTower2022();
+    }
+  }
+
+  private void configureLEDTower2022() {
+    if (RobotConstants.get().hasLEDTower2022()) {
+      ledTower2022.setDefaultCommand(new LEDTower2022RainbowCMD(ledTower2022));
+    }
+  }
+
+  private void initLEDCLimber2022() {
+    if (RobotConstants.get().hasLEDClimber2022()) {
+      ledClimber2022 = new LEDClimber2022();
+    }
+  }
+
+  // private void configureLEDClimber2022() {
+  //   if (RobotConstants.get().hasLEDClimber2022()) {
+  //     ledClimber2022.setDefaultCommand(new (ledClimber2022));
+    }
+  }
+  
   private void initLlamaNeck2022() {
     if (RobotConstants.get().hasLlamaNeck2022()) {
       llamaNeck = new LlamaNeck2022();
