@@ -32,6 +32,9 @@ import frc.robot.commands.GoToTrajectoryCMD;
 import frc.robot.commands.HubCameraLEDEnable;
 import frc.robot.commands.Indexer2022StopCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
+import frc.robot.commands.OffTarmacAutoCMD;
+import frc.robot.commands.OneBallAutoNoVisionOffTarmacCMD;
+import frc.robot.commands.OneBallAutoNoVisionOnTarmacCMD;
 import frc.robot.commands.Shooter2022FlushBallCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
 import frc.robot.commands.Shooter2022IdleTargetCMD;
@@ -344,22 +347,22 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    if (shooter2022 != null) {
-      return new SequentialCommandGroup(
-          new ParallelRaceGroup(
-            new Shooter2022IdleTargetCMD(shooter2022),
-          // new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022),
-            new SequentialCommandGroup(
-                  new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-                      new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)//,
-                  // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-                  //     new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true)
-                      )
-                  ),
-          new Shooter2022ShootTargetCMD(shooter2022, Units.feetToMeters(9))).andThen(this::configureButtonBindings);
-          // new Shooter2022ShootSpeedCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(Units.feetToMeters(9)))).andThen(() -> configureButtonBindings(););
-    }
-    return new GoToDistanceAngleCMD(drivetrain, gyro, 1, 0, false);
+//    if (shooter2022 != null) {
+//      return new SequentialCommandGroup(
+//          new ParallelRaceGroup(
+//            new Shooter2022IdleTargetCMD(shooter2022),
+//          // new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022),
+//            new SequentialCommandGroup(
+//                  new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
+//                      new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)//,
+//                  // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
+//                  //     new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true)
+//                      )
+//                  ),
+//          new Shooter2022ShootTargetCMD(shooter2022, Units.feetToMeters(9))).andThen(this::configureButtonBindings);
+//          // new Shooter2022ShootSpeedCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(Units.feetToMeters(9)))).andThen(() -> configureButtonBindings(););
+//    }
+    return new OneBallAutoNoVisionOnTarmacCMD(shooter2022).andThen(() -> configureButtonBindings());
     // return new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022), new
     // SequentialCommandGroup(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0,
     // 0, new Rotation2d()), List.of(), new Pose2d(2, 0, Rotation2d.fromDegrees(0)),
