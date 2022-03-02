@@ -164,7 +164,7 @@ public class RobotContainer {
                   ),
           new Shooter2022ShootTargetCMD(shooter2022, Units.feetToMeters(9))));
 
-    Shuffleboard.getTab("Auto").add("Autonomous Selector", autoModes);
+    Shuffleboard.getTab("Auto").add("Autonomous Selector", autoModes).withPosition(3, 2).withSize(4, 1);
 
     // Configure the button bindings
     configureButtonBindings();
