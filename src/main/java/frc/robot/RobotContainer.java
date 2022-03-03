@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ArcadeDriveCMD;
@@ -157,21 +158,8 @@ public class RobotContainer {
     getTrajectories();
 
     initializeSubsystems();
-    LEDManager.getInstance().init();
 
-    autoModes.addOption("Off tarmac", new OffTarmacAutoCMD(drivetrain, gyro));
-
-    autoModes.addOption("One ball on tarmac", new OneBallAutoNoVisionOnTarmacCMD(shooter2022));
-    autoModes.addOption("One ball off tarmac", new OneBallAutoNoVisionOffTarmacCMD(shooter2022, drivetrain, gyro));
-
-    autoModes.addOption("Two ball auto", new SequentialCommandGroup(
-        new ParallelRaceGroup(
-            new Shooter2022IdleTargetCMD(shooter2022),
-            new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-                new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)),
-        new Shooter2022ShootTargetCMD(shooter2022, Units.feetToMeters(9))));
-
-    Shuffleboard.getTab("Auto").add("Autonomous Selector", autoModes).withPosition(3, 2).withSize(4, 1);
+    initializeAutoCommands();
 
     // Configure the button bindings
     configureButtonBindings();
@@ -191,6 +179,32 @@ public class RobotContainer {
         }
       }
     }
+  }
+
+  public void initializeAutoCommands() {
+    autoModes.setDefaultOption("Do nothing", new RunCommand(() -> {
+    }));
+
+    if (drivetrain != null && gyro != null) {
+      autoModes.addOption("Off tarmac", new OffTarmacAutoCMD(drivetrain, gyro));
+    }
+
+    if (shooter2022 != null) {
+      autoModes.addOption("One ball on tarmac", new OneBallAutoNoVisionOnTarmacCMD(shooter2022));
+    }
+
+    if (drivetrain != null && gyro != null && shooter2022 != null) {
+      autoModes.addOption("One ball off tarmac", new OneBallAutoNoVisionOffTarmacCMD(shooter2022, drivetrain, gyro));
+
+      autoModes.addOption("Two ball auto", new SequentialCommandGroup(
+          new ParallelRaceGroup(
+              new Shooter2022IdleTargetCMD(shooter2022),
+              new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
+                  new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)),
+          new Shooter2022ShootTargetCMD(shooter2022, Units.feetToMeters(9))));
+    }
+
+    Shuffleboard.getTab("Auto").add("Autonomous Selector", autoModes).withPosition(3, 2).withSize(4, 1);
   }
 
   /**
