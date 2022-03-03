@@ -4,32 +4,20 @@
 
 package frc.robot;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -48,10 +36,15 @@ import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberUpCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
+import frc.robot.commands.OffTarmacAutoCMD;
+import frc.robot.commands.OneBallAutoNoVisionOffTarmacCMD;
+import frc.robot.commands.OneBallAutoNoVisionOnTarmacCMD;
 import frc.robot.commands.Shooter2022FlushBallCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
+import frc.robot.commands.Shooter2022IdleTargetCMD;
 import frc.robot.commands.Shooter2022SetDefaultCMD;
-import frc.robot.commands.Shooter2022ShootCMD;
+import frc.robot.commands.Shooter2022ShootSpeedCMD;
+import frc.robot.commands.Shooter2022ShootTargetCMD;
 import frc.robot.commands.Shooter2022StopCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
@@ -70,6 +63,13 @@ import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Climber2022;
 import frc.robot.subsystems.Spitter2022;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -82,6 +82,7 @@ import frc.robot.subsystems.Spitter2022;
  */
 public class RobotContainer {
   HashMap<String, Trajectory> trajectories = new HashMap<>();
+  private SendableChooser<Command> autoModes = new SendableChooser<>();
 
   // The robot's subsystems and commands are defined here...
   private Drivetrain drivetrain = null;
@@ -149,19 +150,53 @@ public class RobotContainer {
     getTrajectories();
 
     initializeSubsystems();
+
+    initializeAutoCommands();
+
     // Configure the button bindings
     configureButtonBindings();
   }
 
   public void getTrajectories() {
-    for (File file : Objects.requireNonNull(Filesystem.getDeployDirectory().toPath().resolve("paths")
-            .resolve(RobotConstants.get().name().toLowerCase().replace(" ", "")).resolve("output").toFile().listFiles())) {
-      try {
-        trajectories.put(file.getName().replace(".wpilib.json", ""), TrajectoryUtil.fromPathweaverJson(file.toPath()));
-      } catch (IOException e) {
-        e.printStackTrace();
+    File path = Paths.get(Filesystem.getDeployDirectory().toString(), "paths",
+        RobotConstants.get().name().toLowerCase().replace(" ", ""), "output").toFile();
+
+    if (path.exists()) {
+      for (File file : path.listFiles()) {
+        try {
+          trajectories.put(file.getName().replace(".wpilib.json", ""),
+              TrajectoryUtil.fromPathweaverJson(file.toPath()));
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
       }
     }
+  }
+
+  public void initializeAutoCommands() {
+    autoModes.setDefaultOption("Do nothing", new RunCommand(() -> {
+    }));
+
+    if (drivetrain != null && gyro != null) {
+      autoModes.addOption("Off tarmac", new OffTarmacAutoCMD(drivetrain, gyro));
+    }
+
+    if (shooter2022 != null) {
+      autoModes.addOption("One ball on tarmac", new OneBallAutoNoVisionOnTarmacCMD(shooter2022));
+    }
+
+    if (drivetrain != null && gyro != null && shooter2022 != null) {
+      autoModes.addOption("One ball off tarmac", new OneBallAutoNoVisionOffTarmacCMD(shooter2022, drivetrain, gyro));
+
+      autoModes.addOption("Two ball auto", new SequentialCommandGroup(
+          new ParallelRaceGroup(
+              new Shooter2022IdleTargetCMD(shooter2022),
+              new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
+                  new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)),
+          new Shooter2022ShootTargetCMD(shooter2022, Units.feetToMeters(9))));
+    }
+
+    Shuffleboard.getTab("Auto").add("Autonomous Selector", autoModes).withPosition(3, 2).withSize(4, 1);
   }
 
   /**
@@ -172,7 +207,7 @@ public class RobotContainer {
    * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  
+
   private void initializeSubsystems() {
     initGyro();
     initDrivetrain();
@@ -201,7 +236,7 @@ public class RobotContainer {
     configureIndexer2022();
     configureSpitter2022();
     configureShooter2022();
-    
+
     if (shooter2022 != null) {
       driverButtonX.whenPressed(getAutonomousCommand());
     }
@@ -215,10 +250,9 @@ public class RobotContainer {
 
   private void configureDrivetrain() {
     if (RobotConstants.get().hasDrivetrain()) {
-      drivetrain.setDefaultCommand(new DrivetrainNoneCMD(drivetrain));
       drivetrain.setDefaultCommand(new ArcadeDriveCMD(drivetrain,
-              driverJoystick::getAdjustedDriveSpeed,
-              driverJoystick::getAdjustedTurnSpeed));
+          driverJoystick::getAdjustedDriveSpeed,
+          driverJoystick::getAdjustedTurnSpeed));
       // operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
       // driverButtonX.whileHeld(new GoToBallCMD(drivetrain, gyro));
       driverButtonY.whileHeld(new GoToTargetCMD(drivetrain, gyro));
@@ -227,10 +261,12 @@ public class RobotContainer {
       // trajectories.get("Reverse")));
       // driverButtonA.whileHeld(new GoToDistanceAngleCMD(drivetrain, gyro, 2.0, 0.0,
       // true));
-      // driverButtonA.whenPressed(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-      //     new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true));
-      // driverButtonB.whenPressed(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-      //     new Pose2d(2, 0, Rotation2d.fromDegrees(0)), false));
+      // driverButtonA.whenPressed(new GoToTrajectoryCMD(drivetrain, gyro, new
+      // Pose2d(0, 0, new Rotation2d()), List.of(),
+      // new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true));
+      // driverButtonB.whenPressed(new GoToTrajectoryCMD(drivetrain, gyro, new
+      // Pose2d(0, 0, new Rotation2d()), List.of(),
+      // new Pose2d(2, 0, Rotation2d.fromDegrees(0)), false));
     }
   }
 
@@ -322,7 +358,7 @@ public class RobotContainer {
         && RobotConstants.get().hasIndexer2022()
         && RobotConstants.get().hasSpitter2022()) {
       shooter2022 = new Shooter2022(indexer, llamaNeck, spitter);
-        }
+    }
   }
 
   private void configureShooter2022() {
@@ -359,11 +395,16 @@ public class RobotContainer {
   }
 
   public void clearDefaultCommands() {
-    if (drivetrain != null) drivetrain.setDefaultCommand(new BlankDefaultCMD(drivetrain));
-    if (shooter2022 != null) shooter2022.setDefaultCommand(new BlankDefaultCMD(shooter2022));
-    if (spitter != null) spitter.setDefaultCommand(new BlankDefaultCMD(spitter));
-    if (llamaNeck!= null) llamaNeck.setDefaultCommand(new BlankDefaultCMD(llamaNeck));
-    if (indexer != null) indexer.setDefaultCommand(new BlankDefaultCMD(indexer));
+    if (drivetrain != null)
+      drivetrain.setDefaultCommand(new BlankDefaultCMD(drivetrain));
+    if (shooter2022 != null)
+      shooter2022.setDefaultCommand(new BlankDefaultCMD(shooter2022));
+    if (spitter != null)
+      spitter.setDefaultCommand(new BlankDefaultCMD(spitter));
+    if (llamaNeck != null)
+      llamaNeck.setDefaultCommand(new BlankDefaultCMD(llamaNeck));
+    if (indexer != null)
+      indexer.setDefaultCommand(new BlankDefaultCMD(indexer));
   }
 
   /**
@@ -372,22 +413,29 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    if (shooter2022 != null) {
-      return new SequentialCommandGroup(
-          new ParallelRaceGroup(
-            new Shooter2022IdleTargetCMD(shooter2022),
-          // new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022),
-            new SequentialCommandGroup(
-                  new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-                      new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)//,
-                  // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
-                  //     new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true)
-                      )
-                  ),
-          new Shooter2022ShootTargetCMD(shooter2022, Units.feetToMeters(9))).andThen(this::configureButtonBindings);
-          // new Shooter2022ShootSpeedCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(Units.feetToMeters(9)))).andThen(() -> configureButtonBindings(););
-    }
-    return new GoToDistanceAngleCMD(drivetrain, gyro, 1, 0, false);
+    return autoModes.getSelected();
+    // if (shooter2022 != null) {
+    // return new SequentialCommandGroup(
+    // new ParallelRaceGroup(
+    // new Shooter2022IdleTargetCMD(shooter2022),
+    // // new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022),
+    // new SequentialCommandGroup(
+    // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()),
+    // List.of(),
+    // new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)//,
+    // // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new
+    // Rotation2d()), List.of(),
+    // // new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true)
+    // )
+    // ),
+    // new Shooter2022ShootTargetCMD(shooter2022,
+    // Units.feetToMeters(9))).andThen(this::configureButtonBindings);
+    // // new Shooter2022ShootSpeedCMD(shooter2022, () ->
+    // Spitter2022.getFlywheelVelocity(Units.feetToMeters(9)))).andThen(() ->
+    // configureButtonBindings(););
+    // }
+    // return new OneBallAutoNoVisionOnTarmacCMD(shooter2022).andThen(() ->
+    // configureButtonBindings());
     // return new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022), new
     // SequentialCommandGroup(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0,
     // 0, new Rotation2d()), List.of(), new Pose2d(2, 0, Rotation2d.fromDegrees(0)),
