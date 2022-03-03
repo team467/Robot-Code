@@ -15,6 +15,8 @@ import frc.robot.subsystems.Led2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Spitter2022;
 
+import frc.robot.vision.BallTracking;
+import frc.robot.vision.HubTarget;
 import java.util.Map;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -23,14 +25,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Led2022UpdateCMD extends CommandBase {
     private final double TIMER_SPEED = 0.35;
-
-    private NetworkTableEntry hasBallEntry;
-    private NetworkTableEntry ballAngleEntry;
-    private NetworkTableEntry ballDistanceEntry;
-
-    private NetworkTableEntry seesTargetEntry;
-    private NetworkTableEntry targetAngleEntry;
-    private NetworkTableEntry targetDistanceEntry;
 
     private Led2022 ledStrip;
     private LlamaNeck2022 llamaNeck = null;
@@ -73,22 +67,6 @@ public class Led2022UpdateCMD extends CommandBase {
     @Override
     public void initialize() {
 
-        NetworkTable visionTable = NetworkTableInstance.getDefault().getTable("Vision");
-        seesTargetEntry = visionTable.getSubTable("HubTarget").getEntry("isValid");
-        targetAngleEntry = visionTable.getSubTable("HubTarget").getEntry("angle");
-        targetDistanceEntry = visionTable.getSubTable("HubTarget").getEntry("distance");
-
-        ballAngleEntry = visionTable.getSubTable("BallTracking").getEntry("Angle");
-        ballDistanceEntry = visionTable.getSubTable("BallTracking").getEntry("Distance");
-
-        if (DriverStation.getAlliance() == Alliance.Red) {
-            teamColor = Color.kRed;
-            hasBallEntry = visionTable.getSubTable("BallTracking").getSubTable("Red").getEntry("hasBall");
-        } else {
-            teamColor = Color.kBlue;
-            hasBallEntry = visionTable.getSubTable("BallTracking").getSubTable("Blue").getEntry("hasBall");
-        }
-
         // ShuffleboardTab tab = Shuffleboard.getTab("Operator");
         // SuppliedValueWidget<Boolean> rightUpper = tab.addBoolean("Right Status",() -> { return true; })
         //     .withWidget(BuiltInWidgets.kBooleanBox);
@@ -102,19 +80,19 @@ public class Led2022UpdateCMD extends CommandBase {
     @Override
     public void execute() { 
        
-        boolean seesBall = hasBallEntry.getBoolean(false);
-        double ballDistance = ballDistanceEntry.getDouble(0.0);
-        double ballAngle = ballAngleEntry.getDouble(0.0);
+        boolean seesBall = BallTracking.hasBall();
+        double ballDistance = BallTracking.getDistance();
+        double ballAngle = BallTracking.getAngle();
 
-        boolean seesTarget = seesTargetEntry.getBoolean(false);
-        double targetDistance = targetDistanceEntry.getDouble(0.0);
-        double targetAngle = targetAngleEntry.getDouble(0.0);
+        boolean seesTarget = HubTarget.hasTarget();
+        double targetDistance = HubTarget.getDistance();
+        double targetAngle = HubTarget.getAngle();
 
         if (climber != null && climber.isEnabled()) {
             setRainbowMovingUp();
-        } else if (spitter != null && spitter.isAtShootingSpeed()) {
-            //spitter.getCurrentCommand() instanceof Spitter2022ForwardCMD
-            setPurpleMovingUp();
+//        } else if (spitter != null && spitter.isAtShootingSpeed()) {
+//            //spitter.getCurrentCommand() instanceof Spitter2022ForwardCMD
+//            setPurpleMovingUp();
         } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
             if (seesTarget && targetDistance < 3.0 &&  Math.abs(targetAngle) < 4.0) {
                 set(Color.kGreen);
@@ -134,7 +112,8 @@ public class Led2022UpdateCMD extends CommandBase {
             if (seesBall && ballDistance < 3.0 && Math.abs(ballAngle) < 10.0) {
                 set(teamColor);
             } else {
-                set(Color.kGold);
+                setTop(Color.kGold);
+                setBottom(Color.kBlue);
             }
         }
 
