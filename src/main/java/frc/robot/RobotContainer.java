@@ -159,6 +159,8 @@ public class RobotContainer {
 
     initializeSubsystems();
 
+    LEDManager.getInstance().init();
+
     initializeAutoCommands();
 
     // Configure the button bindings
