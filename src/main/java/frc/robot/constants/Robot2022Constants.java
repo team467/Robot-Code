@@ -536,12 +536,12 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public boolean hasLed2022() {
-        return false;
+        return true;
     }
 
     @Override
     public int ledChannel() {
-        return 2;
+        return 0;
     }
 
     @Override
