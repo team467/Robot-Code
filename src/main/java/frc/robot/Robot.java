@@ -88,7 +88,7 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+      m_autonomousCommand.andThen(m_robotContainer::configureButtonBindings).schedule();
     }
   }
 
@@ -105,6 +105,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    CommandScheduler.getInstance().cancelAll();
+    m_robotContainer.configureButtonBindings();
   }
 
   /** This function is called periodically during operator control. */
