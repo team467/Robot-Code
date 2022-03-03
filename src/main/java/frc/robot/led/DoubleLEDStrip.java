@@ -17,6 +17,7 @@ public class DoubleLEDStrip extends LEDStrip {
 
     @Override
     public int getSize() {
+        System.out.println(getLength()/2);
         return getLength() / 2;
     }
 
@@ -25,7 +26,7 @@ public class DoubleLEDStrip extends LEDStrip {
     }
 
     public void setRightLED(int index, Color color) {
-        super.setLED(secondInverted ? (super.getLength() - 1) - index : getLength() + index, color);
+        super.setLED(secondInverted ? (super.getLength() - 1) - index : getSize() + index - 1, color);
     }
 
     @Override
@@ -39,7 +40,7 @@ public class DoubleLEDStrip extends LEDStrip {
     }
 
     public void setRightLED(int index, Color8Bit color) {
-        super.setLED(secondInverted ? (super.getLength() - 1) - index : getLength() + index, color);
+        super.setLED(secondInverted ? (super.getLength() - 1) - index : getSize() + index - 1, color);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class DoubleLEDStrip extends LEDStrip {
     }
 
     public void setRightRGB(int index, int r, int g, int b) {
-        super.setRGB(secondInverted ? (super.getLength() - 1) - index : getLength() + index, r, g, b);
+        super.setRGB(secondInverted ? (super.getLength() - 1) - index : getSize() + index - 1, r, g, b);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class DoubleLEDStrip extends LEDStrip {
     }
 
     public void setRightHSV(int index, int h, int s, int v) {
-        super.setHSV(secondInverted ? (super.getLength() - 1) - index : getLength() + index, h, s, v);
+        super.setHSV(secondInverted ? (super.getLength() - 1) - index : getSize() + index - 1, h, s, v);
     }
 
     @Override
@@ -81,7 +82,7 @@ public class DoubleLEDStrip extends LEDStrip {
     }
 
     public void setRightHSB(int index, float h, float s, float b) {
-        super.setHSB(secondInverted ? (super.getLength() - 1) - index : getLength() + index, h, s, b);
+        super.setHSB(secondInverted ? (super.getLength() - 1) - index : getSize() + index - 1, h, s, b);
     }
 
     @Override
