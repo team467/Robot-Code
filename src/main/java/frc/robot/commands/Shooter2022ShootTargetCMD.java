@@ -16,7 +16,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
   private static final Logger LOGGER =
       RobotLogManager.getMainLogger(Shooter2022ShootTargetCMD.class.getName());
 
-  private final double TIME_UNTIL_FINISHED = 0.7;
+  private final double TIME_UNTIL_FINISHED = 1.5;
 
   private final LlamaNeck2022 llamaNeck;
   private final Indexer2022 indexer;
