@@ -110,7 +110,7 @@ public class Climber2022 extends SubsystemTuner {
 
   public void downFullLeft() {
     if (enabled) {
-      if (climberMotorLeft.getPosition() > 2) {
+      if (climberMotorLeft.getPosition() > -2) {
         climberMotorLeft.set(-RobotConstants.get().climber2022DownSpeed());
       } else {
         stopLeft();
@@ -120,7 +120,7 @@ public class Climber2022 extends SubsystemTuner {
 
   public void downFullRight() {
     if (enabled) {
-      if (climberMotorRight.getPosition() > 2) {
+      if (climberMotorRight.getPosition() > -2) {
         climberMotorRight.set(-RobotConstants.get().climber2022DownSpeed());
       } else {
         stopRight();
