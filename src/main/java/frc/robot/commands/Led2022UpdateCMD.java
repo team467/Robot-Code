@@ -95,16 +95,17 @@ public class Led2022UpdateCMD extends CommandBase {
 //            setPurpleMovingUp();
         } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
             if (seesTarget && targetDistance < 3.0 &&  Math.abs(targetAngle) < 4.0) {
-                set(Color.kGreen);
+                setTopGold();
+                setBottomGold();
             } else {
-                set(Color.kPink);
+                set(Color.kWhite);
             }
         } else if (llamaNeck != null && llamaNeck.hasUpperBall()) {
             setBottom(Color.kPink);
             if (seesBall && ballDistance < 3.0 && Math.abs(ballAngle) < 10.0) {
                 setTop(teamColor);
             } else if (seesTarget && targetDistance < 3.0 &&  Math.abs(targetAngle) < 4.0) {
-                setTop(Color.kGreen);
+                setTopGold();
             } else {
                 setTop(Color.kBlack);
             }
@@ -112,7 +113,7 @@ public class Led2022UpdateCMD extends CommandBase {
             if (seesBall && ballDistance < 3.0 && Math.abs(ballAngle) < 10.0) {
                 set(teamColor);
             } else {
-                setTop(Color.kGold);
+                setTop(Color.kWhite); //?
                 setBottom(Color.kBlue);
             }
         }
@@ -174,18 +175,29 @@ public class Led2022UpdateCMD extends CommandBase {
         }
     }
 
-
-    public void setTopPink() {
+    public void setTopWhite() {
         for (int i = RobotConstants.get().led2022LedCount()/2 +1; i < RobotConstants.get().led2022LedCount(); i++) {
-            ledStrip.setRGB(i,255,192,203);
+            ledStrip.setRGB(i,255,255,255);
         }
     }
 
-    public void setBottomPink() {
+    public void setBottomWhite() {
         for (int i = 0; i < RobotConstants.get().led2022LedCount()/2; i++) {
-            ledStrip.setRGB(i,255,192,203);
+            ledStrip.setRGB(i,255,255,255);
         }
     }
+
+    // public void setTopPink() {
+    //     for (int i = RobotConstants.get().led2022LedCount()/2 +1; i < RobotConstants.get().led2022LedCount(); i++) {
+    //         ledStrip.setRGB(i,255,192,203);
+    //     }
+    // }
+
+    // public void setBottomPink() {
+    //     for (int i = 0; i < RobotConstants.get().led2022LedCount()/2; i++) {
+    //         ledStrip.setRGB(i,255,192,203);
+    //     }
+    // }
 
     public void setTopRed() {
         for (int i = RobotConstants.get().led2022LedCount()/2 +1; i < RobotConstants.get().led2022LedCount(); i++) {
@@ -225,13 +237,13 @@ public class Led2022UpdateCMD extends CommandBase {
 
     public void setTopGold() {
         for (int i = RobotConstants.get().led2022LedCount()/2 +1; i < RobotConstants.get().led2022LedCount(); i++) {
-            ledStrip.setRGB(i,255,215,0);
+            ledStrip.setRGB(i,255,194,10);
         }
     }
 
     public void setBottomGold() {
         for (int i = 0; i < RobotConstants.get().led2022LedCount()/2; i++) {
-            ledStrip.setRGB(i,255,215,0);
+            ledStrip.setRGB(i,255,194,10);
         }
     }
 
