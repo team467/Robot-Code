@@ -31,13 +31,16 @@ public class Led2022UpdateCMD extends CommandBase {
     private COLORS_467 seeTargetColor = COLORS_467.Gold;
     private COLORS_467 seeBallColor = COLORS_467.Blue;
 
+    /*
+     * Color blind preferred pallet includes White, Black, Red, Blue, Gold
+     */
     public enum COLORS_467 {
         White(0xFF, 0xFF, 0xFF),
         Red(0xFF, 0x00, 0x00),
         Green(0x00, 0x80, 0x00),
         Blue(0x00, 0x00, 0xCC),
         Gold(0xFF, 0xC2, 0x0A),
-        Pink(0xFF,192,203),
+        Pink(0xDC, 0x26, 0x7F),
         Black(0x00, 0x00, 0x00);
 
         public final int red;
