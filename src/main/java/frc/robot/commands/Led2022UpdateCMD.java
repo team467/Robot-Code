@@ -134,7 +134,7 @@ public class Led2022UpdateCMD extends CommandBase {
             if (seesBall && ballDistance < 3.0 && Math.abs(ballAngle) < 10.0) {
                 set(teamColor);
             } else {
-                set(Color.kGold);
+                set(Color.kPink);
             }
         }
 
