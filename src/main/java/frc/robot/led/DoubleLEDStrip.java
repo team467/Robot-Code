@@ -17,7 +17,6 @@ public class DoubleLEDStrip extends LEDStrip {
 
     @Override
     public int getSize() {
-        System.out.println(getLength()/2);
         return getLength() / 2;
     }
 
