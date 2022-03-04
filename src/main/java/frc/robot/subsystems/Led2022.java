@@ -17,7 +17,7 @@ public class Led2022 extends SubsystemBase{
 
         ledStrip = LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2022LedCount());
 
-        for (int i = 0; i < ledStrip.getLength(); i++) {
+        for (int i = 0; i < ledStrip.getSize(); i++) {
             ledStrip.setRGB(i, 0, 0, 0);
         }
     }
