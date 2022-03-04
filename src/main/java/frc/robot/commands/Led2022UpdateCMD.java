@@ -103,8 +103,8 @@ public class Led2022UpdateCMD extends CommandBase {
     public void execute() { 
 
         if (DriverStation.isAutonomous() || DriverStation.isTeleop()) {
-            idleColorTop = COLORS_467.Blue;
-            idleColorBottom = COLORS_467.Gold;
+            idleColorTop = COLORS_467.Black;
+            idleColorBottom = COLORS_467.Black;
         } else {
             idleColorTop = COLORS_467.Blue;
             idleColorBottom = COLORS_467.Gold;
