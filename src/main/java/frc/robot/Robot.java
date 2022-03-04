@@ -72,10 +72,13 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_robotContainer.configureButtonBindings();
+    m_robotContainer.getDisabledCommand().getDefaultCommand().initialize();
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.getDisabledCommand().getDefaultCommand().execute();
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override

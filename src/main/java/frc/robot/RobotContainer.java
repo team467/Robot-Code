@@ -159,6 +159,8 @@ public class RobotContainer {
 
     initializeSubsystems();
 
+    LEDManager.getInstance().init();
+
     initializeAutoCommands();
 
     // Configure the button bindings
@@ -179,6 +181,10 @@ public class RobotContainer {
         }
       }
     }
+  }
+
+  public Led2022 getDisabledCommand() {
+    return led2022;
   }
 
   public void initializeAutoCommands() {
@@ -315,7 +321,7 @@ public class RobotContainer {
       led2022 = new Led2022();
       if (RobotConstants.get().hasSpitter2022() 
         && RobotConstants.get().hasLlamaNeck2022()
-        && RobotConstants.get().hasClimber2020()) {
+        && RobotConstants.get().hasClimber2022()) {
           led2022.setDefaultCommand(new Led2022UpdateCMD(led2022, spitter, llamaNeck, climber2022));
         } else {
           led2022.setDefaultCommand(new Led2022UpdateCMD(led2022));
