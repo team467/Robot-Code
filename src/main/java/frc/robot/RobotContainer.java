@@ -14,15 +14,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.autonomous.AutonomousSelector;
+import frc.robot.autonomous.modes.DoNothingAutoMode;
 import frc.robot.commands.*;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.Indexer2022StopCMD;
@@ -43,7 +41,6 @@ import frc.robot.commands.Shooter2022FlushBallCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
 import frc.robot.commands.Shooter2022IdleTargetCMD;
 import frc.robot.commands.Shooter2022SetDefaultCMD;
-import frc.robot.commands.Shooter2022ShootSpeedCMD;
 import frc.robot.commands.Shooter2022ShootTargetCMD;
 import frc.robot.commands.Shooter2022StopCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
@@ -65,11 +62,9 @@ import frc.robot.subsystems.Climber2022;
 import frc.robot.subsystems.Spitter2022;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -82,7 +77,7 @@ import java.util.Objects;
  */
 public class RobotContainer {
   HashMap<String, Trajectory> trajectories = new HashMap<>();
-  private SendableChooser<Command> autoModes = new SendableChooser<>();
+  private final AutonomousSelector autoModes = new AutonomousSelector();
 
   // The robot's subsystems and commands are defined here...
   private Drivetrain drivetrain = null;
@@ -174,8 +169,7 @@ public class RobotContainer {
   }
 
   public void initializeAutoCommands() {
-    autoModes.setDefaultOption("Do nothing", new RunCommand(() -> {
-    }));
+    autoModes.setDefaultOption(new DoNothingAutoMode());
 
     if (drivetrain != null && gyro != null) {
       autoModes.addOption("Off tarmac", new OffTarmacAutoCMD(drivetrain, gyro));
@@ -413,34 +407,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoModes.getSelected();
-    // if (shooter2022 != null) {
-    // return new SequentialCommandGroup(
-    // new ParallelRaceGroup(
-    // new Shooter2022IdleTargetCMD(shooter2022),
-    // // new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022),
-    // new SequentialCommandGroup(
-    // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()),
-    // List.of(),
-    // new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)//,
-    // // new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new
-    // Rotation2d()), List.of(),
-    // // new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), true)
-    // )
-    // ),
-    // new Shooter2022ShootTargetCMD(shooter2022,
-    // Units.feetToMeters(9))).andThen(this::configureButtonBindings);
-    // // new Shooter2022ShootSpeedCMD(shooter2022, () ->
-    // Spitter2022.getFlywheelVelocity(Units.feetToMeters(9)))).andThen(() ->
-    // configureButtonBindings(););
-    // }
-    // return new OneBallAutoNoVisionOnTarmacCMD(shooter2022).andThen(() ->
-    // configureButtonBindings());
-    // return new ParallelRaceGroup(new Shooter2022IdleCMD(shooter2022), new
-    // SequentialCommandGroup(new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0,
-    // 0, new Rotation2d()), List.of(), new Pose2d(2, 0, Rotation2d.fromDegrees(0)),
-    // false), new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new
-    // Rotation2d()), List.of(), new Pose2d(-2, 0, Rotation2d.fromDegrees(0)),
-    // true)));
+    return autoModes.getSelected().getCommand();
   }
 }

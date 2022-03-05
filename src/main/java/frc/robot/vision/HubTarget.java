@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotConstants;
 
 public class HubTarget {
-    private static final Translation2d hubTranslation = new Translation2d(Units.inchesToMeters(324), Units.inchesToMeters(162));
-    private static final double hubOffset = Units.inchesToMeters(26.6875);
+    public static final Translation2d hubTranslation = new Translation2d(Units.inchesToMeters(324), Units.inchesToMeters(162));
+    public static final double hubOffset = Units.inchesToMeters(26.6875);
 
     private static final NetworkTable table = NetworkTableInstance.getDefault().getTable("Vision").getSubTable("HubTarget");
     /**

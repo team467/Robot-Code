@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import frc.robot.utilities.TrajectoryGenerator467;
 import java.util.List;
 
 import edu.wpi.first.math.controller.RamseteController;
@@ -25,53 +26,7 @@ public class GoToTrajectoryCMD extends CommandBase {
     private final Trajectory trajectory;
 
     public GoToTrajectoryCMD(Drivetrain drivetrain, Gyro gyro, Pose2d initalPose, List<Translation2d> interiorWaypoints, Pose2d endingPose, boolean reversed) {
-        this.drivetrain = drivetrain;
-        this.gyro = gyro;
-        this.diffDriveOdometry = new DifferentialDriveOdometry(gyro.getRotation2d());
-
-        DifferentialDriveVoltageConstraint autDriveVoltageConstraint = new DifferentialDriveVoltageConstraint(
-                RobotConstants.get().driveDriveFF().getFeedforward(),
-                RobotConstants.get().driveKinematics(),
-                10);
-
-        // Add kinematics to ensure max speed is actually obeyed
-        // Apply the voltage constraint
-        TrajectoryConfig config = new TrajectoryConfig(
-                RobotConstants.get().driveAutoMaxVelocity(),
-                RobotConstants.get().driveAutoMaxAcceleration())
-                // Add kinematics to ensure max speed is actually obeyed
-                .setKinematics(RobotConstants.get().driveKinematics())
-                // Apply the voltage constraint
-                .addConstraint(autDriveVoltageConstraint)
-                .setReversed(reversed);
-
-
-        // Start at the origin facing the +X direction
-        // Pass through these two interior waypoints, making an 's' curve path
-        // End 3 meters straight ahead of where we started, facing forward
-        // Pass config
-        this.trajectory = TrajectoryGenerator.generateTrajectory(
-            initalPose,
-            interiorWaypoints,
-            endingPose,
-                config
-        );
-
-        this.command = new RamseteCommand(
-                trajectory,
-                diffDriveOdometry::getPoseMeters,
-                new RamseteController(),
-                RobotConstants.get().driveDriveFF().getFeedforward(),
-                RobotConstants.get().driveKinematics(),
-                drivetrain::getWheelSpeeds,
-                RobotConstants.get().driveDriveVelocityPID().getPIDController(),
-                RobotConstants.get().driveDriveVelocityPID().getPIDController(),
-                // RamseteCommand passes volts to the callback
-                drivetrain::tankDriveVolts,
-                drivetrain
-        );
-
-        addRequirements(gyro);
+        this(drivetrain, gyro, TrajectoryGenerator467.generateTrajectory(initalPose, interiorWaypoints, endingPose, reversed));
     }
 
     public GoToTrajectoryCMD(Drivetrain drivetrain, Gyro gyro, Trajectory trajectory) {
@@ -99,7 +54,6 @@ public class GoToTrajectoryCMD extends CommandBase {
 
     @Override
     public void initialize() {
-        // TODO check without gyro reset
         drivetrain.resetPositions();
         diffDriveOdometry.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
 
