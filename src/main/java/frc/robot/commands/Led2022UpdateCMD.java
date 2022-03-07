@@ -1,8 +1,19 @@
 package frc.robot.commands;
 
+import java.util.Map;
+
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotConstants;
@@ -25,11 +36,26 @@ public class Led2022UpdateCMD extends CommandBase {
     int color = 0;
     private Timer timer = new Timer();
 
+    public static final double TARGET_MAX_RANGE = 3.0;
+    public static final double TARGET_MAX_ANGLE = 4.0;
+    public static final double BALL_MAX_RANGE = 3.0;
+    public static final double BALL_MAX_ANGLE = 10.0;
+
     private COLORS_467 idleColorTop = COLORS_467.Blue;
     private COLORS_467 idleColorBottom = COLORS_467.Gold;
     private COLORS_467 hasBallColor = COLORS_467.White;
     private COLORS_467 seeTargetColor = COLORS_467.Gold;
     private COLORS_467 seeBallColor = COLORS_467.Blue;
+
+    private NetworkTableEntry topFarLeft;
+    private NetworkTableEntry topNearLeft;
+    private NetworkTableEntry topFarRight;
+    private NetworkTableEntry topNearRight;
+
+    private NetworkTableEntry bottomFarLeft;
+    private NetworkTableEntry bottomNearLeft;
+    private NetworkTableEntry bottomFarRight;
+    private NetworkTableEntry bottomNearRight;
 
     /*
      * Color blind preferred pallet includes White, Black, Red, Blue, Gold
@@ -92,11 +118,42 @@ public class Led2022UpdateCMD extends CommandBase {
             seeBallColor = COLORS_467.Blue;
         }
 
-        // ShuffleboardTab tab = Shuffleboard.getTab("Operator");
-        // SuppliedValueWidget<Boolean> rightUpper = tab.addBoolean("Right Status",() -> { return true; })
-        //     .withWidget(BuiltInWidgets.kBooleanBox);
-        // rightUpper.withProperties(Map.of("colorWhenTrue", Color.kGold));
+        ShuffleboardTab tab = Shuffleboard.getTab("Operator");
+        Shuffleboard.selectTab("Operator");
+        ShuffleboardLayout layout = tab.getLayout("Indicators").withPosition(0, 4).withSize(5, 2)
+            .withProperties(Map.of("Label position", "HIDDEN"));
+        
+        topFarLeft = layout.add("TopFarLeft", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(0, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("colorWhenFalse", 0x000000))
+            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .getEntry();
 
+        topNearLeft = layout.add("TopNearLeft", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(1, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("colorWhenFalse", 0x000000))
+            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .getEntry();
+
+        topNearRight = layout.add("TopNearRight", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(3, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("colorWhenFalse", 0x000000))
+            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .getEntry();
+
+        topFarRight = layout.add("TopFarRight", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(4, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("colorWhenFalse", 0x000000))
+            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .getEntry();
 
         timer.reset();
 
@@ -121,13 +178,37 @@ public class Led2022UpdateCMD extends CommandBase {
         double targetDistance = HubTarget.getDistance();
         double targetAngle = HubTarget.getAngle();
 
+        if (seesTarget && targetDistance < TARGET_MAX_RANGE) {
+            if  (Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
+                topFarLeft.setBoolean(false);
+                topNearLeft.setBoolean(true);
+                topNearRight.setBoolean(true);
+                topFarRight.setBoolean(false);
+            } else if (targetAngle < 0) {
+                topFarLeft.setBoolean(true);
+                topNearLeft.setBoolean(true);
+                topNearRight.setBoolean(false);
+                topFarRight.setBoolean(false);    
+            } else {
+                topFarLeft.setBoolean(false);
+                topNearLeft.setBoolean(false);
+                topNearRight.setBoolean(true);
+                topFarRight.setBoolean(true);
+            }
+        } else {
+            topFarLeft.setBoolean(false);
+            topNearLeft.setBoolean(false);
+            topNearRight.setBoolean(false);
+            topFarRight.setBoolean(false);
+        }
+
         if (climber != null && climber.isEnabled()) {
             setRainbowMovingUp();
 //        } else if (spitter != null && spitter.isAtShootingSpeed()) {
 //            //spitter.getCurrentCommand() instanceof Spitter2022ForwardCMD
 //            setPurpleMovingUp();
         } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
-            if (seesTarget && targetDistance < 3.0 &&  Math.abs(targetAngle) < 4.0) {
+            if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
                 setTop(seeTargetColor);
                 setBottom(seeTargetColor);
             } else {
@@ -135,15 +216,15 @@ public class Led2022UpdateCMD extends CommandBase {
             }
         } else if (llamaNeck != null && llamaNeck.hasUpperBall()) {
             setBottom(hasBallColor);
-            if (seesBall && ballDistance < 3.0 && Math.abs(ballAngle) < 10.0) {
+            if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
                 set(seeBallColor);
-            } else if (seesTarget && targetDistance < 3.0 &&  Math.abs(targetAngle) < 4.0) {
+            } else if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
                 setTop(seeTargetColor);
             } else {
                 setTop(COLORS_467.Black); // Off
             }
         } else {
-            if (seesBall && ballDistance < 3.0 && Math.abs(ballAngle) < 10.0) {
+            if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
                 set(seeBallColor);
             } else {
                 setTop(idleColorTop);
