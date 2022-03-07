@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.tuning.TunerManager;
 
 import java.io.IOException;
 
@@ -66,7 +67,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_robotContainer.configureButtonBindings();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -75,10 +78,14 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    CommandScheduler.getInstance().clearButtons();
+    m_robotContainer.clearDefaultCommands();
+    // CommandScheduler.getInstance().cancelAll();
+    // CommandScheduler.getInstance().enable();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+      m_autonomousCommand.andThen(m_robotContainer::configureButtonBindings).schedule();
     }
   }
 
@@ -95,6 +102,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    CommandScheduler.getInstance().cancelAll();
+    m_robotContainer.configureButtonBindings();
   }
 
   /** This function is called periodically during operator control. */
@@ -104,7 +114,12 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
+    CommandScheduler.getInstance().clearButtons();
     CommandScheduler.getInstance().cancelAll();
+
+    // You need to enable the command scheduler in test mode
+    CommandScheduler.getInstance().enable();
+    TunerManager.getTunerManager().getTunerChoice().initializeTuner();
   }
 
   /** This function is called periodically during test mode. */

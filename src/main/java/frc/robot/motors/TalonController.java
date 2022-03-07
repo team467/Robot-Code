@@ -48,7 +48,13 @@ public class TalonController implements MotorControllerEncoder {
 
     @Override
     public double getVelocity() {
-        return talon.getSelectedSensorVelocity() * unitsPerRotation;
+        // The TalonSRX returns velocity in RPM. We want to work in revs per second instead.
+        return (talon.getSelectedSensorVelocity()/60) * unitsPerRotation;
+    }
+
+    @Override
+    public void resetPosition() {
+        talon.setSelectedSensorPosition(0);
     }
 
     @Override

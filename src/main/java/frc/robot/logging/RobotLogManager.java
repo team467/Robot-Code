@@ -101,8 +101,8 @@ public class RobotLogManager {
           init(path);
           break;
         }
-        System.out.println("No valid path found.");
       }
+      System.out.println("No valid path found.");
     }
     return initialized;
   }
