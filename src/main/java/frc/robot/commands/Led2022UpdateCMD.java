@@ -86,13 +86,11 @@ public class Led2022UpdateCMD extends CommandBase {
         Spitter2022 spitter, 
         LlamaNeck2022 llamaNeck, 
         Climber2022 climber) {
-        this.ledStrip = ledStrip;
+
+        this(ledStrip);
         this.spitter = spitter;
         this.llamaNeck = llamaNeck;
 
-        timer.start();
-
-        addRequirements(ledStrip);
         addRequirements(spitter);
         addRequirements(llamaNeck);
         addRequirements(climber);
@@ -107,10 +105,7 @@ public class Led2022UpdateCMD extends CommandBase {
         this.ledStrip = ledStrip;
         addRequirements(ledStrip);
 
-    }
-
-    @Override
-    public void initialize() {
+        timer.start();
 
         if (DriverStation.getAlliance() == Alliance.Red) {
             seeBallColor = COLORS_467.Red;
@@ -120,40 +115,48 @@ public class Led2022UpdateCMD extends CommandBase {
 
         ShuffleboardTab tab = Shuffleboard.getTab("Operator");
         Shuffleboard.selectTab("Operator");
-        ShuffleboardLayout layout = tab.getLayout("Indicators").withPosition(0, 4).withSize(5, 2)
+        ShuffleboardLayout layout = tab.getLayout("Grid Layout", "Indicators");
+            layout.withPosition(0, 4).withSize(5, 2)
             .withProperties(Map.of("Label position", "HIDDEN"));
         
         topFarLeft = layout.add("TopFarLeft", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(0, 0)
             .withSize(1,1)
-            .withProperties(Map.of("colorWhenFalse", 0x000000))
-            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .withProperties(Map.of("colorWhenFalse", 0x00000000))
+            .withProperties(Map.of("colorWhenTrue", 0xFFC20A00))
             .getEntry();
 
         topNearLeft = layout.add("TopNearLeft", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(1, 0)
             .withSize(1,1)
-            .withProperties(Map.of("colorWhenFalse", 0x000000))
-            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .withProperties(Map.of("colorWhenFalse", 0x00000000))
+            .withProperties(Map.of("colorWhenTrue", 0xFFC20A00))
             .getEntry();
 
         topNearRight = layout.add("TopNearRight", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(3, 0)
             .withSize(1,1)
-            .withProperties(Map.of("colorWhenFalse", 0x000000))
-            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .withProperties(Map.of("colorWhenFalse", 0x00000000))
+            .withProperties(Map.of("colorWhenTrue", 0xFFC20A00))
             .getEntry();
 
         topFarRight = layout.add("TopFarRight", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(4, 0)
             .withSize(1,1)
-            .withProperties(Map.of("colorWhenFalse", 0x000000))
-            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .withProperties(Map.of("colorWhenFalse", 0x00000000))
+            .withProperties(Map.of("colorWhenTrue", 0xFFC20A00))
             .getEntry();
+
+
+
+    }
+
+    @Override
+    public void initialize() {
 
         timer.reset();
 
@@ -162,77 +165,77 @@ public class Led2022UpdateCMD extends CommandBase {
     @Override
     public void execute() { 
 
-        if (DriverStation.isAutonomous() || DriverStation.isTeleop()) {
-            idleColorTop = COLORS_467.Black;
-            idleColorBottom = COLORS_467.Black;
-        } else {
-            idleColorTop = COLORS_467.Blue;
-            idleColorBottom = COLORS_467.Gold;
-        }
+        // if (DriverStation.isAutonomous() || DriverStation.isTeleop()) {
+        //     idleColorTop = COLORS_467.Black;
+        //     idleColorBottom = COLORS_467.Black;
+        // } else {
+        //     idleColorTop = COLORS_467.Blue;
+        //     idleColorBottom = COLORS_467.Gold;
+        // }
 
-        boolean seesBall = BallTracking.hasBall();
-        double ballDistance = BallTracking.getDistance();
-        double ballAngle = BallTracking.getAngle();
+        // boolean seesBall = BallTracking.hasBall();
+        // double ballDistance = BallTracking.getDistance();
+        // double ballAngle = BallTracking.getAngle();
 
-        boolean seesTarget = HubTarget.hasTarget();
-        double targetDistance = HubTarget.getDistance();
-        double targetAngle = HubTarget.getAngle();
+        // boolean seesTarget = HubTarget.hasTarget();
+        // double targetDistance = HubTarget.getDistance();
+        // double targetAngle = HubTarget.getAngle();
 
-        if (seesTarget && targetDistance < TARGET_MAX_RANGE) {
-            if  (Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
-                topFarLeft.setBoolean(false);
-                topNearLeft.setBoolean(true);
-                topNearRight.setBoolean(true);
-                topFarRight.setBoolean(false);
-            } else if (targetAngle < 0) {
-                topFarLeft.setBoolean(true);
-                topNearLeft.setBoolean(true);
-                topNearRight.setBoolean(false);
-                topFarRight.setBoolean(false);    
-            } else {
-                topFarLeft.setBoolean(false);
-                topNearLeft.setBoolean(false);
-                topNearRight.setBoolean(true);
-                topFarRight.setBoolean(true);
-            }
-        } else {
-            topFarLeft.setBoolean(false);
-            topNearLeft.setBoolean(false);
-            topNearRight.setBoolean(false);
-            topFarRight.setBoolean(false);
-        }
+        // if (seesTarget && targetDistance < TARGET_MAX_RANGE) {
+        //     if  (Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
+        //         topFarLeft.setBoolean(false);
+        //         topNearLeft.setBoolean(true);
+        //         topNearRight.setBoolean(true);
+        //         topFarRight.setBoolean(false);
+        //     } else if (targetAngle < 0) {
+        //         topFarLeft.setBoolean(true);
+        //         topNearLeft.setBoolean(true);
+        //         topNearRight.setBoolean(false);
+        //         topFarRight.setBoolean(false);    
+        //     } else {
+        //         topFarLeft.setBoolean(false);
+        //         topNearLeft.setBoolean(false);
+        //         topNearRight.setBoolean(true);
+        //         topFarRight.setBoolean(true);
+        //     }
+        // } else {
+        //     topFarLeft.setBoolean(false);
+        //     topNearLeft.setBoolean(false);
+        //     topNearRight.setBoolean(false);
+        //     topFarRight.setBoolean(false);
+        // }
 
-        if (climber != null && climber.isEnabled()) {
-            setRainbowMovingUp();
-//        } else if (spitter != null && spitter.isAtShootingSpeed()) {
-//            //spitter.getCurrentCommand() instanceof Spitter2022ForwardCMD
-//            setPurpleMovingUp();
-        } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
-            if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
-                setTop(seeTargetColor);
-                setBottom(seeTargetColor);
-            } else {
-                set(hasBallColor);
-            }
-        } else if (llamaNeck != null && llamaNeck.hasUpperBall()) {
-            setBottom(hasBallColor);
-            if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
-                set(seeBallColor);
-            } else if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
-                setTop(seeTargetColor);
-            } else {
-                setTop(COLORS_467.Black); // Off
-            }
-        } else {
-            if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
-                set(seeBallColor);
-            } else {
-                setTop(idleColorTop);
-                setBottom(idleColorBottom);
-            }
-        }
+//         if (climber != null && climber.isEnabled()) {
+//             setRainbowMovingUp();
+// //        } else if (spitter != null && spitter.isAtShootingSpeed()) {
+// //            //spitter.getCurrentCommand() instanceof Spitter2022ForwardCMD
+// //            setPurpleMovingUp();
+//         } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
+//             if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
+//                 setTop(seeTargetColor);
+//                 setBottom(seeTargetColor);
+//             } else {
+//                 set(hasBallColor);
+//             }
+//         } else if (llamaNeck != null && llamaNeck.hasUpperBall()) {
+//             setBottom(hasBallColor);
+//             if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
+//                 set(seeBallColor);
+//             } else if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
+//                 setTop(seeTargetColor);
+//             } else {
+//                 setTop(COLORS_467.Black); // Off
+//             }
+//         } else {
+//             if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
+//                 set(seeBallColor);
+//             } else {
+//                 setTop(idleColorTop);
+//                 setBottom(idleColorBottom);
+//             }
+//         }
 
-        ledStrip.sendData();
+//         ledStrip.sendData();
     }
 
     @Override
