@@ -2,18 +2,15 @@ package frc.robot.commands;
 
 import java.util.Map;
 
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotConstants;
@@ -117,17 +114,21 @@ public class Led2022UpdateCMD extends CommandBase {
 
         ShuffleboardTab tab = Shuffleboard.getTab("Operator");
         Shuffleboard.selectTab("Operator");
-        ShuffleboardLayout layout = tab.getLayout("Grid Layout", "Grid Layout")
+        ShuffleboardLayout layout = tab.getLayout("Indicators", BuiltInLayouts.kGrid)
             .withPosition(0, 0) 
             .withSize(5, 2)
-            .withProperties(Map.of("Label position", "HIDDEN"));
+            .withProperties(Map.of(
+                "Number of columns", 5, 
+                "Number of rows", 2, 
+                "Label position", "HIDDEN"));
         
         topFarLeft = layout.add("TopFarLeft", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(0, 0)
             .withSize(1,1)
-            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
-            .withProperties(Map.of("Color when true", seeTargetColor.shuffleboard))
+            .withProperties(Map.of(
+                "Color when false", COLORS_467.Black.shuffleboard,
+                "Color when true", seeTargetColor.shuffleboard))
             .getEntry();
 
         topFarLeft.setBoolean(false);
@@ -136,8 +137,9 @@ public class Led2022UpdateCMD extends CommandBase {
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(1, 0)
             .withSize(1,1)
-            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
-            .withProperties(Map.of("Color when true", seeTargetColor.shuffleboard))
+            .withProperties(Map.of(
+                "Color when false", COLORS_467.Black.shuffleboard,
+                "Color when true", seeTargetColor.shuffleboard))
             .getEntry();
         topNearLeft.setBoolean(false);
 
@@ -145,8 +147,9 @@ public class Led2022UpdateCMD extends CommandBase {
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(3, 0)
             .withSize(1,1)
-            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
-            .withProperties(Map.of("Color when true", seeTargetColor.shuffleboard))
+            .withProperties(Map.of(
+                "Color when false", COLORS_467.Black.shuffleboard,
+                "Color when true", seeTargetColor.shuffleboard))
             .getEntry();
         topNearRight.setBoolean(false);
 
@@ -154,44 +157,49 @@ public class Led2022UpdateCMD extends CommandBase {
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(4, 0)
             .withSize(1,1)
-            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
-            .withProperties(Map.of("Color when true", seeTargetColor.shuffleboard))
+            .withProperties(Map.of(
+                "Color when false", COLORS_467.Black.shuffleboard,
+                "Color when true", seeTargetColor.shuffleboard))
             .getEntry();
         topFarRight.setBoolean(false);
 
         bottomFarLeft = layout.add("BottomFarLeft", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(0, 0)
+            .withPosition(0, 1)
             .withSize(1,1)
-            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
-            .withProperties(Map.of("Color when true", seeBallColor.shuffleboard))
+            .withProperties(Map.of(
+                "Color when false", COLORS_467.Black.shuffleboard,
+                "Color when true", seeBallColor.shuffleboard))
             .getEntry();
         bottomFarLeft.setBoolean(false);
 
         bottomNearLeft = layout.add("BottomNearLeft", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(1, 0)
+            .withPosition(1, 1)
             .withSize(1,1)
-            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
-            .withProperties(Map.of("Color when true", seeBallColor.shuffleboard))
+            .withProperties(Map.of(
+                "Color when false", COLORS_467.Black.shuffleboard,
+                "Color when true", seeBallColor.shuffleboard))
             .getEntry();
         bottomNearLeft.setBoolean(false);
 
         bottomNearRight = layout.add("BottomNearRight", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(3, 0)
+            .withPosition(3, 1)
             .withSize(1,1)
-            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
-            .withProperties(Map.of("Color when true", seeBallColor.shuffleboard))
+            .withProperties(Map.of(
+                "Color when false", COLORS_467.Black.shuffleboard,
+                "Color when true", seeBallColor.shuffleboard))
             .getEntry();
         bottomNearRight.setBoolean(false);
 
         bottomFarRight = layout.add("BottomFarRight", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(4, 0)
+            .withPosition(4, 1)
             .withSize(1,1)
-            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
-            .withProperties(Map.of("Color when true", seeBallColor.shuffleboard))
+            .withProperties(Map.of(
+                "Color when false", COLORS_467.Black.shuffleboard,
+                "Color when true", seeBallColor.shuffleboard))
             .getEntry();
         bottomFarRight.setBoolean(false);
 
@@ -253,7 +261,7 @@ public class Led2022UpdateCMD extends CommandBase {
             bottomNearLeft.setBoolean(true);
             bottomNearRight.setBoolean(true);
             bottomFarRight.setBoolean(false);
-        } else if (targetAngle < 0) {
+        } else if (ballAngle < 0) {
             bottomFarLeft.setBoolean(true);
             bottomNearLeft.setBoolean(true);
             bottomNearRight.setBoolean(false);
@@ -301,77 +309,6 @@ public class Led2022UpdateCMD extends CommandBase {
             }
         }
 
-        // if (DriverStation.isAutonomous() || DriverStation.isTeleop()) {
-        //     idleColorTop = COLORS_467.Black;
-        //     idleColorBottom = COLORS_467.Black;
-        // } else {
-        //     idleColorTop = COLORS_467.Blue;
-        //     idleColorBottom = COLORS_467.Gold;
-        // }
-
-        // boolean seesBall = BallTracking.hasBall();
-        // double ballDistance = BallTracking.getDistance();
-        // double ballAngle = BallTracking.getAngle();
-
-        // boolean seesTarget = HubTarget.hasTarget();
-        // double targetDistance = HubTarget.getDistance();
-        // double targetAngle = HubTarget.getAngle();
-
-        // if (seesTarget && targetDistance < TARGET_MAX_RANGE) {
-        //     if  (Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
-        //         topFarLeft.setBoolean(false);
-        //         topNearLeft.setBoolean(true);
-        //         topNearRight.setBoolean(true);
-        //         topFarRight.setBoolean(false);
-        //     } else if (targetAngle < 0) {
-        //         topFarLeft.setBoolean(true);
-        //         topNearLeft.setBoolean(true);
-        //         topNearRight.setBoolean(false);
-        //         topFarRight.setBoolean(false);    
-        //     } else {
-        //         topFarLeft.setBoolean(false);
-        //         topNearLeft.setBoolean(false);
-        //         topNearRight.setBoolean(true);
-        //         topFarRight.setBoolean(true);
-        //     }
-        // } else {
-        //     topFarLeft.setBoolean(false);
-        //     topNearLeft.setBoolean(false);
-        //     topNearRight.setBoolean(false);
-        //     topFarRight.setBoolean(false);
-        // }
-
-//         if (climber != null && climber.isEnabled()) {
-//             setRainbowMovingUp();
-// //        } else if (spitter != null && spitter.isAtShootingSpeed()) {
-// //            //spitter.getCurrentCommand() instanceof Spitter2022ForwardCMD
-// //            setPurpleMovingUp();
-//         } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
-//             if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
-//                 setTop(seeTargetColor);
-//                 setBottom(seeTargetColor);
-//             } else {
-//                 set(hasBallColor);
-//             }
-//         } else if (llamaNeck != null && llamaNeck.hasUpperBall()) {
-//             setBottom(hasBallColor);
-//             if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
-//                 set(seeBallColor);
-//             } else if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
-//                 setTop(seeTargetColor);
-//             } else {
-//                 setTop(COLORS_467.Black); // Off
-//             }
-//         } else {
-//             if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
-//                 set(seeBallColor);
-//             } else {
-//                 setTop(idleColorTop);
-//                 setBottom(idleColorBottom);
-//             }
-//         }
-
-//         ledStrip.sendData();
     }
 
     @Override
