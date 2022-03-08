@@ -39,7 +39,7 @@ public class Led2022UpdateCMD extends CommandBase {
     public static final double TARGET_MAX_RANGE = 3.0;
     public static final double TARGET_MAX_ANGLE = 4.0;
     public static final double BALL_MAX_RANGE = 3.0;
-    public static final double BALL_MAX_ANGLE = 10.0;
+    public static final double BALL_MAX_ANGLE = 4.0;
 
     private COLORS_467 idleColorTop = COLORS_467.Blue;
     private COLORS_467 idleColorBottom = COLORS_467.Gold;
@@ -86,13 +86,12 @@ public class Led2022UpdateCMD extends CommandBase {
         Spitter2022 spitter, 
         LlamaNeck2022 llamaNeck, 
         Climber2022 climber) {
-        this.ledStrip = ledStrip;
+
+        this(ledStrip);
+        
         this.spitter = spitter;
         this.llamaNeck = llamaNeck;
 
-        timer.start();
-
-        addRequirements(ledStrip);
         addRequirements(spitter);
         addRequirements(llamaNeck);
         addRequirements(climber);
@@ -107,11 +106,6 @@ public class Led2022UpdateCMD extends CommandBase {
         this.ledStrip = ledStrip;
         addRequirements(ledStrip);
 
-    }
-
-    @Override
-    public void initialize() {
-
         if (DriverStation.getAlliance() == Alliance.Red) {
             seeBallColor = COLORS_467.Red;
         } else {
@@ -120,7 +114,9 @@ public class Led2022UpdateCMD extends CommandBase {
 
         ShuffleboardTab tab = Shuffleboard.getTab("Operator");
         Shuffleboard.selectTab("Operator");
-        ShuffleboardLayout layout = tab.getLayout("Indicators").withPosition(0, 4).withSize(5, 2)
+        ShuffleboardLayout layout = tab.getLayout("Grid Layout", "Grid Layout")
+            .withPosition(0, 0) 
+            .withSize(5, 2)
             .withProperties(Map.of("Label position", "HIDDEN"));
         
         topFarLeft = layout.add("TopFarLeft", false)
@@ -128,16 +124,20 @@ public class Led2022UpdateCMD extends CommandBase {
             .withPosition(0, 0)
             .withSize(1,1)
             .withProperties(Map.of("colorWhenFalse", 0x000000))
-            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .withProperties(Map.of("colorWhenTrue", 0xE6E64D))
             .getEntry();
+
+        topFarLeft.setBoolean(false);
 
         topNearLeft = layout.add("TopNearLeft", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(1, 0)
             .withSize(1,1)
             .withProperties(Map.of("colorWhenFalse", 0x000000))
-            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .withProperties(Map.of("colorWhenTrue", 0xE6E64D))
             .getEntry();
+
+        topNearLeft.setBoolean(false);
 
         topNearRight = layout.add("TopNearRight", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
@@ -147,6 +147,8 @@ public class Led2022UpdateCMD extends CommandBase {
             .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
             .getEntry();
 
+        topNearRight.setBoolean(false);
+
         topFarRight = layout.add("TopFarRight", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(4, 0)
@@ -154,6 +156,56 @@ public class Led2022UpdateCMD extends CommandBase {
             .withProperties(Map.of("colorWhenFalse", 0x000000))
             .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
             .getEntry();
+
+            topFarRight.setBoolean(false);
+
+            bottomFarLeft = layout.add("BottomFarLeft", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(0, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("colorWhenFalse", 0x000000))
+            .withProperties(Map.of("colorWhenTrue", 0xE6E64D))
+            .getEntry();
+
+        bottomFarLeft.setBoolean(false);
+
+        bottomNearLeft = layout.add("BottomNearLeft", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(1, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("colorWhenFalse", 0x000000))
+            .withProperties(Map.of("colorWhenTrue", 0xE6E64D))
+            .getEntry();
+
+        bottomNearLeft.setBoolean(false);
+
+        bottomNearRight = layout.add("BottomNearRight", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(3, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("colorWhenFalse", 0x000000))
+            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .getEntry();
+
+        bottomNearRight.setBoolean(false);
+
+        bottomFarRight = layout.add("BottomFarRight", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(4, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("colorWhenFalse", 0x000000))
+            .withProperties(Map.of("colorWhenTrue", 0xFFC20A))
+            .getEntry();
+
+            bottomFarRight.setBoolean(false);
+
+
+        timer.start();
+
+    }
+
+    @Override
+    public void initialize() {
 
         timer.reset();
 
@@ -200,6 +252,31 @@ public class Led2022UpdateCMD extends CommandBase {
             topNearLeft.setBoolean(false);
             topNearRight.setBoolean(false);
             topFarRight.setBoolean(false);
+        }
+
+        if (seesBall && ballDistance < BALL_MAX_RANGE) {
+            System.out.println("Sees red ball");
+            if  (Math.abs(ballAngle) < BALL_MAX_ANGLE) {
+                bottomFarLeft.setBoolean(false);
+                bottomNearLeft.setBoolean(true);
+                bottomNearRight.setBoolean(true);
+                bottomFarRight.setBoolean(false);
+            } else if (targetAngle < 0) {
+                bottomFarLeft.setBoolean(true);
+                bottomNearLeft.setBoolean(true);
+                bottomNearRight.setBoolean(false);
+                bottomFarRight.setBoolean(false);    
+            } else {
+                bottomFarLeft.setBoolean(false);
+                bottomNearLeft.setBoolean(false);
+                bottomNearRight.setBoolean(true);
+                bottomFarRight.setBoolean(true);
+            }
+        } else {
+            bottomFarLeft.setBoolean(false);
+            bottomNearLeft.setBoolean(false);
+            bottomNearRight.setBoolean(false);
+            bottomFarRight.setBoolean(false);
         }
 
         if (climber != null && climber.isEnabled()) {

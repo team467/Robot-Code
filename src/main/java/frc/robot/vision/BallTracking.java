@@ -14,22 +14,28 @@ public class BallTracking {
    * @return If the camera sees a red ball
    */
   public static boolean hasRedBall() {
-    return redTable.getEntry("IsValid").getBoolean(false);
+    return redTable.getEntry("HasBall").getBoolean(false);
   }
 
   /**
    * @return If the camera sees a blue ball
    */
   public static boolean hasBlueBall() {
-    return blueTable.getEntry("IsValid").getBoolean(false);
+    return blueTable.getEntry("HasBall").getBoolean(false);
   }
 
   /**
    * @return If the camera sees a ball of the current alliance
    */
   public static boolean hasBall() {
-    return blueTable.getEntry("IsValid").getBoolean(false);
-  }
+    switch (DriverStation.getAlliance()) {
+      case Red:
+        return hasRedBall();
+      default:
+      case Blue:
+        return hasBlueBall();
+    }
+   }
 
   /**
    * @return Distance to the red ball in meters

@@ -185,7 +185,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasClimber2022() {
-        return true;
+        return false;
     }
 
     @Override
@@ -405,7 +405,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasIndexer2022() {
-        return true;
+        return false;
     }
 
     @Override
@@ -435,7 +435,7 @@ public class BriefcaseConstants implements Constants {
     
     @Override
     public boolean hasLlamaNeck2022() {
-        return true;
+        return false;
     }
 
     @Override
@@ -489,7 +489,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasSpitter2022() {
-        return true;
+        return false;
     }
 
     @Override 
@@ -499,7 +499,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean spitter2022MotorInverted() {
-        return true;
+        return false;
     }
 
   @Override
