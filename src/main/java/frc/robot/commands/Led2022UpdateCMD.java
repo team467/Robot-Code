@@ -44,15 +44,9 @@ public class Led2022UpdateCMD extends CommandBase {
     private COLORS_467 seeTargetColor = COLORS_467.Gold;
     private COLORS_467 seeBallColor = COLORS_467.Blue;
 
-    private NetworkTableEntry topFarLeft;
-    private NetworkTableEntry topNearLeft;
-    private NetworkTableEntry topFarRight;
-    private NetworkTableEntry topNearRight;
-
-    private NetworkTableEntry bottomFarLeft;
-    private NetworkTableEntry bottomNearLeft;
-    private NetworkTableEntry bottomFarRight;
-    private NetworkTableEntry bottomNearRight;
+    private NetworkTableEntry[] targetIndicators;
+    private NetworkTableEntry[] seeBallIndicators;
+    private NetworkTableEntry[] hasBallIndicators;
 
     /*
      * Color blind preferred pallet includes White, Black, Red, Blue, Gold
@@ -121,91 +115,89 @@ public class Led2022UpdateCMD extends CommandBase {
                 "Number of columns", 5, 
                 "Number of rows", 2, 
                 "Label position", "HIDDEN"));
+
+        targetIndicators = new NetworkTableEntry[4];
+        seeBallIndicators = new NetworkTableEntry[4];
+        hasBallIndicators = new NetworkTableEntry[2];
+
+        for (int i = 0; i < 4; i++) {
+            targetIndicators[i] = layout.add("Target Indicator " + i, false)
+                .withWidget(BuiltInWidgets.kBooleanBox)
+                .withPosition(i, 0)
+                .withSize(1,1)
+                .withProperties(Map.of(
+                    "Color when false", COLORS_467.Black.shuffleboard,
+                    "Color when true", seeTargetColor.shuffleboard))
+                .getEntry();
+            targetIndicators[i].setBoolean(false);
+        }
         
-        topFarLeft = layout.add("TopFarLeft", false)
+        for (int i = 0; i < 4; i++) {
+            seeBallIndicators[i] = layout.add("See Ball Indicator " + i, false)
             .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(0, 0)
-            .withSize(1,1)
-            .withProperties(Map.of(
-                "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", seeTargetColor.shuffleboard))
-            .getEntry();
-
-        topFarLeft.setBoolean(false);
-
-        topNearLeft = layout.add("TopNearLeft", false)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(1, 0)
-            .withSize(1,1)
-            .withProperties(Map.of(
-                "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", seeTargetColor.shuffleboard))
-            .getEntry();
-        topNearLeft.setBoolean(false);
-
-        topNearRight = layout.add("TopNearRight", false)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(3, 0)
-            .withSize(1,1)
-            .withProperties(Map.of(
-                "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", seeTargetColor.shuffleboard))
-            .getEntry();
-        topNearRight.setBoolean(false);
-
-        topFarRight = layout.add("TopFarRight", false)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(4, 0)
-            .withSize(1,1)
-            .withProperties(Map.of(
-                "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", seeTargetColor.shuffleboard))
-            .getEntry();
-        topFarRight.setBoolean(false);
-
-        bottomFarLeft = layout.add("BottomFarLeft", false)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(0, 1)
+            .withPosition(i, 1)
             .withSize(1,1)
             .withProperties(Map.of(
                 "Color when false", COLORS_467.Black.shuffleboard,
                 "Color when true", seeBallColor.shuffleboard))
             .getEntry();
-        bottomFarLeft.setBoolean(false);
+            seeBallIndicators[i].setBoolean(false);
+        }
 
-        bottomNearLeft = layout.add("BottomNearLeft", false)
+        for (int i = 0; i < 2; i++) {
+            hasBallIndicators[i] = layout.add("Has Ball Indicator " + i, false)
             .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(1, 1)
+            .withPosition(4, i)
             .withSize(1,1)
             .withProperties(Map.of(
                 "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", seeBallColor.shuffleboard))
+                "Color when true", hasBallColor.shuffleboard))
             .getEntry();
-        bottomNearLeft.setBoolean(false);
-
-        bottomNearRight = layout.add("BottomNearRight", false)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(3, 1)
-            .withSize(1,1)
-            .withProperties(Map.of(
-                "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", seeBallColor.shuffleboard))
-            .getEntry();
-        bottomNearRight.setBoolean(false);
-
-        bottomFarRight = layout.add("BottomFarRight", false)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(4, 1)
-            .withSize(1,1)
-            .withProperties(Map.of(
-                "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", seeBallColor.shuffleboard))
-            .getEntry();
-        bottomFarRight.setBoolean(false);
+            seeBallIndicators[i].setBoolean(false);
+        }
 
         timer.start();
     }
 
+    private void indicators(
+        NetworkTableEntry[] indicators, boolean isValid, 
+        double distance, double range,
+        double angle, double maxAngle) {
+        if (isValid && distance < range) {
+            if  (Math.abs(angle) < maxAngle) {
+                indicators[0].setBoolean(false);
+                indicators[1].setBoolean(true);
+                indicators[2].setBoolean(true);
+                indicators[3].setBoolean(false);
+            } else if (angle < 0) {
+                indicators[0].setBoolean(true);
+                indicators[1].setBoolean(true);
+                indicators[2].setBoolean(false);
+                indicators[3].setBoolean(false);    
+            } else {
+                indicators[0].setBoolean(false);
+                indicators[1].setBoolean(false);
+                indicators[2].setBoolean(true);
+                indicators[3].setBoolean(true);
+            }
+        } else {
+            indicators[0].setBoolean(false);
+            indicators[1].setBoolean(false);
+            indicators[2].setBoolean(false);
+            indicators[3].setBoolean(false);
+        }
+    }
+
+    private void cargoIndicator(
+        NetworkTableEntry[] indicators, 
+        int capacity, int amount) {
+        for (int i = 0; i < amount; i++) {
+            indicators[capacity-1-i].setBoolean(true);
+        }
+        for (int i = amount; i < capacity; i++) {
+            indicators[capacity-1-i].setBoolean(true);
+        }
+    }
 
     @Override
     public void initialize() {
@@ -223,68 +215,27 @@ public class Led2022UpdateCMD extends CommandBase {
             idleColorBottom = COLORS_467.Gold;
         }
 
-        boolean seesBall = BallTracking.hasBall();
-        double ballDistance = BallTracking.getDistance();
-        double ballAngle = BallTracking.getAngle();
-
         boolean seesTarget = HubTarget.hasTarget();
         double targetDistance = HubTarget.getDistance();
         double targetAngle = HubTarget.getAngle();
+        indicators(targetIndicators, seesTarget, 
+            targetDistance, TARGET_MAX_RANGE,
+            targetAngle, TARGET_MAX_ANGLE);
 
-        if (seesTarget && targetDistance < TARGET_MAX_RANGE) {
-            if  (Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
-                topFarLeft.setBoolean(false);
-                topNearLeft.setBoolean(true);
-                topNearRight.setBoolean(true);
-                topFarRight.setBoolean(false);
-            } else if (targetAngle < 0) {
-                topFarLeft.setBoolean(true);
-                topNearLeft.setBoolean(true);
-                topNearRight.setBoolean(false);
-                topFarRight.setBoolean(false);    
-            } else {
-                topFarLeft.setBoolean(false);
-                topNearLeft.setBoolean(false);
-                topNearRight.setBoolean(true);
-                topFarRight.setBoolean(true);
-            }
-        } else {
-            topFarLeft.setBoolean(false);
-            topNearLeft.setBoolean(false);
-            topNearRight.setBoolean(false);
-            topFarRight.setBoolean(false);
-        }
+        boolean seesBall = BallTracking.hasBall();
+        double ballDistance = BallTracking.getDistance();
+        double ballAngle = BallTracking.getAngle();
+        indicators(seeBallIndicators, seesBall, 
+            ballDistance, BALL_MAX_RANGE,
+            ballAngle, BALL_MAX_ANGLE);
         
-    if (seesBall && ballDistance < BALL_MAX_RANGE) {
-        if  (Math.abs(ballAngle) < BALL_MAX_ANGLE) {
-            bottomFarLeft.setBoolean(false);
-            bottomNearLeft.setBoolean(true);
-            bottomNearRight.setBoolean(true);
-            bottomFarRight.setBoolean(false);
-        } else if (ballAngle < 0) {
-            bottomFarLeft.setBoolean(true);
-            bottomNearLeft.setBoolean(true);
-            bottomNearRight.setBoolean(false);
-            bottomFarRight.setBoolean(false);    
-        } else {
-            bottomFarLeft.setBoolean(false);
-            bottomNearLeft.setBoolean(false);
-            bottomNearRight.setBoolean(true);
-            bottomFarRight.setBoolean(true);
-        }
-    } else {
-        bottomFarLeft.setBoolean(false);
-        bottomNearLeft.setBoolean(false);
-        bottomNearRight.setBoolean(false);
-        bottomFarRight.setBoolean(false);
-    }
-
         if (climber != null && climber.isEnabled()) {
             setRainbowMovingUp();
 //        } else if (spitter != null && spitter.isAtShootingSpeed()) {
 //            //spitter.getCurrentCommand() instanceof Spitter2022ForwardCMD
 //            setPurpleMovingUp();
         } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
+            cargoIndicator(hasBallIndicators, 2, 2);
             if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
                 setTop(seeTargetColor);
                 setBottom(seeTargetColor);
@@ -292,6 +243,7 @@ public class Led2022UpdateCMD extends CommandBase {
                 set(hasBallColor);
             }
         } else if (llamaNeck != null && llamaNeck.hasUpperBall()) {
+            cargoIndicator(hasBallIndicators, 2, 1);
             setBottom(hasBallColor);
             if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
                 set(seeBallColor);
@@ -301,6 +253,7 @@ public class Led2022UpdateCMD extends CommandBase {
                 setTop(COLORS_467.Black); // Off
             }
         } else {
+            cargoIndicator(hasBallIndicators, 2, 0);
             if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
                 set(seeBallColor);
             } else {
