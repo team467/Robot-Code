@@ -413,6 +413,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+
+    
     return autoModes.getSelected();
     // if (shooter2022 != null) {
     // return new SequentialCommandGroup(
