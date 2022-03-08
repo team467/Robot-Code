@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -322,7 +321,7 @@ public class RobotContainer {
       if (RobotConstants.get().hasSpitter2022() 
         && RobotConstants.get().hasLlamaNeck2022()
         && RobotConstants.get().hasClimber2022()) {
-          led2022.setDefaultCommand(new Led2022UpdateCMD(led2022, spitter, llamaNeck, climber2022));
+          led2022.setDefaultCommand(new Led2022UpdateCMD(led2022, indexer, llamaNeck, climber2022));
         } else {
           led2022.setDefaultCommand(new Led2022UpdateCMD(led2022));
         }

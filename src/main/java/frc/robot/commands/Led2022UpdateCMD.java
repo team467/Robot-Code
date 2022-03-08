@@ -15,9 +15,9 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotConstants;
 import frc.robot.subsystems.Climber2022;
+import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.Led2022;
 import frc.robot.subsystems.LlamaNeck2022;
-import frc.robot.subsystems.Spitter2022;
 
 import frc.robot.vision.BallTracking;
 import frc.robot.vision.HubTarget;
@@ -27,7 +27,7 @@ public class Led2022UpdateCMD extends CommandBase {
 
     private Led2022 ledStrip;
     private LlamaNeck2022 llamaNeck = null;
-    private Spitter2022 spitter = null;
+    private Indexer2022 indexer = null;
     private Climber2022 climber = null;
     
     int color = 0;
@@ -76,19 +76,20 @@ public class Led2022UpdateCMD extends CommandBase {
 
     public Led2022UpdateCMD(
         Led2022 ledStrip,
-        Spitter2022 spitter, 
+        Indexer2022 indexer, 
         LlamaNeck2022 llamaNeck, 
         Climber2022 climber) {
 
         this(ledStrip);
         
-        this.spitter = spitter;
+        this.indexer = indexer;
         this.llamaNeck = llamaNeck;
         this.climber = climber;
 
-        addRequirements(spitter);
+        addRequirements(indexer);
         addRequirements(llamaNeck);
         addRequirements(climber);
+
     }
 
     /**
@@ -231,9 +232,8 @@ public class Led2022UpdateCMD extends CommandBase {
         
         if (climber != null && climber.isEnabled()) {
             setRainbowMovingUp();
-//        } else if (spitter != null && spitter.isAtShootingSpeed()) {
-//            //spitter.getCurrentCommand() instanceof Spitter2022ForwardCMD
-//            setPurpleMovingUp();
+       } else if (indexer != null && indexer.isShooting()) {
+           setPurpleMovingUp();
         } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
             cargoIndicator(hasBallIndicators, 2, 2);
             if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
