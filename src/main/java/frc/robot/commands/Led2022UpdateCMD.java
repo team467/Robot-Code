@@ -39,7 +39,7 @@ public class Led2022UpdateCMD extends CommandBase {
     public static final double TARGET_MAX_RANGE = 3.0;
     public static final double TARGET_MAX_ANGLE = 4.0;
     public static final double BALL_MAX_RANGE = 3.0;
-    public static final double BALL_MAX_ANGLE = 10.0;
+    public static final double BALL_MAX_ANGLE = 4.0;
 
     private COLORS_467 idleColorTop = COLORS_467.Blue;
     private COLORS_467 idleColorBottom = COLORS_467.Gold;
@@ -61,22 +61,24 @@ public class Led2022UpdateCMD extends CommandBase {
      * Color blind preferred pallet includes White, Black, Red, Blue, Gold
      */
     public enum COLORS_467 {
-        White(0xFF, 0xFF, 0xFF),
-        Red(0xFF, 0x00, 0x00),
-        Green(0x00, 0x80, 0x00),
-        Blue(0x00, 0x00, 0xCC),
-        Gold(0xFF, 0xC2, 0x0A),
-        Pink(0xDC, 0x26, 0x7F),
-        Black(0x00, 0x00, 0x00);
+        White(0xFF, 0xFF, 0xFF, 0xFFFFFF00),
+        Red(0xFF, 0x00, 0x00, 0xFF000000),
+        Green(0x00, 0x80, 0x00, 0x00800000),
+        Blue(0x00, 0x00, 0xCC, 0x0000CC00),
+        Gold(0xFF, 0xC2, 0x0A, 0xFFC20A00),
+        Pink(0xDC, 0x26, 0x7F, 0xDC267f00),
+        Black(0x00, 0x00, 0x00, 0x00000000);
 
         public final int red;
         public final int green;
         public final int blue;
+        public final int shuffleboard;
 
-        COLORS_467(int red, int green, int blue) {
+        COLORS_467(int red, int green, int blue, int shuffleboard) {
             this.red = red;
             this.green = green;
             this.blue = blue;
+            this.shuffleboard = shuffleboard;
         }
 
     }
@@ -88,8 +90,10 @@ public class Led2022UpdateCMD extends CommandBase {
         Climber2022 climber) {
 
         this(ledStrip);
+        
         this.spitter = spitter;
         this.llamaNeck = llamaNeck;
+        this.climber = climber;
 
         addRequirements(spitter);
         addRequirements(llamaNeck);
@@ -105,8 +109,6 @@ public class Led2022UpdateCMD extends CommandBase {
         this.ledStrip = ledStrip;
         addRequirements(ledStrip);
 
-        timer.start();
-
         if (DriverStation.getAlliance() == Alliance.Red) {
             seeBallColor = COLORS_467.Red;
         } else {
@@ -115,55 +117,189 @@ public class Led2022UpdateCMD extends CommandBase {
 
         ShuffleboardTab tab = Shuffleboard.getTab("Operator");
         Shuffleboard.selectTab("Operator");
-        ShuffleboardLayout layout = tab.getLayout("Grid Layout", "Indicators");
-            layout.withPosition(0, 4).withSize(5, 2)
+        ShuffleboardLayout layout = tab.getLayout("Grid Layout", "Grid Layout")
+            .withPosition(0, 0) 
+            .withSize(5, 2)
             .withProperties(Map.of("Label position", "HIDDEN"));
         
         topFarLeft = layout.add("TopFarLeft", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(0, 0)
             .withSize(1,1)
-            .withProperties(Map.of("colorWhenFalse", 0x00000000))
-            .withProperties(Map.of("colorWhenTrue", 0xFFC20A00))
+            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
+            .withProperties(Map.of("Color when true", seeTargetColor.shuffleboard))
             .getEntry();
+
+        topFarLeft.setBoolean(false);
 
         topNearLeft = layout.add("TopNearLeft", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(1, 0)
             .withSize(1,1)
-            .withProperties(Map.of("colorWhenFalse", 0x00000000))
-            .withProperties(Map.of("colorWhenTrue", 0xFFC20A00))
+            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
+            .withProperties(Map.of("Color when true", seeTargetColor.shuffleboard))
             .getEntry();
+        topNearLeft.setBoolean(false);
 
         topNearRight = layout.add("TopNearRight", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(3, 0)
             .withSize(1,1)
-            .withProperties(Map.of("colorWhenFalse", 0x00000000))
-            .withProperties(Map.of("colorWhenTrue", 0xFFC20A00))
+            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
+            .withProperties(Map.of("Color when true", seeTargetColor.shuffleboard))
             .getEntry();
+        topNearRight.setBoolean(false);
 
         topFarRight = layout.add("TopFarRight", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(4, 0)
             .withSize(1,1)
-            .withProperties(Map.of("colorWhenFalse", 0x00000000))
-            .withProperties(Map.of("colorWhenTrue", 0xFFC20A00))
+            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
+            .withProperties(Map.of("Color when true", seeTargetColor.shuffleboard))
             .getEntry();
+        topFarRight.setBoolean(false);
 
+        bottomFarLeft = layout.add("BottomFarLeft", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(0, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
+            .withProperties(Map.of("Color when true", seeBallColor.shuffleboard))
+            .getEntry();
+        bottomFarLeft.setBoolean(false);
 
+        bottomNearLeft = layout.add("BottomNearLeft", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(1, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
+            .withProperties(Map.of("Color when true", seeBallColor.shuffleboard))
+            .getEntry();
+        bottomNearLeft.setBoolean(false);
 
+        bottomNearRight = layout.add("BottomNearRight", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(3, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
+            .withProperties(Map.of("Color when true", seeBallColor.shuffleboard))
+            .getEntry();
+        bottomNearRight.setBoolean(false);
+
+        bottomFarRight = layout.add("BottomFarRight", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(4, 0)
+            .withSize(1,1)
+            .withProperties(Map.of("Color when false", COLORS_467.Black.shuffleboard))
+            .withProperties(Map.of("Color when true", seeBallColor.shuffleboard))
+            .getEntry();
+        bottomFarRight.setBoolean(false);
+
+        timer.start();
     }
+
 
     @Override
     public void initialize() {
-
         timer.reset();
-
     }
 
     @Override
     public void execute() { 
+
+        if (DriverStation.isAutonomous() || DriverStation.isTeleop()) {
+            idleColorTop = COLORS_467.Black;
+            idleColorBottom = COLORS_467.Black;
+        } else {
+            idleColorTop = COLORS_467.Blue;
+            idleColorBottom = COLORS_467.Gold;
+        }
+
+        boolean seesBall = BallTracking.hasBall();
+        double ballDistance = BallTracking.getDistance();
+        double ballAngle = BallTracking.getAngle();
+
+        boolean seesTarget = HubTarget.hasTarget();
+        double targetDistance = HubTarget.getDistance();
+        double targetAngle = HubTarget.getAngle();
+
+        if (seesTarget && targetDistance < TARGET_MAX_RANGE) {
+            if  (Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
+                topFarLeft.setBoolean(false);
+                topNearLeft.setBoolean(true);
+                topNearRight.setBoolean(true);
+                topFarRight.setBoolean(false);
+            } else if (targetAngle < 0) {
+                topFarLeft.setBoolean(true);
+                topNearLeft.setBoolean(true);
+                topNearRight.setBoolean(false);
+                topFarRight.setBoolean(false);    
+            } else {
+                topFarLeft.setBoolean(false);
+                topNearLeft.setBoolean(false);
+                topNearRight.setBoolean(true);
+                topFarRight.setBoolean(true);
+            }
+        } else {
+            topFarLeft.setBoolean(false);
+            topNearLeft.setBoolean(false);
+            topNearRight.setBoolean(false);
+            topFarRight.setBoolean(false);
+        }
+        
+    if (seesBall && ballDistance < BALL_MAX_RANGE) {
+        if  (Math.abs(ballAngle) < BALL_MAX_ANGLE) {
+            bottomFarLeft.setBoolean(false);
+            bottomNearLeft.setBoolean(true);
+            bottomNearRight.setBoolean(true);
+            bottomFarRight.setBoolean(false);
+        } else if (targetAngle < 0) {
+            bottomFarLeft.setBoolean(true);
+            bottomNearLeft.setBoolean(true);
+            bottomNearRight.setBoolean(false);
+            bottomFarRight.setBoolean(false);    
+        } else {
+            bottomFarLeft.setBoolean(false);
+            bottomNearLeft.setBoolean(false);
+            bottomNearRight.setBoolean(true);
+            bottomFarRight.setBoolean(true);
+        }
+    } else {
+        bottomFarLeft.setBoolean(false);
+        bottomNearLeft.setBoolean(false);
+        bottomNearRight.setBoolean(false);
+        bottomFarRight.setBoolean(false);
+    }
+
+        if (climber != null && climber.isEnabled()) {
+            setRainbowMovingUp();
+//        } else if (spitter != null && spitter.isAtShootingSpeed()) {
+//            //spitter.getCurrentCommand() instanceof Spitter2022ForwardCMD
+//            setPurpleMovingUp();
+        } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
+            if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
+                setTop(seeTargetColor);
+                setBottom(seeTargetColor);
+            } else {
+                set(hasBallColor);
+            }
+        } else if (llamaNeck != null && llamaNeck.hasUpperBall()) {
+            setBottom(hasBallColor);
+            if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
+                set(seeBallColor);
+            } else if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
+                setTop(seeTargetColor);
+            } else {
+                setTop(COLORS_467.Black); // Off
+            }
+        } else {
+            if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
+                set(seeBallColor);
+            } else {
+                setTop(idleColorTop);
+                setBottom(idleColorBottom);
+            }
+        }
 
         // if (DriverStation.isAutonomous() || DriverStation.isTeleop()) {
         //     idleColorTop = COLORS_467.Black;

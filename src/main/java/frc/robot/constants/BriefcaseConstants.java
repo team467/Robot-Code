@@ -499,7 +499,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean spitter2022MotorInverted() {
-        return true;
+        return false;
     }
 
   @Override
