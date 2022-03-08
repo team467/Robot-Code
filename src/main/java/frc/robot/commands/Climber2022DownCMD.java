@@ -30,7 +30,7 @@ public class Climber2022DownCMD extends CommandBase {
 
     @Override 
     public void initialize(){
-        LOGGER.info("Climber going down"); //don't know what to make the logs
+        LOGGER.debug("Climber going down"); //don't know what to make the logs
     }
 
 
