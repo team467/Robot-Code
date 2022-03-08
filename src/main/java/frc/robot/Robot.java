@@ -8,11 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.tuning.TunerManager;
-
 import java.io.IOException;
-
-import frc.robot.logging.RobotLogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -21,8 +17,6 @@ import org.apache.logging.log4j.Logger;
  * project.
  */
 public class Robot extends TimedRobot {
-
-  private static final Logger LOGGER = RobotLogManager.getMainLogger(Robot.class.getName());
 
   private Command m_autonomousCommand;
 
@@ -36,7 +30,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    
+
     m_robotContainer = new RobotContainer();
 
     // Mounting USB
@@ -46,7 +40,7 @@ public class Robot extends TimedRobot {
       builder.start();
     } catch (IOException e) {
       e.printStackTrace();
-    }  
+    }
   }
 
   /**
