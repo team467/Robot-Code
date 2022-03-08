@@ -82,8 +82,6 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
       spitterSpeed.schedule();
     }
 
-
-
     if (spitter.isAtShootingSpeed()) {
       LOGGER.debug("Spitter is at shooting speed! Throwing balls into flywheel.");
       indexerForward.schedule();

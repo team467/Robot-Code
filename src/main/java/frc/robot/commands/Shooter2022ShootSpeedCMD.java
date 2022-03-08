@@ -18,7 +18,7 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
   private static final Logger LOGGER =
       RobotLogManager.getMainLogger(Shooter2022ShootSpeedCMD.class.getName());
 
-  private final double TIME_UNTIL_FINISHED = 0.5;
+  private final double TIME_UNTIL_FINISHED = 1.5;
 
   private final LlamaNeck2022 llamaNeck;
   private final Indexer2022 indexer;
@@ -34,6 +34,7 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
   private final Command spitterForward;
 
   private final Timer timer;
+  private final Timer shotTimer;
 
   public Shooter2022ShootSpeedCMD(
       Shooter2022 shooter, Supplier<Double> speed) {
@@ -55,6 +56,9 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
     this.timer = new Timer();
     timer.start();
 
+    this.shotTimer = new Timer();
+    shotTimer.start();
+
     addRequirements(shooter);
   }
 
@@ -73,7 +77,18 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
     if (spitter.isAtShootingSpeed()) {
       LOGGER.debug("Spitter is at shooting speed! Throwing balls into flywheel.");
       indexerForward.schedule();
-      llamaNeckForward.schedule();
+    } else {
+      indexerStop.schedule();
+    }
+
+    if (llamaNeck.upperLimitSwitchIsPressed()) {
+      shotTimer.reset();
+    } else {
+      if (shotTimer.hasElapsed(0.2)) {
+        llamaNeckForward.schedule();
+      } else {
+        llamaNeckStop.schedule();
+      }
     }
   }
 
@@ -82,7 +97,7 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    if (llamaNeck.upperLimitSwitchIsPressed() || llamaNeck.lowerLimitSwitchIsPressed()) {
+    if (llamaNeck.upperLimitSwitchIsPressed() || llamaNeck.lowerLimitSwitchIsPressed() || !shotTimer.hasElapsed(0.2)) {
       // any switch still pressed, continue shooting.
       timer.reset();
     }
