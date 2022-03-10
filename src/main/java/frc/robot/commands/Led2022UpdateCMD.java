@@ -2,14 +2,14 @@ package frc.robot.commands;
 
 import java.util.Map;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -23,6 +23,10 @@ import frc.robot.vision.BallTracking;
 import frc.robot.vision.HubTarget;
 
 public class Led2022UpdateCMD extends CommandBase {
+
+    public static final boolean USE_BATTERY_CHECK = true;
+    public static final double BATTER_MIN_VOLTAGE = 11.5;
+
     private final double TIMER_SPEED = 0.35;
 
     private Led2022 ledStrip;
@@ -43,10 +47,18 @@ public class Led2022UpdateCMD extends CommandBase {
     private COLORS_467 hasBallColor = COLORS_467.White;
     private COLORS_467 seeTargetColor = COLORS_467.Gold;
     private COLORS_467 seeBallColor = COLORS_467.Blue;
+    private COLORS_467 batteryCheckColor = COLORS_467.Orange;
 
     private NetworkTableEntry[] targetIndicators;
     private NetworkTableEntry[] seeBallIndicators;
     private NetworkTableEntry[] hasBallIndicators;
+
+    private static final int TARGET_INDICATOR_OFFSET_X = 7;
+    private static final int TARGET_INDICATOR_OFFSET_Y = 0;
+    private static final int SEE_BALL_INDICATOR_OFFSET_X = 7;
+    private static final int SEE_BALL_INDICATOR_OFFSET_Y = 1;
+    private static final int HAVE_BALL_INDICATOR_OFFSET_X = 8;
+    private static final int HAVE_BALL_INDICATOR_OFFSET_Y = 2;
 
     /*
      * Color blind preferred pallet includes White, Black, Red, Blue, Gold
@@ -57,7 +69,8 @@ public class Led2022UpdateCMD extends CommandBase {
         Green(0x00, 0x80, 0x00, 0x33663300),
         Blue(0x00, 0x00, 0xCC, 0x1a339900),
         Gold(0xFF, 0xC2, 0x0A, 0xe6e64d00),
-        Pink(0xDC, 0x26, 0x7F, 0xDC267f00),
+        Pink(0xDC, 0x26, 0x7F, 0xdc267f00),
+        Orange(0xFE, 0x61, 0x00, 0xfe6100),
         Black(0x00, 0x00, 0x00, 0x00000000);
 
         public final int red;
@@ -110,6 +123,13 @@ public class Led2022UpdateCMD extends CommandBase {
         ShuffleboardTab tab = Shuffleboard.getTab("Operator");
         Shuffleboard.selectTab("Operator");
 
+        tab.add("Driver Front Camera", CameraServer.getServer("Driver Front Camera"))
+            .withPosition(0, 0)
+            .withSize(3, 3);
+        tab.add("Driver Back Camera", CameraServer.getServer("Driver Back Camera"))
+            .withPosition(3, 0)
+            .withSize(3, 3);
+
         targetIndicators = new NetworkTableEntry[4];
         seeBallIndicators = new NetworkTableEntry[4];
         hasBallIndicators = new NetworkTableEntry[2];
@@ -117,7 +137,7 @@ public class Led2022UpdateCMD extends CommandBase {
         for (int i = 0; i < 4; i++) {
             targetIndicators[i] = tab.add("Target " + i, false)
                 .withWidget(BuiltInWidgets.kBooleanBox)
-                .withPosition(i, 3)
+                .withPosition(TARGET_INDICATOR_OFFSET_X + i, TARGET_INDICATOR_OFFSET_Y)
                 .withSize(1,1)
                 .withProperties(Map.of(
                     "Color when false", COLORS_467.Black.shuffleboard,
@@ -129,7 +149,7 @@ public class Led2022UpdateCMD extends CommandBase {
         for (int i = 0; i < 4; i++) {
             seeBallIndicators[i] = tab.add("See Ball " + i, false)
             .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(i, 4)
+            .withPosition(SEE_BALL_INDICATOR_OFFSET_X + i, SEE_BALL_INDICATOR_OFFSET_Y)
             .withSize(1,1)
             .withProperties(Map.of(
                 "Color when false", COLORS_467.Black.shuffleboard,
@@ -141,7 +161,7 @@ public class Led2022UpdateCMD extends CommandBase {
         for (int i = 0; i < 2; i++) {
             hasBallIndicators[i] = tab.add("Has Ball " + i, false)
             .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(4, 3+i)
+            .withPosition(HAVE_BALL_INDICATOR_OFFSET_X + i, HAVE_BALL_INDICATOR_OFFSET_Y)
             .withSize(1,1)
             .withProperties(Map.of(
                 "Color when false", COLORS_467.Black.shuffleboard,
@@ -201,7 +221,7 @@ public class Led2022UpdateCMD extends CommandBase {
     @Override
     public void execute() { 
 
-        if (DriverStation.isAutonomous() || DriverStation.isTeleop()) {
+        if (DriverStation.isAutonomous() || DriverStation.isTeleop() || DriverStation.isTest()) {
             idleColorTop = COLORS_467.Black;
             idleColorBottom = COLORS_467.Black;
         } else {
@@ -223,9 +243,11 @@ public class Led2022UpdateCMD extends CommandBase {
             ballDistance, BALL_MAX_RANGE,
             ballAngle, BALL_MAX_ANGLE);
         
-        if (climber != null && climber.isEnabled()) {
+        if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
+            set(batteryCheckColor);
+        } else if (climber != null && climber.isEnabled()) {
             setRainbowMovingUp();
-       } else if (indexer != null && indexer.isShooting()) {
+        } else if (indexer != null && indexer.isShooting()) {
            setPurpleMovingUp();
         } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
             cargoIndicator(hasBallIndicators, 2, 2);
@@ -250,7 +272,8 @@ public class Led2022UpdateCMD extends CommandBase {
             if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
                 set(seeBallColor);
             } else {
-                set(idleColorBottom);
+                setTop(idleColorTop);
+                setBottom(idleColorBottom);
             }
         }
 
