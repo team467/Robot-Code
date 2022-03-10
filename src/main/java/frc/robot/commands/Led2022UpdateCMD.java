@@ -52,11 +52,11 @@ public class Led2022UpdateCMD extends CommandBase {
      * Color blind preferred pallet includes White, Black, Red, Blue, Gold
      */
     public enum COLORS_467 {
-        White(0xFF, 0xFF, 0xFF, 0xFFFFFF00),
-        Red(0xFF, 0x00, 0x00, 0xFF000000),
-        Green(0x00, 0x80, 0x00, 0x00800000),
-        Blue(0x00, 0x00, 0xCC, 0x0000CC00),
-        Gold(0xFF, 0xC2, 0x0A, 0xFFC20A00),
+        White(0xFF, 0xFF, 0xFF, 0xffffff00),
+        Red(0xFF, 0x00, 0x00, 0x99000000),
+        Green(0x00, 0x80, 0x00, 0x33663300),
+        Blue(0x00, 0x00, 0xCC, 0x1a339900),
+        Gold(0xFF, 0xC2, 0x0A, 0xe6e64d00),
         Pink(0xDC, 0x26, 0x7F, 0xDC267f00),
         Black(0x00, 0x00, 0x00, 0x00000000);
 
@@ -109,22 +109,15 @@ public class Led2022UpdateCMD extends CommandBase {
 
         ShuffleboardTab tab = Shuffleboard.getTab("Operator");
         Shuffleboard.selectTab("Operator");
-        ShuffleboardLayout layout = tab.getLayout("Indicators", BuiltInLayouts.kGrid)
-            .withPosition(0, 0) 
-            .withSize(5, 2)
-            .withProperties(Map.of(
-                "Number of columns", 5, 
-                "Number of rows", 2, 
-                "Label position", "HIDDEN"));
 
         targetIndicators = new NetworkTableEntry[4];
         seeBallIndicators = new NetworkTableEntry[4];
         hasBallIndicators = new NetworkTableEntry[2];
 
         for (int i = 0; i < 4; i++) {
-            targetIndicators[i] = layout.add("Target Indicator " + i, false)
+            targetIndicators[i] = tab.add("Target " + i, false)
                 .withWidget(BuiltInWidgets.kBooleanBox)
-                .withPosition(i, 0)
+                .withPosition(i, 3)
                 .withSize(1,1)
                 .withProperties(Map.of(
                     "Color when false", COLORS_467.Black.shuffleboard,
@@ -134,9 +127,9 @@ public class Led2022UpdateCMD extends CommandBase {
         }
         
         for (int i = 0; i < 4; i++) {
-            seeBallIndicators[i] = layout.add("See Ball Indicator " + i, false)
+            seeBallIndicators[i] = tab.add("See Ball " + i, false)
             .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(i, 1)
+            .withPosition(i, 4)
             .withSize(1,1)
             .withProperties(Map.of(
                 "Color when false", COLORS_467.Black.shuffleboard,
@@ -146,9 +139,9 @@ public class Led2022UpdateCMD extends CommandBase {
         }
 
         for (int i = 0; i < 2; i++) {
-            hasBallIndicators[i] = layout.add("Has Ball Indicator " + i, false)
+            hasBallIndicators[i] = tab.add("Has Ball " + i, false)
             .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(4, i)
+            .withPosition(4, 3+i)
             .withSize(1,1)
             .withProperties(Map.of(
                 "Color when false", COLORS_467.Black.shuffleboard,
@@ -257,11 +250,11 @@ public class Led2022UpdateCMD extends CommandBase {
             if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
                 set(seeBallColor);
             } else {
-                setTop(idleColorTop);
-                setBottom(idleColorBottom);
+                set(idleColorBottom);
             }
         }
 
+        ledStrip.sendData();
     }
 
     @Override

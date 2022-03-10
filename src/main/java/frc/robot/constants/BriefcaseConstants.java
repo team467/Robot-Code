@@ -460,7 +460,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override 
     public int led2022LedCount() {
-        return 5;
+        return 10;
     }
 
     public double llamaNeck2022IdleSpeed() {
