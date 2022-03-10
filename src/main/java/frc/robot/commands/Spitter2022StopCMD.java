@@ -27,7 +27,7 @@ public class Spitter2022StopCMD extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {}
-  
+
   @Override
   public boolean isFinished() {
     return false;

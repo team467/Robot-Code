@@ -4,13 +4,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.logging.RobotLogManager;
-import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
-
 import java.util.function.Supplier;
-
 import org.apache.logging.log4j.Logger;
 
 public class Shooter2022ShootSpeedCMD extends CommandBase {
@@ -21,7 +18,6 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
   private final double TIME_UNTIL_FINISHED = 0.5;
 
   private final LlamaNeck2022 llamaNeck;
-  private final Indexer2022 indexer;
   private final Spitter2022 spitter;
   private final Supplier<Double> speed;
 
@@ -35,20 +31,18 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
 
   private final Timer timer;
 
-  public Shooter2022ShootSpeedCMD(
-      Shooter2022 shooter, Supplier<Double> speed) {
+  public Shooter2022ShootSpeedCMD(Shooter2022 shooter, Supplier<Double> speed) {
     super();
 
     this.llamaNeck = shooter.llamaNeck2022;
     this.spitter = shooter.spitter2022;
-    this.indexer = shooter.indexer2022;
     this.speed = speed;
 
     this.llamaNeckStop = new LlamaNeck2022StopCMD(llamaNeck);
     this.llamaNeckForward = new LlamaNeck2022ForwardCMD(llamaNeck);
 
-    this.indexerStop = new Indexer2022StopCMD(indexer);
-    this.indexerForward = new Indexer2022ForwardCMD(indexer);
+    this.indexerStop = new Indexer2022StopCMD(shooter.indexer2022);
+    this.indexerForward = new Indexer2022ForwardCMD(shooter.indexer2022);
 
     this.spitterForward = new Spitter2022SetSpeedCMD(spitter, speed);
 

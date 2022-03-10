@@ -420,7 +420,7 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
-    public double indexer2022InSpeed() {
+    public double indexer2022FastSpeed() {
         return 0.8;
     }
 

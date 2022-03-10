@@ -7,6 +7,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class BallTracking {
+
+  private BallTracking() {
+    throw new IllegalStateException("Utility class");
+  }
   private static final NetworkTable table = NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking");
   private static final NetworkTable redTable = table.getSubTable("Red");
   private static final NetworkTable blueTable = table.getSubTable("Blue");

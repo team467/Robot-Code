@@ -10,6 +10,11 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotConstants;
 
 public class HubTarget {
+
+    private HubTarget() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static final Translation2d hubTranslation = new Translation2d(Units.inchesToMeters(324), Units.inchesToMeters(162));
     private static final double hubOffset = Units.inchesToMeters(26.6875);
 

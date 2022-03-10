@@ -4,33 +4,27 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber2020;
 
 public class ClimberDownCMD extends CommandBase {
-    private Climber2020 climber;
+  private Climber2020 climber;
 
-    public ClimberDownCMD(Climber2020 climber) {
-        this.climber = climber;
+  public ClimberDownCMD(Climber2020 climber) {
+    this.climber = climber;
 
-        addRequirements(climber);
-    }
+    addRequirements(climber);
+  }
 
-    // Called when the command is initially scheduled.
-    @Override
-    public void initialize() {
-    }
+  @Override
+  public void initialize() {}
 
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute() {
-        climber.down();
-    }
+  @Override
+  public void execute() {
+    climber.down();
+  }
 
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-    }
+  @Override
+  public void end(boolean interrupted) {}
 
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 }

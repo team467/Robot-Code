@@ -1,8 +1,8 @@
 package frc.robot.motors;
 
 public enum ControlType {
-    PercentOutput,
-    Velocity,
-    Position,
-    Current  
+  PercentOutput,
+  Velocity,
+  Position,
+  Current
 }

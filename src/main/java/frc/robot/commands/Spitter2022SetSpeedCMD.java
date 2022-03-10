@@ -3,9 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.Spitter2022;
-
 import java.util.function.Supplier;
-
 import org.apache.logging.log4j.Logger;
 
 public class Spitter2022SetSpeedCMD extends CommandBase {

@@ -5,10 +5,16 @@ package frc.robot.utilities;
  */
 public class MathUtils {
 
+  private MathUtils() {
+    throw new IllegalStateException("Utility class");
+  }
+
   /**
-   * Returns the weighted average of a and b.
-   * a when factor = 0;
-   * b when factor = 1
+   * Finds the weighted average of a and b
+   * @param a a value
+   * @param b a value
+   * @param weight the weight to apply
+   * @return the weighted average of a and b
    */
   public static double weightedAverage(double a, double b, double weight) {
     return a * (1 - weight) + b * weight;
