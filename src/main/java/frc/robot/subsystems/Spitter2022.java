@@ -67,9 +67,9 @@ public class Spitter2022 extends SubsystemBase {
 
         spitterPlant = RobotConstants.get().spitter2022FF().getVelocityPlant();
         // TODO: Switch to flywheel plant, after gearing and moment of inertia are calculated
-    //    spitterPlant =
-    //            LinearSystemId.createFlywheelSystem(
-    //                    DCMotor.getNEO(1), RobotConstants.get().spitter2022MomentOfInertia(), RobotConstants.get().spitter2022GearRatio().getRotationsPerOutput());
+      //  spitterPlant =
+      //          LinearSystemId.createFlywheelSystem(
+      //                  DCMotor.getNEO(1), RobotConstants.get().spitter2022MomentOfInertia(), RobotConstants.get().spitter2022GearRatio().getRotationsPerOutput());
         spitterObserver =
             new KalmanFilter<>(
                     Nat.N1(),
