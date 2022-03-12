@@ -45,8 +45,6 @@ public class Led2022UpdateCMD extends CommandBase {
     public static final double BALL_MAX_RANGE = 100.0;
     public static final double BALL_MAX_ANGLE = 15.0;
 
-    private COLORS_467 idleColorTop = COLORS_467.Blue;
-    private COLORS_467 idleColorBottom = COLORS_467.Gold;
     private COLORS_467 hasBallColor = COLORS_467.White;
     private COLORS_467 seeTargetColor = COLORS_467.Gold;
     private COLORS_467 seeBallColor = COLORS_467.Blue;
@@ -228,13 +226,6 @@ public class Led2022UpdateCMD extends CommandBase {
     public void execute() { 
 
         if (DriverStation.isEnabled()) {
-            idleColorTop = COLORS_467.Black;
-            idleColorBottom = COLORS_467.Black;
-        } else {
-            idleColorTop = COLORS_467.Blue;
-            idleColorBottom = COLORS_467.Gold;
-        }
-
         boolean seesTarget = HubTarget.hasTarget();
         double targetDistance = HubTarget.getDistance();
         double targetAngle = HubTarget.getAngle();
@@ -284,10 +275,14 @@ public class Led2022UpdateCMD extends CommandBase {
             if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
                 set(seeBallColor);
             } else {
-                setTop(idleColorTop);
-                setBottom(idleColorBottom);
+                setTop(COLORS_467.Black);
+                setBottom(COLORS_467.Black);
             }
         }
+    } else {
+        setTop(COLORS_467.Blue);
+        setBottom(COLORS_467.Gold);
+    }
 
         ledStrip.sendData();
     }
