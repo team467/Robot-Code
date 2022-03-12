@@ -227,13 +227,13 @@ public class Led2022UpdateCMD extends CommandBase {
     @Override
     public void execute() { 
 
-        // if (DriverStation.isAutonomous() || DriverStation.isTeleop() || DriverStation.isTest()) {
-        //     idleColorTop = COLORS_467.Black;
-        //     idleColorBottom = COLORS_467.Black;
-        // } else {
+        if (DriverStation.isEnabled()) {
+            idleColorTop = COLORS_467.Black;
+            idleColorBottom = COLORS_467.Black;
+        } else {
             idleColorTop = COLORS_467.Blue;
             idleColorBottom = COLORS_467.Gold;
-        // }
+        }
 
         boolean seesTarget = HubTarget.hasTarget();
         double targetDistance = HubTarget.getDistance();
