@@ -25,7 +25,7 @@ import frc.robot.vision.HubTarget;
 public class Led2022UpdateCMD extends CommandBase {
 
     public static final boolean USE_BATTERY_CHECK = true;
-    public static final double BATTER_MIN_VOLTAGE = 11.5;
+    public static final double BATTER_MIN_VOLTAGE = 9.0;
 
     private final double TIMER_SPEED = 0.35;
 
@@ -37,10 +37,10 @@ public class Led2022UpdateCMD extends CommandBase {
     int color = 0;
     private Timer timer = new Timer();
 
-    public static final double TARGET_MAX_RANGE = 3.0;
-    public static final double TARGET_MAX_ANGLE = 4.0;
-    public static final double BALL_MAX_RANGE = 3.0;
-    public static final double BALL_MAX_ANGLE = 4.0;
+    public static final double TARGET_MAX_RANGE = 100.0;
+    public static final double TARGET_MAX_ANGLE = 15.0;
+    public static final double BALL_MAX_RANGE = 100.0;
+    public static final double BALL_MAX_ANGLE = 15.0;
 
     private COLORS_467 idleColorTop = COLORS_467.Blue;
     private COLORS_467 idleColorBottom = COLORS_467.Gold;
@@ -98,10 +98,6 @@ public class Led2022UpdateCMD extends CommandBase {
         this.indexer = indexer;
         this.llamaNeck = llamaNeck;
         this.climber = climber;
-
-        addRequirements(indexer);
-        addRequirements(llamaNeck);
-        addRequirements(climber);
 
     }
 
