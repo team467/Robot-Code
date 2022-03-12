@@ -377,6 +377,7 @@ public class Led2022UpdateCMD extends CommandBase {
     }
 
     public void setRainbow() {
+        rainbowTimer.reset();
         for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
             ledStrip.setHSB(i, (color + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
         }
