@@ -3,7 +3,9 @@ package frc.robot.commands;
 import java.util.Map;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -11,6 +13,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotConstants;
@@ -49,6 +53,10 @@ public class Led2022UpdateCMD extends CommandBase {
     private COLORS_467 seeBallColor = COLORS_467.Blue;
     private COLORS_467 batteryCheckColor = COLORS_467.Orange;
 
+    private SuppliedValueWidget<Boolean> targetIndicatorWidget[];
+    private SuppliedValueWidget<Boolean> seeBallIndicatorWidget[];
+    private SuppliedValueWidget<Boolean> hasBallIndicatorWidget[];
+
     private NetworkTableEntry[] targetIndicators;
     private NetworkTableEntry[] seeBallIndicators;
     private NetworkTableEntry[] hasBallIndicators;
@@ -64,7 +72,7 @@ public class Led2022UpdateCMD extends CommandBase {
      * Color blind preferred pallet includes White, Black, Red, Blue, Gold
      */
     public enum COLORS_467 {
-        White(0xFF, 0xFF, 0xFF, 0xffffff00),
+        White(0xFF, 0xFF, 0xFF, 0xdc267f00),
         Red(0xFF, 0x00, 0x00, 0x99000000),
         Green(0x00, 0x80, 0x00, 0x33663300),
         Blue(0x00, 0x00, 0xCC, 0x1a339900),
@@ -131,44 +139,104 @@ public class Led2022UpdateCMD extends CommandBase {
             .withSize(3, 3);
         }
 
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        NetworkTable table = inst.getTable("Indicators");
+        NetworkTable widgetTable = inst.getTable("Operator Widgets");
+
         targetIndicators = new NetworkTableEntry[4];
         seeBallIndicators = new NetworkTableEntry[4];
         hasBallIndicators = new NetworkTableEntry[2];
 
         for (int i = 0; i < 4; i++) {
-            targetIndicators[i] = tab.add("Target " + i, false)
-                .withWidget(BuiltInWidgets.kBooleanBox)
-                .withPosition(TARGET_INDICATOR_OFFSET_X + i, TARGET_INDICATOR_OFFSET_Y)
-                .withSize(1,1)
-                .withProperties(Map.of(
-                    "Color when false", COLORS_467.Black.shuffleboard,
-                    "Color when true", seeTargetColor.shuffleboard))
-                .getEntry();
+            targetIndicators[i] = table.getEntry("Target "+i);
             targetIndicators[i].setBoolean(false);
+            final String name = "Target " +i;
+            targetIndicatorWidget[i] = tab.addBoolean(name + " Widget", () -> {
+                return NetworkTableInstance.getDefault()
+                    .getTable("Indicators")
+                    .getSubTable("Target")
+                    .getEntry(name)
+                    .getBoolean(false);
+            })
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(TARGET_INDICATOR_OFFSET_X + i, TARGET_INDICATOR_OFFSET_Y)
+            .withSize(1,1)
+            .withProperties(Map.of(
+                "Color when false", COLORS_467.Black.shuffleboard,
+                "Color when true", seeTargetColor.shuffleboard));
+            targetIndicatorWidget[i].buildInto(widgetTable, table);
         }
+
+        //     targetIndicators[i] = tab.add("Target " + i, false)
+        //         .withWidget(BuiltInWidgets.kBooleanBox)
+        //         .withPosition(TARGET_INDICATOR_OFFSET_X + i, TARGET_INDICATOR_OFFSET_Y)
+        //         .withSize(1,1)
+        //         .withProperties(Map.of(
+        //             "Color when false", COLORS_467.Black.shuffleboard,
+        //             "Color when true", seeTargetColor.shuffleboard))
+        //         .getEntry();
+        //     targetIndicators[i].setBoolean(false);
+        // }
         
         for (int i = 0; i < 4; i++) {
-            seeBallIndicators[i] = tab.add("See Ball " + i, false)
+            seeBallIndicators[i] = table.getEntry("See Ball " + i);
+            seeBallIndicators[i].setBoolean(false);
+            final String name = "See Ball " + i;
+            seeBallIndicatorWidget[i] = tab.addBoolean(name + " Widget", () -> {
+                return NetworkTableInstance.getDefault()
+                    .getTable("Indicators")
+                    .getSubTable("See Ball")
+                    .getEntry(name)
+                    .getBoolean(false);
+            })
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(SEE_BALL_INDICATOR_OFFSET_X + i, SEE_BALL_INDICATOR_OFFSET_Y)
             .withSize(1,1)
             .withProperties(Map.of(
                 "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", seeBallColor.shuffleboard))
-            .getEntry();
-            seeBallIndicators[i].setBoolean(false);
+                "Color when true", seeBallColor.shuffleboard));
+            seeBallIndicatorWidget[i].buildInto(widgetTable, table);
+
+            // seeBallIndicators[i] = tab.add("See Ball " + i, false)
+            // .withWidget(BuiltInWidgets.kBooleanBox)
+            // .withPosition(SEE_BALL_INDICATOR_OFFSET_X + i, SEE_BALL_INDICATOR_OFFSET_Y)
+            // .withSize(1,1)
+            // .withProperties(Map.of(
+            //     "Color when false", COLORS_467.Black.shuffleboard,
+            //     "Color when true", seeBallColor.shuffleboard))
+            // .getEntry();
+            // seeBallIndicators[i].setBoolean(false);
         }
 
         for (int i = 0; i < 2; i++) {
-            hasBallIndicators[i] = tab.add("Has Ball " + i, false)
+            hasBallIndicators[i] = table.getEntry("Has Ball " + i);
+            hasBallIndicators[i].setBoolean(false);
+            final String name = "Has Ball " + i;
+            hasBallIndicatorWidget[i] = tab.addBoolean(name + " Widget", () -> {
+                return NetworkTableInstance.getDefault()
+                    .getTable("Indicators")
+                    .getSubTable("Has Ball")
+                    .getEntry(name)
+                    .getBoolean(false);
+            })
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(HAVE_BALL_INDICATOR_OFFSET_X + i, HAVE_BALL_INDICATOR_OFFSET_Y)
             .withSize(1,1)
             .withProperties(Map.of(
                 "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", hasBallColor.shuffleboard))
-            .getEntry();
-            seeBallIndicators[i].setBoolean(false);
+                "Color when true", hasBallColor.shuffleboard));
+            hasBallIndicatorWidget[i].buildInto(widgetTable, table);
+    
+
+            // hasBallIndicators[i] = tab.add("Has Ball " + i, false)
+            // .withWidget(BuiltInWidgets.kBooleanBox)
+            // .withPosition(HAVE_BALL_INDICATOR_OFFSET_X + i, HAVE_BALL_INDICATOR_OFFSET_Y)
+            // .withSize(1,1)
+            // .withProperties(Map.of(
+            //     "Color when false", COLORS_467.Black.shuffleboard,
+            //     "Color when true", hasBallColor.shuffleboard))
+            // .getEntry();
+            // hasBallIndicators[i].setBoolean(false);
         }
 
         timer.start();
