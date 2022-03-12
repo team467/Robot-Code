@@ -118,12 +118,6 @@ public class Led2022UpdateCMD extends CommandBase {
         this.ledStrip = ledStrip;
         addRequirements(ledStrip);
 
-        if (DriverStation.getAlliance() == Alliance.Red) {
-            seeBallColor = COLORS_467.Red;
-        } else {
-            seeBallColor = COLORS_467.Blue;
-        }
-
         ShuffleboardTab tab = Shuffleboard.getTab("Operator");
         Shuffleboard.selectTab("Operator");
 
@@ -291,6 +285,11 @@ public class Led2022UpdateCMD extends CommandBase {
 
     @Override
     public void execute() { 
+        if (DriverStation.getAlliance() == Alliance.Red) {
+            seeBallColor = COLORS_467.Red;
+        } else {
+            seeBallColor = COLORS_467.Blue;
+        }
 
         if (DriverStation.isEnabled()) {
 
