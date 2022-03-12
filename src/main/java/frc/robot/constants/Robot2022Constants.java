@@ -501,7 +501,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public SimpleFeedforwardConstant spitter2022FF() {
-        return new SimpleFeedforwardConstant(0.020143, 0.020143, 0.0010151);
+        return new SimpleFeedforwardConstant(0.21608, 0.026912, 0.00090509);
     }
 
   @Override
@@ -511,17 +511,17 @@ public class Robot2022Constants implements Constants {
 
   @Override
   public GearRatio spitter2022GearRatio() {
-    return new GearRatio(32, 32);
+    return new GearRatio(32, 24);
   }
 
   @Override
     public FeedbackConstant spitter2022FB() {
-        return new FeedbackConstant(0.14261, 0);
+        return new FeedbackConstant(0.018865, 0);
     }
 
     @Override
     public double spitter2022MaxVelocity() {
-        return 468.75;
+        return 351.5625;
     }
 
     @Override
