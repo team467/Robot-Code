@@ -303,6 +303,7 @@ public class Led2022UpdateCMD extends CommandBase {
             boolean seesTarget = HubTarget.hasTarget();
             double targetDistance = HubTarget.getDistance();
             double targetAngle = HubTarget.getAngle();
+            double maxTargetAngle = Math.atan2(0.6, HubTarget.getDistance());
             // indicators(targetIndicators, seesTarget, 
             //     targetDistance, TARGET_MAX_RANGE,
             //     targetAngle, TARGET_MAX_ANGLE);
@@ -328,7 +329,7 @@ public class Led2022UpdateCMD extends CommandBase {
                 setPurpleMovingUp();
             } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
                 // cargoIndicator(hasBallIndicators, 2, 2);
-                if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
+                if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < maxTargetAngle) {
                     setTop(seeTargetColor);
                     setBottom(seeTargetColor);
                 } else {
@@ -339,7 +340,7 @@ public class Led2022UpdateCMD extends CommandBase {
                 setBottom(hasBallColor);
                 if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
                     set(seeBallColor);
-                } else if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
+                } else if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < maxTargetAngle) {
                     setTop(seeTargetColor);
                 } else {
                     setTop(COLORS_467.Black); // Off
