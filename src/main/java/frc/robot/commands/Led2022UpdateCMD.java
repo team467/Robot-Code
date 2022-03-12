@@ -31,7 +31,9 @@ public class Led2022UpdateCMD extends CommandBase {
     public static final boolean USE_BATTERY_CHECK = true;
     public static final double BATTER_MIN_VOLTAGE = 9.0;
 
-    private final double TIMER_SPEED = 0.35;
+    private final double PURPLE_TIMER_SPEED = 0.35;
+    private final double RAINBOW_TIMER_SPEED = 0.02;
+    private final int RAINBOW_AMOUNT = 10;
 
     private Led2022 ledStrip;
     private LlamaNeck2022 llamaNeck = null;
@@ -39,15 +41,14 @@ public class Led2022UpdateCMD extends CommandBase {
     private Climber2022 climber = null;
     
     int color = 0;
-    private Timer timer = new Timer();
+    private Timer rainbowTimer = new Timer();
+    private Timer purpleTimer = new Timer();
 
     public static final double TARGET_MAX_RANGE = 100.0;
     public static final double TARGET_MAX_ANGLE = 15.0;
     public static final double BALL_MAX_RANGE = 100.0;
     public static final double BALL_MAX_ANGLE = 15.0;
 
-    private COLORS_467 idleColorTop = COLORS_467.Blue;
-    private COLORS_467 idleColorBottom = COLORS_467.Gold;
     private COLORS_467 hasBallColor = COLORS_467.White;
     private COLORS_467 seeTargetColor = COLORS_467.Gold;
     private COLORS_467 seeBallColor = COLORS_467.Blue;
@@ -239,7 +240,8 @@ public class Led2022UpdateCMD extends CommandBase {
             // hasBallIndicators[i].setBoolean(false);
         }
 
-        timer.start();
+        rainbowTimer.start();
+        purpleTimer.start();
     }
 
     private void indicators(
@@ -284,20 +286,14 @@ public class Led2022UpdateCMD extends CommandBase {
 
     @Override
     public void initialize() {
-        timer.reset();
+        rainbowTimer.reset();
+        purpleTimer.reset();
     }
 
     @Override
     public void execute() { 
 
-        // if (DriverStation.isAutonomous() || DriverStation.isTeleop() || DriverStation.isTest()) {
-        //     idleColorTop = COLORS_467.Black;
-        //     idleColorBottom = COLORS_467.Black;
-        // } else {
-            idleColorTop = COLORS_467.Blue;
-            idleColorBottom = COLORS_467.Gold;
-        // }
-
+        if (DriverStation.isEnabled()) {
         boolean seesTarget = HubTarget.hasTarget();
         double targetDistance = HubTarget.getDistance();
         double targetAngle = HubTarget.getAngle();
@@ -315,7 +311,13 @@ public class Led2022UpdateCMD extends CommandBase {
         if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
             set(batteryCheckColor);
         } else if (climber != null && climber.isEnabled()) {
-            setRainbowMovingUp();
+            if (climber.getCurrentCommand() instanceof Climber2022UpCMD) {
+                setRainbowMovingUp();
+            } else if (climber.getCurrentCommand() instanceof Climber2022DownCMD) {
+                setRainbowMovingDown();
+            } else {
+                setRainbow();
+            } 
         } else if (indexer != null && indexer.isShooting()) {
            setPurpleMovingUp();
         } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
@@ -341,10 +343,14 @@ public class Led2022UpdateCMD extends CommandBase {
             if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
                 set(seeBallColor);
             } else {
-                setTop(idleColorTop);
-                setBottom(idleColorBottom);
+                setTop(COLORS_467.Black);
+                setBottom(COLORS_467.Black);
             }
         }
+    } else {
+        setTop(COLORS_467.Blue);
+        setBottom(COLORS_467.Gold);
+    }
 
         ledStrip.sendData();
     }
@@ -393,13 +399,13 @@ public class Led2022UpdateCMD extends CommandBase {
     }
 
     public void setPurpleMovingUp() {
-        if (timer.hasElapsed(TIMER_SPEED * (RobotConstants.get().led2022LedCount() + 1))) {
-            timer.reset();
+        if (purpleTimer.hasElapsed(PURPLE_TIMER_SPEED * (RobotConstants.get().led2022LedCount() + 1))) {
+            purpleTimer.reset();
         }
 
         for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
-            if (timer.hasElapsed(TIMER_SPEED * i)) {
-                double timeUntilOff = Math.max(0, (TIMER_SPEED * (i + 1)) - timer.get());
+            if (purpleTimer.hasElapsed(PURPLE_TIMER_SPEED * i)) {
+                double timeUntilOff = Math.max(0, (PURPLE_TIMER_SPEED * (i + 1)) - purpleTimer.get());
                 int brightness = (int) (255 * timeUntilOff);
 
                 ledStrip.setRGB(i, 1 * brightness,0 * brightness, 1 * brightness);
@@ -408,13 +414,33 @@ public class Led2022UpdateCMD extends CommandBase {
     }
 
     public void setRainbowMovingUp() {
-        if (timer.hasElapsed(TIMER_SPEED)) {
-            color += 1;
+        if (rainbowTimer.hasElapsed(RAINBOW_TIMER_SPEED)) {
+            color -= RAINBOW_AMOUNT;
 
             if (color > 360) color = 0;
-            timer.reset();
+            rainbowTimer.reset();
         }
         
+        for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
+            ledStrip.setHSB(i, (color + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
+        }
+    }
+
+    public void setRainbowMovingDown() {
+        if (rainbowTimer.hasElapsed(RAINBOW_TIMER_SPEED)) {
+            color += RAINBOW_AMOUNT;
+
+            if (color < 0) color = 360;
+            rainbowTimer.reset();
+        }
+        
+        for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
+            ledStrip.setHSB(i, (color + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
+        }
+    }
+
+    public void setRainbow() {
+        rainbowTimer.reset();
         for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
             ledStrip.setHSB(i, (color + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
         }
