@@ -29,6 +29,7 @@ public class Led2022UpdateCMD extends CommandBase {
 
     private final double PURPLE_TIMER_SPEED = 0.35;
     private final double RAINBOW_TIMER_SPEED = 0.02;
+    private final int RAINBOW_AMOUNT = 10;
 
     private Led2022 ledStrip;
     private LlamaNeck2022 llamaNeck = null;
@@ -351,7 +352,7 @@ public class Led2022UpdateCMD extends CommandBase {
 
     public void setRainbowMovingUp() {
         if (rainbowTimer.hasElapsed(RAINBOW_TIMER_SPEED)) {
-            color += 10;
+            color -= RAINBOW_AMOUNT;
 
             if (color > 360) color = 0;
             rainbowTimer.reset();
@@ -364,7 +365,7 @@ public class Led2022UpdateCMD extends CommandBase {
 
     public void setRainbowMovingDown() {
         if (rainbowTimer.hasElapsed(RAINBOW_TIMER_SPEED)) {
-            color -= 10;
+            color += RAINBOW_AMOUNT;
 
             if (color < 0) color = 360;
             rainbowTimer.reset();
