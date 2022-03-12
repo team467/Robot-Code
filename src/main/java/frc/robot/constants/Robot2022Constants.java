@@ -56,17 +56,17 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public SimpleFeedforwardConstant driveDriveFF() {
-        return new SimpleFeedforwardConstant(0.16745, 2.8243, 0.49144);
+        return new SimpleFeedforwardConstant(0.19359, 2.8193, 0.38297);
     }
 
     @Override
     public FeedbackConstant driveDriveVelocityPID() {
-        return new FeedbackConstant(3.1939/2, 0.0);
+        return new FeedbackConstant(3.6541/2, 0.0);
     }
 
     @Override
     public FeedbackConstant driveDrivePositionPID() {
-        return new FeedbackConstant(96.073, 8.4843);
+        return new FeedbackConstant(92.34, 7.5956);
     }
 
     @Override
