@@ -45,7 +45,7 @@ public class LEDStrip extends AddressableLEDBuffer {
 
     public void setHSB(int index, float h, float s, float b) {
         java.awt.Color outColor = java.awt.Color.getHSBColor(h, s, b);
-        super.setRGB(index, outColor.getRed(), outColor.getGreen(), outColor.getBlue());
+        setRGBGamma(index, outColor.getRed(), outColor.getGreen(), outColor.getBlue());
     }
 
     public void setHSB(int index, int h, int s, int b) {
