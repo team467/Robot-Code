@@ -3,6 +3,7 @@ package frc.robot.commands;
 import java.util.Map;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -303,7 +304,7 @@ public class Led2022UpdateCMD extends CommandBase {
             boolean seesTarget = HubTarget.hasTarget();
             double targetDistance = HubTarget.getDistance();
             double targetAngle = HubTarget.getAngle();
-            double maxTargetAngle = Math.atan2(0.6, HubTarget.getDistance());
+            double maxTargetAngle = Units.radiansToDegrees(Math.atan2(0.6, HubTarget.getDistance()));
             // indicators(targetIndicators, seesTarget, 
             //     targetDistance, TARGET_MAX_RANGE,
             //     targetAngle, TARGET_MAX_ANGLE);
