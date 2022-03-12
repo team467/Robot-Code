@@ -551,7 +551,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double spitter2022DistanceLinearM() {
-        return 0.09024639947;
+        return 63.62246419;
     }
 
     @Override
