@@ -123,12 +123,17 @@ public class Led2022UpdateCMD extends CommandBase {
         ShuffleboardTab tab = Shuffleboard.getTab("Operator");
         Shuffleboard.selectTab("Operator");
 
-        tab.add("Driver Front Camera", CameraServer.getServer("Driver Front Camera"))
+        if (CameraServer.getServer("Driver Front Camera") != null) {
+            tab.add("Driver Front Camera", CameraServer.getServer("Driver Front Camera"))
             .withPosition(0, 0)
             .withSize(3, 3);
-        tab.add("Driver Back Camera", CameraServer.getServer("Driver Back Camera"))
+        }
+        
+        if (CameraServer.getServer("Driver Back Camera") != null) {
+            tab.add("Driver Back Camera", CameraServer.getServer("Driver Back Camera"))
             .withPosition(3, 0)
             .withSize(3, 3);
+        }
 
         targetIndicators = new NetworkTableEntry[4];
         seeBallIndicators = new NetworkTableEntry[4];
