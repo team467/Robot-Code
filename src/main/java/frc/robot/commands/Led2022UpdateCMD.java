@@ -226,13 +226,13 @@ public class Led2022UpdateCMD extends CommandBase {
     @Override
     public void execute() { 
 
-        if (DriverStation.isAutonomous() || DriverStation.isTeleop() || DriverStation.isTest()) {
-            idleColorTop = COLORS_467.Black;
-            idleColorBottom = COLORS_467.Black;
-        } else {
+        // if (DriverStation.isAutonomous() || DriverStation.isTeleop() || DriverStation.isTest()) {
+        //     idleColorTop = COLORS_467.Black;
+        //     idleColorBottom = COLORS_467.Black;
+        // } else {
             idleColorTop = COLORS_467.Blue;
             idleColorBottom = COLORS_467.Gold;
-        }
+        // }
 
         boolean seesTarget = HubTarget.hasTarget();
         double targetDistance = HubTarget.getDistance();
@@ -300,13 +300,13 @@ public class Led2022UpdateCMD extends CommandBase {
     }
 
     public void setTop(Color color) {
-        for (int i = RobotConstants.get().led2022LedCount()/2; i < RobotConstants.get().led2022LedCount(); i++) {
+        for (int i = 0; i < RobotConstants.get().led2022LedCount()/2; i++) {
             ledStrip.setLED(i, color);
         }
     }
 
     public void setBottom(Color color) {
-        for (int i = 0; i < RobotConstants.get().led2022LedCount()/2; i++) {
+        for (int i = RobotConstants.get().led2022LedCount()/2; i < RobotConstants.get().led2022LedCount(); i++) {
             ledStrip.setLED(i, color);
         }
     }
