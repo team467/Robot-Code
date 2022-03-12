@@ -21,7 +21,8 @@ import frc.robot.subsystems.Climber2022;
 import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.Led2022;
 import frc.robot.subsystems.LlamaNeck2022;
-
+import frc.robot.subsystems.Shooter2022;
+import frc.robot.subsystems.Spitter2022;
 import frc.robot.vision.BallTracking;
 import frc.robot.vision.HubTarget;
 
@@ -30,13 +31,15 @@ public class Led2022UpdateCMD extends CommandBase {
     public static final boolean USE_BATTERY_CHECK = true;
     public static final double BATTER_MIN_VOLTAGE = 9.0;
 
-    private final double SHOOTING_TIMER_SPEED = 0.02;
+    private final double SHOOTING_TIMER_SPEED = 0.1;
     private final double RAINBOW_TIMER_SPEED = 0.02;
     private final int RAINBOW_AMOUNT = 10;
 
     private Led2022 ledStrip;
     private LlamaNeck2022 llamaNeck = null;
     private Indexer2022 indexer = null;
+    private Spitter2022 spitter = null;
+    private Shooter2022 shooter = null;
     private Climber2022 climber = null;
     
     int color = 0;
@@ -53,13 +56,13 @@ public class Led2022UpdateCMD extends CommandBase {
     private COLORS_467 seeBallColor = COLORS_467.Blue;
     private COLORS_467 batteryCheckColor = COLORS_467.Orange;
 
-    private SuppliedValueWidget<Boolean> targetIndicatorWidget[];
-    private SuppliedValueWidget<Boolean> seeBallIndicatorWidget[];
-    private SuppliedValueWidget<Boolean> hasBallIndicatorWidget[];
+    // private SuppliedValueWidget<Boolean> targetIndicatorWidget[];
+    // private SuppliedValueWidget<Boolean> seeBallIndicatorWidget[];
+    // private SuppliedValueWidget<Boolean> hasBallIndicatorWidget[];
 
-    private NetworkTableEntry[] targetIndicators;
-    private NetworkTableEntry[] seeBallIndicators;
-    private NetworkTableEntry[] hasBallIndicators;
+    // private NetworkTableEntry[] targetIndicators;
+    // private NetworkTableEntry[] seeBallIndicators;
+    // private NetworkTableEntry[] hasBallIndicators;
 
     private static final int TARGET_INDICATOR_OFFSET_X = 7;
     private static final int TARGET_INDICATOR_OFFSET_Y = 0;
@@ -99,12 +102,16 @@ public class Led2022UpdateCMD extends CommandBase {
         Led2022 ledStrip,
         Indexer2022 indexer, 
         LlamaNeck2022 llamaNeck, 
+        Spitter2022 spitter,
+        Shooter2022 shooter,
         Climber2022 climber) {
 
         this(ledStrip);
         
         this.indexer = indexer;
         this.llamaNeck = llamaNeck;
+        this.spitter = spitter;
+        this.shooter = shooter;
         this.climber = climber;
 
     }
@@ -118,164 +125,164 @@ public class Led2022UpdateCMD extends CommandBase {
         this.ledStrip = ledStrip;
         addRequirements(ledStrip);
 
-        ShuffleboardTab tab = Shuffleboard.getTab("Operator");
-        Shuffleboard.selectTab("Operator");
+        // ShuffleboardTab tab = Shuffleboard.getTab("Operator");
+        // Shuffleboard.selectTab("Operator");
 
-        if (CameraServer.getServer("Driver Front Camera") != null) {
-            tab.add("Driver Front Camera", CameraServer.getServer("Driver Front Camera"))
-            .withPosition(0, 0)
-            .withSize(3, 3);
-        }
-        
-        if (CameraServer.getServer("Driver Back Camera") != null) {
-            tab.add("Driver Back Camera", CameraServer.getServer("Driver Back Camera"))
-            .withPosition(3, 0)
-            .withSize(3, 3);
-        }
-
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        NetworkTable table = inst.getTable("Indicators");
-        NetworkTable widgetTable = inst.getTable("Operator Widgets");
-
-        targetIndicators = new NetworkTableEntry[4];
-        seeBallIndicators = new NetworkTableEntry[4];
-        hasBallIndicators = new NetworkTableEntry[2];
-
-        for (int i = 0; i < 4; i++) {
-            targetIndicators[i] = table.getEntry("Target "+i);
-            targetIndicators[i].setBoolean(false);
-            final String name = "Target " +i;
-            targetIndicatorWidget[i] = tab.addBoolean(name + " Widget", () -> {
-                return NetworkTableInstance.getDefault()
-                    .getTable("Indicators")
-                    .getSubTable("Target")
-                    .getEntry(name)
-                    .getBoolean(false);
-            })
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(TARGET_INDICATOR_OFFSET_X + i, TARGET_INDICATOR_OFFSET_Y)
-            .withSize(1,1)
-            .withProperties(Map.of(
-                "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", seeTargetColor.shuffleboard));
-            targetIndicatorWidget[i].buildInto(widgetTable, table);
-        }
-
-        //     targetIndicators[i] = tab.add("Target " + i, false)
-        //         .withWidget(BuiltInWidgets.kBooleanBox)
-        //         .withPosition(TARGET_INDICATOR_OFFSET_X + i, TARGET_INDICATOR_OFFSET_Y)
-        //         .withSize(1,1)
-        //         .withProperties(Map.of(
-        //             "Color when false", COLORS_467.Black.shuffleboard,
-        //             "Color when true", seeTargetColor.shuffleboard))
-        //         .getEntry();
-        //     targetIndicators[i].setBoolean(false);
+        // if (CameraServer.getServer("Driver Front Camera") != null) {
+        //     tab.add("Driver Front Camera", CameraServer.getServer("Driver Front Camera"))
+        //     .withPosition(0, 0)
+        //     .withSize(3, 3);
         // }
         
-        for (int i = 0; i < 4; i++) {
-            seeBallIndicators[i] = table.getEntry("See Ball " + i);
-            seeBallIndicators[i].setBoolean(false);
-            final String name = "See Ball " + i;
-            seeBallIndicatorWidget[i] = tab.addBoolean(name + " Widget", () -> {
-                return NetworkTableInstance.getDefault()
-                    .getTable("Indicators")
-                    .getSubTable("See Ball")
-                    .getEntry(name)
-                    .getBoolean(false);
-            })
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(SEE_BALL_INDICATOR_OFFSET_X + i, SEE_BALL_INDICATOR_OFFSET_Y)
-            .withSize(1,1)
-            .withProperties(Map.of(
-                "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", seeBallColor.shuffleboard));
-            seeBallIndicatorWidget[i].buildInto(widgetTable, table);
+        // if (CameraServer.getServer("Driver Back Camera") != null) {
+        //     tab.add("Driver Back Camera", CameraServer.getServer("Driver Back Camera"))
+        //     .withPosition(3, 0)
+        //     .withSize(3, 3);
+        // }
 
-            // seeBallIndicators[i] = tab.add("See Ball " + i, false)
-            // .withWidget(BuiltInWidgets.kBooleanBox)
-            // .withPosition(SEE_BALL_INDICATOR_OFFSET_X + i, SEE_BALL_INDICATOR_OFFSET_Y)
-            // .withSize(1,1)
-            // .withProperties(Map.of(
-            //     "Color when false", COLORS_467.Black.shuffleboard,
-            //     "Color when true", seeBallColor.shuffleboard))
-            // .getEntry();
-            // seeBallIndicators[i].setBoolean(false);
-        }
+        // NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        // NetworkTable table = inst.getTable("Indicators");
+        // NetworkTable widgetTable = inst.getTable("Operator Widgets");
 
-        for (int i = 0; i < 2; i++) {
-            hasBallIndicators[i] = table.getEntry("Has Ball " + i);
-            hasBallIndicators[i].setBoolean(false);
-            final String name = "Has Ball " + i;
-            hasBallIndicatorWidget[i] = tab.addBoolean(name + " Widget", () -> {
-                return NetworkTableInstance.getDefault()
-                    .getTable("Indicators")
-                    .getSubTable("Has Ball")
-                    .getEntry(name)
-                    .getBoolean(false);
-            })
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(HAVE_BALL_INDICATOR_OFFSET_X + i, HAVE_BALL_INDICATOR_OFFSET_Y)
-            .withSize(1,1)
-            .withProperties(Map.of(
-                "Color when false", COLORS_467.Black.shuffleboard,
-                "Color when true", hasBallColor.shuffleboard));
-            hasBallIndicatorWidget[i].buildInto(widgetTable, table);
+        // targetIndicators = new NetworkTableEntry[4];
+        // seeBallIndicators = new NetworkTableEntry[4];
+        // hasBallIndicators = new NetworkTableEntry[2];
+
+        // for (int i = 0; i < 4; i++) {
+        //     targetIndicators[i] = table.getEntry("Target "+i);
+        //     targetIndicators[i].setBoolean(false);
+        //     final String name = "Target " +i;
+        //     targetIndicatorWidget[i] = tab.addBoolean(name + " Widget", () -> {
+        //         return NetworkTableInstance.getDefault()
+        //             .getTable("Indicators")
+        //             .getSubTable("Target")
+        //             .getEntry(name)
+        //             .getBoolean(false);
+        //     })
+        //     .withWidget(BuiltInWidgets.kBooleanBox)
+        //     .withPosition(TARGET_INDICATOR_OFFSET_X + i, TARGET_INDICATOR_OFFSET_Y)
+        //     .withSize(1,1)
+        //     .withProperties(Map.of(
+        //         "Color when false", COLORS_467.Black.shuffleboard,
+        //         "Color when true", seeTargetColor.shuffleboard));
+        //     targetIndicatorWidget[i].buildInto(widgetTable, table);
+        // }
+
+        // //     targetIndicators[i] = tab.add("Target " + i, false)
+        // //         .withWidget(BuiltInWidgets.kBooleanBox)
+        // //         .withPosition(TARGET_INDICATOR_OFFSET_X + i, TARGET_INDICATOR_OFFSET_Y)
+        // //         .withSize(1,1)
+        // //         .withProperties(Map.of(
+        // //             "Color when false", COLORS_467.Black.shuffleboard,
+        // //             "Color when true", seeTargetColor.shuffleboard))
+        // //         .getEntry();
+        // //     targetIndicators[i].setBoolean(false);
+        // // }
+        
+        // for (int i = 0; i < 4; i++) {
+        //     seeBallIndicators[i] = table.getEntry("See Ball " + i);
+        //     seeBallIndicators[i].setBoolean(false);
+        //     final String name = "See Ball " + i;
+        //     seeBallIndicatorWidget[i] = tab.addBoolean(name + " Widget", () -> {
+        //         return NetworkTableInstance.getDefault()
+        //             .getTable("Indicators")
+        //             .getSubTable("See Ball")
+        //             .getEntry(name)
+        //             .getBoolean(false);
+        //     })
+        //     .withWidget(BuiltInWidgets.kBooleanBox)
+        //     .withPosition(SEE_BALL_INDICATOR_OFFSET_X + i, SEE_BALL_INDICATOR_OFFSET_Y)
+        //     .withSize(1,1)
+        //     .withProperties(Map.of(
+        //         "Color when false", COLORS_467.Black.shuffleboard,
+        //         "Color when true", seeBallColor.shuffleboard));
+        //     seeBallIndicatorWidget[i].buildInto(widgetTable, table);
+
+        //     // seeBallIndicators[i] = tab.add("See Ball " + i, false)
+        //     // .withWidget(BuiltInWidgets.kBooleanBox)
+        //     // .withPosition(SEE_BALL_INDICATOR_OFFSET_X + i, SEE_BALL_INDICATOR_OFFSET_Y)
+        //     // .withSize(1,1)
+        //     // .withProperties(Map.of(
+        //     //     "Color when false", COLORS_467.Black.shuffleboard,
+        //     //     "Color when true", seeBallColor.shuffleboard))
+        //     // .getEntry();
+        //     // seeBallIndicators[i].setBoolean(false);
+        // }
+
+        // for (int i = 0; i < 2; i++) {
+        //     hasBallIndicators[i] = table.getEntry("Has Ball " + i);
+        //     hasBallIndicators[i].setBoolean(false);
+        //     final String name = "Has Ball " + i;
+        //     hasBallIndicatorWidget[i] = tab.addBoolean(name + " Widget", () -> {
+        //         return NetworkTableInstance.getDefault()
+        //             .getTable("Indicators")
+        //             .getSubTable("Has Ball")
+        //             .getEntry(name)
+        //             .getBoolean(false);
+        //     })
+        //     .withWidget(BuiltInWidgets.kBooleanBox)
+        //     .withPosition(HAVE_BALL_INDICATOR_OFFSET_X + i, HAVE_BALL_INDICATOR_OFFSET_Y)
+        //     .withSize(1,1)
+        //     .withProperties(Map.of(
+        //         "Color when false", COLORS_467.Black.shuffleboard,
+        //         "Color when true", hasBallColor.shuffleboard));
+        //     hasBallIndicatorWidget[i].buildInto(widgetTable, table);
     
 
-            // hasBallIndicators[i] = tab.add("Has Ball " + i, false)
-            // .withWidget(BuiltInWidgets.kBooleanBox)
-            // .withPosition(HAVE_BALL_INDICATOR_OFFSET_X + i, HAVE_BALL_INDICATOR_OFFSET_Y)
-            // .withSize(1,1)
-            // .withProperties(Map.of(
-            //     "Color when false", COLORS_467.Black.shuffleboard,
-            //     "Color when true", hasBallColor.shuffleboard))
-            // .getEntry();
-            // hasBallIndicators[i].setBoolean(false);
-        }
+        //     // hasBallIndicators[i] = tab.add("Has Ball " + i, false)
+        //     // .withWidget(BuiltInWidgets.kBooleanBox)
+        //     // .withPosition(HAVE_BALL_INDICATOR_OFFSET_X + i, HAVE_BALL_INDICATOR_OFFSET_Y)
+        //     // .withSize(1,1)
+        //     // .withProperties(Map.of(
+        //     //     "Color when false", COLORS_467.Black.shuffleboard,
+        //     //     "Color when true", hasBallColor.shuffleboard))
+        //     // .getEntry();
+        //     // hasBallIndicators[i].setBoolean(false);
+        // }
 
         rainbowTimer.start();
         purpleTimer.start();
     }
 
-    private void indicators(
-        NetworkTableEntry[] indicators, boolean isValid, 
-        double distance, double range,
-        double angle, double maxAngle) {
-        if (isValid && distance < range) {
-            if  (Math.abs(angle) < maxAngle) {
-                indicators[0].setBoolean(false);
-                indicators[1].setBoolean(true);
-                indicators[2].setBoolean(true);
-                indicators[3].setBoolean(false);
-            } else if (angle < 0) {
-                indicators[0].setBoolean(true);
-                indicators[1].setBoolean(true);
-                indicators[2].setBoolean(false);
-                indicators[3].setBoolean(false);    
-            } else {
-                indicators[0].setBoolean(false);
-                indicators[1].setBoolean(false);
-                indicators[2].setBoolean(true);
-                indicators[3].setBoolean(true);
-            }
-        } else {
-            indicators[0].setBoolean(false);
-            indicators[1].setBoolean(false);
-            indicators[2].setBoolean(false);
-            indicators[3].setBoolean(false);
-        }
-    }
+    // private void indicators(
+    //     NetworkTableEntry[] indicators, boolean isValid, 
+    //     double distance, double range,
+    //     double angle, double maxAngle) {
+    //     if (isValid && distance < range) {
+    //         if  (Math.abs(angle) < maxAngle) {
+    //             indicators[0].setBoolean(false);
+    //             indicators[1].setBoolean(true);
+    //             indicators[2].setBoolean(true);
+    //             indicators[3].setBoolean(false);
+    //         } else if (angle < 0) {
+    //             indicators[0].setBoolean(true);
+    //             indicators[1].setBoolean(true);
+    //             indicators[2].setBoolean(false);
+    //             indicators[3].setBoolean(false);    
+    //         } else {
+    //             indicators[0].setBoolean(false);
+    //             indicators[1].setBoolean(false);
+    //             indicators[2].setBoolean(true);
+    //             indicators[3].setBoolean(true);
+    //         }
+    //     } else {
+    //         indicators[0].setBoolean(false);
+    //         indicators[1].setBoolean(false);
+    //         indicators[2].setBoolean(false);
+    //         indicators[3].setBoolean(false);
+    //     }
+    // }
 
-    private void cargoIndicator(
-        NetworkTableEntry[] indicators, 
-        int capacity, int amount) {
-        for (int i = 0; i < amount; i++) {
-            indicators[capacity-1-i].setBoolean(true);
-        }
-        for (int i = amount; i < capacity; i++) {
-            indicators[capacity-1-i].setBoolean(true);
-        }
-    }
+    // private void cargoIndicator(
+    //     NetworkTableEntry[] indicators, 
+    //     int capacity, int amount) {
+    //     for (int i = 0; i < amount; i++) {
+    //         indicators[capacity-1-i].setBoolean(true);
+    //     }
+    //     for (int i = amount; i < capacity; i++) {
+    //         indicators[capacity-1-i].setBoolean(true);
+    //     }
+    // }
 
     @Override
     public void initialize() {
@@ -296,16 +303,16 @@ public class Led2022UpdateCMD extends CommandBase {
             boolean seesTarget = HubTarget.hasTarget();
             double targetDistance = HubTarget.getDistance();
             double targetAngle = HubTarget.getAngle();
-            indicators(targetIndicators, seesTarget, 
-                targetDistance, TARGET_MAX_RANGE,
-                targetAngle, TARGET_MAX_ANGLE);
+            // indicators(targetIndicators, seesTarget, 
+            //     targetDistance, TARGET_MAX_RANGE,
+            //     targetAngle, TARGET_MAX_ANGLE);
 
             boolean seesBall = BallTracking.hasBall();
             double ballDistance = BallTracking.getDistance();
             double ballAngle = BallTracking.getAngle();
-            indicators(seeBallIndicators, seesBall, 
-                ballDistance, BALL_MAX_RANGE,
-                ballAngle, BALL_MAX_ANGLE);
+            // indicators(seeBallIndicators, seesBall, 
+            //     ballDistance, BALL_MAX_RANGE,
+            //     ballAngle, BALL_MAX_ANGLE);
             
             if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
                 set(batteryCheckColor);
@@ -317,10 +324,10 @@ public class Led2022UpdateCMD extends CommandBase {
                 } else {
                     setRainbow();
                 } 
-            } else if (indexer != null && indexer.isShooting()) {
+            } else if (shooter != null && (shooter.getCurrentCommand() instanceof Shooter2022ShootCMD || shooter.getCurrentCommand() instanceof Shooter2022ShootSpeedCMD  || shooter.getCurrentCommand() instanceof Shooter2022ShootTargetCMD)) {
                 setPurpleMovingUp();
             } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
-                cargoIndicator(hasBallIndicators, 2, 2);
+                // cargoIndicator(hasBallIndicators, 2, 2);
                 if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
                     setTop(seeTargetColor);
                     setBottom(seeTargetColor);
@@ -328,7 +335,7 @@ public class Led2022UpdateCMD extends CommandBase {
                     set(hasBallColor);
                 }
             } else if (llamaNeck != null && llamaNeck.hasUpperBall()) {
-                cargoIndicator(hasBallIndicators, 2, 1);
+                // cargoIndicator(hasBallIndicators, 2, 1);
                 setBottom(hasBallColor);
                 if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
                     set(seeBallColor);
@@ -338,7 +345,7 @@ public class Led2022UpdateCMD extends CommandBase {
                     setTop(COLORS_467.Black); // Off
                 }
             } else {
-                cargoIndicator(hasBallIndicators, 2, 0);
+                // cargoIndicator(hasBallIndicators, 2, 0);
                 if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
                     set(seeBallColor);
                 } else {
@@ -398,16 +405,18 @@ public class Led2022UpdateCMD extends CommandBase {
     }
 
     public void setPurpleMovingUp() {
-        if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * (RobotConstants.get().led2022LedCount() + 1))) {
+        if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * (RobotConstants.get().led2022LedCount() + 2))) {
             purpleTimer.reset();
         }
 
         for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
             if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * i)) {
-                double timeUntilOff = Math.max(0, (SHOOTING_TIMER_SPEED * (i + 1)) - purpleTimer.get());
+                double timeUntilOff = Math.max(0, (SHOOTING_TIMER_SPEED * (i + 2)) - purpleTimer.get());
                 int brightness = (int) (255 * timeUntilOff);
 
-                ledStrip.setRGB(i, 1 * brightness,0 * brightness, 1 * brightness);
+                ledStrip.setRGB(i, 1 * brightness, 0 * brightness, 1 * brightness);
+             } else {
+                ledStrip.setRGB(i, 0, 0, 0);
              }
         }
     }

@@ -15,8 +15,6 @@ public class Indexer2022 extends SubsystemBase {
 
   private final MotorControllerEncoder indexerMotor;
 
-  private boolean isShooting;
-
   /** The indexer subsystem, contains the indexer wheel and its motor only. */
   public Indexer2022() {
     super();
@@ -25,8 +23,6 @@ public class Indexer2022 extends SubsystemBase {
             RobotConstants.get().indexer2022MotorID(), MotorType.TALON_SRX);
 
     indexerMotor.setInverted(RobotConstants.get().indexer2022MotorInverted());
-
-    isShooting = false;
   }
 
   /** Idles the indexer wheel. */
@@ -34,7 +30,6 @@ public class Indexer2022 extends SubsystemBase {
     LOGGER.debug(
         "Starting indexer slowly, setting speed to " + RobotConstants.get().indexer2022IdleSpeed());
     indexerMotor.set(RobotConstants.get().indexer2022IdleSpeed());
-    isShooting = false;
   }
 
   /** Moves the indexer wheel forwards at a higher speed. */
@@ -42,7 +37,6 @@ public class Indexer2022 extends SubsystemBase {
     LOGGER.debug(
         "Starting indexer quickly, setting speed to " + RobotConstants.get().indexer2022InSpeed());
     indexerMotor.set(RobotConstants.get().indexer2022InSpeed());
-    isShooting = true;
   }
 
   /** Moves the indexer wheel backwards. */
@@ -50,18 +44,12 @@ public class Indexer2022 extends SubsystemBase {
     LOGGER.debug(
         "Reversing indexer, setting speed to " + RobotConstants.get().indexer2022OutSpeed());
     indexerMotor.set(-RobotConstants.get().indexer2022OutSpeed());
-    isShooting = false;
   }
 
   /** Stops the indexer wheel. */
   public void stop() {
     LOGGER.debug("Stopping indexer, setting speed to 0");
     indexerMotor.set(0);
-    isShooting = false;
-  }
-
-  public boolean isShooting() {
-    return isShooting;
   }
 
   @Override
