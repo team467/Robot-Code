@@ -44,7 +44,7 @@ public class Spitter2022 extends SubsystemBase {
    * @return Calculated flywheel speed in rad/s
    */
   public static double getFlywheelVelocity(double distance) {
-    return RobotConstants.get().spitter2022MaxVelocity() * ((RobotConstants.get().spitter2022DistanceLinearM() * distance) + RobotConstants.get().spitter2022DistanceLinearB());
+    return ((RobotConstants.get().spitter2022DistanceLinearM() * distance) + RobotConstants.get().spitter2022DistanceLinearB());
   }
 
   /**
@@ -67,9 +67,9 @@ public class Spitter2022 extends SubsystemBase {
 
         spitterPlant = RobotConstants.get().spitter2022FF().getVelocityPlant();
         // TODO: Switch to flywheel plant, after gearing and moment of inertia are calculated
-    //    spitterPlant =
-    //            LinearSystemId.createFlywheelSystem(
-    //                    DCMotor.getNEO(1), RobotConstants.get().spitter2022MomentOfInertia(), RobotConstants.get().spitter2022GearRatio().getRotationsPerOutput());
+      //  spitterPlant =
+      //          LinearSystemId.createFlywheelSystem(
+      //                  DCMotor.getNEO(1), RobotConstants.get().spitter2022MomentOfInertia(), RobotConstants.get().spitter2022GearRatio().getRotationsPerOutput());
         spitterObserver =
             new KalmanFilter<>(
                     Nat.N1(),
