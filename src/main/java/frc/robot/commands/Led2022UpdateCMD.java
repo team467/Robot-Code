@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotConstants;
@@ -31,7 +30,7 @@ public class Led2022UpdateCMD extends CommandBase {
     public static final boolean USE_BATTERY_CHECK = true;
     public static final double BATTER_MIN_VOLTAGE = 9.0;
 
-    private final double PURPLE_TIMER_SPEED = 0.35;
+    private final double SHOOTING_TIMER_SPEED = 0.02;
     private final double RAINBOW_TIMER_SPEED = 0.02;
     private final int RAINBOW_AMOUNT = 10;
 
@@ -294,63 +293,64 @@ public class Led2022UpdateCMD extends CommandBase {
     public void execute() { 
 
         if (DriverStation.isEnabled()) {
-        boolean seesTarget = HubTarget.hasTarget();
-        double targetDistance = HubTarget.getDistance();
-        double targetAngle = HubTarget.getAngle();
-        indicators(targetIndicators, seesTarget, 
-            targetDistance, TARGET_MAX_RANGE,
-            targetAngle, TARGET_MAX_ANGLE);
 
-        boolean seesBall = BallTracking.hasBall();
-        double ballDistance = BallTracking.getDistance();
-        double ballAngle = BallTracking.getAngle();
-        indicators(seeBallIndicators, seesBall, 
-            ballDistance, BALL_MAX_RANGE,
-            ballAngle, BALL_MAX_ANGLE);
-        
-        if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
-            set(batteryCheckColor);
-        } else if (climber != null && climber.isEnabled()) {
-            if (climber.getCurrentCommand() instanceof Climber2022UpCMD) {
-                setRainbowMovingUp();
-            } else if (climber.getCurrentCommand() instanceof Climber2022DownCMD) {
-                setRainbowMovingDown();
+            boolean seesTarget = HubTarget.hasTarget();
+            double targetDistance = HubTarget.getDistance();
+            double targetAngle = HubTarget.getAngle();
+            indicators(targetIndicators, seesTarget, 
+                targetDistance, TARGET_MAX_RANGE,
+                targetAngle, TARGET_MAX_ANGLE);
+
+            boolean seesBall = BallTracking.hasBall();
+            double ballDistance = BallTracking.getDistance();
+            double ballAngle = BallTracking.getAngle();
+            indicators(seeBallIndicators, seesBall, 
+                ballDistance, BALL_MAX_RANGE,
+                ballAngle, BALL_MAX_ANGLE);
+            
+            if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
+                set(batteryCheckColor);
+            } else if (climber != null && climber.isEnabled()) {
+                if (climber.getCurrentCommand() instanceof Climber2022UpCMD) {
+                    setRainbowMovingUp();
+                } else if (climber.getCurrentCommand() instanceof Climber2022DownCMD) {
+                    setRainbowMovingDown();
+                } else {
+                    setRainbow();
+                } 
+            } else if (indexer != null && indexer.isShooting()) {
+                setPurpleMovingUp();
+            } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
+                cargoIndicator(hasBallIndicators, 2, 2);
+                if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
+                    setTop(seeTargetColor);
+                    setBottom(seeTargetColor);
+                } else {
+                    set(hasBallColor);
+                }
+            } else if (llamaNeck != null && llamaNeck.hasUpperBall()) {
+                cargoIndicator(hasBallIndicators, 2, 1);
+                setBottom(hasBallColor);
+                if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
+                    set(seeBallColor);
+                } else if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
+                    setTop(seeTargetColor);
+                } else {
+                    setTop(COLORS_467.Black); // Off
+                }
             } else {
-                setRainbow();
-            } 
-        } else if (indexer != null && indexer.isShooting()) {
-           setPurpleMovingUp();
-        } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
-            cargoIndicator(hasBallIndicators, 2, 2);
-            if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
-                setTop(seeTargetColor);
-                setBottom(seeTargetColor);
-            } else {
-                set(hasBallColor);
-            }
-        } else if (llamaNeck != null && llamaNeck.hasUpperBall()) {
-            cargoIndicator(hasBallIndicators, 2, 1);
-            setBottom(hasBallColor);
-            if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
-                set(seeBallColor);
-            } else if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < TARGET_MAX_ANGLE) {
-                setTop(seeTargetColor);
-            } else {
-                setTop(COLORS_467.Black); // Off
+                cargoIndicator(hasBallIndicators, 2, 0);
+                if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
+                    set(seeBallColor);
+                } else {
+                    setTop(COLORS_467.Black);
+                    setBottom(COLORS_467.Black);
+                }
             }
         } else {
-            cargoIndicator(hasBallIndicators, 2, 0);
-            if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
-                set(seeBallColor);
-            } else {
-                setTop(COLORS_467.Black);
-                setBottom(COLORS_467.Black);
-            }
+            setTop(COLORS_467.Blue);
+            setBottom(COLORS_467.Gold);
         }
-    } else {
-        setTop(COLORS_467.Blue);
-        setBottom(COLORS_467.Gold);
-    }
 
         ledStrip.sendData();
     }
@@ -399,13 +399,13 @@ public class Led2022UpdateCMD extends CommandBase {
     }
 
     public void setPurpleMovingUp() {
-        if (purpleTimer.hasElapsed(PURPLE_TIMER_SPEED * (RobotConstants.get().led2022LedCount() + 1))) {
+        if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * (RobotConstants.get().led2022LedCount() + 1))) {
             purpleTimer.reset();
         }
 
         for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
-            if (purpleTimer.hasElapsed(PURPLE_TIMER_SPEED * i)) {
-                double timeUntilOff = Math.max(0, (PURPLE_TIMER_SPEED * (i + 1)) - purpleTimer.get());
+            if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * i)) {
+                double timeUntilOff = Math.max(0, (SHOOTING_TIMER_SPEED * (i + 1)) - purpleTimer.get());
                 int brightness = (int) (255 * timeUntilOff);
 
                 ledStrip.setRGB(i, 1 * brightness,0 * brightness, 1 * brightness);
