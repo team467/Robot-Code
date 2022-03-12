@@ -3,7 +3,7 @@
   "encoder type": "Encoder Port",
   "encoding": false,
   "gearing denominator": 24.0,
-  "gearing numerator": 32.0,
+  "gearing numerator": 24.0,
   "gyro": "Analog Gyro",
   "gyro ctor": "0",
   "is drivetrain": false,

@@ -16,6 +16,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
       RobotLogManager.getMainLogger(Shooter2022ShootTargetCMD.class.getName());
 
   private final double TIME_UNTIL_FINISHED = 1.5;
+  private final double TIME_BETWEEN_BALLS = 0.3;
 
   private final LlamaNeck2022 llamaNeck;
   private final Spitter2022 spitter;
@@ -89,7 +90,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
     if (llamaNeck.upperLimitSwitchIsPressed()) {
       shotTimer.reset();
     } else {
-      if (shotTimer.hasElapsed(0.2)) {
+      if (shotTimer.hasElapsed(TIME_BETWEEN_BALLS)) {
         llamaNeckForward.schedule();
       } else {
         llamaNeckStop.schedule();
@@ -102,9 +103,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    if (llamaNeck.upperLimitSwitchIsPressed()
-        || llamaNeck.lowerLimitSwitchIsPressed()
-        || !shotTimer.hasElapsed(0.2)) {
+    if (llamaNeck.upperLimitSwitchIsPressed() || llamaNeck.lowerLimitSwitchIsPressed() || !shotTimer.hasElapsed(TIME_BETWEEN_BALLS)) {
       // any switch still pressed, continue shooting.
       timer.reset();
     }

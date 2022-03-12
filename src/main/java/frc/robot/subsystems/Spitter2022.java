@@ -89,10 +89,7 @@ public class Spitter2022 extends SubsystemBase {
    * @return Calculated flywheel speed in rad/s
    */
   public static double getFlywheelVelocity(double distance) {
-    // y=mx+b line equation
-    return RobotConstants.get().spitter2022MaxVelocity()
-        * ((RobotConstants.get().spitter2022DistanceLinearM() * distance)
-            + RobotConstants.get().spitter2022DistanceLinearB());
+    return ((RobotConstants.get().spitter2022DistanceLinearM() * distance) + RobotConstants.get().spitter2022DistanceLinearB());
   }
 
   /**
