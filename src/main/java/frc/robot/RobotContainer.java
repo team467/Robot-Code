@@ -417,7 +417,7 @@ public class RobotContainer {
   private void initHubCameraLED() {
     if (RobotConstants.get().hasHubCameraLED()) {
       hubCameraLED = new HubCameraLED();
-      hubCameraLED.setDefaultCommand(new HubCameraLEDSmart(hubCameraLED, llamaNeck));
+      hubCameraLED.setDefaultCommand(new HubCameraLEDSmart(hubCameraLED, shooter2022));
     }
   }
 
