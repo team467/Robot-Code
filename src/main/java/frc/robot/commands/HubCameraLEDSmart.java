@@ -4,14 +4,15 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.HubCameraLED;
 import frc.robot.subsystems.LlamaNeck2022;
+import frc.robot.subsystems.Shooter2022;
 
 public class HubCameraLEDSmart extends CommandBase {
     private HubCameraLED hubCameraLED;
-    private LlamaNeck2022 llamaNeck;
+    private Shooter2022 shooter;
 
-    public HubCameraLEDSmart(HubCameraLED hubCameraLED, LlamaNeck2022 llamaNeck) {
+    public HubCameraLEDSmart(HubCameraLED hubCameraLED, Shooter2022 shooter) {
         this.hubCameraLED = hubCameraLED;
-        this.llamaNeck = llamaNeck;
+        this.shooter = shooter;
 
         addRequirements(hubCameraLED);
     }
@@ -24,7 +25,7 @@ public class HubCameraLEDSmart extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (llamaNeck.upperLimitSwitchIsPressed()) {
+        if (shooter.llamaNeck2022.upperLimitSwitchIsPressed() || shooter.getCurrentCommand() instanceof Shooter2022ShootCMD || shooter.getCurrentCommand() instanceof Shooter2022ShootSpeedCMD  || shooter.getCurrentCommand() instanceof Shooter2022ShootTargetCMD) {
             hubCameraLED.enable();
         } else {
             hubCameraLED.disable();
