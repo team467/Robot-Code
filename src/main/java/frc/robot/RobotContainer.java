@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.BlankDefaultCMD;
 import frc.robot.commands.Indexer2022StopCMD;
@@ -39,6 +40,8 @@ import frc.robot.commands.GoToTargetCMD;
 import frc.robot.commands.GoToTrajectoryCMD;
 import frc.robot.commands.HubCameraLEDEnable;
 import frc.robot.commands.Led2022UpdateCMD;
+import frc.robot.commands.GoToTrajectoryCMD;
+import frc.robot.commands.HubCameraLEDSmart;
 import frc.robot.commands.LlamaNeck2022StopCMD;
 import frc.robot.commands.OffTarmacAutoCMD;
 import frc.robot.commands.OneBallAutoNoVisionOffTarmacCMD;
@@ -394,7 +397,7 @@ public class RobotContainer {
         && RobotConstants.get().hasSpitter2022()) {
       if (operatorShooterFlywheel.get()) {
         shooter2022.setDefaultCommand(
-            new Shooter2022IdleCMD(shooter2022));
+            new Shooter2022IdleTargetCMD(shooter2022));
       } else {
         shooter2022.setDefaultCommand(
             new Shooter2022StopCMD(shooter2022));
@@ -403,7 +406,7 @@ public class RobotContainer {
       operatorShooterFlywheel
           .whenPressed(
               new Shooter2022SetDefaultCMD(
-                  shooter2022, new Shooter2022IdleCMD(shooter2022)))
+                  shooter2022, new Shooter2022IdleTargetCMD(shooter2022)))
           .whenReleased(
               new Shooter2022SetDefaultCMD(
                   shooter2022, new Shooter2022StopCMD(shooter2022)));
