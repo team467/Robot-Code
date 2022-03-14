@@ -367,7 +367,7 @@ public class RobotContainer {
         && RobotConstants.get().hasSpitter2022()) {
       if (operatorShooterFlywheel.get()) {
         shooter2022.setDefaultCommand(
-            new Shooter2022IdleCMD(shooter2022));
+            new Shooter2022IdleTargetCMD(shooter2022));
       } else {
         shooter2022.setDefaultCommand(
             new Shooter2022StopCMD(shooter2022));
@@ -376,7 +376,7 @@ public class RobotContainer {
       operatorShooterFlywheel
           .whenPressed(
               new Shooter2022SetDefaultCMD(
-                  shooter2022, new Shooter2022IdleCMD(shooter2022)))
+                  shooter2022, new Shooter2022IdleTargetCMD(shooter2022)))
           .whenReleased(
               new Shooter2022SetDefaultCMD(
                   shooter2022, new Shooter2022StopCMD(shooter2022)));
