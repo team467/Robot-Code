@@ -309,9 +309,9 @@ public class Led2022UpdateCMD extends CommandBase {
             //     targetDistance, TARGET_MAX_RANGE,
             //     targetAngle, TARGET_MAX_ANGLE);
 
-            boolean seesBall = BallTracking.hasBall();
-            double ballDistance = BallTracking.getDistance();
-            double ballAngle = BallTracking.getAngle();
+            // boolean seesBall = BallTracking.hasBall();
+            // double ballDistance = BallTracking.getDistance();
+            // double ballAngle = BallTracking.getAngle();
             // indicators(seeBallIndicators, seesBall, 
             //     ballDistance, BALL_MAX_RANGE,
             //     ballAngle, BALL_MAX_ANGLE);
@@ -344,21 +344,22 @@ public class Led2022UpdateCMD extends CommandBase {
             } else if (llamaNeck != null && llamaNeck.hasUpperBall()) {
                 // cargoIndicator(hasBallIndicators, 2, 1);
                 setBottom(hasBallColor);
-                if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
-                    set(seeBallColor);
-                } else if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < maxTargetAngle) {
+                // if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
+                //     set(seeBallColor);
+                // } else 
+                if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < maxTargetAngle) {
                     setTop(seeTargetColor);
                 } else {
                     setTop(COLORS_467.Black); // Off
                 }
             } else {
                 // cargoIndicator(hasBallIndicators, 2, 0);
-                if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
-                    set(seeBallColor);
-                } else {
+                // if (seesBall && ballDistance < BALL_MAX_RANGE && Math.abs(ballAngle) < BALL_MAX_ANGLE) {
+                //     set(seeBallColor);
+                // } else {
                     setTop(COLORS_467.Black);
                     setBottom(COLORS_467.Black);
-                }
+                // }
             }
         } else {
             setTop(COLORS_467.Blue);
