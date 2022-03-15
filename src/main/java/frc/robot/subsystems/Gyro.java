@@ -20,6 +20,7 @@ public class Gyro extends SubsystemBase implements edu.wpi.first.wpilibj.interfa
     gyro.calibrate();
   }
 
+  // Resets the gyro heading to zero.
   @Override
   public void reset() {
     gyro.reset();

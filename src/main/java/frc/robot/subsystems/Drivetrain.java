@@ -43,6 +43,9 @@ public class Drivetrain extends SubsystemTuner {
   private DifferentialDrivePoseEstimator estimator;
   private Field2d field;
 
+  /**
+   * It intializes and creates the motors on the drive train using RobotConstants.
+   */
   public Drivetrain() {
     super();
 

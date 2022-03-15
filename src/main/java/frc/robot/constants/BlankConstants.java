@@ -11,11 +11,12 @@ import frc.robot.motors.MotorType;
 import frc.robot.utilities.IMUAxis;
 import frc.robot.utilities.IMUType;
 
+/**
+ * Blank constants file exists as we need to supply some sort of constants for the robot, otherwise it will crash.
+ * The BlankConstants file serves this purpose.
+ * This should never show up and throws an error when it does, however, it is here when we don't specify the rio name.
+ */
 public class BlankConstants implements Constants {
-
-    // Blank constants file exists as we need to supply some sort of constants for the robot, otherwise it will crash.
-    // The BlankConstants file serves this purpose.
-    // This should never show up and throws an error when it does, however, it is here when we don't specify the rio name. 
 
     @Override
     public String name() {
@@ -37,12 +38,12 @@ public class BlankConstants implements Constants {
         return MotorType.NONE;
     }
 
-  @Override
-  public IdleMode driveIdleMode() {
-    return IdleMode.kCoast;
-  }
+    @Override
+    public IdleMode driveIdleMode() {
+        return IdleMode.kCoast;
+    }
 
-  @Override
+    @Override
     public boolean driveUseVelocity() {
         return false;
     }
@@ -92,12 +93,12 @@ public class BlankConstants implements Constants {
         return 0.0;
     }
 
-  @Override
-  public GearRatio driveGearRatio() {
-    return new GearRatio();
-  }
+    @Override
+    public GearRatio driveGearRatio() {
+        return new GearRatio();
+    }
 
-  @Override
+    @Override
     public DifferentialDriveKinematics driveKinematics() {
         return new DifferentialDriveKinematics(0);
     }
@@ -207,22 +208,22 @@ public class BlankConstants implements Constants {
         return false;
     }
 
-    @Override 
+    @Override
     public int climber2020MotorId() {
         return 0;
     }
 
-    @Override 
+    @Override
     public boolean climber2020MotorInverted() {
         return false;
     }
 
-    @Override 
+    @Override
     public double climber2020UpSpeed() {
         return 0;
     }
 
-    @Override 
+    @Override
     public double climber2020DownSpeed() {
         return 0;
     }
@@ -237,7 +238,6 @@ public class BlankConstants implements Constants {
         return 0;
     }
 
-    
     @Override
     public int climber2022LeftMotorId() {
         return 0;
@@ -462,10 +462,10 @@ public class BlankConstants implements Constants {
     public double llamaNeck2022InSpeed() {
         return 0;
     }
-    
+
     @Override
     public double llamaNeck2022OutSpeed() {
-     return 0;   
+        return 0;
     }
 
     @Override
@@ -477,13 +477,13 @@ public class BlankConstants implements Constants {
     public int llamaNeck2022LowerLimitSwitchChannel() {
         return 0;
     }
-    
+
     @Override
     public boolean hasSpitter2022() {
         return false;
     }
 
-    @Override 
+    @Override
     public int spitter2022MotorId() {
         return 0;
     }
@@ -493,10 +493,10 @@ public class BlankConstants implements Constants {
         return false;
     }
 
-  @Override
-  public boolean spitter2022UseVelocity() {
-    return false;
-  }
+    @Override
+    public boolean spitter2022UseVelocity() {
+        return false;
+    }
 
     @Override
     public boolean spitter2022UsePID() {
@@ -508,27 +508,27 @@ public class BlankConstants implements Constants {
         return new SimpleFeedforwardConstant(0, 0, 0);
     }
 
-  @Override
-  public double spitter2022MomentOfInertia() {
-    return 0;
-  }
+    @Override
+    public double spitter2022MomentOfInertia() {
+        return 0;
+    }
 
-  @Override
-  public GearRatio spitter2022GearRatio() {
-    return new GearRatio();
-  }
+    @Override
+    public GearRatio spitter2022GearRatio() {
+        return new GearRatio();
+    }
 
-  @Override
+    @Override
     public FeedbackConstant spitter2022FB() {
         return new FeedbackConstant(0, 0);
     }
 
-  @Override
-  public double spitter2022MaxVelocity() {
-    return 0;
-  }
+    @Override
+    public double spitter2022MaxVelocity() {
+        return 0;
+    }
 
-  @Override
+    @Override
     public double spitter2022ForwardSpeed() {
         return 0;
     }
@@ -538,10 +538,10 @@ public class BlankConstants implements Constants {
         return 0;
     }
 
-  @Override
-  public double spitter2022DistanceLinearM() {
-    return 0;
-  }
+    @Override
+    public double spitter2022DistanceLinearM() {
+        return 0;
+    }
 
     @Override
     public double spitter2022DistanceLinearB() {
@@ -558,9 +558,9 @@ public class BlankConstants implements Constants {
         return 0;
     }
 
-  @Override
-  public Translation2d hubCameraOffset() {
-    return new Translation2d();
-  }
+    @Override
+    public Translation2d hubCameraOffset() {
+        return new Translation2d();
+    }
 
 }

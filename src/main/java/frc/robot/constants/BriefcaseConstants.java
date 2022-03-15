@@ -118,26 +118,31 @@ public class BriefcaseConstants implements Constants {
         return 0;
     }
 
+    // Fast mode maximum speed. 
     @Override
     public double driveFastMaxSpeed() {
         return 1.0;
     }
 
+    // Normal mode maximum speed.
     @Override
     public double driveNormalMaxSpeed() {
         return 0.8;
     }
 
+    // Slow mode maximum speed.
     @Override
     public double driveSlowMaxSpeed() {
         return 0.5;
     }
 
+    // Normal mode maximum turning speed.
     @Override
     public double driveNormalTurnMaxSpeed() {
         return 1.0;
     }
 
+    // Slow mode maximum turning speed.
     @Override
     public double driveSlowTurnMaxSpeed() {
         return 0.8;
@@ -413,6 +418,7 @@ public class BriefcaseConstants implements Constants {
         return 11;
     }
 
+    // The speed of the indexer when it is idle.
     @Override
     public double indexer2022IdleSpeed() {
         return 0.25;

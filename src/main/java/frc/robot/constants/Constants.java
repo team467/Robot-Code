@@ -12,6 +12,7 @@ import frc.robot.utilities.IMUAxis;
 import frc.robot.utilities.IMUType;
 
 public interface Constants {
+  // DRIVETRAIN
   /**
    * @return The name of the robot constant file
    */
@@ -28,7 +29,10 @@ public interface Constants {
    * @return What motor type does the drivetrain use
    */
   MotorType driveMotorType();
-  /** TODO: add explanation to what this is */
+  /** 
+   * @return Returns whether the motor is in idle mode and the coasting and braking values.
+   *  @see https://docs.revrobotics.com/sparkmax/operating-modes/idle-mode-brake-coast-mode
+   */
   IdleMode driveIdleMode();
   /**
    * @return Does the drivetrain use velocity tuning
@@ -138,7 +142,7 @@ public interface Constants {
    */
   boolean driveMotorRightFollowerInverted();
 
-
+  // GYRO
   /**
    * @return Does the robot have a gyro
    */
@@ -166,6 +170,7 @@ public interface Constants {
 
   double climber2020DownSpeed();
 
+  // 2022 CLIMBER
   /**
    * @return Does the robot have a 2022 climber
    */
@@ -194,7 +199,9 @@ public interface Constants {
    * @return The speed in which the climber goes down
    */
   double climber2022DownSpeed();
-  /** The motor ID for the solenoid channel */
+  /** 
+   * @return The motor ID for the solenoid channel 
+   */
   int climber2022SolenoidChannel();
   /**
    * @return The limit to how low the left climber goes
@@ -213,6 +220,7 @@ public interface Constants {
    */
   double climber2022RightUpperLimit();
 
+  // SHOOTER 2020
   // we should probably delete shooter2020
   /**
    * @return Does the robot have a 2020 shooter
@@ -250,26 +258,20 @@ public interface Constants {
   double shooter2020FlywheelkV();
   /** TODO: add explanation to what this is */
   double shooter2020FlywheelkA();
-
+  /**
+   * @return The maximum flywheel 2020 velocity.
+   */
   double shooter2020FlywheelkMaxVelocity();
-
   int shooter2020TriggerMotorId();
-
   boolean shooter2020TriggerInverted();
-  /** TODO: add explanation to what this is */
   int shooter2020LeftServoId();
-  /** TODO: add explanation to what this is */
   double shooter2020LeftServoMax();
-  /** TODO: add explanation to what this is */
   double shooter2020LeftServoMin();
-  /** TODO: add explanation to what this is */
   int shooter2020RightServoId();
-  /** TODO: add explanation to what this is */
   double shooter2020RightServoMax();
-  /** TODO: add explanation to what this is */
   double shooter2020RightServoMin();
 
-
+  // INDEXER
   /**
    * @return Does the robot have a 2022 indexer
    */
@@ -295,7 +297,7 @@ public interface Constants {
    */
   boolean indexer2022MotorInverted();
 
-
+  // LLAMA NECK
   /**
    * @return Does the robot have a 2022 llama neck
    */
@@ -329,6 +331,7 @@ public interface Constants {
    */
   int llamaNeck2022LowerLimitSwitchChannel();
 
+  // SPITTER
   /**
    * @return Does the robot have a 2022 spitter
    */
@@ -355,7 +358,9 @@ public interface Constants {
    * @return Moment of inertia of the flywheel
    */
   double spitter2022MomentOfInertia();
-  /** TODO: add explanation to what this is */
+  /**
+   * @return The gear ratio of the spitter subsystem.
+   */
   GearRatio spitter2022GearRatio();
   /** TODO: add explanation to what this is */
   FeedbackConstant spitter2022FB();
@@ -380,7 +385,7 @@ public interface Constants {
    */
   double spitter2022DistanceLinearB();
 
-
+  // LED
   /**
    * @return Does the robot have a hub camera LED
    */

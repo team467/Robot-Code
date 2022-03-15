@@ -1,7 +1,10 @@
 package frc.robot.motors;
 
 import edu.wpi.first.math.controller.RamseteController;
-
+/**
+ * The Ramsete Controller is a trajectory tracker that is built in to WPILib.
+ * @see https://docs.wpilib.org/en/latest/docs/software/advanced-controls/trajectories/ramsete.html#constructing-the-ramsete-controller-object
+ */
 public class RamseteConstant {
   private final double kB;
   private final double kZeta;

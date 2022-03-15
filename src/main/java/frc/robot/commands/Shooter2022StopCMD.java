@@ -9,6 +9,10 @@ import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * A command that stops the shooter.
+ * It also stops the llama neck, spitter, and indexer in that order.
+ */
 public class Shooter2022StopCMD extends CommandBase {
 
   private static final Logger LOGGER =
