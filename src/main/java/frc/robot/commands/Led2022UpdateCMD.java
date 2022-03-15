@@ -327,7 +327,12 @@ public class Led2022UpdateCMD extends CommandBase {
                     setRainbow();
                 } 
             } else if (shooter != null && (shooter.getCurrentCommand() instanceof Shooter2022ShootCMD || shooter.getCurrentCommand() instanceof Shooter2022ShootSpeedCMD  || shooter.getCurrentCommand() instanceof Shooter2022ShootTargetCMD)) {
-                setPurpleMovingUp();
+                if (HubTarget.hasTarget()) {
+                    setColorMovingUp(Color.kBlack, Color.kGold);
+                } else {
+                    setColorMovingUp(Color.kAliceBlue, Color.kBlack);
+                }
+                
             } else if (llamaNeck != null && llamaNeck.hasLowerBall()) {
                 // cargoIndicator(hasBallIndicators, 2, 2);
                 if (seesTarget && targetDistance < TARGET_MAX_RANGE &&  Math.abs(targetAngle) < maxTargetAngle) {
@@ -406,7 +411,7 @@ public class Led2022UpdateCMD extends CommandBase {
         }
     }
 
-    public void setPurpleMovingUp() {
+    public void setColorMovingUp(Color fgColor, Color bgColor) {
         if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * (RobotConstants.get().led2022LedCount() + 2))) {
             purpleTimer.reset();
         }
@@ -414,11 +419,15 @@ public class Led2022UpdateCMD extends CommandBase {
         for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
             if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * i)) {
                 double timeUntilOff = Math.max(0, (SHOOTING_TIMER_SPEED * (i + 2)) - purpleTimer.get());
-                int brightness = (int) (255 * timeUntilOff);
+                double brightness = (255 * timeUntilOff);
 
-                ledStrip.setRGB(i, 1 * brightness, 0 * brightness, 1 * brightness);
+                if (brightness == 0) {
+                    ledStrip.setLED(i, bgColor);
+                } else {
+                    ledStrip.setRGB(i, (int) (fgColor.red * brightness), (int) (fgColor.green * brightness), (int) (fgColor.blue * brightness));
+                }
              } else {
-                ledStrip.setRGB(i, 0, 0, 0);
+                ledStrip.setLED(i, bgColor);
              }
         }
     }

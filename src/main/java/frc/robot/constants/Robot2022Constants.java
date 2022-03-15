@@ -251,7 +251,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double climber2022UpSpeed() {
-        return 0.5;
+        return 0.8;
     }
 
     @Override

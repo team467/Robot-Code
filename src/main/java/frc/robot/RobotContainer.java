@@ -48,6 +48,7 @@ import frc.robot.commands.OneBallAutoNoVisionOffTarmacCMD;
 import frc.robot.commands.OneBallAutoNoVisionOnTarmacCMD;
 import frc.robot.commands.Shooter2022FlushBallCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
+import frc.robot.commands.Shooter2022IdleSpinupCMD;
 import frc.robot.commands.Shooter2022IdleTargetCMD;
 import frc.robot.commands.Shooter2022SetDefaultCMD;
 import frc.robot.commands.Shooter2022ShootSpeedCMD;
@@ -397,7 +398,7 @@ public class RobotContainer {
         && RobotConstants.get().hasSpitter2022()) {
       if (operatorShooterFlywheel.get()) {
         shooter2022.setDefaultCommand(
-            new Shooter2022IdleTargetCMD(shooter2022));
+            new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(0.6)));
       } else {
         shooter2022.setDefaultCommand(
             new Shooter2022StopCMD(shooter2022));
@@ -406,7 +407,7 @@ public class RobotContainer {
       operatorShooterFlywheel
           .whenPressed(
               new Shooter2022SetDefaultCMD(
-                  shooter2022, new Shooter2022IdleTargetCMD(shooter2022)))
+                  shooter2022, new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(0.6))))
           .whenReleased(
               new Shooter2022SetDefaultCMD(
                   shooter2022, new Shooter2022StopCMD(shooter2022)));
