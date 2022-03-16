@@ -566,6 +566,11 @@ public class KitBot2022Constants implements Constants {
         return 0;
     }
 
+    @Override
+    public boolean hasDashboard2022() {
+        return false;
+    }  
+
   @Override
   public Translation2d hubCameraOffset() {
     return new Translation2d();

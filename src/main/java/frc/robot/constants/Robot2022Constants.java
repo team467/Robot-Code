@@ -569,6 +569,12 @@ public class Robot2022Constants implements Constants {
         return 0;
     }
 
+    @Override
+    public boolean hasDashboard2022() {
+        return true;
+    }
+  
+
     // TODO: Pester cad into giving me the offset for the hub camera
   @Override
   public Translation2d hubCameraOffset() {

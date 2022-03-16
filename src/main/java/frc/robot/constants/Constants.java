@@ -133,4 +133,6 @@ public interface Constants {
     public boolean hasHubCameraLED();
     public int hubCameraLEDChannel();
     public Translation2d hubCameraOffset();
+
+    public boolean hasDashboard2022();
 }
