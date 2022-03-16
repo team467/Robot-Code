@@ -3,64 +3,101 @@ package frc.robot.led;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import frc.robot.RobotConstants;
-
 import java.util.ArrayList;
 
 public class LEDManager {
-    private static LEDManager instance = null;
-    private final ArrayList<Integer> offsets = new ArrayList<>();
-    private int length = 0;
-    private AddressableLEDBuffer ledBuffer;
-    private AddressableLED ledStrip;
+  private static LEDManager instance = null;
+  private final ArrayList<Integer> offsets = new ArrayList<>();
+  private int length = 0;
+  private AddressableLEDBuffer ledBuffer;
+  private AddressableLED ledStrip;
 
-    public static LEDManager getInstance() {
-        if (instance == null) instance = new LEDManager();
-        return instance;
+  private LEDManager() {
+    // no constructor needed
+  }
+
+  public static synchronized LEDManager getInstance() {
+    if (instance == null) instance = new LEDManager();
+    return instance;
+  }
+
+  /**
+   * Creates a new LED strip with a certain length.
+   *
+   * @param length TODO: explain what this means
+   * @return A LED strip that can be controlled.
+   */
+  public LEDStrip createStrip(int length) {
+    offsets.add(this.length);
+    this.length += length;
+
+    return new LEDStrip(length, offsets.size() - 1);
+  }
+
+  /**
+   * Creates a single new LED strip with a certain length.
+   *
+   * @param length TODO: explain what this means
+   * @return A LED strip that can be controlled.
+   */
+  public LEDStrip createSingleStrip(int length) {
+    return createStrip(length);
+  }
+
+  /**
+   * Creates a new inverted LED strip with a certain length.
+   *
+   * @param length TODO: explain what this means
+   * @return An inverted LED strip that can be controlled.
+   */
+  public InvertedLEDStrip createInvertedStrip(int length) {
+    offsets.add(this.length);
+    this.length += length;
+
+    return new InvertedLEDStrip(length, offsets.size() - 1);
+  }
+
+  /**
+   * Creates a new double LED strip with a certain length.
+   *
+   * @param length TODO: explain what this means
+   * @return A double LED strip that can be controlled.
+   */
+  public DoubleLEDStrip createDoubleStrip(int length) {
+    offsets.add(this.length);
+    this.length += length * 2;
+
+    return new DoubleLEDStrip(length, offsets.size() - 1);
+  }
+
+  /** Initializes the LED manager */
+  public void init() {
+    ledBuffer = new AddressableLEDBuffer(length);
+    ledStrip = new AddressableLED(RobotConstants.get().ledChannel());
+    ledStrip.setLength(length);
+    ledStrip.setData(ledBuffer);
+    ledStrip.start();
+  }
+
+  /**
+   * Updates the LED manager
+   *
+   * @param buffer TODO: explain what this means
+   * @param offset TODO: explain what this means
+   */
+  public void update(AddressableLEDBuffer buffer, int offset) {
+    for (int i = 0; i < buffer.getLength(); i++) {
+      ledBuffer.setLED(i + offset, buffer.getLED(i));
     }
+    ledStrip.setData(ledBuffer);
+  }
 
-    private LEDManager() {}
-
-    public LEDStrip createStrip(int length) {
-        offsets.add(this.length);
-        this.length += length;
-
-        return new LEDStrip(length, offsets.size() - 1);
-    }
-
-    public LEDStrip createSingleStrip(int length) {
-        return createStrip(length);
-    }
-
-    public InvertedLEDStrip createInvertedStrip(int length) {
-        offsets.add(this.length);
-        this.length += length;
-
-        return new InvertedLEDStrip(length, offsets.size() - 1);
-    }
-
-    public DoubleLEDStrip createDoubleStrip(int length) {
-        offsets.add(this.length);
-        this.length += length*2;
-
-        return new DoubleLEDStrip(length, offsets.size() - 1);
-    }
-
-    public void init() {
-        ledBuffer = new AddressableLEDBuffer(length);
-        ledStrip = new AddressableLED(RobotConstants.get().ledChannel());
-        ledStrip.setLength(length);
-        ledStrip.setData(ledBuffer);
-        ledStrip.start();
-    }
-
-    public void update(AddressableLEDBuffer buffer, int offset) {
-        for (int i = 0; i < buffer.getLength(); i++) {
-            ledBuffer.setLED(i + offset, buffer.getLED(i));
-        }
-        ledStrip.setData(ledBuffer);
-    }
-
-    public void update(LEDStrip strip) {
-        update(strip, offsets.get(strip.getId()));
-    }
+  /**
+   * Updates an LED strip
+   *
+   * @param strip the LED strip to update
+   */
+  public void update(LEDStrip strip) {
+    update(strip, offsets.get(strip.getId()));
+  }
 }

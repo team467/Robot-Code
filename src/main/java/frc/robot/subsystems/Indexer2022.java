@@ -35,7 +35,8 @@ public class Indexer2022 extends SubsystemBase {
   /** Moves the indexer wheel forwards at a higher speed. */
   public void forward() {
     LOGGER.debug(
-        "Starting indexer quickly, setting speed to " + RobotConstants.get().indexer2022FastSpeed());
+        "Starting indexer quickly, setting speed to "
+            + RobotConstants.get().indexer2022FastSpeed());
     indexerMotor.set(RobotConstants.get().indexer2022FastSpeed());
   }
 

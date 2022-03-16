@@ -8,12 +8,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class BallTracking {
 
+  private static final NetworkTable table =
+      NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking");
+  private static final NetworkTable redTable = table.getSubTable("Red");
+  private static final NetworkTable blueTable = table.getSubTable("Blue");
+
   private BallTracking() {
     throw new IllegalStateException("Utility class");
   }
-  private static final NetworkTable table = NetworkTableInstance.getDefault().getTable("Vision").getSubTable("BallTracking");
-  private static final NetworkTable redTable = table.getSubTable("Red");
-  private static final NetworkTable blueTable = table.getSubTable("Blue");
+
   /**
    * @return If the camera sees a red ball
    */
@@ -39,7 +42,7 @@ public class BallTracking {
       case Blue:
         return hasBlueBall();
     }
-   }
+  }
 
   /**
    * @return Distance to the red ball in meters
@@ -54,7 +57,6 @@ public class BallTracking {
   public static double getBlueDistance() {
     return blueTable.getEntry("Distance").getDouble(0);
   }
-
 
   /**
    * @return Distance to the ball of the current alliance in meters
@@ -131,10 +133,10 @@ public class BallTracking {
     return new Translation2d(getBlueDistance(), getBlueRotation2d());
   }
 
-    /**
-     * @return Translation2d to the ball of the current alliance
-     */
-    public static Translation2d getTranslation2d() {
-      return new Translation2d(getDistance(), getRotation2d());
+  /**
+   * @return Translation2d to the ball of the current alliance
+   */
+  public static Translation2d getTranslation2d() {
+    return new Translation2d(getDistance(), getRotation2d());
   }
 }

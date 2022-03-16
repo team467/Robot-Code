@@ -331,7 +331,7 @@ public class RobotContainer {
   private void initLed2022() {
     if (RobotConstants.get().hasLed2022()) {
       led2022 = new Led2022();
-      if (RobotConstants.get().hasSpitter2022() 
+      if (RobotConstants.get().hasSpitter2022()
         && RobotConstants.get().hasLlamaNeck2022()
         && RobotConstants.get().hasClimber2022()) {
           led2022.setDefaultCommand(new Led2022UpdateCMD(led2022, indexer, llamaNeck, spitter, shooter2022, climber2022));

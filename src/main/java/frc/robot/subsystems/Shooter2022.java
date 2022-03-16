@@ -25,8 +25,21 @@ public class Shooter2022 extends SubsystemTuner {
 
   @Override
   public void initializeTunerNetworkTables(ShuffleboardTab tab) {
-    addEntry("speed", tab.add("Flywheel Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 1).withProperties(Map.of("min", 0, "max", RobotConstants.get().spitter2022MaxVelocity())).getEntry());
-    addEntry("run", tab.add("Run", false).withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(4, 3).getEntry());   
+    addEntry(
+        "speed",
+        tab.add("Flywheel Speed", 0)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withSize(2, 1)
+            .withPosition(4, 1)
+            .withProperties(Map.of("min", 0, "max", RobotConstants.get().spitter2022MaxVelocity()))
+            .getEntry());
+    addEntry(
+        "run",
+        tab.add("Run", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
+            .withSize(2, 1)
+            .withPosition(4, 3)
+            .getEntry());
   }
 
   @Override

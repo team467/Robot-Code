@@ -21,10 +21,8 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Creates a new climber object.
- * The climber motors, left and right, are intitalized and created.
+ * Creates a new climber object. The climber motors, left and right, are intitalized and created.
  */
-
 public class Climber2022 extends SubsystemTuner {
 
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Climber2022.class.getName());

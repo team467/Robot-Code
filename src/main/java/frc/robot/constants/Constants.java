@@ -12,7 +12,6 @@ import frc.robot.utilities.IMUAxis;
 import frc.robot.utilities.IMUType;
 
 public interface Constants {
-  // DRIVETRAIN
   /**
    * @return The name of the robot constant file
    */
@@ -29,9 +28,9 @@ public interface Constants {
    * @return What motor type does the drivetrain use
    */
   MotorType driveMotorType();
-  /** 
+  /**
    * @return Returns whether the motor is in idle mode and the coasting and braking values.
-   *  @see https://docs.revrobotics.com/sparkmax/operating-modes/idle-mode-brake-coast-mode
+   *  @see <a href="https://docs.revrobotics.com/sparkmax/operating-modes/idle-mode-brake-coast-mode">More info</a>
    */
   IdleMode driveIdleMode();
   /**
@@ -70,7 +69,7 @@ public interface Constants {
   /**
    * @return Constant for DifferentialDriveKinematics (converts between a ChassisSpeeds object and a
    *     DifferentialDriveWheelSpeeds)(@see
-   *     https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/differential-drive-kinematics.html
+   * @see <a href="https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/differential-drive-kinematics.html">More info</a>
    */
   DifferentialDriveKinematics driveKinematics();
   /**
@@ -170,7 +169,7 @@ public interface Constants {
 
   double climber2020DownSpeed();
 
-  // 2022 CLIMBER
+
   /**
    * @return Does the robot have a 2022 climber
    */
@@ -199,8 +198,8 @@ public interface Constants {
    * @return The speed in which the climber goes down
    */
   double climber2022DownSpeed();
-  /** 
-   * @return The motor ID for the solenoid channel 
+  /**
+   * @return The motor ID for the solenoid channel
    */
   int climber2022SolenoidChannel();
   /**
@@ -220,8 +219,7 @@ public interface Constants {
    */
   double climber2022RightUpperLimit();
 
-  // SHOOTER 2020
-  // we should probably delete shooter2020
+
   /**
    * @return Does the robot have a 2020 shooter
    */
@@ -271,7 +269,7 @@ public interface Constants {
   double shooter2020RightServoMax();
   double shooter2020RightServoMin();
 
-  // INDEXER
+
   /**
    * @return Does the robot have a 2022 indexer
    */
@@ -297,7 +295,7 @@ public interface Constants {
    */
   boolean indexer2022MotorInverted();
 
-  // LLAMA NECK
+
   /**
    * @return Does the robot have a 2022 llama neck
    */
@@ -331,7 +329,7 @@ public interface Constants {
    */
   int llamaNeck2022LowerLimitSwitchChannel();
 
-  // SPITTER
+
   /**
    * @return Does the robot have a 2022 spitter
    */
@@ -385,7 +383,7 @@ public interface Constants {
    */
   double spitter2022DistanceLinearB();
 
-  // LED
+
   /**
    * @return Does the robot have a hub camera LED
    */
@@ -398,4 +396,19 @@ public interface Constants {
    * @return The offset for the Hub Target tracking
    */
   Translation2d hubCameraOffset();
+
+  /**
+   * @return The channel ID for the led
+   */
+  public int ledChannel();
+
+  /**
+   * @return Does the robot have a led
+   */
+  public boolean hasLed2022();
+
+  /**
+   * @return The number of leds the robot has
+   */
+  public int led2022LedCount();
 }
