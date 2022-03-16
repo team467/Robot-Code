@@ -5,6 +5,7 @@ import frc.robot.subsystems.Climber2022;
 import java.util.function.Supplier;
 
 public class Climber2022SetLeftSpeed extends CommandBase {
+
   private final Climber2022 climber;
   private final Supplier<Double> speed;
 

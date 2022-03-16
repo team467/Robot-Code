@@ -48,7 +48,7 @@ public class Shooter2022IdleSpinupCMD extends CommandBase {
     LOGGER.debug("Idling system...");
     indexerIdle.schedule();
     llamaNeckIdle.schedule();
-    spitterSpeed.schedule();
+    spitterStop.schedule();
   }
 
   @Override
@@ -56,6 +56,7 @@ public class Shooter2022IdleSpinupCMD extends CommandBase {
     if (llamaNeck.upperLimitSwitchIsPressed()) {
       LOGGER.debug("Upper limit switch was activated. Stop indexer.");
       indexerStop.schedule();
+      spitterSpeed.schedule();
 
       if (llamaNeck.lowerLimitSwitchIsPressed()) {
         LOGGER.debug("Lower limit switch was activated. Stop llama neck.");
@@ -64,6 +65,7 @@ public class Shooter2022IdleSpinupCMD extends CommandBase {
     } else {
       indexerIdle.schedule();
       llamaNeckIdle.schedule();
+      spitterStop.schedule();
     }
   }
 

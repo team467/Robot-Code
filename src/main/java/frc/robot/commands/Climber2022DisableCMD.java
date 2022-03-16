@@ -21,6 +21,30 @@ public class Climber2022DisableCMD extends InstantCommand {
     LOGGER.debug("Climber disabled");
   }
 
-  @Override
-  public void end(boolean interrupted) {}
+
+    public Climber2022DisableCMD(Climber2022 climber) {
+        this.climber = climber;
+        addRequirements(climber);
+    }
+    
+
+    @Override 
+    public void initialize() {
+        climber.disable();
+        LOGGER.debug("Climber disabled");
+    }
+
+
+    @Override 
+    public void execute() {
+    }
+
+    @Override 
+    public void end(boolean interrupted) {}
+
+
+    @Override 
+    public boolean isFinished() {
+        return true;
+    }
 }

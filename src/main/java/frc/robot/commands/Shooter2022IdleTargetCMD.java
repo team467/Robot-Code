@@ -24,8 +24,9 @@ public class Shooter2022IdleTargetCMD extends CommandBase {
 
   private final Command spitterTarget;
   private final Command spitterSpeed;
+  private final Command spitterStop;
 
-  public Shooter2022IdleTargetCMD(Shooter2022 shooter) {
+  public Shooter2022IdleTargetCMD(Shooter2022 shooter, double defaultDistance) {
     super();
 
     this.llamaNeck = shooter.llamaNeck2022;
@@ -36,11 +37,15 @@ public class Shooter2022IdleTargetCMD extends CommandBase {
     this.indexerStop = new Indexer2022StopCMD(shooter.indexer2022);
     this.indexerIdle = new Indexer2022IdleCMD(shooter.indexer2022);
 
-    this.spitterTarget = new Spitter2022TargetCMD(shooter.spitter2022);
-    this.spitterSpeed =
-        new Spitter2022SetSpeedCMD(shooter.spitter2022, () -> Spitter2022.getFlywheelVelocity(1));
+    this.spitterTarget = new Spitter2022TargetCMD(spitter);
+    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, () -> Spitter2022.getFlywheelVelocity(defaultDistance));
+    this.spitterStop = new Spitter2022StopCMD(spitter);
 
     addRequirements(shooter);
+  }
+
+  public Shooter2022IdleTargetCMD(Shooter2022 shooter) {
+    this(shooter, 0.6);
   }
 
   @Override
@@ -52,15 +57,15 @@ public class Shooter2022IdleTargetCMD extends CommandBase {
 
   @Override
   public void execute() {
-    if (HubTarget.hasTarget()) {
-      spitterTarget.schedule();
-    } else {
-      spitterSpeed.schedule();
-    }
-
     if (llamaNeck.upperLimitSwitchIsPressed()) {
       LOGGER.debug("Upper limit switch was activated. Stop indexer.");
       indexerStop.schedule();
+
+      if (HubTarget.hasTarget()) {
+        spitterTarget.schedule();
+      } else {
+        spitterSpeed.schedule();
+      }
 
       if (llamaNeck.lowerLimitSwitchIsPressed()) {
         LOGGER.debug("Lower limit switch was activated. Stop llama neck.");
@@ -69,6 +74,8 @@ public class Shooter2022IdleTargetCMD extends CommandBase {
     } else {
       indexerIdle.schedule();
       llamaNeckIdle.schedule();
+
+      spitterStop.schedule();
     }
   }
 

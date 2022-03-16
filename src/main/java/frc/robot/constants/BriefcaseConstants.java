@@ -190,17 +190,17 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasClimber2022() {
-        return true;
+        return false;
     }
 
     @Override
     public int climber2022RightMotorId() {
-        return 1;
+        return 11;
     }
 
     @Override
     public int climber2022LeftMotorId() {
-        return 1;
+        return 10;
     }
 
     @Override
@@ -410,7 +410,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasIndexer2022() {
-        return true;
+        return false;
     }
 
     @Override
@@ -441,7 +441,7 @@ public class BriefcaseConstants implements Constants {
     
     @Override
     public boolean hasLlamaNeck2022() {
-        return true;
+        return false;
     }
 
     @Override
@@ -454,7 +454,21 @@ public class BriefcaseConstants implements Constants {
         return false;
     }
 
+    @Override 
+    public boolean hasLed2022() {
+        return true;
+    }
+
     @Override
+    public int ledChannel() {
+        return 2;
+    }
+
+    @Override 
+    public int led2022LedCount() {
+        return 10;
+    }
+
     public double llamaNeck2022IdleSpeed() {
         return 0;
     }
@@ -481,7 +495,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean hasSpitter2022() {
-        return true;
+        return false;
     }
 
     @Override 
@@ -491,7 +505,7 @@ public class BriefcaseConstants implements Constants {
 
     @Override
     public boolean spitter2022MotorInverted() {
-        return true;
+        return false;
     }
 
   @Override

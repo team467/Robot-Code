@@ -409,7 +409,17 @@ public class BlankConstants implements Constants {
     }
 
     @Override
+    public int ledChannel() {
+        return 0;
+    }
+
+    @Override
     public boolean hasIndexer2022() {
+        return false;
+    }
+
+    @Override 
+    public boolean hasLed2022() {
         return false;
     }
 
@@ -481,6 +491,11 @@ public class BlankConstants implements Constants {
     @Override
     public boolean hasSpitter2022() {
         return false;
+    }
+
+    @Override 
+    public int led2022LedCount() {
+        return 0;
     }
 
     @Override
