@@ -39,7 +39,9 @@ public class Climber2022 extends SubsystemTuner {
     super();
 
     climberMotorLeft.setInverted(RobotConstants.get().climber2022LeftMotorInverted());
+    climberMotorLeft.setUnitsPerRotation(Math.PI * RobotConstants.get().climber2022Diameter() * RobotConstants.get().climber2022GearRatio().getRotationsPerInput());
     climberMotorRight.setInverted(RobotConstants.get().climber2022RightMotorInverted());
+    climberMotorRight.setUnitsPerRotation(Math.PI * RobotConstants.get().climber2022Diameter() * RobotConstants.get().climber2022GearRatio().getRotationsPerInput());
     climberLock.set(Value.kOff);
   }
 
@@ -110,7 +112,7 @@ public class Climber2022 extends SubsystemTuner {
 
   public void downFullLeft() {
     if (enabled) {
-      if (climberMotorLeft.getPosition() > -2) {
+      if (climberMotorLeft.getPosition() > RobotConstants.get().climber2022LeftDangerLimit()) {
         climberMotorLeft.set(-RobotConstants.get().climber2022DownSpeed());
       } else {
         stopLeft();
@@ -120,7 +122,7 @@ public class Climber2022 extends SubsystemTuner {
 
   public void downFullRight() {
     if (enabled) {
-      if (climberMotorRight.getPosition() > -2) {
+      if (climberMotorRight.getPosition() > RobotConstants.get().climber2022RightDangerLimit()) {
         climberMotorRight.set(-RobotConstants.get().climber2022DownSpeed());
       } else {
         stopRight();
@@ -152,6 +154,14 @@ public class Climber2022 extends SubsystemTuner {
 
   public void setRightSpeed(double speed) {
     climberMotorRight.set(speed);
+  }
+
+  public double getLeftVelocity() {
+    return climberMotorLeft.getVelocity();
+  }
+
+  public double getRightVelocity() {
+    return climberMotorRight.getVelocity();
   }
 
   @Override

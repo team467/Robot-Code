@@ -266,22 +266,43 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double climber2022LeftLowerLimit() {
-        return 20;
+        return 20 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
     }
 
     @Override
     public double climber2022RightLowerLimit() {
-        return 20;
+        return 20 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
+    }
+
+    @Override
+    public double climber2022LeftDangerLimit() {
+        return -2 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
+    }
+
+    @Override
+    public double climber2022RightDangerLimit() {
+        return -2 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
     }
 
     @Override
     public double climber2022LeftUpperLimit() {
-        return 75;
+        return 75 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
     }
 
     @Override
     public double climber2022RightUpperLimit() {
-        return 75;
+        return 75 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
+    }
+
+    @Override
+    public GearRatio climber2022GearRatio() {
+        return new GearRatio(13.5, 1);
+    }
+
+
+    @Override
+    public double climber2022Diameter() {
+        return 0.0203;
     }
 
     @Override

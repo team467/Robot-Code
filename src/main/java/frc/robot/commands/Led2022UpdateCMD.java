@@ -43,9 +43,12 @@ public class Led2022UpdateCMD extends CommandBase {
     private Shooter2022 shooter = null;
     private Climber2022 climber = null;
     
-    int color = 0;
+    private double color = 0;
+    private double leftColor = 0;
+    private double rightColor = 0;
     private Timer rainbowTimer = new Timer();
     private Timer purpleTimer = new Timer();
+    private double lastLoopTime = 0;
 
     public static final double TARGET_MAX_RANGE = 100.0;
     public static final double TARGET_MAX_ANGLE = 15.0;
@@ -289,6 +292,7 @@ public class Led2022UpdateCMD extends CommandBase {
     public void initialize() {
         rainbowTimer.reset();
         purpleTimer.reset();
+        lastLoopTime = Timer.getFPGATimestamp();
     }
 
     @Override
@@ -319,13 +323,7 @@ public class Led2022UpdateCMD extends CommandBase {
             if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
                 set(batteryCheckColor);
             } else if (climber != null && climber.isEnabled()) {
-                if (climber.getCurrentCommand() instanceof Climber2022UpCMD) {
-                    setRainbowMovingUp();
-                } else if (climber.getCurrentCommand() instanceof Climber2022DownCMD) {
-                    setRainbowMovingDown();
-                } else {
-                    setRainbow();
-                } 
+                setRainbowClimber();
             } else if (shooter != null && (shooter.getCurrentCommand() instanceof Shooter2022ShootCMD || shooter.getCurrentCommand() instanceof Shooter2022ShootSpeedCMD  || shooter.getCurrentCommand() instanceof Shooter2022ShootTargetCMD)) {
                 if (HubTarget.hasTarget()) {
                     setColorMovingUp(Color.kBlack, Color.kGold);
@@ -367,6 +365,7 @@ public class Led2022UpdateCMD extends CommandBase {
         }
 
         ledStrip.sendData();
+        lastLoopTime = Timer.getFPGATimestamp();
     }
 
     @Override
@@ -442,7 +441,7 @@ public class Led2022UpdateCMD extends CommandBase {
         }
         
         for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
-            ledStrip.setHSB(i, (color + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
+            ledStrip.setHSB(i, ((int) color + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
         }
     }
 
@@ -455,14 +454,26 @@ public class Led2022UpdateCMD extends CommandBase {
         }
         
         for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
-            ledStrip.setHSB(i, (color + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
+            ledStrip.setHSB(i, ((int) color + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
         }
+    }
+
+    public void setRainbowClimber() {
+        double deltaTime = Timer.getFPGATimestamp() - lastLoopTime;
+        leftColor += deltaTime * climber.getLeftVelocity() * -2000;
+        rightColor += deltaTime * climber.getRightVelocity() * -2000;
+        
+        for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
+            ledStrip.setRightHSB(i, ((int) leftColor + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
+            ledStrip.setLeftHSB(i, ((int) rightColor + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
+        }
+        
     }
 
     public void setRainbow() {
         rainbowTimer.reset();
         for (int i = 0; i < RobotConstants.get().led2022LedCount(); i++) {
-            ledStrip.setHSB(i, (color + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
+            ledStrip.setHSB(i, ((int) color + (i * 360/RobotConstants.get().led2022LedCount())) % 360, 255, 127);
         }
     }
 

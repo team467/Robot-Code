@@ -276,12 +276,33 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
+    public double climber2022LeftDangerLimit() {
+        return 0;
+    }
+
+    @Override
+    public double climber2022RightDangerLimit() {
+        return 0;
+    }
+
+    @Override
     public double climber2022LeftUpperLimit() {
         return 0;
     }
 
     @Override
     public double climber2022RightUpperLimit() {
+        return 0;
+    }
+
+    @Override
+    public GearRatio climber2022GearRatio() {
+        return new GearRatio();
+    }
+
+
+    @Override
+    public double climber2022Diameter() {
         return 0;
     }
 
