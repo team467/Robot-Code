@@ -59,6 +59,7 @@ import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
 import frc.robot.commands.Spitter2022StopCMD;
+import frc.robot.commands.TurnToTargetCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.led.LEDManager;
@@ -254,10 +255,6 @@ public class RobotContainer {
     configureIndexer2022();
     configureSpitter2022();
     configureShooter2022();
-
-    if (shooter2022 != null) {
-      driverButtonX.whenPressed(getAutonomousCommand());
-    }
   }
 
   private void initDrivetrain() {
@@ -272,7 +269,7 @@ public class RobotContainer {
           driverJoystick::getAdjustedDriveSpeed,
           driverJoystick::getAdjustedTurnSpeed));
       // operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
-      // driverButtonX.whileHeld(new GoToBallCMD(drivetrain, gyro));
+      driverButtonY.whenPressed(new TurnToTargetCMD(drivetrain, gyro));
       // driverButtonY.whileHeld(new GoToTargetCMD(drivetrain, gyro));
       // driverButtonA.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
       // driverButtonY.whileHeld(new GoToTrajectoryCMD(drivetrain, gyro,
