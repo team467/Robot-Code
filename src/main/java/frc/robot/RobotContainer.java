@@ -73,6 +73,7 @@ import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
 import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Climber2022;
+import frc.robot.subsystems.Dashboard2022;
 import frc.robot.subsystems.Spitter2022;
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +108,7 @@ public class RobotContainer {
   private HubCameraLED hubCameraLED = null;
   private Climber2020 climber2020 = null;
   private Climber2022 climber2022 = null;
+  private Dashboard2022 dashboard2022 = null;
 
   // User interface objects
   // Xbox controller for driver
@@ -236,6 +238,7 @@ public class RobotContainer {
     initLlamaNeck2022();
     initShooter2022();
     initHubCameraLED();
+    initDashboard2022();
     initLed2022();
   }
 
@@ -322,9 +325,9 @@ public class RobotContainer {
       if (RobotConstants.get().hasSpitter2022() 
         && RobotConstants.get().hasLlamaNeck2022()
         && RobotConstants.get().hasClimber2022()) {
-          led2022.setDefaultCommand(new Led2022UpdateCMD(led2022, indexer, llamaNeck, spitter, shooter2022, climber2022));
+          led2022.setDefaultCommand(new Led2022UpdateCMD(led2022, llamaNeck, shooter2022, climber2022, dashboard2022));
         } else {
-          led2022.setDefaultCommand(new Led2022UpdateCMD(led2022));
+          led2022.setDefaultCommand(new Led2022UpdateCMD(led2022, dashboard2022));
         }
     }
   }
@@ -419,6 +422,12 @@ public class RobotContainer {
     if (RobotConstants.get().hasHubCameraLED()) {
       hubCameraLED = new HubCameraLED();
       hubCameraLED.setDefaultCommand(new HubCameraLEDSmart(hubCameraLED, shooter2022));
+    }
+  }
+
+  private void initDashboard2022() {
+    if (RobotConstants.get().hasDashboard2022()) {
+      dashboard2022 = new Dashboard2022();
     }
   }
 

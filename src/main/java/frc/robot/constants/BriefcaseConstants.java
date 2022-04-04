@@ -593,4 +593,9 @@ public class BriefcaseConstants implements Constants {
     return new Translation2d();
   }
 
+  @Override
+  public boolean hasDashboard2022() {
+      return true;
+  }
+
 }
