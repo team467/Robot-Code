@@ -199,6 +199,11 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override
+    public boolean climber2022HasLimitSwitch() {
+        return false;
+    }
+
+    @Override
     public int climber2022LeftLimitSwitchChannel() {
         return 0;
     }

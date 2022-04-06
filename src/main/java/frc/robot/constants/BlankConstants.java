@@ -244,6 +244,11 @@ public class BlankConstants implements Constants {
     }
 
     @Override
+    public boolean climber2022HasLimitSwitch() {
+        return false;
+    }
+
+    @Override
     public int climber2022LeftLimitSwitchChannel() {
         return 0;
     }
@@ -287,7 +292,7 @@ public class BlankConstants implements Constants {
     public double climber2022RightLowerLimit() {
         return 0;
     }
-    
+
     @Override
     public double climber2022LeftUpperLimit() {
         return 0;

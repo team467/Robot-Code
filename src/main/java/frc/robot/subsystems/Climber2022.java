@@ -32,8 +32,8 @@ public class Climber2022 extends SubsystemTuner {
       RobotConstants.get().climber2022RightMotorId(), MotorType.SPARK_MAX_BRUSHLESS);
   private final Relay climberLock = new Relay(RobotConstants.get().climber2022SolenoidChannel());
 
-  private final DigitalInput climberLimitSwitchLeft = new DigitalInput(RobotConstants.get().climber2022LeftLimitSwitchChannel()); 
-  private final DigitalInput climberLimitSwitchRight = new DigitalInput(RobotConstants.get().climber2022RightLimitSwitchChannel()); 
+  private final DigitalInput climberLimitSwitchLeft;
+  private final DigitalInput climberLimitSwitchRight; 
 
   private boolean enabled = false;
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Climber2022.class.getName());
@@ -47,6 +47,14 @@ public class Climber2022 extends SubsystemTuner {
     climberMotorRight.setInverted(RobotConstants.get().climber2022RightMotorInverted());
     climberMotorRight.setUnitsPerRotation(Math.PI * RobotConstants.get().climber2022Diameter() * RobotConstants.get().climber2022GearRatio().getRotationsPerInput());
     climberLock.set(Value.kOff);
+
+    if (RobotConstants.get().climber2022HasLimitSwitch()) {
+      climberLimitSwitchLeft = new DigitalInput(RobotConstants.get().climber2022LeftLimitSwitchChannel()); 
+      climberLimitSwitchRight = new DigitalInput(RobotConstants.get().climber2022RightLimitSwitchChannel());
+    } else {
+      climberLimitSwitchLeft = null; 
+      climberLimitSwitchRight = null;
+    }
   }
 
   public void enable() {
@@ -65,10 +73,12 @@ public class Climber2022 extends SubsystemTuner {
   }
 
   public boolean getLeftLimitSwitch() {
+    if (climberLimitSwitchLeft == null) return false;
     return !climberLimitSwitchLeft.get();
   }
 
   public boolean getRightLimitSwitch() {
+    if (climberLimitSwitchRight == null) return false;
     return !climberLimitSwitchRight.get();
   }
 

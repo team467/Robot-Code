@@ -61,6 +61,7 @@ public interface Constants {
     public boolean hasClimber2022();
     public int climber2022RightMotorId();
     public int climber2022LeftMotorId();
+    public boolean climber2022HasLimitSwitch();
     public int climber2022LeftLimitSwitchChannel();
     public int climber2022RightLimitSwitchChannel();
     public boolean climber2022LeftMotorInverted();
