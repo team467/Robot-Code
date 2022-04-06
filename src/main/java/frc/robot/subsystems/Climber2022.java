@@ -35,6 +35,8 @@ public class Climber2022 extends SubsystemTuner {
   private final DigitalInput climberLimitSwitchLeft;
   private final DigitalInput climberLimitSwitchRight; 
 
+  private boolean zeroed = false;
+
   private boolean enabled = false;
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Climber2022.class.getName());
 
@@ -66,6 +68,14 @@ public class Climber2022 extends SubsystemTuner {
     climberLock.set(Value.kOff);
     stop();
     enabled = false;
+  }
+
+  public boolean hasZeroed() {
+    return zeroed;
+  }
+
+  public void setZeroed(boolean zeroed) {
+    this.zeroed = zeroed;
   }
 
   public boolean isEnabled() {

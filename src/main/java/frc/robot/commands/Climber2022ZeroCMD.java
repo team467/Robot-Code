@@ -44,14 +44,18 @@ public class Climber2022ZeroCMD extends CommandBase {
     @Override 
     public void end(boolean interrupted) {
         climber.stop();
-        climber.resetLeftPosition();
-        climber.resetRightPosition();
+        if (!climber.hasZeroed()) {
+            climber.resetLeftPosition();
+            climber.resetRightPosition();
+        }
+
+        climber.setZeroed(true);
     }
 
 
     @Override 
     public boolean isFinished() {
-        if (!RobotConstants.get().climber2022HasLimitSwitch()) return true;
+        if (!RobotConstants.get().climber2022HasLimitSwitch() || climber.hasZeroed()) return true;
         return climber.getLeftLimitSwitch() && climber.getRightLimitSwitch();
     }
 }
