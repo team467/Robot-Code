@@ -240,6 +240,16 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
+    public int climber2022LeftLimitSwitchChannel() {
+        return 2;
+    }
+
+    @Override
+    public int climber2022RightLimitSwitchChannel() {
+        return 3;
+    }
+
+    @Override
     public boolean climber2022LeftMotorInverted() {
         return false;
     }
@@ -260,6 +270,11 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
+    public double climber2022ZeroingSpeed() {
+        return 0.1;
+    }
+
+    @Override
     public int climber2022SolenoidChannel() {
         return 1;
     }
@@ -272,16 +287,6 @@ public class Robot2022Constants implements Constants {
     @Override
     public double climber2022RightLowerLimit() {
         return 20 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
-    }
-
-    @Override
-    public double climber2022LeftDangerLimit() {
-        return -2 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
-    }
-
-    @Override
-    public double climber2022RightDangerLimit() {
-        return -2 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
     }
 
     @Override

@@ -214,6 +214,16 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
+    public int climber2022LeftLimitSwitchChannel() {
+        return 0;
+    }
+
+    @Override
+    public int climber2022RightLimitSwitchChannel() {
+        return 0;
+    }
+
+    @Override
     public boolean climber2022LeftMotorInverted() {
         return false;
     }
@@ -234,22 +244,17 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
+    public double climber2022ZeroingSpeed() {
+        return 0.1;
+    }
+
+    @Override
     public double climber2022LeftLowerLimit() {
         return 0;
     }
 
     @Override
     public double climber2022RightLowerLimit() {
-        return 0;
-    }
-
-    @Override
-    public double climber2022LeftDangerLimit() {
-        return 0;
-    }
-
-    @Override
-    public double climber2022RightDangerLimit() {
         return 0;
     }
 

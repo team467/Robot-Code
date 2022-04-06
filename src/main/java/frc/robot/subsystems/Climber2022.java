@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -31,6 +32,9 @@ public class Climber2022 extends SubsystemTuner {
       RobotConstants.get().climber2022RightMotorId(), MotorType.SPARK_MAX_BRUSHLESS);
   private final Relay climberLock = new Relay(RobotConstants.get().climber2022SolenoidChannel());
 
+  private final DigitalInput climberLimitSwitchLeft = new DigitalInput(RobotConstants.get().climber2022LeftLimitSwitchChannel()); 
+  private final DigitalInput climberLimitSwitchRight = new DigitalInput(RobotConstants.get().climber2022RightLimitSwitchChannel()); 
+
   private boolean enabled = false;
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Climber2022.class.getName());
 
@@ -58,6 +62,14 @@ public class Climber2022 extends SubsystemTuner {
 
   public boolean isEnabled() {
     return enabled;
+  }
+
+  public boolean getLeftLimitSwitch() {
+    return !climberLimitSwitchLeft.get();
+  }
+
+  public boolean getRightLimitSwitch() {
+    return !climberLimitSwitchRight.get();
   }
 
   public void upLeft() {
@@ -112,8 +124,8 @@ public class Climber2022 extends SubsystemTuner {
 
   public void downFullLeft() {
     if (enabled) {
-      if (climberMotorLeft.getPosition() > RobotConstants.get().climber2022LeftDangerLimit()) {
-        climberMotorLeft.set(-RobotConstants.get().climber2022DownSpeed());
+      if (climberMotorLeft.getPosition() >= 0 || getLeftLimitSwitch()) {
+        climberMotorLeft.set(-RobotConstants.get().climber2022ZeroingSpeed());
       } else {
         stopLeft();
       }
@@ -122,8 +134,8 @@ public class Climber2022 extends SubsystemTuner {
 
   public void downFullRight() {
     if (enabled) {
-      if (climberMotorRight.getPosition() > RobotConstants.get().climber2022RightDangerLimit()) {
-        climberMotorRight.set(-RobotConstants.get().climber2022DownSpeed());
+      if (climberMotorRight.getPosition() >= 0 || getRightLimitSwitch()) {
+        climberMotorRight.set(-RobotConstants.get().climber2022ZeroingSpeed());
       } else {
         stopRight();
       }
@@ -164,6 +176,22 @@ public class Climber2022 extends SubsystemTuner {
     return climberMotorRight.getVelocity();
   }
 
+  public double getLeftPosition() {
+    return climberMotorLeft.getPosition();
+  }
+
+  public double getRightPosition() {
+    return climberMotorRight.getPosition();
+  }
+
+  public void resetLeftPosition() {
+    climberMotorLeft.resetPosition();
+  }
+
+  public void resetRightPosition() {
+    climberMotorRight.resetPosition();
+  }
+
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
@@ -173,6 +201,17 @@ public class Climber2022 extends SubsystemTuner {
 
     builder.addDoubleProperty("Right Climber Position", climberMotorRight::getPosition, null);
     builder.addDoubleProperty("Right Climber Velocity", climberMotorRight::getVelocity, null);
+  }
+
+  @Override
+  public void periodic() {
+    if (getLeftLimitSwitch()) {
+      resetLeftPosition();
+    }
+
+    if (getRightLimitSwitch()) {
+      resetRightPosition();
+    }
   }
 
   @Override
