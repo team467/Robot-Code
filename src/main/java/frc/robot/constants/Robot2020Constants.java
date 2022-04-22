@@ -238,10 +238,25 @@ public class Robot2020Constants implements Constants {
     return 0;
   }
 
-  @Override
-  public boolean climber2022LeftMotorInverted() {
-    return false;
-  }
+    @Override
+    public boolean climber2022HasLimitSwitch() {
+        return false;
+    }
+
+    @Override
+    public int climber2022LeftLimitSwitchChannel() {
+        return 0;
+    }
+
+    @Override
+    public int climber2022RightLimitSwitchChannel() {
+        return 0;
+    }
+
+    @Override
+    public boolean climber2022LeftMotorInverted() {
+        return false;
+    }
 
   @Override
   public boolean climber2022RightMotorInverted() {
@@ -258,10 +273,15 @@ public class Robot2020Constants implements Constants {
     return 0;
   }
 
-  @Override
-  public int climber2022SolenoidChannel() {
-    return 0;
-  }
+    @Override
+    public double climber2022ZeroingSpeed() {
+        return 0;
+    }
+
+    @Override
+    public int climber2022SolenoidChannel() {
+        return 0;
+    }
 
   @Override
   public double climber2022LeftLowerLimit() {
@@ -288,6 +308,21 @@ public class Robot2020Constants implements Constants {
     return true;
   }
 
+    @Override
+    public GearRatio climber2022GearRatio() {
+        return new GearRatio();
+    }
+
+
+    @Override
+    public double climber2022Diameter() {
+        return 0;
+    }
+
+    @Override
+    public boolean hasShooter2020() {
+        return true;
+    }
   @Override
   public MotorType shooter2020MotorType() {
     return MotorType.SPARK_MAX_BRUSHLESS;

@@ -29,6 +29,8 @@ import frc.robot.commands.Climber2022DownCMD;
 import frc.robot.commands.Climber2022EnableCMD;
 import frc.robot.commands.Climber2022StopCMD;
 import frc.robot.commands.Climber2022UpCMD;
+import frc.robot.commands.Climber2022ZeroCMD;
+import frc.robot.commands.Climber2022DownCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
@@ -374,7 +376,7 @@ public class RobotContainer {
 
   private void configureClimber2022() {
     if (RobotConstants.get().hasClimber2022()) {
-      operatorClimberLock.whenPressed(new Climber2022EnableCMD(climber2022));
+      operatorClimberLock.whenPressed(new SequentialCommandGroup(new Climber2022EnableCMD(climber2022), new Climber2022ZeroCMD(climber2022)), false);
       operatorClimberLock.whenReleased(new Climber2022DisableCMD(climber2022));
       operatorClimberUp.whileHeld(new Climber2022UpCMD(climber2022));
       operatorClimberDown.whileHeld(new Climber2022DownCMD(climber2022, operatorIndexAuto::get));

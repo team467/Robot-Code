@@ -239,10 +239,25 @@ public class Robot2022Constants implements Constants {
     return 11;
   }
 
-  @Override
-  public boolean climber2022LeftMotorInverted() {
-    return false;
-  }
+    @Override
+    public boolean climber2022HasLimitSwitch() {
+        return false;
+    }
+
+    @Override
+    public int climber2022LeftLimitSwitchChannel() {
+        return 2;
+    }
+
+    @Override
+    public int climber2022RightLimitSwitchChannel() {
+        return 3;
+    }
+
+    @Override
+    public boolean climber2022LeftMotorInverted() {
+        return false;
+    }
 
   @Override
   public boolean climber2022RightMotorInverted() {
@@ -259,35 +274,51 @@ public class Robot2022Constants implements Constants {
     return 0.3;
   }
 
-  @Override
-  public int climber2022SolenoidChannel() {
-    return 1;
-  }
+    @Override
+    public double climber2022ZeroingSpeed() {
+        return 0.1;
+    }
 
-  @Override
-  public double climber2022LeftLowerLimit() {
-    return 20;
-  }
+    @Override
+    public int climber2022SolenoidChannel() {
+        return 1;
+    }
 
-  @Override
-  public double climber2022RightLowerLimit() {
-    return 20;
-  }
+    @Override
+    public double climber2022LeftLowerLimit() {
+        return 20 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
+    }
 
-  @Override
-  public double climber2022LeftUpperLimit() {
-    return 75;
-  }
+    @Override
+    public double climber2022RightLowerLimit() {
+        return 20 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
+    }
 
-  @Override
-  public double climber2022RightUpperLimit() {
-    return 75;
-  }
+    @Override
+    public double climber2022LeftUpperLimit() {
+        return 75 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
+    }
 
-  @Override
-  public boolean hasShooter2020() {
-    return false;
-  }
+    @Override
+    public double climber2022RightUpperLimit() {
+        return 75 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
+    }
+
+    @Override
+    public GearRatio climber2022GearRatio() {
+        return new GearRatio(13.5, 1);
+    }
+
+
+    @Override
+    public double climber2022Diameter() {
+        return 0.0203;
+    }
+
+    @Override
+    public boolean hasShooter2020() {
+        return false;
+    }
 
   @Override
   public MotorType shooter2020MotorType() {

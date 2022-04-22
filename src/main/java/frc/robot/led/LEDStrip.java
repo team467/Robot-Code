@@ -25,7 +25,9 @@ public class LEDStrip extends AddressableLEDBuffer {
     215, 218, 220, 223, 225, 228, 231, 233, 236, 239, 241, 244, 247, 249, 252, 255
   };
 
-  private final int id;
+    public static double centerToCenterDistance = 0.01588;
+
+    private final int id;
 
   protected LEDStrip(int length, int id) {
     super(length);

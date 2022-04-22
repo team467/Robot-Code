@@ -89,8 +89,20 @@ public class Led2022 extends SubsystemBase {
     setHSB(index, h / 360f, s / 255f, b / 255f);
   }
 
-  /** Updates the LED Strip */
-  public void sendData() {
-    ledStrip.update();
-  }
+    public void setLeftHSB(int index, int h, int s, int b) {
+        ledStrip.setLeftHSB(index, h/360f, s/255f, b/255f);
+    }
+
+    public void setRightHSB(int index, int h, int s, int b) {
+        ledStrip.setRightHSB(index, h/360f, s/255f, b/255f);
+    }
+
+    public void sendData() {
+        ledStrip.update();
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+    }
 }
