@@ -304,25 +304,20 @@ public class Robot2020Constants implements Constants {
   }
 
   @Override
+  public GearRatio climber2022GearRatio() {
+    return new GearRatio();
+  }
+
+  @Override
+  public double climber2022Diameter() {
+    return 0;
+  }
+
+  @Override
   public boolean hasShooter2020() {
     return true;
   }
 
-    @Override
-    public GearRatio climber2022GearRatio() {
-        return new GearRatio();
-    }
-
-
-    @Override
-    public double climber2022Diameter() {
-        return 0;
-    }
-
-    @Override
-    public boolean hasShooter2020() {
-        return true;
-    }
   @Override
   public MotorType shooter2020MotorType() {
     return MotorType.SPARK_MAX_BRUSHLESS;

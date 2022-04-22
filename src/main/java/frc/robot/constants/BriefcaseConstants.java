@@ -252,15 +252,11 @@ public class BriefcaseConstants implements Constants {
   public double climber2022DownSpeed() {
     return 0.1;
   }
-    @Override
-    public double climber2022ZeroingSpeed() {
-        return 0.1;
-    }
 
-    @Override
-    public double climber2022LeftLowerLimit() {
-        return 0;
-    }
+  @Override
+  public double climber2022ZeroingSpeed() {
+      return 0.1;
+  }
 
   @Override
   public double climber2022LeftLowerLimit() {
@@ -281,21 +277,16 @@ public class BriefcaseConstants implements Constants {
   public double climber2022RightUpperLimit() {
     return 0;
   }
-    @Override
-    public GearRatio climber2022GearRatio() {
-        return new GearRatio();
-    }
 
+  @Override
+  public GearRatio climber2022GearRatio() {
+      return new GearRatio();
+  }
 
-    @Override
-    public double climber2022Diameter() {
-        return 0;
-    }
-
-    @Override
-    public boolean hasClimber2020() {
-        return false;
-    }
+  @Override
+  public double climber2022Diameter() {
+      return 0;
+  }
 
   @Override
   public boolean hasClimber2020() {

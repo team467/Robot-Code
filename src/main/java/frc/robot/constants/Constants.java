@@ -156,24 +156,6 @@ public interface Constants {
   IMUAxis gyroYawAxis();
 
 
-    public boolean hasClimber2022();
-    public int climber2022RightMotorId();
-    public int climber2022LeftMotorId();
-    public boolean climber2022HasLimitSwitch();
-    public int climber2022LeftLimitSwitchChannel();
-    public int climber2022RightLimitSwitchChannel();
-    public boolean climber2022LeftMotorInverted();
-    public boolean climber2022RightMotorInverted();
-    public double climber2022UpSpeed();
-    public double climber2022DownSpeed();
-    public double climber2022ZeroingSpeed();
-    public int climber2022SolenoidChannel();
-    public double climber2022LeftLowerLimit();
-    public double climber2022RightLowerLimit();
-    public double climber2022LeftUpperLimit();
-    public double climber2022RightUpperLimit();
-    public GearRatio climber2022GearRatio();
-    public double climber2022Diameter();
   /**
    * @return Does the robot have a 2020 climber
    */
@@ -236,6 +218,13 @@ public interface Constants {
    * @return The limit to how high the right climber goes
    */
   double climber2022RightUpperLimit();
+
+  public boolean climber2022HasLimitSwitch();
+  public int climber2022LeftLimitSwitchChannel();
+  public int climber2022RightLimitSwitchChannel();
+  public double climber2022ZeroingSpeed();
+  public GearRatio climber2022GearRatio();
+  public double climber2022Diameter();
 
 
   /**
