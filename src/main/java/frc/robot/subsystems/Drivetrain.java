@@ -52,6 +52,8 @@ public class Drivetrain extends SubsystemTuner {
     private DifferentialDrivePoseEstimator estimator;
     private Field2d field;
 
+    private double maxSpeedMultiplier = 1.0;
+
     public Drivetrain() {
         super();
 
@@ -159,6 +161,10 @@ public class Drivetrain extends SubsystemTuner {
         }
     }
 
+    public void setMaxSpeedMultiplier(double maxSpeedMultiplier) {
+        this.maxSpeedMultiplier = maxSpeedMultiplier;
+    }
+
     public void arcadeDrive(double speed, double rotation, boolean squareInputs) {
         if (RobotConstants.get().driveUseVelocity()) {
             DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(MathUtil.applyDeadband(speed, 0.02), MathUtil.applyDeadband(rotation, 0.02), squareInputs);
@@ -182,8 +188,8 @@ public class Drivetrain extends SubsystemTuner {
     }
 
     private void setVelocityFromWheelSpeeds(DifferentialDrive.WheelSpeeds speeds) {
-        double leftVelocity =  speeds.left * RobotConstants.get().driveMaxVelocity();
-        double rightVelocity =  speeds.right * RobotConstants.get().driveMaxVelocity();
+        double leftVelocity =  speeds.left * RobotConstants.get().driveMaxVelocity() * maxSpeedMultiplier;
+        double rightVelocity =  speeds.right * RobotConstants.get().driveMaxVelocity() * maxSpeedMultiplier;
         double leftVoltage = driveFF.calculate(leftVelocity);
         double rightVoltage = driveFF.calculate(rightVelocity);
 

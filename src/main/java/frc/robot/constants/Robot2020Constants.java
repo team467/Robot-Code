@@ -144,6 +144,11 @@ public class Robot2020Constants implements Constants {
     }
 
     @Override
+    public double driveDemoModeMultiplier() {
+        return 0.6;
+    }
+
+    @Override
     public int driveMotorLeftLeaderId() {
         return 1;
     }

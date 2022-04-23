@@ -471,4 +471,16 @@ public class RobotContainer {
     // Rotation2d()), List.of(), new Pose2d(-2, 0, Rotation2d.fromDegrees(0)),
     // true)));
   }
+
+  public void enableDemoMode() {
+    if (drivetrain != null) {
+      drivetrain.setMaxSpeedMultiplier(RobotConstants.get().driveDemoModeMultiplier());
+    }
+  }
+
+  public void disableDemoMode() {
+    if (drivetrain != null) {
+      drivetrain.setMaxSpeedMultiplier(1.0);
+    }
+  }
 }

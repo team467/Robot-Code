@@ -39,6 +39,7 @@ public interface Constants {
     public double driveSlowMaxSpeed();
     public double driveNormalTurnMaxSpeed();
     public double driveSlowTurnMaxSpeed();
+    public double driveDemoModeMultiplier();
     public int driveMotorLeftLeaderId();
     public boolean driveMotorLeftLeaderInverted();
     public int driveMotorLeftFollowerId();
