@@ -25,12 +25,6 @@ public class TunerManager {
     }
 
     public void setDefaultTuner(Tuner tuner) {
-        // System.out.println("Registered tuner: " + tuner.getTunerName());
-        Shuffleboard.getTab(tuner.getTunerName()).add("Tuner Selection", tunerChooser).withWidget(BuiltInWidgets.kComboBoxChooser)
-                .withSize(2, 1)
-                .withPosition(0, 0);
-        tuners.add(tuner);
-        tuner.initializeTunerNetworkTables(Shuffleboard.getTab(tuner.getTunerName()));
         tunerChooser.setDefaultOption(tuner.getTunerName(), tuner);
     }
 
