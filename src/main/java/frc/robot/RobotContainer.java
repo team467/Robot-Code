@@ -485,7 +485,7 @@ public class RobotContainer {
 
   public void disableDemoMode() {
     if (drivetrain != null) {
-      drivetrain.setMaxSpeedMultiplier(1.0);
+      drivetrain.setMaxSpeedMultiplier(RobotConstants.get().driveNormalModeMultiplier());
     }
   }
 }

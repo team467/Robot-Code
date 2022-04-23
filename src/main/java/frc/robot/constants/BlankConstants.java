@@ -148,6 +148,11 @@ public class BlankConstants implements Constants {
     }
 
     @Override
+    public double driveNormalModeMultiplier() {
+        return 0.0;
+    }
+
+    @Override
     public double driveDemoModeMultiplier() {
         return 0.0;
     }

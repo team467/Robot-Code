@@ -145,6 +145,11 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
+    public double driveNormalModeMultiplier() {
+        return 1.0;
+    }
+
+    @Override
     public double driveDemoModeMultiplier() {
         return 0.6;
     }
