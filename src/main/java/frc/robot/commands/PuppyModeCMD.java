@@ -1,12 +1,10 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
@@ -60,7 +58,7 @@ public class PuppyModeCMD extends CommandBase {
     public void execute() {
         if (hasBallEntry.getBoolean(false)) {
             double angle = angleEntry.getDouble(0)/120; // 30deg range
-            double speed = MathUtil.clamp(distanceEntry.getDouble(0) / 120, 0.1, 0.5); // 120 inches max distance
+            // double speed = MathUtil.clamp(distanceEntry.getDouble(0) / 120, 0.1, 0.5); // 120 inches max distance
 
             // drivetrain.curvatureDrive(speed, angle);
             drivetrain.curvatureDrive(0, angle);

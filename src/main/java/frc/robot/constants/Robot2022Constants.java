@@ -251,7 +251,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double climber2022UpSpeed() {
-        return 0.5;
+        return 0.8;
     }
 
     @Override
@@ -266,22 +266,43 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double climber2022LeftLowerLimit() {
-        return 20;
+        return 20 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
     }
 
     @Override
     public double climber2022RightLowerLimit() {
-        return 20;
+        return 20 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
+    }
+
+    @Override
+    public double climber2022LeftDangerLimit() {
+        return -2 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
+    }
+
+    @Override
+    public double climber2022RightDangerLimit() {
+        return -2 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
     }
 
     @Override
     public double climber2022LeftUpperLimit() {
-        return 75;
+        return 75 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
     }
 
     @Override
     public double climber2022RightUpperLimit() {
-        return 75;
+        return 75 * Math.PI * climber2022Diameter() * climber2022GearRatio().getRotationsPerInput();
+    }
+
+    @Override
+    public GearRatio climber2022GearRatio() {
+        return new GearRatio(13.5, 1);
+    }
+
+
+    @Override
+    public double climber2022Diameter() {
+        return 0.0203;
     }
 
     @Override
@@ -501,7 +522,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public SimpleFeedforwardConstant spitter2022FF() {
-        return new SimpleFeedforwardConstant(0.020143, 0.020143, 0.0010151);
+        return new SimpleFeedforwardConstant(0.21608, 0.026912, 0.00090509);
     }
 
   @Override
@@ -511,17 +532,17 @@ public class Robot2022Constants implements Constants {
 
   @Override
   public GearRatio spitter2022GearRatio() {
-    return new GearRatio(32, 32);
+    return new GearRatio(32, 24);
   }
 
   @Override
     public FeedbackConstant spitter2022FB() {
-        return new FeedbackConstant(0.14261, 0);
+        return new FeedbackConstant(0.018865, 0);
     }
 
     @Override
     public double spitter2022MaxVelocity() {
-        return 468.75;
+        return 351.5625;
     }
 
     @Override
@@ -535,13 +556,28 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
+    public boolean hasLed2022() {
+        return true;
+    }
+
+    @Override
+    public int ledChannel() {
+        return 0;
+    }
+
+    @Override
+    public int led2022LedCount() {
+        return 10;
+    }
+
+    @Override
     public double spitter2022DistanceLinearM() {
-        return 63.62246419;
+        return 58.57135471;
     }
 
     @Override
     public double spitter2022DistanceLinearB() {
-        return 168.3516662;
+        return 156.7621671;
     }
 
     @Override

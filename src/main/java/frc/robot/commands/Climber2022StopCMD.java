@@ -21,7 +21,7 @@ public class Climber2022StopCMD extends CommandBase {
 
 @Override
 public void initialize() {  
-    LOGGER.info("Stopping climber");
+    LOGGER.debug("Stopping climber");
 }
 
 

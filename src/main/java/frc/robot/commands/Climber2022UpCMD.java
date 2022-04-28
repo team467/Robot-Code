@@ -22,7 +22,7 @@ public class Climber2022UpCMD extends CommandBase {
 
     @Override
     public void initialize() {
-        LOGGER.info("Climber going up");
+        LOGGER.debug("Climber going up");
     }
 
 

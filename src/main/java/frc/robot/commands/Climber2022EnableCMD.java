@@ -25,7 +25,7 @@ public class Climber2022EnableCMD extends CommandBase {
     @Override 
     public void initialize() {
         climber.enable();
-        LOGGER.info("Climber enabled");
+        LOGGER.debug("Climber enabled");
     }
 
     @Override 

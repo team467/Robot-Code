@@ -22,7 +22,7 @@ public class Climber2022DisableCMD extends CommandBase{
     @Override 
     public void initialize() {
         climber.disable();
-        LOGGER.info("Climber disabled");
+        LOGGER.debug("Climber disabled");
     }
 
 

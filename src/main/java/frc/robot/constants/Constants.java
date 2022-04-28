@@ -68,8 +68,12 @@ public interface Constants {
     public int climber2022SolenoidChannel();
     public double climber2022LeftLowerLimit();
     public double climber2022RightLowerLimit();
+    public double climber2022LeftDangerLimit();
+    public double climber2022RightDangerLimit();
     public double climber2022LeftUpperLimit();
     public double climber2022RightUpperLimit();
+    public GearRatio climber2022GearRatio();
+    public double climber2022Diameter();
 
     public boolean hasShooter2020();
     public MotorType shooter2020MotorType();
@@ -95,7 +99,9 @@ public interface Constants {
     public int shooter2020RightServoId();
     public double shooter2020RightServoMax();
     public double shooter2020RightServoMin();
-
+    public int ledChannel();
+    public boolean hasLed2022();
+    public int led2022LedCount();
     public boolean hasIndexer2022();
     public int indexer2022MotorID();
     public double indexer2022IdleSpeed();

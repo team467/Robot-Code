@@ -244,12 +244,33 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
+    public double climber2022LeftDangerLimit() {
+        return 0;
+    }
+
+    @Override
+    public double climber2022RightDangerLimit() {
+        return 0;
+    }
+
+    @Override
     public double climber2022LeftUpperLimit() {
         return 0;
     }
 
     @Override
     public double climber2022RightUpperLimit() {
+        return 0;
+    }
+
+    @Override
+    public GearRatio climber2022GearRatio() {
+        return new GearRatio();
+    }
+
+
+    @Override
+    public double climber2022Diameter() {
         return 0;
     }
 
@@ -404,6 +425,10 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override
+    public int ledChannel() {
+        return 2;
+    }
+
     public boolean hasIndexer2022() {
         return false;
     }
@@ -411,6 +436,11 @@ public class KitBot2022Constants implements Constants {
     @Override
     public int indexer2022MotorID() {
         return 0;
+    }
+
+    @Override 
+    public boolean hasLed2022() {
+        return true;
     }
 
     @Override
@@ -479,6 +509,10 @@ public class KitBot2022Constants implements Constants {
     }
 
     @Override 
+    public int led2022LedCount() {
+        return 0;
+    }
+
     public int spitter2022MotorId() {
         return 0;
     }

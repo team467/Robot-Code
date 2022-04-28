@@ -274,12 +274,32 @@ public class BlankConstants implements Constants {
     }
 
     @Override
+    public double climber2022LeftDangerLimit() {
+        return 0;
+    }
+
+    @Override
+    public double climber2022RightDangerLimit() {
+        return 0;
+    }
+
+    @Override
     public double climber2022LeftUpperLimit() {
         return 0;
     }
 
     @Override
     public double climber2022RightUpperLimit() {
+        return 0;
+    }
+
+    @Override
+    public GearRatio climber2022GearRatio() {
+        return new GearRatio();
+    }
+
+    @Override
+    public double climber2022Diameter() {
         return 0;
     }
 
@@ -409,7 +429,17 @@ public class BlankConstants implements Constants {
     }
 
     @Override
+    public int ledChannel() {
+        return 0;
+    }
+
+    @Override
     public boolean hasIndexer2022() {
+        return false;
+    }
+
+    @Override 
+    public boolean hasLed2022() {
         return false;
     }
 
@@ -484,6 +514,11 @@ public class BlankConstants implements Constants {
     }
 
     @Override 
+    public int led2022LedCount() {
+        return 0;
+    }
+
+    @Override
     public int spitter2022MotorId() {
         return 0;
     }

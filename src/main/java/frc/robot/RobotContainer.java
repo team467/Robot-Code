@@ -17,14 +17,13 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.*;
 import frc.robot.commands.ArcadeDriveCMD;
+import frc.robot.commands.BlankDefaultCMD;
 import frc.robot.commands.Indexer2022StopCMD;
 import frc.robot.commands.Climber2022DisableCMD;
 import frc.robot.commands.Climber2022EnableCMD;
@@ -35,12 +34,21 @@ import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberUpCMD;
+import frc.robot.commands.DrivetrainNoneCMD;
+import frc.robot.commands.GoToDistanceAngleCMD;
+import frc.robot.commands.GoToTargetCMD;
+import frc.robot.commands.GoToTrajectoryCMD;
+import frc.robot.commands.HubCameraLEDEnable;
+import frc.robot.commands.Led2022UpdateCMD;
+import frc.robot.commands.GoToTrajectoryCMD;
+import frc.robot.commands.HubCameraLEDSmart;
 import frc.robot.commands.LlamaNeck2022StopCMD;
 import frc.robot.commands.OffTarmacAutoCMD;
 import frc.robot.commands.OneBallAutoNoVisionOffTarmacCMD;
 import frc.robot.commands.OneBallAutoNoVisionOnTarmacCMD;
 import frc.robot.commands.Shooter2022FlushBallCMD;
 import frc.robot.commands.Shooter2022IdleCMD;
+import frc.robot.commands.Shooter2022IdleSpinupCMD;
 import frc.robot.commands.Shooter2022IdleTargetCMD;
 import frc.robot.commands.Shooter2022SetDefaultCMD;
 import frc.robot.commands.Shooter2022ShootSpeedCMD;
@@ -53,14 +61,16 @@ import frc.robot.commands.ShooterTriggerStopCMD;
 import frc.robot.commands.Spitter2022StopCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
+import frc.robot.led.LEDManager;
+import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Led2022;
 import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.HubCameraLED;
 import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
 import frc.robot.subsystems.Shooter2022;
-import frc.robot.subsystems.Climber2020;
 import frc.robot.subsystems.Climber2022;
 import frc.robot.subsystems.Spitter2022;
 import java.io.File;
@@ -88,6 +98,7 @@ public class RobotContainer {
   private Drivetrain drivetrain = null;
   private Gyro gyro = null;
   private Shooter2020 shooter = null;
+  private Led2022 led2022 = null;
   private LlamaNeck2022 llamaNeck = null;
   private Indexer2022 indexer = null;
   private Spitter2022 spitter = null;
@@ -151,6 +162,8 @@ public class RobotContainer {
 
     initializeSubsystems();
 
+    LEDManager.getInstance().init();
+
     initializeAutoCommands();
 
     // Configure the button bindings
@@ -171,6 +184,10 @@ public class RobotContainer {
         }
       }
     }
+  }
+
+  public Led2022 getDisabledCommand() {
+    return led2022;
   }
 
   public void initializeAutoCommands() {
@@ -218,6 +235,7 @@ public class RobotContainer {
     initLlamaNeck2022();
     initShooter2022();
     initHubCameraLED();
+    initLed2022();
   }
 
   private void initGyro() {
@@ -301,6 +319,19 @@ public class RobotContainer {
     }
   }
 
+  private void initLed2022() {
+    if (RobotConstants.get().hasLed2022()) {
+      led2022 = new Led2022();
+      if (RobotConstants.get().hasSpitter2022() 
+        && RobotConstants.get().hasLlamaNeck2022()
+        && RobotConstants.get().hasClimber2022()) {
+          led2022.setDefaultCommand(new Led2022UpdateCMD(led2022, indexer, llamaNeck, spitter, shooter2022, climber2022));
+        } else {
+          led2022.setDefaultCommand(new Led2022UpdateCMD(led2022));
+        }
+    }
+  }
+
   private void initLlamaNeck2022() {
     if (RobotConstants.get().hasLlamaNeck2022()) {
       llamaNeck = new LlamaNeck2022();
@@ -367,7 +398,7 @@ public class RobotContainer {
         && RobotConstants.get().hasSpitter2022()) {
       if (operatorShooterFlywheel.get()) {
         shooter2022.setDefaultCommand(
-            new Shooter2022IdleCMD(shooter2022));
+            new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(0.6)));
       } else {
         shooter2022.setDefaultCommand(
             new Shooter2022StopCMD(shooter2022));
@@ -376,7 +407,7 @@ public class RobotContainer {
       operatorShooterFlywheel
           .whenPressed(
               new Shooter2022SetDefaultCMD(
-                  shooter2022, new Shooter2022IdleCMD(shooter2022)))
+                  shooter2022, new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(0.6))))
           .whenReleased(
               new Shooter2022SetDefaultCMD(
                   shooter2022, new Shooter2022StopCMD(shooter2022)));
@@ -390,7 +421,7 @@ public class RobotContainer {
   private void initHubCameraLED() {
     if (RobotConstants.get().hasHubCameraLED()) {
       hubCameraLED = new HubCameraLED();
-      hubCameraLED.setDefaultCommand(new HubCameraLEDEnable(hubCameraLED));
+      hubCameraLED.setDefaultCommand(new HubCameraLEDSmart(hubCameraLED, shooter2022));
     }
   }
 

@@ -28,6 +28,8 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private CommandScheduler commandScheduler;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -38,6 +40,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     
     m_robotContainer = new RobotContainer();
+    commandScheduler = CommandScheduler.getInstance();
 
     // Mounting USB
     ProcessBuilder builder = new ProcessBuilder();
@@ -69,11 +72,14 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_robotContainer.configureButtonBindings();
+    m_robotContainer.getDisabledCommand().getDefaultCommand().initialize();
   }
 
   @Override
-  public void disabledPeriodic() {}
-
+  public void disabledPeriodic() {
+    m_robotContainer.getDisabledCommand().getDefaultCommand().execute();
+  }
+  
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
