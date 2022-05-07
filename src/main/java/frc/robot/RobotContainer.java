@@ -74,6 +74,9 @@ import frc.robot.subsystems.Shooter2020;
 import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Climber2022;
 import frc.robot.subsystems.Spitter2022;
+import frc.robot.tuners.DemoModeTuner;
+import frc.robot.tuning.TunerManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -166,6 +169,8 @@ public class RobotContainer {
     LEDManager.getInstance().init();
 
     initializeAutoCommands();
+
+    TunerManager.getTunerManager().setDefaultTuner(new DemoModeTuner(this));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -470,5 +475,17 @@ public class RobotContainer {
     // false), new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new
     // Rotation2d()), List.of(), new Pose2d(-2, 0, Rotation2d.fromDegrees(0)),
     // true)));
+  }
+
+  public void enableDemoMode() {
+    if (drivetrain != null) {
+      drivetrain.setMaxSpeedMultiplier(RobotConstants.get().driveDemoModeMultiplier());
+    }
+  }
+
+  public void disableDemoMode() {
+    if (drivetrain != null) {
+      drivetrain.setMaxSpeedMultiplier(RobotConstants.get().driveNormalModeMultiplier());
+    }
   }
 }

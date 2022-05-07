@@ -24,6 +24,10 @@ public class TunerManager {
         tunerChooser.addOption(tuner.getTunerName(), tuner);
     }
 
+    public void setDefaultTuner(Tuner tuner) {
+        tunerChooser.setDefaultOption(tuner.getTunerName(), tuner);
+    }
+
     public Tuner getTunerChoice() {
         return tunerChooser.getSelected();
     }
