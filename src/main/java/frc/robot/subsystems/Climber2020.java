@@ -31,13 +31,13 @@ public class Climber2020 extends SubsystemBase {
 
     public void up() {
         if (this.isEnabled()) {
-            climberMotor.set(RobotConstants.get().climber2020UpSpeed());
+            climberMotor.set(RobotConstants.get().climber2022UpSpeed());
         }
     }
 
     public void down() {
         if (this.isEnabled()) {
-            climberMotor.set(-RobotConstants.get().climber2020DownSpeed());
+            climberMotor.set(RobotConstants.get().climber2022DownSpeed());
         }
     }
 

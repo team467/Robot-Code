@@ -10,7 +10,7 @@ import frc.robot.constants.BriefcaseConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.KitBot2022Constants;
 import frc.robot.constants.Robot2019Constants;
-import frc.robot.constants.Robot2020Constants;
+import frc.robot.constants.Robot2022Constants;
 
 public class RobotConstants {
     /*
@@ -48,7 +48,7 @@ public class RobotConstants {
             break;
         
           case "von neumann":
-            RobotConstants.set(new Robot2020Constants());
+            RobotConstants.set(new Robot2022Constants());
             break;
           
           case "hopper":

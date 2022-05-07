@@ -1,0 +1,9 @@
+{
+  "lengthUnit": "Meter",
+  "exportUnit": "Always Meters",
+  "maxVelocity": 3.0,
+  "maxAcceleration": 2.0,
+  "trackWidth": 0.58,
+  "gameName": "Rapid React",
+  "outputDir": "../../../paths/kitbot2022"
+}

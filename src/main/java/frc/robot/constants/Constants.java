@@ -1,12 +1,46 @@
 package frc.robot.constants;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import frc.robot.motors.FeedbackConstant;
+import frc.robot.motors.GearRatio;
+import frc.robot.motors.RamseteConstant;
+import frc.robot.motors.SimpleFeedforwardConstant;
 import frc.robot.motors.MotorType;
+import frc.robot.utilities.IMUAxis;
+import frc.robot.utilities.IMUType;
 
 public interface Constants {
     public String name();
     public boolean hasDrivetrain();
     public boolean driveDualMotors();
     public MotorType driveMotorType();
+    public IdleMode driveIdleMode();
+    public boolean driveUseVelocity();
+    public boolean driveUsePID();
+    public RamseteConstant driveRamsete();
+    public SimpleFeedforwardConstant driveDriveFF();
+    public FeedbackConstant driveDriveVelocityPID();
+    public FeedbackConstant driveDrivePositionPID();
+    public SimpleFeedforwardConstant driveTurnFF();
+    public FeedbackConstant driveTurnVelocityPID();
+    public FeedbackConstant driveTurnPositionPID();
+    public double driveWheelDiameter();
+    public GearRatio driveGearRatio();
+    public DifferentialDriveKinematics driveKinematics();
+    public double driveMaxVelocity();
+    public double driveMaxAcceleration();
+    public double driveAutoMaxVelocity();
+    public double driveAutoMaxAcceleration();
+    public double driveFastMaxSpeed();
+    public double driveNormalMaxSpeed();
+    public double driveSlowMaxSpeed();
+    public double driveNormalTurnMaxSpeed();
+    public double driveSlowTurnMaxSpeed();
+    public double driveNormalModeMultiplier();
+    public double driveDemoModeMultiplier();
     public int driveMotorLeftLeaderId();
     public boolean driveMotorLeftLeaderInverted();
     public int driveMotorLeftFollowerId();
@@ -16,11 +50,32 @@ public interface Constants {
     public int driveMotorRightFollowerId();
     public boolean driveMotorRightFollowerInverted();
 
+    public boolean hasGyro();
+    public IMUType gyroIMUType();
+    public IMUAxis gyroYawAxis();
+
     public boolean hasClimber2020();
     public int climber2020MotorId();
     public boolean climber2020MotorInverted();
     public double climber2020UpSpeed();
     public double climber2020DownSpeed();
+
+    public boolean hasClimber2022();
+    public int climber2022RightMotorId();
+    public int climber2022LeftMotorId();
+    public boolean climber2022LeftMotorInverted();
+    public boolean climber2022RightMotorInverted();
+    public double climber2022UpSpeed();
+    public double climber2022DownSpeed();
+    public int climber2022SolenoidChannel();
+    public double climber2022LeftLowerLimit();
+    public double climber2022RightLowerLimit();
+    public double climber2022LeftDangerLimit();
+    public double climber2022RightDangerLimit();
+    public double climber2022LeftUpperLimit();
+    public double climber2022RightUpperLimit();
+    public GearRatio climber2022GearRatio();
+    public double climber2022Diameter();
 
     public boolean hasShooter2020();
     public MotorType shooter2020MotorType();
@@ -46,4 +101,42 @@ public interface Constants {
     public int shooter2020RightServoId();
     public double shooter2020RightServoMax();
     public double shooter2020RightServoMin();
+    public int ledChannel();
+    public boolean hasLed2022();
+    public int led2022LedCount();
+    public boolean hasIndexer2022();
+    public int indexer2022MotorID();
+    public double indexer2022IdleSpeed();
+    public double indexer2022InSpeed();
+    public double indexer2022OutSpeed();
+    public boolean indexer2022MotorInverted();
+
+
+    public boolean hasLlamaNeck2022();
+    public int llamaNeck2022MotorID();
+    public boolean llamaNeck2022MotorInverted();
+    public double llamaNeck2022IdleSpeed();
+    public double llamaNeck2022InSpeed();
+    public double llamaNeck2022OutSpeed();
+    public int llamaNeck2022UpperLimitSwitchChannel();
+    public int llamaNeck2022LowerLimitSwitchChannel();
+
+    public boolean hasSpitter2022();
+    public int spitter2022MotorId();
+    public boolean spitter2022MotorInverted();
+    public boolean spitter2022UseVelocity();
+    public boolean spitter2022UsePID();
+    public SimpleFeedforwardConstant spitter2022FF();
+    public double spitter2022MomentOfInertia();
+    public GearRatio spitter2022GearRatio();
+    public FeedbackConstant spitter2022FB();
+    public double spitter2022MaxVelocity();
+    public double spitter2022ForwardSpeed();
+    public double spitter2022BackwardSpeed();
+    public double spitter2022DistanceLinearM();
+    public double spitter2022DistanceLinearB();
+
+    public boolean hasHubCameraLED();
+    public int hubCameraLEDChannel();
+    public Translation2d hubCameraOffset();
 }
