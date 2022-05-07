@@ -522,7 +522,7 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public SimpleFeedforwardConstant spitter2022FF() {
-        return new SimpleFeedforwardConstant(0.21608, 0.026912, 0.00090509);
+        return new SimpleFeedforwardConstant(0.026723, 0.026723, 0.0012179);
     }
 
   @Override
@@ -537,12 +537,12 @@ public class Robot2022Constants implements Constants {
 
   @Override
     public FeedbackConstant spitter2022FB() {
-        return new FeedbackConstant(0.018865, 0);
+        return new FeedbackConstant(0.048493, 0);
     }
 
     @Override
     public double spitter2022MaxVelocity() {
-        return 351.5625;
+        return 420.0;
     }
 
     @Override
@@ -572,12 +572,12 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double spitter2022DistanceLinearM() {
-        return 58.57135471;
+        return 53.46920837;
     }
 
     @Override
     public double spitter2022DistanceLinearB() {
-        return 156.7621671;
+        return 129.6610759;
     }
 
     @Override
