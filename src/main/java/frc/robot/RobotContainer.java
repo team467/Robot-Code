@@ -15,43 +15,35 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.BlankDefaultCMD;
-import frc.robot.commands.Indexer2022StopCMD;
 import frc.robot.commands.Climber2022DisableCMD;
+import frc.robot.commands.Climber2022DownCMD;
 import frc.robot.commands.Climber2022EnableCMD;
 import frc.robot.commands.Climber2022StopCMD;
 import frc.robot.commands.Climber2022UpCMD;
-import frc.robot.commands.Climber2022DownCMD;
 import frc.robot.commands.ClimberDownCMD;
 import frc.robot.commands.ClimberEnableCMD;
 import frc.robot.commands.ClimberStopCMD;
 import frc.robot.commands.ClimberUpCMD;
-import frc.robot.commands.DrivetrainNoneCMD;
-import frc.robot.commands.GoToDistanceAngleCMD;
-import frc.robot.commands.GoToTargetCMD;
-import frc.robot.commands.GoToTrajectoryCMD;
-import frc.robot.commands.HubCameraLEDEnable;
-import frc.robot.commands.Led2022UpdateCMD;
 import frc.robot.commands.GoToTrajectoryCMD;
 import frc.robot.commands.HubCameraLEDSmart;
+import frc.robot.commands.Indexer2022StopCMD;
+import frc.robot.commands.Led2022UpdateCMD;
 import frc.robot.commands.LlamaNeck2022StopCMD;
 import frc.robot.commands.OffTarmacAutoCMD;
 import frc.robot.commands.OneBallAutoNoVisionOffTarmacCMD;
 import frc.robot.commands.OneBallAutoNoVisionOnTarmacCMD;
 import frc.robot.commands.Shooter2022FlushBallCMD;
-import frc.robot.commands.Shooter2022IdleCMD;
 import frc.robot.commands.Shooter2022IdleSpinupCMD;
 import frc.robot.commands.Shooter2022IdleTargetCMD;
 import frc.robot.commands.Shooter2022SetDefaultCMD;
-import frc.robot.commands.Shooter2022ShootSpeedCMD;
 import frc.robot.commands.Shooter2022ShootTargetCMD;
 import frc.robot.commands.Shooter2022StopCMD;
 import frc.robot.commands.ShooterRunFlywheelCMD;
@@ -64,26 +56,23 @@ import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.led.LEDManager;
 import frc.robot.subsystems.Climber2020;
+import frc.robot.subsystems.Climber2022;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Led2022;
 import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.HubCameraLED;
 import frc.robot.subsystems.Indexer2022;
+import frc.robot.subsystems.Led2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2020;
 import frc.robot.subsystems.Shooter2022;
-import frc.robot.subsystems.Climber2022;
 import frc.robot.subsystems.Spitter2022;
 import frc.robot.tuners.DemoModeTuner;
 import frc.robot.tuning.TunerManager;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -400,7 +389,7 @@ public class RobotContainer {
         && RobotConstants.get().hasSpitter2022()) {
       if (operatorShooterFlywheel.get()) {
         shooter2022.setDefaultCommand(
-            new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(0.6)));
+            new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getBottomFlywheelVelocity(0.6), () -> Spitter2022.getTopFlywheelVelocity(0.6)));
       } else {
         shooter2022.setDefaultCommand(
             new Shooter2022StopCMD(shooter2022));
@@ -409,7 +398,7 @@ public class RobotContainer {
       operatorShooterFlywheel
           .whenPressed(
               new Shooter2022SetDefaultCMD(
-                  shooter2022, new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getFlywheelVelocity(0.6))))
+                  shooter2022, new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getBottomFlywheelVelocity(0.6), () -> Spitter2022.getTopFlywheelVelocity(0.6))))
           .whenReleased(
               new Shooter2022SetDefaultCMD(
                   shooter2022, new Shooter2022StopCMD(shooter2022)));
@@ -464,7 +453,7 @@ public class RobotContainer {
     // new Shooter2022ShootTargetCMD(shooter2022,
     // Units.feetToMeters(9))).andThen(this::configureButtonBindings);
     // // new Shooter2022ShootSpeedCMD(shooter2022, () ->
-    // Spitter2022.getFlywheelVelocity(Units.feetToMeters(9)))).andThen(() ->
+    // Spitter2022.getBottomFlywheelVelocity(Units.feetToMeters(9)))).andThen(() ->
     // configureButtonBindings(););
     // }
     // return new OneBallAutoNoVisionOnTarmacCMD(shooter2022).andThen(() ->

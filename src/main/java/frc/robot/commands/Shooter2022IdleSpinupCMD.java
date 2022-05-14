@@ -18,7 +18,6 @@ public class Shooter2022IdleSpinupCMD extends CommandBase {
   private final LlamaNeck2022 llamaNeck;
   private final Indexer2022 indexer;
   private final Spitter2022 spitter;
-  private final Supplier<Double> speed;
 
   private final Command llamaNeckStop;
   private final Command llamaNeckIdle;
@@ -29,13 +28,13 @@ public class Shooter2022IdleSpinupCMD extends CommandBase {
   private final Command spitterStop;
   private final Command spitterSpeed;
 
-  public Shooter2022IdleSpinupCMD(Shooter2022 shooter, Supplier<Double> speed) {
+  public Shooter2022IdleSpinupCMD(Shooter2022 shooter, Supplier<Double> bottomSpeed,
+      Supplier<Double> topSpeed) {
     super();
 
     this.llamaNeck = shooter.llamaNeck2022;
     this.spitter = shooter.spitter2022;
     this.indexer = shooter.indexer2022;
-    this.speed = speed;
 
     this.llamaNeckStop = new LlamaNeck2022StopCMD(llamaNeck);
     this.llamaNeckIdle = new LlamaNeck2022IdleCMD(llamaNeck);
@@ -44,7 +43,7 @@ public class Shooter2022IdleSpinupCMD extends CommandBase {
     this.indexerIdle = new Indexer2022IdleCMD(indexer);
 
     this.spitterStop = new Spitter2022StopCMD(spitter);
-    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, speed, () -> 0.0);
+    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, bottomSpeed, topSpeed);
 
     addRequirements(shooter);
   }

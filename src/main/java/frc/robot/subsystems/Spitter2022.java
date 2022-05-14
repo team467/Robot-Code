@@ -40,23 +40,43 @@ public class Spitter2022 extends SubsystemBase {
   private boolean timerEnabled = false;
 
   /**
-   * Returns calculated flywheel speed in rad/s from any distance in meters
+   * Returns calculated bottom flywheel speed in rad/s from any distance in meters
    *
    * @param distance Distance in meters
    * @return Calculated flywheel speed in rad/s
    */
-  public static double getFlywheelVelocity(double distance) {
+  public static double getBottomFlywheelVelocity(double distance) {
     return ((RobotConstants.get().bottomSpitter2022DistanceLinearM() * distance)
         + RobotConstants.get().bottomSpitter2022DistanceLinearB());
   }
 
   /**
-   * Returns calculated flywheel speed in rad/s from the distance to the target
+   * Returns calculated top flywheel speed in rad/s from any distance in meters
+   *
+   * @param distance Distance in meters
+   * @return Calculated flywheel speed in rad/s
+   */
+  public static double getTopFlywheelVelocity(double distance) {
+    return ((RobotConstants.get().topSpitter2022DistanceLinearM() * distance)
+        + RobotConstants.get().topSpitter2022DistanceLinearB());
+  }
+
+  /**
+   * Returns calculated bottom flywheel speed in rad/s from the distance to the target
    *
    * @return Calculated flywheel speed in rad/s
    */
-  public static double getFlywheelVelocity() {
-    return getFlywheelVelocity(HubTarget.getDistance());
+  public static double getBottomFlywheelVelocity() {
+    return getBottomFlywheelVelocity(HubTarget.getDistance());
+  }
+
+  /**
+   * Returns calculated top flywheel speed in rad/s from the distance to the target
+   *
+   * @return Calculated flywheel speed in rad/s
+   */
+  public static double getTopFlywheelVelocity() {
+    return getTopFlywheelVelocity(HubTarget.getDistance());
   }
 
   /** The spitter subsystem, contains the flywheel and its motor only. */
@@ -71,11 +91,6 @@ public class Spitter2022 extends SubsystemBase {
         2.0 * Math.PI * RobotConstants.get().bottomSpitter2022GearRatio().getRotationsPerInput());
 
     bottomSpitterPlant = RobotConstants.get().bottomSpitter2022FF().getVelocityPlant();
-    // TODO: Switch to flywheel plant, after gearing and moment of inertia are calculated
-    //  spitterPlant =
-    //          LinearSystemId.createFlywheelSystem(
-    //                  DCMotor.getNEO(1), RobotConstants.get().bottomSpitter2022MomentOfInertia(),
-    // RobotConstants.get().bottomSpitter2022GearRatio().getRotationsPerOutput());
     bottomSpitterObserver =
         new KalmanFilter<>(
             Nat.N1(),
@@ -114,11 +129,6 @@ public class Spitter2022 extends SubsystemBase {
         2.0 * Math.PI * RobotConstants.get().topSpitter2022GearRatio().getRotationsPerInput());
 
     topSpitterPlant = RobotConstants.get().topSpitter2022FF().getVelocityPlant();
-    // TODO: Switch to flywheel plant, after gearing and moment of inertia are calculated
-    //  spitterPlant =
-    //          LinearSystemId.createFlywheelSystem(
-    //                  DCMotor.getNEO(1), RobotConstants.get().topSpitter2022MomentOfInertia(),
-    // RobotConstants.get().topSpitter2022GearRatio().getRotationsPerOutput());
     topSpitterObserver =
         new KalmanFilter<>(
             Nat.N1(),
@@ -206,10 +216,10 @@ public class Spitter2022 extends SubsystemBase {
 
   public void setSpitterToTarget() {
     // System.out.printf("Setting velocity to %f rad/s, %f percent,l distance is %f meters, %n",
-    // getFlywheelVelocity(), getFlywheelVelocity()/RobotConstants.get().bottomSpitter2022MaxVelocity(),
+    // getBottomFlywheelVelocity(), getBottomFlywheelVelocity()/RobotConstants.get().bottomSpitter2022MaxVelocity(),
     // HubTarget.getDistance());
-    //TODO: add top flywheel
-    setBottomVelocity(getFlywheelVelocity());
+    setBottomVelocity(getBottomFlywheelVelocity());
+    setTopVelocity(getTopFlywheelVelocity());
   }
 
   /** Stop the flywheel. */
