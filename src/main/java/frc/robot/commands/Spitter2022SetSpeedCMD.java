@@ -3,20 +3,21 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.logging.RobotLogManager;
 import frc.robot.subsystems.Spitter2022;
-
 import java.util.function.Supplier;
-
 import org.apache.logging.log4j.Logger;
 
 public class Spitter2022SetSpeedCMD extends CommandBase {
   private static final Logger LOGGER =
       RobotLogManager.getMainLogger(Spitter2022SetSpeedCMD.class.getName());
   private final Spitter2022 spitter;
-  private final Supplier<Double> speed;
+  private final Supplier<Double> bottomSpeed;
+  private final Supplier<Double> topSpeed;
 
-  public Spitter2022SetSpeedCMD(Spitter2022 spitter, Supplier<Double> speed) {
+  public Spitter2022SetSpeedCMD(Spitter2022 spitter, Supplier<Double> bottomSpeed,
+      Supplier<Double> topSpeed) {
     this.spitter = spitter;
-    this.speed = speed;
+    this.bottomSpeed = bottomSpeed;
+    this.topSpeed = topSpeed;
 
     addRequirements(spitter);
   }
@@ -28,7 +29,8 @@ public class Spitter2022SetSpeedCMD extends CommandBase {
 
   @Override
   public void execute() {
-    spitter.setVelocity(speed.get());
+    spitter.setBottomVelocity(bottomSpeed.get());
+    spitter.setTopVelocity(topSpeed.get());
   }
 
   @Override

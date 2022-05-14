@@ -1,14 +1,13 @@
 package frc.robot.constants;
 
 import com.revrobotics.CANSparkMax.IdleMode;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.GearRatio;
+import frc.robot.motors.MotorType;
 import frc.robot.motors.RamseteConstant;
 import frc.robot.motors.SimpleFeedforwardConstant;
-import frc.robot.motors.MotorType;
 import frc.robot.utilities.IMUAxis;
 import frc.robot.utilities.IMUType;
 
@@ -122,20 +121,33 @@ public interface Constants {
     public int llamaNeck2022LowerLimitSwitchChannel();
 
     public boolean hasSpitter2022();
-    public int spitter2022MotorId();
-    public boolean spitter2022MotorInverted();
-    public boolean spitter2022UseVelocity();
-    public boolean spitter2022UsePID();
-    public SimpleFeedforwardConstant spitter2022FF();
-    public double spitter2022MomentOfInertia();
-    public GearRatio spitter2022GearRatio();
-    public FeedbackConstant spitter2022FB();
-    public double spitter2022MaxVelocity();
-    public double spitter2022ForwardSpeed();
-    public double spitter2022BackwardSpeed();
-    public double spitter2022DistanceLinearM();
-    public double spitter2022DistanceLinearB();
+    public int bottomSpitter2022MotorId();
+    public boolean bottomSpitter2022MotorInverted();
+    public boolean bottomSpitter2022UseVelocity();
+    public boolean bottomSpitter2022UsePID();
+    public SimpleFeedforwardConstant bottomSpitter2022FF();
+    public double bottomSpitter2022MomentOfInertia();
+    public GearRatio bottomSpitter2022GearRatio();
+    public FeedbackConstant bottomSpitter2022FB();
+    public double bottomSpitter2022MaxVelocity();
+    public double bottomSpitter2022ForwardSpeed();
+    public double bottomSpitter2022BackwardSpeed();
+    public double bottomSpitter2022DistanceLinearM();
+    public double bottomSpitter2022DistanceLinearB();
 
+    public int topSpitter2022MotorId();
+    public boolean topSpitter2022MotorInverted();
+    public boolean topSpitter2022UseVelocity();
+    public boolean topSpitter2022UsePID();
+    public SimpleFeedforwardConstant topSpitter2022FF();
+    public double topSpitter2022MomentOfInertia();
+    public GearRatio topSpitter2022GearRatio();
+    public FeedbackConstant topSpitter2022FB();
+    public double topSpitter2022MaxVelocity();
+    public double topSpitter2022ForwardSpeed();
+    public double topSpitter2022BackwardSpeed();
+    public double topSpitter2022DistanceLinearM();
+    public double topSpitter2022DistanceLinearB();
     public boolean hasHubCameraLED();
     public int hubCameraLEDChannel();
     public Translation2d hubCameraOffset();

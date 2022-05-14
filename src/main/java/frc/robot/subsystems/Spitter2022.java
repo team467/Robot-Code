@@ -3,15 +3,10 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,27 +23,36 @@ public class Spitter2022 extends SubsystemBase {
 
   private static final Logger LOGGER = RobotLogManager.getMainLogger(Spitter2022.class.getName());
 
-    private final double SHOOTING_SPEED_TOLERANCE = 1.0;
-    private final MotorControllerEncoder spitterMotor;
+  private final double SHOOTING_SPEED_TOLERANCE = 1.0;
+  private final MotorControllerEncoder bottomSpitterMotor;
+  private final LinearSystem<N1, N1, N1> bottomSpitterPlant;
+  private final KalmanFilter<N1, N1, N1> bottomSpitterObserver;
+  private final LinearQuadraticRegulator<N1, N1, N1> bottomSpitterController;
+  private final LinearSystemLoop<N1, N1, N1> bottomSpitterLoop;
 
-    private final LinearSystem<N1, N1, N1> spitterPlant;
-    private final KalmanFilter<N1, N1, N1> spitterObserver;
-    private final LinearQuadraticRegulator<N1, N1, N1> spitterController;
-    private final LinearSystemLoop<N1, N1, N1> spitterLoop;
-    private final Timer timer;
-    private boolean timerEnabled = false;
+  private final MotorControllerEncoder topSpitterMotor;
+  private final LinearSystem<N1, N1, N1> topSpitterPlant;
+  private final KalmanFilter<N1, N1, N1> topSpitterObserver;
+  private final LinearQuadraticRegulator<N1, N1, N1> topSpitterController;
+  private final LinearSystemLoop<N1, N1, N1> topSpitterLoop;
+
+  private final Timer timer;
+  private boolean timerEnabled = false;
 
   /**
    * Returns calculated flywheel speed in rad/s from any distance in meters
+   *
    * @param distance Distance in meters
    * @return Calculated flywheel speed in rad/s
    */
   public static double getFlywheelVelocity(double distance) {
-    return ((RobotConstants.get().spitter2022DistanceLinearM() * distance) + RobotConstants.get().spitter2022DistanceLinearB());
+    return ((RobotConstants.get().bottomSpitter2022DistanceLinearM() * distance)
+        + RobotConstants.get().bottomSpitter2022DistanceLinearB());
   }
 
   /**
    * Returns calculated flywheel speed in rad/s from the distance to the target
+   *
    * @return Calculated flywheel speed in rad/s
    */
   public static double getFlywheelVelocity() {
@@ -59,130 +63,204 @@ public class Spitter2022 extends SubsystemBase {
   public Spitter2022() {
     super();
 
-        spitterMotor =
-                MotorControllerFactory.create(
-                        RobotConstants.get().spitter2022MotorId(), MotorType.SPARK_MAX_BRUSHLESS);
-        spitterMotor.setInverted(RobotConstants.get().spitter2022MotorInverted());
-        spitterMotor.setUnitsPerRotation(2.0 * Math.PI * RobotConstants.get().spitter2022GearRatio().getRotationsPerInput());
+    bottomSpitterMotor =
+        MotorControllerFactory.create(
+            RobotConstants.get().bottomSpitter2022MotorId(), MotorType.SPARK_MAX_BRUSHLESS);
+    bottomSpitterMotor.setInverted(RobotConstants.get().bottomSpitter2022MotorInverted());
+    bottomSpitterMotor.setUnitsPerRotation(
+        2.0 * Math.PI * RobotConstants.get().bottomSpitter2022GearRatio().getRotationsPerInput());
 
-        spitterPlant = RobotConstants.get().spitter2022FF().getVelocityPlant();
-        // TODO: Switch to flywheel plant, after gearing and moment of inertia are calculated
-      //  spitterPlant =
-      //          LinearSystemId.createFlywheelSystem(
-      //                  DCMotor.getNEO(1), RobotConstants.get().spitter2022MomentOfInertia(), RobotConstants.get().spitter2022GearRatio().getRotationsPerOutput());
-        spitterObserver =
-            new KalmanFilter<>(
-                    Nat.N1(),
-                    Nat.N1(),
-                    spitterPlant,
-                    VecBuilder.fill(3.0), // How accurate we think our model is
-                    VecBuilder.fill(0.01), // How accurate we think our encoder
-                    // data is
-                    0.020);
+    bottomSpitterPlant = RobotConstants.get().bottomSpitter2022FF().getVelocityPlant();
+    // TODO: Switch to flywheel plant, after gearing and moment of inertia are calculated
+    //  spitterPlant =
+    //          LinearSystemId.createFlywheelSystem(
+    //                  DCMotor.getNEO(1), RobotConstants.get().bottomSpitter2022MomentOfInertia(),
+    // RobotConstants.get().bottomSpitter2022GearRatio().getRotationsPerOutput());
+    bottomSpitterObserver =
+        new KalmanFilter<>(
+            Nat.N1(),
+            Nat.N1(),
+            bottomSpitterPlant,
+            VecBuilder.fill(3.0), // How accurate we think our model is
+            VecBuilder.fill(0.01), // How accurate we think our encoder
+            // data is
+            0.020);
 
-        spitterController =
-                new LinearQuadraticRegulator<>(
-                        spitterPlant,
-                        VecBuilder.fill(8.0), // qelms. Velocity error tolerance, in radians per second. Decrease
-                        // this to more heavily penalize state excursion, or make the controller behave more
-                        // aggressively.
-                        VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
-                        // heavily penalize control effort, or make the controller less aggressive. 12 is a good
-                        // starting point because that is the (approximate) maximum voltage of a battery.
-                        0.020); // Nominal time between loops. 0.020 for TimedRobot, but can be
-        // lower if using notifiers.
+    bottomSpitterController =
+        new LinearQuadraticRegulator<>(
+            bottomSpitterPlant,
+            VecBuilder.fill(
+                8.0), // qelms. Velocity error tolerance, in radians per second. Decrease
+            // this to more heavily penalize state excursion, or make the controller behave more
+            // aggressively.
+            VecBuilder.fill(
+                12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+            // heavily penalize control effort, or make the controller less aggressive. 12 is a good
+            // starting point because that is the (approximate) maximum voltage of a battery.
+            0.020); // Nominal time between loops. 0.020 for TimedRobot, but can be
+    // lower if using notifiers.
 
-        spitterLoop =
-                new LinearSystemLoop<>(spitterPlant, spitterController, spitterObserver, 12.0, 0.020);
+    bottomSpitterLoop =
+        new LinearSystemLoop<>(bottomSpitterPlant, bottomSpitterController, bottomSpitterObserver, 12.0, 0.020);
 
-        spitterLoop.reset(VecBuilder.fill(spitterMotor.getVelocity()));
+    bottomSpitterLoop.reset(VecBuilder.fill(bottomSpitterMotor.getVelocity()));
 
-        timer = new Timer();
+
+    topSpitterMotor =
+        MotorControllerFactory.create(
+            RobotConstants.get().topSpitter2022MotorId(), MotorType.SPARK_MAX_BRUSHLESS);
+    topSpitterMotor.setInverted(RobotConstants.get().topSpitter2022MotorInverted());
+    topSpitterMotor.setUnitsPerRotation(
+        2.0 * Math.PI * RobotConstants.get().topSpitter2022GearRatio().getRotationsPerInput());
+
+    topSpitterPlant = RobotConstants.get().topSpitter2022FF().getVelocityPlant();
+    // TODO: Switch to flywheel plant, after gearing and moment of inertia are calculated
+    //  spitterPlant =
+    //          LinearSystemId.createFlywheelSystem(
+    //                  DCMotor.getNEO(1), RobotConstants.get().topSpitter2022MomentOfInertia(),
+    // RobotConstants.get().topSpitter2022GearRatio().getRotationsPerOutput());
+    topSpitterObserver =
+        new KalmanFilter<>(
+            Nat.N1(),
+            Nat.N1(),
+            topSpitterPlant,
+            VecBuilder.fill(3.0), // How accurate we think our model is
+            VecBuilder.fill(0.01), // How accurate we think our encoder
+            // data is
+            0.020);
+
+    topSpitterController =
+        new LinearQuadraticRegulator<>(
+            topSpitterPlant,
+            VecBuilder.fill(
+                8.0), // qelms. Velocity error tolerance, in radians per second. Decrease
+            // this to more heavily penalize state excursion, or make the controller behave more
+            // aggressively.
+            VecBuilder.fill(
+                12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+            // heavily penalize control effort, or make the controller less aggressive. 12 is a good
+            // starting point because that is the (approximate) maximum voltage of a battery.
+            0.020); // Nominal time between loops. 0.020 for TimedRobot, but can be
+    // lower if using notifiers.
+
+    topSpitterLoop =
+        new LinearSystemLoop<>(topSpitterPlant, topSpitterController, topSpitterObserver, 12.0, 0.020);
+
+    topSpitterLoop.reset(VecBuilder.fill(topSpitterMotor.getVelocity()));
+
+    timer = new Timer();
+  }
+
+  /**
+   * Sets the speed of the bottom motor, using velocity if it is enabled in the constants.
+   *
+   * @param speed the speed to set the motor to.
+   */
+  public void setBottomSpeed(double speed) {
+    setBottomVelocity(speed * RobotConstants.get().bottomSpitter2022MaxVelocity());
+  }
+
+  /**
+   * Sets the speed of the top motor, using velocity if it is enabled in the constants.
+   *
+   * @param speed the speed to set the motor to.
+   */
+  public void setTopSpeed(double speed) {
+    setTopVelocity(speed * RobotConstants.get().topSpitter2022MaxVelocity());
+  }
+
+  /**
+   * Sets the velocity for the bottom motor, using the velocity controllers
+   *
+   * @param velocity the velocity to set the motor to.
+   */
+  public void setBottomVelocity(double velocity) {
+    bottomSpitterLoop.setNextR(VecBuilder.fill(velocity));
+  }
+
+  /**
+   * Sets the velocity for the top motor, using the velocity controllers
+   *
+   * @param velocity the velocity to set the motor to.
+   */
+  public void setTopVelocity(double velocity) {
+    topSpitterLoop.setNextR(VecBuilder.fill(velocity));
+  }
+
+  public void reset() {
+    bottomSpitterLoop.reset(VecBuilder.fill(bottomSpitterMotor.getVelocity()));
+    topSpitterLoop.reset(VecBuilder.fill(topSpitterMotor.getVelocity()));
+  }
+
+  /** Start spinning the flywheel. */
+  public void forward() {
+    setBottomSpeed(RobotConstants.get().bottomSpitter2022ForwardSpeed());
+    setTopSpeed(RobotConstants.get().topSpitter2022ForwardSpeed());
+  }
+
+  /** Start spinning the flywheel backwards. */
+  public void backward() {
+    setBottomSpeed(-RobotConstants.get().bottomSpitter2022BackwardSpeed());
+    setTopVelocity(-RobotConstants.get().topSpitter2022BackwardSpeed());
+  }
+
+  public void setSpitterToTarget() {
+    // System.out.printf("Setting velocity to %f rad/s, %f percent,l distance is %f meters, %n",
+    // getFlywheelVelocity(), getFlywheelVelocity()/RobotConstants.get().bottomSpitter2022MaxVelocity(),
+    // HubTarget.getDistance());
+    //TODO: add top flywheel
+    setBottomVelocity(getFlywheelVelocity());
+  }
+
+  /** Stop the flywheel. */
+  public void stop() {
+    bottomSpitterLoop.setNextR(VecBuilder.fill(0));
+    topSpitterLoop.setNextR(VecBuilder.fill(0));
+  }
+
+  /**
+   * Checks if the flywheel speed has reached the threshold.
+   *
+   * <p>If velocity is not used, return true as atSpeed can not be used.
+   *
+   * @return if the threshold has been met
+   */
+  public boolean isAtShootingSpeed() {
+    boolean atSpeed = Math.abs(bottomSpitterLoop.getError(0)) <= SHOOTING_SPEED_TOLERANCE;
+    if (atSpeed) {
+      timer.start();
+      timerEnabled = true;
+    } else {
+      timer.reset();
+      timer.stop();
     }
 
-    /**
-     * Sets the speed of the motor, using velocity if it is enabled in the constants.
-     *
-     * @param speed the speed to set the motor to.
-     */
-    public void setSpeed(double speed) {
-        setVelocity(speed * RobotConstants.get().spitter2022MaxVelocity());
+    if (timer.get() > 0.1 && atSpeed) {
+      timerEnabled = false;
+      return true;
     }
 
-    /**
-     * Sets the velocity for the motor, using the velocity controllers
-     *
-     * @param velocity the velocity to set the motor to.
-     */
-    public void setVelocity(double velocity) {
-        spitterLoop.setNextR(VecBuilder.fill(velocity));
-    }
+    return false;
+  }
 
-    public void reset() {
-        spitterLoop.reset(VecBuilder.fill(spitterMotor.getVelocity()));
-    }
+  @Override
+  public void periodic() {
+    super.periodic();
+    bottomSpitterLoop.correct(VecBuilder.fill(bottomSpitterMotor.getVelocity()));
+    bottomSpitterLoop.predict(0.020);
+    bottomSpitterMotor.setVoltage(bottomSpitterLoop.getU(0));
+    topSpitterLoop.correct(VecBuilder.fill(topSpitterMotor.getVelocity()));
+    topSpitterLoop.predict(0.020);
+    topSpitterMotor.setVoltage(topSpitterLoop.getU(0));
+  }
 
-    /** Start spinning the flywheel. */
-    public void forward() {
-        setSpeed(RobotConstants.get().spitter2022ForwardSpeed());
-    }
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
 
-    /** Start spinning the flywheel backwards. */
-    public void backward() {
-        setSpeed(-RobotConstants.get().spitter2022BackwardSpeed());
-    }
-
-    public void setSpitterToTarget() {
-      // System.out.printf("Setting velocity to %f rad/s, %f percent,l distance is %f meters, %n", getFlywheelVelocity(), getFlywheelVelocity()/RobotConstants.get().spitter2022MaxVelocity(), HubTarget.getDistance());
-        setVelocity(getFlywheelVelocity());
-    }
-
-    /** Stop the flywheel. */
-    public void stop() {
-        spitterLoop.setNextR(VecBuilder.fill(0));
-    }
-
-    /**
-     * Checks if the flywheel speed has reached the threshold.
-     *
-     * <p>If velocity is not used, return true as atSpeed can not be used.
-     *
-     * @return if the threshold has been met
-     */
-    public boolean isAtShootingSpeed() {
-        boolean atSpeed = Math.abs(spitterLoop.getError(0)) <= SHOOTING_SPEED_TOLERANCE;
-        if (atSpeed) {
-          timer.start();
-          timerEnabled = true;
-        } else {
-          timer.reset();
-          timer.stop();
-        }
-
-        if (timer.get() > 0.1 && atSpeed) {
-            timerEnabled = false;
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public void periodic() {
-        super.periodic();
-        spitterLoop.correct(VecBuilder.fill(spitterMotor.getVelocity()));
-        spitterLoop.predict(0.020);
-        spitterMotor.setVoltage(spitterLoop.getU(0));
-    }
-
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
-
-        builder.addDoubleProperty("Flywheel Velocity", spitterMotor::getVelocity, null);
-        builder.addDoubleProperty(
-                "Flywheel Velocity Error",
-                () -> spitterLoop.getError(0),
-                null);
-    }
+    builder.addDoubleProperty("Bottom Flywheel Velocity", bottomSpitterMotor::getVelocity, null);
+    builder.addDoubleProperty("Top Flywheel Velocity", topSpitterMotor::getVelocity, null);
+    builder.addDoubleProperty("Bottom Flywheel Velocity Error", () -> bottomSpitterLoop.getError(0), null);
+    builder.addDoubleProperty("Top Flywheel Velocity Error", () -> topSpitterLoop.getError(0), null);
+  }
 }

@@ -511,59 +511,124 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override 
-    public int spitter2022MotorId() {
+    public int bottomSpitter2022MotorId() {
         return 5;
     }
 
     @Override
-    public boolean spitter2022MotorInverted() {
+    public boolean bottomSpitter2022MotorInverted() {
         return true;
     }
 
     @Override
-    public boolean spitter2022UseVelocity() {
+    public boolean bottomSpitter2022UseVelocity() {
         return true;
     }
 
     @Override
-    public boolean spitter2022UsePID() {
+    public boolean bottomSpitter2022UsePID() {
         return false;
     }
 
     @Override
-    public SimpleFeedforwardConstant spitter2022FF() {
-        return new SimpleFeedforwardConstant(0.026723, 0.026723, 0.0012179);
+    public SimpleFeedforwardConstant bottomSpitter2022FF() {
+        return new SimpleFeedforwardConstant(0.22553, 0.027314, 0.0021264);
     }
 
   @Override
-  public double spitter2022MomentOfInertia() {
+  public double bottomSpitter2022MomentOfInertia() {
     return 0.00161 * 2;
   }
 
   @Override
-  public GearRatio spitter2022GearRatio() {
+  public GearRatio bottomSpitter2022GearRatio() {
     return new GearRatio(32, 24);
   }
 
   @Override
-    public FeedbackConstant spitter2022FB() {
-        return new FeedbackConstant(0.048493, 0);
+    public FeedbackConstant bottomSpitter2022FB() {
+        return new FeedbackConstant(0.03067, 0);
     }
 
     @Override
-    public double spitter2022MaxVelocity() {
+    public double bottomSpitter2022MaxVelocity() {
         return 420.0;
     }
 
     @Override
-    public double spitter2022ForwardSpeed() {
+    public double bottomSpitter2022ForwardSpeed() {
         return 0.46;
     }
 
     @Override
-    public double spitter2022BackwardSpeed() {
+    public double bottomSpitter2022BackwardSpeed() {
         return 0.1;
     }
+
+  @Override
+  public int topSpitter2022MotorId() {
+    return 12;
+  }
+
+  @Override
+  public boolean topSpitter2022MotorInverted() {
+    return true;
+  }
+
+  @Override
+  public boolean topSpitter2022UseVelocity() {
+    return false;
+  }
+
+  @Override
+  public boolean topSpitter2022UsePID() {
+    return false;
+  }
+
+  @Override
+  public SimpleFeedforwardConstant topSpitter2022FF() {
+    return new SimpleFeedforwardConstant(0.24531, 0.02668, 0.00094431);
+  }
+
+  @Override
+  public double topSpitter2022MomentOfInertia() {
+    return 0;
+  }
+
+  @Override
+  public GearRatio topSpitter2022GearRatio() {
+    return new GearRatio(32, 24);
+  }
+
+  @Override
+  public FeedbackConstant topSpitter2022FB() {
+    return new FeedbackConstant(0.019505, 0);
+  }
+
+  @Override
+  public double topSpitter2022MaxVelocity() {
+    return 420.0;
+  }
+
+  @Override
+  public double topSpitter2022ForwardSpeed() {
+    return 0.46;
+  }
+
+  @Override
+  public double topSpitter2022BackwardSpeed() {
+    return 0.1;
+  }
+
+  @Override
+  public double topSpitter2022DistanceLinearM() {
+    return 0;
+  }
+
+  @Override
+  public double topSpitter2022DistanceLinearB() {
+    return 0;
+  }
 
     @Override
     public boolean hasLed2022() {
@@ -581,12 +646,12 @@ public class Robot2022Constants implements Constants {
     }
 
     @Override
-    public double spitter2022DistanceLinearM() {
+    public double bottomSpitter2022DistanceLinearM() {
         return 53.46920837;
     }
 
     @Override
-    public double spitter2022DistanceLinearB() {
+    public double bottomSpitter2022DistanceLinearB() {
         return 154.6610759;
     }
 

@@ -50,7 +50,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
     this.indexerForward = new Indexer2022ForwardCMD(indexer);
 
     this.spitterTarget = new Spitter2022TargetCMD(spitter);
-    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, () -> Spitter2022.getFlywheelVelocity(defaultDistance));
+    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, () -> Spitter2022.getFlywheelVelocity(defaultDistance), () -> 0.0);
 
     this.timer = new Timer();
     timer.start();

@@ -1,15 +1,13 @@
 package frc.robot.subsystems;
 
-import java.util.Map;
-
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.NetworkButton;
 import frc.robot.RobotConstants;
 import frc.robot.commands.Shooter2022IdleCMD;
 import frc.robot.commands.Shooter2022ShootSpeedCMD;
 import frc.robot.tuning.SubsystemTuner;
+import java.util.Map;
 
 public class Shooter2022 extends SubsystemTuner {
   public final Indexer2022 indexer2022;
@@ -26,20 +24,23 @@ public class Shooter2022 extends SubsystemTuner {
 
   @Override
   public void initializeTunerNetworkTables(ShuffleboardTab tab) {
-    addEntry("speed", tab.add("Flywheel Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 1).withProperties(Map.of("min", 0, "max", RobotConstants.get().spitter2022MaxVelocity())).getEntry());
-    addEntry("run", tab.add("Run", false).withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(4, 3).getEntry());   
+    addEntry("bottomSpeed", tab.add("Bottom Flywheel Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 1).withProperties(Map.of("min", 0, "max", RobotConstants.get().bottomSpitter2022MaxVelocity())).getEntry());
+    addEntry("topSpeed", tab.add("Top Flywheel Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).withSize(2, 1).withPosition(4, 2).withProperties(Map.of("min", 0, "max", RobotConstants.get().topSpitter2022MaxVelocity())).getEntry());
+    addEntry("run", tab.add("Run", false).withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(4, 4).getEntry());
   }
 
   @Override
   public void initializeTuner() {
     this.setDefaultCommand(new Shooter2022IdleCMD(this));
 
-    getEntry("speed").setDouble(0);
+    getEntry("bottomSpeed").setDouble(0);
+    getEntry("topSpeed").setDouble(0);
     getEntry("run").setBoolean(false);
 
     new NetworkButton(getEntry("run")).whileActiveContinuous(
     new Shooter2022ShootSpeedCMD(this, 
-        () -> getEntry("speed").getDouble(0)
+        () -> getEntry("bottomSpeed").getDouble(0),
+        () -> getEntry("topSpeed").getDouble(0)
     ));
   }
 }

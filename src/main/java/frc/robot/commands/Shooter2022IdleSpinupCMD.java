@@ -7,9 +7,7 @@ import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
-
 import java.util.function.Supplier;
-
 import org.apache.logging.log4j.Logger;
 
 public class Shooter2022IdleSpinupCMD extends CommandBase {
@@ -46,7 +44,7 @@ public class Shooter2022IdleSpinupCMD extends CommandBase {
     this.indexerIdle = new Indexer2022IdleCMD(indexer);
 
     this.spitterStop = new Spitter2022StopCMD(spitter);
-    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, speed);
+    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, speed, () -> 0.0);
 
     addRequirements(shooter);
   }

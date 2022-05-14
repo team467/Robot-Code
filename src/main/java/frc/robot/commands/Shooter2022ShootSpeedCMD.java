@@ -8,9 +8,7 @@ import frc.robot.subsystems.Indexer2022;
 import frc.robot.subsystems.LlamaNeck2022;
 import frc.robot.subsystems.Shooter2022;
 import frc.robot.subsystems.Spitter2022;
-
 import java.util.function.Supplier;
-
 import org.apache.logging.log4j.Logger;
 
 public class Shooter2022ShootSpeedCMD extends CommandBase {
@@ -37,13 +35,13 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
   private final Timer shotTimer;
 
   public Shooter2022ShootSpeedCMD(
-      Shooter2022 shooter, Supplier<Double> speed) {
+      Shooter2022 shooter, Supplier<Double> bottomSpeed, Supplier<Double> topSpeed) {
     super();
 
     this.llamaNeck = shooter.llamaNeck2022;
     this.spitter = shooter.spitter2022;
     this.indexer = shooter.indexer2022;
-    this.speed = speed;
+    this.speed = bottomSpeed;
 
     this.llamaNeckStop = new LlamaNeck2022StopCMD(llamaNeck);
     this.llamaNeckForward = new LlamaNeck2022ForwardCMD(llamaNeck);
@@ -51,7 +49,7 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
     this.indexerStop = new Indexer2022StopCMD(indexer);
     this.indexerForward = new Indexer2022ForwardCMD(indexer);
 
-    this.spitterForward = new Spitter2022SetSpeedCMD(spitter, speed);
+    this.spitterForward = new Spitter2022SetSpeedCMD(spitter, bottomSpeed, topSpeed);
 
     this.timer = new Timer();
     timer.start();

@@ -5,9 +5,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import frc.robot.motors.FeedbackConstant;
 import frc.robot.motors.GearRatio;
+import frc.robot.motors.MotorType;
 import frc.robot.motors.RamseteConstant;
 import frc.robot.motors.SimpleFeedforwardConstant;
-import frc.robot.motors.MotorType;
 import frc.robot.utilities.IMUAxis;
 import frc.robot.utilities.IMUType;
 
@@ -524,69 +524,134 @@ public class BriefcaseConstants implements Constants {
     }
 
     @Override 
-    public int spitter2022MotorId() {
+    public int bottomSpitter2022MotorId() {
         return 1;
     }
 
     @Override
-    public boolean spitter2022MotorInverted() {
+    public boolean bottomSpitter2022MotorInverted() {
         return false;
     }
 
   @Override
-  public boolean spitter2022UseVelocity() {
+  public boolean bottomSpitter2022UseVelocity() {
     return false;
   }
 
     @Override
-    public boolean spitter2022UsePID() {
+    public boolean bottomSpitter2022UsePID() {
         return false;
     }
 
     @Override
-    public SimpleFeedforwardConstant spitter2022FF() {
+    public SimpleFeedforwardConstant bottomSpitter2022FF() {
         return new SimpleFeedforwardConstant(0, 0, 0);
     }
 
   @Override
-  public double spitter2022MomentOfInertia() {
+  public double bottomSpitter2022MomentOfInertia() {
     return 0;
   }
 
   @Override
-  public GearRatio spitter2022GearRatio() {
+  public GearRatio bottomSpitter2022GearRatio() {
     return new GearRatio();
   }
 
   @Override
-    public FeedbackConstant spitter2022FB() {
+    public FeedbackConstant bottomSpitter2022FB() {
         return new FeedbackConstant(0, 0);
     }
 
     @Override
-    public double spitter2022MaxVelocity() {
+    public double bottomSpitter2022MaxVelocity() {
         return 0;
     }
 
     @Override
-    public double spitter2022ForwardSpeed() {
+    public double bottomSpitter2022ForwardSpeed() {
         return 0.7;
     }
 
     @Override
-    public double spitter2022BackwardSpeed() {
+    public double bottomSpitter2022BackwardSpeed() {
         return 0.5;
     }
 
   @Override
-  public double spitter2022DistanceLinearM() {
+  public double bottomSpitter2022DistanceLinearM() {
     return 0;
   }
 
     @Override
-    public double spitter2022DistanceLinearB() {
+    public double bottomSpitter2022DistanceLinearB() {
         return 0;
     }
+
+  @Override
+  public int topSpitter2022MotorId() {
+    return 0;
+  }
+
+  @Override
+  public boolean topSpitter2022MotorInverted() {
+    return false;
+  }
+
+  @Override
+  public boolean topSpitter2022UseVelocity() {
+    return false;
+  }
+
+  @Override
+  public boolean topSpitter2022UsePID() {
+    return false;
+  }
+
+  @Override
+  public SimpleFeedforwardConstant topSpitter2022FF() {
+    return new SimpleFeedforwardConstant(0, 0, 0);
+  }
+
+  @Override
+  public double topSpitter2022MomentOfInertia() {
+    return 0;
+  }
+
+  @Override
+  public GearRatio topSpitter2022GearRatio() {
+    return new GearRatio();
+  }
+
+  @Override
+  public FeedbackConstant topSpitter2022FB() {
+    return new FeedbackConstant(0, 0);
+  }
+
+  @Override
+  public double topSpitter2022MaxVelocity() {
+    return 0;
+  }
+
+  @Override
+  public double topSpitter2022ForwardSpeed() {
+    return 0;
+  }
+
+  @Override
+  public double topSpitter2022BackwardSpeed() {
+    return 0;
+  }
+
+  @Override
+  public double topSpitter2022DistanceLinearM() {
+    return 0;
+  }
+
+  @Override
+  public double topSpitter2022DistanceLinearB() {
+    return 0;
+  }
 
     @Override
     public boolean hasHubCameraLED() {
