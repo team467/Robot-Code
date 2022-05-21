@@ -20,6 +20,27 @@ public class CustomController2022 extends CustomControllerBase {
         }
     }
 
+    public enum Sections {
+        UNDER_BOTTOM(0),
+        UNDER_RIGHT(1),
+        UNDER_TOP(2),
+        UNDER_LEFT(3),
+        RING_TOP(4),
+        RING_BOTTOM(5),
+        RING(6),
+        UNDER(7);
+
+        public final byte value;
+    
+        Sections(byte value) {
+            this.value = value;
+        }
+
+        Sections(int value) {
+            this.value = (byte) value;
+        }
+    }
+
     public JoystickButton getButton(Buttons button) {
         return getButton(button.value);
     }
@@ -27,14 +48,7 @@ public class CustomController2022 extends CustomControllerBase {
     public CustomController2022(int port) {
         super(port);
         addCommandToQueue(new byte[]{(byte) 0x06, (byte) 0x04, (byte) 0x06, (byte) 0x80});
-        addCommandToQueue(new byte[]{(byte) 0x06, (byte) 0x03, (byte) 0x04, (byte) 0x03, (byte) 0x03});
-        addCommandToQueue(new byte[]{(byte) 0x06, (byte) 0x03, (byte) 0x05, (byte) 0x03, (byte) 0x03});
-
-        addCommandToQueue(new byte[]{(byte) 0x06, (byte) 0x03, (byte) 0x05, (byte) 0x03, (byte) 0x00});
-        for (int i = 30; i < 40; i++) {
-            addCommandToQueue(new byte[]{(byte) 0x06, (byte) 0x01, (byte) i, (byte) 0x01, (byte) 0x80, (byte) 0xFF, 0x00});
-
-        }
-
+        addCommandToQueue(new byte[]{(byte) 0x06, (byte) 0x03, Sections.RING.value, (byte) 0x03, (byte) 0x03});
+        addCommandToQueue(new byte[]{(byte) 0x06, (byte) 0x03, Sections.UNDER.value, (byte) 0x03, (byte) 0x03});
     }
 }
