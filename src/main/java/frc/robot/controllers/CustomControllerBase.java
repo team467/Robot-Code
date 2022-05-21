@@ -6,6 +6,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public abstract class CustomControllerBase extends Joystick {
     private NetworkTable controllerTable = NetworkTableInstance.getDefault().getTable("Controller");
@@ -57,5 +58,9 @@ public abstract class CustomControllerBase extends Joystick {
             hasCommandEntry.setBoolean(true);
             commandList.clear();
         }
+    }
+
+    public JoystickButton getButton(int button) {
+        return new JoystickButton(this, button);
     }
 }
