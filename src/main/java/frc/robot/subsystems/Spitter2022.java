@@ -236,7 +236,7 @@ public class Spitter2022 extends SubsystemBase {
    * @return if the threshold has been met
    */
   public boolean isAtShootingSpeed() {
-    boolean atSpeed = Math.abs(bottomSpitterLoop.getError(0)) <= SHOOTING_SPEED_TOLERANCE;
+    boolean atSpeed = Math.abs(bottomSpitterLoop.getError(0)) <= SHOOTING_SPEED_TOLERANCE && Math.abs(topSpitterLoop.getError(0)) <= SHOOTING_SPEED_TOLERANCE;
     if (atSpeed) {
       timer.start();
       timerEnabled = true;

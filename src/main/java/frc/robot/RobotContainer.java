@@ -51,7 +51,6 @@ import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
 import frc.robot.commands.Spitter2022StopCMD;
-import frc.robot.commands.TurnToTargetCMD;
 import frc.robot.controllers.CustomController2020;
 import frc.robot.controllers.XboxController467;
 import frc.robot.led.LEDManager;
@@ -263,7 +262,7 @@ public class RobotContainer {
           driverJoystick::getAdjustedDriveSpeed,
           driverJoystick::getAdjustedTurnSpeed));
       // operatorShooterShoot.whileHeld(new PuppyModeCMD(drivetrain));
-      driverButtonY.whenPressed(new TurnToTargetCMD(drivetrain, gyro));
+      //driverButtonY.whenPressed(new TurnToTargetCMD(drivetrain, gyro));
       // driverButtonY.whileHeld(new GoToTargetCMD(drivetrain, gyro));
       // driverButtonA.whenPressed(new TurnAngleCMD(drivetrain, gyro, 90));
       // driverButtonY.whileHeld(new GoToTrajectoryCMD(drivetrain, gyro,
@@ -387,7 +386,7 @@ public class RobotContainer {
     if (RobotConstants.get().hasLlamaNeck2022()
         && RobotConstants.get().hasIndexer2022()
         && RobotConstants.get().hasSpitter2022()) {
-      if (operatorShooterFlywheel.get()) {
+      if (driverButtonY.get()) {
         shooter2022.setDefaultCommand(
             new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getBottomFlywheelVelocity(0.6), () -> Spitter2022.getTopFlywheelVelocity(0.6)));
       } else {
@@ -395,16 +394,16 @@ public class RobotContainer {
             new Shooter2022StopCMD(shooter2022));
       }
 
-      operatorShooterFlywheel
+      driverButtonY
           .whenPressed(
               new Shooter2022SetDefaultCMD(
                   shooter2022, new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getBottomFlywheelVelocity(0.6), () -> Spitter2022.getTopFlywheelVelocity(0.6))))
           .whenReleased(
               new Shooter2022SetDefaultCMD(
                   shooter2022, new Shooter2022StopCMD(shooter2022)));
-      operatorShooterShoot.whenPressed(
+      driverButtonX.whenPressed(
           new Shooter2022ShootTargetCMD(shooter2022));
-      operatorIntakeRollerBackward.whenHeld(
+      driverButtonB.whenHeld(
           new Shooter2022FlushBallCMD(shooter2022));
     }
   }
