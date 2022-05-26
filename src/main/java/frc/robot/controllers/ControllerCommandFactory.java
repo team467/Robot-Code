@@ -8,12 +8,12 @@ public class ControllerCommandFactory {
         return new byte[] {ControllerDataProtocol.CommandID.SetLed, ControllerDataProtocol.LightingSelection.Single, (byte) index, ControllerDataProtocol.LightingValue.LedBaseColor, (byte) r, (byte) g, (byte) b};
     }
 
-    public static byte[] setLEDRGB(int index, Color8Bit color) {
+    public static byte[] setLEDBaseColor(int index, Color8Bit color) {
         return setLEDRGB(index, color.red, color.green, color.blue);
     }
 
-    public static byte[] setLEDRGB(int index, Color color) {
-        return setLEDRGB(index, new Color8Bit(color));
+    public static byte[] setLEDBaseColor(int index, Color color) {
+        return setLEDBaseColor(index, new Color8Bit(color));
     }
 
     public static byte[] setLEDHSB(int index, float h, float s, float b) {
@@ -29,12 +29,12 @@ public class ControllerCommandFactory {
         return new byte[] {ControllerDataProtocol.CommandID.SetLed, ControllerDataProtocol.LightingSelection.Multiple, (byte) startLED, (byte) endLED, ControllerDataProtocol.LightingValue.LedBaseColor, (byte) r, (byte) g, (byte) b};
     }
 
-    public static byte[] setLEDRangeRGB(int startLED, int endLED, Color8Bit color) {
+    public static byte[] setLEDRangeBaseColor(int startLED, int endLED, Color8Bit color) {
         return setLEDRangeRGB(startLED, endLED, color.red, color.green, color.blue);
     }
 
-    public static byte[] setLEDRangeRGB(int startLED, int endLED, Color color) {
-        return setLEDRangeRGB(startLED, endLED, new Color8Bit(color));
+    public static byte[] setLEDRangeBaseColor(int startLED, int endLED, Color color) {
+        return setLEDRangeBaseColor(startLED, endLED, new Color8Bit(color));
     }
 
     public static byte[] setLEDRangeHSB(int startLED, int endLED, float h, float s, float b) {
@@ -50,12 +50,12 @@ public class ControllerCommandFactory {
         return new byte[] {ControllerDataProtocol.CommandID.SetLed, ControllerDataProtocol.LightingSelection.Section, (byte) section, ControllerDataProtocol.LightingValue.LedBaseColor, (byte) r, (byte) g, (byte) b};
     }
 
-    public static byte[] setLEDSectionRGB(int section, Color8Bit color) {
+    public static byte[] setLEDSectionBaseColor(int section, Color8Bit color) {
         return setLEDSectionRGB(section, color.red, color.green, color.blue);
     }
 
-    public static byte[] setLEDSectionRGB(int section, Color color) {
-        return setLEDSectionRGB(section, new Color8Bit(color));
+    public static byte[] setLEDSectionBaseColor(int section, Color color) {
+        return setLEDSectionBaseColor(section, new Color8Bit(color));
     }
 
     public static byte[] setLEDSectionHSB(int section, float h, float s, float b) {
@@ -71,12 +71,12 @@ public class ControllerCommandFactory {
         return new byte[] {ControllerDataProtocol.CommandID.SetLed, ControllerDataProtocol.LightingSelection.All, ControllerDataProtocol.LightingValue.LedBaseColor, (byte) r, (byte) g, (byte) b};
     }
 
-    public static byte[] setAllLEDRGB(Color8Bit color) {
+    public static byte[] setAllLEDBaseColor(Color8Bit color) {
         return setAllLEDRGB(color.red, color.green, color.blue);
     }
 
-    public static byte[] setAllLEDRGB(Color color) {
-        return setAllLEDRGB(new Color8Bit(color));
+    public static byte[] setAllLEDBaseColor(Color color) {
+        return setAllLEDBaseColor(new Color8Bit(color));
     }
 
     public static byte[] setAllLEDHSB(float h, float s, float b) {
