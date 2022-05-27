@@ -50,8 +50,11 @@ import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
+import frc.robot.controllers.ControllerQueue;
 import frc.robot.commands.Spitter2022StopCMD;
 import frc.robot.controllers.CustomController2020;
+import frc.robot.controllers.CustomController2022;
+import frc.robot.controllers.CustomControllerBase;
 import frc.robot.controllers.XboxController467;
 import frc.robot.led.LEDManager;
 import frc.robot.subsystems.Climber2020;
@@ -123,31 +126,16 @@ public class RobotContainer {
       XboxController467.Buttons.BumperRight.value);
 
   // Custom controller for operator
-  private final GenericHID operatorJoystick = new Joystick(1);
-  private final JoystickButton operatorInakeArm = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.INTAKE_ARM.value);
-  private final JoystickButton operatorIntakeRollerForward = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.INTAKE_ROLLER_FORWARD.value);
-  private final JoystickButton operatorIntakeRollerBackward = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.INTAKE_ROLLER_BACKWARD.value);
-  private final JoystickButton operatorIndexAuto = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.INDEX_AUTO.value);
-  private final JoystickButton operatorIndexRollerForward = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.INDEX_ROLLER_FORWARD.value);
-  private final JoystickButton operatorIndexRollerBackward = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.INDEX_ROLLER_BACKWARD.value);
-  private final JoystickButton operatorShooterAuto = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.SHOOTER_AUTO.value);
-  private final JoystickButton operatorShooterFlywheel = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.SHOOTER_FLYWHEEL.value);
-  private final JoystickButton operatorShooterShoot = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.SHOOTER_SHOOT.value);
-  private final JoystickButton operatorClimberLock = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.CLIMBER_LOCK_SWITCH.value);
-  private final JoystickButton operatorClimberUp = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.CLIMBER_UP_BUTTON.value);
-  private final JoystickButton operatorClimberDown = new JoystickButton(operatorJoystick,
-      CustomController2020.Buttons.CLIMBER_DOWN_BUTTON.value);
+  private final CustomController2022 operatorJoystick = new CustomController2022(1);
+  private final JoystickButton operatorFlush = operatorJoystick.getButton(CustomController2022.Buttons.FLUSH);
+  private final JoystickButton operatorClimberLimits = operatorJoystick.getButton(CustomController2022.Buttons.CLIMBER_LIMITS);
+  private final JoystickButton operatorShooterAuto = operatorJoystick.getButton(CustomController2022.Buttons.SHOOTER_AUTO);
+  private final JoystickButton operatorEverything = operatorJoystick.getButton(CustomController2022.Buttons.EVERYTHING);
+  private final JoystickButton operatorShoot = operatorJoystick.getButton(CustomController2022.Buttons.SHOOT);
+  private final JoystickButton operatorClimberLock = operatorJoystick.getButton(CustomController2022.Buttons.CLIMBER_LOCK);
+  private final JoystickButton operatorClimberUp = operatorJoystick.getButton(CustomController2022.Buttons.CLIMBER_UP);
+  private final JoystickButton operatorClimberDown = operatorJoystick.getButton(CustomController2022.Buttons.CLIMBER_DOWN);
+
 
   public RobotContainer() {
     getTrajectories();
@@ -162,6 +150,7 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    ControllerQueue.getInstance().addController(operatorJoystick);
   }
 
   public void getTrajectories() {
@@ -301,11 +290,11 @@ public class RobotContainer {
 
   private void configureShooter2020() {
     if (RobotConstants.get().hasShooter2020()) {
-      operatorShooterFlywheel.whenPressed(new ShooterRunFlywheelCMD(shooter));
-      operatorShooterFlywheel.whenReleased(new ShooterStopFlywheelCMD(shooter));
-      operatorShooterShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
-      operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
-      operatorShooterShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
+      operatorEverything.whenPressed(new ShooterRunFlywheelCMD(shooter));
+      operatorEverything.whenReleased(new ShooterStopFlywheelCMD(shooter));
+      operatorShoot.whenPressed(new ShooterTriggerForwardCMD(shooter));
+      operatorShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
+      operatorShoot.whenReleased(new ShooterTriggerStopCMD(shooter));
     }
   }
 
@@ -358,7 +347,7 @@ public class RobotContainer {
       operatorClimberLock.whenPressed(new Climber2022EnableCMD(climber2022));
       operatorClimberLock.whenReleased(new Climber2022DisableCMD(climber2022));
       operatorClimberUp.whileHeld(new Climber2022UpCMD(climber2022));
-      operatorClimberDown.whileHeld(new Climber2022DownCMD(climber2022, operatorIndexAuto::get));
+      operatorClimberDown.whileHeld(new Climber2022DownCMD(climber2022, operatorClimberLimits::get));
     }
   }
 
@@ -386,7 +375,7 @@ public class RobotContainer {
     if (RobotConstants.get().hasLlamaNeck2022()
         && RobotConstants.get().hasIndexer2022()
         && RobotConstants.get().hasSpitter2022()) {
-      if (driverButtonY.get()) {
+      if (operatorEverything.get()) {
         shooter2022.setDefaultCommand(
             new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getBottomFlywheelVelocity(0.6), () -> Spitter2022.getTopFlywheelVelocity(0.6)));
       } else {
@@ -394,16 +383,16 @@ public class RobotContainer {
             new Shooter2022StopCMD(shooter2022));
       }
 
-      driverButtonY
+      operatorEverything
           .whenPressed(
               new Shooter2022SetDefaultCMD(
                   shooter2022, new Shooter2022IdleSpinupCMD(shooter2022, () -> Spitter2022.getBottomFlywheelVelocity(0.6), () -> Spitter2022.getTopFlywheelVelocity(0.6))))
           .whenReleased(
               new Shooter2022SetDefaultCMD(
                   shooter2022, new Shooter2022StopCMD(shooter2022)));
-      driverButtonX.whenPressed(
+      operatorShoot.whenPressed(
           new Shooter2022ShootTargetCMD(shooter2022));
-      driverButtonB.whenHeld(
+      operatorFlush.whenHeld(
           new Shooter2022FlushBallCMD(shooter2022));
     }
   }
