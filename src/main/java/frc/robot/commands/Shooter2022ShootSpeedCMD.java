@@ -34,6 +34,8 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
   private final Timer timer;
   private final Timer shotTimer;
 
+  private final Timer delayTimer;
+
   public Shooter2022ShootSpeedCMD(
       Shooter2022 shooter, Supplier<Double> bottomSpeed, Supplier<Double> topSpeed) {
     super();
@@ -57,6 +59,9 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
     this.shotTimer = new Timer();
     shotTimer.start();
 
+    this.delayTimer = new Timer();
+    delayTimer.start();
+
     addRequirements(shooter);
   }
 
@@ -68,13 +73,16 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
     spitterForward.schedule();
 
     timer.reset();
+
+    delayTimer.reset();
   }
 
   @Override
   public void execute() {
-    if (spitter.isAtShootingSpeed()) {
+    if (spitter.isAtShootingSpeed() && delayTimer.hasElapsed(0.7)) {
+      new Indexer2022ForwardCMD(indexer).schedule();
       LOGGER.debug("Spitter is at shooting speed! Throwing balls into flywheel.");
-      indexerForward.schedule();
+      //indexerForward.schedule();
     } else {
       indexerStop.schedule();
     }
@@ -82,7 +90,7 @@ public class Shooter2022ShootSpeedCMD extends CommandBase {
     if (llamaNeck.upperLimitSwitchIsPressed()) {
       shotTimer.reset();
     } else {
-      if (shotTimer.hasElapsed(0.2)) {
+      if (shotTimer.hasElapsed(0.1)) {
         llamaNeckForward.schedule();
       } else {
         llamaNeckStop.schedule();

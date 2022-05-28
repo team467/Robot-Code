@@ -602,7 +602,7 @@ public class Robot2022Constants implements Constants {
 
   @Override
   public FeedbackConstant topSpitter2022FB() {
-    return new FeedbackConstant(0.033692, 0);
+    return new FeedbackConstant(0.019228, 0);
   }
 
   @Override
@@ -622,12 +622,12 @@ public class Robot2022Constants implements Constants {
 
   @Override
   public double topSpitter2022DistanceLinearM() {
-    return -157.4166936;
+    return -43.41618149;
   }
 
   @Override
   public double topSpitter2022DistanceLinearB() {
-    return 561.5974153;
+    return 321.3367563;
   }
 
     @Override
@@ -647,12 +647,12 @@ public class Robot2022Constants implements Constants {
 
     @Override
     public double bottomSpitter2022DistanceLinearM() {
-        return 148.8152382;
+        return 62.93840669;
     }
 
     @Override
     public double bottomSpitter2022DistanceLinearB() {
-        return -121.1995881;
+        return 29.04057748;
     }
 
     @Override
