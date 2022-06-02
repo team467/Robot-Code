@@ -11,7 +11,6 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -20,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ArcadeDriveCMD;
 import frc.robot.commands.BlankDefaultCMD;
@@ -50,11 +50,9 @@ import frc.robot.commands.ShooterRunFlywheelCMD;
 import frc.robot.commands.ShooterStopFlywheelCMD;
 import frc.robot.commands.ShooterTriggerForwardCMD;
 import frc.robot.commands.ShooterTriggerStopCMD;
-import frc.robot.controllers.ControllerQueue;
 import frc.robot.commands.Spitter2022StopCMD;
-import frc.robot.controllers.CustomController2020;
+import frc.robot.controllers.ControllerQueue;
 import frc.robot.controllers.CustomController2022;
-import frc.robot.controllers.CustomControllerBase;
 import frc.robot.controllers.XboxController467;
 import frc.robot.led.LEDManager;
 import frc.robot.subsystems.Climber2020;
@@ -193,6 +191,7 @@ public class RobotContainer {
               new Shooter2022IdleTargetCMD(shooter2022),
               new GoToTrajectoryCMD(drivetrain, gyro, new Pose2d(0, 0, new Rotation2d()), List.of(),
                   new Pose2d(1.5, 0, Rotation2d.fromDegrees(0)), false)),
+          new WaitCommand(2),
           new Shooter2022ShootTargetCMD(shooter2022, Units.feetToMeters(9))));
     }
 

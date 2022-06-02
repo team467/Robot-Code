@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -17,7 +18,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
       RobotLogManager.getMainLogger(Shooter2022ShootTargetCMD.class.getName());
 
   private final double TIME_UNTIL_FINISHED = 1.5;
-  private final double TIME_BETWEEN_BALLS = 0.3;
+  private final double TIME_BETWEEN_BALLS = 0.5;//0.3;
 
   private final LlamaNeck2022 llamaNeck;
   private final Indexer2022 indexer;
@@ -30,13 +31,18 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
   private final Command indexerForward;
 
   private final Command spitterTarget;
-  private final Command spitterSpeed;
+  private Command spitterSpeed;
 
   private final Timer timer;
   private final Timer shotTimer;
 
   public Shooter2022ShootTargetCMD(
       Shooter2022 shooter,  double defaultDistance) {
+    this(shooter);
+    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, () -> Spitter2022.getBottomFlywheelVelocity(defaultDistance), () -> Spitter2022.getTopFlywheelVelocity(defaultDistance));
+  }
+
+  public Shooter2022ShootTargetCMD(Shooter2022 shooter) {
     super();
 
     this.llamaNeck = shooter.llamaNeck2022;
@@ -50,7 +56,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
     this.indexerForward = new Indexer2022ForwardCMD(indexer);
 
     this.spitterTarget = new Spitter2022TargetCMD(spitter);
-    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, () -> Spitter2022.getBottomFlywheelVelocity(defaultDistance), () -> Spitter2022.getTopFlywheelVelocity(defaultDistance));
+    this.spitterSpeed = new Spitter2022SetSpeedCMD(spitter, () -> 136.18, () -> 30.10);
 
     this.timer = new Timer();
     timer.start();
@@ -59,10 +65,6 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
     shotTimer.start();
 
     addRequirements(shooter);
-  }
-
-  public Shooter2022ShootTargetCMD(Shooter2022 shooter) {
-    this(shooter, 0.6);
   }
 
   @Override
@@ -77,7 +79,7 @@ public class Shooter2022ShootTargetCMD extends CommandBase {
 
   @Override
   public void execute() {
-    if (HubTarget.hasTarget()) {
+    if (HubTarget.hasTarget() && HubTarget.getDistance() > Units.feetToMeters(4.6)) {
       spitterTarget.schedule();
     } else {
       spitterSpeed.schedule();
