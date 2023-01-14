@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -12,14 +14,10 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
 public class Robot extends LoggedRobot {
@@ -27,8 +25,8 @@ public class Robot extends LoggedRobot {
   private RobotContainer robotContainer;
 
   /**
-   * This function is run when the robot is first started up and should be used
-   * for any initialization code.
+   * This function is run when the robot is first started up and should be used for any
+   * initialization code.
    */
   @Override
   public void robotInit() {
@@ -54,7 +52,7 @@ public class Robot extends LoggedRobot {
 
     // Set up data receivers & replay source
     switch (RobotConstants.get().mode()) {
-      // Running on a real robot, log to a USB stick if possible
+        // Running on a real robot, log to a USB stick if possible
       case REAL:
         logger.addDataReceiver(new NT4Publisher());
         String folder = RobotConstants.get().logFolder();
@@ -63,13 +61,13 @@ public class Robot extends LoggedRobot {
         }
         break;
 
-      // Running a physics simulator, log to local folder
+        // Running a physics simulator, log to local folder
       case SIM:
         logger.addDataReceiver(new WPILOGWriter(""));
         logger.addDataReceiver(new NT4Publisher());
         break;
 
-      // Replaying a log, set up replay source
+        // Replaying a log, set up replay source
       case REPLAY:
         setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog();
@@ -103,18 +101,13 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {
-  }
+  public void disabledInit() {}
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {
-  }
+  public void disabledPeriodic() {}
 
-  /**
-   * This autonomous runs the autonomous command selected by your
-   * {@link RobotContainer} class.
-   */
+  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
@@ -127,8 +120,7 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-  }
+  public void autonomousPeriodic() {}
 
   /** This function is called once when teleop is enabled. */
   @Override
@@ -144,8 +136,7 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-  }
+  public void teleopPeriodic() {}
 
   /** This function is called once when test mode is enabled. */
   @Override
@@ -156,16 +147,13 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {
-  }
+  public void testPeriodic() {}
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {
-  }
+  public void simulationInit() {}
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {
-  }
+  public void simulationPeriodic() {}
 }

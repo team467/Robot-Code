@@ -1,7 +1,7 @@
 package frc.robot;
 
-import frc.robot.constants.Constants;
 import frc.robot.constants.CompBotConstants;
+import frc.robot.constants.Constants;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

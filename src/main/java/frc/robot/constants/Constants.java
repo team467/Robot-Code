@@ -1,6 +1,11 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.constants.controls.FeedbackConstant;
+import frc.robot.constants.controls.GearRatio;
+import frc.robot.constants.controls.SimpleFeedforwardConstant;
 
 public interface Constants {
 
@@ -40,4 +45,39 @@ public interface Constants {
     REPLAY,
     SIM
   }
+
+  // Drive constants
+  double driveMaxCoastVelocity();
+
+  double maxLinearSpeed();
+
+  double maxAngularSpeed();
+
+  double moduleWheelDiameter();
+
+  GearRatio moduleDriveGearRatio();
+
+  GearRatio moduleTurnGearRatio();
+
+  SimpleFeedforwardConstant moduleDriveFF();
+
+  SimpleFeedforwardConstant moduleTurnFF();
+
+  FeedbackConstant moduleTurnFB();
+
+  SwerveDriveKinematics kinematics();
+
+  Rotation2d[] absoluteAngleOffset();
+
+  double chassisDriveMaxVelocity();
+
+  double chassisDriveMaxAcceleration();
+
+  double chassisTurnMaxVelocity();
+
+  double chassisTurnMaxAcceleration();
+
+  FeedbackConstant chassisDriveFB();
+
+  FeedbackConstant chassisTurnFB();
 }

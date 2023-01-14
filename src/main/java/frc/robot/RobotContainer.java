@@ -4,12 +4,28 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.drive.DriveWithJoysticks;
+import frc.robot.commands.drive.GoToTrajectory;
+import frc.robot.commands.general.FeedForwardCharacterization;
+import frc.robot.commands.general.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOSparkMAX;
+import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.shrewsburyrobotics.shrewsburylib.holonomictrajectory.Waypoint;
+import org.shrewsburyrobotics.shrewsburylib.io.gyro.GyroIO;
+import org.shrewsburyrobotics.shrewsburylib.io.gyro.GyroIOADIS16470;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,9 +36,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
+  private final Drive drive;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driverController = new CommandXboxController(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser =
@@ -35,22 +52,65 @@ public class RobotContainer {
       case REAL:
         // Init subsystems
         // subsystem = new Subsystem(new SubsystemIOImpl());
+        drive =
+            new Drive(
+                new GyroIOADIS16470(),
+                new ModuleIOSparkMAX(5, 6, 11, 0),
+                new ModuleIOSparkMAX(7, 8, 12, 1),
+                new ModuleIOSparkMAX(3, 4, 10, 2),
+                new ModuleIOSparkMAX(1, 2, 9, 3));
         break;
 
         // Sim robot, instantiate physics sim IO implementations
       case SIM:
         // Init subsystems
         // subsystem = new Subsystem(new SubsystemIOSim());
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim());
         break;
 
         // Replayed robot, disable IO implementations
       default:
         // subsystem = new Subsystem(new SubsystemIO() {});
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
         break;
     }
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
+    autoChooser.addOption(
+        "S shape",
+        new GoToTrajectory(
+            drive,
+            List.of(
+                Waypoint.fromHolonomicPose(new Pose2d()),
+                new Waypoint(new Translation2d(1, 1)),
+                new Waypoint(new Translation2d(2, -1)),
+                Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
+    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
+    // Rotation2d()));
+    autoChooser.addOption(
+        "Drive Characterization",
+        Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
+            .andThen(
+                new FeedForwardCharacterization(
+                    drive,
+                    true,
+                    new FeedForwardCharacterizationData("drive"),
+                    drive::runCharacterizationVolts,
+                    drive::getCharacterizationVelocity))
+            .andThen(() -> configureButtonBindings()));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
     // Configure the button bindings
@@ -63,7 +123,21 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    drive.setDefaultCommand(
+        new DriveWithJoysticks(
+            drive,
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX(),
+            () -> true // TODO: add toggle
+            ));
+    driverController
+        .start()
+        .onTrue(
+            Commands.runOnce(() -> drive.setPose(new Pose2d()))
+                .andThen(Commands.print("Reset pose")));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
