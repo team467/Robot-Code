@@ -1,10 +1,10 @@
-package frc.robot.oi;
+package frc.robot.input;
 
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.shrewsburyrobotics.shrewsburylib.input.ControllerCommandFactory;
-import org.shrewsburyrobotics.shrewsburylib.input.ControllerDataProtocol;
-import org.shrewsburyrobotics.shrewsburylib.input.CustomControllerBase;
+import frc.lib.input.ControllerCommandFactory;
+import frc.lib.input.ControllerDataProtocol;
+import frc.lib.input.CustomControllerBase;
 
 public class CustomController2022 extends CustomControllerBase {
   public enum Buttons {

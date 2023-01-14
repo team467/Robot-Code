@@ -13,19 +13,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.holonomictrajectory.Waypoint;
+import frc.lib.io.gyro.GyroIO;
+import frc.lib.io.gyro.GyroIOADIS16470;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
-import frc.robot.commands.general.FeedForwardCharacterization;
-import frc.robot.commands.general.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import frc.lib.characterization.FeedForwardCharacterization;
+import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.shrewsburyrobotics.shrewsburylib.holonomictrajectory.Waypoint;
-import org.shrewsburyrobotics.shrewsburylib.io.gyro.GyroIO;
-import org.shrewsburyrobotics.shrewsburylib.io.gyro.GyroIOADIS16470;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a

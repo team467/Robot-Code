@@ -3,10 +3,10 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.lib.holonomictrajectory.Waypoint;
+import frc.lib.utils.GeomUtils;
 import frc.robot.subsystems.drive.Drive;
 import java.util.List;
-import org.shrewsburyrobotics.shrewsburylib.holonomictrajectory.Waypoint;
-import org.shrewsburyrobotics.shrewsburylib.utils.GeomUtils;
 
 /**
  * TODO: do not use, BROKEN! BROKEN! BROKEN! BROKEN! BROKEN! BROKEN!

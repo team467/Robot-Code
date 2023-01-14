@@ -10,7 +10,7 @@
  *
  ******************************************************************************/
 
-package frc.robot.util;
+package frc.lib.utils;
 
 import Jama.Matrix;
 import Jama.QRDecomposition;

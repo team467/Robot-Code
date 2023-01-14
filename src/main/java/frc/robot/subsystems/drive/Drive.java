@@ -12,9 +12,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.io.gyro.GyroIO;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
-import org.shrewsburyrobotics.shrewsburylib.io.gyro.GyroIO;
 
 public class Drive extends SubsystemBase {
 

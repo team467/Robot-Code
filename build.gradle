@@ -102,8 +102,6 @@ dependencies {
     implementation "gov.nist.math:jama:1.0.3"
 
     annotationProcessor "org.littletonrobotics.akit.junction:junction-autolog:2.0.0"
-
-    implementation 'com.github.AdamCraftmaster:ShrewsburyLib:prerelease1' //TODO: replace with team version
 }
 
 test {

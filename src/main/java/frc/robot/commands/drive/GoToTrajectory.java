@@ -6,12 +6,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.lib.holonomictrajectory.CustomTrajectoryGenerator;
+import frc.lib.holonomictrajectory.SwerveControllerCommand;
+import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.RobotConstants;
 import frc.robot.subsystems.drive.Drive;
 import java.util.List;
-import org.shrewsburyrobotics.shrewsburylib.holonomictrajectory.CustomTrajectoryGenerator;
-import org.shrewsburyrobotics.shrewsburylib.holonomictrajectory.SwerveControllerCommand;
-import org.shrewsburyrobotics.shrewsburylib.holonomictrajectory.Waypoint;
 
 public class GoToTrajectory extends CommandBase {
 
