@@ -6,10 +6,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.lib.utils.GeomUtils;
 import frc.robot.RobotConstants;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
-import org.shrewsburyrobotics.shrewsburylib.utils.GeomUtils;
 
 public class DriveWithJoysticks extends CommandBase {
   private final Drive drive;
