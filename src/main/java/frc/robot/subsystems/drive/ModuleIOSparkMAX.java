@@ -23,8 +23,6 @@ public class ModuleIOSparkMAX implements ModuleIO {
   private final int index;
 
   public ModuleIOSparkMAX(int driveMotorId, int turnMotorId, int turnAbsEncoderId, int index) {
-    System.out.println(
-        "new moduleio: " + driveMotorId + " " + turnMotorId + " " + turnMotorId + " " + index);
     driveMotor = new CANSparkMax(driveMotorId, MotorType.kBrushless);
     turnMotor = new CANSparkMax(turnMotorId, MotorType.kBrushless);
     driveEncoder = driveMotor.getEncoder();
@@ -64,8 +62,6 @@ public class ModuleIOSparkMAX implements ModuleIO {
     if (turnEncoder.getVelocity() < Units.degreesToRadians(0.5)) {
       if (++resetCount >= 500) {
         resetCount = 0;
-        //
-        // turnEncoder.setPosition(Units.degreesToRadians(turnEncoderAbsolute.getAbsolutePosition()));
         turnEncoder.setPosition(
             Rotation2d.fromDegrees(turnEncoderAbsolute.getAbsolutePosition())
                 .minus(RobotConstants.get().absoluteAngleOffset()[index])

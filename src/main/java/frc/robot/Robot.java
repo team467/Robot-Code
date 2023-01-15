@@ -39,41 +39,35 @@ public class Robot extends LoggedRobot {
     logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
     logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
     switch (BuildConstants.DIRTY) {
-      case 0:
-        logger.recordMetadata("GitDirty", "All changes committed");
-        break;
-      case 1:
-        logger.recordMetadata("GitDirty", "Uncomitted changes");
-        break;
-      default:
-        logger.recordMetadata("GitDirty", "Unknown");
-        break;
+      case 0 -> logger.recordMetadata("GitDirty", "All changes committed");
+      case 1 -> logger.recordMetadata("GitDirty", "Uncomitted changes");
+      default -> logger.recordMetadata("GitDirty", "Unknown");
     }
 
     // Set up data receivers & replay source
     switch (RobotConstants.get().mode()) {
-        // Running on a real robot, log to a USB stick if possible
-      case REAL:
+      // Running on a real robot, log to a USB stick if possible
+      case REAL -> {
         logger.addDataReceiver(new NT4Publisher());
         String folder = RobotConstants.get().logFolder();
         if (folder != null) {
           logger.addDataReceiver(new WPILOGWriter(folder));
         }
-        break;
+      }
 
-        // Running a physics simulator, log to local folder
-      case SIM:
+      // Running a physics simulator, log to local folder
+      case SIM -> {
         logger.addDataReceiver(new WPILOGWriter(""));
         logger.addDataReceiver(new NT4Publisher());
-        break;
+      }
 
-        // Replaying a log, set up replay source
-      case REPLAY:
+      // Replaying a log, set up replay source
+      case REPLAY -> {
         setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog();
         logger.setReplaySource(new WPILOGReader(logPath));
         logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
-        break;
+      }
     }
 
     // Start AdvantageKit logger
