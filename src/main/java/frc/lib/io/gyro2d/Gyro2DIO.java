@@ -1,12 +1,12 @@
-package frc.lib.io.gyro;
+package frc.lib.io.gyro2d;
 
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 /** An abstract IO for reading a Gyro. */
-public interface GyroIO {
+public interface Gyro2DIO {
 
-  class GyroIOInputs implements LoggableInputs {
+  class Gyro2DIOInputs implements LoggableInputs {
 
     /** Whether the gyro is connected */
     public boolean connected = false;
@@ -33,7 +33,7 @@ public interface GyroIO {
    *
    * @param inputs The inputs to update
    */
-  default void updateInputs(GyroIOInputs inputs) {
+  default void updateInputs(Gyro2DIOInputs inputs) {
     inputs.connected = false;
     inputs.angle = 0.0;
     inputs.rate = 0.0;

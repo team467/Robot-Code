@@ -13,13 +13,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.lib.holonomictrajectory.Waypoint;
-import frc.lib.io.gyro.GyroIO;
-import frc.lib.io.gyro.GyroIOADIS16470;
-import frc.robot.commands.drive.DriveWithJoysticks;
-import frc.robot.commands.drive.GoToTrajectory;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import frc.lib.holonomictrajectory.Waypoint;
+import frc.lib.io.gyro2d.Gyro2DIO;
+import frc.lib.io.gyro2d.Gyro2DIOADIS16470;
+import frc.robot.commands.drive.DriveWithJoysticks;
+import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -54,7 +54,7 @@ public class RobotContainer {
         // subsystem = new Subsystem(new SubsystemIOImpl());
         drive =
             new Drive(
-                new GyroIOADIS16470(),
+                new Gyro2DIOADIS16470(),
                 new ModuleIOSparkMAX(5, 6, 11, 0),
                 new ModuleIOSparkMAX(7, 8, 12, 1),
                 new ModuleIOSparkMAX(3, 4, 10, 2),
@@ -67,7 +67,7 @@ public class RobotContainer {
         // subsystem = new Subsystem(new SubsystemIOSim());
         drive =
             new Drive(
-                new GyroIO() {},
+                new Gyro2DIO() {},
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
@@ -79,7 +79,7 @@ public class RobotContainer {
         // subsystem = new Subsystem(new SubsystemIO() {});
         drive =
             new Drive(
-                new GyroIO() {},
+                new Gyro2DIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},

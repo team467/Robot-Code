@@ -12,7 +12,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.io.gyro.GyroIO;
+import frc.lib.io.gyro2d.Gyro2DIO;
+import frc.lib.io.gyro2d.Gyro2DIO.Gyro2DIOInputs;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -31,8 +32,8 @@ public class Drive extends SubsystemBase {
         new ModuleIOInputsAutoLogged(),
         new ModuleIOInputsAutoLogged()
       };
-  private final GyroIO gyroIO;
-  private final GyroIO.GyroIOInputs gyroIOInputs = new GyroIO.GyroIOInputs();
+  private final Gyro2DIO gyroIO;
+  private final Gyro2DIOInputs gyroIOInputs = new Gyro2DIOInputs();
 
   private double angle = 0;
   private DriveMode driveMode = DriveMode.NORMAL;
@@ -53,7 +54,7 @@ public class Drive extends SubsystemBase {
    * @param blIO Back Left Module IO
    * @param brIO Back Right Module IO
    */
-  public Drive(GyroIO gyroIO, ModuleIO flIO, ModuleIO frIO, ModuleIO blIO, ModuleIO brIO) {
+  public Drive(Gyro2DIO gyroIO, ModuleIO flIO, ModuleIO frIO, ModuleIO blIO, ModuleIO brIO) {
     super();
     this.gyroIO = gyroIO;
     moduleIOs[0] = flIO;
