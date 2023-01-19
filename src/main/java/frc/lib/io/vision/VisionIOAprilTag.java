@@ -16,14 +16,12 @@ import java.util.Optional;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-public class VisionIOPhotonVision implements VisionIO {
+public class VisionIOAprilTag implements VisionIO {
   private final PhotonCamera camera;
   private final PhotonPoseEstimator poseEstimator;
-  private boolean aprilTag = true;
 
-  public VisionIOPhotonVision(String cameraName, Transform3d robotToCam) {
+  public VisionIOAprilTag(String cameraName, Transform3d robotToCam) {
     camera = new PhotonCamera(cameraName);
-    camera.setPipelineIndex(1);
     List<AprilTag> aprilTags = new ArrayList<>();
     aprilTags.add(
         new AprilTag(
