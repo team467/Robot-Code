@@ -2,6 +2,7 @@ package frc.lib.io.vision;
 
 import edu.wpi.first.math.geometry.Transform3d;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionIOReflective implements VisionIO {
@@ -13,7 +14,8 @@ public class VisionIOReflective implements VisionIO {
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
-    var result = camera.getLatestResult();
+    PhotonPipelineResult result = camera.getLatestResult();
+    inputs.hasTargets = result.hasTargets();
     if (result.hasTargets()) {
       PhotonTrackedTarget target = result.getBestTarget();
       inputs.bestYaw = target.getYaw();
@@ -43,5 +45,15 @@ public class VisionIOReflective implements VisionIO {
             alternateCameraToTarget.getRotation().getQuaternion().getZ(),
           };
     }
+  }
+
+  @Override
+  public void setDriverMode(boolean driverMode) {
+    camera.setDriverMode(driverMode);
+  }
+
+  @Override
+  public void setPipelineIndex(int index) {
+    camera.setPipelineIndex(index);
   }
 }

@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface VisionIO {
   @AutoLog
   class VisionIOInputs {
+    public boolean hasTargets = false;
     public double bestYaw = 0.0;
     public double bestPitch = 0.0;
     public double bestArea = 0.0;
@@ -32,4 +33,6 @@ public interface VisionIO {
   }
 
   default void updateInputs(VisionIOInputs inputs) {}
+  default void setDriverMode(boolean driverMode) {}
+  default void setPipelineIndex(int index) {}
 }

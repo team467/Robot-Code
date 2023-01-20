@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionIOAprilTag implements VisionIO {
@@ -22,7 +23,8 @@ public class VisionIOAprilTag implements VisionIO {
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
-    var result = camera.getLatestResult();
+    PhotonPipelineResult result = camera.getLatestResult();
+    inputs.hasTargets = result.hasTargets();
     if (result.hasTargets()) {
       PhotonTrackedTarget target = result.getBestTarget();
       inputs.bestYaw = target.getYaw();
@@ -72,5 +74,15 @@ public class VisionIOAprilTag implements VisionIO {
         inputs.estimatedPoseTimestamp = -1;
       }
     }
+  }
+
+  @Override
+  public void setDriverMode(boolean driverMode) {
+    camera.setDriverMode(driverMode);
+  }
+
+  @Override
+  public void setPipelineIndex(int index) {
+    camera.setPipelineIndex(index);
   }
 }
