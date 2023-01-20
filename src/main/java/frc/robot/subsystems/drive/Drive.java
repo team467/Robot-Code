@@ -124,7 +124,7 @@ public class Drive extends SubsystemBase {
       }
     } else {
       switch (driveMode) {
-        case NORMAL:
+        case NORMAL -> {
           // In normal mode, run the controllers for turning and driving based on the current
           // setpoint
           SwerveModuleState[] setpointStates =
@@ -137,7 +137,6 @@ public class Drive extends SubsystemBase {
               Math.abs(setpoint.vxMetersPerSecond) < 1e-3
                   && Math.abs(setpoint.vyMetersPerSecond) < 1e-3
                   && Math.abs(setpoint.omegaRadiansPerSecond) < 1e-3;
-
           SwerveModuleState[] setpointStatesOptimized =
               new SwerveModuleState[] {null, null, null, null};
           for (int i = 0; i < 4; i++) {
@@ -177,14 +176,13 @@ public class Drive extends SubsystemBase {
           Logger.getInstance().recordOutput("SwerveModuleStates/Setpoints", setpointStates);
           Logger.getInstance()
               .recordOutput("SwerveModuleStates/SetpointsOptimized", setpointStatesOptimized);
-          break;
-
-        case CHARACTERIZATION:
+        }
+        case CHARACTERIZATION -> {
           for (int i = 0; i < 4; i++) {
             moduleIOs[i].setTurnVoltage(turnFB[i].calculate(turnPositions[i].getRadians(), 0.0));
             moduleIOs[i].setDriveVoltage(characterizationVoltage);
           }
-          break;
+        }
       }
     }
 

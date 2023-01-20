@@ -23,16 +23,11 @@ public interface Constants {
    * @return Check if robot is real, sim, or replay
    */
   default Mode mode() {
-    switch (robot()) {
-      case ROBOT_COMP:
-        return RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
-
-      case ROBOT_SIMBOT:
-        return Mode.SIM;
-
-      default:
-        return Mode.REAL;
-    }
+    return switch (robot()) {
+      case ROBOT_COMP -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
+      case ROBOT_SIMBOT -> Mode.SIM;
+      default -> Mode.REAL;
+    };
   }
 
   enum RobotType {
