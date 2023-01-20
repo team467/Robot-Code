@@ -1,41 +1,23 @@
 package frc.lib.io.vision;
 
-import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
-import frc.lib.io.vision.poseestimator.EstimatedRobotPose;
-import frc.lib.io.vision.poseestimator.PhotonPoseEstimator;
-import frc.lib.io.vision.poseestimator.PhotonPoseEstimator.PoseStrategy;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionIOAprilTag implements VisionIO {
   private final PhotonCamera camera;
   private final PhotonPoseEstimator poseEstimator;
 
-  public VisionIOAprilTag(String cameraName, Transform3d robotToCam) {
+  public VisionIOAprilTag(
+      String cameraName, Transform3d robotToCam, AprilTagFieldLayout fieldLayout) {
     camera = new PhotonCamera(cameraName);
-    List<AprilTag> aprilTags = new ArrayList<>();
-    aprilTags.add(
-        new AprilTag(
-            4,
-            new Pose3d(
-                new Translation3d(Units.inchesToMeters(125), 0, Units.inchesToMeters(25)),
-                new Rotation3d())));
     poseEstimator =
         new PhotonPoseEstimator(
-            new AprilTagFieldLayout(
-                aprilTags, Units.inchesToMeters(130), Units.inchesToMeters(130)),
-            PoseStrategy.AVERAGE_BEST_TARGETS,
-            camera,
-            robotToCam);
+            fieldLayout, PhotonPoseEstimator.PoseStrategy.AVERAGE_BEST_TARGETS, camera, robotToCam);
   }
 
   @Override

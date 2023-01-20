@@ -32,6 +32,7 @@ import Jama.QRDecomposition;
  * @author Kevin Wayne
  */
 public class PolynomialRegression implements Comparable<PolynomialRegression> {
+  // TODO: rewrite for WPILib Matrix and QRDecomposition
   private final String variableName; // name of the predictor variable
   private int degree; // degree of the polynomial regression
   private Matrix beta; // the polynomial regression coefficients

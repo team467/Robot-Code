@@ -9,17 +9,15 @@ public interface VisionIO {
     public double bestPitch = 0.0;
     public double bestArea = 0.0;
     public double bestSkew = 0.0;
-    public int fiducialId = 0;
+    public long fiducialId = 0;
     /**
      * Translation3d formatted to
      * [(Translation)x,(Translation)y,(Translation)z,(Quaternion)w,(Quaternion)x,(Quaternion)y,(Quaternion)z],
-     * sorry and good luck
      */
     public double[] bestBestCameraToTarget = new double[] {0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0};
     /**
      * Translation3d formatted to
      * [(Translation)x,(Translation)y,(Translation)z,(Quaternion)w,(Quaternion)x,(Quaternion)y,(Quaternion)z],
-     * sorry and good luck
      */
     public double[] bestAltCameraToTarget = new double[] {0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0};
 
@@ -27,7 +25,6 @@ public interface VisionIO {
     /**
      * Pose3d formatted to
      * [(Translation)x,(Translation)y,(Translation)z,(Quaternion)w,(Quaternion)x,(Quaternion)y,(Quaternion)z],
-     * sorry and good luck
      */
     public double[] estimatedPose = new double[] {0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0};
 
