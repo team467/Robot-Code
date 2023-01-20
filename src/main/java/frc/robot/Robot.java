@@ -46,7 +46,7 @@ public class Robot extends LoggedRobot {
 
     // Set up data receivers & replay source
     switch (RobotConstants.get().mode()) {
-      // Running on a real robot, log to a USB stick if possible
+        // Running on a real robot, log to a USB stick if possible
       case REAL -> {
         logger.addDataReceiver(new NT4Publisher());
         String folder = RobotConstants.get().logFolder();
@@ -55,13 +55,13 @@ public class Robot extends LoggedRobot {
         }
       }
 
-      // Running a physics simulator, log to local folder
+        // Running a physics simulator, log to local folder
       case SIM -> {
         logger.addDataReceiver(new WPILOGWriter(""));
         logger.addDataReceiver(new NT4Publisher());
       }
 
-      // Replaying a log, set up replay source
+        // Replaying a log, set up replay source
       case REPLAY -> {
         setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog();
