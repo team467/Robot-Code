@@ -13,7 +13,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro2d.Gyro2DIO;
-import frc.lib.io.gyro2d.Gyro2DIO.Gyro2DIOInputs;
+import frc.lib.io.gyro2d.Gyro2DIOInputsAutoLogged;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -33,7 +33,7 @@ public class Drive extends SubsystemBase {
         new ModuleIOInputsAutoLogged()
       };
   private final Gyro2DIO gyroIO;
-  private final Gyro2DIOInputs gyroIOInputs = new Gyro2DIOInputs();
+  private final Gyro2DIOInputsAutoLogged gyroIOInputs = new Gyro2DIOInputsAutoLogged();
 
   private double angle = 0;
   private DriveMode driveMode = DriveMode.NORMAL;
