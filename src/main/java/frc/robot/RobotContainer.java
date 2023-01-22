@@ -82,15 +82,6 @@ public class RobotContainer {
           }
         }
       }
-        drive =
-            new Drive(
-                new Gyro2DIOADIS16470(),
-                new ModuleIOSparkMAX(5, 6, 11, 0),
-                new ModuleIOSparkMAX(7, 8, 12, 1),
-                new ModuleIOSparkMAX(3, 4, 10, 2),
-                new ModuleIOSparkMAX(1, 2, 9, 3));
-        break;
-
         // Sim robot, instantiate physics sim IO implementations
       case SIM -> {
         // Init subsystems
