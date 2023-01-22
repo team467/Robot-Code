@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -24,7 +23,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
-  private LidarLitePWM lidar;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -78,8 +76,6 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
-
-    lidar = new LidarLitePWM(new DigitalInput(1));
   }
 
   /** This function is called periodically during all modes. */
@@ -103,10 +99,7 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {
-    Logger.getInstance().recordOutput("LiDAR cm", lidar.getDistance());
-    // System.out.println("Lidar: " + lidar.getDistance() + " cm");
-  }
+  public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
