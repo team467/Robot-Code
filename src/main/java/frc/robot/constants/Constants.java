@@ -24,7 +24,7 @@ public interface Constants {
    */
   default Mode mode() {
     return switch (robot()) {
-      case ROBOT_COMP -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
+      case ROBOT_COMP, ROBOT_BRIEFCASE -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
       case ROBOT_SIMBOT -> Mode.SIM;
       default -> Mode.REAL;
     };
@@ -32,7 +32,8 @@ public interface Constants {
 
   enum RobotType {
     ROBOT_COMP,
-    ROBOT_SIMBOT
+    ROBOT_SIMBOT,
+    ROBOT_BRIEFCASE
   }
 
   enum Mode {

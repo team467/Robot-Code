@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.constants.BriefcaseConstants;
 import frc.robot.constants.CompBotConstants;
 import frc.robot.constants.Constants;
 import java.io.BufferedReader;
@@ -8,27 +10,29 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class RobotConstants {
-  /** TODO: Manually change this for simulation and Replay. */
-  private static Constants constants = new CompBotConstants();
+  private static Constants constants;
 
   private RobotConstants() {
     throw new IllegalStateException("Utility class");
   }
 
   private static void initConstants() throws IOException {
-    // Not yet implemented with 2023 robots, set manually above
     if (constants == null) {
       File file = new File(System.getProperty("user.home") + "/robot");
       if (!file.exists()) {
-        throw new IOException("No roborio name file found, add it or change robot var manually.");
+        throw new IOException(
+            "No roborio name file found, add it or change RobotConstants.constants var manually.");
       }
       FileReader reader = new FileReader(file);
       try (BufferedReader br = new BufferedReader(reader)) {
         String name = br.readLine().toLowerCase();
         System.out.println("Name: " + name);
         switch (name) {
-          case "comp":
+          case "lovelace":
             RobotConstants.set(new CompBotConstants());
+            break;
+          case "turing":
+            RobotConstants.set(new BriefcaseConstants());
             break;
           default:
             throw new IOException("Invalid roborio name found");
@@ -44,6 +48,7 @@ public class RobotConstants {
       try {
         initConstants();
       } catch (IOException e) {
+        DriverStation.reportError("[RobotConstants] Error initializing constants!", e.getStackTrace());
         throw new RuntimeException(e); // No compilation warnings
       }
     }
