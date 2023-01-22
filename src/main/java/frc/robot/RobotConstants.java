@@ -1,5 +1,6 @@
 package frc.robot;
 
+import frc.robot.constants.BriefcaseConstants;
 import frc.robot.constants.CompBotConstants;
 import frc.robot.constants.Constants;
 import java.io.BufferedReader;
@@ -8,8 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class RobotConstants {
-  /** TODO: Manually change this for simulation and Replay. */
-  private static Constants constants = new CompBotConstants();
+  private static Constants constants;
 
   private RobotConstants() {
     throw new IllegalStateException("Utility class");
@@ -20,7 +20,8 @@ public class RobotConstants {
     if (constants == null) {
       File file = new File(System.getProperty("user.home") + "/robot");
       if (!file.exists()) {
-        throw new IOException("No roborio name file found, add it or change robot var manually.");
+        throw new IOException(
+            "No roborio name file found, add it or change RobotConstants.constants var manually.");
       }
       FileReader reader = new FileReader(file);
       try (BufferedReader br = new BufferedReader(reader)) {
@@ -28,7 +29,11 @@ public class RobotConstants {
         System.out.println("Name: " + name);
         switch (name) {
           case "comp":
+          case "lovelace":
             RobotConstants.set(new CompBotConstants());
+            break;
+          case "turing":
+            RobotConstants.set(new BriefcaseConstants());
             break;
           default:
             throw new IOException("Invalid roborio name found");

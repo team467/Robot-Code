@@ -32,7 +32,8 @@ public interface Constants {
 
   enum RobotType {
     ROBOT_COMP,
-    ROBOT_SIMBOT
+    ROBOT_SIMBOT,
+    ROBOT_BRIEFCASE
   }
 
   enum Mode {
