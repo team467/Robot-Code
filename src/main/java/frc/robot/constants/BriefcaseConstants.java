@@ -24,22 +24,17 @@ public class BriefcaseConstants implements Constants {
   // Drive constants
   @Override
   public double driveMaxCoastVelocity() {
-    return 0.5;
-  } // TODO: tune
+    return 0;
+  }
 
   private Translation2d[] moduleTranslations() {
-    return new Translation2d[] {
-      new Translation2d(Units.inchesToMeters(11.50), Units.inchesToMeters(11.50)),
-      new Translation2d(Units.inchesToMeters(11.50), -Units.inchesToMeters(11.50)),
-      new Translation2d(-Units.inchesToMeters(11.50), Units.inchesToMeters(11.50)),
-      new Translation2d(-Units.inchesToMeters(11.50), -Units.inchesToMeters(11.50))
-    };
+    return new Translation2d[] {new Translation2d(), new Translation2d(), new Translation2d(), new Translation2d()};
   }
 
   @Override
   public double maxLinearSpeed() {
-    return 3.0;
-  } // TODO: tune
+    return 0.0;
+  }
 
   @Override
   public double maxAngularSpeed() {
@@ -52,32 +47,32 @@ public class BriefcaseConstants implements Constants {
 
   @Override
   public double moduleWheelDiameter() {
-    return Units.inchesToMeters(4);
+    return 0;
   }
 
   @Override
   public GearRatio moduleDriveGearRatio() {
-    return new GearRatio(6.75, 1); // SDS L2
+    return new GearRatio();
   }
 
   @Override
   public GearRatio moduleTurnGearRatio() {
-    return new GearRatio(12.8, 1);
+    return new GearRatio();
   }
 
   @Override
   public SimpleFeedforwardConstant moduleDriveFF() {
-    return new SimpleFeedforwardConstant(0.15026, 0.13682);
-  } // TODO: tune
+    return new SimpleFeedforwardConstant(0, 0);
+  }
 
   @Override
   public SimpleFeedforwardConstant moduleTurnFF() {
-    return new SimpleFeedforwardConstant(0.16302, 0.0089689, 0.00034929);
+    return new SimpleFeedforwardConstant(0, 0);
   }
 
   @Override
   public FeedbackConstant moduleTurnFB() {
-    return new FeedbackConstant(3.2526, 0.05);
+    return new FeedbackConstant(0);
   }
 
   @Override
@@ -87,41 +82,36 @@ public class BriefcaseConstants implements Constants {
 
   @Override
   public Rotation2d[] absoluteAngleOffset() {
-    return new Rotation2d[] {
-      Rotation2d.fromDegrees(-46.75781250000001),
-      Rotation2d.fromDegrees(11.162109374999998),
-      Rotation2d.fromDegrees(110.478515625),
-      Rotation2d.fromDegrees(-100.19531250000001)
-    };
+    return new Rotation2d[] {new Rotation2d(), new Rotation2d(), new Rotation2d(), new Rotation2d()};
   }
 
   @Override
   public double chassisDriveMaxVelocity() {
-    return 1.2;
-  } // TODO: tune
+    return 0;
+  }
 
   @Override
   public double chassisDriveMaxAcceleration() {
-    return 1.2;
-  } // TODO: tune
+    return 0;
+  }
 
   @Override
   public double chassisTurnMaxVelocity() {
-    return 0.2;
-  } // TODO: tune
+    return 0;
+  }
 
   @Override
   public double chassisTurnMaxAcceleration() {
-    return 0.2;
-  } // TODO: tune
+    return 0;
+  }
 
   @Override
   public FeedbackConstant chassisDriveFB() {
-    return new FeedbackConstant(0.1);
-  } // TODO: tune
+    return new FeedbackConstant(0);
+  }
 
   @Override
   public FeedbackConstant chassisTurnFB() {
-    return new FeedbackConstant(0.1);
-  } // TODO: tune
+    return new FeedbackConstant(0);
+  }
 }
