@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.BriefcaseConstants;
 import frc.robot.constants.CompBotConstants;
 import frc.robot.constants.Constants;
@@ -16,7 +17,6 @@ public class RobotConstants {
   }
 
   private static void initConstants() throws IOException {
-    // Not yet implemented with 2023 robots, set manually above
     if (constants == null) {
       File file = new File(System.getProperty("user.home") + "/robot");
       if (!file.exists()) {
@@ -28,7 +28,6 @@ public class RobotConstants {
         String name = br.readLine().toLowerCase();
         System.out.println("Name: " + name);
         switch (name) {
-          case "comp":
           case "lovelace":
             RobotConstants.set(new CompBotConstants());
             break;
@@ -49,6 +48,7 @@ public class RobotConstants {
       try {
         initConstants();
       } catch (IOException e) {
+        DriverStation.reportError("[RobotConstants] Error initializing constants!", e.getStackTrace());
         throw new RuntimeException(e); // No compilation warnings
       }
     }

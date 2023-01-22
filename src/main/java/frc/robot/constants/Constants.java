@@ -24,7 +24,7 @@ public interface Constants {
    */
   default Mode mode() {
     return switch (robot()) {
-      case ROBOT_COMP -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
+      case ROBOT_COMP, ROBOT_BRIEFCASE -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
       case ROBOT_SIMBOT -> Mode.SIM;
       default -> Mode.REAL;
     };
