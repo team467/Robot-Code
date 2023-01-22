@@ -49,20 +49,42 @@ public class RobotContainer {
   public RobotContainer() {
     switch (RobotConstants.get().mode()) {
         // Real robot, instantiate hardware IO implementations
-      case REAL:
         // Init subsystems
         // subsystem = new Subsystem(new SubsystemIOImpl());
-        drive =
-            new Drive(
-                new GyroIOADIS16470(),
-                new ModuleIOSparkMAX(5, 6, 11, 0),
-                new ModuleIOSparkMAX(7, 8, 12, 1),
-                new ModuleIOSparkMAX(3, 4, 10, 2),
-                new ModuleIOSparkMAX(1, 2, 9, 3));
-        break;
+      case REAL -> {
+        switch (RobotConstants.get().robot()) {
+          case ROBOT_COMP -> {
+            drive =
+                new Drive(
+                    new GyroIOADIS16470(),
+                    new ModuleIOSparkMAX(5, 6, 11, 0),
+                    new ModuleIOSparkMAX(7, 8, 12, 1),
+                    new ModuleIOSparkMAX(3, 4, 10, 2),
+                    new ModuleIOSparkMAX(1, 2, 9, 3));
+          }
+          case ROBOT_BRIEFCASE -> {
+            drive =
+                new Drive(
+                    new GyroIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {});
+          }
+          default -> {
+            drive =
+                new Drive(
+                    new GyroIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {});
+          }
+        }
+      }
 
         // Sim robot, instantiate physics sim IO implementations
-      case SIM:
+      case SIM -> {
         // Init subsystems
         // subsystem = new Subsystem(new SubsystemIOSim());
         drive =
@@ -72,10 +94,10 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        break;
+      }
 
         // Replayed robot, disable IO implementations
-      default:
+      default -> {
         // subsystem = new Subsystem(new SubsystemIO() {});
         drive =
             new Drive(
@@ -84,7 +106,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        break;
+      }
     }
 
     // Set up auto routines
