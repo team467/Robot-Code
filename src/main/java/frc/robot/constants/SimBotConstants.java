@@ -119,4 +119,16 @@ public class SimBotConstants implements Constants {
   public FeedbackConstant chassisTurnFB() {
     return new FeedbackConstant(0, 0);
   }
+
+  @Override
+  public GearRatio armExtendGearRatio() {
+    // TODO: Update actual gear ratio
+    return new GearRatio(6.75, 1); // SDS L2
+  }
+
+  @Override
+  public GearRatio armRotateGearRatio() {
+    // TODO: Update actual gear ratio
+    return new GearRatio(6.75, 1); // SDS L2
+  }
 }

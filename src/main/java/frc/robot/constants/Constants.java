@@ -59,6 +59,20 @@ public interface Constants {
 
   GearRatio moduleTurnGearRatio();
 
+  /**
+   * Used to translate encoder ticks to arm lengths.
+   *
+   * @return the gear ratio of the arm extension motor
+   */
+  GearRatio armExtendGearRatio();
+
+  /**
+   * Used to translate encoder ticks to arm positions.
+   *
+   * @return the gear ratio of the arm rotate motor
+   */
+  GearRatio armRotateGearRatio();
+
   SimpleFeedforwardConstant moduleDriveFF();
 
   SimpleFeedforwardConstant moduleTurnFF();
