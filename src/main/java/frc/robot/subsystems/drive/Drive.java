@@ -69,15 +69,15 @@ public class Drive extends SubsystemBase {
               .moduleTurnFB()
               .getProfiledPIDController(new TrapezoidProfile.Constraints(550.6, 7585));
       turnFB[i].enableContinuousInput(-Math.PI, Math.PI);
-      turnFB[i].reset(this.moduleIOInputs[i].turnPositionAbsolute);
+      turnFB[i].reset(this.moduleIOInputs[i].turnPositionAbsoluteRad);
     }
 
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
     for (int i = 0; i < 4; i++) {
       modulePositions[i] =
           new SwerveModulePosition(
-              moduleIOInputs[i].drivePosition * (RobotConstants.get().moduleWheelDiameter() / 2),
-              new Rotation2d(moduleIOInputs[i].turnPositionAbsolute));
+              moduleIOInputs[i].drivePositionRad * (RobotConstants.get().moduleWheelDiameter() / 2),
+              new Rotation2d(moduleIOInputs[i].turnPositionAbsoluteRad));
     }
 
     if (gyroIOInputs.connected) {
@@ -114,7 +114,7 @@ public class Drive extends SubsystemBase {
     // Update angle measurements
     Rotation2d[] turnPositions = new Rotation2d[4];
     for (int i = 0; i < 4; i++) {
-      turnPositions[i] = new Rotation2d(moduleIOInputs[i].turnPositionAbsolute);
+      turnPositions[i] = new Rotation2d(moduleIOInputs[i].turnPositionAbsoluteRad);
     }
 
     if (DriverStation.isDisabled()) {
@@ -192,7 +192,8 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       measuredStates[i] =
           new SwerveModuleState(
-              moduleIOInputs[i].driveVelocity * (RobotConstants.get().moduleWheelDiameter() / 2),
+              moduleIOInputs[i].driveVelocityRadPerSec
+                  * (RobotConstants.get().moduleWheelDiameter() / 2),
               turnPositions[i]);
     }
 
@@ -201,7 +202,7 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       measuredPositions[i] =
           new SwerveModulePosition(
-              moduleIOInputs[i].drivePosition * (RobotConstants.get().moduleWheelDiameter() / 2),
+              moduleIOInputs[i].drivePositionRad * (RobotConstants.get().moduleWheelDiameter() / 2),
               turnPositions[i]);
     }
     if (gyroIOInputs.connected) {
@@ -232,7 +233,8 @@ public class Drive extends SubsystemBase {
       boolean stillMoving = false;
       for (int i = 0; i < 4; i++) {
         if (Math.abs(
-                moduleIOInputs[i].driveVelocity * (RobotConstants.get().moduleWheelDiameter() / 2))
+                moduleIOInputs[i].driveVelocityRadPerSec
+                    * (RobotConstants.get().moduleWheelDiameter() / 2))
             > RobotConstants.get().driveMaxCoastVelocity()) {
           stillMoving = true;
         }
@@ -276,8 +278,8 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       modulePositions[i] =
           new SwerveModulePosition(
-              moduleIOInputs[i].drivePosition * (RobotConstants.get().moduleWheelDiameter() / 2),
-              new Rotation2d(moduleIOInputs[i].turnPositionAbsolute));
+              moduleIOInputs[i].drivePositionRad * (RobotConstants.get().moduleWheelDiameter() / 2),
+              new Rotation2d(moduleIOInputs[i].turnPositionAbsoluteRad));
     }
     if (gyroIOInputs.connected) {
       odometry.resetPosition(Rotation2d.fromDegrees(gyroIOInputs.angle), modulePositions, pose);
@@ -310,7 +312,7 @@ public class Drive extends SubsystemBase {
   public double getCharacterizationVelocity() {
     double driveVelocityAverage = 0.0;
     for (int i = 0; i < 4; i++) {
-      driveVelocityAverage += moduleIOInputs[i].driveVelocity;
+      driveVelocityAverage += moduleIOInputs[i].driveVelocityRadPerSec;
     }
     return driveVelocityAverage / 4.0;
   }
