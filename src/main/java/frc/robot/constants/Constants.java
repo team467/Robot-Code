@@ -80,4 +80,10 @@ public interface Constants {
   FeedbackConstant chassisDriveFB();
 
   FeedbackConstant chassisTurnFB();
+
+  int armMotorOneId();
+
+  int armMotorTwoId();
+
+    public int armSolenoidChannel();
 }
