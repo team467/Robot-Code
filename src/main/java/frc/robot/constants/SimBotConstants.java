@@ -119,9 +119,4 @@ public class SimBotConstants implements Constants {
   public FeedbackConstant chassisTurnFB() {
     return new FeedbackConstant(0, 0);
   }
-
-  @Override
-public int armSolenoidChannel() {
-    return 0;
-}
 }

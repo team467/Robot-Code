@@ -32,21 +32,9 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     Logger logger = Logger.getInstance();
 
-    // Record metadata
-    logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-    logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-    logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-    logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
-    logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-    switch (BuildConstants.DIRTY) {
-      case 0 -> logger.recordMetadata("GitDirty", "All changes committed");
-      case 1 -> logger.recordMetadata("GitDirty", "Uncomitted changes");
-      default -> logger.recordMetadata("GitDirty", "Unknown");
-    }
-
     // Set up data receivers & replay source
     switch (RobotConstants.get().mode()) {
-      // Running on a real robot, log to a USB stick if possible
+        // Running on a real robot, log to a USB stick if possible
       case REAL -> {
         logger.addDataReceiver(new NT4Publisher());
         String folder = RobotConstants.get().logFolder();
@@ -55,13 +43,13 @@ public class Robot extends LoggedRobot {
         }
       }
 
-      // Running a physics simulator, log to local folder
+        // Running a physics simulator, log to local folder
       case SIM -> {
         logger.addDataReceiver(new WPILOGWriter(""));
         logger.addDataReceiver(new NT4Publisher());
       }
 
-      // Replaying a log, set up replay source
+        // Replaying a log, set up replay source
       case REPLAY -> {
         setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog();

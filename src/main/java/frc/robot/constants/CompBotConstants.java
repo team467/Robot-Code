@@ -124,10 +124,5 @@ public class CompBotConstants implements Constants {
   public FeedbackConstant chassisTurnFB() {
     return new FeedbackConstant(0.1);
   } // TODO: tune
-
-  @Override
-public int armSolenoidChannel() {
-    return 0;
-}
 }
 
