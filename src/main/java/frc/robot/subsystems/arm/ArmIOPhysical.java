@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.RobotConstants;
 
 public class ArmIOPhysical implements ArmIO {
@@ -14,13 +15,17 @@ public class ArmIOPhysical implements ArmIO {
   private final CANSparkMax rotateMotor;
   private final RelativeEncoder rotateEncoder;
 
+  private final LidarLitePWM lidar;
+
   // private int resetCount = 0;
 
-  public ArmIOPhysical(int extendMotorId, int rotateMotorId, int rotateAbsEncoderId, int index) {
+  public ArmIOPhysical(int extendMotorId, int rotateMotorId, int rotateAbsEncoderId, 
+      int lidarId, int index) {
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
     extendEncoder = extendMotor.getEncoder();
     rotateEncoder = rotateMotor.getEncoder();
+    lidar = new LidarLitePWM(new DigitalInput(lidarId));
 
     // Convert rotations to radians
     double extendRotationsToRads =
@@ -47,6 +52,8 @@ public class ArmIOPhysical implements ArmIO {
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
+
+    inputs.extendPositionAbsolute = lidar.getDistance() / 100.0;
 
     // TODO: Use the Lidar to get the absolute position of the arm
     // Reset the turn encoder sometimes when not moving
