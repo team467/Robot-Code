@@ -4,7 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
-public class ModuleIOSim implements ModuleIO {
+public class ArmIOSim implements ArmIO {
   private final FlywheelSim extendSim = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
   private final FlywheelSim rotateSim =
       new FlywheelSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004096955);

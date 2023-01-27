@@ -7,7 +7,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotConstants;
 
-public class ModuleIOPhysical implements ModuleIO {
+public class ArmIOPhysical implements ArmIO {
   private final CANSparkMax extendMotor;
   private final RelativeEncoder extendEncoder;
 
@@ -16,7 +16,7 @@ public class ModuleIOPhysical implements ModuleIO {
 
   // private int resetCount = 0;
 
-  public ModuleIOPhysical(int extendMotorId, int rotateMotorId, int rotateAbsEncoderId, int index) {
+  public ArmIOPhysical(int extendMotorId, int rotateMotorId, int rotateAbsEncoderId, int index) {
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
     extendEncoder = extendMotor.getEncoder();

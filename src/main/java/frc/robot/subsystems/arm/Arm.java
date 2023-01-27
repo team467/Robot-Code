@@ -13,7 +13,7 @@ public class Arm extends SubsystemBase {
 	private static final SimpleMotorFeedforward extendFF = RobotConstants.get().moduleDriveFF().getFeedforward(); 
 	private static final SimpleMotorFeedforward rotateFF = RobotConstants.get().moduleTurnFF().getFeedforward();
 
-	private final ModuleIO armIO;
+	private final ArmIO armIO;
 	private final ModuleIOInputsAutoLogged armIOInputs = new ModuleIOInputsAutoLogged();
 
 	private enum ArmMode {
@@ -34,7 +34,7 @@ public class Arm extends SubsystemBase {
 	 *
 	 * @param armIO   Arm IO
 	 */
-	public Arm(ModuleIO armIO) {
+	public Arm(ArmIO armIO) {
 		super();
 		this.armIO = armIO;
 		armIO.updateInputs(armIOInputs);

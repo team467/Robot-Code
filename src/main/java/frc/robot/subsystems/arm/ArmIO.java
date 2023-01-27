@@ -2,7 +2,7 @@ package frc.robot.subsystems.arm;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ModuleIO {
+public interface ArmIO {
 
   @AutoLog
   class ModuleIOInputs {
