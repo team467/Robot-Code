@@ -9,7 +9,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro2d.Gyro2DIO;
 import frc.lib.io.gyro2d.Gyro2DIOInputsAutoLogged;
@@ -25,9 +24,9 @@ public class NewDrive extends SubsystemBase {
   private boolean isCharacterizing = false;
   private double characterizationVolts = 0.0;
   private ChassisSpeeds setpoint = new ChassisSpeeds();
-  private Timer lastMovementTimer = new Timer();
 
-  private SwerveDriveOdometry odometry;
+  private final SwerveDriveOdometry odometry;
+  private Rotation2d simGyro;
 
   public NewDrive(
       Gyro2DIO gyroIO,
@@ -40,7 +39,6 @@ public class NewDrive extends SubsystemBase {
     modules[1] = new Module(frModuleIO, 1);
     modules[2] = new Module(blModuleIO, 2);
     modules[3] = new Module(brModuleIO, 3);
-    lastMovementTimer.start();
     for (var module : modules) {
       module.setBrakeMode(true);
       module.periodic();
@@ -52,9 +50,13 @@ public class NewDrive extends SubsystemBase {
       modulePositions[i] = modules[i].getPosition();
     }
 
-    odometry =
-        new SwerveDriveOdometry(
-            kinematics, Rotation2d.fromDegrees(gyroInputs.angle), modulePositions);
+    if (gyroInputs.connected) {
+      odometry =
+          new SwerveDriveOdometry(
+              kinematics, Rotation2d.fromDegrees(gyroInputs.angle), modulePositions);
+    } else {
+      odometry = new SwerveDriveOdometry(kinematics, simGyro, modulePositions);
+    }
   }
 
   @Override
@@ -128,7 +130,13 @@ public class NewDrive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       measuredPositions[i] = modules[i].getPosition();
     }
-    odometry.update(Rotation2d.fromDegrees(gyroInputs.angle), measuredPositions);
+    if (gyroInputs.connected) {
+      odometry.update(Rotation2d.fromDegrees(gyroInputs.angle), measuredPositions);
+    } else {
+      simGyro.plus(new Rotation2d(kinematics.toChassisSpeeds(measuredStates).omegaRadiansPerSecond * 0.02));
+      odometry.update(simGyro, measuredPositions);
+    }
+    Logger.getInstance().recordOutput("Odometry", getPose());
   }
 
   public void runVelocity(ChassisSpeeds speeds) {

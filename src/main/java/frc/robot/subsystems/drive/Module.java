@@ -49,6 +49,9 @@ public class Module {
         turnFB.calculate(getAngle().getRadians(), optimizedState.angle.getRadians())
             + turnFF.calculate(turnFB.getSetpoint().velocity));
 
+    // Update velocity based on turn error
+    optimizedState.speedMetersPerSecond *= Math.cos(turnFB.getPositionError());
+
     // Run drive controller
     double velocityRadPerSec = optimizedState.speedMetersPerSecond / wheelRadius;
     io.setDriveVoltage(driveFF.calculate(velocityRadPerSec));
