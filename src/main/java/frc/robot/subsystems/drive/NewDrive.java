@@ -97,8 +97,8 @@ public class NewDrive extends SubsystemBase {
                       new Rotation2d(setpoint.omegaRadiansPerSecond * 0.020)));
       ChassisSpeeds adjustedSpeeds =
           new ChassisSpeeds(
-              setpoint.vxMetersPerSecond / 0.020,
-              setpoint.vyMetersPerSecond / 0.020,
+              setpointTwist.dx / 0.020,
+              setpointTwist.dy / 0.020,
               setpointTwist.dtheta / 0.020);
       // In normal mode, run the controllers for turning and driving based on the current
       // setpoint
