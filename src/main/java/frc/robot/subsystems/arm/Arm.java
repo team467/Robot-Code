@@ -1,13 +1,18 @@
 package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
-
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Arm extends SubsystemBase {
-
+  
+  private static final CANSparkMax armExtendMotor = new CANSparkMax (0, MotorType.kBrushless);
+  private static final CANSparkMax armRotateMotor = new CANSparkMax(1,MotorType.kBrushless);
+ 
   private final Logger logger = Logger.getInstance();
 
   private static final SimpleMotorFeedforward extendFF =
@@ -28,24 +33,73 @@ public class Arm extends SubsystemBase {
 
   private double angle = 0;
   private double characterizationVoltage = 0.0;
-
+  private double distanceTargetInches = 0;
+  private double rotateTargetDegrees = 0;
   private double extendSetpoint = 0.0;
   private double rotateSetpoint = 0.0;
+  
+  public static final double EXTEND_TOLERANCE_INCHES = 2.0;
+  public static final double ROTATE_TOLERANCE_DEGREES = 2.0;
+  
+  private boolean enabled = false;
+
+  private boolean isManual  = true;
+  private double manualExtend = 0.0;
+  private double manualRotate = 0.0;
 
   /**
+   *
    * Configures the arm subsystem
    *
    * @param armIO Arm IO
    */
+
   public Arm(ArmIO armIO) {
     super();
     this.armIO = armIO;
     armIO.updateInputs(armIOInputs);
   }
 
+  public void enable() {
+    enabled = true;
+  }
+
+  public void disable() {
+    stop();
+    enabled = false;
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public boolean isManual() {
+    return isManual;
+  }
+
+  
+  public void stop() {
+    isManual = true; 
+    armExtendMotor.set(0.0);
+    armRotateMotor.set(0.0);
+  }
+  
+  
+  public void manualMove(double extend, double rotate){
+
+    isManual = true; 
+    manualExtend = extend;
+    manualRotate = rotate;
+  }
+
+
   @Override
   public void periodic() {
+    if (isManual) {
+      armExtendMotor.set(manualExtend);
+      armRotateMotor.set(manualRotate);
 
+    }
     // Update inputs for IOs
     for (int i = 0; i < 4; i++) {
       armIO.updateInputs(armIOInputs);
@@ -54,10 +108,10 @@ public class Arm extends SubsystemBase {
 
     if (DriverStation.isDisabled()) {
       // Disable output while disabled
-      for (int i = 0; i < 4; i++) {
-        armIO.setExtendVoltage(0.0);
-        armIO.setRotateVoltage(0.0);
-      }
+      armIO.setExtendVoltage(0.0);
+      armIO.setRotateVoltage(0.0);
+    } else if (isManual) {
+
     } else {
       switch (mode) {
         case NORMAL:
@@ -91,6 +145,7 @@ public class Arm extends SubsystemBase {
           armIO.setRotateVoltage(characterizationVoltage);
           break;
       }
+      
     }
 
     // TODO: Translate velocity into movement
@@ -100,6 +155,11 @@ public class Arm extends SubsystemBase {
     logger.recordOutput("Arm/Extend/Position", armIOInputs.extendPosition * PLACEHOLDER);
     logger.recordOutput("Arm/Rotate/Velocity", armIOInputs.rotateVelocity * PLACEHOLDER);
     logger.recordOutput("Arm/Rotate/Position", armIOInputs.rotatePosition * PLACEHOLDER);
+
+    // TODO: Proper conversions  
+    armExtendMotor.getEncoder().setPosition(distanceTargetInches);
+    armRotateMotor.getEncoder().setPosition(rotateTargetDegrees);
+
   }
 
   public void setExtendSetpoint(double setpoint) {
@@ -130,5 +190,45 @@ public class Arm extends SubsystemBase {
     } else {
       return 0.0;
     }
+  }
+
+
+  @Override
+  public void simulationPeriodic() {
+    // This method will be called once per scheduler run during simulation
+  }
+  
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
+  }
+
+  public void extendAndRotate(double distanceTargetInches, double rotateTargetDegrees) {
+    this.distanceTargetInches = distanceTargetInches;
+    this.rotateTargetDegrees = rotateTargetDegrees;
+  }
+
+  public boolean isStopped() {
+    if (armExtendMotor.getEncoder().getVelocity() <= 0.1
+      && armRotateMotor.getEncoder().getVelocity() <= 0.1)
+      return true;
+    return false;
+  }
+
+  public boolean finished() {
+    double currentDistance = armExtendMotor.getEncoder().getPosition(); // NEEDS CONVERSION
+    // TODO: CHANGE to Lidar
+
+    double currentAngle = armRotateMotor.getEncoder().getPosition(); // NEEDS CONVERSION
+
+    if (currentDistance >= (distanceTargetInches - EXTEND_TOLERANCE_INCHES)
+      && (currentDistance <= (distanceTargetInches + EXTEND_TOLERANCE_INCHES) 
+      && (currentAngle >= (rotateTargetDegrees - EXTEND_TOLERANCE_INCHES)
+      && (currentAngle <= (rotateTargetDegrees + EXTEND_TOLERANCE_INCHES)
+      )))) {
+        return true;
+      }
+
+    return false;
   }
 }
