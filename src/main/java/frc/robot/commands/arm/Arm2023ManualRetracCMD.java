@@ -3,10 +3,10 @@ package frc.robot.commands.arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.arm.Arm;
 
-public class Arm2023ManualRetractCMD extends CommandBase {
+public class Arm2023ManualRetracCMD extends CommandBase {
   private Arm arm;
 
-  public Arm2023ManualRetractCMD(Arm arm) {
+  public Arm2023ManualRetracCMD(Arm arm) {
     this.arm = arm;
 
     addRequirements(arm);
@@ -17,8 +17,8 @@ public class Arm2023ManualRetractCMD extends CommandBase {
 
   @Override
   public void execute() {
-    // climber.retract();
-    // retract does not exist, have to find what it is called in codes
+    arm.manualExtend(-0.1);
+    ;
   }
 
   @Override

@@ -42,6 +42,9 @@ public class ArmIOPhysical implements ArmIO {
     extendEncoder.setVelocityConversionFactor(extendRotationsToRads / 60);
     rotateEncoder.setVelocityConversionFactor(rotateRotationsToRads / 60);
 
+    // Convert rotations per minute to radians per second
+    extendEncoder.setPositionConversionFactor(1);
+
     // Invert motors
     extendMotor.setInverted(false);
     rotateMotor.setInverted(false); // TODO: check if inverted

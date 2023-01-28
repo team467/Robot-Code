@@ -17,8 +17,8 @@ public class ArmManualExtendCMD extends CommandBase {
 
   @Override
   public void execute() {
-    System.out.println("manual extend");
-    // arm.extendAndRotate();
+    arm.manualExtend(0.1);
+    ;
   }
 
   @Override

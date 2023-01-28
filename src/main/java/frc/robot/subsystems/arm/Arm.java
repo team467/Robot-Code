@@ -82,6 +82,8 @@ public class Arm extends SubsystemBase {
     isManual = true;
     armExtendMotor.set(0.0);
     armRotateMotor.set(0.0);
+    manualExtend = 0;
+    manualRotate = 0;
   }
 
   public void manualExtend(double extend) {
