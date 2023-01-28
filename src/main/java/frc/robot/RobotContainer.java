@@ -124,6 +124,7 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+   
   }
 
   /**
@@ -133,6 +134,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    System.out.println("in Configure the button bindings ");
+    
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,
