@@ -17,13 +17,12 @@ public class ArmManualExtendCMD extends CommandBase {
 
   @Override
   public void execute() {
-    // climber.extend();
+    System.out.println("manual extend");
+    // arm.extendAndRotate();
   }
 
   @Override
-  public void end(boolean interrupted) {
-    
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {

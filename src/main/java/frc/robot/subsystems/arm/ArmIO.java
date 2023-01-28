@@ -1,5 +1,6 @@
 package frc.robot.subsystems.arm;
 
+import com.revrobotics.CANSparkMax;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ArmIO {
@@ -32,4 +33,8 @@ public interface ArmIO {
   default void setExtendBrakeMode(boolean brake) {}
 
   default void setRotateBrakeMode(boolean brake) {}
+
+  public CANSparkMax getExtendMotor();
+
+  public CANSparkMax getRotateMotor();
 }

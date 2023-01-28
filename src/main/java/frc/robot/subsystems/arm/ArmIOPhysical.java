@@ -98,4 +98,14 @@ public class ArmIOPhysical implements ArmIO {
   public void setRotateBrakeMode(boolean brake) {
     rotateMotor.setIdleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
   }
+
+  public CANSparkMax getExtendMotor() {
+
+    return extendMotor;
+  }
+
+  public CANSparkMax getRotateMotor() {
+
+    return rotateMotor;
+  }
 }

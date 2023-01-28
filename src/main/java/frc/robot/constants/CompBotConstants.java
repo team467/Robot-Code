@@ -128,13 +128,13 @@ public class CompBotConstants implements Constants {
   @Override
   public GearRatio armExtendGearRatio() {
     // TODO Auto-generated method stub
-    return null;
+    return new GearRatio();
   }
 
   @Override
   public GearRatio armRotateGearRatio() {
     // TODO Auto-generated method stub
-    return null;
+    return new GearRatio();
   }
 
   @Override

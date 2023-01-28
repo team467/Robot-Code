@@ -17,8 +17,8 @@ public class ArmStopCMD extends CommandBase {
 
   @Override
   public void execute() {
-    arm.stop();
     System.out.println("Stopping");
+    arm.stop();
   }
 
   @Override

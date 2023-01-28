@@ -1,18 +1,18 @@
 package frc.robot.subsystems.arm;
 
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 public class Arm extends SubsystemBase {
-  
-  private static final CANSparkMax armExtendMotor = new CANSparkMax (0, MotorType.kBrushless);
-  private static final CANSparkMax armRotateMotor = new CANSparkMax(1,MotorType.kBrushless);
- 
+
+  private final CANSparkMax armExtendMotor;
+  private final CANSparkMax armRotateMotor;
+
   private final Logger logger = Logger.getInstance();
 
   private static final SimpleMotorFeedforward extendFF =
@@ -37,26 +37,27 @@ public class Arm extends SubsystemBase {
   private double rotateTargetDegrees = 0;
   private double extendSetpoint = 0.0;
   private double rotateSetpoint = 0.0;
-  
+
   public static final double EXTEND_TOLERANCE_INCHES = 2.0;
   public static final double ROTATE_TOLERANCE_DEGREES = 2.0;
-  
+
   private boolean enabled = false;
 
-  private boolean isManual  = true;
+  private boolean isManual = true;
   private double manualExtend = 0.0;
   private double manualRotate = 0.0;
 
   /**
-   *
    * Configures the arm subsystem
    *
    * @param armIO Arm IO
    */
-
   public Arm(ArmIO armIO) {
     super();
     this.armIO = armIO;
+    this.armExtendMotor = armIO.getExtendMotor();
+    this.armRotateMotor = armIO.getRotateMotor();
+
     armIO.updateInputs(armIOInputs);
   }
 
@@ -77,23 +78,22 @@ public class Arm extends SubsystemBase {
     return isManual;
   }
 
-  
   public void stop() {
-    isManual = true; 
+    isManual = true;
     armExtendMotor.set(0.0);
     armRotateMotor.set(0.0);
   }
 
-  public void manualExtend (double extend){
+  public void manualExtend(double extend) {
     isManual = true;
     manualExtend = extend;
   }
-  
-  public void manualRotate (double rotate) {
+
+  public void manualRotate(double rotate) {
     isManual = true;
     manualRotate = rotate;
   }
- 
+
   @Override
   public void periodic() {
     if (isManual) {
@@ -145,7 +145,6 @@ public class Arm extends SubsystemBase {
           armIO.setRotateVoltage(characterizationVoltage);
           break;
       }
-      
     }
 
     // TODO: Translate velocity into movement
@@ -156,10 +155,9 @@ public class Arm extends SubsystemBase {
     logger.recordOutput("Arm/Rotate/Velocity", armIOInputs.rotateVelocity * PLACEHOLDER);
     logger.recordOutput("Arm/Rotate/Position", armIOInputs.rotatePosition * PLACEHOLDER);
 
-    // TODO: Proper conversions  
+    // TODO: Proper conversions
     armExtendMotor.getEncoder().setPosition(distanceTargetInches);
     armRotateMotor.getEncoder().setPosition(rotateTargetDegrees);
-
   }
 
   public void setExtendSetpoint(double setpoint) {
@@ -192,12 +190,11 @@ public class Arm extends SubsystemBase {
     }
   }
 
-
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
   }
-  
+
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
@@ -210,8 +207,7 @@ public class Arm extends SubsystemBase {
 
   public boolean isStopped() {
     if (armExtendMotor.getEncoder().getVelocity() <= 0.1
-      && armRotateMotor.getEncoder().getVelocity() <= 0.1)
-      return true;
+        && armRotateMotor.getEncoder().getVelocity() <= 0.1) return true;
     return false;
   }
 
@@ -222,12 +218,11 @@ public class Arm extends SubsystemBase {
     double currentAngle = armRotateMotor.getEncoder().getPosition(); // NEEDS CONVERSION
 
     if (currentDistance >= (distanceTargetInches - EXTEND_TOLERANCE_INCHES)
-      && (currentDistance <= (distanceTargetInches + EXTEND_TOLERANCE_INCHES) 
-      && (currentAngle >= (rotateTargetDegrees - EXTEND_TOLERANCE_INCHES)
-      && (currentAngle <= (rotateTargetDegrees + EXTEND_TOLERANCE_INCHES)
-      )))) {
-        return true;
-      }
+        && (currentDistance <= (distanceTargetInches + EXTEND_TOLERANCE_INCHES)
+            && (currentAngle >= (rotateTargetDegrees - EXTEND_TOLERANCE_INCHES)
+                && (currentAngle <= (rotateTargetDegrees + EXTEND_TOLERANCE_INCHES))))) {
+      return true;
+    }
 
     return false;
   }

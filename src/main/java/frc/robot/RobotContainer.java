@@ -17,21 +17,17 @@ import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro.GyroIO;
-import frc.lib.io.gyro.GyroIOADIS16470;
 import frc.robot.commands.arm.ArmManualExtendCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIOPhysical;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.arm.ArmIO;
-import frc.robot.subsystems.arm.ArmIOPhysical;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -44,7 +40,6 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private final Drive drive;
   private final Arm arm;
-  
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -55,18 +50,28 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    System.out.println("Mode : " + RobotConstants.get().mode());
+
     switch (RobotConstants.get().mode()) {
         // Real robot, instantiate hardware IO implementations
       case REAL:
         // Init subsystems
         // subsystem = new Subsystem(new SubsystemIOImpl());
+        // drive =
+        //     new Drive(
+        //         new GyroIOADIS16470(),
+        //         new ModuleIOSparkMAX(5, 6, 11, 0),
+        //         new ModuleIOSparkMAX(7, 8, 12, 1),
+        //         new ModuleIOSparkMAX(3, 4, 10, 2),
+        //         new ModuleIOSparkMAX(1, 2, 9, 3));
         drive =
             new Drive(
-                new GyroIOADIS16470(),
-                new ModuleIOSparkMAX(5, 6, 11, 0),
-                new ModuleIOSparkMAX(7, 8, 12, 1),
-                new ModuleIOSparkMAX(3, 4, 10, 2),
-                new ModuleIOSparkMAX(1, 2, 9, 3));
+                new GyroIO() {},
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim());
         break;
 
         // Sim robot, instantiate physics sim IO implementations
@@ -95,7 +100,11 @@ public class RobotContainer {
         break;
     }
 
-    arm = new Arm(new ArmIOPhysical(20,0,8,2,3));
+    System.out.println("creating an arm object");
+
+    arm = new Arm(new ArmIOPhysical(20, 0, 8, 2, 3));
+
+    System.out.println("finished creating an arm object");
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     autoChooser.addOption(
@@ -124,7 +133,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-   
   }
 
   /**
@@ -149,11 +157,8 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> drive.setPose(new Pose2d()))
                 .andThen(Commands.print("Reset pose")));
-        driverController.y().onTrue(new ArmManualExtendCMD(arm));
-        driverController.b().onTrue(new ArmStopCMD(arm));
-        
-          
-        
+    driverController.y().onTrue(new ArmManualExtendCMD(arm));
+    driverController.b().onTrue(new ArmStopCMD(arm));
   }
 
   /**
