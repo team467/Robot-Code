@@ -83,22 +83,22 @@ public class Arm extends SubsystemBase {
     armExtendMotor.set(0.0);
     armRotateMotor.set(0.0);
   }
-  
-  
-  public void manualMove(double extend, double rotate){
 
-    isManual = true; 
+  public void manualExtend (double extend){
+    isManual = true;
     manualExtend = extend;
+  }
+  
+  public void manualRotate (double rotate) {
+    isManual = true;
     manualRotate = rotate;
   }
-
-
+ 
   @Override
   public void periodic() {
     if (isManual) {
       armExtendMotor.set(manualExtend);
       armRotateMotor.set(manualRotate);
-
     }
     // Update inputs for IOs
     for (int i = 0; i < 4; i++) {
