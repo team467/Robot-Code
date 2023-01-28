@@ -95,7 +95,7 @@ public class RobotContainer {
         break;
     }
 
-    arm = new Arm(new ArmIOPhysical(20,0,1,2,3));
+    arm = new Arm(new ArmIOPhysical(20,0,8,2,3));
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     autoChooser.addOption(
@@ -135,7 +135,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     System.out.println("in Configure the button bindings ");
-    
+
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,
