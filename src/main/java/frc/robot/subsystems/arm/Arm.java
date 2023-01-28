@@ -8,39 +8,42 @@ import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
 
-	private final Logger logger = Logger.getInstance();
+  private final Logger logger = Logger.getInstance();
 
-	private static final SimpleMotorFeedforward extendFF = RobotConstants.get().moduleDriveFF().getFeedforward(); 
-	private static final SimpleMotorFeedforward rotateFF = RobotConstants.get().moduleTurnFF().getFeedforward();
+  private static final SimpleMotorFeedforward extendFF =
+      RobotConstants.get().moduleDriveFF().getFeedforward();
+  private static final SimpleMotorFeedforward rotateFF =
+      RobotConstants.get().moduleTurnFF().getFeedforward();
 
-	private final ArmIO armIO;
-	private final ModuleIOInputsAutoLogged armIOInputs = new ModuleIOInputsAutoLogged();
+  private final ArmIO armIO;
+  private final ArmIOInputsAutoLogged armIOInputs = new ArmIOInputsAutoLogged();
 
-	private enum ArmMode {
-		NORMAL,
-		EXTEND_CHARACTERIZATION,
-		ROTATE_CHARACTERIZATION
-	}
-	private ArmMode mode = ArmMode.NORMAL;
+  private enum ArmMode {
+    NORMAL,
+    EXTEND_CHARACTERIZATION,
+    ROTATE_CHARACTERIZATION
+  }
 
-	private double angle = 0;
-	private double characterizationVoltage = 0.0;
+  private ArmMode mode = ArmMode.NORMAL;
 
-	private double extendSetpoint = 0.0;
-	private double rotateSetpoint = 0.0;
+  private double angle = 0;
+  private double characterizationVoltage = 0.0;
 
-	/**
-	 * Configures the arm subsystem
-	 *
-	 * @param armIO   Arm IO
-	 */
-	public Arm(ArmIO armIO) {
-		super();
-		this.armIO = armIO;
-		armIO.updateInputs(armIOInputs);
-	}
+  private double extendSetpoint = 0.0;
+  private double rotateSetpoint = 0.0;
 
-	@Override
+  /**
+   * Configures the arm subsystem
+   *
+   * @param armIO Arm IO
+   */
+  public Arm(ArmIO armIO) {
+    super();
+    this.armIO = armIO;
+    armIO.updateInputs(armIOInputs);
+  }
+
+  @Override
   public void periodic() {
 
     // Update inputs for IOs
@@ -61,73 +64,71 @@ public class Arm extends SubsystemBase {
           // In normal mode, run the motors for arm extension and rotation
           // based on the current setpoint
 
-					// Run extend controller
-					double extendRadPerSec = 0.0;
-					// TODO: Translate setpoint to voltage
-							// setpointStatesOptimized[i].speedMetersPerSecond
-							//     / (RobotConstants.get().moduleWheelDiameter() / 2);
-					armIO.setExtendVoltage(extendFF.calculate(extendRadPerSec));
+          // Run extend controller
+          double extendRadPerSec = 0.0;
+          // TODO: Translate setpoint to voltage
+          // setpointStatesOptimized[i].speedMetersPerSecond
+          //     / (RobotConstants.get().moduleWheelDiameter() / 2);
+          armIO.setExtendVoltage(extendFF.calculate(extendRadPerSec));
 
-					// Run extend controller
-					double rotateRadPerSec = 0.0;
-					// TODO: Translate setpoint to voltage
-							// setpointStatesOptimized[i].speedMetersPerSecond
-							//     / (RobotConstants.get().moduleWheelDiameter() / 2);
-					armIO.setRotateVoltage(rotateFF.calculate(rotateRadPerSec));
+          // Run extend controller
+          double rotateRadPerSec = 0.0;
+          // TODO: Translate setpoint to voltage
+          // setpointStatesOptimized[i].speedMetersPerSecond
+          //     / (RobotConstants.get().moduleWheelDiameter() / 2);
+          armIO.setRotateVoltage(rotateFF.calculate(rotateRadPerSec));
 
-					// Log individual setpoints
-					logger.recordOutput("ArmExtendSetpoint", extendRadPerSec);
-					logger.recordOutput("ArmRotateSetpoint", rotateRadPerSec);
+          // Log individual setpoints
+          logger.recordOutput("ArmExtendSetpoint", extendRadPerSec);
+          logger.recordOutput("ArmRotateSetpoint", rotateRadPerSec);
           break;
 
         case EXTEND_CHARACTERIZATION:
-					armIO.setExtendVoltage(characterizationVoltage);
+          armIO.setExtendVoltage(characterizationVoltage);
           break;
 
-				case ROTATE_CHARACTERIZATION:
-					armIO.setRotateVoltage(characterizationVoltage);
+        case ROTATE_CHARACTERIZATION:
+          armIO.setRotateVoltage(characterizationVoltage);
           break;
-			}
+      }
     }
 
-		// TODO: Translate velocity into movement
-		double PLACEHOLDER = 1.0;
-		// Log measured states
-		logger.recordOutput("Arm/Extend/Velocity", armIOInputs.extendVelocity * PLACEHOLDER);
-		logger.recordOutput("Arm/Extend/Position", armIOInputs.extendPosition * PLACEHOLDER);
-		logger.recordOutput("Arm/Rotate/Velocity", armIOInputs.rotateVelocity * PLACEHOLDER);
-		logger.recordOutput("Arm/Rotate/Position", armIOInputs.rotatePosition * PLACEHOLDER);
+    // TODO: Translate velocity into movement
+    double PLACEHOLDER = 1.0;
+    // Log measured states
+    logger.recordOutput("Arm/Extend/Velocity", armIOInputs.extendVelocity * PLACEHOLDER);
+    logger.recordOutput("Arm/Extend/Position", armIOInputs.extendPosition * PLACEHOLDER);
+    logger.recordOutput("Arm/Rotate/Velocity", armIOInputs.rotateVelocity * PLACEHOLDER);
+    logger.recordOutput("Arm/Rotate/Position", armIOInputs.rotatePosition * PLACEHOLDER);
   }
 
+  public void setExtendSetpoint(double setpoint) {
+    extendSetpoint = setpoint;
+  }
 
-	public void setExtendSetpoint(double setpoint) {
-		extendSetpoint = setpoint;
-	}
+  public void setRotateSetpoint(double setpoint) {
+    rotateSetpoint = setpoint;
+  }
 
-	public void setRotateSetpoint(double setpoint) {
-		rotateSetpoint = setpoint;
-	}
+  public void characterizeExtend() {
+    mode = ArmMode.EXTEND_CHARACTERIZATION;
+  }
 
-	public void characterizeExtend() {
-		mode = ArmMode.EXTEND_CHARACTERIZATION;
-	}
+  public void characterizeRotate() {
+    mode = ArmMode.ROTATE_CHARACTERIZATION;
+  }
 
-	public void characterizeRotate() {
-		mode = ArmMode.ROTATE_CHARACTERIZATION;
-	}
-
-	public void runCharacterizationVolts(double volts) {
+  public void runCharacterizationVolts(double volts) {
     characterizationVoltage = volts;
   }
 
   public double getCharacterizationVelocity() {
-		if (mode == ArmMode.EXTEND_CHARACTERIZATION) {
-			return armIOInputs.extendVelocity;
-		} else if (mode == ArmMode.ROTATE_CHARACTERIZATION) {
-			return armIOInputs.rotateVelocity;
-		} else {
-			return 0.0;
-		}
-	}
-
+    if (mode == ArmMode.EXTEND_CHARACTERIZATION) {
+      return armIOInputs.extendVelocity;
+    } else if (mode == ArmMode.ROTATE_CHARACTERIZATION) {
+      return armIOInputs.rotateVelocity;
+    } else {
+      return 0.0;
+    }
+  }
 }

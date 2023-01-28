@@ -1,35 +1,30 @@
 package frc.robot.commands.arm;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.arm.Arm;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-
 public class ArmStopCMD extends CommandBase {
-    private final Arm arm;
+  private final Arm arm;
 
-    public ArmStopCMD(Arm arm) {
-        this.arm = arm;
+  public ArmStopCMD(Arm arm) {
+    this.arm = arm;
 
-        addRequirements(this.arm);
-    }
+    addRequirements(this.arm);
+  }
 
-    @Override
-    public void initialize() {
-    }
+  @Override
+  public void initialize() {}
 
+  @Override
+  public void execute() {
+    // arm.stop();
+  }
 
-    @Override 
-    public void execute() {
-        arm.stop();
-    }
+  @Override
+  public void end(boolean interrupted) {}
 
-
-    @Override
-    public void end(boolean interrupted) {}
-
-
-    @Override 
-    public boolean isFinished() {
-        return arm.isStopped();
-    }
+  @Override
+  public boolean isFinished() {
+    return false; // TODO: arm.isStopped();
+  }
 }

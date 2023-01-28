@@ -99,5 +99,5 @@ public interface Constants {
 
   int armMotorTwoId();
 
-    public int armSolenoidChannel();
+  public int armSolenoidChannel();
 }

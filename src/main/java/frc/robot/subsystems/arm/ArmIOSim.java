@@ -12,7 +12,7 @@ public class ArmIOSim implements ArmIO {
   private double extendAppliedVolts = 0.0;
 
   @Override
-  public void updateInputs(ModuleIOInputs inputs) {
+  public void updateInputs(ArmIOInputs inputs) {
     extendSim.update(0.02);
     rotateSim.update(0.02);
 

@@ -19,8 +19,8 @@ public class ArmIOPhysical implements ArmIO {
 
   // private int resetCount = 0;
 
-  public ArmIOPhysical(int extendMotorId, int rotateMotorId, int rotateAbsEncoderId, 
-      int lidarId, int index) {
+  public ArmIOPhysical(
+      int extendMotorId, int rotateMotorId, int rotateAbsEncoderId, int lidarId, int index) {
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
     extendEncoder = extendMotor.getEncoder();
@@ -51,7 +51,7 @@ public class ArmIOPhysical implements ArmIO {
   }
 
   @Override
-  public void updateInputs(ModuleIOInputs inputs) {
+  public void updateInputs(ArmIOInputs inputs) {
 
     inputs.extendPositionAbsolute = lidar.getDistance() / 100.0;
 

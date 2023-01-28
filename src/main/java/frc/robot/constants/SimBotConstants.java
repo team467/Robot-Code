@@ -119,4 +119,34 @@ public class SimBotConstants implements Constants {
   public FeedbackConstant chassisTurnFB() {
     return new FeedbackConstant(0, 0);
   }
+
+  @Override
+  public GearRatio armExtendGearRatio() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public GearRatio armRotateGearRatio() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public int armMotorOneId() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public int armMotorTwoId() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public int armSolenoidChannel() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
 }
