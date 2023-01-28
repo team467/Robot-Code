@@ -18,6 +18,8 @@ import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacter
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro.GyroIO;
 import frc.lib.io.gyro.GyroIOADIS16470;
+import frc.robot.commands.arm.ArmManualExtendCMD;
+import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.drive.Drive;
@@ -26,6 +28,10 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.arm.ArmIOPhysical;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -37,6 +43,8 @@ public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
   private final Drive drive;
+  private final Arm arm;
+  
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -87,6 +95,7 @@ public class RobotContainer {
         break;
     }
 
+    arm = new Arm(new ArmIOPhysical(20,0,1,2,3));
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     autoChooser.addOption(
@@ -137,6 +146,11 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> drive.setPose(new Pose2d()))
                 .andThen(Commands.print("Reset pose")));
+        driverController.y().onTrue(new ArmManualExtendCMD(arm));
+        driverController.b().onTrue(new ArmStopCMD(arm));
+        
+          
+        
   }
 
   /**
