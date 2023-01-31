@@ -37,7 +37,8 @@ public interface Constants {
 
   enum RobotType {
     ROBOT_COMP,
-    ROBOT_SIMBOT
+    ROBOT_SIMBOT,
+    ROBOT_BRIEFCASEBOT
   }
 
   enum Mode {
@@ -80,4 +81,10 @@ public interface Constants {
   FeedbackConstant chassisDriveFB();
 
   FeedbackConstant chassisTurnFB();
+
+  public int ledChannel();
+
+  public boolean hasLed2023();
+
+  public int led2023LedCount();
 }

@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.input.ControllerQueue;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -23,6 +24,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+  // private LidarLitePWM lidar;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -30,6 +32,8 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
+
+    // lidar = new LidarLitePWM(new DigitalInput(1));
     Logger logger = Logger.getInstance();
 
     // Record metadata
@@ -46,7 +50,7 @@ public class Robot extends LoggedRobot {
 
     // Set up data receivers & replay source
     switch (RobotConstants.get().mode()) {
-      // Running on a real robot, log to a USB stick if possible
+        // Running on a real robot, log to a USB stick if possible
       case REAL -> {
         logger.addDataReceiver(new NT4Publisher());
         String folder = RobotConstants.get().logFolder();
@@ -55,13 +59,13 @@ public class Robot extends LoggedRobot {
         }
       }
 
-      // Running a physics simulator, log to local folder
+        // Running a physics simulator, log to local folder
       case SIM -> {
         logger.addDataReceiver(new WPILOGWriter(""));
         logger.addDataReceiver(new NT4Publisher());
       }
 
-      // Replaying a log, set up replay source
+        // Replaying a log, set up replay source
       case REPLAY -> {
         setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog();
@@ -90,6 +94,8 @@ public class Robot extends LoggedRobot {
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
+    ControllerQueue.getInstance().run();
+
     Threads.setCurrentThreadPriority(true, 10);
   }
 
@@ -99,12 +105,14 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    // System.out.println("lidar: " + lidar.getDistance() + " cm");
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    autonomousCommand = robotContainer.getAutonomousCommand();
+    // autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {

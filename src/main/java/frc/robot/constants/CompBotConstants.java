@@ -124,4 +124,22 @@ public class CompBotConstants implements Constants {
   public FeedbackConstant chassisTurnFB() {
     return new FeedbackConstant(0.1);
   } // TODO: tune
+
+  @Override
+  public int ledChannel() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public boolean hasLed2023() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public int led2023LedCount() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
 }

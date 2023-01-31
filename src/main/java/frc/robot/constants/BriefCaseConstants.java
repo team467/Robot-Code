@@ -9,37 +9,37 @@ import frc.robot.constants.controls.GearRatio;
 import frc.robot.constants.controls.SimpleFeedforwardConstant;
 import java.util.Arrays;
 
-public class SimBotConstants implements Constants {
+public class BriefCaseConstants implements Constants {
 
   @Override
   public RobotType robot() {
-    return RobotType.ROBOT_COMP;
+    return RobotType.ROBOT_BRIEFCASEBOT;
   }
 
   @Override
   public String logFolder() {
-    return "";
+    return "/media/sda1";
   }
 
   // Drive constants
   @Override
   public double driveMaxCoastVelocity() {
-    return 0;
-  }
+    return 0.5;
+  } // TODO: tune
 
   private Translation2d[] moduleTranslations() {
     return new Translation2d[] {
-      new Translation2d(0.65 / 2, 0.65 / 2),
-      new Translation2d(0.65 / 2, -0.65 / 2),
-      new Translation2d(-0.65 / 2, -0.65 / 2),
-      new Translation2d(-0.65 / 2, 0.65 / 2)
+      new Translation2d(Units.inchesToMeters(11.50), Units.inchesToMeters(11.50)),
+      new Translation2d(Units.inchesToMeters(11.50), -Units.inchesToMeters(11.50)),
+      new Translation2d(-Units.inchesToMeters(11.50), Units.inchesToMeters(11.50)),
+      new Translation2d(-Units.inchesToMeters(11.50), -Units.inchesToMeters(11.50))
     };
   }
 
   @Override
   public double maxLinearSpeed() {
-    return Units.feetToMeters(14.5);
-  }
+    return 3.0;
+  } // TODO: tune
 
   @Override
   public double maxAngularSpeed() {
@@ -52,7 +52,7 @@ public class SimBotConstants implements Constants {
 
   @Override
   public double moduleWheelDiameter() {
-    return Units.inchesToMeters(2);
+    return Units.inchesToMeters(4);
   }
 
   @Override
@@ -67,17 +67,17 @@ public class SimBotConstants implements Constants {
 
   @Override
   public SimpleFeedforwardConstant moduleDriveFF() {
-    return new SimpleFeedforwardConstant(0.116970, 0.133240);
-  }
+    return new SimpleFeedforwardConstant(0.15026, 0.13682);
+  } // TODO: tune
 
   @Override
   public SimpleFeedforwardConstant moduleTurnFF() {
-    return new SimpleFeedforwardConstant(0, 0);
+    return new SimpleFeedforwardConstant(0.16302, 0.0089689, 0.00034929);
   }
 
   @Override
   public FeedbackConstant moduleTurnFB() {
-    return new FeedbackConstant(23.0, 0.0);
+    return new FeedbackConstant(3.2526, 0.05);
   }
 
   @Override
@@ -87,54 +87,56 @@ public class SimBotConstants implements Constants {
 
   @Override
   public Rotation2d[] absoluteAngleOffset() {
-    return new Rotation2d[] {new Rotation2d()};
+    return new Rotation2d[] {
+      Rotation2d.fromDegrees(-46.75781250000001),
+      Rotation2d.fromDegrees(11.162109374999998),
+      Rotation2d.fromDegrees(110.478515625),
+      Rotation2d.fromDegrees(-100.19531250000001)
+    };
   }
 
   @Override
   public double chassisDriveMaxVelocity() {
-    return Units.inchesToMeters(150.0);
-  }
+    return 1.2;
+  } // TODO: tune
 
   @Override
   public double chassisDriveMaxAcceleration() {
-    return Units.inchesToMeters(200);
-  }
+    return 1.2;
+  } // TODO: tune
 
   @Override
   public double chassisTurnMaxVelocity() {
-    return Units.inchesToMeters(150.0);
-  }
+    return 0.2;
+  } // TODO: tune
 
   @Override
   public double chassisTurnMaxAcceleration() {
-    return Units.inchesToMeters(200);
-  }
+    return 0.2;
+  } // TODO: tune
 
   @Override
   public FeedbackConstant chassisDriveFB() {
-    return new FeedbackConstant(0, 0);
-  }
+    return new FeedbackConstant(0.1);
+  } // TODO: tune
 
   @Override
   public FeedbackConstant chassisTurnFB() {
-    return new FeedbackConstant(0, 0);
+    return new FeedbackConstant(0.1);
+  } // TODO: tune
+
+  @Override
+  public boolean hasLed2023() {
+    return true;
   }
 
   @Override
   public int ledChannel() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public boolean hasLed2023() {
-    // TODO Auto-generated method stub
-    return false;
+    return 2;
   }
 
   @Override
   public int led2023LedCount() {
-    // TODO Auto-generated method stub
-    return 0;
+    return 10;
   }
 }

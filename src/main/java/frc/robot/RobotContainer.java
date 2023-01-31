@@ -13,13 +13,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.lib.characterization.FeedForwardCharacterization;
+import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro.GyroIO;
 import frc.lib.io.gyro.GyroIOADIS16470;
+import frc.lib.leds.LEDManager;
+import frc.robot.commands.LedBlueGold;
+import frc.robot.commands.LedRainbowCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
-import frc.lib.characterization.FeedForwardCharacterization;
-import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import frc.robot.input.CustomController2022;
+import frc.robot.subsystems.Led2023;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -34,6 +40,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  private final CustomController2022 operatorJoystick = new CustomController2022(1);
+  private final JoystickButton operatorFlush =
+      operatorJoystick.getButton(CustomController2022.Buttons.FLUSH);
+  private final JoystickButton operatorShoot =
+      operatorJoystick.getButton(CustomController2022.Buttons.SHOOT);
+
   // Subsystems
   // private final Subsystem subsystem;
   private final Drive drive;
@@ -44,6 +56,8 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser =
       new LoggedDashboardChooser<>("Auto Choices");
+
+  private Led2023 led2023 = null;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -98,8 +112,8 @@ public class RobotContainer {
                 new Waypoint(new Translation2d(1, 1)),
                 new Waypoint(new Translation2d(2, -1)),
                 Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
-    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
-    // Rotation2d()));
+    // autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0,
+    new Rotation2d();
     autoChooser.addOption(
         "Drive Characterization",
         Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
@@ -115,6 +129,31 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    initializeSubsystems();
+  }
+
+  private void configureShooter2023() {
+    if (RobotConstants.get().hasLed2023()) {
+      operatorShoot.onTrue(new LedRainbowCMD(led2023));
+      operatorFlush.onTrue(new LedBlueGold(led2023));
+    }
+  }
+
+  private void initializeSubsystems() {
+    System.out.println("Pikachu1");
+    initLed2023();
+    LEDManager.getInstance().init(RobotConstants.get().ledChannel());
+    configureShooter2023();
+  }
+
+  private void initLed2023() {
+    if (RobotConstants.get().hasLed2023()) {
+      led2023 = new Led2023();
+      System.out.println("Pikachu2");
+
+      // led2023.setDefaultCommand(new LedRainbowCMD(led2023));
+    }
   }
 
   /**
