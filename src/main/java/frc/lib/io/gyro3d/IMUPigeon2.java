@@ -3,12 +3,12 @@ package frc.lib.io.gyro3d;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
-public class IMU3DPigeon2 implements IMUIO {
+public class IMUPigeon2 implements IMUIO {
   private final WPI_Pigeon2 pigeon;
   double[] rate = new double[3];
   double[] gravVector = new double[3];
 
-  public IMU3DPigeon2(int deviceID) {
+  public IMUPigeon2(int deviceID) {
     pigeon = new WPI_Pigeon2(deviceID);
   }
 
