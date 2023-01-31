@@ -11,7 +11,7 @@ import org.littletonrobotics.junction.Logger;
 public class Arm extends SubsystemBase {
 
   private final CANSparkMax armExtendMotor;
-  private final CANSparkMax armRotateMotor;
+  // private final CANSparkMax armRotateMotor;
 
   private final Logger logger = Logger.getInstance();
 
@@ -56,7 +56,7 @@ public class Arm extends SubsystemBase {
     super();
     this.armIO = armIO;
     this.armExtendMotor = armIO.getExtendMotor();
-    this.armRotateMotor = armIO.getRotateMotor();
+    // this.armRotateMotor = armIO.getRotateMotor();
 
     armIO.updateInputs(armIOInputs);
   }
@@ -81,7 +81,7 @@ public class Arm extends SubsystemBase {
   public void stop() {
     isManual = true;
     armExtendMotor.set(0.0);
-    armRotateMotor.set(0.0);
+    // armRotateMotor.set(0.0);
     manualExtend = 0;
     manualRotate = 0;
   }
@@ -100,7 +100,7 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     if (isManual) {
       armExtendMotor.set(manualExtend);
-      armRotateMotor.set(manualRotate);
+      // armRotateMotor.set(manualRotate);
     }
     // Update inputs for IOs
     for (int i = 0; i < 4; i++) {
@@ -159,7 +159,7 @@ public class Arm extends SubsystemBase {
 
     // TODO: Proper conversions
     armExtendMotor.getEncoder().setPosition(distanceTargetInches);
-    armRotateMotor.getEncoder().setPosition(rotateTargetDegrees);
+    // armRotateMotor.getEncoder().setPosition(rotateTargetDegrees);
   }
 
   public void setExtendSetpoint(double setpoint) {
@@ -208,8 +208,9 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isStopped() {
-    if (armExtendMotor.getEncoder().getVelocity() <= 0.1
-        && armRotateMotor.getEncoder().getVelocity() <= 0.1) return true;
+    if (armExtendMotor.getEncoder().getVelocity() <= 0.1)
+      // && armRotateMotor.getEncoder().getVelocity() <= 0.1)
+      return true;
     return false;
   }
 
@@ -217,8 +218,8 @@ public class Arm extends SubsystemBase {
     double currentDistance = armExtendMotor.getEncoder().getPosition(); // NEEDS CONVERSION
     // TODO: CHANGE to Lidar
 
-    double currentAngle = armRotateMotor.getEncoder().getPosition(); // NEEDS CONVERSION
-
+    // double currentAngle = armRotateMotor.getEncoder().getPosition(); // NEEDS CONVERSION
+    double currentAngle = 0;
     if (currentDistance >= (distanceTargetInches - EXTEND_TOLERANCE_INCHES)
         && (currentDistance <= (distanceTargetInches + EXTEND_TOLERANCE_INCHES)
             && (currentAngle >= (rotateTargetDegrees - EXTEND_TOLERANCE_INCHES)
