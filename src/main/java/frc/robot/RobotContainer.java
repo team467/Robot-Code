@@ -161,6 +161,8 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> drive.setPose(new Pose2d()))
                 .andThen(Commands.print("Reset pose")));
+
+    driverController.a().whileTrue(new Balancing(drive));
   }
 
   /**
