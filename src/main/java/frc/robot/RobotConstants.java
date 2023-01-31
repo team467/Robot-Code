@@ -48,7 +48,8 @@ public class RobotConstants {
       try {
         initConstants();
       } catch (IOException e) {
-        DriverStation.reportError("[RobotConstants] Error initializing constants!", e.getStackTrace());
+        DriverStation.reportError(
+            "[RobotConstants] Error initializing constants!", e.getStackTrace());
         throw new RuntimeException(e); // No compilation warnings
       }
     }

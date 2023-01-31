@@ -28,17 +28,15 @@ public class ModuleIOSim implements ModuleIO {
       turnAbsolutePosition -= 2.0 * Math.PI;
     }
 
-    inputs.drivePosition += driveSim.getAngularVelocityRadPerSec() * 0.02;
-    inputs.driveVelocity = driveSim.getAngularVelocityRadPerSec();
+    inputs.drivePositionRad += driveSim.getAngularVelocityRadPerSec() * 0.02;
+    inputs.driveVelocityRadPerSec = driveSim.getAngularVelocityRadPerSec();
     inputs.driveAppliedVolts = driveAppliedVolts;
-    inputs.driveCurrent = new double[] {Math.abs(driveSim.getCurrentDrawAmps())};
-    inputs.driveTemp = new double[] {};
+    inputs.driveCurrentAmps = new double[] {Math.abs(driveSim.getCurrentDrawAmps())};
 
-    inputs.turnPositionAbsolute = turnAbsolutePosition;
-    inputs.turnPosition = turnRelativePosition;
-    inputs.turnVelocity = turnSim.getAngularVelocityRadPerSec();
-    inputs.turnCurrent = new double[] {Math.abs(turnSim.getCurrentDrawAmps())};
-    inputs.turnTemp = new double[] {};
+    inputs.turnPositionAbsoluteRad = turnAbsolutePosition;
+    inputs.turnPositionRad = turnRelativePosition;
+    inputs.turnVelocityRadPerSec = turnSim.getAngularVelocityRadPerSec();
+    inputs.turnCurrentAmps = new double[] {Math.abs(turnSim.getCurrentDrawAmps())};
   }
 
   @Override

@@ -3,7 +3,6 @@ package frc.robot.constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.util.Units;
 import frc.robot.constants.controls.FeedbackConstant;
 import frc.robot.constants.controls.GearRatio;
 import frc.robot.constants.controls.SimpleFeedforwardConstant;
@@ -28,7 +27,9 @@ public class BriefcaseConstants implements Constants {
   }
 
   private Translation2d[] moduleTranslations() {
-    return new Translation2d[] {new Translation2d(), new Translation2d(), new Translation2d(), new Translation2d()};
+    return new Translation2d[] {
+      new Translation2d(), new Translation2d(), new Translation2d(), new Translation2d()
+    };
   }
 
   @Override
@@ -82,7 +83,9 @@ public class BriefcaseConstants implements Constants {
 
   @Override
   public Rotation2d[] absoluteAngleOffset() {
-    return new Rotation2d[] {new Rotation2d(), new Rotation2d(), new Rotation2d(), new Rotation2d()};
+    return new Rotation2d[] {
+      new Rotation2d(), new Rotation2d(), new Rotation2d(), new Rotation2d()
+    };
   }
 
   @Override
