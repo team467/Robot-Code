@@ -116,9 +116,14 @@ public class Drive extends SubsystemBase {
               setpointStates, RobotConstants.get().maxLinearSpeed());
 
           // Set setpoints to modules
+          boolean isStationary =
+              Math.abs(setpoint.vxMetersPerSecond) < 1e-3
+                  && Math.abs(setpoint.vyMetersPerSecond) < 1e-3
+                  && Math.abs(setpoint.omegaRadiansPerSecond) < 1e-3;
+
           SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
           for (int i = 0; i < 4; i++) {
-            optimizedStates[i] = modules[i].runSetpoint(setpointStates[i]);
+            optimizedStates[i] = modules[i].runSetpoint(setpointStates[i], isStationary);
           }
 
           // Log setpoint states

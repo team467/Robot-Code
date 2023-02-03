@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.GeomUtils;
 import frc.robot.RobotConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -78,9 +79,14 @@ public class DriveWithJoysticks extends CommandBase {
               speeds.vxMetersPerSecond,
               speeds.vyMetersPerSecond,
               speeds.omegaRadiansPerSecond,
-              drive.getPose().getRotation());
+              AllianceFlipUtil.apply(drive.getPose().getRotation()));
     }
 
     drive.runVelocity(speeds);
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    drive.stop();
   }
 }
