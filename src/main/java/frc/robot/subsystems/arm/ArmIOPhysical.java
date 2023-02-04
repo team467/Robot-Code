@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.RobotConstants;
 
 public class ArmIOPhysical implements ArmIO {
   private final CANSparkMax extendMotor;
@@ -22,8 +23,8 @@ public class ArmIOPhysical implements ArmIO {
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     // rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
     extendEncoder = extendMotor.getEncoder();
-    extendEncoder.setPosition(0.0);
-    extendEncoder.setPositionConversionFactor(10);
+    extendEncoder.setPosition(lidar.getDistance());
+    extendEncoder.setPositionConversionFactor(RobotConstants.get().conversionFactor());
 
     rotateMotor = null;
     // rotateEncoder = rotateMotor.getEncoder();

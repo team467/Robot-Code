@@ -99,5 +99,7 @@ public interface Constants {
 
   int armMotorTwoId();
 
+  double conversionFactor();
+
   public int armSolenoidChannel();
 }

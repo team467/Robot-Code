@@ -154,4 +154,9 @@ public class CompBotConstants implements Constants {
     // TODO Auto-generated method stub
     return 0;
   }
+
+  @Override
+  public double conversionFactor() {
+    return 0;
+  }
 }

@@ -1,5 +1,6 @@
 package frc.robot.subsystems.arm;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -29,8 +30,6 @@ public class Arm extends SubsystemBase {
 
   private double angle = 0;
   private double characterizationVoltage = 0.0;
-  private double distanceTargetInches = 0;
-  private double rotateTargetDegrees = 0;
   private double extendSetpoint = 0.0;
   private double rotateSetpoint = 0.0;
 
@@ -43,6 +42,7 @@ public class Arm extends SubsystemBase {
   private double manualExtend = 0.0;
   private double manualRotate = 0.0;
 
+  private PIDController extendPID = new PIDController(0.1, 0.0, 10.0);
   /**
    * Configures the arm subsystem
    *
@@ -72,6 +72,7 @@ public class Arm extends SubsystemBase {
     return isManual;
   }
 
+  
   public void stop() {
     isManual = true;
     armIO.setExtendVoltage(0.0);
@@ -106,26 +107,10 @@ public class Arm extends SubsystemBase {
     } else {
       switch (mode) {
         case NORMAL:
-          // In normal mode, run the motors for arm extension and rotation
-          // based on the current setpoint
+          armIO.setExtendVoltage(extendPID.calculate(armIOInputs.extendPosition, extendSetpoint));
 
-          // Run extend controller
-          double extendRadPerSec = 0.0;
-          // TODO: Translate setpoint to voltage
-          // setpointStatesOptimized[i].speedMetersPerSecond
-          //     / (RobotConstants.get().moduleWheelDiameter() / 2);
-          armIO.setExtendVoltage(extendFF.calculate(extendRadPerSec));
-
-          // Run extend controller
-          double rotateRadPerSec = 0.0;
-          // TODO: Translate setpoint to voltage
-          // setpointStatesOptimized[i].speedMetersPerSecond
-          //     / (RobotConstants.get().moduleWheelDiameter() / 2);
-          armIO.setRotateVoltage(rotateFF.calculate(rotateRadPerSec));
-
-          // Log individual setpoints
-          logger.recordOutput("ArmExtendSetpoint", extendRadPerSec);
-          logger.recordOutput("ArmRotateSetpoint", rotateRadPerSec);
+          logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
+          logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);
           break;
 
         case EXTEND_CHARACTERIZATION:
@@ -183,11 +168,6 @@ public class Arm extends SubsystemBase {
     super.initSendable(builder);
   }
 
-  public void extendAndRotate(double distanceTargetInches, double rotateTargetDegrees) {
-    this.distanceTargetInches = distanceTargetInches;
-    this.rotateTargetDegrees = rotateTargetDegrees;
-  }
-
   public boolean isStopped() {
     if (armIOInputs.extendVelocity <= 0.1 && armIOInputs.rotateVelocity <= 0.1) return true;
     return false;
@@ -199,10 +179,10 @@ public class Arm extends SubsystemBase {
 
     // double currentAngle = armRotateMotor.getEncoder().getPosition(); // NEEDS CONVERSION
     double currentAngle = 0;
-    if (currentDistance >= (distanceTargetInches - EXTEND_TOLERANCE_INCHES)
-        && (currentDistance <= (distanceTargetInches + EXTEND_TOLERANCE_INCHES)
-            && (currentAngle >= (rotateTargetDegrees - EXTEND_TOLERANCE_INCHES)
-                && (currentAngle <= (rotateTargetDegrees + EXTEND_TOLERANCE_INCHES))))) {
+    if (currentDistance >= (extendSetpoint - EXTEND_TOLERANCE_INCHES)
+        && (currentDistance <= (extendSetpoint + EXTEND_TOLERANCE_INCHES)
+            && (currentAngle >= (rotateSetpoint - EXTEND_TOLERANCE_INCHES)
+                && (currentAngle <= (rotateSetpoint + EXTEND_TOLERANCE_INCHES))))) {
       return true;
     }
 

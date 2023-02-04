@@ -14,7 +14,6 @@ public class LidarLitePWM {
 
   private Counter counter;
   private LinearFilter filter;
-  private LinearFilter filter2;
   private int printedWarningCount = 5;
 
   /**
@@ -32,7 +31,6 @@ public class LidarLitePWM {
 
     // Set up a linear filter to discard outliers; filter size is ~20 measurements
     filter = LinearFilter.movingAverage(20);
-    filter2 = LinearFilter.singlePoleIIR(0.1, 0.02);
   }
 
   /**
@@ -41,7 +39,7 @@ public class LidarLitePWM {
    * @return Distance in cm
    */
   public double getDistance() {
-    double cm;
+    double m;
     /*
      * If we haven't seen the first rising to falling pulse, then we have no
      * measurement.
@@ -59,7 +57,7 @@ public class LidarLitePWM {
      * distance.
      */
     double measure = filter.calculate(counter.getPeriod());
-    cm = (measure * 1000000.0 / 10.0) + CALIBRATION_OFFSET;
-    return cm;
+    m = (measure * 100000.0) + CALIBRATION_OFFSET;
+    return m;
   }
 }

@@ -157,6 +157,11 @@ public class RobotArmConstants implements Constants {
     return 20;
   }
 
+  @Override
+  public double conversionFactor() {
+    return 49.17;
+  }
+
   // @Override
   // public boolean hasClimber2020() {
   //     return false;
