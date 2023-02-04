@@ -12,7 +12,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.io.gyro.GyroIO;
+import frc.lib.io.gyro2d.Gyro2DIO;
+import frc.lib.io.gyro2d.Gyro2DIOInputsAutoLogged;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -31,8 +32,8 @@ public class Drive extends SubsystemBase {
         new ModuleIOInputsAutoLogged(),
         new ModuleIOInputsAutoLogged()
       };
-  private final GyroIO gyroIO;
-  private final GyroIO.GyroIOInputs gyroIOInputs = new GyroIO.GyroIOInputs();
+  private final Gyro2DIO gyroIO;
+  private final Gyro2DIOInputsAutoLogged gyroIOInputs = new Gyro2DIOInputsAutoLogged();
 
   private double angle = 0;
   private DriveMode driveMode = DriveMode.NORMAL;
@@ -53,7 +54,7 @@ public class Drive extends SubsystemBase {
    * @param blIO Back Left Module IO
    * @param brIO Back Right Module IO
    */
-  public Drive(GyroIO gyroIO, ModuleIO flIO, ModuleIO frIO, ModuleIO blIO, ModuleIO brIO) {
+  public Drive(Gyro2DIO gyroIO, ModuleIO flIO, ModuleIO frIO, ModuleIO blIO, ModuleIO brIO) {
     super();
     this.gyroIO = gyroIO;
     moduleIOs[0] = flIO;
@@ -124,7 +125,7 @@ public class Drive extends SubsystemBase {
       }
     } else {
       switch (driveMode) {
-        case NORMAL:
+        case NORMAL -> {
           // In normal mode, run the controllers for turning and driving based on the current
           // setpoint
           SwerveModuleState[] setpointStates =
@@ -137,7 +138,6 @@ public class Drive extends SubsystemBase {
               Math.abs(setpoint.vxMetersPerSecond) < 1e-3
                   && Math.abs(setpoint.vyMetersPerSecond) < 1e-3
                   && Math.abs(setpoint.omegaRadiansPerSecond) < 1e-3;
-
           SwerveModuleState[] setpointStatesOptimized =
               new SwerveModuleState[] {null, null, null, null};
           for (int i = 0; i < 4; i++) {
@@ -177,14 +177,13 @@ public class Drive extends SubsystemBase {
           Logger.getInstance().recordOutput("SwerveModuleStates/Setpoints", setpointStates);
           Logger.getInstance()
               .recordOutput("SwerveModuleStates/SetpointsOptimized", setpointStatesOptimized);
-          break;
-
-        case CHARACTERIZATION:
+        }
+        case CHARACTERIZATION -> {
           for (int i = 0; i < 4; i++) {
             moduleIOs[i].setTurnVoltage(turnFB[i].calculate(turnPositions[i].getRadians(), 0.0));
             moduleIOs[i].setDriveVoltage(characterizationVoltage);
           }
-          break;
+        }
       }
     }
 

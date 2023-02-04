@@ -16,7 +16,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.holonomictrajectory.Waypoint;
-import frc.lib.io.gyro.GyroIO;
+import frc.lib.io.gyro2d.Gyro2DIO;
+import frc.lib.io.gyro2d.Gyro2DIOADIS16470;
 import frc.robot.commands.arm.Arm2023ManualRetracCMD;
 import frc.robot.commands.arm.ArmManualExtendCMD;
 import frc.robot.commands.arm.ArmStopCMD;
@@ -27,6 +28,7 @@ import frc.robot.subsystems.arm.ArmIOPhysical;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -56,49 +58,63 @@ public class RobotContainer {
 
     switch (RobotConstants.get().mode()) {
         // Real robot, instantiate hardware IO implementations
-      case REAL:
         // Init subsystems
         // subsystem = new Subsystem(new SubsystemIOImpl());
-        // drive =
-        //     new Drive(
-        //         new GyroIOADIS16470(),
-        //         new ModuleIOSparkMAX(5, 6, 11, 0),
-        //         new ModuleIOSparkMAX(7, 8, 12, 1),
-        //         new ModuleIOSparkMAX(3, 4, 10, 2),
-        //         new ModuleIOSparkMAX(1, 2, 9, 3));
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim());
-        break;
-
+      case REAL -> {
+        switch (RobotConstants.get().robot()) {
+          case ROBOT_COMP -> {
+            drive =
+                new Drive(
+                    new Gyro2DIOADIS16470(),
+                    new ModuleIOSparkMAX(5, 6, 11, 0),
+                    new ModuleIOSparkMAX(7, 8, 12, 1),
+                    new ModuleIOSparkMAX(3, 4, 10, 2),
+                    new ModuleIOSparkMAX(1, 2, 9, 3));
+          }
+          case ROBOT_BRIEFCASE -> {
+            drive =
+                new Drive(
+                    new Gyro2DIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {});
+          }
+          default -> {
+            drive =
+                new Drive(
+                    new Gyro2DIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {});
+          }
+        }
+      }
         // Sim robot, instantiate physics sim IO implementations
-      case SIM:
+      case SIM -> {
         // Init subsystems
         // subsystem = new Subsystem(new SubsystemIOSim());
         drive =
             new Drive(
-                new GyroIO() {},
+                new Gyro2DIO() {},
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        break;
+      }
 
         // Replayed robot, disable IO implementations
-      default:
+      default -> {
         // subsystem = new Subsystem(new SubsystemIO() {});
         drive =
             new Drive(
-                new GyroIO() {},
+                new Gyro2DIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        break;
+      }
     }
 
     System.out.println("creating an arm object");

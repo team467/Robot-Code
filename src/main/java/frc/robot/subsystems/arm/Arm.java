@@ -72,7 +72,6 @@ public class Arm extends SubsystemBase {
     return isManual;
   }
 
-  
   public void stop() {
     isManual = true;
     armIO.setExtendVoltage(0.0);
