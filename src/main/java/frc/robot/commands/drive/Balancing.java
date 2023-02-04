@@ -2,7 +2,6 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 
 public class Balancing extends CommandBase {
@@ -16,7 +15,11 @@ public class Balancing extends CommandBase {
   @Override
   public void execute() {
     double[] gravVec = drive.getGravVec();
-    drive.runVelocity(new ChassisSpeeds(gravVec[0], gravVec[1], 0.0));
+    if (Math.abs(gravVec[0]) + Math.abs(gravVec[1]) > 0.05) {
+      drive.runVelocity(new ChassisSpeeds(1.6 * gravVec[0], 1.6 * gravVec[1], 0.0));
+    } else {
+      drive.runVelocity(new ChassisSpeeds());
+    }
   }
 
   @Override
