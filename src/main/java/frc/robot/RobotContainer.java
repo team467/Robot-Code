@@ -54,8 +54,6 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    System.out.println("Mode : " + RobotConstants.get().mode());
-
     switch (RobotConstants.get().mode()) {
         // Real robot, instantiate hardware IO implementations
         // Init subsystems
@@ -117,8 +115,6 @@ public class RobotContainer {
       }
     }
 
-    System.out.println("creating an arm object");
-
     arm =
         new Arm(
             new ArmIOPhysical(
@@ -126,7 +122,6 @@ public class RobotContainer {
                 RobotConstants.get().armRotateMotorId(),
                 RobotConstants.get().armLidarId()));
 
-    System.out.println("finished creating an arm object");
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     autoChooser.addOption(
@@ -164,8 +159,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    System.out.println("in Configure the button bindings ");
-
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,
