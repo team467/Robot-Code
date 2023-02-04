@@ -31,6 +31,9 @@ public class RobotConstants {
           case "lovelace":
             RobotConstants.set(new CompBotConstants());
             break;
+          case "hopper":
+            RobotConstants.set(new CompBotConstants());
+            break;
           case "turing":
             RobotConstants.set(new BriefcaseConstants());
             break;
