@@ -95,7 +95,7 @@ public interface Constants {
 
   int armRotateMotorId();
 
-  double conversionFactor();
+  double armExtendConversionFactor();
 
-  public int armSolenoidChannel();
+  int armLidarId();
 }

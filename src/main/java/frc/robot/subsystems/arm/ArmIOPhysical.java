@@ -16,15 +16,14 @@ public class ArmIOPhysical implements ArmIO {
 
   private final LidarLitePWM lidar;
 
-  public ArmIOPhysical(
-      int extendMotorId, int rotateMotorId, int rotateAbsEncoderId, int lidarId, int index) {
+  public ArmIOPhysical(int extendMotorId, int rotateMotorId, int lidarId) {
     lidar = new LidarLitePWM(new DigitalInput(lidarId));
 
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     // rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
     extendEncoder = extendMotor.getEncoder();
     extendEncoder.setPosition(lidar.getDistance());
-    extendEncoder.setPositionConversionFactor(RobotConstants.get().conversionFactor());
+    extendEncoder.setPositionConversionFactor(RobotConstants.get().armExtendConversionFactor());
 
     rotateMotor = null;
     // rotateEncoder = rotateMotor.getEncoder();

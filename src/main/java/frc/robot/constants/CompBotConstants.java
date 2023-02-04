@@ -139,24 +139,21 @@ public class CompBotConstants implements Constants {
 
   @Override
   public int armExtendMotorId() {
-    // TODO Auto-generated method stub
-    return 0;
+    return 20;
   }
 
   @Override
   public int armRotateMotorId() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
-  public int armSolenoidChannel() {
-    // TODO Auto-generated method stub
-    return 0;
+  public double armExtendConversionFactor() {
+    return 1;
   }
 
   @Override
-  public double conversionFactor() {
-    return 0;
+  public int armLidarId() {
+    return 2;
   }
 }

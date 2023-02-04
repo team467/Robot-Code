@@ -139,12 +139,12 @@ public class BriefcaseConstants implements Constants {
   }
 
   @Override
-  public double conversionFactor() {
-    return 0;
+  public double armExtendConversionFactor() {
+    return 1;
   }
 
   @Override
-  public int armSolenoidChannel() {
+  public int armLidarId() {
     return 0;
   }
 }

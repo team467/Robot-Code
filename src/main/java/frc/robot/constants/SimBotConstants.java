@@ -122,36 +122,31 @@ public class SimBotConstants implements Constants {
 
   @Override
   public GearRatio armExtendGearRatio() {
-    // TODO Auto-generated method stub
-    return null;
+    return new GearRatio();
   }
 
   @Override
   public GearRatio armRotateGearRatio() {
-    // TODO Auto-generated method stub
-    return null;
+    return new GearRatio();
   }
 
   @Override
   public int armExtendMotorId() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public int armRotateMotorId() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
-  public int armSolenoidChannel() {
-    // TODO Auto-generated method stub
-    return 0;
+  public double armExtendConversionFactor() {
+    return 1;
   }
 
   @Override
-  public double conversionFactor() {
+  public int armLidarId() {
     return 0;
   }
 }

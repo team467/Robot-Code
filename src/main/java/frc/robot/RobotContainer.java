@@ -119,7 +119,12 @@ public class RobotContainer {
 
     System.out.println("creating an arm object");
 
-    arm = new Arm(new ArmIOPhysical(20, 0, 8, 2, 3));
+    arm =
+        new Arm(
+            new ArmIOPhysical(
+                RobotConstants.get().armExtendMotorId(),
+                RobotConstants.get().armRotateMotorId(),
+                RobotConstants.get().armLidarId()));
 
     System.out.println("finished creating an arm object");
     // Set up auto routines

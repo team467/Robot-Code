@@ -129,143 +129,32 @@ public class RobotArmConstants implements Constants {
   // Arm Constants
 
   @Override
-  public int armSolenoidChannel() {
-    return 1;
-  }
-
-  @Override
   public GearRatio armExtendGearRatio() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public GearRatio armRotateGearRatio() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public int armExtendMotorId() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public int armRotateMotorId() {
-    // TODO Auto-generated method stub
     return 20;
   }
 
   @Override
-  public double conversionFactor() {
-    return 49.17;
+  public int armRotateMotorId() {
+    return 0;
   }
 
-  // @Override
-  // public boolean hasClimber2020() {
-  //     return false;
-  // }
+  @Override
+  public double armExtendConversionFactor() {
+    return 1;
+  }
 
-  // @Override
-  // public int climber2020MotorId() {
-  //     return 11;
-  // }
-
-  // @Override
-  // public boolean climber2020MotorInverted() {
-  //     return false;
-  // }
-
-  // @Override
-  // public double climber2020UpSpeed() {
-  //     return 0.3;
-  // }
-
-  // @Override
-  // public double climber2020DownSpeed() {
-  //     return 0.1;
-  // }
-
-  // @Override
-  // public boolean hasClimber2022() {
-  //     return true;
-  // }
-
-  // @Override
-  // public int climber2022RightMotorId() {
-  //     return 6;
-  // }
-
-  // @Override
-  // public int climber2022LeftMotorId() {
-  //     return 11;
-  // }
-
-  // @Override
-  // public boolean climber2022LeftMotorInverted() {
-  //     return false;
-  // }
-
-  // @Override
-  // public boolean climber2022RightMotorInverted() {
-  //     return true;
-  // }
-
-  // @Override
-  // public double climber2022UpSpeed() {
-  //     return 0.8;
-  // }
-
-  // @Override
-  // public double climber2022DownSpeed() {
-  //     return 0.3;
-  // }
-
-  //     @Override
-  //     public double climber2022LeftLowerLimit() {
-  //         return 20 * Math.PI * climber2022Diameter() *
-  // climber2022GearRatio().getRotationsPerInput();
-  //     }
-
-  //     @Override
-  //     public double climber2022RightLowerLimit() {
-  //         return 20 * Math.PI * climber2022Diameter() *
-  // climber2022GearRatio().getRotationsPerInput();
-  //     }
-
-  //     @Override
-  //     public double climber2022LeftDangerLimit() {
-  //         return -2 * Math.PI * climber2022Diameter() *
-  // climber2022GearRatio().getRotationsPerInput();
-  //     }
-
-  //     @Override
-  //     public double climber2022RightDangerLimit() {
-  //         return -2 * Math.PI * climber2022Diameter() *
-  // climber2022GearRatio().getRotationsPerInput();
-  //     }
-
-  //     @Override
-  //     public double climber2022LeftUpperLimit() {
-  //         return 75 * Math.PI * climber2022Diameter() *
-  // climber2022GearRatio().getRotationsPerInput();
-  //     }
-
-  //     @Override
-  //     public double climber2022RightUpperLimit() {
-  //         return 75 * Math.PI * climber2022Diameter() *
-  // climber2022GearRatio().getRotationsPerInput();
-  //     }
-
-  //     @Override
-  //     public GearRatio climber2022GearRatio() {
-  //         return new GearRatio(13.5, 1);
-  //     }
-
-  //     @Override
-  //     public double climber2022Diameter() {
-  //         return 0.0203;
-  //     }
-
+  @Override
+  public int armLidarId() {
+    return 2;
+  }
 }
