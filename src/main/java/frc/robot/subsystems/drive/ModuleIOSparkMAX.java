@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.RobotConstants;
 
 public class ModuleIOSparkMAX implements ModuleIO {
@@ -42,7 +43,7 @@ public class ModuleIOSparkMAX implements ModuleIO {
 
     // Invert motors
     driveMotor.setInverted(index > 1);
-    turnMotor.setInverted(false); // TODO: check if inverted
+    turnMotor.setInverted(false);
 
     driveMotor.enableVoltageCompensation(12);
     turnMotor.enableVoltageCompensation(12);
@@ -54,9 +55,11 @@ public class ModuleIOSparkMAX implements ModuleIO {
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-    inputs.driveVelocity = driveEncoder.getVelocity();
-    inputs.drivePosition = driveEncoder.getPosition();
-    inputs.turnVelocity = turnEncoder.getVelocity();
+    inputs.driveVelocityRadPerSec = driveEncoder.getVelocity();
+    inputs.drivePositionRad = driveEncoder.getPosition();
+    inputs.driveAppliedVolts = driveMotor.getAppliedOutput() * RobotController.getBatteryVoltage();
+    inputs.driveCurrentAmps = new double[] {driveMotor.getOutputCurrent()};
+    inputs.turnVelocityRadPerSec = turnEncoder.getVelocity();
 
     // Reset the turn encoder sometimes when not moving
     if (turnEncoder.getVelocity() < Units.degreesToRadians(0.5)) {
@@ -70,12 +73,14 @@ public class ModuleIOSparkMAX implements ModuleIO {
     } else {
       resetCount = 0;
     }
-    inputs.turnPosition = turnEncoder.getPosition();
+    inputs.turnPositionRad = turnEncoder.getPosition();
 
-    inputs.turnPositionAbsolute =
+    inputs.turnPositionAbsoluteRad =
         Rotation2d.fromDegrees(turnEncoderAbsolute.getAbsolutePosition())
             .minus(RobotConstants.get().absoluteAngleOffset()[index])
             .getRadians();
+    inputs.turnAppliedVolts = turnMotor.getAppliedOutput() * RobotController.getBatteryVoltage();
+    inputs.turnCurrentAmps = new double[] {turnMotor.getOutputCurrent()};
   }
 
   @Override
