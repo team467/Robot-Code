@@ -17,8 +17,7 @@ public class VisionIOReflective implements VisionIO {
     PhotonPipelineResult result = camera.getLatestResult();
     inputs.hasTargets = result.hasTargets();
     if (result.hasTargets()) {
-      inputs.targets =
-          result.getTargets().stream().map(Optional::ofNullable).toList();
+      inputs.targets = result.getTargets().stream().map(Optional::ofNullable).toList();
     } else {
       inputs.targets = List.of(Optional.empty());
     }
