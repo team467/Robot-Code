@@ -3,10 +3,10 @@ package frc.robot.commands.arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.arm.Arm;
 
-public class Arm2023ScoreMidNodeCMD extends CommandBase {
+public class ArmScoreMidNodeCMD extends CommandBase {
   private final Arm arm;
 
-  public Arm2023ScoreMidNodeCMD(Arm arm) {
+  public ArmScoreMidNodeCMD(Arm arm) {
     this.arm = arm;
 
     addRequirements(arm);
