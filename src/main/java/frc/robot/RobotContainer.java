@@ -16,11 +16,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.holonomictrajectory.Waypoint;
-import frc.lib.io.gyro2d.Gyro2DIO;
-import frc.lib.io.gyro2d.Gyro2DIOADIS16470;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUPigeon2;
-import frc.robot.commands.drive.Balancing;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.drive.Drive;
@@ -159,8 +157,12 @@ public class RobotContainer {
     driverController
         .start()
         .onTrue(
-            Commands.runOnce(() -> drive.setPose(new Pose2d()))
-                .andThen(Commands.print("Reset pose")));
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(
+                                new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
+                .ignoringDisable(true));
   }
 
   /**

@@ -9,16 +9,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.io.gyro2d.Gyro2DIO;
-import frc.lib.io.gyro2d.Gyro2DIOInputsAutoLogged;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUIOInputsAutoLogged;
 import frc.robot.RobotConstants;
-import frc.robot.commands.drive.DriveWithJoysticks;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
@@ -116,9 +110,14 @@ public class Drive extends SubsystemBase {
               setpointStates, RobotConstants.get().maxLinearSpeed());
 
           // Set setpoints to modules
+          boolean isStationary =
+              Math.abs(setpoint.vxMetersPerSecond) < 1e-3
+                  && Math.abs(setpoint.vyMetersPerSecond) < 1e-3
+                  && Math.abs(setpoint.omegaRadiansPerSecond) < 1e-3;
+
           SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
           for (int i = 0; i < 4; i++) {
-            optimizedStates[i] = modules[i].runSetpoint(setpointStates[i]);
+            optimizedStates[i] = modules[i].runSetpoint(setpointStates[i], isStationary);
           }
 
           // Log setpoint states

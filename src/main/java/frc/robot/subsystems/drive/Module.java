@@ -40,14 +40,15 @@ public class Module {
     Logger.getInstance().processInputs("Drive/Module" + index, inputs);
   }
 
-  public SwerveModuleState runSetpoint(SwerveModuleState state) {
+  public SwerveModuleState runSetpoint(SwerveModuleState state, boolean isStationary) {
     // Optimize state based on current angle
     SwerveModuleState optimizedState = SwerveModuleState.optimize(state, getAngle());
 
-    // Run turn controller
     io.setTurnVoltage(
-        turnFB.calculate(getAngle().getRadians(), optimizedState.angle.getRadians())
-            + turnFF.calculate(turnFB.getSetpoint().velocity));
+        isStationary
+            ? 0.0
+            : turnFB.calculate(getAngle().getRadians(), optimizedState.angle.getRadians())
+                + turnFF.calculate(turnFB.getSetpoint().velocity));
 
     // Update velocity based on turn error
     optimizedState.speedMetersPerSecond *= Math.cos(turnFB.getPositionError());
