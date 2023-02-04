@@ -27,7 +27,7 @@ public class Drive extends SubsystemBase {
   private ChassisSpeeds setpoint = new ChassisSpeeds();
 
   private final SwerveDriveOdometry odometry;
-  private Rotation2d simGyro;
+  private Rotation2d simGyro = new Rotation2d();
 
   public Drive(
       IMUIO gyroIO,

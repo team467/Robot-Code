@@ -149,7 +149,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double armExtendConversionFactor() {
-    return 1;
+    return 0.02;
   }
 
   @Override

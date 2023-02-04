@@ -3,10 +3,10 @@ package frc.robot.commands.arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.arm.Arm;
 
-public class ArmScoreMidNodeCMD extends CommandBase {
+public class ArmResetCMD extends CommandBase {
   private final Arm arm;
 
-  public ArmScoreMidNodeCMD(Arm arm) {
+  public ArmResetCMD(Arm arm) {
     this.arm = arm;
 
     addRequirements(arm);
@@ -14,7 +14,7 @@ public class ArmScoreMidNodeCMD extends CommandBase {
 
   @Override
   public void execute() {
-    arm.setExtendSetpoint(0.7);
+    arm.resetEncoderPosition();
   }
 
   @Override
@@ -22,6 +22,6 @@ public class ArmScoreMidNodeCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return arm.finished();
+    return false;
   }
 }

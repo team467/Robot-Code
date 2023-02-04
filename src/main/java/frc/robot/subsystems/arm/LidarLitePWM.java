@@ -30,7 +30,7 @@ public class LidarLitePWM {
     counter.reset();
 
     // Set up a linear filter to discard outliers; filter size is ~20 measurements
-    filter = LinearFilter.movingAverage(20);
+    filter = LinearFilter.movingAverage(5);
   }
 
   /**
@@ -57,7 +57,7 @@ public class LidarLitePWM {
      * distance.
      */
     double measure = filter.calculate(counter.getPeriod());
-    m = (measure * 100000.0) + CALIBRATION_OFFSET;
+    m = (measure * 1000.0) + CALIBRATION_OFFSET;
     return m;
   }
 }

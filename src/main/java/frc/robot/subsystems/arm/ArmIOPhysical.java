@@ -57,7 +57,7 @@ public class ArmIOPhysical implements ArmIO {
   @Override
   public void setExtendVelocity(double velocity) {
     extendMotor.set(velocity);
-    System.out.println(extendMotor.getAppliedOutput());
+    // System.out.println(extendMotor.getAppliedOutput());
   }
 
   @Override
@@ -113,5 +113,9 @@ public class ArmIOPhysical implements ArmIO {
   @Override
   public void setRotateBrakeMode(boolean brake) {
     // rotateMotor.setIdleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
+  }
+
+  public void resetEncoderPosition() {
+    extendEncoder.setPosition(lidar.getDistance());
   }
 }

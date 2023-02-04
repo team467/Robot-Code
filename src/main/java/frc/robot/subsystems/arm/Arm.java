@@ -1,6 +1,6 @@
 package frc.robot.subsystems.arm;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,26 +23,29 @@ public class Arm extends SubsystemBase {
   private enum ArmMode {
     NORMAL,
     EXTEND_CHARACTERIZATION,
-    ROTATE_CHARACTERIZATION
+    ROTATE_CHARACTERIZATION,
+    MANUAL,
+    DISABLED,
+    HOLD
   }
 
-  private ArmMode mode = ArmMode.NORMAL;
-
+  private ArmMode mode = ArmMode.MANUAL;
+  private double currentPosition;
   private double angle = 0;
   private double characterizationVoltage = 0.0;
-  private double extendSetpoint = 0.0;
+  private double extendSetpoint = 0.6;
   private double rotateSetpoint = 0.0;
 
-  public static final double EXTEND_TOLERANCE_INCHES = 2.0;
+  public static final double EXTEND_TOLERANCE_METERS = 0.05;
   public static final double ROTATE_TOLERANCE_DEGREES = 2.0;
 
   private boolean enabled = false;
 
-  private boolean isManual = true;
   private double manualExtend = 0.0;
   private double manualRotate = 0.0;
 
-  private PIDController extendPID = new PIDController(0.1, 0.0, 10.0);
+  // private PIDController extendPID = new PIDController(0.1, 0.0, 0.0);
+  BangBangController controller = new BangBangController();
   /**
    * Configures the arm subsystem
    *
@@ -69,11 +72,11 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isManual() {
-    return isManual;
+    return mode == ArmMode.MANUAL;
   }
 
   public void stop() {
-    isManual = true;
+    mode = ArmMode.MANUAL;
     armIO.setExtendVoltage(0.0);
     armIO.setRotateVoltage(0.0);
     manualExtend = 0;
@@ -81,32 +84,70 @@ public class Arm extends SubsystemBase {
   }
 
   public void manualExtend(double direction) {
-    isManual = true;
+    mode = ArmMode.MANUAL;
     manualExtend = direction;
   }
 
   public void manualRotate(double direction) {
-    isManual = true;
+    mode = ArmMode.MANUAL;
     manualRotate = direction;
   }
 
+  public void hold() {
+    currentPosition = armIOInputs.extendPosition;
+    mode = ArmMode.HOLD;
+  }
+
+  /* (non-Javadoc)
+   * @see edu.wpi.first.wpilibj2.command.Subsystem#periodic()
+   */
   @Override
   public void periodic() {
     // Update inputs for IOs
     armIO.updateInputs(armIOInputs);
     logger.processInputs("Arm", armIOInputs);
+    controller.setTolerance(EXTEND_TOLERANCE_METERS);
+    // double pidOutput = controller.calculate(armIOInputs.extendPositionAbsolute, extendSetpoint);
+
+    double pidOutput = 0.0;
+    if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
+      pidOutput = -0.1;
+    } else {
+      pidOutput = 0.1;
+    }
+    if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.2) {
+      hold();
+    }
+
+    double holdPIDOutput = 0.0;
+    if (armIOInputs.extendPosition > extendSetpoint) {
+      holdPIDOutput = -0.1;
+    } else {
+      holdPIDOutput = 0.1;
+    }
+    logger.recordOutput("arm/pidoutput", pidOutput);
 
     if (DriverStation.isDisabled()) {
       // Disable output while disabled
       armIO.setExtendVoltage(0.0);
       armIO.setRotateVoltage(0.0);
-    } else if (isManual) {
-      armIO.setExtendVelocity(manualExtend);
-      armIO.setRotateVelocity(manualRotate);
+
     } else {
       switch (mode) {
+        case MANUAL:
+          armIO.setExtendVelocity(manualExtend);
+          armIO.setRotateVelocity(manualRotate);
+          break;
         case NORMAL:
-          armIO.setExtendVoltage(extendPID.calculate(armIOInputs.extendPosition, extendSetpoint));
+          if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
+            pidOutput = -0.1;
+          } else {
+            pidOutput = 0.1;
+          }
+          if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.2) {
+            hold();
+          }
+          armIO.setExtendVelocity(pidOutput);
 
           logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
           logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);
@@ -119,6 +160,11 @@ public class Arm extends SubsystemBase {
         case ROTATE_CHARACTERIZATION:
           armIO.setRotateVoltage(characterizationVoltage);
           break;
+        case DISABLED:
+          break;
+        case HOLD:
+          armIO.setExtendVelocity(holdPIDOutput);
+          break;
       }
     }
 
@@ -128,10 +174,12 @@ public class Arm extends SubsystemBase {
   }
 
   public void setExtendSetpoint(double setpoint) {
+    mode = ArmMode.NORMAL;
     extendSetpoint = setpoint;
   }
 
   public void setRotateSetpoint(double setpoint) {
+    mode = ArmMode.NORMAL;
     rotateSetpoint = setpoint;
   }
 
@@ -178,13 +226,17 @@ public class Arm extends SubsystemBase {
 
     // double currentAngle = armRotateMotor.getEncoder().getPosition(); // NEEDS CONVERSION
     double currentAngle = 0;
-    if (currentDistance >= (extendSetpoint - EXTEND_TOLERANCE_INCHES)
-        && (currentDistance <= (extendSetpoint + EXTEND_TOLERANCE_INCHES)
-            && (currentAngle >= (rotateSetpoint - EXTEND_TOLERANCE_INCHES)
-                && (currentAngle <= (rotateSetpoint + EXTEND_TOLERANCE_INCHES))))) {
+    if (currentDistance >= (extendSetpoint - EXTEND_TOLERANCE_METERS)
+        && (currentDistance <= (extendSetpoint + EXTEND_TOLERANCE_METERS)
+            && (currentAngle >= (rotateSetpoint - EXTEND_TOLERANCE_METERS)
+                && (currentAngle <= (rotateSetpoint + EXTEND_TOLERANCE_METERS))))) {
       return true;
     }
 
     return false;
+  }
+
+  public void resetEncoderPosition() {
+    armIO.resetEncoderPosition();
   }
 }

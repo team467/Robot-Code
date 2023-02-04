@@ -17,10 +17,11 @@ import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro3d.IMUIO;
-import frc.lib.io.gyro3d.IMUPigeon2;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.arm.ArmManualExtendCMD;
 import frc.robot.commands.arm.ArmManualRetractCMD;
+import frc.robot.commands.arm.ArmResetCMD;
+import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
@@ -29,7 +30,6 @@ import frc.robot.subsystems.arm.ArmIOPhysical;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -64,12 +64,13 @@ public class RobotContainer {
           case ROBOT_COMP -> {
             drive =
                 new Drive(
-                    new IMUPigeon2(17),
-                    new ModuleIOSparkMAX(5, 6, 11, 0),
-                    new ModuleIOSparkMAX(7, 8, 12, 1),
-                    new ModuleIOSparkMAX(3, 4, 10, 2),
-                    new ModuleIOSparkMAX(1, 2, 9, 3));
+                    new IMUIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {});
           }
+
           case ROBOT_BRIEFCASE -> {
             drive =
                 new Drive(
@@ -79,6 +80,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {});
           }
+
           default -> {
             drive =
                 new Drive(
@@ -180,6 +182,8 @@ public class RobotContainer {
     driverController.y().onTrue(new ArmManualExtendCMD(arm));
     driverController.b().onTrue(new ArmStopCMD(arm));
     driverController.a().onTrue(new ArmManualRetractCMD(arm));
+    driverController.x().onTrue(new ArmScoreMidNodeCMD(arm));
+    driverController.rightBumper().onTrue(new ArmResetCMD(arm));
   }
 
   /**
