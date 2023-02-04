@@ -8,6 +8,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.lib.utils.AllianceFlipUtil;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -90,8 +91,9 @@ public class SwerveControllerCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Trajectory.State driveState = driveTrajectory.sample(timer.get());
-    RotationSequence.State holonomicRotationState = holonomicRotationSequence.sample(timer.get());
+    Trajectory.State driveState = AllianceFlipUtil.apply(driveTrajectory.sample(timer.get()));
+    RotationSequence.State holonomicRotationState =
+        AllianceFlipUtil.apply(holonomicRotationSequence.sample(timer.get()));
 
     ChassisSpeeds nextDriveState =
         controller.calculate(pose.get(), driveState, holonomicRotationState);

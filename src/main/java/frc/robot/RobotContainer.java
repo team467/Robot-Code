@@ -16,8 +16,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.holonomictrajectory.Waypoint;
-import frc.lib.io.gyro2d.Gyro2DIO;
-import frc.lib.io.gyro2d.Gyro2DIOADIS16470;
+import frc.lib.io.gyro3d.IMUIO;
+import frc.lib.io.gyro3d.IMUPigeon2;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.drive.Drive;
@@ -56,7 +57,7 @@ public class RobotContainer {
           case ROBOT_COMP -> {
             drive =
                 new Drive(
-                    new Gyro2DIOADIS16470(),
+                    new IMUPigeon2(17),
                     new ModuleIOSparkMAX(5, 6, 11, 0),
                     new ModuleIOSparkMAX(7, 8, 12, 1),
                     new ModuleIOSparkMAX(3, 4, 10, 2),
@@ -65,7 +66,7 @@ public class RobotContainer {
           case ROBOT_BRIEFCASE -> {
             drive =
                 new Drive(
-                    new Gyro2DIO() {},
+                    new IMUIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
@@ -74,7 +75,7 @@ public class RobotContainer {
           default -> {
             drive =
                 new Drive(
-                    new Gyro2DIO() {},
+                    new IMUIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
@@ -88,7 +89,7 @@ public class RobotContainer {
         // subsystem = new Subsystem(new SubsystemIOSim());
         drive =
             new Drive(
-                new Gyro2DIO() {},
+                new IMUIO() {},
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
@@ -100,7 +101,7 @@ public class RobotContainer {
         // subsystem = new Subsystem(new SubsystemIO() {});
         drive =
             new Drive(
-                new Gyro2DIO() {},
+                new IMUIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
@@ -156,8 +157,12 @@ public class RobotContainer {
     driverController
         .start()
         .onTrue(
-            Commands.runOnce(() -> drive.setPose(new Pose2d()))
-                .andThen(Commands.print("Reset pose")));
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(
+                                new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
+                .ignoringDisable(true));
   }
 
   /**
