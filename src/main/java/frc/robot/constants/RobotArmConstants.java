@@ -146,13 +146,13 @@ public class RobotArmConstants implements Constants {
   }
 
   @Override
-  public int armMotorOneId() {
+  public int armExtendMotorId() {
     // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
-  public int armMotorTwoId() {
+  public int armRotateMotorId() {
     // TODO Auto-generated method stub
     return 20;
   }

@@ -129,12 +129,12 @@ public class BriefcaseConstants implements Constants {
   }
 
   @Override
-  public int armMotorOneId() {
+  public int armExtendMotorId() {
     return 0;
   }
 
   @Override
-  public int armMotorTwoId() {
+  public int armRotateMotorId() {
     return 0;
   }
 

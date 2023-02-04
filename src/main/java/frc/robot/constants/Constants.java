@@ -91,9 +91,9 @@ public interface Constants {
 
   FeedbackConstant chassisTurnFB();
 
-  int armMotorOneId();
+  int armExtendMotorId();
 
-  int armMotorTwoId();
+  int armRotateMotorId();
 
   double conversionFactor();
 
