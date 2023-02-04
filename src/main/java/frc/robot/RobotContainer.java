@@ -18,8 +18,8 @@ import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacter
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro2d.Gyro2DIO;
 import frc.lib.io.gyro2d.Gyro2DIOADIS16470;
-import frc.robot.commands.arm.Arm2023ManualRetracCMD;
 import frc.robot.commands.arm.ArmManualExtendCMD;
+import frc.robot.commands.arm.ArmManualRetractCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
@@ -181,7 +181,7 @@ public class RobotContainer {
                 .andThen(Commands.print("Reset pose")));
     driverController.y().onTrue(new ArmManualExtendCMD(arm));
     driverController.b().onTrue(new ArmStopCMD(arm));
-    driverController.a().onTrue(new Arm2023ManualRetracCMD(arm));
+    driverController.a().onTrue(new ArmManualRetractCMD(arm));
   }
 
   /**
