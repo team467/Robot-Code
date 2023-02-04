@@ -1,5 +1,6 @@
 package frc.robot.subsystems.arm;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalSource;
 
@@ -12,6 +13,8 @@ public class LidarLitePWM {
   private static final int CALIBRATION_OFFSET = 0;
 
   private Counter counter;
+  private LinearFilter filter;
+  private LinearFilter filter2;
   private int printedWarningCount = 5;
 
   /**
@@ -26,6 +29,10 @@ public class LidarLitePWM {
     // Configure for measuring rising to falling pulses
     counter.setSemiPeriodMode(true);
     counter.reset();
+
+    // Set up a linear filter to discard outliers; filter size is ~20 measurements
+    filter = LinearFilter.movingAverage(20);
+    filter2 = LinearFilter.singlePoleIIR(0.1, 0.02);
   }
 
   /**
@@ -51,7 +58,8 @@ public class LidarLitePWM {
      * The LIDAR-Lite unit sends a high signal for 10 microseconds per cm of
      * distance.
      */
-    cm = (counter.getPeriod() * 1000000.0 / 10.0) + CALIBRATION_OFFSET;
+    double measure = filter.calculate(counter.getPeriod());
+    cm = (measure * 1000000.0 / 10.0) + CALIBRATION_OFFSET;
     return cm;
   }
 }

@@ -1,6 +1,5 @@
 package frc.robot.subsystems.arm;
 
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -57,16 +56,4 @@ public class ArmIOSim implements ArmIO {
 
   @Override
   public void setRotateBrakeMode(boolean brake) {}
-
-  @Override
-  public CANSparkMax getExtendMotor() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public CANSparkMax getRotateMotor() {
-    // TODO Auto-generated method stub
-    return null;
-  }
 }

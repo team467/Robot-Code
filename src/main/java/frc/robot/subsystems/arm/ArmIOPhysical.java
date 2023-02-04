@@ -4,10 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxRelativeEncoder;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.RobotConstants;
 
 public class ArmIOPhysical implements ArmIO {
   private final CANSparkMax extendMotor;
@@ -18,25 +15,23 @@ public class ArmIOPhysical implements ArmIO {
 
   private final LidarLitePWM lidar;
 
-  // private int resetCount = 0;
-
   public ArmIOPhysical(
       int extendMotorId, int rotateMotorId, int rotateAbsEncoderId, int lidarId, int index) {
     lidar = new LidarLitePWM(new DigitalInput(lidarId));
+
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     // rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
-    extendEncoder = extendMotor.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, 42);
-    extendEncoder.setPosition(lidar.getDistance());
+    extendEncoder = extendMotor.getEncoder();
+    extendEncoder.setPosition(0.0);
     extendEncoder.setPositionConversionFactor(10);
 
     rotateMotor = null;
-
     // rotateEncoder = rotateMotor.getEncoder();
 
     // Convert rotations to radians
-    double extendRotationsToRads =
-        Units.rotationsToRadians(1)
-            * RobotConstants.get().armExtendGearRatio().getRotationsPerInput();
+    // double extendRotationsToRads =
+    //     Units.rotationsToRadians(1)
+    //         * RobotConstants.get().armExtendGearRatio().getRotationsPerInput();
     // extendEncoder.setPositionConversionFactor(extendRotationsToRads);
 
     // double rotateRotationsToRads =
@@ -52,17 +47,28 @@ public class ArmIOPhysical implements ArmIO {
     // extendEncoder.setPositionConversionFactor(1);
 
     // // Invert motors
-    // extendMotor.setInverted(false);
+    extendMotor.setInverted(false);
     // rotateMotor.setInverted(false); // TODO: check if inverted
 
-    // extendMotor.enableVoltageCompensation(12);
+    extendMotor.enableVoltageCompensation(12);
     // rotateMotor.enableVoltageCompensation(12);
+  }
+
+  @Override
+  public void setExtendVelocity(double velocity) {
+    extendMotor.set(velocity);
+    System.out.println(extendMotor.getAppliedOutput());
+  }
+
+  @Override
+  public void setRotateVelocity(double velocity) {
+    // rotateMotor.set(velocity);
   }
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {
 
-    inputs.extendPositionAbsolute = lidar.getDistance() / 100.0;
+    inputs.extendPositionAbsolute = lidar.getDistance();
 
     // TODO: Use the Lidar to get the absolute position of the arm
     // Reset the turn encoder sometimes when not moving
@@ -84,8 +90,9 @@ public class ArmIOPhysical implements ArmIO {
 
     inputs.extendVelocity = extendEncoder.getVelocity();
     inputs.extendPosition = extendEncoder.getPosition();
-    // inputs.rotateVelocity = rotateEncoder.getVelocity();
-    // inputs.rotatePosition = rotateEncoder.getPosition();
+    inputs.extendAppliedVolts = extendMotor.getBusVoltage();
+    inputs.extendCurrent = extendMotor.getOutputCurrent();
+    inputs.extendTemp = extendMotor.getMotorTemperature();
   }
 
   @Override
@@ -106,15 +113,5 @@ public class ArmIOPhysical implements ArmIO {
   @Override
   public void setRotateBrakeMode(boolean brake) {
     // rotateMotor.setIdleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
-  }
-
-  public CANSparkMax getExtendMotor() {
-
-    return extendMotor;
-  }
-
-  public CANSparkMax getRotateMotor() {
-
-    return rotateMotor;
   }
 }

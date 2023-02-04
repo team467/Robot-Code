@@ -1,6 +1,5 @@
 package frc.robot.subsystems.arm;
 
-import com.revrobotics.CANSparkMax;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ArmIO {
@@ -16,7 +15,6 @@ public interface ArmIO {
     /** Uses Lidar to get the absolute position of the arm. This is used to calibrate the arm. */
     public double extendPositionAbsolute = 0.0;
 
-    public double rotatePositionAbsolute = 0.0;
     public double rotatePosition = 0.0;
     public double rotateVelocity = 0.0;
     public double rotateAppliedVolts = 0.0;
@@ -30,11 +28,11 @@ public interface ArmIO {
 
   default void setRotateVoltage(double volts) {}
 
+  default void setExtendVelocity(double speed) {}
+
+  default void setRotateVelocity(double speed) {}
+
   default void setExtendBrakeMode(boolean brake) {}
 
   default void setRotateBrakeMode(boolean brake) {}
-
-  public CANSparkMax getExtendMotor();
-
-  public CANSparkMax getRotateMotor();
 }
