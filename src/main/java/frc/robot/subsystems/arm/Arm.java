@@ -98,34 +98,28 @@ public class Arm extends SubsystemBase {
     mode = ArmMode.HOLD;
   }
 
+  public boolean isHolding() {
+    return mode == ArmMode.HOLD;
+  }
+
   /* (non-Javadoc)
    * @see edu.wpi.first.wpilibj2.command.Subsystem#periodic()
    */
   @Override
   public void periodic() {
+    System.out.println(mode);
     // Update inputs for IOs
     armIO.updateInputs(armIOInputs);
     logger.processInputs("Arm", armIOInputs);
     controller.setTolerance(EXTEND_TOLERANCE_METERS);
-    // double pidOutput = controller.calculate(armIOInputs.extendPositionAbsolute, extendSetpoint);
-
-    double pidOutput = 0.0;
-    if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
-      pidOutput = -0.1;
-    } else {
-      pidOutput = 0.1;
-    }
-    if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.2) {
-      hold();
-    }
 
     double holdPIDOutput = 0.0;
-    if (armIOInputs.extendPosition > extendSetpoint) {
-      holdPIDOutput = -0.1;
+    if (armIOInputs.extendPosition > currentPosition) {
+      holdPIDOutput = -0.2;
     } else {
-      holdPIDOutput = 0.1;
+      holdPIDOutput = 0;
     }
-    logger.recordOutput("arm/pidoutput", pidOutput);
+    // logger.recordOutput("arm/pidoutput", pidOutput);
 
     if (DriverStation.isDisabled()) {
       // Disable output while disabled
@@ -139,6 +133,7 @@ public class Arm extends SubsystemBase {
           armIO.setRotateVelocity(manualRotate);
           break;
         case NORMAL:
+          double pidOutput;
           if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
             pidOutput = -0.1;
           } else {
@@ -163,7 +158,7 @@ public class Arm extends SubsystemBase {
         case DISABLED:
           break;
         case HOLD:
-          armIO.setExtendVelocity(holdPIDOutput);
+          armIO.setExtendVoltage(holdPIDOutput);
           break;
       }
     }
@@ -221,19 +216,20 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean finished() {
-    double currentDistance = armIOInputs.extendPosition; // NEEDS CONVERSION
+    return Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint)
+        <= 0.01; // NEEDS CONVERSION
     // TODO: CHANGE to Lidar
 
     // double currentAngle = armRotateMotor.getEncoder().getPosition(); // NEEDS CONVERSION
-    double currentAngle = 0;
-    if (currentDistance >= (extendSetpoint - EXTEND_TOLERANCE_METERS)
-        && (currentDistance <= (extendSetpoint + EXTEND_TOLERANCE_METERS)
-            && (currentAngle >= (rotateSetpoint - EXTEND_TOLERANCE_METERS)
-                && (currentAngle <= (rotateSetpoint + EXTEND_TOLERANCE_METERS))))) {
-      return true;
-    }
+    // double currentAngle = 0;
+    // if (currentDistance >= (extendSetpoint - EXTEND_TOLERANCE_METERS)
+    //     && (currentDistance <= (extendSetpoint + EXTEND_TOLERANCE_METERS)
+    //         && (currentAngle >= (rotateSetpoint - EXTEND_TOLERANCE_METERS)
+    //             && (currentAngle <= (rotateSetpoint + EXTEND_TOLERANCE_METERS))))) {
+    //   return true;
+    // }
 
-    return false;
+    // return false;
   }
 
   public void resetEncoderPosition() {
