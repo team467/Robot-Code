@@ -92,7 +92,8 @@ public class SwerveControllerCommand extends CommandBase {
   @Override
   public void execute() {
     Trajectory.State driveState = AllianceFlipUtil.apply(driveTrajectory.sample(timer.get()));
-    RotationSequence.State holonomicRotationState = AllianceFlipUtil.apply(holonomicRotationSequence.sample(timer.get()));
+    RotationSequence.State holonomicRotationState =
+        AllianceFlipUtil.apply(holonomicRotationSequence.sample(timer.get()));
 
     ChassisSpeeds nextDriveState =
         controller.calculate(pose.get(), driveState, holonomicRotationState);
