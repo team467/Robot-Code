@@ -30,7 +30,12 @@ public interface VisionIO {
     @Override
     public void toLog(LogTable table) {
       for (int i = 0; i < 7; i++) {
-        PhotonTrackedTarget target = targets.get(i).orElse(null);
+        PhotonTrackedTarget target;
+        if (i < targets.size()) {
+          target = targets.get(i).orElse(null);
+        } else {
+          target = null;
+        }
         if (target != null) {
           table.put("Target/" + i + "/Valid", true);
           table.put("Target/" + i + "/Yaw", target.getYaw());

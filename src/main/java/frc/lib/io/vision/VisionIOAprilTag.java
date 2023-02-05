@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class VisionIOAprilTag implements VisionIO {
@@ -16,8 +17,7 @@ public class VisionIOAprilTag implements VisionIO {
       String cameraName, Transform3d robotToCam, AprilTagFieldLayout fieldLayout) {
     camera = new PhotonCamera(cameraName);
     poseEstimator =
-        new PhotonPoseEstimator(
-            fieldLayout, PhotonPoseEstimator.PoseStrategy.AVERAGE_BEST_TARGETS, camera, robotToCam);
+        new PhotonPoseEstimator(fieldLayout, PoseStrategy.AVERAGE_BEST_TARGETS, camera, robotToCam);
   }
 
   @Override
