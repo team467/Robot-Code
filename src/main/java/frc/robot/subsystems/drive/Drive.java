@@ -1,40 +1,61 @@
 package frc.robot.subsystems.drive;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUIOInputsAutoLogged;
+import frc.lib.io.vision.VisionIO;
+import frc.lib.io.vision.VisionIO.VisionIOInputs;
 import frc.robot.RobotConstants;
+import java.util.ArrayList;
+import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   private final IMUIO gyroIO;
   private final IMUIOInputsAutoLogged gyroInputs = new IMUIOInputsAutoLogged();
+  private final List<VisionIO> aprilTagCameraIO = new ArrayList<>();
+  private final List<VisionIOInputs> aprilTagCameraInputs = new ArrayList<>();
   private final Module[] modules = new Module[4];
   private final SwerveDriveKinematics kinematics = RobotConstants.get().kinematics();
+  SwerveDrivePoseEstimator odomTest =
+      new SwerveDrivePoseEstimator(
+          kinematics,
+          new Rotation2d(),
+          new SwerveModulePosition[] {
+            new SwerveModulePosition(),
+            new SwerveModulePosition(),
+            new SwerveModulePosition(),
+            new SwerveModulePosition()
+          },
+          new Pose2d(5.0, 0.2, new Rotation2d(2.0)),
+          VecBuilder.fill(0.01, 0.01, 0.01),
+          VecBuilder.fill(0.071, 0.557, 4.967));
 
   private boolean isCharacterizing = false;
   private DriveMode driveMode = DriveMode.NORMAL;
   private double characterizationVolts = 0.0;
   private ChassisSpeeds setpoint = new ChassisSpeeds();
 
-  private final SwerveDriveOdometry odometry;
-  private Rotation2d simGyro;
+  private final SwerveDrivePoseEstimator odometry;
+  private Rotation2d simGyro = new Rotation2d();
 
   public Drive(
       IMUIO gyroIO,
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
-      ModuleIO brModuleIO) {
+      ModuleIO brModuleIO,
+      List<VisionIO> aprilTagCameraIO) {
     this.gyroIO = gyroIO;
     modules[0] = new Module(flModuleIO, 0);
     modules[1] = new Module(frModuleIO, 1);
@@ -43,6 +64,10 @@ public class Drive extends SubsystemBase {
     for (var module : modules) {
       module.setBrakeMode(true);
       module.periodic();
+    }
+    for (var aprilTagCamera : aprilTagCameraIO) {
+      this.aprilTagCameraIO.add(aprilTagCamera);
+      this.aprilTagCameraInputs.add(new VisionIOInputs());
     }
     this.gyroIO.updateInputs(gyroInputs);
 
@@ -53,11 +78,13 @@ public class Drive extends SubsystemBase {
 
     if (gyroInputs.connected) {
       odometry =
-          new SwerveDriveOdometry(
-              kinematics, Rotation2d.fromDegrees(gyroInputs.yaw), modulePositions);
+          new SwerveDrivePoseEstimator(
+              kinematics, Rotation2d.fromDegrees(gyroInputs.yaw), modulePositions, new Pose2d());
     } else {
-      odometry = new SwerveDriveOdometry(kinematics, simGyro, modulePositions);
+      odometry = new SwerveDrivePoseEstimator(kinematics, simGyro, modulePositions, new Pose2d());
     }
+
+    Logger.getInstance().recordOutput("Odometry/EstimPose/" + 0, new Pose2d());
   }
 
   @Override
@@ -138,8 +165,43 @@ public class Drive extends SubsystemBase {
       for (int i = 0; i < 4; i++) {
         measuredPositions[i] = modules[i].getPosition();
       }
+
+      odomTest.update(
+          new Rotation2d(),
+          new SwerveModulePosition[] {
+            new SwerveModulePosition(0, new Rotation2d()),
+            new SwerveModulePosition(0, new Rotation2d()),
+            new SwerveModulePosition(0, new Rotation2d()),
+            new SwerveModulePosition(0, new Rotation2d())
+          });
+      for (int i = 0; i < aprilTagCameraIO.size(); i++) {
+        aprilTagCameraIO.get(i).updateInputs(aprilTagCameraInputs.get(i));
+        Logger.getInstance().processInputs("Camera/" + i, aprilTagCameraInputs.get(i));
+        if (aprilTagCameraInputs.get(i).estimatedPose.isPresent()) {
+          Logger.getInstance()
+              .recordOutput(
+                  "Odometry/VisionPose/" + i,
+                  aprilTagCameraInputs.get(i).estimatedPose.get().estimatedPose.toPose2d());
+          odomTest.addVisionMeasurement(
+              aprilTagCameraInputs.get(i).estimatedPose.get().estimatedPose.toPose2d(),
+              aprilTagCameraInputs.get(i).estimatedPose.get().timestampSeconds);
+          Logger.getInstance()
+              .recordOutput("Odometry/EstimPose/" + i, odomTest.getEstimatedPosition());
+        }
+      }
+
       if (gyroInputs.connected) {
         odometry.update(Rotation2d.fromDegrees(gyroInputs.yaw), measuredPositions);
+        for (int i = 0; i < aprilTagCameraInputs.size(); i++) {
+          aprilTagCameraInputs
+              .get(i)
+              .estimatedPose
+              .ifPresent(
+                  estimatedRobotPose ->
+                      odometry.addVisionMeasurement(
+                          estimatedRobotPose.estimatedPose.toPose2d(),
+                          estimatedRobotPose.timestampSeconds));
+        }
       } else {
         simGyro.plus(
             new Rotation2d(
@@ -162,7 +224,7 @@ public class Drive extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    return odometry.getPoseMeters();
+    return odometry.getEstimatedPosition();
   }
 
   public void setPose(Pose2d pose) {

@@ -4,9 +4,16 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,14 +24,14 @@ import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro3d.IMUIO;
-import frc.lib.io.gyro3d.IMUPigeon2;
+import frc.lib.io.vision.VisionIO;
+import frc.lib.io.vision.VisionIOAprilTag;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -55,13 +62,33 @@ public class RobotContainer {
       case REAL -> {
         switch (RobotConstants.get().robot()) {
           case ROBOT_COMP -> {
+            List<AprilTag> aprilTags =
+                List.of(
+                    new AprilTag(
+                        1,
+                        new Pose3d(
+                            new Translation3d(0, Units.feetToMeters(1), Units.inchesToMeters(29)),
+                            new Rotation3d(0, 0, 0))),
+                    new AprilTag(
+                        2,
+                        new Pose3d(
+                            new Translation3d(0, Units.feetToMeters(5), Units.inchesToMeters(29)),
+                            new Rotation3d(0, 0, 0))),
+                    new AprilTag(
+                        3,
+                        new Pose3d(
+                            new Translation3d(0, Units.feetToMeters(9), Units.inchesToMeters(25)),
+                            new Rotation3d(0, 0, 0))));
+            AprilTagFieldLayout layout = new AprilTagFieldLayout(aprilTags, 20, 20);
+            Transform3d cameraToRobotA = new Transform3d();
             drive =
                 new Drive(
-                    new IMUPigeon2(17),
-                    new ModuleIOSparkMAX(5, 6, 11, 0),
-                    new ModuleIOSparkMAX(7, 8, 12, 1),
-                    new ModuleIOSparkMAX(3, 4, 10, 2),
-                    new ModuleIOSparkMAX(1, 2, 9, 3));
+                    new IMUIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    List.of(new VisionIOAprilTag("aprila", cameraToRobotA, layout)));
           }
           case ROBOT_BRIEFCASE -> {
             drive =
@@ -70,7 +97,8 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
-                    new ModuleIO() {});
+                    new ModuleIO() {},
+                    List.of(new VisionIO() {}));
           }
           default -> {
             drive =
@@ -79,7 +107,8 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
-                    new ModuleIO() {});
+                    new ModuleIO() {},
+                    List.of(new VisionIO() {}));
           }
         }
       }
@@ -93,7 +122,8 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
-                new ModuleIOSim());
+                new ModuleIOSim(),
+                List.of(new VisionIO() {}));
       }
 
         // Replayed robot, disable IO implementations
@@ -105,7 +135,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                List.of(new VisionIO() {}));
       }
     }
 
