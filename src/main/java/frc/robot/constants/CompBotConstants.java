@@ -18,7 +18,8 @@ public class CompBotConstants implements Constants {
 
   @Override
   public String logFolder() {
-    return "/media/sda1";
+    //    return "/media/sda1";
+    return null;
   }
 
   // Drive constants
