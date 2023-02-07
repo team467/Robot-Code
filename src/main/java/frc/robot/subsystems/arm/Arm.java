@@ -134,13 +134,15 @@ public class Arm extends SubsystemBase {
           break;
         case NORMAL:
           double fbOutput;
-          if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
-            fbOutput = -0.1;
-            if ()
+          if (0.07 > Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint)) {
+            fbOutput = 0.05;
           } else {
             fbOutput = 0.1;
           }
-          if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.1) {
+          if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
+            fbOutput = fbOutput * -1;
+          }
+          if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.02) {
             hold();
           }
           armIO.setExtendVelocity(fbOutput);
