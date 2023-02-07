@@ -133,16 +133,17 @@ public class Arm extends SubsystemBase {
           armIO.setRotateVelocity(manualRotate);
           break;
         case NORMAL:
-          double pidOutput;
+          double fbOutput;
           if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
-            pidOutput = -0.1;
+            fbOutput = -0.1;
+            if ()
           } else {
-            pidOutput = 0.1;
+            fbOutput = 0.1;
           }
-          if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.2) {
+          if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.1) {
             hold();
           }
-          armIO.setExtendVelocity(pidOutput);
+          armIO.setExtendVelocity(fbOutput);
 
           logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
           logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);

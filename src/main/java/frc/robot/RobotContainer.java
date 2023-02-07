@@ -20,8 +20,7 @@ import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.arm.ArmManualExtendCMD;
 import frc.robot.commands.arm.ArmManualRetractCMD;
-import frc.robot.commands.arm.ArmResetCMD;
-import frc.robot.commands.arm.ArmScoreMidNodeCMD;
+import frc.robot.commands.arm.ArmScoreCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
@@ -179,11 +178,15 @@ public class RobotContainer {
                             new Pose2d(
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
-    driverController.y().onTrue(new ArmManualExtendCMD(arm));
-    driverController.b().onTrue(new ArmStopCMD(arm));
-    driverController.a().onTrue(new ArmManualRetractCMD(arm));
-    driverController.x().onTrue(new ArmScoreMidNodeCMD(arm));
-    driverController.rightBumper().onTrue(new ArmResetCMD(arm));
+    driverController.leftBumper().onTrue(new ArmManualExtendCMD(arm));
+    driverController.start().onTrue(new ArmStopCMD(arm));
+    driverController.rightBumper().onTrue(new ArmManualRetractCMD(arm));
+    driverController.leftTrigger().onTrue(new ArmScoreCMD(arm, 0.85)); // Extend full
+    driverController.rightTrigger().onTrue(new ArmScoreCMD(arm, 0.75)); // Extend Mid
+    driverController.a().onTrue(new ArmScoreCMD(arm, 0.5)); // Retract full
+    driverController.b().onTrue(new ArmScoreCMD(arm, 0.6)); // Retract Mid
+    driverController.y().onTrue(new ArmScoreCMD(arm, 0.65));
+    driverController.x().onTrue(new ArmScoreCMD(arm, 0.7));
   }
 
   /**

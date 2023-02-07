@@ -1,5 +1,10 @@
 package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.arm.Arm;
 
-public class ArmScoreHighNodeCMD extends CommandBase {}
+public class ArmScoreHighNodeCMD extends ArmScoreCMD {
+
+  public ArmScoreHighNodeCMD(Arm arm) {
+    super(arm, 0.8);
+  }
+}
