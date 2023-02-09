@@ -1,6 +1,6 @@
 package frc.robot.subsystems.arm;
 
-import edu.wpi.first.math.controller.BangBangController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -43,9 +43,9 @@ public class Arm extends SubsystemBase {
 
   private double manualExtend = 0.0;
   private double manualRotate = 0.0;
+  private PIDController pidController = new PIDController(10, 0, 0);
+  private static final double BACK_FORCE = -0.25;
 
-  // private PIDController extendPID = new PIDController(0.1, 0.0, 0.0);
-  BangBangController controller = new BangBangController();
   /**
    * Configures the arm subsystem
    *
@@ -111,15 +111,17 @@ public class Arm extends SubsystemBase {
     // Update inputs for IOs
     armIO.updateInputs(armIOInputs);
     logger.processInputs("Arm", armIOInputs);
-    controller.setTolerance(EXTEND_TOLERANCE_METERS);
 
-    double holdPIDOutput = 0.0;
-    if (armIOInputs.extendPosition > currentPosition) {
-      holdPIDOutput = -0.2;
-    } else {
-      holdPIDOutput = 0;
-    }
+    double pidOutput =
+        pidController.calculate(armIOInputs.extendPosition, currentPosition) + BACK_FORCE;
+    // if (armIOInputs.extendPosition > currentPosition) {
+    //   pidOutput = -0.25;
+    // } else {
+    //   pidOutput = 0;
+    // }
     // logger.recordOutput("arm/pidoutput", pidOutput);
+    logger.recordOutput("Arm/pidOuput", pidOutput);
+    logger.recordOutput("Arm/currentPosition/", currentPosition);
 
     if (DriverStation.isDisabled()) {
       // Disable output while disabled
@@ -133,22 +135,26 @@ public class Arm extends SubsystemBase {
           armIO.setRotateVelocity(manualRotate);
           break;
         case NORMAL:
-          double fbOutput;
-          if (0.07 > Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint)) {
-            fbOutput = 0.05;
-          } else {
-            fbOutput = 0.1;
-          }
-          if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
-            fbOutput = fbOutput * -1;
-          }
-          if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.02) {
+          // double fbOutput;
+          // if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) < 0.07) {
+          //   fbOutput = 0.05;
+          // } else {
+          //   fbOutput = 0.1;
+          // }
+          // if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
+          //   fbOutput = fbOutput * -1;
+          // }
+          double fbOutput =
+              pidController.calculate(armIOInputs.extendPositionAbsolute, extendSetpoint)
+                  + BACK_FORCE;
+          if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.005) {
             hold();
           }
-          armIO.setExtendVelocity(fbOutput);
+          armIO.setExtendVoltage(fbOutput);
 
           logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
           logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);
+
           break;
 
         case EXTEND_CHARACTERIZATION:
@@ -161,7 +167,7 @@ public class Arm extends SubsystemBase {
         case DISABLED:
           break;
         case HOLD:
-          armIO.setExtendVoltage(holdPIDOutput);
+          armIO.setExtendVoltage(pidOutput);
           break;
       }
     }

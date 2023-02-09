@@ -52,6 +52,8 @@ public class ArmIOPhysical implements ArmIO {
 
     extendMotor.enableVoltageCompensation(12);
     // rotateMotor.enableVoltageCompensation(12);
+
+    extendMotor.setIdleMode(IdleMode.kBrake);
   }
 
   @Override
