@@ -144,7 +144,7 @@ public class BriefcaseConstants implements Constants {
   }
 
   @Override
-  public int armLidarId() {
+  public int extendLimitSwitchId() {
     return 0;
   }
 }

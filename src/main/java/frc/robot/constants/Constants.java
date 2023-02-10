@@ -97,5 +97,5 @@ public interface Constants {
 
   double armExtendConversionFactor();
 
-  int armLidarId();
+  int extendLimitSwitchId();
 }

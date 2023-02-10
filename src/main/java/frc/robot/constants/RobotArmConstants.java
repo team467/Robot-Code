@@ -154,7 +154,7 @@ public class RobotArmConstants implements Constants {
   }
 
   @Override
-  public int armLidarId() {
-    return 2;
+  public int extendLimitSwitchId() {
+    return 0;
   }
 }

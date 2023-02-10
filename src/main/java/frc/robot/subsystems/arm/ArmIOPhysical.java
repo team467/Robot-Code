@@ -10,19 +10,18 @@ import frc.robot.RobotConstants;
 public class ArmIOPhysical implements ArmIO {
   private final CANSparkMax extendMotor;
   private final RelativeEncoder extendEncoder;
+  private final DigitalInput extendLimitSwitch;
 
   private CANSparkMax rotateMotor;
   private RelativeEncoder rotateEncoder;
 
-  private final LidarLitePWM lidar;
-
-  public ArmIOPhysical(int extendMotorId, int rotateMotorId, int lidarId) {
-    lidar = new LidarLitePWM(new DigitalInput(lidarId));
+  public ArmIOPhysical(int extendMotorId, int rotateMotorId, int extendLimitSwitchId) {
+    extendLimitSwitch = new DigitalInput(extendLimitSwitchId);
 
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     // rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
     extendEncoder = extendMotor.getEncoder();
-    extendEncoder.setPosition(lidar.getDistance());
+   
     extendEncoder.setPositionConversionFactor(RobotConstants.get().armExtendConversionFactor());
 
     rotateMotor = null;
@@ -70,7 +69,7 @@ public class ArmIOPhysical implements ArmIO {
   @Override
   public void updateInputs(ArmIOInputs inputs) {
 
-    inputs.extendPositionAbsolute = lidar.getDistance();
+    // inputs.extendPositionAbsolute = lidar.getDistance();
 
     // TODO: Use the Lidar to get the absolute position of the arm
     // Reset the turn encoder sometimes when not moving
@@ -118,6 +117,6 @@ public class ArmIOPhysical implements ArmIO {
   }
 
   public void resetEncoderPosition() {
-    extendEncoder.setPosition(lidar.getDistance());
+    // extendEncoder.setPosition(lidar.getDistance());
   }
 }
