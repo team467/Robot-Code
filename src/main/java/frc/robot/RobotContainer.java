@@ -18,8 +18,10 @@ import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacter
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.robot.commands.arm.ArmManualDownCMD;
 import frc.robot.commands.arm.ArmManualExtendCMD;
 import frc.robot.commands.arm.ArmManualRetractCMD;
+import frc.robot.commands.arm.ArmManualUpCMD;
 import frc.robot.commands.arm.ArmScoreCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
@@ -182,8 +184,8 @@ public class RobotContainer {
     driverController.leftBumper().onTrue(new ArmManualExtendCMD(arm));
     driverController.start().onTrue(new ArmStopCMD(arm));
     driverController.rightBumper().onTrue(new ArmManualRetractCMD(arm));
-    // driverController.leftTrigger().onTrue(new ArmScoreCMD(arm, 0.85)); // Extend full
-    // driverController.rightTrigger().onTrue(new ArmScoreCMD(arm, 0.75)); // Extend Mid
+    driverController.leftTrigger().onTrue(new ArmManualDownCMD(arm));
+    driverController.rightTrigger().onTrue(new ArmManualUpCMD(arm));
     driverController.a().onTrue(new ArmScoreCMD(arm, 0.0, 0)); // Retract full
     driverController.b().onTrue(new ArmScoreCMD(arm, 0.1, 0)); // Retract Mid
     driverController.y().onTrue(new ArmScoreCMD(arm, 0.2, 0));
