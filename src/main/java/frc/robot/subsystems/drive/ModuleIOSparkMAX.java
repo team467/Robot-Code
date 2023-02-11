@@ -42,8 +42,11 @@ public class ModuleIOSparkMAX implements ModuleIO {
     turnEncoder.setVelocityConversionFactor(rotsToRads / 60);
 
     // Invert motors
-    driveMotor.setInverted(index == 0);
+    driveMotor.setInverted(false);
     turnMotor.setInverted(false);
+
+    driveMotor.setIdleMode(IdleMode.kCoast);
+    turnMotor.setIdleMode(IdleMode.kCoast);
 
     driveMotor.enableVoltageCompensation(12);
     turnMotor.enableVoltageCompensation(12);
