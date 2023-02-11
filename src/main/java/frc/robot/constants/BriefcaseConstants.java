@@ -144,8 +144,18 @@ public class BriefcaseConstants implements Constants {
   }
 
   @Override
-  public int extendLimitSwitchId() {
+  public int armExtendLimitSwitchId() {
     return 0;
+  }
+
+  @Override
+  public int armRotateHighLimitSwitchId() {
+    return 4; // DIO #4
+  }
+
+  @Override
+  public int armRotateLowLimitSwitchId() {
+    return 5; // DIO #5
   }
 
   @Override

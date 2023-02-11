@@ -12,14 +12,24 @@ public class ArmIOPhysical implements ArmIO {
   private final CANSparkMax extendMotor;
   private final RelativeEncoder extendEncoder;
   private final DigitalInput extendLimitSwitch;
+  private final DigitalInput rotateHighLimitSwitch;
+  private final DigitalInput rotateLowLimitSwitch;
   private final DigitalOutput ratchetSolenoid;
 
   private CANSparkMax rotateMotor;
   private RelativeEncoder rotateEncoder;
 
   public ArmIOPhysical(
-      int extendMotorId, int rotateMotorId, int extendLimitSwitchId, int ratchetSolenoidId) {
+      int extendMotorId,
+      int rotateMotorId,
+      int extendLimitSwitchId,
+      int ratchetSolenoidId,
+      int rotateHighLimitSwitchId,
+      int rotateLowLimitSwitchId) {
     extendLimitSwitch = new DigitalInput(extendLimitSwitchId);
+    rotateHighLimitSwitch = new DigitalInput(rotateHighLimitSwitchId);
+    rotateLowLimitSwitch = new DigitalInput(rotateLowLimitSwitchId);
+
     ratchetSolenoid = new DigitalOutput(ratchetSolenoidId);
 
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
@@ -96,6 +106,16 @@ public class ArmIOPhysical implements ArmIO {
   @Override
   public boolean isExtendLimitSwitchPressed() {
     return extendLimitSwitch.get();
+  }
+
+  @Override
+  public boolean isRotateHighLimitSwitchPressed() {
+    return rotateHighLimitSwitch.get();
+  }
+
+  @Override
+  public boolean isRotateLowLimitSwitchPressed() {
+    return rotateLowLimitSwitch.get();
   }
 
   @Override

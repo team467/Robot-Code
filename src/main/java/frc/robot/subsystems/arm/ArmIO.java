@@ -40,6 +40,14 @@ public interface ArmIO {
     return false;
   }
 
+  default boolean isRotateHighLimitSwitchPressed() {
+    return false;
+  }
+
+  default boolean isRotateLowLimitSwitchPressed() {
+    return false;
+  }
+
   public default void setRatchetLocked(boolean locked) {}
 
   public default boolean isRatchedLocked() {
