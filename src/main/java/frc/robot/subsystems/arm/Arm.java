@@ -117,7 +117,7 @@ public class Arm extends SubsystemBase {
           armIO.setExtendVelocity(0);
         } else if (armIOInputs.extendPosition < RobotConstants.get().armExtendMin()
             && manualExtend < 0) {
-          hold();
+          armIO.setExtendVoltage(calculateExtendPid(0));
         } else {
           armIO.setExtendVelocity(manualExtend);
         }
