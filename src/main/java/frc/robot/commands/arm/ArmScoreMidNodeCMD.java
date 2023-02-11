@@ -5,6 +5,6 @@ import frc.robot.subsystems.arm.Arm;
 public class ArmScoreMidNodeCMD extends ArmScoreCMD {
 
   public ArmScoreMidNodeCMD(Arm arm) {
-    super(arm, 0.2);
+    super(arm, 0.2, 0);
   }
 }
