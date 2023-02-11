@@ -34,7 +34,7 @@ public class Arm extends SubsystemBase {
   private double currentPosition;
   private double angle = 0;
   private double characterizationVoltage = 0.0;
-  private double extendSetpoint = 0.6;
+  private double extendSetpoint = 0.2;
   private double rotateSetpoint = 0.0;
 
   public static final double EXTEND_TOLERANCE_METERS = 0.05;
@@ -44,7 +44,7 @@ public class Arm extends SubsystemBase {
 
   private double manualExtend = 0.0;
   private double manualRotate = 0.0;
-  private PIDController pidController = new PIDController(10, 0, 0);
+  private PIDController pidController = new PIDController(20, 0, 0);
   private static final double BACK_FORCE = -0.25;
 
   /**
@@ -120,9 +120,13 @@ public class Arm extends SubsystemBase {
       // armIO.resetEncoderPosition();
       // mode = ArmMode.HOLD;
       // currentPosition = 0;
-      hold();
+      // hold();
+      if (armIOInputs.extendPosition > 0.1 || armIOInputs.extendPosition < -0.1) {
+        mode = ArmMode.CALIBRATE;
+      } else {
+        hold();
+      }
     }
-
     armIO.updateInputs(armIOInputs);
     logger.processInputs("Arm", armIOInputs);
 
@@ -139,7 +143,14 @@ public class Arm extends SubsystemBase {
 
     switch (mode) {
       case MANUAL:
-        armIO.setExtendVelocity(manualExtend);
+        if (armIOInputs.extendPosition > RobotConstants.get().armExtendMax() && manualExtend > 0) {
+          armIO.setExtendVelocity(0);
+        } else if (armIOInputs.extendPosition < RobotConstants.get().armExtendMin()
+            && manualExtend < 0) {
+          hold();
+        } else {
+          armIO.setExtendVelocity(manualExtend);
+        }
         armIO.setRotateVelocity(manualRotate);
         break;
       case NORMAL:
@@ -199,7 +210,7 @@ public class Arm extends SubsystemBase {
 
   public void setExtendSetpoint(double setpoint) {
     mode = ArmMode.NORMAL;
-    extendSetpoint = setpoint;
+    extendSetpoint = Math.min(RobotConstants.get().armExtendMax(), setpoint);
   }
 
   public void setRotateSetpoint(double setpoint) {

@@ -97,5 +97,9 @@ public interface Constants {
 
   double armExtendConversionFactor();
 
+  double armExtendMax();
+
+  double armExtendMin();
+
   int extendLimitSwitchId();
 }

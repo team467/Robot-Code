@@ -157,4 +157,14 @@ public class RobotArmConstants implements Constants {
   public int extendLimitSwitchId() {
     return 0;
   }
+
+  @Override
+  public double armExtendMax() {
+    return 0.34;
+  }
+
+  @Override
+  public double armExtendMin() {
+    return 0.02;
+  }
 }
