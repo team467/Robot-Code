@@ -183,11 +183,11 @@ public class RobotContainer {
                             new Pose2d(
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
-    driverController.leftBumper().onTrue(new ArmManualExtendCMD(arm));
     driverController.start().onTrue(new ArmStopCMD(arm));
-    driverController.rightBumper().onTrue(new ArmManualRetractCMD(arm));
-    driverController.leftTrigger().onTrue(new ArmManualDownCMD(arm));
-    driverController.rightTrigger().onTrue(new ArmManualUpCMD(arm));
+    driverController.leftBumper().whileTrue(new ArmManualExtendCMD(arm));
+    driverController.rightBumper().whileTrue(new ArmManualRetractCMD(arm));
+    driverController.leftTrigger().whileTrue(new ArmManualDownCMD(arm));
+    driverController.rightTrigger().whileTrue(new ArmManualUpCMD(arm));
     driverController.a().onTrue(new ArmScoreCMD(arm, 0.0, 0)); // Retract full
     driverController.b().onTrue(new ArmScoreCMD(arm, 0.1, 0)); // Retract Mid
     driverController.y().onTrue(new ArmScoreCMD(arm, 0.2, 0));
