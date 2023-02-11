@@ -140,6 +140,7 @@ public class Drive extends SubsystemBase {
       }
       if (gyroInputs.connected) {
         odometry.update(Rotation2d.fromDegrees(gyroInputs.yaw), measuredPositions);
+        simGyro = Rotation2d.fromDegrees(gyroInputs.yaw);
       } else {
         simGyro.plus(
             new Rotation2d(
