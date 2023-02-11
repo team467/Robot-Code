@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUIOInputsAutoLogged;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -27,7 +28,7 @@ public class Drive extends SubsystemBase {
   private ChassisSpeeds setpoint = new ChassisSpeeds();
 
   private final SwerveDriveOdometry odometry;
-  private Rotation2d simGyro = new Rotation2d();
+  private double simGyro = 0.0;
 
   public Drive(
       IMUIO gyroIO,
@@ -54,9 +55,17 @@ public class Drive extends SubsystemBase {
     if (gyroInputs.connected) {
       odometry =
           new SwerveDriveOdometry(
-              kinematics, Rotation2d.fromDegrees(gyroInputs.yaw), modulePositions);
+              kinematics,
+              Rotation2d.fromDegrees(gyroInputs.yaw),
+              modulePositions,
+              AllianceFlipUtil.apply(new Pose2d()));
     } else {
-      odometry = new SwerveDriveOdometry(kinematics, simGyro, modulePositions);
+      odometry =
+          new SwerveDriveOdometry(
+              kinematics,
+              new Rotation2d(simGyro),
+              modulePositions,
+              AllianceFlipUtil.apply(new Pose2d()));
     }
   }
 
@@ -141,10 +150,8 @@ public class Drive extends SubsystemBase {
       if (gyroInputs.connected) {
         odometry.update(Rotation2d.fromDegrees(gyroInputs.yaw), measuredPositions);
       } else {
-        simGyro.plus(
-            new Rotation2d(
-                kinematics.toChassisSpeeds(measuredStates).omegaRadiansPerSecond * 0.02));
-        odometry.update(simGyro, measuredPositions);
+        simGyro += kinematics.toChassisSpeeds(measuredStates).omegaRadiansPerSecond * 0.02;
+        odometry.update(new Rotation2d(simGyro), measuredPositions);
       }
       Logger.getInstance().recordOutput("Odometry", getPose());
     }

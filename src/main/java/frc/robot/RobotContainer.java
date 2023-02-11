@@ -120,6 +120,13 @@ public class RobotContainer {
                 new Waypoint(new Translation2d(1, 1)),
                 new Waypoint(new Translation2d(2, -1)),
                 Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
+    autoChooser.addOption(
+        "Drive foward",
+        new GoToTrajectory(
+            drive,
+            List.of(
+                Waypoint.fromHolonomicPose(new Pose2d()),
+                new Waypoint(new Translation2d(FieldConstants.Community.outerX, 0)))));
     //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
     // Rotation2d()));
 
