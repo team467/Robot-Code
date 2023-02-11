@@ -100,6 +100,7 @@ public class Arm extends SubsystemBase {
     }
     armIO.updateInputs(armIOInputs);
     logger.processInputs("Arm", armIOInputs);
+    logger.recordOutput("Arm/mode", mode.toString());
 
     switch (mode) {
       case MANUAL:
@@ -114,11 +115,15 @@ public class Arm extends SubsystemBase {
         armIO.setRotateVelocity(manualRotate);
         break;
       case NORMAL:
-        double fbOutput = pidController.calculate(armIOInputs.extendPosition, extendSetpoint) + BACK_FORCE;
         if (Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS) {
+          // Reached target.
           hold();
+        } else {
+          double fbOutput =
+              pidController.calculate(armIOInputs.extendPosition, extendSetpoint) + BACK_FORCE;
+          logger.recordOutput("Arm/fbOutput", fbOutput);
+          armIO.setExtendVoltage(fbOutput);
         }
-        armIO.setExtendVoltage(fbOutput);
         logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
         logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);
         break;
@@ -135,8 +140,9 @@ public class Arm extends SubsystemBase {
         break;
 
       case HOLD:
-        double holdPidOutput = pidController.calculate(armIOInputs.extendPosition, holdPosition) + BACK_FORCE;
-        logger.recordOutput("Arm/pidOuput", holdPidOutput);
+        double holdPidOutput =
+            pidController.calculate(armIOInputs.extendPosition, holdPosition) + BACK_FORCE;
+        logger.recordOutput("Arm/holdPidOutput", holdPidOutput);
         if (armIO.isExtendLimitSwitchPressed()) {
           armIO.setExtendVoltage(0);
         } else {
