@@ -89,10 +89,10 @@ public class CompBotConstants implements Constants {
   @Override
   public Rotation2d[] absoluteAngleOffset() {
     return new Rotation2d[] {
-      Rotation2d.fromDegrees(-156.4453125),
-      Rotation2d.fromDegrees(47.021484375),
-      Rotation2d.fromDegrees(167.51953125),
-      Rotation2d.fromDegrees(101.513671875)
+      Rotation2d.fromDegrees(20.5),
+      Rotation2d.fromDegrees(42.0),
+      Rotation2d.fromDegrees(168.4),
+      Rotation2d.fromDegrees(99.9)
     };
   }
 
