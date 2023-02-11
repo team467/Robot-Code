@@ -13,7 +13,7 @@ public class SimBotConstants implements Constants {
 
   @Override
   public RobotType robot() {
-    return RobotType.ROBOT_COMP;
+    return RobotType.ROBOT_SIMBOT;
   }
 
   @Override

@@ -4,13 +4,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.BriefcaseConstants;
 import frc.robot.constants.CompBotConstants;
 import frc.robot.constants.Constants;
+import frc.robot.constants.SimBotConstants;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
 public class RobotConstants {
-  private static Constants constants;
+  private static Constants constants = new SimBotConstants();
 
   private RobotConstants() {
     throw new IllegalStateException("Utility class");
