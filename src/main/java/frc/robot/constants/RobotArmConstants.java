@@ -11,13 +11,6 @@ import java.util.Arrays;
 
 public class RobotArmConstants implements Constants {
 
-  /*
-   * @Override
-   * public String name() {
-   * return "Robot Arm 2023";
-   * }
-   */
-
   @Override
   public RobotType robot() {
     return RobotType.ROBOT_COMP;
@@ -25,7 +18,7 @@ public class RobotArmConstants implements Constants {
 
   @Override
   public String logFolder() {
-    return "";
+    return "/media/sda1";
   }
 
   // Drive constants
@@ -126,21 +119,25 @@ public class RobotArmConstants implements Constants {
   public FeedbackConstant chassisTurnFB() {
     return new FeedbackConstant(0, 0);
   }
+
+  
   // Arm Constants
 
   @Override
   public GearRatio armExtendGearRatio() {
-    return null;
+    // TODO Auto-generated method stub
+    return new GearRatio();
   }
 
   @Override
   public GearRatio armRotateGearRatio() {
-    return null;
+    // TODO Auto-generated method stub
+    return new GearRatio();
   }
 
   @Override
   public int armExtendMotorId() {
-    return 20;
+    return 20; // CAN #20
   }
 
   @Override
@@ -150,17 +147,17 @@ public class RobotArmConstants implements Constants {
 
   @Override
   public double armExtendConversionFactor() {
-    return 1;
+    return 0.02;
   }
 
   @Override
   public int extendLimitSwitchId() {
-    return 0;
+    return 0; // DIO #0
   }
 
   @Override
   public int ratchetSolenoidId() {
-    return 1;
+    return 1; // DIO #1
   }
 
   @Override
