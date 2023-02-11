@@ -151,6 +151,11 @@ public class SimBotConstants implements Constants {
   }
 
   @Override
+  public int ratchetSolenoidId() {
+    return 1;
+  }
+
+  @Override
   public double armExtendMax() {
     return 0.34;
   }

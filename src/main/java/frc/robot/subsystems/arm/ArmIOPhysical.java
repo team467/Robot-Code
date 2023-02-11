@@ -5,18 +5,22 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import frc.robot.RobotConstants;
 
 public class ArmIOPhysical implements ArmIO {
   private final CANSparkMax extendMotor;
   private final RelativeEncoder extendEncoder;
   private final DigitalInput extendLimitSwitch;
+  private final DigitalOutput ratchetSolenoid;
 
   private CANSparkMax rotateMotor;
   private RelativeEncoder rotateEncoder;
 
-  public ArmIOPhysical(int extendMotorId, int rotateMotorId, int extendLimitSwitchId) {
+  public ArmIOPhysical(
+      int extendMotorId, int rotateMotorId, int extendLimitSwitchId, int ratchetSolenoidId) {
     extendLimitSwitch = new DigitalInput(extendLimitSwitchId);
+    ratchetSolenoid = new DigitalOutput(ratchetSolenoidId);
 
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     // rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
@@ -124,5 +128,15 @@ public class ArmIOPhysical implements ArmIO {
   @Override
   public boolean isExtendLimitSwitchPressed() {
     return extendLimitSwitch.get();
+  }
+
+  @Override
+  public void setRatchedLocked(boolean locked) {
+    ratchetSolenoid.set(locked);
+  }
+
+  @Override
+  public boolean isRatchedLocked() {
+    return ratchetSolenoid.get();
   }
 }

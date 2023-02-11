@@ -122,7 +122,8 @@ public class RobotContainer {
             new ArmIOPhysical(
                 RobotConstants.get().armExtendMotorId(),
                 RobotConstants.get().armRotateMotorId(),
-                RobotConstants.get().extendLimitSwitchId()));
+                RobotConstants.get().extendLimitSwitchId(),
+                RobotConstants.get().ratchetSolenoidId()));
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());

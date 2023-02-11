@@ -139,7 +139,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public int armExtendMotorId() {
-    return 20;
+    return 20; // CAN #20
   }
 
   @Override
@@ -154,7 +154,12 @@ public class CompBotConstants implements Constants {
 
   @Override
   public int extendLimitSwitchId() {
-    return 0;
+    return 0; // DIO #0
+  }
+
+  @Override
+  public int ratchetSolenoidId() {
+    return 1; // DIO #1
   }
 
   @Override

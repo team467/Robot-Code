@@ -101,5 +101,7 @@ public interface Constants {
 
   double armExtendMin();
 
+  int ratchetSolenoidId();
+
   int extendLimitSwitchId();
 }

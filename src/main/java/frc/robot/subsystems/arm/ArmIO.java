@@ -43,4 +43,10 @@ public interface ArmIO {
   default boolean isExtendLimitSwitchPressed() {
     return false;
   }
+
+  public default void setRatchedLocked(boolean locked) {}
+
+  public default boolean isRatchedLocked() {
+    return false;
+  }
 }
