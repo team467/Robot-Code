@@ -16,7 +16,7 @@ public class ArmScoreCMD extends CommandBase {
 
   @Override
   public void execute() {
-    arm.setExtendSetpoint(setpoint);
+    arm.setTargetPositions(setpoint, 0);
   }
 
   @Override

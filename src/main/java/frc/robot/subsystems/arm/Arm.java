@@ -15,7 +15,7 @@ public class Arm extends SubsystemBase {
   private final ArmIOInputsAutoLogged armIOInputs = new ArmIOInputsAutoLogged();
 
   private enum ArmMode {
-    NORMAL,
+    AUTO,
     EXTEND_CHARACTERIZATION,
     ROTATE_CHARACTERIZATION,
     MANUAL,
@@ -114,7 +114,8 @@ public class Arm extends SubsystemBase {
         }
         armIO.setRotateVelocity(manualRotate);
         break;
-      case NORMAL:
+
+      case AUTO:
         if (Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS) {
           // Reached target.
           hold();
@@ -164,14 +165,10 @@ public class Arm extends SubsystemBase {
     armIO.setRatchetLocked(isHolding());
   }
 
-  public void setExtendSetpoint(double setpoint) {
-    mode = ArmMode.NORMAL;
-    extendSetpoint = Math.min(RobotConstants.get().armExtendMax(), setpoint);
-  }
-
-  public void setRotateSetpoint(double setpoint) {
-    mode = ArmMode.NORMAL;
-    rotateSetpoint = setpoint;
+  public void setTargetPositions(double extendSetpoint, double rotateSetpoint) {
+    mode = ArmMode.AUTO;
+    this.extendSetpoint = Math.min(RobotConstants.get().armExtendMax(), extendSetpoint);
+    this.rotateSetpoint = rotateSetpoint;
   }
 
   public void characterizeExtend() {
