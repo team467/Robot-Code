@@ -50,10 +50,4 @@ public class ArmIOSim implements ArmIO {
   public void setRotateVoltage(double volts) {
     rotateSim.setInputVoltage(MathUtil.clamp(volts, -12.0, 12.0));
   }
-
-  @Override
-  public void setExtendBrakeMode(boolean brake) {}
-
-  @Override
-  public void setRotateBrakeMode(boolean brake) {}
 }

@@ -23,13 +23,12 @@ public class ArmIOPhysical implements ArmIO {
     ratchetSolenoid = new DigitalOutput(ratchetSolenoidId);
 
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
-    // rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
-    extendEncoder = extendMotor.getEncoder();
+    rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
 
+    extendEncoder = extendMotor.getEncoder();
     extendEncoder.setPositionConversionFactor(RobotConstants.get().armExtendConversionFactor());
 
-    rotateMotor = null;
-    // rotateEncoder = rotateMotor.getEncoder();
+    rotateEncoder = rotateMotor.getEncoder();
 
     // Convert rotations to radians
     // double extendRotationsToRads =
@@ -54,45 +53,14 @@ public class ArmIOPhysical implements ArmIO {
     // rotateMotor.setInverted(false); // TODO: check if inverted
 
     extendMotor.enableVoltageCompensation(12);
-    // rotateMotor.enableVoltageCompensation(12);
+    rotateMotor.enableVoltageCompensation(12);
 
     extendMotor.setIdleMode(IdleMode.kBrake);
-  }
-
-  @Override
-  public void setExtendVelocity(double velocity) {
-    extendMotor.set(velocity);
-    // System.out.println(extendMotor.getAppliedOutput());
-  }
-
-  @Override
-  public void setRotateVelocity(double velocity) {
-    // rotateMotor.set(velocity);
+    rotateMotor.setIdleMode(IdleMode.kBrake);
   }
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {
-
-    // inputs.extendPositionAbsolute = lidar.getDistance();
-
-    // TODO: Use the Lidar to get the absolute position of the arm
-    // Reset the turn encoder sometimes when not moving
-    // if (turnEncoder.getVelocity() < Units.degreesToRadians(0.5)) {
-    //   if (++resetCount >= 500) {
-    //     resetCount = 0;
-    //     turnEncoder.setPosition(
-    //         Rotation2d.fromDegrees(turnEncoderAbsolute.getAbsolutePosition())
-    //             .minus(RobotConstants.get().absoluteAngleOffset()[index])
-    //             .getRadians());
-    //   }
-    // } else {
-    //   resetCount = 0;
-    // }
-    // inputs.turnPositionAbsolute =
-    //     Rotation2d.fromDegrees(turnEncoderAbsolute.getAbsolutePosition())
-    //         .minus(RobotConstants.get().absoluteAngleOffset()[index])
-    //         .getRadians();
-
     inputs.extendVelocity = extendEncoder.getVelocity();
     inputs.extendPosition = extendEncoder.getPosition();
     inputs.extendAppliedVolts = extendMotor.getBusVoltage();
@@ -102,23 +70,23 @@ public class ArmIOPhysical implements ArmIO {
   }
 
   @Override
+  public void setExtendVelocity(double velocity) {
+    extendMotor.set(velocity);
+  }
+
+  @Override
+  public void setRotateVelocity(double velocity) {
+    rotateMotor.set(velocity);
+  }
+
+  @Override
   public void setExtendVoltage(double volts) {
     extendMotor.setVoltage(volts);
   }
 
   @Override
   public void setRotateVoltage(double volts) {
-    // rotateMotor.setVoltage(volts);
-  }
-
-  @Override
-  public void setExtendBrakeMode(boolean brake) {
-    extendMotor.setIdleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
-  }
-
-  @Override
-  public void setRotateBrakeMode(boolean brake) {
-    // rotateMotor.setIdleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
+    rotateMotor.setVoltage(volts);
   }
 
   public void resetEncoderPosition() {

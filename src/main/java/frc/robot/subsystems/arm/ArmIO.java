@@ -34,10 +34,6 @@ public interface ArmIO {
 
   default void setRotateVelocity(double speed) {}
 
-  default void setExtendBrakeMode(boolean brake) {}
-
-  default void setRotateBrakeMode(boolean brake) {}
-
   default void resetEncoderPosition() {}
 
   default boolean isExtendLimitSwitchPressed() {
