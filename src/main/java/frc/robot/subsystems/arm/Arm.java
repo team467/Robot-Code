@@ -120,8 +120,7 @@ public class Arm extends SubsystemBase {
           // Reached target.
           hold();
         } else {
-          double fbOutput =
-              pidController.calculate(armIOInputs.extendPosition, extendSetpoint) + BACK_FORCE;
+          double fbOutput = calculateExtendPid(extendSetpoint);
           logger.recordOutput("Arm/fbOutput", fbOutput);
           armIO.setExtendVoltage(fbOutput);
         }
@@ -141,8 +140,7 @@ public class Arm extends SubsystemBase {
         break;
 
       case HOLD:
-        double holdPidOutput =
-            pidController.calculate(armIOInputs.extendPosition, holdPosition) + BACK_FORCE;
+        double holdPidOutput = calculateExtendPid(holdPosition);
         logger.recordOutput("Arm/holdPidOutput", holdPidOutput);
         if (armIO.isExtendLimitSwitchPressed()) {
           armIO.setExtendVoltage(0);
@@ -214,5 +212,9 @@ public class Arm extends SubsystemBase {
 
   public void resetEncoderPosition() {
     armIO.resetEncoderPosition();
+  }
+
+  private double calculateExtendPid(double targetPosition) {
+    return pidController.calculate(armIOInputs.extendPosition, targetPosition) + BACK_FORCE;
   }
 }
