@@ -164,8 +164,10 @@ public class RobotContainer {
                             new Pose2d(
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
-                new DriveWithDpad(drive, 
-                    () -> -driverController.getHID().getPOV());
+
+    driverController
+        .povCenter()
+        .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
   }
 
   /**
