@@ -120,7 +120,6 @@ public class RobotArmConstants implements Constants {
     return new FeedbackConstant(0, 0);
   }
 
-  
   // Arm Constants
 
   @Override
