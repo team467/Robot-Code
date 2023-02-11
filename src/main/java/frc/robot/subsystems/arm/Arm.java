@@ -31,6 +31,9 @@ public class Arm extends SubsystemBase {
   private double extendSetpoint = 0.2;
   private double rotateSetpoint = 0.0;
 
+  private boolean extendCalibrated = false;
+  private boolean rotationCalibrated = true;
+
   private static final double EXTEND_TOLERANCE_METERS = 0.005;
   private static final double ROTATE_TOLERANCE_DEGREES = 2.0;
 
@@ -78,6 +81,11 @@ public class Arm extends SubsystemBase {
     mode = ArmMode.HOLD;
   }
 
+  public void hold(double position) {
+    holdPosition = position;
+    mode = ArmMode.HOLD;
+  }
+
   public boolean isHolding() {
     return mode == ArmMode.HOLD;
   }
@@ -94,6 +102,7 @@ public class Arm extends SubsystemBase {
     if (armIO.isExtendLimitSwitchPressed() && mode != ArmMode.CALIBRATE) {
       if (Math.abs(armIOInputs.extendPosition) > 0.1) {
         mode = ArmMode.CALIBRATE;
+        extendCalibrated = false;
       } else {
         hold();
       }
@@ -151,12 +160,16 @@ public class Arm extends SubsystemBase {
 
       case CALIBRATE:
         if (armIO.isExtendLimitSwitchPressed()) {
-          armIO.resetEncoderPosition();
-          holdPosition = 0;
-          armIO.setExtendVoltage(0);
-          mode = ArmMode.HOLD;
+          if (!extendCalibrated) {
+            armIO.resetEncoderPosition();
+          }
+          armIO.setExtendVoltage(calculateExtendPid(0));
+          extendCalibrated = true;
         } else {
           armIO.setExtendVoltage(-1);
+        }
+        if (extendCalibrated && rotationCalibrated) {
+          hold(0);
         }
         break;
     }
