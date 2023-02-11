@@ -44,7 +44,7 @@ public interface ArmIO {
     return false;
   }
 
-  public default void setRatchedLocked(boolean locked) {}
+  public default void setRatchetLocked(boolean locked) {}
 
   public default boolean isRatchedLocked() {
     return false;

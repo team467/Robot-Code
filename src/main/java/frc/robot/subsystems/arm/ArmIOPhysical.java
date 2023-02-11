@@ -131,7 +131,7 @@ public class ArmIOPhysical implements ArmIO {
   }
 
   @Override
-  public void setRatchedLocked(boolean locked) {
+  public void setRatchetLocked(boolean locked) {
     ratchetSolenoid.set(locked);
   }
 

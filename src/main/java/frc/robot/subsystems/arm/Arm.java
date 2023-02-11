@@ -114,8 +114,7 @@ public class Arm extends SubsystemBase {
         armIO.setRotateVelocity(manualRotate);
         break;
       case NORMAL:
-        double fbOutput =
-            pidController.calculate(armIOInputs.extendPosition, extendSetpoint) + BACK_FORCE;
+        double fbOutput = pidController.calculate(armIOInputs.extendPosition, extendSetpoint) + BACK_FORCE;
         if (Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS) {
           hold();
         }
@@ -136,8 +135,7 @@ public class Arm extends SubsystemBase {
         break;
 
       case HOLD:
-        double holdPidOutput =
-            pidController.calculate(armIOInputs.extendPosition, holdPosition) + BACK_FORCE;
+        double holdPidOutput = pidController.calculate(armIOInputs.extendPosition, holdPosition) + BACK_FORCE;
         logger.recordOutput("Arm/pidOuput", holdPidOutput);
         if (armIO.isExtendLimitSwitchPressed()) {
           armIO.setExtendVoltage(0);
@@ -157,6 +155,7 @@ public class Arm extends SubsystemBase {
         }
         break;
     }
+    armIO.setRatchetLocked(isHolding());
   }
 
   public void setExtendSetpoint(double setpoint) {
