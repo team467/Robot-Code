@@ -8,9 +8,9 @@ public class ArmScoreCMD extends CommandBase {
   private double extendSetpoint;
   private double rotateSetpoint;
 
-  public ArmScoreCMD(Arm arm, double setpoint, double rotateSetpoint) {
+  public ArmScoreCMD(Arm arm, double extendSetpoint, double rotateSetpoint) {
     this.arm = arm;
-    this.extendSetpoint = setpoint;
+    this.extendSetpoint = extendSetpoint;
     this.rotateSetpoint = rotateSetpoint;
 
     addRequirements(arm);
