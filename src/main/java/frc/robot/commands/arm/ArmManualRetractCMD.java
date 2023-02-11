@@ -25,6 +25,6 @@ public class ArmManualRetractCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return arm.isHolding();
   }
 }

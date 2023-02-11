@@ -26,10 +26,11 @@ public class Arm extends SubsystemBase {
     ROTATE_CHARACTERIZATION,
     MANUAL,
     DISABLED,
-    HOLD
+    HOLD,
+    CALIBRATE
   }
 
-  private ArmMode mode = ArmMode.MANUAL;
+  private ArmMode mode = ArmMode.CALIBRATE;
   private double currentPosition;
   private double angle = 0;
   private double characterizationVoltage = 0.0;
@@ -107,8 +108,21 @@ public class Arm extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    System.out.println(mode);
+    if (DriverStation.isDisabled()) {
+      // Disable output while disabled
+      armIO.setExtendVoltage(0.0);
+      armIO.setRotateVoltage(0.0);
+      return;
+    }
+    // System.out.println(mode);
     // Update inputs for IOs
+    if (armIO.isExtendLimitSwitchPressed() && mode != ArmMode.CALIBRATE) {
+      // armIO.resetEncoderPosition();
+      // mode = ArmMode.HOLD;
+      // currentPosition = 0;
+      hold();
+    }
+
     armIO.updateInputs(armIOInputs);
     logger.processInputs("Arm", armIOInputs);
 
@@ -123,53 +137,59 @@ public class Arm extends SubsystemBase {
     logger.recordOutput("Arm/pidOuput", pidOutput);
     logger.recordOutput("Arm/currentPosition/", currentPosition);
 
-    if (DriverStation.isDisabled()) {
-      // Disable output while disabled
-      armIO.setExtendVoltage(0.0);
-      armIO.setRotateVoltage(0.0);
+    switch (mode) {
+      case MANUAL:
+        armIO.setExtendVelocity(manualExtend);
+        armIO.setRotateVelocity(manualRotate);
+        break;
+      case NORMAL:
+        // double fbOutput;
+        // if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) < 0.07) {
+        //   fbOutput = 0.05;
+        // } else {
+        //   fbOutput = 0.1;
+        // }
+        // if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
+        //   fbOutput = fbOutput * -1;
+        // }
+        double fbOutput =
+            pidController.calculate(armIOInputs.extendPosition, extendSetpoint) + BACK_FORCE;
+        if (Math.abs(armIOInputs.extendPosition - extendSetpoint) <= 0.005) {
+          hold();
+        }
+        armIO.setExtendVoltage(fbOutput);
 
-    } else {
-      switch (mode) {
-        case MANUAL:
-          armIO.setExtendVelocity(manualExtend);
-          armIO.setRotateVelocity(manualRotate);
-          break;
-        case NORMAL:
-          // double fbOutput;
-          // if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) < 0.07) {
-          //   fbOutput = 0.05;
-          // } else {
-          //   fbOutput = 0.1;
-          // }
-          // if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
-          //   fbOutput = fbOutput * -1;
-          // }
-          double fbOutput =
-              pidController.calculate(armIOInputs.extendPositionAbsolute, extendSetpoint)
-                  + BACK_FORCE;
-          if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.005) {
-            hold();
-          }
-          armIO.setExtendVoltage(fbOutput);
+        logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
+        logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);
 
-          logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
-          logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);
+        break;
 
-          break;
+      case EXTEND_CHARACTERIZATION:
+        armIO.setExtendVoltage(characterizationVoltage);
+        break;
 
-        case EXTEND_CHARACTERIZATION:
-          armIO.setExtendVoltage(characterizationVoltage);
-          break;
-
-        case ROTATE_CHARACTERIZATION:
-          armIO.setRotateVoltage(characterizationVoltage);
-          break;
-        case DISABLED:
-          break;
-        case HOLD:
+      case ROTATE_CHARACTERIZATION:
+        armIO.setRotateVoltage(characterizationVoltage);
+        break;
+      case DISABLED:
+        break;
+      case HOLD:
+        if (armIO.isExtendLimitSwitchPressed()) {
+          armIO.setExtendVoltage(0);
+        } else {
           armIO.setExtendVoltage(pidOutput);
-          break;
-      }
+        }
+        break;
+      case CALIBRATE:
+        if (armIO.isExtendLimitSwitchPressed()) {
+          armIO.resetEncoderPosition();
+          currentPosition = 0;
+          armIO.setExtendVoltage(0);
+          mode = ArmMode.HOLD;
+        } else {
+          armIO.setExtendVoltage(-1);
+        }
+        break;
     }
 
     // TODO: Proper conversions
@@ -225,8 +245,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean finished() {
-    return Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint)
-        <= 0.01; // NEEDS CONVERSION
+    return Math.abs(armIOInputs.extendPosition - extendSetpoint) <= 0.01; // NEEDS CONVERSION
     // TODO: CHANGE to Lidar
 
     // double currentAngle = armRotateMotor.getEncoder().getPosition(); // NEEDS CONVERSION

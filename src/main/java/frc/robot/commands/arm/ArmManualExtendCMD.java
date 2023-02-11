@@ -18,7 +18,6 @@ public class ArmManualExtendCMD extends CommandBase {
   @Override
   public void execute() {
     arm.manualExtend(0.1);
-    ;
   }
 
   @Override
@@ -26,6 +25,6 @@ public class ArmManualExtendCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return arm.isHolding();
   }
 }

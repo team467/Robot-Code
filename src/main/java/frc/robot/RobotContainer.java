@@ -181,12 +181,12 @@ public class RobotContainer {
     driverController.leftBumper().onTrue(new ArmManualExtendCMD(arm));
     driverController.start().onTrue(new ArmStopCMD(arm));
     driverController.rightBumper().onTrue(new ArmManualRetractCMD(arm));
-    driverController.leftTrigger().onTrue(new ArmScoreCMD(arm, 0.85)); // Extend full
-    driverController.rightTrigger().onTrue(new ArmScoreCMD(arm, 0.75)); // Extend Mid
-    driverController.a().onTrue(new ArmScoreCMD(arm, 0.5)); // Retract full
-    driverController.b().onTrue(new ArmScoreCMD(arm, 0.6)); // Retract Mid
-    driverController.y().onTrue(new ArmScoreCMD(arm, 0.65));
-    driverController.x().onTrue(new ArmScoreCMD(arm, 0.7));
+    // driverController.leftTrigger().onTrue(new ArmScoreCMD(arm, 0.85)); // Extend full
+    // driverController.rightTrigger().onTrue(new ArmScoreCMD(arm, 0.75)); // Extend Mid
+    driverController.a().onTrue(new ArmScoreCMD(arm, 0.1)); // Retract full
+    driverController.b().onTrue(new ArmScoreCMD(arm, 0.2)); // Retract Mid
+    driverController.y().onTrue(new ArmScoreCMD(arm, 0.3));
+    driverController.x().onTrue(new ArmScoreCMD(arm, 0.4));
   }
 
   /**

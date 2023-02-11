@@ -21,7 +21,7 @@ public class ArmIOPhysical implements ArmIO {
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     // rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
     extendEncoder = extendMotor.getEncoder();
-   
+
     extendEncoder.setPositionConversionFactor(RobotConstants.get().armExtendConversionFactor());
 
     rotateMotor = null;
@@ -94,6 +94,7 @@ public class ArmIOPhysical implements ArmIO {
     inputs.extendAppliedVolts = extendMotor.getBusVoltage();
     inputs.extendCurrent = extendMotor.getOutputCurrent();
     inputs.extendTemp = extendMotor.getMotorTemperature();
+    inputs.extendLimitSwitch = extendLimitSwitch.get();
   }
 
   @Override
@@ -117,6 +118,11 @@ public class ArmIOPhysical implements ArmIO {
   }
 
   public void resetEncoderPosition() {
-    // extendEncoder.setPosition(lidar.getDistance());
+    extendEncoder.setPosition(0);
+  }
+
+  @Override
+  public boolean isExtendLimitSwitchPressed() {
+    return extendLimitSwitch.get();
   }
 }

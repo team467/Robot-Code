@@ -20,6 +20,8 @@ public interface ArmIO {
     public double rotateAppliedVolts = 0.0;
     public double rotateCurrent = 0.0;
     public double rotateTemp = 0.0;
+
+    public boolean extendLimitSwitch = false;
   }
 
   default void updateInputs(ArmIOInputs inputs) {}
@@ -37,4 +39,8 @@ public interface ArmIO {
   default void setRotateBrakeMode(boolean brake) {}
 
   default void resetEncoderPosition() {}
+
+  default boolean isExtendLimitSwitchPressed() {
+    return false;
+  }
 }
