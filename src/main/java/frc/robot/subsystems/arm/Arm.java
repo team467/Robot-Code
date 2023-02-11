@@ -1,7 +1,6 @@
 package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -11,11 +10,6 @@ import org.littletonrobotics.junction.Logger;
 public class Arm extends SubsystemBase {
 
   private final Logger logger = Logger.getInstance();
-
-  private static final SimpleMotorFeedforward extendFF =
-      RobotConstants.get().moduleDriveFF().getFeedforward();
-  private static final SimpleMotorFeedforward rotateFF =
-      RobotConstants.get().moduleTurnFF().getFeedforward();
 
   private final ArmIO armIO;
   private final ArmIOInputsAutoLogged armIOInputs = new ArmIOInputsAutoLogged();
@@ -31,16 +25,14 @@ public class Arm extends SubsystemBase {
   }
 
   private ArmMode mode = ArmMode.CALIBRATE;
-  private double currentPosition;
+  private double holdPosition;
   private double angle = 0;
   private double characterizationVoltage = 0.0;
   private double extendSetpoint = 0.2;
   private double rotateSetpoint = 0.0;
 
-  public static final double EXTEND_TOLERANCE_METERS = 0.05;
-  public static final double ROTATE_TOLERANCE_DEGREES = 2.0;
-
-  private boolean enabled = false;
+  private static final double EXTEND_TOLERANCE_METERS = 0.005;
+  private static final double ROTATE_TOLERANCE_DEGREES = 2.0;
 
   private double manualExtend = 0.0;
   private double manualRotate = 0.0;
@@ -57,19 +49,6 @@ public class Arm extends SubsystemBase {
     this.armIO = armIO;
 
     armIO.updateInputs(armIOInputs);
-  }
-
-  public void enable() {
-    enabled = true;
-  }
-
-  public void disable() {
-    stop();
-    enabled = false;
-  }
-
-  public boolean isEnabled() {
-    return enabled;
   }
 
   public boolean isManual() {
@@ -95,7 +74,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void hold() {
-    currentPosition = armIOInputs.extendPosition;
+    holdPosition = armIOInputs.extendPosition;
     mode = ArmMode.HOLD;
   }
 
@@ -103,9 +82,6 @@ public class Arm extends SubsystemBase {
     return mode == ArmMode.HOLD;
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.first.wpilibj2.command.Subsystem#periodic()
-   */
   @Override
   public void periodic() {
     if (DriverStation.isDisabled()) {
@@ -114,14 +90,9 @@ public class Arm extends SubsystemBase {
       armIO.setRotateVoltage(0.0);
       return;
     }
-    // System.out.println(mode);
-    // Update inputs for IOs
+
     if (armIO.isExtendLimitSwitchPressed() && mode != ArmMode.CALIBRATE) {
-      // armIO.resetEncoderPosition();
-      // mode = ArmMode.HOLD;
-      // currentPosition = 0;
-      // hold();
-      if (armIOInputs.extendPosition > 0.1 || armIOInputs.extendPosition < -0.1) {
+      if (Math.abs(armIOInputs.extendPosition) > 0.1) {
         mode = ArmMode.CALIBRATE;
       } else {
         hold();
@@ -129,17 +100,6 @@ public class Arm extends SubsystemBase {
     }
     armIO.updateInputs(armIOInputs);
     logger.processInputs("Arm", armIOInputs);
-
-    double pidOutput =
-        pidController.calculate(armIOInputs.extendPosition, currentPosition) + BACK_FORCE;
-    // if (armIOInputs.extendPosition > currentPosition) {
-    //   pidOutput = -0.25;
-    // } else {
-    //   pidOutput = 0;
-    // }
-    // logger.recordOutput("arm/pidoutput", pidOutput);
-    logger.recordOutput("Arm/pidOuput", pidOutput);
-    logger.recordOutput("Arm/currentPosition/", currentPosition);
 
     switch (mode) {
       case MANUAL:
@@ -154,25 +114,14 @@ public class Arm extends SubsystemBase {
         armIO.setRotateVelocity(manualRotate);
         break;
       case NORMAL:
-        // double fbOutput;
-        // if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) < 0.07) {
-        //   fbOutput = 0.05;
-        // } else {
-        //   fbOutput = 0.1;
-        // }
-        // if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
-        //   fbOutput = fbOutput * -1;
-        // }
         double fbOutput =
             pidController.calculate(armIOInputs.extendPosition, extendSetpoint) + BACK_FORCE;
-        if (Math.abs(armIOInputs.extendPosition - extendSetpoint) <= 0.005) {
+        if (Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS) {
           hold();
         }
         armIO.setExtendVoltage(fbOutput);
-
         logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
         logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);
-
         break;
 
       case EXTEND_CHARACTERIZATION:
@@ -182,19 +131,25 @@ public class Arm extends SubsystemBase {
       case ROTATE_CHARACTERIZATION:
         armIO.setRotateVoltage(characterizationVoltage);
         break;
+
       case DISABLED:
         break;
+
       case HOLD:
+        double holdPidOutput =
+            pidController.calculate(armIOInputs.extendPosition, holdPosition) + BACK_FORCE;
+        logger.recordOutput("Arm/pidOuput", holdPidOutput);
         if (armIO.isExtendLimitSwitchPressed()) {
           armIO.setExtendVoltage(0);
         } else {
-          armIO.setExtendVoltage(pidOutput);
+          armIO.setExtendVoltage(holdPidOutput);
         }
         break;
+
       case CALIBRATE:
         if (armIO.isExtendLimitSwitchPressed()) {
           armIO.resetEncoderPosition();
-          currentPosition = 0;
+          holdPosition = 0;
           armIO.setExtendVoltage(0);
           mode = ArmMode.HOLD;
         } else {
@@ -202,10 +157,6 @@ public class Arm extends SubsystemBase {
         }
         break;
     }
-
-    // TODO: Proper conversions
-    // armIO.setExtendPosition(distanceTargetInches);
-    // armIO.setRotatePosition(rotateTargetDegrees);
   }
 
   public void setExtendSetpoint(double setpoint) {
@@ -256,19 +207,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean finished() {
-    return Math.abs(armIOInputs.extendPosition - extendSetpoint) <= 0.01; // NEEDS CONVERSION
-    // TODO: CHANGE to Lidar
-
-    // double currentAngle = armRotateMotor.getEncoder().getPosition(); // NEEDS CONVERSION
-    // double currentAngle = 0;
-    // if (currentDistance >= (extendSetpoint - EXTEND_TOLERANCE_METERS)
-    //     && (currentDistance <= (extendSetpoint + EXTEND_TOLERANCE_METERS)
-    //         && (currentAngle >= (rotateSetpoint - EXTEND_TOLERANCE_METERS)
-    //             && (currentAngle <= (rotateSetpoint + EXTEND_TOLERANCE_METERS))))) {
-    //   return true;
-    // }
-
-    // return false;
+    return Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS;
   }
 
   public void resetEncoderPosition() {
