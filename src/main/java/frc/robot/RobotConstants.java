@@ -28,7 +28,7 @@ public class RobotConstants {
         String name = br.readLine().toLowerCase();
         System.out.println("Name: " + name);
         switch (name) {
-          case "lovelace":
+          case "von neumann":
             RobotConstants.set(new CompBotConstants());
             break;
           case "turing":

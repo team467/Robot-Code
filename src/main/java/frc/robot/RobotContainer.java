@@ -58,10 +58,10 @@ public class RobotContainer {
             drive =
                 new Drive(
                     new IMUPigeon2(17),
-                    new ModuleIOSparkMAX(5, 6, 11, 0),
-                    new ModuleIOSparkMAX(7, 8, 12, 1),
-                    new ModuleIOSparkMAX(3, 4, 10, 2),
-                    new ModuleIOSparkMAX(1, 2, 9, 3));
+                    new ModuleIOSparkMAX(3, 4, 13, 0),
+                    new ModuleIOSparkMAX(5, 6, 14, 1),
+                    new ModuleIOSparkMAX(1, 2, 15, 2),
+                    new ModuleIOSparkMAX(7, 8, 16, 3));
           }
           case ROBOT_BRIEFCASE -> {
             drive =
