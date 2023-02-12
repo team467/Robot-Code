@@ -21,10 +21,15 @@ import frc.lib.io.gyro3d.IMUPigeon2;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
+import frc.robot.commands.intakerelease.IntakeCMD;
+import frc.robot.commands.intakerelease.ReleaseCMD;
+import frc.robot.commands.intakerelease.StopCMD;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
+import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -38,6 +43,7 @@ public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
   private final Drive drive;
+  private final IntakeRelease intakeRelease;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -108,7 +114,8 @@ public class RobotContainer {
                 new ModuleIO() {});
       }
     }
-
+    intakeRelease = new IntakeRelease(new IntakeReleaseIOPhysical(RobotConstants.get().intakeMotorID(), RobotConstants.get().intakeCubeLimitSwitchID(), RobotConstants.get().intakeConeLimitSwitchID()));
+    intakeRelease.setDefaultCommand(new StopCMD(intakeRelease));
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     autoChooser.addOption(
@@ -163,6 +170,8 @@ public class RobotContainer {
                             new Pose2d(
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
+    driverController.a().whileTrue(new IntakeCMD(intakeRelease));
+    driverController.b().whileTrue(new ReleaseCMD(intakeRelease));
   }
 
   /**

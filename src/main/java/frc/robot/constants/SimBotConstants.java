@@ -119,4 +119,22 @@ public class SimBotConstants implements Constants {
   public FeedbackConstant chassisTurnFB() {
     return new FeedbackConstant(0, 0);
   }
+
+  @Override
+  public int intakeMotorID() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public int intakeCubeLimitSwitchID() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public int intakeConeLimitSwitchID() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
 }

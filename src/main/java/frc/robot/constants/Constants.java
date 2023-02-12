@@ -76,4 +76,10 @@ public interface Constants {
   FeedbackConstant chassisDriveFB();
 
   FeedbackConstant chassisTurnFB();
+
+  int intakeMotorID();
+
+  int intakeCubeLimitSwitchID();
+
+  int intakeConeLimitSwitchID();
 }
