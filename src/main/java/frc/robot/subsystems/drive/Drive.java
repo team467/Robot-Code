@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -9,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro3d.IMUIO;
@@ -182,25 +184,28 @@ public class Drive extends SubsystemBase {
               .recordOutput(
                   "Odometry/VisionPose/" + i,
                   aprilTagCameraInputs.get(i).estimatedPose.get().estimatedPose.toPose2d());
+          Vector<N3> std =
+              switch (i) {
+                case 0 -> VecBuilder.fill(0.163, 0.326, 0.050);
+                case 1 -> VecBuilder.fill(0.0001, 0.021, 0.013);
+                default -> VecBuilder.fill(1, 1, 1);
+              };
           odomTest.addVisionMeasurement(
               aprilTagCameraInputs.get(i).estimatedPose.get().estimatedPose.toPose2d(),
-              aprilTagCameraInputs.get(i).estimatedPose.get().timestampSeconds);
-          Logger.getInstance()
-              .recordOutput("Odometry/EstimPose/" + i, odomTest.getEstimatedPosition());
+              aprilTagCameraInputs.get(i).estimatedPose.get().timestampSeconds,
+              std);
         }
+        Logger.getInstance().recordOutput("Odometry/EstimPose/", odomTest.getEstimatedPosition());
       }
 
       if (gyroInputs.connected) {
         odometry.update(Rotation2d.fromDegrees(gyroInputs.yaw), measuredPositions);
-        for (int i = 0; i < aprilTagCameraInputs.size(); i++) {
-          aprilTagCameraInputs
-              .get(i)
-              .estimatedPose
-              .ifPresent(
-                  estimatedRobotPose ->
-                      odometry.addVisionMeasurement(
-                          estimatedRobotPose.estimatedPose.toPose2d(),
-                          estimatedRobotPose.timestampSeconds));
+        for (VisionIOInputs aprilTagCameraInput : aprilTagCameraInputs) {
+          aprilTagCameraInput.estimatedPose.ifPresent(
+              estimatedRobotPose ->
+                  odometry.addVisionMeasurement(
+                      estimatedRobotPose.estimatedPose.toPose2d(),
+                      estimatedRobotPose.timestampSeconds));
         }
       } else {
         simGyro.plus(

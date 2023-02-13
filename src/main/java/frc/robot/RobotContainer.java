@@ -6,14 +6,15 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,6 +33,7 @@ import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
+import java.io.IOException;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -44,7 +46,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
-  private final Drive drive;
+  private Drive drive;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -64,31 +66,41 @@ public class RobotContainer {
           case ROBOT_COMP -> {
             List<AprilTag> aprilTags =
                 List.of(
-                    new AprilTag(
-                        1,
-                        new Pose3d(
-                            new Translation3d(0, Units.feetToMeters(1), Units.inchesToMeters(29)),
-                            new Rotation3d(0, 0, 0))),
-                    new AprilTag(
-                        2,
-                        new Pose3d(
-                            new Translation3d(0, Units.feetToMeters(5), Units.inchesToMeters(29)),
-                            new Rotation3d(0, 0, 0))),
-                    new AprilTag(
-                        3,
-                        new Pose3d(
-                            new Translation3d(0, Units.feetToMeters(9), Units.inchesToMeters(25)),
-                            new Rotation3d(0, 0, 0))));
+                    new AprilTag(1, FieldConstants.aprilTags.get(1)),
+                    new AprilTag(2, FieldConstants.aprilTags.get(2)),
+                    new AprilTag(3, FieldConstants.aprilTags.get(3)));
             AprilTagFieldLayout layout = new AprilTagFieldLayout(aprilTags, 20, 20);
-            Transform3d cameraToRobotA = new Transform3d();
-            drive =
-                new Drive(
-                    new IMUIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    List.of(new VisionIOAprilTag("aprila", cameraToRobotA, layout)));
+            //            Transform3d cameraToRobotA = new Transform3d(
+            //                new Translation3d(
+            //                    Units.inchesToMeters(7.5),
+            //                    Units.inchesToMeters(-15),
+            //                    Units.inchesToMeters(12)
+            //                ),
+            //                new Rotation3d()
+            //            );
+            Transform3d front = new Transform3d();
+            //            Transform3d cameraToRobotB = new Transform3d(
+            //                new Translation3d(
+            //                    Units.inchesToMeters(7.5),
+            //                    Units.inchesToMeters(-15),
+            //                    Units.inchesToMeters(12)
+            //                ),
+            //                new Rotation3d(0.0, 0.0, 90)
+            //            );
+            Transform3d right =
+                new Transform3d(
+                    new Translation3d(Units.inchesToMeters(-4), Units.inchesToMeters(-3), 0),
+                    new Rotation3d(0, 0, Math.toRadians(-90)));
+              drive =
+                  new Drive(
+                      new IMUIO() {},
+                      new ModuleIO() {},
+                      new ModuleIO() {},
+                      new ModuleIO() {},
+                      new ModuleIO() {},
+                      List.of(
+                          new VisionIOAprilTag("front", front, layout),
+                          new VisionIOAprilTag("right", right, layout)));
           }
           case ROBOT_BRIEFCASE -> {
             drive =
