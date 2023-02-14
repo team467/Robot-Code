@@ -20,6 +20,8 @@ public interface ArmIO {
     public double rotateAppliedVolts = 0.0;
     public double rotateCurrent = 0.0;
     public double rotateTemp = 0.0;
+
+    public boolean extendLimitSwitch = false;
   }
 
   default void updateInputs(ArmIOInputs inputs) {}
@@ -32,9 +34,23 @@ public interface ArmIO {
 
   default void setRotateVelocity(double speed) {}
 
-  default void setExtendBrakeMode(boolean brake) {}
-
-  default void setRotateBrakeMode(boolean brake) {}
-
   default void resetEncoderPosition() {}
+
+  default boolean isExtendLimitSwitchPressed() {
+    return false;
+  }
+
+  default boolean isRotateHighLimitSwitchPressed() {
+    return false;
+  }
+
+  default boolean isRotateLowLimitSwitchPressed() {
+    return false;
+  }
+
+  public default void setRatchetLocked(boolean locked) {}
+
+  public default boolean isRatchedLocked() {
+    return false;
+  }
 }

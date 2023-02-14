@@ -1,7 +1,6 @@
 package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,39 +11,36 @@ public class Arm extends SubsystemBase {
 
   private final Logger logger = Logger.getInstance();
 
-  private static final SimpleMotorFeedforward extendFF =
-      RobotConstants.get().moduleDriveFF().getFeedforward();
-  private static final SimpleMotorFeedforward rotateFF =
-      RobotConstants.get().moduleTurnFF().getFeedforward();
-
   private final ArmIO armIO;
   private final ArmIOInputsAutoLogged armIOInputs = new ArmIOInputsAutoLogged();
 
   private enum ArmMode {
-    NORMAL,
+    AUTO,
     EXTEND_CHARACTERIZATION,
     ROTATE_CHARACTERIZATION,
     MANUAL,
     DISABLED,
-    HOLD
+    HOLD,
+    CALIBRATE
   }
 
-  private ArmMode mode = ArmMode.MANUAL;
-  private double currentPosition;
+  private ArmMode mode = ArmMode.CALIBRATE;
+  private double holdPosition;
   private double angle = 0;
   private double characterizationVoltage = 0.0;
-  private double extendSetpoint = 0.6;
+  private double extendSetpoint = 0.2;
   private double rotateSetpoint = 0.0;
 
-  public static final double EXTEND_TOLERANCE_METERS = 0.05;
-  public static final double ROTATE_TOLERANCE_DEGREES = 2.0;
+  private boolean extendCalibrated = false;
+  private boolean rotationCalibrated = true;
 
-  private boolean enabled = false;
+  private static final double EXTEND_TOLERANCE_METERS = 0.005;
+  private static final double ROTATE_TOLERANCE_DEGREES = 2.0;
 
   private double manualExtend = 0.0;
   private double manualRotate = 0.0;
-  private PIDController extendPidController = new PIDController(10, 0, 0);
-  private PIDController  rotatePidController = new PIDController(10, 0, 0);
+  private PIDController extendPidController = new PIDController(20, 0, 0);
+  private PIDController  rotatePidController = new PIDController(5, 0, 0);
   private static final double BACK_FORCE = -0.25;
 
   /**
@@ -57,19 +53,6 @@ public class Arm extends SubsystemBase {
     this.armIO = armIO;
 
     armIO.updateInputs(armIOInputs);
-  }
-
-  public void enable() {
-    enabled = true;
-  }
-
-  public void disable() {
-    stop();
-    enabled = false;
-  }
-
-  public boolean isEnabled() {
-    return enabled;
   }
 
   public boolean isManual() {
@@ -95,7 +78,12 @@ public class Arm extends SubsystemBase {
   }
 
   public void hold() {
-    currentPosition = armIOInputs.extendPosition;
+    holdPosition = armIOInputs.extendPosition;
+    mode = ArmMode.HOLD;
+  }
+
+  public void hold(double position) {
+    holdPosition = position;
     mode = ArmMode.HOLD;
   }
 
@@ -103,89 +91,96 @@ public class Arm extends SubsystemBase {
     return mode == ArmMode.HOLD;
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.first.wpilibj2.command.Subsystem#periodic()
-   */
   @Override
   public void periodic() {
-    System.out.println(mode);
-    // Update inputs for IOs
-    armIO.updateInputs(armIOInputs);
-    logger.processInputs("Arm", armIOInputs);
-
-    double pidOutput =
-        extendPidController.calculate(armIOInputs.extendPosition, currentPosition) + BACK_FORCE;
-    // if (armIOInputs.extendPosition > currentPosition) {
-    //   pidOutput = -0.25;
-    // } else {
-    //   pidOutput = 0;
-    // }
-    // logger.recordOutput("arm/pidoutput", pidOutput);
-    logger.recordOutput("Arm/pidOuput", pidOutput);
-    logger.recordOutput("Arm/currentPosition/", currentPosition);
-
     if (DriverStation.isDisabled()) {
       // Disable output while disabled
       armIO.setExtendVoltage(0.0);
       armIO.setRotateVoltage(0.0);
-
-    } else {
-      switch (mode) {
-        case MANUAL:
-          armIO.setExtendVelocity(manualExtend);
-          armIO.setRotateVelocity(manualRotate);
-          break;
-        case NORMAL:
-          // double fbOutput;
-          // if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) < 0.07) {
-          //   fbOutput = 0.05;
-          // } else {
-          //   fbOutput = 0.1;
-          // }
-          // if (armIOInputs.extendPositionAbsolute > extendSetpoint) {
-          //   fbOutput = fbOutput * -1;
-          // }
-          double fbOutput =
-              extendPidController.calculate(armIOInputs.extendPositionAbsolute, extendSetpoint) 
-                  + BACK_FORCE;
-          if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.005) {
-            hold();
-          }
-          armIO.setExtendVoltage(fbOutput);
- 
-          logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
-          logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);
-
-          break;
-
-        case EXTEND_CHARACTERIZATION:
-          armIO.setExtendVoltage(characterizationVoltage);
-          break;
-
-        case ROTATE_CHARACTERIZATION:
-          armIO.setRotateVoltage(characterizationVoltage);
-          break;
-        case DISABLED:
-          break;
-        case HOLD:
-          armIO.setExtendVoltage(pidOutput);
-          break;
-      }
+      return;
     }
 
-    // TODO: Proper conversions
-    // armIO.setExtendPosition(distanceTargetInches);
-    // armIO.setRotatePosition(rotateTargetDegrees);
+    if (armIO.isExtendLimitSwitchPressed() && mode != ArmMode.CALIBRATE) {
+      if (Math.abs(armIOInputs.extendPosition) > 0.1) {
+        mode = ArmMode.CALIBRATE;
+        extendCalibrated = false;
+      } else {
+        hold();
+      }
+    }
+    armIO.updateInputs(armIOInputs);
+    logger.processInputs("Arm", armIOInputs);
+    logger.recordOutput("Arm/mode", mode.toString());
+
+    switch (mode) {
+      case MANUAL:
+        if (armIOInputs.extendPosition > RobotConstants.get().armExtendMax() && manualExtend > 0) {
+          armIO.setExtendVelocity(0);
+        } else if (armIOInputs.extendPosition < RobotConstants.get().armExtendMin()
+            && manualExtend < 0) {
+          armIO.setExtendVoltage(calculateExtendPid(0));
+        } else {
+          armIO.setExtendVelocity(manualExtend);
+        }
+        armIO.setRotateVelocity(manualRotate);
+        break;
+
+      case AUTO:
+        if (Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS) {
+          // Reached target.
+          hold();
+        } else {
+          double fbOutput = calculateExtendPid(extendSetpoint);
+          logger.recordOutput("Arm/fbOutput", fbOutput);
+          armIO.setExtendVoltage(fbOutput);
+         }
+        logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
+        logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);
+        break;
+
+      case EXTEND_CHARACTERIZATION:
+        armIO.setExtendVoltage(characterizationVoltage);
+        break;
+
+      case ROTATE_CHARACTERIZATION:
+        armIO.setRotateVoltage(characterizationVoltage);
+        break;
+
+      case DISABLED:
+        break;
+
+      case HOLD:
+        double holdPidOutput = calculateExtendPid(holdPosition);
+        logger.recordOutput("Arm/holdPidOutput", holdPidOutput);
+        if (armIO.isExtendLimitSwitchPressed()) {
+          armIO.setExtendVoltage(0);
+        } else {
+          armIO.setExtendVoltage(holdPidOutput);
+        }
+        break;
+
+      case CALIBRATE:
+        if (armIO.isExtendLimitSwitchPressed()) {
+          if (!extendCalibrated) {
+            armIO.resetEncoderPosition();
+          }
+          armIO.setExtendVoltage(calculateExtendPid(0));
+          extendCalibrated = true;
+        } else {
+          armIO.setExtendVoltage(-1);
+        }
+        if (extendCalibrated && rotationCalibrated) {
+          hold(0);
+        }
+        break;
+    }
+    armIO.setRatchetLocked(isHolding());
   }
 
-  public void setExtendSetpoint(double setpoint) {
-    mode = ArmMode.NORMAL;
-    extendSetpoint = setpoint;
-  }
-
-  public void setRotateSetpoint(double setpoint) {
-    mode = ArmMode.NORMAL;
-    rotateSetpoint = setpoint;
+  public void setTargetPositions(double extendSetpoint, double rotateSetpoint) {
+    mode = ArmMode.AUTO;
+    this.extendSetpoint = Math.min(RobotConstants.get().armExtendMax(), extendSetpoint);
+    this.rotateSetpoint = rotateSetpoint;
   }
 
   public void characterizeExtend() {
@@ -226,23 +221,14 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean finished() {
-    return Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint)
-        <= 0.01; // NEEDS CONVERSION
-    // TODO: CHANGE to Lidar
-
-    // double currentAngle = armRotateMotor.getEncoder().getPosition(); // NEEDS CONVERSION
-    // double currentAngle = 0;
-    // if (currentDistance >= (extendSetpoint - EXTEND_TOLERANCE_METERS)
-    //     && (currentDistance <= (extendSetpoint + EXTEND_TOLERANCE_METERS)
-    //         && (currentAngle >= (rotateSetpoint - EXTEND_TOLERANCE_METERS)
-    //             && (currentAngle <= (rotateSetpoint + EXTEND_TOLERANCE_METERS))))) {
-    //   return true;
-    // }
-
-    // return false;
+    return Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS;
   }
 
   public void resetEncoderPosition() {
     armIO.resetEncoderPosition();
+  }
+
+  private double calculateExtendPid(double targetPosition) {
+    return pidController.calculate(armIOInputs.extendPosition, targetPosition) + BACK_FORCE;
   }
 }

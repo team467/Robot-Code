@@ -18,14 +18,15 @@ public class ArmManualExtendCMD extends CommandBase {
   @Override
   public void execute() {
     arm.manualExtend(0.1);
-    ;
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    arm.hold();
+  }
 
   @Override
   public boolean isFinished() {
-    return false;
+    return arm.isHolding();
   }
 }

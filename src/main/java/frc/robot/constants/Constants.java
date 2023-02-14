@@ -97,5 +97,15 @@ public interface Constants {
 
   double armExtendConversionFactor();
 
-  int extendLimitSwitchId();
+  double armExtendMax();
+
+  double armExtendMin();
+
+  int ratchetSolenoidId();
+
+  int armExtendLimitSwitchId();
+
+  int armRotateHighLimitSwitchId();
+
+  int armRotateLowLimitSwitchId();
 }

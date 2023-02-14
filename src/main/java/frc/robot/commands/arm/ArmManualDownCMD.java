@@ -13,15 +13,14 @@ public class ArmManualDownCMD extends CommandBase {
   }
 
   @Override
-  public void initialize() {}
-
-  @Override
   public void execute() {
-    // climber.down();
+    arm.manualRotate(-0.1);
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    arm.hold();
+  }
 
   @Override
   public boolean isFinished() {

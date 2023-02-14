@@ -5,27 +5,40 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import frc.robot.RobotConstants;
 
 public class ArmIOPhysical implements ArmIO {
   private final CANSparkMax extendMotor;
   private final RelativeEncoder extendEncoder;
   private final DigitalInput extendLimitSwitch;
+  private final DigitalInput rotateHighLimitSwitch;
+  private final DigitalInput rotateLowLimitSwitch;
+  private final DigitalOutput ratchetSolenoid;
 
   private CANSparkMax rotateMotor;
   private RelativeEncoder rotateEncoder;
 
-  public ArmIOPhysical(int extendMotorId, int rotateMotorId, int extendLimitSwitchId) {
+  public ArmIOPhysical(
+      int extendMotorId,
+      int rotateMotorId,
+      int extendLimitSwitchId,
+      int ratchetSolenoidId,
+      int rotateHighLimitSwitchId,
+      int rotateLowLimitSwitchId) {
     extendLimitSwitch = new DigitalInput(extendLimitSwitchId);
+    rotateHighLimitSwitch = new DigitalInput(rotateHighLimitSwitchId);
+    rotateLowLimitSwitch = new DigitalInput(rotateLowLimitSwitchId);
+
+    ratchetSolenoid = new DigitalOutput(ratchetSolenoidId);
 
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
-    // rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
+    rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
+
     extendEncoder = extendMotor.getEncoder();
-   
     extendEncoder.setPositionConversionFactor(RobotConstants.get().armExtendConversionFactor());
 
-    rotateMotor = null;
-    // rotateEncoder = rotateMotor.getEncoder();
+    rotateEncoder = rotateMotor.getEncoder();
 
     // Convert rotations to radians
     // double extendRotationsToRads =
@@ -50,50 +63,30 @@ public class ArmIOPhysical implements ArmIO {
     // rotateMotor.setInverted(false); // TODO: check if inverted
 
     extendMotor.enableVoltageCompensation(12);
-    // rotateMotor.enableVoltageCompensation(12);
+    rotateMotor.enableVoltageCompensation(12);
 
     extendMotor.setIdleMode(IdleMode.kBrake);
-  }
-
-  @Override
-  public void setExtendVelocity(double velocity) {
-    extendMotor.set(velocity);
-    // System.out.println(extendMotor.getAppliedOutput());
-  }
-
-  @Override
-  public void setRotateVelocity(double velocity) {
-    // rotateMotor.set(velocity);
+    rotateMotor.setIdleMode(IdleMode.kBrake);
   }
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {
-
-    // inputs.extendPositionAbsolute = lidar.getDistance();
-
-    // TODO: Use the Lidar to get the absolute position of the arm
-    // Reset the turn encoder sometimes when not moving
-    // if (turnEncoder.getVelocity() < Units.degreesToRadians(0.5)) {
-    //   if (++resetCount >= 500) {
-    //     resetCount = 0;
-    //     turnEncoder.setPosition(
-    //         Rotation2d.fromDegrees(turnEncoderAbsolute.getAbsolutePosition())
-    //             .minus(RobotConstants.get().absoluteAngleOffset()[index])
-    //             .getRadians());
-    //   }
-    // } else {
-    //   resetCount = 0;
-    // }
-    // inputs.turnPositionAbsolute =
-    //     Rotation2d.fromDegrees(turnEncoderAbsolute.getAbsolutePosition())
-    //         .minus(RobotConstants.get().absoluteAngleOffset()[index])
-    //         .getRadians();
-
     inputs.extendVelocity = extendEncoder.getVelocity();
     inputs.extendPosition = extendEncoder.getPosition();
     inputs.extendAppliedVolts = extendMotor.getBusVoltage();
     inputs.extendCurrent = extendMotor.getOutputCurrent();
     inputs.extendTemp = extendMotor.getMotorTemperature();
+    inputs.extendLimitSwitch = extendLimitSwitch.get();
+  }
+
+  @Override
+  public void setExtendVelocity(double velocity) {
+    extendMotor.set(velocity);
+  }
+
+  @Override
+  public void setRotateVelocity(double velocity) {
+    rotateMotor.set(velocity);
   }
 
   @Override
@@ -103,20 +96,35 @@ public class ArmIOPhysical implements ArmIO {
 
   @Override
   public void setRotateVoltage(double volts) {
-    // rotateMotor.setVoltage(volts);
-  }
-
-  @Override
-  public void setExtendBrakeMode(boolean brake) {
-    extendMotor.setIdleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
-  }
-
-  @Override
-  public void setRotateBrakeMode(boolean brake) {
-    // rotateMotor.setIdleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
+    rotateMotor.setVoltage(volts);
   }
 
   public void resetEncoderPosition() {
-    // extendEncoder.setPosition(lidar.getDistance());
+    extendEncoder.setPosition(0);
+  }
+
+  @Override
+  public boolean isExtendLimitSwitchPressed() {
+    return extendLimitSwitch.get();
+  }
+
+  @Override
+  public boolean isRotateHighLimitSwitchPressed() {
+    return rotateHighLimitSwitch.get();
+  }
+
+  @Override
+  public boolean isRotateLowLimitSwitchPressed() {
+    return rotateLowLimitSwitch.get();
+  }
+
+  @Override
+  public void setRatchetLocked(boolean locked) {
+    ratchetSolenoid.set(locked);
+  }
+
+  @Override
+  public boolean isRatchedLocked() {
+    return ratchetSolenoid.get();
   }
 }

@@ -5,18 +5,20 @@ import frc.robot.subsystems.arm.Arm;
 
 public class ArmScoreCMD extends CommandBase {
   private final Arm arm;
-  private double setpoint;
+  private double extendSetpoint;
+  private double rotateSetpoint;
 
-  public ArmScoreCMD(Arm arm, double setpoint) {
+  public ArmScoreCMD(Arm arm, double extendSetpoint, double rotateSetpoint) {
     this.arm = arm;
-    this.setpoint = setpoint;
+    this.extendSetpoint = extendSetpoint;
+    this.rotateSetpoint = rotateSetpoint;
 
     addRequirements(arm);
   }
 
   @Override
   public void execute() {
-    arm.setExtendSetpoint(setpoint);
+    arm.setTargetPositions(extendSetpoint, rotateSetpoint);
   }
 
   @Override
