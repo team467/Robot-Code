@@ -43,7 +43,8 @@ public class Arm extends SubsystemBase {
 
   private double manualExtend = 0.0;
   private double manualRotate = 0.0;
-  private PIDController pidController = new PIDController(10, 0, 0);
+  private PIDController extendPidController = new PIDController(10, 0, 0);
+  private PIDController  rotatePidController = new PIDController(10, 0, 0);
   private static final double BACK_FORCE = -0.25;
 
   /**
@@ -113,7 +114,7 @@ public class Arm extends SubsystemBase {
     logger.processInputs("Arm", armIOInputs);
 
     double pidOutput =
-        pidController.calculate(armIOInputs.extendPosition, currentPosition) + BACK_FORCE;
+        extendPidController.calculate(armIOInputs.extendPosition, currentPosition) + BACK_FORCE;
     // if (armIOInputs.extendPosition > currentPosition) {
     //   pidOutput = -0.25;
     // } else {
@@ -145,13 +146,13 @@ public class Arm extends SubsystemBase {
           //   fbOutput = fbOutput * -1;
           // }
           double fbOutput =
-              pidController.calculate(armIOInputs.extendPositionAbsolute, extendSetpoint)
+              extendPidController.calculate(armIOInputs.extendPositionAbsolute, extendSetpoint) 
                   + BACK_FORCE;
           if (Math.abs(armIOInputs.extendPositionAbsolute - extendSetpoint) <= 0.005) {
             hold();
           }
           armIO.setExtendVoltage(fbOutput);
-
+ 
           logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
           logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);
 
