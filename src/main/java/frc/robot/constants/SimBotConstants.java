@@ -174,4 +174,15 @@ public class SimBotConstants implements Constants {
   public double armExtendMin() {
     return 0.02;
   }
+
+  @Override
+  public double armRotateMax() {
+
+    return 180;
+  }
+
+  @Override
+  public double armRotateMin() {
+    return 0;
+  }
 }
