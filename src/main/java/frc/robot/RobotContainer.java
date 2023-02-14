@@ -22,6 +22,8 @@ import frc.lib.io.gyro.GyroIOADIS16470;
 import frc.lib.leds.LEDManager;
 import frc.robot.commands.LedBlueGold;
 import frc.robot.commands.LedRainbowCMD;
+import frc.robot.commands.LedWantsCone;
+import frc.robot.commands.LedWantsCube;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.input.CustomController2022;
@@ -52,12 +54,13 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser =
       new LoggedDashboardChooser<>("Auto Choices");
 
-  private Led2023 led2023 = null;
+  private Led2023 led2023;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -127,6 +130,7 @@ public class RobotContainer {
             .andThen(() -> configureButtonBindings()));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
+    led2023 = new Led2023();
     // Configure the button bindings
     configureButtonBindings();
 
@@ -176,6 +180,10 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> drive.setPose(new Pose2d()))
                 .andThen(Commands.print("Reset pose")));
+
+    operatorController.start();
+    operatorController.leftBumper().onTrue(new LedWantsCone(led2023));
+    operatorController.rightBumper().onTrue(new LedWantsCube(led2023));
   }
 
   /**
