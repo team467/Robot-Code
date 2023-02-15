@@ -1,4 +1,4 @@
-package frc.robot.constants.controls;
+package frc.lib.constantcontrol;
 
 /** Fancy constant wrapper for a gear ratio */
 public class GearRatio {

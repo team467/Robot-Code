@@ -1,12 +1,11 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -15,14 +14,8 @@ public class Module {
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
 
-  private final SimpleMotorFeedforward driveFF =
-      RobotConstants.get().moduleDriveFF().getFeedforward();
-  private final SimpleMotorFeedforward turnFF =
-      RobotConstants.get().moduleTurnFF().getFeedforward();
-  private final ProfiledPIDController turnFB =
-      RobotConstants.get()
-          .moduleTurnFB()
-          .getProfiledPIDController(new TrapezoidProfile.Constraints(550.6, 7585));
+  private SimpleMotorFeedforward driveFF;
+  private final PIDController turnFB;
 
   private final double wheelRadius = (RobotConstants.get().moduleWheelDiameter() / 2);
 
@@ -30,14 +23,37 @@ public class Module {
     this.io = io;
     this.index = index;
 
+    this.driveFF =
+        new SimpleMotorFeedforward(
+            RobotConstants.get().moduleDriveFF().getkS(),
+            RobotConstants.get().moduleDriveFF().getkV(),
+            RobotConstants.get().moduleDriveFF().getkA());
+    this.turnFB =
+        new PIDController(
+            RobotConstants.get().moduleTurnFB().getkP(),
+            0,
+            RobotConstants.get().moduleTurnFB().getkD());
+
     turnFB.enableContinuousInput(-Math.PI, Math.PI);
-    this.io.updateInputs(this.inputs);
-    turnFB.reset(this.inputs.turnPositionAbsoluteRad);
   }
 
   public void periodic() {
     io.updateInputs(inputs);
     Logger.getInstance().processInputs("Drive/Module" + index, inputs);
+
+    if (RobotConstants.get().moduleDriveFF().hasChanged(hashCode())) {
+      this.driveFF =
+          new SimpleMotorFeedforward(
+              RobotConstants.get().moduleDriveFF().getkS(),
+              RobotConstants.get().moduleDriveFF().getkV(),
+              RobotConstants.get().moduleDriveFF().getkA());
+    }
+    if (RobotConstants.get().moduleTurnFB().hasChanged(hashCode())) {
+      turnFB.setPID(
+          RobotConstants.get().moduleTurnFB().getkP(),
+          0.0,
+          RobotConstants.get().moduleTurnFB().getkD());
+    }
   }
 
   public SwerveModuleState runSetpoint(SwerveModuleState state, boolean isStationary) {
@@ -47,8 +63,7 @@ public class Module {
     io.setTurnVoltage(
         isStationary
             ? 0.0
-            : turnFB.calculate(getAngle().getRadians(), optimizedState.angle.getRadians())
-                + turnFF.calculate(turnFB.getSetpoint().velocity));
+            : turnFB.calculate(getAngle().getRadians(), optimizedState.angle.getRadians()));
 
     // Update velocity based on turn error
     optimizedState.speedMetersPerSecond *= Math.cos(turnFB.getPositionError());
@@ -61,9 +76,7 @@ public class Module {
   }
 
   public void runCharacterization(double volts) {
-    io.setTurnVoltage(
-        turnFB.calculate(getAngle().getRadians(), 0.0)
-            + turnFB.calculate(turnFB.getSetpoint().velocity));
+    io.setTurnVoltage(turnFB.calculate(getAngle().getRadians(), 0.0));
     io.setDriveVoltage(volts);
   }
 

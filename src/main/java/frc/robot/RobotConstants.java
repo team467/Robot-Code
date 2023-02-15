@@ -11,6 +11,8 @@ import java.io.IOException;
 
 public class RobotConstants {
   private static Constants constants;
+  /** TODO: Change when tuning */
+  public static boolean tuningMode = false;
 
   private RobotConstants() {
     throw new IllegalStateException("Utility class");

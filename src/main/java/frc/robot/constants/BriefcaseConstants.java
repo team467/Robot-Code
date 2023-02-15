@@ -3,9 +3,9 @@ package frc.robot.constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import frc.robot.constants.controls.FeedbackConstant;
-import frc.robot.constants.controls.GearRatio;
-import frc.robot.constants.controls.SimpleFeedforwardConstant;
+import frc.lib.constantcontrol.GearRatio;
+import frc.lib.constantcontrol.LoggedFeedbackConstant;
+import frc.lib.constantcontrol.LoggedSimpleFeedforwardConstant;
 import java.util.Arrays;
 
 public class BriefcaseConstants implements Constants {
@@ -61,19 +61,22 @@ public class BriefcaseConstants implements Constants {
     return new GearRatio();
   }
 
+  private static final LoggedSimpleFeedforwardConstant moduleDriveFF = new LoggedSimpleFeedforwardConstant(0, 0, "moduleDriveFF");
   @Override
-  public SimpleFeedforwardConstant moduleDriveFF() {
-    return new SimpleFeedforwardConstant(0, 0);
+  public LoggedSimpleFeedforwardConstant moduleDriveFF() {
+    return moduleDriveFF;
   }
 
+  private static final LoggedSimpleFeedforwardConstant moduleTurnFF = new LoggedSimpleFeedforwardConstant(0, 0, "moduleTurnFF");
   @Override
-  public SimpleFeedforwardConstant moduleTurnFF() {
-    return new SimpleFeedforwardConstant(0, 0);
+  public LoggedSimpleFeedforwardConstant moduleTurnFF() {
+    return moduleTurnFF;
   }
 
+  private static final LoggedFeedbackConstant moduleTurnFB = new LoggedFeedbackConstant(0, "moduleTurnFB");
   @Override
-  public FeedbackConstant moduleTurnFB() {
-    return new FeedbackConstant(0);
+  public LoggedFeedbackConstant moduleTurnFB() {
+    return moduleTurnFB;
   }
 
   @Override
@@ -108,13 +111,15 @@ public class BriefcaseConstants implements Constants {
     return 0;
   }
 
+  private static final LoggedFeedbackConstant chassisDriveFB = new LoggedFeedbackConstant(0, "chassisDriveFB");
   @Override
-  public FeedbackConstant chassisDriveFB() {
-    return new FeedbackConstant(0);
+  public LoggedFeedbackConstant chassisDriveFB() {
+    return chassisDriveFB;
   }
 
+  private static final LoggedFeedbackConstant chassisTurnFB = new LoggedFeedbackConstant(0, "chassisTurnFB");
   @Override
-  public FeedbackConstant chassisTurnFB() {
-    return new FeedbackConstant(0);
+  public LoggedFeedbackConstant chassisTurnFB() {
+    return chassisTurnFB;
   }
 }

@@ -3,9 +3,9 @@ package frc.robot.constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.constants.controls.FeedbackConstant;
-import frc.robot.constants.controls.GearRatio;
-import frc.robot.constants.controls.SimpleFeedforwardConstant;
+import frc.lib.constantcontrol.GearRatio;
+import frc.lib.constantcontrol.LoggedFeedbackConstant;
+import frc.lib.constantcontrol.LoggedSimpleFeedforwardConstant;
 
 public interface Constants {
 
@@ -55,11 +55,11 @@ public interface Constants {
 
   GearRatio moduleTurnGearRatio();
 
-  SimpleFeedforwardConstant moduleDriveFF();
+  LoggedSimpleFeedforwardConstant moduleDriveFF();
 
-  SimpleFeedforwardConstant moduleTurnFF();
+  LoggedSimpleFeedforwardConstant moduleTurnFF();
 
-  FeedbackConstant moduleTurnFB();
+  LoggedFeedbackConstant moduleTurnFB();
 
   SwerveDriveKinematics kinematics();
 
@@ -73,7 +73,7 @@ public interface Constants {
 
   double chassisTurnMaxAcceleration();
 
-  FeedbackConstant chassisDriveFB();
+  LoggedFeedbackConstant chassisDriveFB();
 
-  FeedbackConstant chassisTurnFB();
+  LoggedFeedbackConstant chassisTurnFB();
 }

@@ -4,9 +4,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
-import frc.robot.constants.controls.FeedbackConstant;
-import frc.robot.constants.controls.GearRatio;
-import frc.robot.constants.controls.SimpleFeedforwardConstant;
+import frc.lib.constantcontrol.GearRatio;
+import frc.lib.constantcontrol.LoggedFeedbackConstant;
+import frc.lib.constantcontrol.LoggedSimpleFeedforwardConstant;
 import java.util.Arrays;
 
 public class CompBotConstants implements Constants {
@@ -66,19 +66,28 @@ public class CompBotConstants implements Constants {
     return new GearRatio(12.8, 1);
   }
 
+  private static final LoggedSimpleFeedforwardConstant moduleDriveFF =
+      new LoggedSimpleFeedforwardConstant(0.15026, 0.13682, "moduleDriveFF");
+
   @Override
-  public SimpleFeedforwardConstant moduleDriveFF() {
-    return new SimpleFeedforwardConstant(0.15026, 0.13682);
+  public LoggedSimpleFeedforwardConstant moduleDriveFF() {
+    return moduleDriveFF;
   } // TODO: tune
 
-  @Override
-  public SimpleFeedforwardConstant moduleTurnFF() {
-    return new SimpleFeedforwardConstant(0.16302, 0.0089689, 0.00034929);
-  }
+  private static final LoggedSimpleFeedforwardConstant moduleTurnFF =
+      new LoggedSimpleFeedforwardConstant(0.16302, 0.0089689, 0.00034929, "moduleTurnFF");
 
   @Override
-  public FeedbackConstant moduleTurnFB() {
-    return new FeedbackConstant(3.2526, 0.05);
+  public LoggedSimpleFeedforwardConstant moduleTurnFF() {
+    return moduleTurnFF;
+  }
+
+  private static final LoggedFeedbackConstant moduleTurnFB =
+      new LoggedFeedbackConstant(3.2526, 0.05, "moduleTurnFB");
+
+  @Override
+  public LoggedFeedbackConstant moduleTurnFB() {
+    return moduleTurnFB;
   }
 
   @Override
@@ -116,13 +125,19 @@ public class CompBotConstants implements Constants {
     return 0.2;
   } // TODO: tune
 
-  @Override
-  public FeedbackConstant chassisDriveFB() {
-    return new FeedbackConstant(0.1);
-  } // TODO: tune
+  private static LoggedFeedbackConstant chassisDriveFB =
+      new LoggedFeedbackConstant(0.1, "chassisDriveFB");
 
   @Override
-  public FeedbackConstant chassisTurnFB() {
-    return new FeedbackConstant(0.1);
+  public LoggedFeedbackConstant chassisDriveFB() {
+    return chassisDriveFB;
+  } // TODO: tune
+
+  private static LoggedFeedbackConstant chassisTurnFB =
+      new LoggedFeedbackConstant(0.1, "chassisDriveFB");
+
+  @Override
+  public LoggedFeedbackConstant chassisTurnFB() {
+    return chassisTurnFB;
   } // TODO: tune
 }

@@ -4,9 +4,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
-import frc.robot.constants.controls.FeedbackConstant;
-import frc.robot.constants.controls.GearRatio;
-import frc.robot.constants.controls.SimpleFeedforwardConstant;
+import frc.lib.constantcontrol.GearRatio;
+import frc.lib.constantcontrol.LoggedFeedbackConstant;
+import frc.lib.constantcontrol.LoggedSimpleFeedforwardConstant;
 import java.util.Arrays;
 
 public class SimBotConstants implements Constants {
@@ -66,18 +66,18 @@ public class SimBotConstants implements Constants {
   }
 
   @Override
-  public SimpleFeedforwardConstant moduleDriveFF() {
-    return new SimpleFeedforwardConstant(0.116970, 0.133240);
+  public LoggedSimpleFeedforwardConstant moduleDriveFF() {
+    return new LoggedSimpleFeedforwardConstant(0.116970, 0.133240, "moduleDriveFF");
   }
 
   @Override
-  public SimpleFeedforwardConstant moduleTurnFF() {
-    return new SimpleFeedforwardConstant(0, 0);
+  public LoggedSimpleFeedforwardConstant moduleTurnFF() {
+    return new LoggedSimpleFeedforwardConstant(0, 0, "moduleTurnFF");
   }
 
   @Override
-  public FeedbackConstant moduleTurnFB() {
-    return new FeedbackConstant(23.0, 0.0);
+  public LoggedFeedbackConstant moduleTurnFB() {
+    return new LoggedFeedbackConstant(23.0, 0.0, "moduleTurnFB");
   }
 
   @Override
@@ -111,12 +111,12 @@ public class SimBotConstants implements Constants {
   }
 
   @Override
-  public FeedbackConstant chassisDriveFB() {
-    return new FeedbackConstant(0, 0);
+  public LoggedFeedbackConstant chassisDriveFB() {
+    return new LoggedFeedbackConstant(0, 0, "chassisDriveFB");
   }
 
   @Override
-  public FeedbackConstant chassisTurnFB() {
-    return new FeedbackConstant(0, 0);
+  public LoggedFeedbackConstant chassisTurnFB() {
+    return new LoggedFeedbackConstant(0, 0, "chassisTurnFB");
   }
 }

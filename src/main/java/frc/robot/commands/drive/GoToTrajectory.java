@@ -1,5 +1,7 @@
 package frc.robot.commands.drive;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGenerationException;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -10,6 +12,7 @@ import frc.lib.holonomictrajectory.CustomTrajectoryGenerator;
 import frc.lib.holonomictrajectory.SwerveControllerCommand;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.RobotConstants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
 import java.util.List;
 
@@ -56,14 +59,24 @@ public class GoToTrajectory extends CommandBase {
             customGenerator.getDriveTrajectory(),
             customGenerator.getHolonomicRotationSequence(),
             drive::getPose,
-            RobotConstants.get().chassisDriveFB().getPIDController(),
-            RobotConstants.get().chassisDriveFB().getPIDController(),
-            RobotConstants.get()
-                .chassisTurnFB()
-                .getProfiledPIDController(
-                    new Constraints(
-                        RobotConstants.get().chassisTurnMaxVelocity(),
-                        RobotConstants.get().chassisTurnMaxAcceleration())),
+            new PIDController(
+                RobotConstants.get().chassisDriveFB().getkP(),
+                0.0,
+                RobotConstants.get().chassisDriveFB().getkD()
+            ),
+            new PIDController(
+                RobotConstants.get().chassisDriveFB().getkP(),
+                0.0,
+                RobotConstants.get().chassisDriveFB().getkD()
+            ),
+            new ProfiledPIDController(
+                RobotConstants.get().chassisDriveFB().getkP(),
+                0.0,
+                RobotConstants.get().chassisDriveFB().getkD(),
+                new Constraints(
+                    RobotConstants.get().chassisTurnMaxVelocity(),
+                    RobotConstants.get().chassisTurnMaxAcceleration())
+            ),
             drive::runVelocity,
             drive);
   }
