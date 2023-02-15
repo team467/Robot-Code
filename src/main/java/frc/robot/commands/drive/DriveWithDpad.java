@@ -7,8 +7,9 @@ import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
 public class DriveWithDpad extends CommandBase {
-  private Drive drive;
-  private Supplier<Integer> povSupplier;
+  private final Drive drive;
+  private final Supplier<Integer> povSupplier;
+  private static final double SLOW_SPEED = Units.inchesToMeters(10);
 
   public DriveWithDpad(Drive drive, Supplier<Integer> povSupplier) {
     this.drive = drive;
@@ -16,27 +17,16 @@ public class DriveWithDpad extends CommandBase {
     addRequirements(drive);
   }
 
+  @Override
   public void execute() {
     int pov = povSupplier.get();
 
-    final double SlowSpeed = Units.inchesToMeters(10);
-    System.out.println(pov);
-
     switch (pov) {
-      case 0:
-        drive.runVelocity(new ChassisSpeeds(SlowSpeed, 0, 0));
-        break;
-      case 90:
-        drive.runVelocity(new ChassisSpeeds(0, SlowSpeed, 0));
-        break;
-      case 180:
-        drive.runVelocity(new ChassisSpeeds(-SlowSpeed, 0, 0));
-        break;
-      case 270:
-        drive.runVelocity(new ChassisSpeeds(0, -SlowSpeed, 0));
-        break;
-      default:
-        drive.stop();
+      case 0 -> drive.runVelocity(new ChassisSpeeds(SLOW_SPEED, 0, 0));
+      case 90 -> drive.runVelocity(new ChassisSpeeds(0, SLOW_SPEED, 0));
+      case 180 -> drive.runVelocity(new ChassisSpeeds(-SLOW_SPEED, 0, 0));
+      case 270 -> drive.runVelocity(new ChassisSpeeds(0, -SLOW_SPEED, 0));
+      default -> drive.stop();
     }
   }
 }

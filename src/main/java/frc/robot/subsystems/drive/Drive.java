@@ -178,10 +178,6 @@ public class Drive extends SubsystemBase {
     return gyroInputs.gravVector;
   }
 
-  public double GetYaw() {
-    return gyroInputs.yaw;
-  }
-
   public void chassisDrive(double x, double y, double rot, boolean fieldRelative) {
     if (fieldRelative) {
       runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(x, y, rot, getPose().getRotation()));
