@@ -4,6 +4,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -29,19 +30,6 @@ public class Drive extends SubsystemBase {
   private final List<VisionIOInputs> aprilTagCameraInputs = new ArrayList<>();
   private final Module[] modules = new Module[4];
   private final SwerveDriveKinematics kinematics = RobotConstants.get().kinematics();
-  SwerveDrivePoseEstimator odomTest =
-      new SwerveDrivePoseEstimator(
-          kinematics,
-          new Rotation2d(),
-          new SwerveModulePosition[] {
-            new SwerveModulePosition(),
-            new SwerveModulePosition(),
-            new SwerveModulePosition(),
-            new SwerveModulePosition()
-          },
-          new Pose2d(5.0, 0.2, new Rotation2d(2.0)),
-          VecBuilder.fill(0.01, 0.01, 0.01),
-          VecBuilder.fill(0.071, 0.557, 4.967));
 
   private boolean isCharacterizing = false;
   private DriveMode driveMode = DriveMode.NORMAL;
@@ -49,7 +37,7 @@ public class Drive extends SubsystemBase {
   private ChassisSpeeds setpoint = new ChassisSpeeds();
 
   private final SwerveDrivePoseEstimator odometry;
-  private Rotation2d simGyro = new Rotation2d();
+  private double simGyro = 0.0;
 
   public Drive(
       IMUIO gyroIO,
@@ -83,10 +71,10 @@ public class Drive extends SubsystemBase {
           new SwerveDrivePoseEstimator(
               kinematics, Rotation2d.fromDegrees(gyroInputs.yaw), modulePositions, new Pose2d());
     } else {
-      odometry = new SwerveDrivePoseEstimator(kinematics, simGyro, modulePositions, new Pose2d());
+      odometry =
+          new SwerveDrivePoseEstimator(
+              kinematics, new Rotation2d(simGyro), modulePositions, new Pose2d());
     }
-
-    Logger.getInstance().recordOutput("Odometry/EstimPose/" + 0, new Pose2d());
   }
 
   @Override
@@ -167,52 +155,45 @@ public class Drive extends SubsystemBase {
       for (int i = 0; i < 4; i++) {
         measuredPositions[i] = modules[i].getPosition();
       }
-
-      odomTest.update(
-          new Rotation2d(),
-          new SwerveModulePosition[] {
-            new SwerveModulePosition(0, new Rotation2d()),
-            new SwerveModulePosition(0, new Rotation2d()),
-            new SwerveModulePosition(0, new Rotation2d()),
-            new SwerveModulePosition(0, new Rotation2d())
-          });
       for (int i = 0; i < aprilTagCameraIO.size(); i++) {
         aprilTagCameraIO.get(i).updateInputs(aprilTagCameraInputs.get(i));
-        Logger.getInstance().processInputs("Camera/" + i, aprilTagCameraInputs.get(i));
-        if (aprilTagCameraInputs.get(i).estimatedPose.isPresent()) {
-          Logger.getInstance()
-              .recordOutput(
-                  "Odometry/VisionPose/" + i,
-                  aprilTagCameraInputs.get(i).estimatedPose.get().estimatedPose.toPose2d());
-          Vector<N3> std =
-              switch (i) {
-                case 0 -> VecBuilder.fill(0.163, 0.326, 0.050);
-                case 1 -> VecBuilder.fill(0.0001, 0.021, 0.013);
-                default -> VecBuilder.fill(1, 1, 1);
-              };
-          odomTest.addVisionMeasurement(
-              aprilTagCameraInputs.get(i).estimatedPose.get().estimatedPose.toPose2d(),
-              aprilTagCameraInputs.get(i).estimatedPose.get().timestampSeconds,
-              std);
-        }
-        Logger.getInstance().recordOutput("Odometry/EstimPose/", odomTest.getEstimatedPosition());
       }
 
       if (gyroInputs.connected) {
         odometry.update(Rotation2d.fromDegrees(gyroInputs.yaw), measuredPositions);
-        for (VisionIOInputs aprilTagCameraInput : aprilTagCameraInputs) {
-          aprilTagCameraInput.estimatedPose.ifPresent(
-              estimatedRobotPose ->
-                  odometry.addVisionMeasurement(
-                      estimatedRobotPose.estimatedPose.toPose2d(),
-                      estimatedRobotPose.timestampSeconds));
-        }
+        simGyro = gyroInputs.yaw;
       } else {
-        simGyro.plus(
-            new Rotation2d(
-                kinematics.toChassisSpeeds(measuredStates).omegaRadiansPerSecond * 0.02));
-        odometry.update(simGyro, measuredPositions);
+        simGyro += kinematics.toChassisSpeeds(measuredStates).omegaRadiansPerSecond * 0.02;
+        odometry.update(new Rotation2d(simGyro), measuredPositions);
       }
+
+      for (VisionIOInputs aprilTagCameraInput : aprilTagCameraInputs) {
+        aprilTagCameraInput.estimatedPose.ifPresentOrElse(
+            estimatedRobotPose -> {
+              Logger.getInstance()
+                  .recordOutput(
+                      "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
+                      estimatedRobotPose.estimatedPose);
+
+              Vector<N3> std =
+                  switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
+                    case 0 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
+                    case 1 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
+                    default -> VecBuilder.fill(1.0, 1.0, 1.0);
+                  };
+
+              odometry.addVisionMeasurement(
+                  estimatedRobotPose.estimatedPose.toPose2d(),
+                  estimatedRobotPose.timestampSeconds,
+                  std);
+            },
+            () ->
+                Logger.getInstance()
+                    .recordOutput(
+                        "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
+                        new Pose3d()));
+      }
+
       Logger.getInstance().recordOutput("Odometry", getPose());
     }
   }
@@ -238,10 +219,6 @@ public class Drive extends SubsystemBase {
       modulePositions[i] = modules[i].getPosition();
     }
     odometry.resetPosition(Rotation2d.fromDegrees(gyroInputs.yaw), modulePositions, pose);
-  }
-
-  public double[] getGravVec() {
-    return gyroInputs.gravVector;
   }
 
   public void chassisDrive(double x, double y, double rot, boolean fieldRelative) {
