@@ -74,7 +74,7 @@ public class DriveWithJoysticks extends CommandBase {
             rightX * RobotConstants.get().maxAngularSpeed());
 
     // Convert from field relative
-    if (!robotRelativeOverride.get()) {
+    if (robotRelativeOverride.get()) {
       Rotation2d driveRotation = drive.getPose().getRotation();
       if (DriverStation.getAlliance() == Alliance.Red) {
         driveRotation = driveRotation.plus(new Rotation2d(Math.PI));
