@@ -210,6 +210,10 @@ public class Drive extends SubsystemBase {
     runVelocity(new ChassisSpeeds());
   }
 
+  public double[] getGravVec() {
+    return gyroInputs.gravVector;
+  }
+
   public Pose2d getPose() {
     return odometry.getEstimatedPosition();
   }
