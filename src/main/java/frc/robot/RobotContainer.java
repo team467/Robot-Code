@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -27,6 +28,8 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import com.google.flatbuffers.FlexBuffers.Map;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -133,8 +136,28 @@ public class RobotContainer {
     //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
     // Rotation2d()));
 
-    autoChooser.addOption("Cross Community", new GoToTrajectory(drive, List.of(Waypoint.fromHolonomicPose(new Pose2d()), new Waypoint(new Translation2d(FieldConstants.Community.outerX, 0)))));
+    autoChooser.addOption("Cross Community", new GoToTrajectory(drive, List.of(Waypoint.fromHolonomicPose(new Pose2d()),
+        new Waypoint(new Translation2d(FieldConstants.Community.outerX, 0)))));
 
+    autoChooser.addOption("Go to node 1", new GoToTrajectory(drive, List.of(Waypoint.fromHolonomicPose(new Pose2d()),
+        new Waypoint(new Translation2d(FieldConstants.Grids.lowX, FieldConstants.Grids.nodeFirstY)))));
+    autoChooser.addOption("Go to node 2", new GoToTrajectory(drive, List.of(Waypoint.fromHolonomicPose(new Pose2d()),
+        new Waypoint(FieldConstants.aprilTags.get(1).getTranslation().toTranslation2d()))));
+    autoChooser.addOption("Go to node 3", new GoToTrajectory(drive, List.of(Waypoint.fromHolonomicPose(new Pose2d()),
+        new Waypoint(new Translation2d(FieldConstants.Grids.lowX, FieldConstants.Grids.nodeFirstY)))));
+        autoChooser.addOption("Go to node 4", new GoToTrajectory(drive, List.of(Waypoint.fromHolonomicPose(new Pose2d()),
+            new Waypoint(new Translation2d(FieldConstants.Grids.lowX, FieldConstants.Grids.nodeFirstY)))));
+        autoChooser.addOption("Go to node 5", new GoToTrajectory(drive, List.of(Waypoint.fromHolonomicPose(new Pose2d()),
+            new Waypoint(FieldConstants.aprilTags.get(2).getTranslation().toTranslation2d()))));
+        autoChooser.addOption("Go to node 6", new GoToTrajectory(drive, List.of(Waypoint.fromHolonomicPose(new Pose2d()),
+            new Waypoint(new Translation2d(FieldConstants.Grids.lowX, FieldConstants.Grids.nodeFirstY)))));
+        autoChooser.addOption("Go to node 7", new GoToTrajectory(drive, List.of(Waypoint.fromHolonomicPose(new Pose2d()),
+            new Waypoint(new Translation2d(FieldConstants.Grids.lowX, FieldConstants.Grids.nodeFirstY)))));
+        autoChooser.addOption("Go to node 8", new GoToTrajectory(drive, List.of(Waypoint.fromHolonomicPose(new Pose2d()),
+            new Waypoint(new Translation2d(FieldConstants.Grids.lowX, FieldConstants.Grids.nodeFirstY)))));
+        autoChooser.addOption("Go to node 9", new GoToTrajectory(drive, List.of(Waypoint.fromHolonomicPose(new Pose2d()),
+        new Waypoint(new Translation2d(FieldConstants.Grids.lowX, FieldConstants.Grids.nodeFirstY)))));
+    
     autoChooser.addOption(
         "Drive Characterization",
         Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
