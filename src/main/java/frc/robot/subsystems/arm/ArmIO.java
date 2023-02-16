@@ -12,9 +12,6 @@ public interface ArmIO {
     public double extendCurrent = 0.0;
     public double extendTemp = 0.0;
 
-    /** Uses Lidar to get the absolute position of the arm. This is used to calibrate the arm. */
-    public double extendPositionAbsolute = 0.0;
-
     public double rotatePosition = 0.0;
     public double rotateVelocity = 0.0;
     public double rotateAppliedVolts = 0.0;
