@@ -128,12 +128,12 @@ public class CompBotConstants implements Constants {
 
   @Override
   public int armExtendMotorId() {
-    return 20; // CAN #20
+    return 10; // CAN #10
   }
 
   @Override
   public int armRotateMotorId() {
-    return 0;
+    return 9; // CAN #9
   }
 
   @Override

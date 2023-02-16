@@ -23,7 +23,7 @@ public class Arm extends SubsystemBase {
     CALIBRATE
   }
 
-  private ArmMode mode = ArmMode.CALIBRATE;
+  private ArmMode mode = ArmMode.MANUAL;
   private double holdPosition;
   private double angle = 0;
   private double characterizationVoltage = 0.0;
@@ -78,13 +78,14 @@ public class Arm extends SubsystemBase {
   }
 
   public void hold() {
-    holdPosition = armIOInputs.extendPosition;
-    mode = ArmMode.HOLD;
+    hold(armIOInputs.extendPosition);
   }
 
   public void hold(double position) {
     holdPosition = position;
     mode = ArmMode.HOLD;
+    armIO.setExtendVoltage(0.0);
+    armIO.setRotateVoltage(0.0);
   }
 
   public boolean isHolding() {
@@ -105,7 +106,7 @@ public class Arm extends SubsystemBase {
         mode = ArmMode.CALIBRATE;
         extendCalibrated = false;
       } else {
-        hold();
+        // hold();
       }
     }
     armIO.updateInputs(armIOInputs);
@@ -122,19 +123,19 @@ public class Arm extends SubsystemBase {
         } else {
           armIO.setExtendVelocity(manualExtend);
         }
-        if (armIOInputs.rotatePosition > RobotConstants.get().armRotateMax() && manualRotate > 0) {
+        /*if (armIOInputs.rotatePosition > RobotConstants.get().armRotateMax() && manualRotate > 0) {
           armIO.setRotateVelocity(0);
         } else if (armIOInputs.rotatePosition < RobotConstants.get().armRotateMin()
             && manualRotate < 0) {
-          armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMin()));
-        } else {
-          armIO.setRotateVelocity(manualRotate);
-        }
+          armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMin())); */
+
+        armIO.setRotateVelocity(manualRotate);
+        logger.recordOutput("Arm/manualRotate", manualRotate);
 
       case AUTO:
         if (finished()) {
           // Reached target.
-          hold();
+          // hold();
         } else {
           double extendFbOutput = calculateExtendPid(extendSetpoint);
           double rotateFbOutput = calculateRotatePid(rotateSetpoint);

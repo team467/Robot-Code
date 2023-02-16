@@ -62,6 +62,8 @@ public class ArmIOPhysical implements ArmIO {
     inputs.extendLimitSwitch = extendLimitSwitch.get();
     inputs.rotateHighLimitSwitch = rotateHighLimitSwitch.get();
     inputs.rotateLowLimitSwitch = rotateLowLimitSwitch.get();
+    inputs.rotatePosition = rotateEncoder.getPosition();
+    inputs.rotateVelocity = rotateEncoder.getVelocity();
   }
 
   @Override

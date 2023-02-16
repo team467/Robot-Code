@@ -45,7 +45,7 @@ public class Robot extends LoggedRobot {
           logger.addDataReceiver(new WPILOGWriter(folder));
         }
         if (RobotConstants.get().robot() == RobotType.ROBOT_COMP) {
-          new PowerDistribution(63, ModuleType.kRev);
+          //   new PowerDistribution(63, ModuleType.kRev);
         } else {
           new PowerDistribution(20, ModuleType.kCTRE);
         }
