@@ -79,21 +79,7 @@ public interface Constants {
 
   int armExtendMotorId();
 
-  /**
-   * Used to translate encoder ticks to arm lengths.
-   *
-   * @return the gear ratio of the arm extension motor
-   */
-  GearRatio armExtendGearRatio();
-
   int armRotateMotorId();
-
-  /**
-   * Used to translate encoder ticks to arm positions.
-   *
-   * @return the gear ratio of the arm rotate motor
-   */
-  GearRatio armRotateGearRatio();
 
   double armExtendConversionFactor();
 
@@ -112,4 +98,6 @@ public interface Constants {
   int armRotateHighLimitSwitchId();
 
   int armRotateLowLimitSwitchId();
+
+  double armRotateConversionFactor();
 }

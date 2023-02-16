@@ -39,28 +39,11 @@ public class ArmIOPhysical implements ArmIO {
     extendEncoder.setPositionConversionFactor(RobotConstants.get().armExtendConversionFactor());
 
     rotateEncoder = rotateMotor.getEncoder();
+    rotateEncoder.setPositionConversionFactor(RobotConstants.get().armRotateConversionFactor());
 
-    // Convert rotations to radians
-    // double extendRotationsToRads =
-    //     Units.rotationsToRadians(1)
-    //         * RobotConstants.get().armExtendGearRatio().getRotationsPerInput();
-    // extendEncoder.setPositionConversionFactor(extendRotationsToRads);
-
-    // double rotateRotationsToRads =
-    //     Units.rotationsToRadians(1)
-    //         * RobotConstants.get().armRotateGearRatio().getRotationsPerInput();
-    // rotateEncoder.setPositionConversionFactor(rotateRotationsToRads);
-
-    // // Convert rotations per minute to radians per second
-    // extendEncoder.setVelocityConversionFactor(extendRotationsToRads / 60);
-    // rotateEncoder.setVelocityConversionFactor(rotateRotationsToRads / 60);
-
-    // // Convert rotations per minute to radians per second
-    // extendEncoder.setPositionConversionFactor(1);
-
-    // // Invert motors
+    // Invert motors
     extendMotor.setInverted(false);
-    // rotateMotor.setInverted(false); // TODO: check if inverted
+    rotateMotor.setInverted(false); // TODO: check if inverted
 
     extendMotor.enableVoltageCompensation(12);
     rotateMotor.enableVoltageCompensation(12);

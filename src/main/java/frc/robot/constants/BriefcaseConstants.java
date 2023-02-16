@@ -119,16 +119,6 @@ public class BriefcaseConstants implements Constants {
   }
 
   @Override
-  public GearRatio armExtendGearRatio() {
-    return new GearRatio();
-  }
-
-  @Override
-  public GearRatio armRotateGearRatio() {
-    return new GearRatio();
-  }
-
-  @Override
   public int armExtendMotorId() {
     return 0;
   }
@@ -182,5 +172,10 @@ public class BriefcaseConstants implements Constants {
   @Override
   public double armRotateMin() {
     return 0;
+  }
+
+  @Override
+  public double armRotateConversionFactor() {
+    return 1;
   }
 }
