@@ -12,7 +12,6 @@ import frc.lib.holonomictrajectory.CustomTrajectoryGenerator;
 import frc.lib.holonomictrajectory.SwerveControllerCommand;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.RobotConstants;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
 import java.util.List;
 
@@ -62,21 +61,18 @@ public class GoToTrajectory extends CommandBase {
             new PIDController(
                 RobotConstants.get().chassisDriveFB().getkP(),
                 0.0,
-                RobotConstants.get().chassisDriveFB().getkD()
-            ),
+                RobotConstants.get().chassisDriveFB().getkD()),
             new PIDController(
                 RobotConstants.get().chassisDriveFB().getkP(),
                 0.0,
-                RobotConstants.get().chassisDriveFB().getkD()
-            ),
+                RobotConstants.get().chassisDriveFB().getkD()),
             new ProfiledPIDController(
                 RobotConstants.get().chassisDriveFB().getkP(),
                 0.0,
                 RobotConstants.get().chassisDriveFB().getkD(),
                 new Constraints(
                     RobotConstants.get().chassisTurnMaxVelocity(),
-                    RobotConstants.get().chassisTurnMaxAcceleration())
-            ),
+                    RobotConstants.get().chassisTurnMaxAcceleration())),
             drive::runVelocity,
             drive);
   }

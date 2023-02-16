@@ -61,19 +61,25 @@ public class BriefcaseConstants implements Constants {
     return new GearRatio();
   }
 
-  private static final LoggedSimpleFeedforwardConstant moduleDriveFF = new LoggedSimpleFeedforwardConstant(0, 0, "moduleDriveFF");
+  private static final LoggedSimpleFeedforwardConstant moduleDriveFF =
+      new LoggedSimpleFeedforwardConstant(0, 0, "moduleDriveFF");
+
   @Override
   public LoggedSimpleFeedforwardConstant moduleDriveFF() {
     return moduleDriveFF;
   }
 
-  private static final LoggedSimpleFeedforwardConstant moduleTurnFF = new LoggedSimpleFeedforwardConstant(0, 0, "moduleTurnFF");
+  private static final LoggedSimpleFeedforwardConstant moduleTurnFF =
+      new LoggedSimpleFeedforwardConstant(0, 0, "moduleTurnFF");
+
   @Override
   public LoggedSimpleFeedforwardConstant moduleTurnFF() {
     return moduleTurnFF;
   }
 
-  private static final LoggedFeedbackConstant moduleTurnFB = new LoggedFeedbackConstant(0, "moduleTurnFB");
+  private static final LoggedFeedbackConstant moduleTurnFB =
+      new LoggedFeedbackConstant(0, "moduleTurnFB");
+
   @Override
   public LoggedFeedbackConstant moduleTurnFB() {
     return moduleTurnFB;
@@ -111,13 +117,17 @@ public class BriefcaseConstants implements Constants {
     return 0;
   }
 
-  private static final LoggedFeedbackConstant chassisDriveFB = new LoggedFeedbackConstant(0, "chassisDriveFB");
+  private static final LoggedFeedbackConstant chassisDriveFB =
+      new LoggedFeedbackConstant(0, "chassisDriveFB");
+
   @Override
   public LoggedFeedbackConstant chassisDriveFB() {
     return chassisDriveFB;
   }
 
-  private static final LoggedFeedbackConstant chassisTurnFB = new LoggedFeedbackConstant(0, "chassisTurnFB");
+  private static final LoggedFeedbackConstant chassisTurnFB =
+      new LoggedFeedbackConstant(0, "chassisTurnFB");
+
   @Override
   public LoggedFeedbackConstant chassisTurnFB() {
     return chassisTurnFB;
