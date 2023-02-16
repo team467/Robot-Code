@@ -145,7 +145,6 @@ public class RobotContainer {
   }
 
   private void initializeSubsystems() {
-    System.out.println("Pikachu1");
     initLed2023();
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
     configureShooter2023();
@@ -154,9 +153,6 @@ public class RobotContainer {
   private void initLed2023() {
     if (RobotConstants.get().hasLed2023()) {
       led2023 = new Led2023();
-      System.out.println("Pikachu2");
-
-      // led2023.setDefaultCommand(new LedRainbowCMD(led2023));
     }
   }
 
@@ -182,8 +178,9 @@ public class RobotContainer {
                 .andThen(Commands.print("Reset pose")));
 
     operatorController.start();
-    operatorController.leftBumper().onTrue(new LedWantsCone(led2023));
-    operatorController.rightBumper().onTrue(new LedWantsCube(led2023));
+    operatorController.leftBumper().toggleOnTrue(new LedWantsCone(led2023));
+    operatorController.rightBumper().toggleOnTrue(new LedWantsCube(led2023));
+    led2023.setDefaultCommand(new LedRainbowCMD(led2023));
   }
 
   /**
