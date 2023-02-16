@@ -15,7 +15,6 @@ public class LedWantsCubeCMD extends Led2023UpdateCMD {
 
   @Override
   void setColorPeriodic() {
-    setTop(COLORS_467.Orange);
-    setBottom(COLORS_467.Blue);
+    set(COLORS_467.Blue);
   }
 }

@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -13,7 +14,7 @@ public abstract class Led2023UpdateCMD extends CommandBase {
 
   private final double SHOOTING_TIMER_SPEED = 0.1;
   private final double RAINBOW_TIMER_SPEED = 0.02;
-  private final int RAINBOW_AMOUNT = 10;
+  private final int RAINBOW_AMOUNT = 20;
 
   private Led2023 ledStrip;
 
@@ -21,11 +22,6 @@ public abstract class Led2023UpdateCMD extends CommandBase {
   private Timer rainbowTimer = new Timer();
   private Timer purpleTimer = new Timer();
   protected double lastLoopTime = 0;
-
-  public static final double TARGET_MAX_RANGE = 100.0;
-  public static final double TARGET_MAX_ANGLE = 15.0;
-  public static final double BALL_MAX_RANGE = 100.0;
-  public static final double BALL_MAX_ANGLE = 15.0;
 
   /*
    * Color blind preferred pallet includes White, Black, Red, Blue, Gold
@@ -69,7 +65,6 @@ public abstract class Led2023UpdateCMD extends CommandBase {
 
   @Override
   public void initialize() {
-    System.out.println("Pikachu3.5");
     rainbowTimer.reset();
     purpleTimer.reset();
     lastLoopTime = Timer.getFPGATimestamp();
@@ -77,16 +72,10 @@ public abstract class Led2023UpdateCMD extends CommandBase {
 
   @Override
   public void execute() {
-    // if (DriverStation.getAlliance() == Alliance.Red) {
-
-    // } else {
-    // }
-
-    // if (DriverStation.isEnabled()) {}
-
-    System.out.println("Pick Up");
-
+    if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
+      set(COLORS_467.White);
     setColorPeriodic();
+    }
 
     ledStrip.sendData();
     lastLoopTime = Timer.getFPGATimestamp();
@@ -136,16 +125,23 @@ public abstract class Led2023UpdateCMD extends CommandBase {
 
   public void setBottom(COLORS_467 color) {
     for (int i = 0; i < RobotConstants.get().led2023LedCount() / 2; i++) {
-      System.out.println("Drop off");
       ledStrip.setRGB(i, color.red, color.green, color.blue);
     }
   }
 
-  public void setColorMovingUp(Color fgColor, Color bgColor) {
+  public void setColorMovingUp(COLORS_467 fgColor, COLORS_467 bgColor) {
     if (purpleTimer.hasElapsed(
         SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
       purpleTimer.reset();
+      }
     }
+
+  public void setColorMovingDown(COLORS_467 fgColor, COLORS_467 bgColor) {
+    if (purpleTimer.hasElapsed(
+        SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() - 2))) {
+      purpleTimer.reset();
+        }
+      }
 
     for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
       if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * i)) {
