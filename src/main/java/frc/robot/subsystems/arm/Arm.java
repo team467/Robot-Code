@@ -101,7 +101,7 @@ public class Arm extends SubsystemBase {
       return;
     }
 
-    if (armIO.isExtendLimitSwitchPressed() && mode != ArmMode.CALIBRATE) {
+    if (armIOInputs.extendLimitSwitch && mode != ArmMode.CALIBRATE) {
       if (Math.abs(armIOInputs.extendPosition) > 0.1) {
         mode = ArmMode.CALIBRATE;
         extendCalibrated = false;
@@ -163,7 +163,7 @@ public class Arm extends SubsystemBase {
       case HOLD:
         double holdPidOutput = calculateExtendPid(holdPosition);
         logger.recordOutput("Arm/holdPidOutput", holdPidOutput);
-        if (armIO.isExtendLimitSwitchPressed()) {
+        if (armIOInputs.extendLimitSwitch) {
           armIO.setExtendVoltage(0);
         } else {
           armIO.setExtendVoltage(holdPidOutput);
@@ -171,7 +171,7 @@ public class Arm extends SubsystemBase {
         break;
 
       case CALIBRATE:
-        if (armIO.isExtendLimitSwitchPressed()) {
+        if (armIOInputs.extendLimitSwitch) {
           if (!extendCalibrated) {
             armIO.resetEncoderPosition();
             extendCalibrated = true;
@@ -180,7 +180,7 @@ public class Arm extends SubsystemBase {
         } else {
           armIO.setExtendVoltage(-1);
         }
-        if (armIO.isRotateLowLimitSwitchPressed()) {
+        if (armIOInputs.rotateLowLimitSwitch) {
           if (!rotationCalibrated) {
             armIO.resetEncoderPosition();
             rotationCalibrated = true;
@@ -231,19 +231,8 @@ public class Arm extends SubsystemBase {
     }
   }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
-
-  @Override
-  public void initSendable(SendableBuilder builder) {
-    super.initSendable(builder);
-  }
-
   public boolean isStopped() {
-    if (armIOInputs.extendVelocity <= 0.1 && armIOInputs.rotateVelocity <= 0.1) return true;
-    return false;
+    return armIOInputs.extendVelocity <= 0.1 && armIOInputs.rotateVelocity <= 0.1;
   }
 
   public boolean finished() {

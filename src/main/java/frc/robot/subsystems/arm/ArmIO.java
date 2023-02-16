@@ -22,6 +22,8 @@ public interface ArmIO {
     public double rotateTemp = 0.0;
 
     public boolean extendLimitSwitch = false;
+    public boolean rotateHighLimitSwitch = false;
+    public boolean rotateLowLimitSwitch = false;
   }
 
   default void updateInputs(ArmIOInputs inputs) {}
@@ -36,21 +38,5 @@ public interface ArmIO {
 
   default void resetEncoderPosition() {}
 
-  default boolean isExtendLimitSwitchPressed() {
-    return false;
-  }
-
-  default boolean isRotateHighLimitSwitchPressed() {
-    return false;
-  }
-
-  default boolean isRotateLowLimitSwitchPressed() {
-    return false;
-  }
-
-  public default void setRatchetLocked(boolean locked) {}
-
-  public default boolean isRatchedLocked() {
-    return false;
-  }
+  default void setRatchetLocked(boolean locked) {}
 }

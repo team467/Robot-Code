@@ -77,6 +77,8 @@ public class ArmIOPhysical implements ArmIO {
     inputs.extendCurrent = extendMotor.getOutputCurrent();
     inputs.extendTemp = extendMotor.getMotorTemperature();
     inputs.extendLimitSwitch = extendLimitSwitch.get();
+    inputs.rotateHighLimitSwitch = rotateHighLimitSwitch.get();
+    inputs.rotateLowLimitSwitch = rotateLowLimitSwitch.get();
   }
 
   @Override
@@ -99,32 +101,13 @@ public class ArmIOPhysical implements ArmIO {
     rotateMotor.setVoltage(volts);
   }
 
+  @Override
   public void resetEncoderPosition() {
     extendEncoder.setPosition(0);
   }
 
   @Override
-  public boolean isExtendLimitSwitchPressed() {
-    return extendLimitSwitch.get();
-  }
-
-  @Override
-  public boolean isRotateHighLimitSwitchPressed() {
-    return rotateHighLimitSwitch.get();
-  }
-
-  @Override
-  public boolean isRotateLowLimitSwitchPressed() {
-    return rotateLowLimitSwitch.get();
-  }
-
-  @Override
   public void setRatchetLocked(boolean locked) {
     ratchetSolenoid.set(locked);
-  }
-
-  @Override
-  public boolean isRatchedLocked() {
-    return ratchetSolenoid.get();
   }
 }
