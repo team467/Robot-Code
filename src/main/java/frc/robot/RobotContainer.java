@@ -20,10 +20,10 @@ import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro.GyroIO;
 import frc.lib.io.gyro.GyroIOADIS16470;
 import frc.lib.leds.LEDManager;
-import frc.robot.commands.LedBlueGold;
+import frc.robot.commands.LedBlueGoldCMD;
 import frc.robot.commands.LedRainbowCMD;
-import frc.robot.commands.LedWantsCone;
-import frc.robot.commands.LedWantsCube;
+import frc.robot.commands.LedWantsConeCMD;
+import frc.robot.commands.LedWantsCubeCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.input.CustomController2022;
@@ -140,7 +140,7 @@ public class RobotContainer {
   private void configureShooter2023() {
     if (RobotConstants.get().hasLed2023()) {
       operatorShoot.onTrue(new LedRainbowCMD(led2023));
-      operatorFlush.onTrue(new LedBlueGold(led2023));
+      operatorFlush.onTrue(new LedBlueGoldCMD(led2023));
     }
   }
 
@@ -178,8 +178,8 @@ public class RobotContainer {
                 .andThen(Commands.print("Reset pose")));
 
     operatorController.start();
-    operatorController.leftBumper().toggleOnTrue(new LedWantsCone(led2023));
-    operatorController.rightBumper().toggleOnTrue(new LedWantsCube(led2023));
+    operatorController.leftBumper().toggleOnTrue(new LedWantsConeCMD(led2023));
+    operatorController.rightBumper().toggleOnTrue(new LedWantsCubeCMD(led2023));
     led2023.setDefaultCommand(new LedRainbowCMD(led2023));
   }
 

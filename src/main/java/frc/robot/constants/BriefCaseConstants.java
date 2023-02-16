@@ -137,6 +137,6 @@ public class BriefCaseConstants implements Constants {
 
   @Override
   public int led2023LedCount() {
-    return 20;
+    return 10;
   }
 }

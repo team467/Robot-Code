@@ -14,8 +14,7 @@ public class Led2023 extends SubsystemBase {
   public Led2023() {
     super();
 
-    ledStrip = LEDManager.getInstance().createSingleStrip(RobotConstants.get().led2023LedCount());
-
+    ledStrip = LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount());
     for (int i = 0; i < ledStrip.getSize(); i++) {
       ledStrip.setRGB(i, 0, 0, 0);
     }
