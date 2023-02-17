@@ -12,5 +12,4 @@ public class LedRainbowCMD extends LedBaseCMD {
   public void execute() {
     ledStrip.defaultLights();
   }
-
 }

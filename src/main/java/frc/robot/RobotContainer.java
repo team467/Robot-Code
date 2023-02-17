@@ -19,8 +19,8 @@ import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacter
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUPigeon2;
-import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.leds.LEDManager;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.commands.intakerelease.HoldCMD;
@@ -29,10 +29,7 @@ import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.commands.intakerelease.StopCMD;
 import frc.robot.commands.intakerelease.WantConeCMD;
 import frc.robot.commands.intakerelease.WantCubeCMD;
-import frc.robot.commands.leds.LedBlueGoldCMD;
 import frc.robot.commands.leds.LedRainbowCMD;
-import frc.robot.commands.leds.LedWantsConeCMD;
-import frc.robot.commands.leds.LedWantsCubeCMD;
 import frc.robot.input.CustomController2022;
 import frc.robot.subsystems.Led2023;
 import frc.robot.subsystems.drive.Drive;
@@ -134,7 +131,12 @@ public class RobotContainer {
                 new ModuleIO() {});
       }
     }
-    intakeRelease = new IntakeRelease(new IntakeReleaseIOPhysical(RobotConstants.get().intakeMotorID(), RobotConstants.get().intakeCubeLimitSwitchID(), RobotConstants.get().intakeConeLimitSwitchID()));
+    intakeRelease =
+        new IntakeRelease(
+            new IntakeReleaseIOPhysical(
+                RobotConstants.get().intakeMotorID(),
+                RobotConstants.get().intakeCubeLimitSwitchID(),
+                RobotConstants.get().intakeConeLimitSwitchID()));
     intakeRelease.setDefaultCommand(new StopCMD(intakeRelease));
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
@@ -169,18 +171,13 @@ public class RobotContainer {
     initializeSubsystems();
   }
 
-  private void configureShooter2023() {
-    if (RobotConstants.get().hasLed2023()) {
-      operatorShoot.onTrue(new LedRainbowCMD(led2023));
-      operatorFlush.onTrue(new LedBlueGoldCMD(led2023));
-    }
-  }
-
   private void initializeSubsystems() {
     initLed2023();
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
     configureShooter2023();
   }
+
+  private void configureShooter2023() {}
 
   private void initLed2023() {
     if (RobotConstants.get().hasLed2023()) {
@@ -212,14 +209,13 @@ public class RobotContainer {
                             new Pose2d(
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
-    driverController.a().whileTrue(new IntakeCMD(intakeRelease).andThen(new HoldCMD(intakeRelease)));
-    driverController.b().whileTrue(new ReleaseCMD(intakeRelease));
-    driverController.x().onTrue(new WantConeCMD(intakeRelease));
-    driverController.y().onTrue(new WantCubeCMD(intakeRelease));
-
-    operatorController.start();
-    operatorController.leftBumper().toggleOnTrue(new LedWantsConeCMD(led2023));
-    operatorController.rightBumper().toggleOnTrue(new LedWantsCubeCMD(led2023));
+    driverController
+        .a()
+        .whileTrue(
+            new IntakeCMD(intakeRelease, led2023).andThen(new HoldCMD(intakeRelease, led2023)));
+    driverController.b().whileTrue(new ReleaseCMD(intakeRelease, led2023));
+    driverController.x().onTrue(new WantConeCMD(intakeRelease, led2023));
+    driverController.y().onTrue(new WantCubeCMD(intakeRelease, led2023));
     led2023.setDefaultCommand(new LedRainbowCMD(led2023));
   }
 

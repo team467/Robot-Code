@@ -85,7 +85,6 @@ public class Led2023 extends SubsystemBase {
 
     sendData();
     lastLoopTime = Timer.getFPGATimestamp();
-
   }
 
   public void setLED(int index, Color color) {
@@ -150,7 +149,6 @@ public class Led2023 extends SubsystemBase {
 
   public void setBottom(COLORS_467 color) {
     for (int i = 0; i < RobotConstants.get().led2023LedCount() / 2; i++) {
-      System.out.println("Drop off");
       ledStrip.setRGB(i, color.red, color.green, color.blue);
     }
   }

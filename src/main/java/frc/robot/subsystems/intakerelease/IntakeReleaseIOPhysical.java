@@ -2,17 +2,15 @@ package frc.robot.subsystems.intakerelease;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.DigitalInput;
-import pabeles.concurrency.IntObjectConsumer;
-
 import com.revrobotics.RelativeEncoder;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   private final CANSparkMax motor;
   private final RelativeEncoder encoder;
   private final DigitalInput cubeLimitSwitch;
   private final DigitalInput coneLimitSwitch;
+
   public IntakeReleaseIOPhysical(int motorID, int cubeLimID, int coneLimID) {
     motor = new CANSparkMax(motorID, MotorType.kBrushless);
     encoder = motor.getEncoder();

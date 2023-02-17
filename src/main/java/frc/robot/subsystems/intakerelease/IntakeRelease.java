@@ -1,15 +1,12 @@
 package frc.robot.subsystems.intakerelease;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.intakerelease.WantConeCMD;
-
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeRelease extends SubsystemBase {
   private final Logger logger = Logger.getInstance();
   private final IntakeReleaseIO intakeReleaseIO;
   private final IntakeReleaseIOInputsAutoLogged inputs;
-
 
   private enum State {
     DISABLED,

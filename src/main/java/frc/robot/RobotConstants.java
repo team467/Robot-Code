@@ -1,7 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.constants.BriefcaseConstants;
+import frc.robot.constants.BriefCaseConstants;
 import frc.robot.constants.CompBotConstants;
 import frc.robot.constants.Constants;
 import java.io.BufferedReader;
@@ -29,12 +29,11 @@ public class RobotConstants {
         String name = br.readLine().toLowerCase();
         System.out.println("Pikachu Pika Pika Pika Pika Pika Pika Pika Pika Pika Name: " + name);
         switch (name) {
-
           case "von neumann":
             RobotConstants.set(new CompBotConstants());
             break;
           case "turing":
-            RobotConstants.set(new BriefcaseConstants());
+            RobotConstants.set(new BriefCaseConstants());
             break;
           default:
             throw new IOException("Invalid roborio name found");
