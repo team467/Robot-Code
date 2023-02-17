@@ -135,4 +135,22 @@ public class BriefcaseConstants implements Constants {
     // TODO Auto-generated method stub
     return 0;
   }
+
+  @Override
+  public int ledChannel() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public boolean hasLed2023() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public int led2023LedCount() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
 }

@@ -29,9 +29,6 @@ public class RobotConstants {
         String name = br.readLine().toLowerCase();
         System.out.println("Pikachu Pika Pika Pika Pika Pika Pika Pika Pika Pika Name: " + name);
         switch (name) {
-          case "turing":
-            RobotConstants.set(new BriefCaseConstants());
-            break;
 
           case "von neumann":
             RobotConstants.set(new CompBotConstants());
