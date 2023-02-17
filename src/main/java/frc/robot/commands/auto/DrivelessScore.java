@@ -4,7 +4,6 @@
 
 package frc.robot.commands.auto;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class DrivelessScore extends SequentialCommandGroup {
@@ -12,10 +11,8 @@ public class DrivelessScore extends SequentialCommandGroup {
   public DrivelessScore() {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands(
-    //commandA,
-    //commandB
-      
-      );
-    
+        // commandA,
+        // commandB
+        );
   }
 }
