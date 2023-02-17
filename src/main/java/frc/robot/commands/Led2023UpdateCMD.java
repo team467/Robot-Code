@@ -198,4 +198,4 @@ public abstract class Led2023UpdateCMD extends CommandBase {
           i, ((int) color + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
     }
   }
-}
+
