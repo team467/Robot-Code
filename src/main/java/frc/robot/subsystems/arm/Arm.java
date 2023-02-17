@@ -101,14 +101,14 @@ public class Arm extends SubsystemBase {
       return;
     }
 
-    if (armIOInputs.extendLimitSwitch && mode != ArmMode.CALIBRATE) {
+    /*if (armIOInputs.extendLimitSwitch && mode != ArmMode.CALIBRATE) {
       if (Math.abs(armIOInputs.extendPosition) > 0.1) {
         mode = ArmMode.CALIBRATE;
         extendCalibrated = false;
       } else {
         // hold();
       }
-    }
+    }*/
     armIO.updateInputs(armIOInputs);
     logger.processInputs("Arm", armIOInputs);
     logger.recordOutput("Arm/mode", mode.toString());
@@ -129,8 +129,9 @@ public class Arm extends SubsystemBase {
             && manualRotate < 0) {
           armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMin())); */
 
-        armIO.setRotateVelocity(manualRotate);
+        armIO.setRotateVoltage(manualRotate);
         logger.recordOutput("Arm/manualRotate", manualRotate);
+        break;
 
       case AUTO:
         if (finished()) {
@@ -155,6 +156,7 @@ public class Arm extends SubsystemBase {
 
       case ROTATE_CHARACTERIZATION:
         armIO.setRotateVoltage(characterizationVoltage);
+
         break;
 
       case DISABLED:
