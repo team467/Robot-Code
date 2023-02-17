@@ -31,8 +31,8 @@ public class SimBotConstants implements Constants {
     return new Translation2d[] {
       new Translation2d(0.65 / 2, 0.65 / 2),
       new Translation2d(0.65 / 2, -0.65 / 2),
-      new Translation2d(-0.65 / 2, -0.65 / 2),
-      new Translation2d(-0.65 / 2, 0.65 / 2)
+      new Translation2d(-0.65 / 2, 0.65 / 2),
+      new Translation2d(-0.65 / 2, -0.65 / 2)
     };
   }
 
@@ -134,6 +134,24 @@ public class SimBotConstants implements Constants {
 
   @Override
   public int led2023LedCount() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public int intakeMotorID() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public int intakeCubeLimitSwitchID() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public int intakeConeLimitSwitchID() {
     // TODO Auto-generated method stub
     return 0;
   }

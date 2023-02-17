@@ -5,6 +5,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.utils.GeomUtils;
 import frc.robot.RobotConstants;
@@ -73,14 +75,23 @@ public class DriveWithJoysticks extends CommandBase {
 
     // Convert from field relative
     if (robotRelativeOverride.get()) {
+      Rotation2d driveRotation = drive.getPose().getRotation();
+      if (DriverStation.getAlliance() == Alliance.Red) {
+        driveRotation = driveRotation.plus(new Rotation2d(Math.PI));
+      }
       speeds =
           ChassisSpeeds.fromFieldRelativeSpeeds(
               speeds.vxMetersPerSecond,
               speeds.vyMetersPerSecond,
               speeds.omegaRadiansPerSecond,
-              drive.getPose().getRotation());
+              driveRotation);
     }
 
     drive.runVelocity(speeds);
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    drive.stop();
   }
 }

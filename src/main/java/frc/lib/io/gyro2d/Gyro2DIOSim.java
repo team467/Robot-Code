@@ -1,10 +1,10 @@
-package frc.lib.io.gyro;
+package frc.lib.io.gyro2d;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.function.Supplier;
 
 /** A Gyro IO class that pretends to have a set angle. */
-public class GyroIOSim implements GyroIO {
+public class Gyro2DIOSim implements Gyro2DIO {
 
   private Supplier<Rotation2d> angle;
 
@@ -13,12 +13,12 @@ public class GyroIOSim implements GyroIO {
    *
    * @param angle the angle to have the gyro claim
    */
-  public GyroIOSim(Supplier<Rotation2d> angle) {
+  public Gyro2DIOSim(Supplier<Rotation2d> angle) {
     this.angle = angle;
   }
 
   @Override
-  public void updateInputs(GyroIOInputs inputs) {
+  public void updateInputs(Gyro2DIOInputs inputs) {
     inputs.connected = true;
     inputs.angle = angle.get().getDegrees();
     inputs.rate = 0;

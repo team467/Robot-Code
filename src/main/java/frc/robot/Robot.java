@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.Constants.RobotType;
 import frc.lib.input.ControllerQueue;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -56,6 +59,11 @@ public class Robot extends LoggedRobot {
         String folder = RobotConstants.get().logFolder();
         if (folder != null) {
           logger.addDataReceiver(new WPILOGWriter(folder));
+        }
+        if (RobotConstants.get().robot() == RobotType.ROBOT_COMP) {
+          new PowerDistribution(63, ModuleType.kRev);
+        } else {
+          new PowerDistribution(20, ModuleType.kCTRE);
         }
       }
 

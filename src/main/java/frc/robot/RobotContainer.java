@@ -17,8 +17,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.holonomictrajectory.Waypoint;
-import frc.lib.io.gyro.GyroIO;
-import frc.lib.io.gyro.GyroIOADIS16470;
+import frc.lib.io.gyro3d.IMUIO;
+import frc.lib.io.gyro3d.IMUPigeon2;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.leds.LEDManager;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
@@ -32,6 +33,8 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
+import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -51,6 +54,7 @@ public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
   private final Drive drive;
+  private final IntakeRelease intakeRelease;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -66,44 +70,66 @@ public class RobotContainer {
   public RobotContainer() {
     switch (RobotConstants.get().mode()) {
         // Real robot, instantiate hardware IO implementations
-      case REAL:
         // Init subsystems
         // subsystem = new Subsystem(new SubsystemIOImpl());
-        drive =
-            new Drive(
-                new GyroIOADIS16470(),
-                new ModuleIOSparkMAX(5, 6, 11, 0),
-                new ModuleIOSparkMAX(7, 8, 12, 1),
-                new ModuleIOSparkMAX(3, 4, 10, 2),
-                new ModuleIOSparkMAX(1, 2, 9, 3));
-        break;
-
+      case REAL -> {
+        switch (RobotConstants.get().robot()) {
+          case ROBOT_COMP -> {
+            drive =
+                new Drive(
+                    new IMUPigeon2(17),
+                    new ModuleIOSparkMAX(3, 4, 13, 0),
+                    new ModuleIOSparkMAX(5, 6, 14, 1),
+                    new ModuleIOSparkMAX(1, 2, 15, 2),
+                    new ModuleIOSparkMAX(7, 8, 16, 3));
+          }
+          case ROBOT_BRIEFCASE -> {
+            drive =
+                new Drive(
+                    new IMUIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {});
+          }
+          default -> {
+            drive =
+                new Drive(
+                    new IMUIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {});
+          }
+        }
+      }
         // Sim robot, instantiate physics sim IO implementations
-      case SIM:
+      case SIM -> {
         // Init subsystems
         // subsystem = new Subsystem(new SubsystemIOSim());
         drive =
             new Drive(
-                new GyroIO() {},
+                new IMUIO() {},
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        break;
+      }
 
         // Replayed robot, disable IO implementations
-      default:
+      default -> {
         // subsystem = new Subsystem(new SubsystemIO() {});
         drive =
             new Drive(
-                new GyroIO() {},
+                new IMUIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        break;
+      }
     }
-
+    intakeRelease = new IntakeRelease(new IntakeReleaseIOPhysical(RobotConstants.get().intakeMotorID(), RobotConstants.get().intakeCubeLimitSwitchID(), RobotConstants.get().intakeConeLimitSwitchID()));
+    intakeRelease.setDefaultCommand(new StopCMD(intakeRelease));
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     autoChooser.addOption(
@@ -174,8 +200,16 @@ public class RobotContainer {
     driverController
         .start()
         .onTrue(
-            Commands.runOnce(() -> drive.setPose(new Pose2d()))
-                .andThen(Commands.print("Reset pose")));
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(
+                                new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
+                .ignoringDisable(true));
+    driverController.a().whileTrue(new IntakeCMD(intakeRelease).andThen(new HoldCMD(intakeRelease)));
+    driverController.b().whileTrue(new ReleaseCMD(intakeRelease));
+    driverController.x().onTrue(new WantConeCMD(intakeRelease));
+    driverController.y().onTrue(new WantCubeCMD(intakeRelease));
 
     operatorController.start();
     operatorController.leftBumper().toggleOnTrue(new LedWantsConeCMD(led2023));
