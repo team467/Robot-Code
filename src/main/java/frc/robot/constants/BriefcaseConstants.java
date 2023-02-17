@@ -3,16 +3,17 @@ package frc.robot.constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.util.Units;
 import frc.robot.constants.controls.FeedbackConstant;
 import frc.robot.constants.controls.GearRatio;
 import frc.robot.constants.controls.SimpleFeedforwardConstant;
 import java.util.Arrays;
 
-public class BriefcaseConstants implements Constants {
+public class BriefCaseConstants implements Constants {
 
   @Override
   public RobotType robot() {
-    return RobotType.ROBOT_BRIEFCASE;
+    return RobotType.ROBOT_BRIEFCASEBOT;
   }
 
   @Override
@@ -23,19 +24,22 @@ public class BriefcaseConstants implements Constants {
   // Drive constants
   @Override
   public double driveMaxCoastVelocity() {
-    return 0;
-  }
+    return 0.5;
+  } // TODO: tune
 
   private Translation2d[] moduleTranslations() {
     return new Translation2d[] {
-      new Translation2d(), new Translation2d(), new Translation2d(), new Translation2d()
+      new Translation2d(Units.inchesToMeters(11.50), Units.inchesToMeters(11.50)),
+      new Translation2d(Units.inchesToMeters(11.50), -Units.inchesToMeters(11.50)),
+      new Translation2d(-Units.inchesToMeters(11.50), Units.inchesToMeters(11.50)),
+      new Translation2d(-Units.inchesToMeters(11.50), -Units.inchesToMeters(11.50))
     };
   }
 
   @Override
   public double maxLinearSpeed() {
-    return 0.0;
-  }
+    return 3.0;
+  } // TODO: tune
 
   @Override
   public double maxAngularSpeed() {
@@ -48,32 +52,32 @@ public class BriefcaseConstants implements Constants {
 
   @Override
   public double moduleWheelDiameter() {
-    return 0;
+    return Units.inchesToMeters(4);
   }
 
   @Override
   public GearRatio moduleDriveGearRatio() {
-    return new GearRatio();
+    return new GearRatio(6.75, 1); // SDS L2
   }
 
   @Override
   public GearRatio moduleTurnGearRatio() {
-    return new GearRatio();
+    return new GearRatio(12.8, 1);
   }
 
   @Override
   public SimpleFeedforwardConstant moduleDriveFF() {
-    return new SimpleFeedforwardConstant(0, 0);
-  }
+    return new SimpleFeedforwardConstant(0.15026, 0.13682);
+  } // TODO: tune
 
   @Override
   public SimpleFeedforwardConstant moduleTurnFF() {
-    return new SimpleFeedforwardConstant(0, 0);
+    return new SimpleFeedforwardConstant(0.16302, 0.0089689, 0.00034929);
   }
 
   @Override
   public FeedbackConstant moduleTurnFB() {
-    return new FeedbackConstant(0);
+    return new FeedbackConstant(3.2526, 0.05);
   }
 
   @Override
@@ -84,73 +88,55 @@ public class BriefcaseConstants implements Constants {
   @Override
   public Rotation2d[] absoluteAngleOffset() {
     return new Rotation2d[] {
-      new Rotation2d(), new Rotation2d(), new Rotation2d(), new Rotation2d()
+      Rotation2d.fromDegrees(-46.75781250000001),
+      Rotation2d.fromDegrees(11.162109374999998),
+      Rotation2d.fromDegrees(110.478515625),
+      Rotation2d.fromDegrees(-100.19531250000001)
     };
   }
 
   @Override
   public double chassisDriveMaxVelocity() {
-    return 0;
-  }
+    return 1.2;
+  } // TODO: tune
 
   @Override
   public double chassisDriveMaxAcceleration() {
-    return 0;
-  }
+    return 1.2;
+  } // TODO: tune
 
   @Override
   public double chassisTurnMaxVelocity() {
-    return 0;
-  }
+    return 0.2;
+  } // TODO: tune
 
   @Override
   public double chassisTurnMaxAcceleration() {
-    return 0;
-  }
+    return 0.2;
+  } // TODO: tune
 
   @Override
   public FeedbackConstant chassisDriveFB() {
-    return new FeedbackConstant(0);
-  }
+    return new FeedbackConstant(0.1);
+  } // TODO: tune
 
   @Override
   public FeedbackConstant chassisTurnFB() {
-    return new FeedbackConstant(0);
-  }
+    return new FeedbackConstant(0.1);
+  } // TODO: tune
 
   @Override
-  public int intakeMotorID() {
-    // TODO Auto-generated method stub
-    return 1;
-  }
-
-  @Override
-  public int intakeCubeLimitSwitchID() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public int intakeConeLimitSwitchID() {
-    // TODO Auto-generated method stub
-    return 0;
+  public boolean hasLed2023() {
+    return true;
   }
 
   @Override
   public int ledChannel() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public boolean hasLed2023() {
-    // TODO Auto-generated method stub
-    return false;
+    return 2;
   }
 
   @Override
   public int led2023LedCount() {
-    // TODO Auto-generated method stub
-    return 0;
+    return 10;
   }
 }
