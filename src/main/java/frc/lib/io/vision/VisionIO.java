@@ -17,15 +17,15 @@ public interface VisionIO {
   class VisionIOInputs implements LoggableInputs {
 
     /** A list with a size of 8 containing the targets that the vision system has detected. */
-    public List<Optional<PhotonTrackedTarget>> targets;
+    public List<Optional<PhotonTrackedTarget>> targets = List.of(Optional.empty());
     /** The latency of the vision system in milliseconds. */
-    public double latencyMillis;
+    public double latencyMillis = -1;
     /** The timestamp of the vision system in milliseconds. */
-    public double timestampSeconds;
+    public double timestampSeconds = -1;
     /** Returns whether the vision system has detected any targets. */
-    public boolean hasTargets;
+    public boolean hasTargets = false;
     /** The estimated pose of the robot. */
-    public Optional<EstimatedRobotPose> estimatedPose;
+    public Optional<EstimatedRobotPose> estimatedPose = Optional.empty();
 
     @Override
     public void toLog(LogTable table) {
