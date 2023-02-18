@@ -4,14 +4,10 @@
 
 package frc.robot.commands;
 
-import java.lang.reflect.Method;
-
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class GoToTag extends CommandBase {
@@ -20,12 +16,11 @@ public class GoToTag extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  //true = left
+  // true = left
   public Translation2d leftright(boolean leftright, Translation2d apriltag) {
     if (leftright == true) {
       apriltag = apriltag.plus(new Translation2d(1, 0));
-    }
-    else {
+    } else {
       apriltag = apriltag.plus(new Translation2d(-1, 0));
     }
     return apriltag;
@@ -42,20 +37,19 @@ public class GoToTag extends CommandBase {
     Pose3d aprilTwoThreeD = new Pose3d(7.0, 1.0, 1.0, new Rotation3d(0, 0, 27.0));
     Pose3d aprilThreeThreeD = new Pose3d(1.0, 1.0, 1.0, new Rotation3d(0, 0, 9.0));
 
-    
     var aprilone = aprilOneThreeD.getTranslation().toTranslation2d();
     Translation2d apriloneleft = leftright(true, aprilone);
     Translation2d apriloneright = leftright(false, aprilone);
     Translation2d apriltwo = new Translation2d(aprilTwoThreeD.getX(), aprilTwoThreeD.getY());
-        Translation2d apriltwoleft = leftright(true, apriltwo);
+    Translation2d apriltwoleft = leftright(true, apriltwo);
     Translation2d apriltworight = leftright(false, apriltwo);
     Translation2d aprilthree = new Translation2d(aprilThreeThreeD.getX(), aprilThreeThreeD.getY());
-        Translation2d aprilthreeleft = leftright(true, aprilthree);
+    Translation2d aprilthreeleft = leftright(true, aprilthree);
     Translation2d aprilthreeright = leftright(false, aprilthree);
     Rotation2d rotationaprilone = new Rotation2d(aprilOneThreeD.getRotation().getAngle());
     Rotation2d rotationapriltwo = new Rotation2d(aprilTwoThreeD.getRotation().getAngle());
     Rotation2d rotationaprilthree = new Rotation2d(aprilThreeThreeD.getRotation().getAngle());
-    //left and rights should shift x by a certain messurment
+    // left and rights should shift x by a certain messurment
   }
 
   // Called once the command ends or is interrupted.
