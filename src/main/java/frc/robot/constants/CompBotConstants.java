@@ -33,7 +33,7 @@ public class CompBotConstants implements Constants {
       new Translation2d(Units.inchesToMeters(12.75), Units.inchesToMeters(9.25)),
       new Translation2d(Units.inchesToMeters(12.75), -Units.inchesToMeters(9.25)),
       new Translation2d(-Units.inchesToMeters(12.75), Units.inchesToMeters(9.25)),
-      new Translation2d(-Units.inchesToMeters(12.75), -Units.inchesToMeters(9.25))
+      new Translation2d(-Units.inchesToMeters(12.75), -Units.inchesToMeters(9.25)),
     };
   }
 
@@ -44,11 +44,11 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double maxAngularSpeed() {
-    return maxLinearSpeed()
+    return (maxLinearSpeed()
         / Arrays.stream(moduleTranslations())
             .map(Translation2d::getNorm)
             .max(Double::compare)
-            .get();
+            .get());
   }
 
   @Override
@@ -92,7 +92,7 @@ public class CompBotConstants implements Constants {
       Rotation2d.fromDegrees(20.5),
       Rotation2d.fromDegrees(42.0),
       Rotation2d.fromDegrees(168.4),
-      Rotation2d.fromDegrees(99.9)
+      Rotation2d.fromDegrees(99.9),
     };
   }
 
@@ -173,17 +173,21 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double armRotateMax() {
-
-    return 180;
+    return 10;
   }
 
   @Override
   public double armRotateMin() {
-    return 0;
+    return -10;
   }
 
   @Override
   public double armRotateConversionFactor() {
     return 0.00236706;
+  }
+
+  @Override
+  public double armExtendMinDown() {
+    return 0.2;
   }
 }

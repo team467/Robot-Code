@@ -28,7 +28,7 @@ public class BriefcaseConstants implements Constants {
 
   private Translation2d[] moduleTranslations() {
     return new Translation2d[] {
-      new Translation2d(), new Translation2d(), new Translation2d(), new Translation2d()
+      new Translation2d(), new Translation2d(), new Translation2d(), new Translation2d(),
     };
   }
 
@@ -39,11 +39,11 @@ public class BriefcaseConstants implements Constants {
 
   @Override
   public double maxAngularSpeed() {
-    return maxLinearSpeed()
+    return (maxLinearSpeed()
         / Arrays.stream(moduleTranslations())
             .map(Translation2d::getNorm)
             .max(Double::compare)
-            .get();
+            .get());
   }
 
   @Override
@@ -84,7 +84,7 @@ public class BriefcaseConstants implements Constants {
   @Override
   public Rotation2d[] absoluteAngleOffset() {
     return new Rotation2d[] {
-      new Rotation2d(), new Rotation2d(), new Rotation2d(), new Rotation2d()
+      new Rotation2d(), new Rotation2d(), new Rotation2d(), new Rotation2d(),
     };
   }
 
@@ -165,7 +165,6 @@ public class BriefcaseConstants implements Constants {
 
   @Override
   public double armRotateMax() {
-
     return 180;
   }
 
@@ -177,5 +176,11 @@ public class BriefcaseConstants implements Constants {
   @Override
   public double armRotateConversionFactor() {
     return 1;
+  }
+
+  @Override
+  public double armExtendMinDown() {
+    // TODO Auto-generated method stub
+    return 0;
   }
 }

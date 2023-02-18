@@ -5,14 +5,15 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import frc.robot.RobotConstants;
+import org.littletonrobotics.junction.Logger;
 
 public class ArmIOPhysical implements ArmIO {
+
   private final CANSparkMax extendMotor;
   private final RelativeEncoder extendEncoder;
-  private final DigitalInput extendLimitSwitch;
+  private final SparkMaxLimitSwitch extendLimitSwitch;
   private final SparkMaxLimitSwitch rotateHighLimitSwitch;
   private final SparkMaxLimitSwitch rotateLowLimitSwitch;
   private final DigitalOutput ratchetSolenoid;
@@ -22,8 +23,6 @@ public class ArmIOPhysical implements ArmIO {
 
   public ArmIOPhysical(
       int extendMotorId, int rotateMotorId, int extendLimitSwitchId, int ratchetSolenoidId) {
-    extendLimitSwitch = new DigitalInput(extendLimitSwitchId);
-
     ratchetSolenoid = new DigitalOutput(ratchetSolenoidId);
 
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
@@ -32,6 +31,7 @@ public class ArmIOPhysical implements ArmIO {
         rotateMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
     rotateLowLimitSwitch =
         rotateMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
+    extendLimitSwitch = extendMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
 
     extendEncoder = extendMotor.getEncoder();
     extendEncoder.setPositionConversionFactor(RobotConstants.get().armExtendConversionFactor());
@@ -54,10 +54,10 @@ public class ArmIOPhysical implements ArmIO {
   public void updateInputs(ArmIOInputs inputs) {
     inputs.extendVelocity = extendEncoder.getVelocity();
     inputs.extendPosition = extendEncoder.getPosition();
-    inputs.extendAppliedVolts = extendMotor.getBusVoltage();
+    inputs.extendAppliedVolts = extendMotor.getBusVoltage() * extendMotor.getAppliedOutput();
     inputs.extendCurrent = extendMotor.getOutputCurrent();
     inputs.extendTemp = extendMotor.getMotorTemperature();
-    inputs.extendLimitSwitch = extendLimitSwitch.get();
+    inputs.extendLimitSwitch = extendLimitSwitch.isPressed();
     inputs.rotateHighLimitSwitch = rotateHighLimitSwitch.isPressed();
     inputs.rotateLowLimitSwitch = rotateLowLimitSwitch.isPressed();
     inputs.rotatePosition = rotateEncoder.getPosition();
@@ -66,16 +66,26 @@ public class ArmIOPhysical implements ArmIO {
 
   @Override
   public void setExtendVelocity(double velocity) {
+    if (velocity != 0) {
+      ratchetSolenoid.set(false);
+    } else {
+      ratchetSolenoid.set(true);
+    }
     extendMotor.set(velocity);
   }
 
   @Override
   public void setRotateVelocity(double velocity) {
-    rotateMotor.set(velocity);
+    Logger.getInstance().recordOutput("Rotate Velocity", velocity);
   }
 
   @Override
   public void setExtendVoltage(double volts) {
+    if (volts != 0) {
+      ratchetSolenoid.set(false);
+    } else {
+      ratchetSolenoid.set(true);
+    }
     extendMotor.setVoltage(volts);
   }
 

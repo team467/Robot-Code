@@ -24,6 +24,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * project.
  */
 public class Robot extends LoggedRobot {
+
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
@@ -45,18 +46,16 @@ public class Robot extends LoggedRobot {
           logger.addDataReceiver(new WPILOGWriter(folder));
         }
         if (RobotConstants.get().robot() == RobotType.ROBOT_COMP) {
-          //   new PowerDistribution(63, ModuleType.kRev);
+          new PowerDistribution(20, ModuleType.kRev);
         } else {
           new PowerDistribution(20, ModuleType.kCTRE);
         }
       }
-
         // Running a physics simulator, log to local folder
       case SIM -> {
         logger.addDataReceiver(new WPILOGWriter(""));
         logger.addDataReceiver(new NT4Publisher());
       }
-
         // Replaying a log, set up replay source
       case REPLAY -> {
         setUseTiming(false); // Run as fast as possible
