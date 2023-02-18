@@ -1,11 +1,14 @@
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -100,6 +103,7 @@ public final class FieldConstants {
 
     // Translations (all nodes in the same column/row have the same X/Y coordinate)
     public static final Translation2d[] lowTranslations = new Translation2d[nodeRowCount];
+    public static final Translation3d[] low3dTranslations = new Translation3d[nodeRowCount];
     public static final Translation2d[] midTranslations = new Translation2d[nodeRowCount];
     public static final Translation3d[] mid3dTranslations = new Translation3d[nodeRowCount];
     public static final Translation2d[] highTranslations = new Translation2d[nodeRowCount];
@@ -109,6 +113,7 @@ public final class FieldConstants {
       for (int i = 0; i < nodeRowCount; i++) {
         boolean isCube = i == 1 || i == 4 || i == 7;
         lowTranslations[i] = new Translation2d(lowX, nodeFirstY + nodeSeparationY * i);
+        low3dTranslations[i] = new Translation3d(lowX, nodeFirstY + nodeSeparationY * i, 0.0);
         midTranslations[i] = new Translation2d(midX, nodeFirstY + nodeSeparationY * i);
         mid3dTranslations[i] =
             new Translation3d(midX, nodeFirstY + nodeSeparationY * i, isCube ? midCubeZ : midConeZ);
@@ -139,6 +144,20 @@ public final class FieldConstants {
           new Translation2d(
               complexLowXCones, nodeFirstY + nodeSeparationY * 8 + complexLowOuterYOffset),
         };
+
+    public static final Translation3d[] complexLow3dTranslations =
+        new Translation3d[] {
+          new Translation3d(complexLowXCones, nodeFirstY - complexLowOuterYOffset, 0.0),
+          new Translation3d(complexLowXCubes, nodeFirstY + nodeSeparationY * 1, 0.0),
+          new Translation3d(complexLowXCones, nodeFirstY + nodeSeparationY * 2, 0.0),
+          new Translation3d(complexLowXCones, nodeFirstY + nodeSeparationY * 3, 0.0),
+          new Translation3d(complexLowXCubes, nodeFirstY + nodeSeparationY * 4, 0.0),
+          new Translation3d(complexLowXCones, nodeFirstY + nodeSeparationY * 5, 0.0),
+          new Translation3d(complexLowXCones, nodeFirstY + nodeSeparationY * 6, 0.0),
+          new Translation3d(complexLowXCubes, nodeFirstY + nodeSeparationY * 7, 0.0),
+          new Translation3d(
+              complexLowXCones, nodeFirstY + nodeSeparationY * 8 + complexLowOuterYOffset, 0.0),
+        };
   }
 
   // Dimensions for loading zone and substations, including the tape
@@ -166,6 +185,7 @@ public final class FieldConstants {
     public static final double doubleSubstationLength = Units.inchesToMeters(14.0);
     public static final double doubleSubstationX = innerX - doubleSubstationLength;
     public static final double doubleSubstationShelfZ = Units.inchesToMeters(37.375);
+    public static final double doubleSubstationCenterY = Units.inchesToMeters(265.74);
 
     // Single substation dimensions
     public static final double singleSubstationWidth = Units.inchesToMeters(22.75);
@@ -252,4 +272,18 @@ public final class FieldConstants {
               Units.inchesToMeters(42.19),
               Units.inchesToMeters(18.22),
               new Rotation3d()));
+
+  public static final AprilTagFieldLayout aprilTagFieldLayout =
+      new AprilTagFieldLayout(
+          List.of(
+              new AprilTag(1, aprilTags.get(1)),
+              new AprilTag(2, aprilTags.get(2)),
+              new AprilTag(3, aprilTags.get(3)),
+              new AprilTag(4, aprilTags.get(4)),
+              new AprilTag(5, aprilTags.get(5)),
+              new AprilTag(6, aprilTags.get(6)),
+              new AprilTag(7, aprilTags.get(7)),
+              new AprilTag(8, aprilTags.get(8))),
+          fieldLength,
+          fieldWidth);
 }

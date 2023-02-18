@@ -17,7 +17,7 @@ public class VisionIOAprilTag implements VisionIO {
       String cameraName, Transform3d robotToCam, AprilTagFieldLayout fieldLayout) {
     camera = new PhotonCamera(cameraName);
     poseEstimator =
-        new PhotonPoseEstimator(fieldLayout, PoseStrategy.AVERAGE_BEST_TARGETS, camera, robotToCam);
+        new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP, camera, robotToCam);
   }
 
   @Override

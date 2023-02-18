@@ -6,7 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,6 +20,9 @@ import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro3d.IMUIO;
+import frc.lib.io.gyro3d.IMUPigeon2;
+import frc.lib.io.vision.VisionIO;
+import frc.lib.io.vision.VisionIOAprilTag;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.arm.ArmManualDownCMD;
 import frc.robot.commands.arm.ArmManualExtendCMD;
@@ -31,6 +37,7 @@ import frc.robot.subsystems.arm.ArmIOPhysical;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -41,135 +48,128 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-
   // Subsystems
   // private final Subsystem subsystem;
-  private final Drive drive;
+  private Drive drive;
   private final Arm arm;
 
   // Controller
-  private final CommandXboxController driverController = new CommandXboxController(
-    0
-  );
-  private final CommandXboxController operatorController = new CommandXboxController(
-    1
-  );
+  private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>(
-    "Auto Choices"
-  );
+  private final LoggedDashboardChooser<Command> autoChooser =
+      new LoggedDashboardChooser<>("Auto Choices");
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (RobotConstants.get().mode()) {
-      // Real robot, instantiate hardware IO implementations
-      // Init subsystems
-      // subsystem = new Subsystem(new SubsystemIOImpl());
+        // Real robot, instantiate hardware IO implementations
+        // Init subsystems
+        // subsystem = new Subsystem(new SubsystemIOImpl());
       case REAL -> {
         switch (RobotConstants.get().robot()) {
           case ROBOT_COMP -> {
+            Transform3d front =
+                new Transform3d(
+                    new Translation3d(6 * 0.01, -10 * 0.01, 42 * 0.01), new Rotation3d());
+            Transform3d right =
+                new Transform3d(
+                    new Translation3d(2 * 0.01, -12 * 0.01, 42 * 0.01),
+                    new Rotation3d(0, 0, -0.5 * Math.PI));
             drive =
-              new Drive(
-                new IMUIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {}
-              );
+                new Drive(
+                    new IMUPigeon2(17),
+                    new ModuleIOSparkMAX(3, 4, 13, 0),
+                    new ModuleIOSparkMAX(5, 6, 14, 1),
+                    new ModuleIOSparkMAX(1, 2, 15, 2),
+                    new ModuleIOSparkMAX(7, 8, 16, 3),
+                    List.of(
+                        new VisionIOAprilTag("front", front, FieldConstants.aprilTagFieldLayout),
+                        new VisionIOAprilTag("right", right, FieldConstants.aprilTagFieldLayout)));
           }
           case ROBOT_BRIEFCASE -> {
             drive =
-              new Drive(
-                new IMUIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {}
-              );
+                new Drive(
+                    new IMUIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    List.of(new VisionIO() {}));
           }
           default -> {
             drive =
-              new Drive(
-                new IMUIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {}
-              );
+                new Drive(
+                    new IMUIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    List.of(new VisionIO() {}));
           }
         }
       }
-      // Sim robot, instantiate physics sim IO implementations
+        // Sim robot, instantiate physics sim IO implementations
       case SIM -> {
         // Init subsystems
         // subsystem = new Subsystem(new SubsystemIOSim());
         drive =
-          new Drive(
-            new IMUIO() {},
-            new ModuleIOSim(),
-            new ModuleIOSim(),
-            new ModuleIOSim(),
-            new ModuleIOSim()
-          );
+            new Drive(
+                new IMUIO() {},
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                List.of(new VisionIO() {}));
       }
-      // Replayed robot, disable IO implementations
+
+        // Replayed robot, disable IO implementations
       default -> {
         // subsystem = new Subsystem(new SubsystemIO() {});
         drive =
-          new Drive(
-            new IMUIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {}
-          );
+            new Drive(
+                new IMUIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                List.of(new VisionIO() {}));
       }
     }
 
     arm =
-      new Arm(
-        new ArmIOPhysical(
-          RobotConstants.get().armExtendMotorId(),
-          RobotConstants.get().armRotateMotorId(),
-          RobotConstants.get().armExtendLimitSwitchId(),
-          RobotConstants.get().ratchetSolenoidId()
-        )
-      );
+        new Arm(
+            new ArmIOPhysical(
+                RobotConstants.get().armExtendMotorId(),
+                RobotConstants.get().armRotateMotorId(),
+                RobotConstants.get().armExtendLimitSwitchId(),
+                RobotConstants.get().ratchetSolenoidId()));
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     autoChooser.addOption(
-      "S shape",
-      new GoToTrajectory(
-        drive,
-        List.of(
-          Waypoint.fromHolonomicPose(new Pose2d()),
-          new Waypoint(new Translation2d(1, 1)),
-          new Waypoint(new Translation2d(2, -1)),
-          Waypoint.fromHolonomicPose(
-            new Pose2d(3, 0, Rotation2d.fromDegrees(90))
-          )
-        )
-      )
-    );
+        "S shape",
+        new GoToTrajectory(
+            drive,
+            List.of(
+                Waypoint.fromHolonomicPose(new Pose2d()),
+                new Waypoint(new Translation2d(1, 1)),
+                new Waypoint(new Translation2d(2, -1)),
+                Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
     //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
     // Rotation2d()));
     autoChooser.addOption(
-      "Drive Characterization",
-      Commands
-        .runOnce(() -> drive.setPose(new Pose2d()), drive)
-        .andThen(
-          new FeedForwardCharacterization(
-            drive,
-            true,
-            new FeedForwardCharacterizationData("drive"),
-            drive::runCharacterizationVolts,
-            drive::getCharacterizationVelocity
-          )
-        )
-        .andThen(() -> configureButtonBindings())
-    );
+        "Drive Characterization",
+        Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
+            .andThen(
+                new FeedForwardCharacterization(
+                    drive,
+                    true,
+                    new FeedForwardCharacterizationData("drive"),
+                    drive::runCharacterizationVolts,
+                    drive::getCharacterizationVelocity))
+            .andThen(() -> configureButtonBindings()));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
     // Configure the button bindings
@@ -184,28 +184,23 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     drive.setDefaultCommand(
-      new DriveWithJoysticks(
-        drive,
-        () -> -driverController.getLeftY(),
-        () -> -driverController.getLeftX(),
-        () -> -driverController.getRightX(),
-        () -> true // TODO: add toggle
-      )
-    );
-    operatorController
-      .start()
-      .onTrue(
-        Commands
-          .runOnce(() ->
-            drive.setPose(
-              new Pose2d(
-                new Translation2d(),
-                AllianceFlipUtil.apply(new Rotation2d())
-              )
-            )
-          )
-          .ignoringDisable(true)
-      );
+        new DriveWithJoysticks(
+            drive,
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX(),
+            () -> true // TODO: add toggle
+            ));
+    driverController
+        .start()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(
+                                new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
+                .ignoringDisable(true));
+
     operatorController.start().onTrue(new ArmStopCMD(arm));
     operatorController.leftBumper().whileTrue(new ArmManualExtendCMD(arm));
     operatorController.rightBumper().whileTrue(new ArmManualRetractCMD(arm));
