@@ -122,37 +122,26 @@ public class SimBotConstants implements Constants {
 
   @Override
   public int ledChannel() {
-    // TODO Auto-generated method stub
-    return 4;
-  }
-
-  @Override
-  public boolean hasLed2023() {
-    // TODO Auto-generated method stub
-    return false;
+    return 0;
   }
 
   @Override
   public int led2023LedCount() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public int intakeMotorID() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public int intakeCubeLimitSwitchID() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public int intakeConeLimitSwitchID() {
-    // TODO Auto-generated method stub
     return 0;
   }
 }

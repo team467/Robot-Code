@@ -27,7 +27,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
-  // private LidarLitePWM lidar;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -35,8 +34,6 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-
-    // lidar = new LidarLitePWM(new DigitalInput(1));
     Logger logger = Logger.getInstance();
 
     // Record metadata
@@ -113,14 +110,12 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {
-    // System.out.println("lidar: " + lidar.getDistance() + " cm");
-  }
+  public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // autonomousCommand = robotContainer.getAutonomousCommand();
+    autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {

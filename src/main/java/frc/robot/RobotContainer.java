@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.holonomictrajectory.Waypoint;
@@ -34,14 +33,13 @@ import frc.robot.commands.intakerelease.StopCMD;
 import frc.robot.commands.intakerelease.WantConeCMD;
 import frc.robot.commands.intakerelease.WantCubeCMD;
 import frc.robot.commands.leds.LedRainbowCMD;
-import frc.robot.input.CustomController2022;
-import frc.robot.subsystems.Led2023;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
+import frc.robot.subsystems.led.Led2023;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -52,12 +50,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final CustomController2022 operatorJoystick = new CustomController2022(1);
-  private final JoystickButton operatorFlush =
-      operatorJoystick.getButton(CustomController2022.Buttons.FLUSH);
-  private final JoystickButton operatorShoot =
-      operatorJoystick.getButton(CustomController2022.Buttons.SHOOT);
-
   // Subsystems
   // private final Subsystem subsystem;
   private Drive drive;
@@ -65,7 +57,6 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser =
@@ -186,23 +177,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    initializeSubsystems();
-  }
-
-  private void initializeSubsystems() {
-    initLed2023();
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
-    configureShooter2023();
   }
-
-  private void configureShooter2023() {}
-
-  private void initLed2023() {
-    if (RobotConstants.get().hasLed2023()) {
-      led2023 = new Led2023();
-    }
-  }
-
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link

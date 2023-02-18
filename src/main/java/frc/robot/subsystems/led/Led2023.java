@@ -1,6 +1,5 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.led;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
@@ -252,10 +251,5 @@ public class Led2023 extends SubsystemBase {
           i, ((int) color + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
       ledStrip.update();
     }
-  }
-
-  @Override
-  public void initSendable(SendableBuilder builder) {
-    super.initSendable(builder);
   }
 }

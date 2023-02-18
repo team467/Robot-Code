@@ -85,7 +85,5 @@ public interface Constants {
 
   public int ledChannel();
 
-  public boolean hasLed2023();
-
   public int led2023LedCount();
 }

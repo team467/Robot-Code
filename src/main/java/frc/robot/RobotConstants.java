@@ -1,7 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.constants.BriefCaseConstants;
+import frc.robot.constants.BriefcaseConstants;
 import frc.robot.constants.CompBotConstants;
 import frc.robot.constants.Constants;
 import java.io.BufferedReader;
@@ -33,7 +33,7 @@ public class RobotConstants {
             RobotConstants.set(new CompBotConstants());
             break;
           case "turing":
-            RobotConstants.set(new BriefCaseConstants());
+            RobotConstants.set(new BriefcaseConstants());
             break;
           default:
             throw new IOException("Invalid roborio name found");

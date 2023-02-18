@@ -1,7 +1,7 @@
 package frc.robot.commands.leds;
 
-import frc.robot.subsystems.Led2023;
-import frc.robot.subsystems.Led2023.COLORS_467;
+import frc.robot.subsystems.led.Led2023;
+import frc.robot.subsystems.led.Led2023.COLORS_467;
 
 public class LedBlueGoldCMD extends LedBaseCMD {
 
