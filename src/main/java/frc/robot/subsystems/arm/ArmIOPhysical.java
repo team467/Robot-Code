@@ -5,7 +5,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import frc.robot.RobotConstants;
@@ -22,19 +21,17 @@ public class ArmIOPhysical implements ArmIO {
   private RelativeEncoder rotateEncoder;
 
   public ArmIOPhysical(
-      int extendMotorId,
-      int rotateMotorId,
-      int extendLimitSwitchId,
-      int ratchetSolenoidId) {
+      int extendMotorId, int rotateMotorId, int extendLimitSwitchId, int ratchetSolenoidId) {
     extendLimitSwitch = new DigitalInput(extendLimitSwitchId);
-    
 
     ratchetSolenoid = new DigitalOutput(ratchetSolenoidId);
 
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
-    rotateHighLimitSwitch = rotateMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
-    rotateLowLimitSwitch = rotateMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    rotateHighLimitSwitch =
+        rotateMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
+    rotateLowLimitSwitch =
+        rotateMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
 
     extendEncoder = extendMotor.getEncoder();
     extendEncoder.setPositionConversionFactor(RobotConstants.get().armExtendConversionFactor());
