@@ -19,7 +19,6 @@ public abstract class LedBaseCMD extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-    System.out.println("rainbow finished");
   }
 
   @Override

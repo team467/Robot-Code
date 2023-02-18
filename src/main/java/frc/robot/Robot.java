@@ -36,7 +36,6 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     Logger logger = Logger.getInstance();
 
-
     // Set up data receivers & replay source
     switch (RobotConstants.get().mode()) {
         // Running on a real robot, log to a USB stick if possible

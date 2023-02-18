@@ -128,22 +128,22 @@ public class CompBotConstants implements Constants {
 
   @Override
   public int intakeMotorID() {
-    return 0;
+    return 0; //TODO: Change Me
   }
 
   @Override
   public int intakeCubeLimitSwitchID() {
-    return 3;
+    return 0; //TODO: Change Me
   }
 
   @Override
   public int intakeConeLimitSwitchID() {
-    return 1;
+    return 0; //TODO: Change Me
   }
 
   @Override
   public int ledChannel() {
-    return 2;
+    return 2; //TODO: Change Me
   }
 
   @Override
