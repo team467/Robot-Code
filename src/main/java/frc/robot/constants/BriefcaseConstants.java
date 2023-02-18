@@ -126,11 +126,6 @@ public class BriefcaseConstants implements Constants {
   } // TODO: tune
 
   @Override
-  public boolean hasLed2023() {
-    return true;
-  }
-
-  @Override
   public int ledChannel() {
     return 2;
   }
@@ -138,5 +133,23 @@ public class BriefcaseConstants implements Constants {
   @Override
   public int led2023LedCount() {
     return 10;
+  }
+
+  @Override
+  public int intakeMotorID() {
+    // TODO Update ME
+    return 0;
+  }
+
+  @Override
+  public int intakeCubeLimitSwitchID() {
+    // TODO Update Me
+    return 0;
+  }
+
+  @Override
+  public int intakeConeLimitSwitchID() {
+    // TODO Update Me
+    return 0;
   }
 }
