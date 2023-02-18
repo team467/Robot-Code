@@ -9,11 +9,11 @@ import frc.robot.constants.controls.GearRatio;
 import frc.robot.constants.controls.SimpleFeedforwardConstant;
 import java.util.Arrays;
 
-public class BriefcaseConstants implements Constants {
+public class BriefCaseConstants implements Constants {
 
   @Override
   public RobotType robot() {
-    return RobotType.ROBOT_BRIEFCASE;
+    return RobotType.ROBOT_BRIEFCASEBOT;
   }
 
   @Override
@@ -126,18 +126,8 @@ public class BriefcaseConstants implements Constants {
   } // TODO: tune
 
   @Override
-  public int intakeMotorID() {
-    return 0; // TODO: Change Me
-  }
-
-  @Override
-  public int intakeCubeLimitSwitchID() {
-    return 0; // TODO: Change Me
-  }
-
-  @Override
-  public int intakeConeLimitSwitchID() {
-    return 0; // TODO: Change Me
+  public boolean hasLed2023() {
+    return true;
   }
 
   @Override
