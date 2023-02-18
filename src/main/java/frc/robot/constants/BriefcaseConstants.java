@@ -13,7 +13,7 @@ public class BriefCaseConstants implements Constants {
 
   @Override
   public RobotType robot() {
-    return RobotType.ROBOT_BRIEFCASE;
+    return RobotType.ROBOT_BRIEFCASEBOT;
   }
 
   @Override
