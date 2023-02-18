@@ -209,6 +209,8 @@ public class RobotContainer {
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
     driverController.a().whileTrue(new IntakeCMD(intakeRelease, led2023));
+    // Commands.startEnd(new IntakeCMD(intakeRelease, led2023), new HoldCMD(intakeRelease, led2023),
+    // null);
     driverController.b().whileTrue(new ReleaseCMD(intakeRelease, led2023));
     driverController.x().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
     driverController.y().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));

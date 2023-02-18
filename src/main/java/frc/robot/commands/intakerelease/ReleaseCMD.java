@@ -29,7 +29,9 @@ public class ReleaseCMD extends CommandBase {
     } else if (intakerelease.haveCone()) {
       ledStrip.setColorMovingUp(
           COLORS_467.Black.getColor(), COLORS_467.Green.getColor()); // Green, black
-      System.out.println(intakerelease.getWants());
+    } else {
+      ledStrip.setTop(COLORS_467.Gold);
+      ledStrip.setTop(COLORS_467.Blue);
     }
   }
 

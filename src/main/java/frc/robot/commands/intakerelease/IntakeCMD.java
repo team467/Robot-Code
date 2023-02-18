@@ -24,15 +24,15 @@ public class IntakeCMD extends CommandBase {
   @Override
   public void execute() {
     intakerelease.intake();
-    System.out.println(intakerelease.getWants() + " top");
     if (intakerelease.getWants() == Wants.CUBE) {
       ledStrip.setColorMovingUp(
           COLORS_467.White.getColor(), COLORS_467.Blue.getColor()); // Blue, black
-      System.out.println(intakerelease.getWants() + " if");
     } else if (intakerelease.getWants() == Wants.CONE) {
       ledStrip.setColorMovingUp(
           COLORS_467.White.getColor(), COLORS_467.Green.getColor()); // Green, black
-      System.out.println(intakerelease.getWants() + " elseif");
+    } else {
+      ledStrip.setTop(COLORS_467.Blue);
+      ledStrip.setTop(COLORS_467.Gold);
     }
   }
 
