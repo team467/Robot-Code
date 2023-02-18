@@ -6,7 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,6 +22,8 @@ import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacter
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUPigeon2;
+import frc.lib.io.vision.VisionIO;
+import frc.lib.io.vision.VisionIOAprilTag;
 import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithJoysticks;
@@ -55,7 +60,7 @@ public class RobotContainer {
 
   // Subsystems
   // private final Subsystem subsystem;
-  private final Drive drive;
+  private Drive drive;
   private final IntakeRelease intakeRelease;
 
   // Controller
@@ -77,13 +82,23 @@ public class RobotContainer {
       case REAL -> {
         switch (RobotConstants.get().robot()) {
           case ROBOT_COMP -> {
+            Transform3d front =
+                new Transform3d(
+                    new Translation3d(6 * 0.01, -10 * 0.01, 42 * 0.01), new Rotation3d());
+            Transform3d right =
+                new Transform3d(
+                    new Translation3d(2 * 0.01, -12 * 0.01, 42 * 0.01),
+                    new Rotation3d(0, 0, -0.5 * Math.PI));
             drive =
                 new Drive(
                     new IMUPigeon2(17),
                     new ModuleIOSparkMAX(3, 4, 13, 0),
                     new ModuleIOSparkMAX(5, 6, 14, 1),
                     new ModuleIOSparkMAX(1, 2, 15, 2),
-                    new ModuleIOSparkMAX(7, 8, 16, 3));
+                    new ModuleIOSparkMAX(7, 8, 16, 3),
+                    List.of(
+                        new VisionIOAprilTag("front", front, FieldConstants.aprilTagFieldLayout),
+                        new VisionIOAprilTag("right", right, FieldConstants.aprilTagFieldLayout)));
           }
           case ROBOT_BRIEFCASE -> {
             drive =
@@ -92,7 +107,8 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
-                    new ModuleIO() {});
+                    new ModuleIO() {},
+                    List.of(new VisionIO() {}));
           }
           default -> {
             drive =
@@ -101,7 +117,8 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
-                    new ModuleIO() {});
+                    new ModuleIO() {},
+                    List.of(new VisionIO() {}));
           }
         }
       }
@@ -115,7 +132,8 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
-                new ModuleIOSim());
+                new ModuleIOSim(),
+                List.of(new VisionIO() {}));
       }
 
         // Replayed robot, disable IO implementations
@@ -127,7 +145,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                List.of(new VisionIO() {}));
       }
     }
     intakeRelease =
