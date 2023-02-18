@@ -18,7 +18,8 @@ public class CompBotConstants implements Constants {
 
   @Override
   public String logFolder() {
-    return "/media/sda1";
+    //    return "/media/sda1";
+    return null;
   }
 
   // Drive constants
@@ -29,10 +30,10 @@ public class CompBotConstants implements Constants {
 
   private Translation2d[] moduleTranslations() {
     return new Translation2d[] {
-      new Translation2d(Units.inchesToMeters(11.50), Units.inchesToMeters(11.50)),
-      new Translation2d(Units.inchesToMeters(11.50), -Units.inchesToMeters(11.50)),
-      new Translation2d(-Units.inchesToMeters(11.50), Units.inchesToMeters(11.50)),
-      new Translation2d(-Units.inchesToMeters(11.50), -Units.inchesToMeters(11.50))
+      new Translation2d(Units.inchesToMeters(12.75), Units.inchesToMeters(9.25)),
+      new Translation2d(Units.inchesToMeters(12.75), -Units.inchesToMeters(9.25)),
+      new Translation2d(-Units.inchesToMeters(12.75), Units.inchesToMeters(9.25)),
+      new Translation2d(-Units.inchesToMeters(12.75), -Units.inchesToMeters(9.25))
     };
   }
 
@@ -88,10 +89,10 @@ public class CompBotConstants implements Constants {
   @Override
   public Rotation2d[] absoluteAngleOffset() {
     return new Rotation2d[] {
-      Rotation2d.fromDegrees(-46.75781250000001),
-      Rotation2d.fromDegrees(11.162109374999998),
-      Rotation2d.fromDegrees(110.478515625),
-      Rotation2d.fromDegrees(-100.19531250000001)
+      Rotation2d.fromDegrees(20.5),
+      Rotation2d.fromDegrees(42.0),
+      Rotation2d.fromDegrees(168.4),
+      Rotation2d.fromDegrees(99.9)
     };
   }
 

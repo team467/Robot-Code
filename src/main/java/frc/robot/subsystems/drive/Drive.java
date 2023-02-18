@@ -1,24 +1,34 @@
 package frc.robot.subsystems.drive;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUIOInputsAutoLogged;
-import frc.lib.utils.AllianceFlipUtil;
+import frc.lib.io.vision.VisionIO;
+import frc.lib.io.vision.VisionIO.VisionIOInputs;
 import frc.robot.RobotConstants;
+import java.util.ArrayList;
+import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   private final IMUIO gyroIO;
   private final IMUIOInputsAutoLogged gyroInputs = new IMUIOInputsAutoLogged();
+  private final List<VisionIO> aprilTagCameraIO = new ArrayList<>();
+  private final List<VisionIOInputs> aprilTagCameraInputs = new ArrayList<>();
   private final Module[] modules = new Module[4];
   private final SwerveDriveKinematics kinematics = RobotConstants.get().kinematics();
 
@@ -27,7 +37,7 @@ public class Drive extends SubsystemBase {
   private double characterizationVolts = 0.0;
   private ChassisSpeeds setpoint = new ChassisSpeeds();
 
-  private final SwerveDriveOdometry odometry;
+  private final SwerveDrivePoseEstimator odometry;
   private double simGyro = 0.0;
 
   public Drive(
@@ -35,7 +45,8 @@ public class Drive extends SubsystemBase {
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
-      ModuleIO brModuleIO) {
+      ModuleIO brModuleIO,
+      List<VisionIO> aprilTagCameraIO) {
     this.gyroIO = gyroIO;
     modules[0] = new Module(flModuleIO, 0);
     modules[1] = new Module(frModuleIO, 1);
@@ -44,6 +55,10 @@ public class Drive extends SubsystemBase {
     for (var module : modules) {
       module.setBrakeMode(true);
       module.periodic();
+    }
+    for (var aprilTagCamera : aprilTagCameraIO) {
+      this.aprilTagCameraIO.add(aprilTagCamera);
+      this.aprilTagCameraInputs.add(new VisionIOInputs());
     }
     this.gyroIO.updateInputs(gyroInputs);
 
@@ -54,18 +69,12 @@ public class Drive extends SubsystemBase {
 
     if (gyroInputs.connected) {
       odometry =
-          new SwerveDriveOdometry(
-              kinematics,
-              Rotation2d.fromDegrees(gyroInputs.yaw),
-              modulePositions,
-              AllianceFlipUtil.apply(new Pose2d()));
+          new SwerveDrivePoseEstimator(
+              kinematics, Rotation2d.fromDegrees(gyroInputs.yaw), modulePositions, new Pose2d());
     } else {
       odometry =
-          new SwerveDriveOdometry(
-              kinematics,
-              new Rotation2d(simGyro),
-              modulePositions,
-              AllianceFlipUtil.apply(new Pose2d()));
+          new SwerveDrivePoseEstimator(
+              kinematics, new Rotation2d(simGyro), modulePositions, new Pose2d());
     }
   }
 
@@ -147,12 +156,45 @@ public class Drive extends SubsystemBase {
       for (int i = 0; i < 4; i++) {
         measuredPositions[i] = modules[i].getPosition();
       }
+      for (int i = 0; i < aprilTagCameraIO.size(); i++) {
+        aprilTagCameraIO.get(i).updateInputs(aprilTagCameraInputs.get(i));
+      }
+
       if (gyroInputs.connected) {
         odometry.update(Rotation2d.fromDegrees(gyroInputs.yaw), measuredPositions);
+        simGyro = Units.degreesToRadians(gyroInputs.yaw);
       } else {
         simGyro += kinematics.toChassisSpeeds(measuredStates).omegaRadiansPerSecond * 0.02;
         odometry.update(new Rotation2d(simGyro), measuredPositions);
       }
+
+      for (VisionIOInputs aprilTagCameraInput : aprilTagCameraInputs) {
+        aprilTagCameraInput.estimatedPose.ifPresentOrElse(
+            estimatedRobotPose -> {
+              Logger.getInstance()
+                  .recordOutput(
+                      "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
+                      estimatedRobotPose.estimatedPose);
+
+              Vector<N3> std =
+                  switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
+                    case 0 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
+                    case 1 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
+                    default -> VecBuilder.fill(1.0, 1.0, 1.0);
+                  };
+
+              odometry.addVisionMeasurement(
+                  estimatedRobotPose.estimatedPose.toPose2d(),
+                  estimatedRobotPose.timestampSeconds,
+                  std);
+            },
+            () ->
+                Logger.getInstance()
+                    .recordOutput(
+                        "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
+                        new Pose3d()));
+      }
+
       Logger.getInstance().recordOutput("Odometry", getPose());
     }
   }
@@ -168,8 +210,12 @@ public class Drive extends SubsystemBase {
     runVelocity(new ChassisSpeeds());
   }
 
+  public double[] getGravVec() {
+    return gyroInputs.gravVector;
+  }
+
   public Pose2d getPose() {
-    return odometry.getPoseMeters();
+    return odometry.getEstimatedPosition();
   }
 
   public void setPose(Pose2d pose) {
@@ -178,10 +224,6 @@ public class Drive extends SubsystemBase {
       modulePositions[i] = modules[i].getPosition();
     }
     odometry.resetPosition(Rotation2d.fromDegrees(gyroInputs.yaw), modulePositions, pose);
-  }
-
-  public double[] getGravVec() {
-    return gyroInputs.gravVector;
   }
 
   public void chassisDrive(double x, double y, double rot, boolean fieldRelative) {
