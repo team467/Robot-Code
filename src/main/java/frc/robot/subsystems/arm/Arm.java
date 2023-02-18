@@ -23,7 +23,7 @@ public class Arm extends SubsystemBase {
     CALIBRATE
   }
 
-  private ArmMode mode = ArmMode.MANUAL;
+  private ArmMode mode = ArmMode.CALIBRATE;
   private double holdPosition;
   private double angle = 0;
   private double characterizationVoltage = 0.0;
@@ -31,7 +31,7 @@ public class Arm extends SubsystemBase {
   private double rotateSetpoint = 0.0;
 
   private boolean extendCalibrated = false;
-  private boolean rotationCalibrated = true;
+  private boolean rotationCalibrated = false;
 
   private boolean hasRotate = true;
   private boolean hasExtend = false;
@@ -186,25 +186,29 @@ public class Arm extends SubsystemBase {
         break;
 
       case CALIBRATE:
-        if (armIOInputs.extendLimitSwitch) {
-          if (!extendCalibrated) {
-            armIO.resetEncoderPosition();
-            extendCalibrated = true;
+        if (hasExtend) {
+          if (armIOInputs.extendLimitSwitch) {
+            if (!extendCalibrated) {
+              armIO.resetEncoderPosition();
+              extendCalibrated = true;
+            }
+            armIO.setExtendVoltage(calculateExtendPid(0));
+          } else {
+            armIO.setExtendVoltage(-1);
           }
-          armIO.setExtendVoltage(calculateExtendPid(0));
-        } else {
-          armIO.setExtendVoltage(-1);
         }
-        if (armIOInputs.rotateLowLimitSwitch) {
-          if (!rotationCalibrated) {
-            armIO.resetRotateEncoder();
-            rotationCalibrated = true;
+        if (hasRotate) {
+          if (armIOInputs.rotateLowLimitSwitch) {
+            if (!rotationCalibrated) {
+              armIO.resetRotateEncoder();
+              rotationCalibrated = true;
+            }
+            armIO.setRotateVoltage(calculateExtendPid(0));
+          } else {
+            armIO.setRotateVoltage(-3);
           }
-          armIO.setRotateVoltage(calculateExtendPid(0));
-        } else {
-          armIO.setRotateVoltage(-1);
         }
-        if (extendCalibrated && (!hasRotate || rotationCalibrated)) {
+        if ((!hasExtend || extendCalibrated) && (!hasRotate || rotationCalibrated)) {
           hold(0);
         }
         break;
