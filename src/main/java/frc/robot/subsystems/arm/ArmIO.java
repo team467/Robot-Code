@@ -35,5 +35,7 @@ public interface ArmIO {
 
   default void resetEncoderPosition() {}
 
+  default void resetRotateEncoder() {}
+
   default void setRatchetLocked(boolean locked) {}
 }

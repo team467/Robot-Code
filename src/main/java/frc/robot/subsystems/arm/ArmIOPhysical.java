@@ -91,6 +91,11 @@ public class ArmIOPhysical implements ArmIO {
   }
 
   @Override
+  public void resetRotateEncoder() {
+    rotateEncoder.setPosition(0);
+  }
+
+  @Override
   public void setRatchetLocked(boolean locked) {
     ratchetSolenoid.set(locked);
   }

@@ -113,6 +113,13 @@ public class Arm extends SubsystemBase {
     logger.processInputs("Arm", armIOInputs);
     logger.recordOutput("Arm/mode", mode.toString());
 
+    if (armIOInputs.rotateLowLimitSwitch) {
+      armIO.resetRotateEncoder();
+    }
+    if (armIOInputs.extendLimitSwitch) {
+      armIO.resetEncoderPosition();
+    }
+
     switch (mode) {
       case MANUAL:
         if (armIOInputs.extendPosition > RobotConstants.get().armExtendMax() && manualExtend > 0) {
