@@ -57,7 +57,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isManual() {
-    return mode == ArmMode.CALIBRATE;
+    return mode == ArmMode.MANUAL;
   }
 
   public void stop() {
