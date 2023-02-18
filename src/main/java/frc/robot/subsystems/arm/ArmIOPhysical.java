@@ -47,7 +47,7 @@ public class ArmIOPhysical implements ArmIO {
     rotateMotor.enableVoltageCompensation(12);
 
     extendMotor.setIdleMode(IdleMode.kBrake);
-    rotateMotor.setIdleMode(IdleMode.kCoast);
+    rotateMotor.setIdleMode(IdleMode.kBrake);
   }
 
   @Override
@@ -72,7 +72,6 @@ public class ArmIOPhysical implements ArmIO {
   @Override
   public void setRotateVelocity(double velocity) {
     rotateMotor.set(velocity);
-    System.out.println("setRotateVelocity(velocity): " + velocity);
   }
 
   @Override
