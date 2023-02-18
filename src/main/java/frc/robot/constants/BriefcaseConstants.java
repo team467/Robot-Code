@@ -149,12 +149,12 @@ public class BriefCaseConstants implements Constants {
   @Override
   public int intakeCubeLimitSwitchID() {
     // TODO Auto-generated method stub
-    return 0;
+    return 4;
   }
 
   @Override
   public int intakeConeLimitSwitchID() {
     // TODO Auto-generated method stub
-    return 0;
+    return 5;
   }
 }

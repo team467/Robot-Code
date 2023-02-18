@@ -135,30 +135,30 @@ public class CompBotConstants implements Constants {
   @Override
   public int intakeCubeLimitSwitchID() {
     // TODO Auto-generated method stub
-    return 0;
+    return 3;
   }
 
   @Override
   public int intakeConeLimitSwitchID() {
     // TODO Auto-generated method stub
-    return 0;
+    return 1;
   }
 
   @Override
   public int ledChannel() {
     // TODO Auto-generated method stub
-    return 0;
+    return 2;
   }
 
   @Override
   public boolean hasLed2023() {
     // TODO Auto-generated method stub
-    return false;
+    return true;
   }
 
   @Override
   public int led2023LedCount() {
     // TODO Auto-generated method stub
-    return 0;
+    return 10;
   }
 }

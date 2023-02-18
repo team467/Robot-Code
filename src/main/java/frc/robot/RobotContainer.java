@@ -38,6 +38,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
+import frc.robot.subsystems.intakerelease.IntakeReleaseSim;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -216,7 +217,8 @@ public class RobotContainer {
     driverController.b().whileTrue(new ReleaseCMD(intakeRelease, led2023));
     driverController.x().onTrue(new WantConeCMD(intakeRelease, led2023));
     driverController.y().onTrue(new WantCubeCMD(intakeRelease, led2023));
-    led2023.setDefaultCommand(new LedRainbowCMD(led2023));
+    led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
+
   }
 
   /**

@@ -123,7 +123,7 @@ public class SimBotConstants implements Constants {
   @Override
   public int ledChannel() {
     // TODO Auto-generated method stub
-    return 0;
+    return 4;
   }
 
   @Override
