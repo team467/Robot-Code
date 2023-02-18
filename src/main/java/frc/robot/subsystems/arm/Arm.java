@@ -33,7 +33,8 @@ public class Arm extends SubsystemBase {
   private boolean extendCalibrated = false;
   private boolean rotationCalibrated = true;
 
-  private boolean hasRotate = false;
+  private boolean hasRotate = true;
+  private boolean hasExtend = false;
   private static final double EXTEND_TOLERANCE_METERS = 0.005;
   private static final double ROTATE_TOLERANCE_DEGREES = 2.0;
 
@@ -56,7 +57,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isManual() {
-    return mode == ArmMode.MANUAL;
+    return mode == ArmMode.CALIBRATE;
   }
 
   public void stop() {
@@ -101,14 +102,16 @@ public class Arm extends SubsystemBase {
       return;
     }
 
-    /*if (armIOInputs.extendLimitSwitch && mode != ArmMode.CALIBRATE) {
-      if (Math.abs(armIOInputs.extendPosition) > 0.1) {
-        mode = ArmMode.CALIBRATE;
-        extendCalibrated = false;
-      } else {
-        // hold();
+    if (hasExtend) {
+      if (armIOInputs.extendLimitSwitch && mode != ArmMode.CALIBRATE) {
+        if (Math.abs(armIOInputs.extendPosition) > 0.1) {
+          mode = ArmMode.CALIBRATE;
+          extendCalibrated = false;
+        } else {
+          hold();
+        }
       }
-    }*/
+    }
     armIO.updateInputs(armIOInputs);
     logger.processInputs("Arm", armIOInputs);
     logger.recordOutput("Arm/mode", mode.toString());
@@ -130,12 +133,15 @@ public class Arm extends SubsystemBase {
         } else {
           armIO.setExtendVelocity(manualExtend);
         }
-        /*if (armIOInputs.rotatePosition > RobotConstants.get().armRotateMax() && manualRotate > 0) {
-          armIO.setRotateVelocity(0);
-        } else if (armIOInputs.rotatePosition < RobotConstants.get().armRotateMin()
-            && manualRotate < 0) {
-          armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMin())); */
-
+        if (hasExtend) {
+          if (armIOInputs.rotatePosition > RobotConstants.get().armRotateMax()
+              && manualRotate > 0) {
+            armIO.setRotateVelocity(0);
+          } else if (armIOInputs.rotatePosition < RobotConstants.get().armRotateMin()
+              && manualRotate < 0) {
+            armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMin()));
+          }
+        }
         armIO.setRotateVoltage(manualRotate);
         logger.recordOutput("Arm/manualRotate", manualRotate);
         break;
@@ -191,7 +197,7 @@ public class Arm extends SubsystemBase {
         }
         if (armIOInputs.rotateLowLimitSwitch) {
           if (!rotationCalibrated) {
-            armIO.resetEncoderPosition();
+            armIO.resetRotateEncoder();
             rotationCalibrated = true;
           }
           armIO.setRotateVoltage(calculateExtendPid(0));
@@ -245,8 +251,9 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean finished() {
-    return (Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS
-        && (!hasRotate
+    return (!hasExtend
+            || Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS)
+        && ((!hasRotate
             || Math.abs(armIOInputs.rotatePosition - rotateSetpoint) <= ROTATE_TOLERANCE_DEGREES));
   }
 
