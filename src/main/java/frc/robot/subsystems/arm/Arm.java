@@ -34,14 +34,14 @@ public class Arm extends SubsystemBase {
   private boolean rotationCalibrated = false;
 
   private boolean hasRotate = true;
-  private boolean hasExtend = false;
+  private boolean hasExtend = true;
   private static final double EXTEND_TOLERANCE_METERS = 0.005;
   private static final double ROTATE_TOLERANCE_DEGREES = 2.0;
 
   private double manualExtend = 0.0;
   private double manualRotate = 0.0;
   private PIDController extendPidController = new PIDController(20, 0, 0);
-  private PIDController rotatePidController = new PIDController(5, 0, 0);
+  private PIDController rotatePidController = new PIDController(7, 0, 0);
   private static final double BACK_FORCE = -0.25;
 
   /**
@@ -149,7 +149,7 @@ public class Arm extends SubsystemBase {
       case AUTO:
         if (finished()) {
           // Reached target.
-          // hold();
+          hold();
         } else {
           double extendFbOutput = calculateExtendPid(extendSetpoint);
           double rotateFbOutput = calculateRotatePid(rotateSetpoint);
@@ -159,8 +159,8 @@ public class Arm extends SubsystemBase {
           armIO.setExtendVoltage(extendFbOutput);
           armIO.setRotateVoltage(rotateFbOutput);
         }
-        logger.recordOutput("ArmExtendSetpoint", extendSetpoint);
-        logger.recordOutput("ArmRotateSetpoint", rotateSetpoint);
+        logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
+        logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
         break;
 
       case EXTEND_CHARACTERIZATION:

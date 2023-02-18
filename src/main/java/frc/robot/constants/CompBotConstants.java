@@ -184,6 +184,6 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double armRotateConversionFactor() {
-    return 1;
+    return 0.00236706;
   }
 }
