@@ -25,10 +25,11 @@ public class ReleaseCMD extends CommandBase {
     intakerelease.release();
     if (intakerelease.haveCube()) {
       ledStrip.setColorMovingUp(
-          COLORS_467.Blue.getColor(), COLORS_467.Black.getColor()); // Blue,black
-    } else {
+          COLORS_467.Black.getColor(), COLORS_467.Blue.getColor()); // Blue,black
+    } else if (intakerelease.haveCone()) {
       ledStrip.setColorMovingUp(
-          COLORS_467.Green.getColor(), COLORS_467.Black.getColor()); // Green, black
+          COLORS_467.Black.getColor(), COLORS_467.Green.getColor()); // Green, black
+      System.out.println(intakerelease.getWants());
     }
   }
 

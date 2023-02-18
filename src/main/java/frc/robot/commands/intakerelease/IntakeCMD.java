@@ -9,7 +9,6 @@ import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 public class IntakeCMD extends CommandBase {
   private IntakeRelease intakerelease;
   private Led2023 ledStrip;
-  private Wants wants;
 
   public IntakeCMD(IntakeRelease intakerelease, Led2023 ledStrip) {
     this.intakerelease = intakerelease;
@@ -25,12 +24,15 @@ public class IntakeCMD extends CommandBase {
   @Override
   public void execute() {
     intakerelease.intake();
-    if (Wants.CUBE == wants) {
-      ledStrip.setColorMovingDown(
-          COLORS_467.Blue.getColor(), COLORS_467.Black.getColor()); // Blue, black
-    } else {
-      ledStrip.setColorMovingDown(
-          COLORS_467.Green.getColor(), COLORS_467.Black.getColor()); // Green, black
+    System.out.println(intakerelease.getWants() + " top");
+    if (intakerelease.getWants() == Wants.CUBE) {
+      ledStrip.setColorMovingUp(
+          COLORS_467.White.getColor(), COLORS_467.Blue.getColor()); // Blue, black
+      System.out.println(intakerelease.getWants() + " if");
+    } else if (intakerelease.getWants() == Wants.CONE) {
+      ledStrip.setColorMovingUp(
+          COLORS_467.White.getColor(), COLORS_467.Green.getColor()); // Green, black
+      System.out.println(intakerelease.getWants() + " elseif");
     }
   }
 

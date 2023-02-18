@@ -23,7 +23,6 @@ import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
-import frc.robot.commands.intakerelease.HoldCMD;
 import frc.robot.commands.intakerelease.IntakeCMD;
 import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.commands.intakerelease.StopCMD;
@@ -38,7 +37,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
-import frc.robot.subsystems.intakerelease.IntakeReleaseSim;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -210,15 +208,11 @@ public class RobotContainer {
                             new Pose2d(
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
-    driverController
-        .a()
-        .whileTrue(
-            new IntakeCMD(intakeRelease, led2023).andThen(new HoldCMD(intakeRelease, led2023)));
+    driverController.a().whileTrue(new IntakeCMD(intakeRelease, led2023));
     driverController.b().whileTrue(new ReleaseCMD(intakeRelease, led2023));
-    driverController.x().onTrue(new WantConeCMD(intakeRelease, led2023));
-    driverController.y().onTrue(new WantCubeCMD(intakeRelease, led2023));
-    led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
-
+    driverController.x().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
+    driverController.y().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
+    led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
   }
 
   /**

@@ -2,6 +2,7 @@ package frc.robot.commands.intakerelease;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Led2023;
+import frc.robot.subsystems.Led2023.COLORS_467;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
@@ -22,6 +23,8 @@ public class WantConeCMD extends CommandBase {
   @Override
   public void execute() {
     intakerelease.setWants(Wants.CONE);
+    ledStrip.set(COLORS_467.Green);
+    ledStrip.sendData();
   }
 
   @Override
