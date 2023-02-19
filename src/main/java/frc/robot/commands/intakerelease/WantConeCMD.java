@@ -9,8 +9,9 @@ import frc.robot.subsystems.led.Led2023.COLORS_467;
 public class WantConeCMD extends CommandBase {
   private IntakeRelease intakerelease;
   private Led2023 ledStrip;
+  private HoldCMD holdCMD;
 
-  public WantConeCMD(IntakeRelease intakerelease, Led2023 ledStrip) {
+  public WantConeCMD(IntakeRelease intakerelease, Led2023 ledStrip, HoldCMD holdCMD) {
     this.intakerelease = intakerelease;
     this.ledStrip = ledStrip;
     addRequirements(ledStrip);

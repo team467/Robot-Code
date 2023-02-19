@@ -9,12 +9,13 @@ import frc.robot.subsystems.led.Led2023.COLORS_467;
 public class IntakeCMD extends CommandBase {
   private IntakeRelease intakerelease;
   private Led2023 ledStrip;
+  private HoldCMD holdCMD;
 
-  public IntakeCMD(IntakeRelease intakerelease, Led2023 ledStrip) {
+  public IntakeCMD(IntakeRelease intakerelease, Led2023 ledStrip, HoldCMD holdCMD) {
     this.intakerelease = intakerelease;
     this.ledStrip = ledStrip;
+    this.holdCMD = holdCMD;
     addRequirements(ledStrip);
-
     addRequirements(intakerelease);
   }
 
@@ -37,7 +38,12 @@ public class IntakeCMD extends CommandBase {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    intakerelease.stop();
+    if (holdCMD != null) {
+      holdCMD.schedule();
+    }
+  }
 
   @Override
   public boolean isFinished() {

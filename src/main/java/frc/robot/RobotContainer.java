@@ -27,6 +27,7 @@ import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
+import frc.robot.commands.intakerelease.HoldCMD;
 import frc.robot.commands.intakerelease.IntakeCMD;
 import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.commands.intakerelease.StopCMD;
@@ -203,11 +204,12 @@ public class RobotContainer {
                             new Pose2d(
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
-    driverController.a().whileTrue(new IntakeCMD(intakeRelease, led2023));
+    HoldCMD holdCMD = new HoldCMD(intakeRelease, led2023);
+    driverController.a().whileTrue(new IntakeCMD(intakeRelease, led2023, holdCMD));
     // Commands.startEnd(new IntakeCMD(intakeRelease, led2023), new HoldCMD(intakeRelease, led2023),
     // null);
     driverController.b().whileTrue(new ReleaseCMD(intakeRelease, led2023));
-    driverController.x().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
+    driverController.x().toggleOnTrue(new WantConeCMD(intakeRelease, led2023, holdCMD));
     driverController.y().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
     led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
   }
