@@ -137,19 +137,19 @@ public class BriefcaseConstants implements Constants {
 
   @Override
   public int intakeMotorID() {
-    // TODO Update me
+    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public int intakeCubeLimitSwitchID() {
-    // TODO: Update me
+    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public int intakeConeLimitSwitchID() {
-    // TODO: Update me
+    // TODO Auto-generated method stub
     return 0;
   }
 }
