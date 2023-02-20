@@ -104,6 +104,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
+            arm = null;
           }
           default -> {
             drive =
@@ -114,6 +115,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
+            arm = null;
           }
         }
       }
@@ -129,6 +131,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 List.of(new VisionIO() {}));
+        arm = null;
       }
 
         // Replayed robot, disable IO implementations
@@ -142,6 +145,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 List.of(new VisionIO() {}));
+        arm = null;
       }
     }
 
@@ -200,16 +204,20 @@ public class RobotContainer {
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
 
-    if (RobotConstants.get().mode() == Mode.REAL) {
-      operatorController.start().onTrue(new ArmStopCMD(arm));
-      operatorController.leftBumper().whileTrue(new ArmManualExtendCMD(arm));
-      operatorController.rightBumper().whileTrue(new ArmManualRetractCMD(arm));
-      operatorController.leftTrigger().whileTrue(new ArmManualDownCMD(arm));
-      operatorController.rightTrigger().whileTrue(new ArmManualUpCMD(arm));
-      operatorController.a().onTrue(new ArmScoreCMD(arm, 0.0, 0)); // Retract full
-      operatorController.b().onTrue(new ArmScoreCMD(arm, 0.1, 0.05)); // Retract Mid
-      operatorController.y().onTrue(new ArmScoreCMD(arm, 0.2, 0.1));
-      operatorController.x().onTrue(new ArmScoreCMD(arm, 0.3, 0.2));
+    switch (RobotConstants.get().mode()) {
+      case REAL -> {
+        operatorController.start().onTrue(new ArmStopCMD(arm));
+        operatorController.leftBumper().whileTrue(new ArmManualExtendCMD(arm));
+        operatorController.rightBumper().whileTrue(new ArmManualRetractCMD(arm));
+        operatorController.leftTrigger().whileTrue(new ArmManualDownCMD(arm));
+        operatorController.rightTrigger().whileTrue(new ArmManualUpCMD(arm));
+        operatorController.a().onTrue(new ArmScoreCMD(arm, 0.0, 0)); // Retract full
+        operatorController.b().onTrue(new ArmScoreCMD(arm, 0.1, 0.05)); // Retract Mid
+        operatorController.y().onTrue(new ArmScoreCMD(arm, 0.2, 0.1));
+        operatorController.x().onTrue(new ArmScoreCMD(arm, 0.3, 0.2));
+      }
+      case REPLAY -> {}
+      case SIM -> {}
     }
   }
 

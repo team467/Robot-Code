@@ -204,7 +204,8 @@ public class Arm extends SubsystemBase {
         // Drive Extend Motor a little bit outwards
         if (hasExtend) {
           armIO.setExtendVoltage(calculateExtendPid(EXTEND_CALIBRATION_POSITION));
-          if (Math.abs(armIOInputs.extendPosition - EXTEND_CALIBRATION_POSITION) <= EXTEND_TOLERANCE_METERS) {
+          if (Math.abs(armIOInputs.extendPosition - EXTEND_CALIBRATION_POSITION)
+              <= EXTEND_TOLERANCE_METERS) {
             calibrateMode = CalibrateMode.PHASE_THREE;
           }
         }
@@ -315,6 +316,7 @@ public class Arm extends SubsystemBase {
   private boolean isRotateSafe(double rotatePosition) {
     return isCalibrated && (rotatePosition > 0.2 || armIOInputs.extendPosition < 0.1);
   }
+
   private boolean isExtendSafe(double extendPosition) {
     return isCalibrated && armIOInputs.rotatePosition > 0.1;
   }
