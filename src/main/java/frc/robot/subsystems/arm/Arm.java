@@ -48,8 +48,8 @@ public class Arm extends SubsystemBase {
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.05;
 
-  private double manualExtend = 0.0;
-  private double manualRotate = 0.0;
+  private double manualExtendVelocity = 0.0;
+  private double manualRotateVolts = 0.0;
   private PIDController extendPidController = new PIDController(20, 0, 0);
   private PIDController rotatePidController = new PIDController(7, 0, 0);
   private static final double BACK_FORCE = -0.25;
@@ -74,18 +74,18 @@ public class Arm extends SubsystemBase {
     mode = ArmMode.MANUAL;
     armIO.setExtendVoltage(0.0);
     armIO.setRotateVoltage(0.0);
-    manualExtend = 0;
-    manualRotate = 0;
+    manualExtendVelocity = 0;
+    manualRotateVolts = 0;
   }
 
-  public void manualExtend(double direction) {
+  public void manualExtend(double velocity) {
     mode = ArmMode.MANUAL;
-    manualExtend = direction;
+    manualExtendVelocity = velocity;
   }
 
-  public void manualRotate(double direction) {
+  public void manualRotate(double volts) {
     mode = ArmMode.MANUAL;
-    manualRotate = direction;
+    manualRotateVolts = volts;
   }
 
   public void hold() {
@@ -96,8 +96,8 @@ public class Arm extends SubsystemBase {
     mode = ArmMode.HOLD;
     armIO.setExtendVoltage(0.0);
     armIO.setRotateVoltage(0.0);
-    manualRotate = 0;
-    manualExtend = 0;
+    manualRotateVolts = 0;
+    manualExtendVelocity = 0;
   }
 
   public boolean isHolding() {
@@ -121,26 +121,26 @@ public class Arm extends SubsystemBase {
     switch (mode) {
       case MANUAL:
         if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
-            && manualExtend > 0) {
+            && manualExtendVelocity > 0) {
           armIO.setExtendVelocity(0);
         } else if (armIOInputs.extendPosition < RobotConstants.get().armExtendMinMeters()
-            && manualExtend < 0) {
+            && manualExtendVelocity < 0) {
           armIO.setExtendVoltage(calculateExtendPid(RobotConstants.get().armExtendMinMeters()));
         } else {
-          armIO.setExtendVelocity(manualExtend);
+          armIO.setExtendVelocity(manualExtendVelocity);
         }
         if (hasRotate) {
           if (armIOInputs.rotatePosition > RobotConstants.get().armRotateMaxMeters()
-              && manualRotate > 0) {
+              && manualRotateVolts > 0) {
             armIO.setRotateVelocity(0);
           } else if (armIOInputs.rotatePosition < RobotConstants.get().armRotateMinMeters()
-              && manualRotate < 0) {
+              && manualRotateVolts < 0) {
             armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMinMeters()));
           } else {
-            rotate(manualRotate);
+            rotate(manualRotateVolts);
           }
         }
-        logger.recordOutput("Arm/ManualRotate", manualRotate);
+        logger.recordOutput("Arm/ManualRotate", manualRotateVolts);
         break;
 
       case AUTO:
@@ -149,12 +149,16 @@ public class Arm extends SubsystemBase {
           hold();
         } else {
           double extendFbOutput = calculateExtendPid(extendSetpoint);
-          double rotateFbOutput = calculateRotatePid(rotateSetpoint);
-
+          if (extendFbOutput == extendSetpoint) {
+            double rotateFbOutput = calculateRotatePid(rotateSetpoint);
           logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
           logger.recordOutput("Arm/RotateFbOutput", rotateFbOutput);
           armIO.setExtendVoltage(extendFbOutput);
           rotate(rotateFbOutput);
+          }
+         
+
+         
         }
         logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
         logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
@@ -258,6 +262,14 @@ public class Arm extends SubsystemBase {
             RobotConstants.get().armRotateMaxMeters());
   }
 
+  public void setTargetPositionExtend(double extendSetpoint) {
+   setTargetPositions(extendSetpoint, armIOInputs.rotatePosition);
+  }
+
+  public void setTargetPositionRotate(double rotateSetpoint) {
+      setTargetPositions( armIOInputs.extendPosition, rotateSetpoint);
+  }
+
   public void characterizeExtend() {
     mode = ArmMode.EXTEND_CHARACTERIZATION;
   }
@@ -281,7 +293,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isStopped() {
-    return mode == ArmMode.MANUAL && manualExtend == 0 && manualRotate == 0;
+    return mode == ArmMode.MANUAL && manualExtendVelocity == 0 && manualRotateVolts == 0;
   }
 
   public boolean finished() {

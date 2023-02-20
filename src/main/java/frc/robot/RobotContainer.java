@@ -29,6 +29,7 @@ import frc.robot.commands.arm.ArmManualDownCMD;
 import frc.robot.commands.arm.ArmManualExtendCMD;
 import frc.robot.commands.arm.ArmManualRetractCMD;
 import frc.robot.commands.arm.ArmManualUpCMD;
+import frc.robot.commands.arm.ArmRetractCMD;
 import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
@@ -209,14 +210,15 @@ public class RobotContainer {
     switch (RobotConstants.get().mode()) {
       case REAL -> {
         operatorController.start().onTrue(new ArmStopCMD(arm));
-        operatorController.leftBumper().whileTrue(new ArmManualExtendCMD(arm));
-        operatorController.rightBumper().whileTrue(new ArmManualRetractCMD(arm));
-        operatorController.leftTrigger().whileTrue(new ArmManualDownCMD(arm));
-        operatorController.rightTrigger().whileTrue(new ArmManualUpCMD(arm));
-        operatorController.a().onTrue(new ArmHomeCMD(arm)); // Retract full
-        operatorController.b().onTrue(new ArmScoreLowNodeCMD(arm));
-        operatorController.y().onTrue(new ArmScoreMidNodeCMD(arm));
-        operatorController.x().onTrue(new ArmScoreHighNodeCMD(arm));
+        operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));
+        operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm));
+        operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm));
+        operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm));
+        operatorController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
+        operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
+        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm));
+        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm));
+        operatorController.back().onTrue(new ArmRetractCMD(arm));
       }
       case REPLAY -> {}
       case SIM -> {}
