@@ -146,12 +146,16 @@ public class Arm extends SubsystemBase {
           hold();
         } else {
           double extendFbOutput = calculateExtendPid(extendSetpoint);
-          double rotateFbOutput = calculateRotatePid(rotateSetpoint);
-
+          if (extendFbOutput == extendSetpoint) {
+            double rotateFbOutput = calculateRotatePid(rotateSetpoint);
           logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
           logger.recordOutput("Arm/RotateFbOutput", rotateFbOutput);
           armIO.setExtendVoltage(extendFbOutput);
           rotate(rotateFbOutput);
+          }
+         
+
+         
         }
         logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
         logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
