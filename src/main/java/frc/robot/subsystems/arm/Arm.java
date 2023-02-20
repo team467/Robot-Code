@@ -31,14 +31,14 @@ public class Arm extends SubsystemBase {
     PHASE_FOUR,
   }
 
-  private enum ArmPhase {
+  private enum AutoMode {
     RETRACT,
     ROTATE,
     EXTEND
   }
 
   private ArmMode mode = ArmMode.CALIBRATE;
-  private ArmPhase phase = ArmPhase.RETRACT;
+  private AutoMode autoMode = AutoMode.RETRACT;
   private CalibrateMode calibrateMode = CalibrateMode.PHASE_ONE;
   private double characterizationVoltage = 0.0;
   private double extendSetpoint = 0.2;
@@ -164,17 +164,18 @@ public class Arm extends SubsystemBase {
           // Reached target.
           hold();
         }
-        switch (phase) {
+        switch (autoMode) {
           case RETRACT:
             if (Math.abs(armIOInputs.extendPosition - RobotConstants.get().armExtendMinMeters())
                 <= EXTEND_TOLERANCE_METERS) {
-
-              phase = ArmPhase.ROTATE;
+                  armIO.setExtendVoltage(0);
+              autoMode = AutoMode.ROTATE;
                   
 
             } else {
               double extendFbOutput = calculateExtendPid(RobotConstants.get().armExtendMinMeters());
               armIO.setExtendVoltage(extendFbOutput);
+
             }
 
             break;
@@ -184,20 +185,18 @@ public class Arm extends SubsystemBase {
             rotate(rotateFbOutput);
             logger.recordOutput("Arm/RotateFbOutput", rotateFbOutput);
             if (rotateFinished()) {
-               phase = ArmPhase.EXTEND;
+              autoMode = AutoMode.EXTEND;
+               armIO.setExtendVoltage(0);
                   
-
-              
             }
             break;
 
           case EXTEND:
-            if (rotateFinished()) {
               double extendFbOutput = calculateExtendPid(extendSetpoint);
               armIO.setExtendVoltage(extendFbOutput);
               logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
               break;
-            }
+  
         }
 
         logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
@@ -290,6 +289,7 @@ public class Arm extends SubsystemBase {
 
   public void setTargetPositions(double extendSetpoint, double rotateSetpoint) {
     mode = ArmMode.AUTO;
+    autoMode = AutoMode.RETRACT;
     this.extendSetpoint =
         MathUtil.clamp(
             extendSetpoint,
