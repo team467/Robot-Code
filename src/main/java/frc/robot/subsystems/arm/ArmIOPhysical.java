@@ -21,8 +21,7 @@ public class ArmIOPhysical implements ArmIO {
   private CANSparkMax rotateMotor;
   private RelativeEncoder rotateEncoder;
 
-  public ArmIOPhysical(
-      int extendMotorId, int rotateMotorId, int extendLimitSwitchId, int ratchetSolenoidId) {
+  public ArmIOPhysical(int extendMotorId, int rotateMotorId, int ratchetSolenoidId) {
     ratchetSolenoid = new DigitalOutput(ratchetSolenoidId);
 
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);

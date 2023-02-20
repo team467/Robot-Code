@@ -136,11 +136,6 @@ public class SimBotConstants implements Constants {
   }
 
   @Override
-  public int armExtendLimitSwitchId() {
-    return 0;
-  }
-
-  @Override
   public int armRotateHighLimitSwitchId() {
     return 4; // DIO #4
   }
