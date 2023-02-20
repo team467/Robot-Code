@@ -33,7 +33,6 @@ public class Arm extends SubsystemBase {
 
   private ArmMode mode = ArmMode.CALIBRATE;
   private CalibrateMode calibrateMode = CalibrateMode.PHASE_ONE;
-  private double holdPosition;
   private double characterizationVoltage = 0.0;
   private double extendSetpoint = 0.2;
   private double rotateSetpoint = 0.0;
@@ -91,7 +90,6 @@ public class Arm extends SubsystemBase {
   }
 
   public void hold(double position) {
-    holdPosition = position;
     mode = ArmMode.HOLD;
     armIO.setExtendVoltage(0.0);
     armIO.setRotateVoltage(0.0);
