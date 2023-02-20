@@ -4,7 +4,6 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -83,6 +82,11 @@ public class Drive extends SubsystemBase {
     // Update inputs for IOs
     gyroIO.updateInputs(gyroInputs);
     Logger.getInstance().processInputs("Drive/Gyro", gyroInputs);
+
+    for (int i = 0; i < aprilTagCameraIO.size(); i++) {
+      aprilTagCameraIO.get(i).updateInputs(aprilTagCameraInputs.get(i));
+      Logger.getInstance().processInputs("Drive/Vision" + i, aprilTagCameraInputs.get(i));
+    }
     for (var module : modules) {
       module.periodic();
     }
@@ -169,12 +173,12 @@ public class Drive extends SubsystemBase {
       }
 
       for (VisionIOInputs aprilTagCameraInput : aprilTagCameraInputs) {
-        aprilTagCameraInput.estimatedPose.ifPresentOrElse(
+        aprilTagCameraInput.estimatedPose.ifPresent(
             estimatedRobotPose -> {
               Logger.getInstance()
                   .recordOutput(
                       "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
-                      estimatedRobotPose.estimatedPose);
+                      estimatedRobotPose.estimatedPose.toPose2d());
 
               Vector<N3> std =
                   switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
@@ -187,12 +191,7 @@ public class Drive extends SubsystemBase {
                   estimatedRobotPose.estimatedPose.toPose2d(),
                   estimatedRobotPose.timestampSeconds,
                   std);
-            },
-            () ->
-                Logger.getInstance()
-                    .recordOutput(
-                        "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
-                        new Pose3d()));
+            });
       }
 
       Logger.getInstance().recordOutput("Odometry", getPose());
