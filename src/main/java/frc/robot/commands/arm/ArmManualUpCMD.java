@@ -24,6 +24,6 @@ public class ArmManualUpCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return arm.isHolding();
   }
 }

@@ -3,12 +3,12 @@ package frc.robot.commands.arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.arm.Arm;
 
-public class ArmScoreCMD extends CommandBase {
+public class ArmPositionCMD extends CommandBase {
   private final Arm arm;
   private double extendSetpoint;
   private double rotateSetpoint;
 
-  public ArmScoreCMD(Arm arm, double extendSetpoint, double rotateSetpoint) {
+  public ArmPositionCMD(Arm arm, double extendSetpoint, double rotateSetpoint) {
     this.arm = arm;
     this.extendSetpoint = extendSetpoint;
     this.rotateSetpoint = rotateSetpoint;
