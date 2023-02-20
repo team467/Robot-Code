@@ -24,7 +24,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * project.
  */
 public class Robot extends LoggedRobot {
-
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
@@ -36,6 +35,18 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     Logger logger = Logger.getInstance();
 
+    // Record metadata
+    logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+    logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+    logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+    logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+    logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+    switch (BuildConstants.DIRTY) {
+      case 0 -> logger.recordMetadata("GitDirty", "All changes committed");
+      case 1 -> logger.recordMetadata("GitDirty", "Uncomitted changes");
+      default -> logger.recordMetadata("GitDirty", "Unknown");
+    }
+
     // Set up data receivers & replay source
     switch (RobotConstants.get().mode()) {
         // Running on a real robot, log to a USB stick if possible
@@ -46,16 +57,18 @@ public class Robot extends LoggedRobot {
           logger.addDataReceiver(new WPILOGWriter(folder));
         }
         if (RobotConstants.get().robot() == RobotType.ROBOT_COMP) {
-          new PowerDistribution(20, ModuleType.kRev);
+          new PowerDistribution(63, ModuleType.kRev);
         } else {
           new PowerDistribution(20, ModuleType.kCTRE);
         }
       }
+
         // Running a physics simulator, log to local folder
       case SIM -> {
         logger.addDataReceiver(new WPILOGWriter(""));
         logger.addDataReceiver(new NT4Publisher());
       }
+
         // Replaying a log, set up replay source
       case REPLAY -> {
         setUseTiming(false); // Run as fast as possible
