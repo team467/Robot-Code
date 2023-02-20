@@ -12,7 +12,7 @@ public class DriveFowardComeBack extends SequentialCommandGroup {
   /** Creates a new DrivelessScore. */
   public DriveFowardComeBack(Drive drive) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addCommands(
+    super(
         // commandA,
         // commandB
         new GoToTrajectory(
@@ -21,13 +21,7 @@ public class DriveFowardComeBack extends SequentialCommandGroup {
                 new Waypoint(FieldConstants.aprilTags.get(7).getTranslation().toTranslation2d()),
                 new Waypoint(
                     new Translation2d(
-                        FieldConstants.Community.outerX + 0.5,
-                        FieldConstants.aprilTags.get(7).getTranslation().toTranslation2d().getY())),
-                new Waypoint(
-                    FieldConstants.aprilTags
-                        .get(7)
-                        .getTranslation()
-                        .toTranslation2d()
-                        .plus(new Translation2d(0.01, 0.01))))));
+                        FieldConstants.Community.outerX + 2.0,
+                        FieldConstants.aprilTags.get(7).getTranslation().toTranslation2d().getY())))));
   }
 }
