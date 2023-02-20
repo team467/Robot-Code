@@ -141,21 +141,19 @@ public class Arm extends SubsystemBase {
         break;
 
       case AUTO:
-        if (finished()) {
+       if (finished()) {
           // Reached target.
           hold();
         } else {
-          double extendFbOutput = calculateExtendPid(extendSetpoint);
-          if (extendFbOutput == extendSetpoint) {
-            double rotateFbOutput = calculateRotatePid(rotateSetpoint);
-          logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
-          logger.recordOutput("Arm/RotateFbOutput", rotateFbOutput);
-          armIO.setExtendVoltage(extendFbOutput);
-          rotate(rotateFbOutput);
-          }
-         
-
-         
+          double rotateFbOutput = calculateRotatePid(rotateSetpoint);
+           rotate(rotateFbOutput);
+           if (rotateFbOutput == rotateSetpoint) {
+             double extendFbOutput = calculateExtendPid(extendSetpoint);
+             logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
+             logger.recordOutput("Arm/RotateFbOutput", rotateFbOutput);
+             armIO.setExtendVoltage(extendFbOutput);
+           }
+          
         }
         logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
         logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
