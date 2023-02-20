@@ -50,6 +50,9 @@ public class Arm extends SubsystemBase {
   private static final double EXTEND_TOLERANCE_METERS = 0.005;
   private static final double ROTATE_TOLERANCE_DEGREES = 2.0;
 
+  private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.13;
+  private static final double SAFE_EXTENSION_LENGTH = 0.1;
+
   private static final double EXTEND_CALIBRATION_POSITION = 0.05;
 
   private double manualExtendVelocity = 0.0;
@@ -200,24 +203,26 @@ public class Arm extends SubsystemBase {
         logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
         logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
         break;
+
       case EXTEND_CHARACTERIZATION:
         armIO.setExtendVoltage(characterizationVoltage);
         break;
+
       case ROTATE_CHARACTERIZATION:
         rotate(characterizationVoltage);
-
         break;
+
       case DISABLED:
         break;
+
       case HOLD:
         armIO.setExtendVoltage(0);
         break;
+
       case CALIBRATE:
         calibrate();
-
         break;
     }
-    armIO.setRatchetLocked(isHolding());
   }
 
   private void calibrate() {
@@ -365,10 +370,10 @@ public class Arm extends SubsystemBase {
   }
 
   private boolean isRotateSafe(double rotatePosition) {
-    return isCalibrated && (rotatePosition > 0.2 || armIOInputs.extendPosition < 0.1);
+    return isCalibrated && (rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION || armIOInputs.extendPosition < SAFE_EXTENSION_LENGTH);
   }
 
   private boolean isExtendSafe(double extendPosition) {
-    return isCalibrated && armIOInputs.rotatePosition > 0.2;
+    return isCalibrated && armIOInputs.rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION;
   }
 }
