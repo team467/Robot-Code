@@ -253,6 +253,14 @@ public class Arm extends SubsystemBase {
             RobotConstants.get().armRotateMaxMeters());
   }
 
+  public void setTargetPositionExtend(double extendSetpoint) {
+   setTargetPositions(extendSetpoint, armIOInputs.rotatePosition);
+  }
+
+  public void setTargetPositionRotate(double rotateSetpoint) {
+      setTargetPositions( armIOInputs.extendPosition, rotateSetpoint);
+  }
+
   public void characterizeExtend() {
     mode = ArmMode.EXTEND_CHARACTERIZATION;
   }
