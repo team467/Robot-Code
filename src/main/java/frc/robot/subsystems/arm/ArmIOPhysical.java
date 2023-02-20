@@ -65,11 +65,7 @@ public class ArmIOPhysical implements ArmIO {
 
   @Override
   public void setExtendVelocity(double velocity) {
-    if (velocity != 0) {
-      ratchetSolenoid.set(false);
-    } else {
-      ratchetSolenoid.set(true);
-    }
+    ratchetSolenoid.set(velocity == 0);
     extendMotor.set(velocity);
   }
 
@@ -80,11 +76,7 @@ public class ArmIOPhysical implements ArmIO {
 
   @Override
   public void setExtendVoltage(double volts) {
-    if (volts != 0) {
-      ratchetSolenoid.set(false);
-    } else {
-      ratchetSolenoid.set(true);
-    }
+    ratchetSolenoid.set(volts == 0);
     extendMotor.setVoltage(volts);
   }
 

@@ -165,13 +165,7 @@ public class Arm extends SubsystemBase {
       case DISABLED:
         break;
       case HOLD:
-        double holdPidOutput = calculateExtendPid(holdPosition);
-        logger.recordOutput("Arm/HoldPidOutput", holdPidOutput);
-        if (armIOInputs.extendLimitSwitch) {
-          armIO.setExtendVoltage(0);
-        } else {
-          armIO.setExtendVoltage(holdPidOutput);
-        }
+        armIO.setExtendVoltage(0);
         break;
       case CALIBRATE:
         calibrate();
