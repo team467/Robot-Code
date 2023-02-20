@@ -37,16 +37,16 @@ public class Arm extends SubsystemBase {
     EXTEND
   }
 
-  private ArmMode mode = ArmMode.CALIBRATE;
+  private ArmMode mode = ArmMode.MANUAL;
   private AutoMode autoMode = AutoMode.RETRACT;
   private CalibrateMode calibrateMode = CalibrateMode.PHASE_ONE;
   private double characterizationVoltage = 0.0;
-  private double extendSetpoint = 0.2;
+  private double extendSetpoint = 0.0;
   private double rotateSetpoint = 0.0;
   private boolean isCalibrated = false;
 
   private boolean hasRotate = true;
-  private boolean hasExtend = false;
+  private boolean hasExtend = true;
   private static final double EXTEND_TOLERANCE_METERS = 0.005;
   private static final double ROTATE_TOLERANCE_DEGREES = 2.0;
 
@@ -136,31 +136,32 @@ public class Arm extends SubsystemBase {
 
     switch (mode) {
       case MANUAL:
-        if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
-            && manualExtendVelocity > 0) {
-          armIO.setExtendVelocity(0);
-        } else if (armIOInputs.extendPosition < RobotConstants.get().armExtendMinMeters()
-            && manualExtendVelocity < 0) {
-          armIO.setExtendVoltage(calculateExtendPid(RobotConstants.get().armExtendMinMeters()));
-        } else {
-          armIO.setExtendVelocity(manualExtendVelocity);
-        }
-        if (hasRotate) {
-          if (armIOInputs.rotatePosition > RobotConstants.get().armRotateMaxMeters()
-              && manualRotateVolts > 0) {
-            armIO.setRotateVelocity(0);
-          } else if (armIOInputs.rotatePosition < RobotConstants.get().armRotateMinMeters()
-              && manualRotateVolts < 0) {
-            armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMinMeters()));
-          } else {
-            rotate(manualRotateVolts);
-          }
-        }
+        armIO.setExtendVelocity(manualExtendVelocity);
+        rotate(manualRotateVolts);
+        // if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
+        //     && manualExtendVelocity > 0) {
+        //   armIO.setExtendVelocity(0);
+        // } else if (armIOInputs.extendPosition < RobotConstants.get().armExtendMinMeters()
+        //     && manualExtendVelocity < 0) {
+        //   armIO.setExtendVoltage(calculateExtendPid(RobotConstants.get().armExtendMinMeters()));
+        // } else {
+        // }
+        // if (hasRotate) {
+        // if (armIOInputs.rotatePosition > RobotConstants.get().armRotateMaxMeters()
+        //     && manualRotateVolts > 0) {
+        //   armIO.setRotateVelocity(0);
+        // } else if (armIOInputs.rotatePosition < RobotConstants.get().armRotateMinMeters()
+        //     && manualRotateVolts < 0) {
+        //
+        // armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMinMeters()));
+        // } else {
+        // }
+        // }
         logger.recordOutput("Arm/ManualRotate", manualRotateVolts);
         break;
 
       case AUTO:
-       if (finished()) {
+        if (finished()) {
           // Reached target.
           hold();
         }
@@ -168,14 +169,12 @@ public class Arm extends SubsystemBase {
           case RETRACT:
             if (Math.abs(armIOInputs.extendPosition - RobotConstants.get().armExtendMinMeters())
                 <= EXTEND_TOLERANCE_METERS) {
-                  armIO.setExtendVoltage(0);
+              armIO.setExtendVoltage(0);
               autoMode = AutoMode.ROTATE;
-                  
 
             } else {
               double extendFbOutput = calculateExtendPid(RobotConstants.get().armExtendMinMeters());
               armIO.setExtendVoltage(extendFbOutput);
-
             }
 
             break;
@@ -186,17 +185,15 @@ public class Arm extends SubsystemBase {
             logger.recordOutput("Arm/RotateFbOutput", rotateFbOutput);
             if (rotateFinished()) {
               autoMode = AutoMode.EXTEND;
-               armIO.setExtendVoltage(0);
-                  
+              armIO.setExtendVoltage(0);
             }
             break;
 
           case EXTEND:
-              double extendFbOutput = calculateExtendPid(extendSetpoint);
-              armIO.setExtendVoltage(extendFbOutput);
-              logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
-              break;
-  
+            double extendFbOutput = calculateExtendPid(extendSetpoint);
+            armIO.setExtendVoltage(extendFbOutput);
+            logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
+            break;
         }
 
         logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
@@ -370,7 +367,9 @@ public class Arm extends SubsystemBase {
   }
 
   private boolean isRotateSafe(double rotatePosition) {
-    return isCalibrated && (rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION || armIOInputs.extendPosition < SAFE_EXTENSION_LENGTH);
+    return isCalibrated
+        && (rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION
+            || armIOInputs.extendPosition < SAFE_EXTENSION_LENGTH);
   }
 
   private boolean isExtendSafe(double extendPosition) {
