@@ -37,6 +37,7 @@ public class Arm extends SubsystemBase {
   private double characterizationVoltage = 0.0;
   private double extendSetpoint = 0.2;
   private double rotateSetpoint = 0.0;
+  private boolean isCalibrated = false;
 
   private boolean hasRotate = true;
   private boolean hasExtend = false;
@@ -113,7 +114,8 @@ public class Arm extends SubsystemBase {
 
     armIO.updateInputs(armIOInputs);
     logger.processInputs("Arm", armIOInputs);
-    logger.recordOutput("Arm/mode", mode.toString());
+    logger.recordOutput("Arm/Mode", mode.toString());
+    logger.recordOutput("Arm/CalibrateMode", calibrateMode.toString());
 
     switch (mode) {
       case MANUAL:
@@ -135,7 +137,7 @@ public class Arm extends SubsystemBase {
           }
         }
         rotate(manualRotate);
-        logger.recordOutput("Arm/manualRotate", manualRotate);
+        logger.recordOutput("Arm/ManualRotate", manualRotate);
         break;
       case AUTO:
         if (finished()) {
@@ -145,8 +147,8 @@ public class Arm extends SubsystemBase {
           double extendFbOutput = calculateExtendPid(extendSetpoint);
           double rotateFbOutput = calculateRotatePid(rotateSetpoint);
 
-          logger.recordOutput("Arm/extendFbOutput", extendFbOutput);
-          logger.recordOutput("Arm/rotateFbOutput", rotateFbOutput);
+          logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
+          logger.recordOutput("Arm/RotateFbOutput", rotateFbOutput);
           armIO.setExtendVoltage(extendFbOutput);
           rotate(rotateFbOutput);
         }
@@ -164,7 +166,7 @@ public class Arm extends SubsystemBase {
         break;
       case HOLD:
         double holdPidOutput = calculateExtendPid(holdPosition);
-        logger.recordOutput("Arm/holdPidOutput", holdPidOutput);
+        logger.recordOutput("Arm/HoldPidOutput", holdPidOutput);
         if (armIOInputs.extendLimitSwitch) {
           armIO.setExtendVoltage(0);
         } else {
@@ -229,11 +231,13 @@ public class Arm extends SubsystemBase {
           if (armIOInputs.extendLimitSwitch) {
             armIO.resetEncoderPosition();
             hold();
+            isCalibrated = true;
           } else {
             armIO.setExtendVoltage(-1);
           }
         } else {
           hold();
+          isCalibrated = true;
         }
         break;
     }
@@ -287,13 +291,7 @@ public class Arm extends SubsystemBase {
   }
 
   private void rotate(double volts) {
-    // if (volts < 0 && armIOInputs.extendPosition < RobotConstants.get().armExtendMinDown()) {
-    //   armIO.setExtendVoltage(
-    //       extendPidController.calculate(
-    //           armIOInputs.extendPosition, RobotConstants.get().armExtendMinDown() + 2.0));
-    // } else {
     armIO.setRotateVoltage(volts);
-    // }
   }
 
   public void resetEncoderPosition() {
@@ -301,10 +299,23 @@ public class Arm extends SubsystemBase {
   }
 
   private double calculateExtendPid(double targetPosition) {
+    if (!isExtendSafe(targetPosition)) {
+      return 0;
+    }
     return (extendPidController.calculate(armIOInputs.extendPosition, targetPosition) + BACK_FORCE);
   }
 
   private double calculateRotatePid(double targetPosition) {
+    if (!isRotateSafe(targetPosition)) {
+      return 0;
+    }
     return rotatePidController.calculate(armIOInputs.rotatePosition, targetPosition);
+  }
+
+  private boolean isRotateSafe(double rotatePosition) {
+    return isCalibrated && (rotatePosition > 0.2 || armIOInputs.extendPosition < 0.1);
+  }
+  private boolean isExtendSafe(double extendPosition) {
+    return isCalibrated && armIOInputs.rotatePosition > 0.1;
   }
 }
