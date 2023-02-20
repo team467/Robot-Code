@@ -22,6 +22,10 @@ public class DriveFowardComeBack extends SequentialCommandGroup {
                 new Waypoint(
                     new Translation2d(
                         FieldConstants.Community.outerX + 2.0,
-                        FieldConstants.aprilTags.get(7).getTranslation().toTranslation2d().getY())))));
+                        FieldConstants.aprilTags
+                            .get(7)
+                            .getTranslation()
+                            .toTranslation2d()
+                            .getY())))));
   }
 }

@@ -183,8 +183,8 @@ public class Drive extends SubsystemBase {
 
             Vector<N3> std =
                 switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
-                  case 0 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
-                  case 1 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
+                  case 0 -> VecBuilder.fill(0.1, 0.1, 0.1); // TODO: Tune these
+                  case 1 -> VecBuilder.fill(0.1, 0.1, 0.1); // TODO: Tune these
                   default -> VecBuilder.fill(1.0, 1.0, 1.0);
                 };
 

@@ -60,7 +60,7 @@ public class QuickDriveToPose extends CommandBase {
             currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
     if (driveController.atGoal()) driveVelocityScalar = 0.0;
     if (thetaController.atGoal()) thetaVelocity = 0.0;
-    var driveVelocity =
+    Pose2d driveVelocity =
         new Pose2d(
                 new Translation2d(),
                 currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())

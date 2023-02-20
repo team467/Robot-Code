@@ -11,7 +11,6 @@ public class Balancing extends CommandBase {
   private double prevZ = 0.0;
   private double deltaZ = 0.0;
 
-
   public Balancing(Drive drive) {
     this.drive = drive;
     addRequirements(drive);
@@ -30,7 +29,7 @@ public class Balancing extends CommandBase {
     deltaZ = gravVec[2] - prevZ;
     prevZ = gravVec[2];
     double nextZ = gravVec[2] + deltaZ;
-//    if (Math.abs(gravVec[2]) < 0.8) {
+    //    if (Math.abs(gravVec[2]) < 0.8) {
     if (Math.abs(nextZ) < 0.8) {
       timer.reset();
       drive.runVelocity(new ChassisSpeeds(1.6 * gravVec[0], 1.6 * gravVec[1], 0.0));

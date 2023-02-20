@@ -45,9 +45,12 @@ public class DriveWithJoysticks extends CommandBase {
   @Override
   public void execute() {
     // Get values from double suppliers
-    double leftX = leftXFilter.calculate(leftXSupplier.get());
-    double leftY = leftYFilter.calculate(leftYSupplier.get());
-    double rightX = rightXFilter.calculate(rightXSupplier.get());
+    //    double leftX = leftXFilter.calculate(leftXSupplier.get());
+    //    double leftY = leftYFilter.calculate(leftYSupplier.get());
+    //    double rightX = rightXFilter.calculate(rightXSupplier.get());
+    double leftX = leftXSupplier.get();
+    double leftY = leftYSupplier.get();
+    double rightX = rightXSupplier.get();
 
     // Get direction and magnitude of linear axes
     double linearMagnitude = Math.hypot(leftX, leftY);
