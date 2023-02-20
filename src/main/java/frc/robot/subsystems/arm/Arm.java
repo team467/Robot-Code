@@ -31,7 +31,14 @@ public class Arm extends SubsystemBase {
     PHASE_FOUR,
   }
 
+  private enum ArmPhase {
+    RETRACT,
+    ROTATE,
+    EXTEND
+  }
+
   private ArmMode mode = ArmMode.CALIBRATE;
+  private ArmPhase phase = ArmPhase.RETRACT;
   private CalibrateMode calibrateMode = CalibrateMode.PHASE_ONE;
   private double characterizationVoltage = 0.0;
   private double extendSetpoint = 0.2;
@@ -42,6 +49,9 @@ public class Arm extends SubsystemBase {
   private boolean hasExtend = false;
   private static final double EXTEND_TOLERANCE_METERS = 0.005;
   private static final double ROTATE_TOLERANCE_DEGREES = 2.0;
+
+  private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.13;
+  private static final double SAFE_EXTENSION_LENGTH = 0.1;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.05;
 
@@ -101,6 +111,15 @@ public class Arm extends SubsystemBase {
     return mode == ArmMode.HOLD;
   }
 
+  /* (non-Javadoc)
+   * @see edu.wpi.first.wpilibj2.command.Subsystem#periodic()
+   */
+  /* (non-Javadoc)
+   * @see edu.wpi.first.wpilibj2.command.Subsystem#periodic()
+   */
+  /* (non-Javadoc)
+   * @see edu.wpi.first.wpilibj2.command.Subsystem#periodic()
+   */
   @Override
   public void periodic() {
     if (DriverStation.isDisabled()) {
@@ -144,38 +163,66 @@ public class Arm extends SubsystemBase {
        if (finished()) {
           // Reached target.
           hold();
-        } else {
-          double rotateFbOutput = calculateRotatePid(rotateSetpoint);
-           rotate(rotateFbOutput);
-           if (rotateFbOutput == rotateSetpoint) {
-             double extendFbOutput = calculateExtendPid(extendSetpoint);
-             logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
-             logger.recordOutput("Arm/RotateFbOutput", rotateFbOutput);
-             armIO.setExtendVoltage(extendFbOutput);
-           }
-          
         }
+        switch (phase) {
+          case RETRACT:
+            if (Math.abs(armIOInputs.extendPosition - RobotConstants.get().armExtendMinMeters())
+                <= EXTEND_TOLERANCE_METERS) {
+
+              phase = ArmPhase.ROTATE;
+                  
+
+            } else {
+              double extendFbOutput = calculateExtendPid(RobotConstants.get().armExtendMinMeters());
+              armIO.setExtendVoltage(extendFbOutput);
+            }
+
+            break;
+
+          case ROTATE:
+            double rotateFbOutput = calculateRotatePid(rotateSetpoint);
+            rotate(rotateFbOutput);
+            logger.recordOutput("Arm/RotateFbOutput", rotateFbOutput);
+            if (rotateFinished()) {
+               phase = ArmPhase.EXTEND;
+                  
+
+              
+            }
+            break;
+
+          case EXTEND:
+            if (rotateFinished()) {
+              double extendFbOutput = calculateExtendPid(extendSetpoint);
+              armIO.setExtendVoltage(extendFbOutput);
+              logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
+              break;
+            }
+        }
+
         logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
         logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
         break;
+
       case EXTEND_CHARACTERIZATION:
         armIO.setExtendVoltage(characterizationVoltage);
         break;
+
       case ROTATE_CHARACTERIZATION:
         rotate(characterizationVoltage);
-
         break;
+
       case DISABLED:
         break;
+
       case HOLD:
         armIO.setExtendVoltage(0);
         break;
+
       case CALIBRATE:
         calibrate();
-
         break;
     }
-    armIO.setRatchetLocked(isHolding());
   }
 
   private void calibrate() {
@@ -256,11 +303,11 @@ public class Arm extends SubsystemBase {
   }
 
   public void setTargetPositionExtend(double extendSetpoint) {
-   setTargetPositions(extendSetpoint, armIOInputs.rotatePosition);
+    setTargetPositions(extendSetpoint, armIOInputs.rotatePosition);
   }
 
   public void setTargetPositionRotate(double rotateSetpoint) {
-      setTargetPositions( armIOInputs.extendPosition, rotateSetpoint);
+    setTargetPositions(armIOInputs.extendPosition, rotateSetpoint);
   }
 
   public void characterizeExtend() {
@@ -292,8 +339,12 @@ public class Arm extends SubsystemBase {
   public boolean finished() {
     return ((!hasExtend
             || Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS)
-        && ((!hasRotate
-            || Math.abs(armIOInputs.rotatePosition - rotateSetpoint) <= ROTATE_TOLERANCE_DEGREES)));
+        && rotateFinished());
+  }
+
+  public boolean rotateFinished() {
+    return !hasRotate
+        || Math.abs(armIOInputs.rotatePosition - rotateSetpoint) <= ROTATE_TOLERANCE_DEGREES;
   }
 
   private void rotate(double volts) {
@@ -319,10 +370,10 @@ public class Arm extends SubsystemBase {
   }
 
   private boolean isRotateSafe(double rotatePosition) {
-    return isCalibrated && (rotatePosition > 0.2 || armIOInputs.extendPosition < 0.1);
+    return isCalibrated && (rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION || armIOInputs.extendPosition < SAFE_EXTENSION_LENGTH);
   }
 
   private boolean isExtendSafe(double extendPosition) {
-    return isCalibrated && armIOInputs.rotatePosition > 0.2;
+    return isCalibrated && armIOInputs.rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION;
   }
 }
