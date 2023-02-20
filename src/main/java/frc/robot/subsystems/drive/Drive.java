@@ -147,55 +147,55 @@ public class Drive extends SubsystemBase {
           Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", optimizedStates);
         }
       }
-
-      // Log measured states
-      SwerveModuleState[] measuredStates = new SwerveModuleState[4];
-      for (int i = 0; i < 4; i++) {
-        measuredStates[i] = modules[i].getState();
-      }
-      Logger.getInstance().recordOutput("SwerveStates/Measured", measuredStates);
-
-      // Update odometry
-      SwerveModulePosition[] measuredPositions = new SwerveModulePosition[4];
-      for (int i = 0; i < 4; i++) {
-        measuredPositions[i] = modules[i].getPosition();
-      }
-      for (int i = 0; i < aprilTagCameraIO.size(); i++) {
-        aprilTagCameraIO.get(i).updateInputs(aprilTagCameraInputs.get(i));
-      }
-
-      if (gyroInputs.connected) {
-        odometry.update(Rotation2d.fromDegrees(gyroInputs.yaw), measuredPositions);
-        simGyro = Units.degreesToRadians(gyroInputs.yaw);
-      } else {
-        simGyro += kinematics.toChassisSpeeds(measuredStates).omegaRadiansPerSecond * 0.02;
-        odometry.update(new Rotation2d(simGyro), measuredPositions);
-      }
-
-      for (VisionIOInputs aprilTagCameraInput : aprilTagCameraInputs) {
-        aprilTagCameraInput.estimatedPose.ifPresent(
-            estimatedRobotPose -> {
-              Logger.getInstance()
-                  .recordOutput(
-                      "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
-                      estimatedRobotPose.estimatedPose.toPose2d());
-
-              Vector<N3> std =
-                  switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
-                    case 0 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
-                    case 1 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
-                    default -> VecBuilder.fill(1.0, 1.0, 1.0);
-                  };
-
-              odometry.addVisionMeasurement(
-                  estimatedRobotPose.estimatedPose.toPose2d(),
-                  estimatedRobotPose.timestampSeconds,
-                  std);
-            });
-      }
-
-      Logger.getInstance().recordOutput("Odometry", getPose());
     }
+
+    // Log measured states
+    SwerveModuleState[] measuredStates = new SwerveModuleState[4];
+    for (int i = 0; i < 4; i++) {
+      measuredStates[i] = modules[i].getState();
+    }
+    Logger.getInstance().recordOutput("SwerveStates/Measured", measuredStates);
+
+    // Update odometry
+    SwerveModulePosition[] measuredPositions = new SwerveModulePosition[4];
+    for (int i = 0; i < 4; i++) {
+      measuredPositions[i] = modules[i].getPosition();
+    }
+    for (int i = 0; i < aprilTagCameraIO.size(); i++) {
+      aprilTagCameraIO.get(i).updateInputs(aprilTagCameraInputs.get(i));
+    }
+
+    if (gyroInputs.connected) {
+      odometry.update(Rotation2d.fromDegrees(gyroInputs.yaw), measuredPositions);
+      simGyro = Units.degreesToRadians(gyroInputs.yaw);
+    } else {
+      simGyro += kinematics.toChassisSpeeds(measuredStates).omegaRadiansPerSecond * 0.02;
+      odometry.update(new Rotation2d(simGyro), measuredPositions);
+    }
+
+    for (VisionIOInputs aprilTagCameraInput : aprilTagCameraInputs) {
+      aprilTagCameraInput.estimatedPose.ifPresent(
+          estimatedRobotPose -> {
+            Logger.getInstance()
+                .recordOutput(
+                    "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
+                    estimatedRobotPose.estimatedPose.toPose2d());
+
+            Vector<N3> std =
+                switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
+                  case 0 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
+                  case 1 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
+                  default -> VecBuilder.fill(1.0, 1.0, 1.0);
+                };
+
+            odometry.addVisionMeasurement(
+                estimatedRobotPose.estimatedPose.toPose2d(),
+                estimatedRobotPose.timestampSeconds,
+                std);
+          });
+    }
+
+    Logger.getInstance().recordOutput("Odometry", getPose());
   }
 
   public void runVelocity(ChassisSpeeds speeds) {
