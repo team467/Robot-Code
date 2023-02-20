@@ -281,7 +281,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isStopped() {
-    return (armIOInputs.extendVelocity <= 0.1 && armIOInputs.rotateVelocity <= 0.1);
+    return mode == ArmMode.MANUAL && manualExtend == 0 && manualRotate == 0;
   }
 
   public boolean finished() {

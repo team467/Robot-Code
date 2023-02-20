@@ -25,6 +25,6 @@ public class ArmStopCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return false; // TODO: arm.isStopped();
+    return arm.isStopped();
   }
 }
