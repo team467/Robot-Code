@@ -55,6 +55,7 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Drive drive;
   private final IntakeRelease intakeRelease;
+  private Led2023 led2023;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -62,8 +63,6 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser =
       new LoggedDashboardChooser<>("Auto Choices");
-
-  private Led2023 led2023;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -141,6 +140,7 @@ public class RobotContainer {
                 List.of(new VisionIO() {}));
       }
     }
+
     intakeRelease =
         new IntakeRelease(
             new IntakeReleaseIOPhysical(
@@ -148,6 +148,18 @@ public class RobotContainer {
                 RobotConstants.get().intakeCubeLimitSwitchID(),
                 RobotConstants.get().intakeConeLimitSwitchID()));
     intakeRelease.setDefaultCommand(new StopCMD(intakeRelease));
+    led2023 = new Led2023();
+    configureButtonBindings();
+
+    LEDManager.getInstance().init(RobotConstants.get().ledChannel());
+    HoldCMD holdCMD = new HoldCMD(intakeRelease, led2023);
+    driverController.a().whileTrue(new IntakeCMD(intakeRelease, led2023, holdCMD));
+    // Commands.startEnd(new IntakeCMD(intakeRelease, led2023), new HoldCMD(intakeRelease, led2023),
+    // null);
+    driverController.b().whileTrue(new ReleaseCMD(intakeRelease, led2023, holdCMD));
+    driverController.x().toggleOnTrue(new WantConeCMD(intakeRelease, led2023, holdCMD));
+    driverController.y().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
+    led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     autoChooser.addOption(
@@ -172,13 +184,6 @@ public class RobotContainer {
                     drive::runCharacterizationVolts,
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
-    // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
-
-    led2023 = new Led2023();
-    // Configure the button bindings
-    configureButtonBindings();
-
-    LEDManager.getInstance().init(RobotConstants.get().ledChannel());
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -204,14 +209,6 @@ public class RobotContainer {
                             new Pose2d(
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
-    HoldCMD holdCMD = new HoldCMD(intakeRelease, led2023);
-    driverController.a().whileTrue(new IntakeCMD(intakeRelease, led2023, holdCMD));
-    // Commands.startEnd(new IntakeCMD(intakeRelease, led2023), new HoldCMD(intakeRelease, led2023),
-    // null);
-    driverController.b().whileTrue(new ReleaseCMD(intakeRelease, led2023));
-    driverController.x().toggleOnTrue(new WantConeCMD(intakeRelease, led2023, holdCMD));
-    driverController.y().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
-    led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
   }
 
   /**

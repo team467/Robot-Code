@@ -5,6 +5,7 @@ import frc.robot.subsystems.led.Led2023;
 
 public class LedRainbowCMD extends LedBaseCMD {
   private IntakeRelease intakerelease;
+  private Led2023 ledStrip;
 
   public LedRainbowCMD(Led2023 ledStrip, IntakeRelease intakerelease) {
     super(ledStrip);

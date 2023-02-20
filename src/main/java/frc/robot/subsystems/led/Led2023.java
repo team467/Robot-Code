@@ -79,8 +79,10 @@ public class Led2023 extends SubsystemBase {
   public void defaultLights() {
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       set(batteryCheckColor);
+      sendData();
     } else {
       setRainbowMovingDown();
+      sendData();
     }
 
     sendData();

@@ -144,12 +144,12 @@ public class BriefcaseConstants implements Constants {
   @Override
   public int intakeCubeLimitSwitchID() {
     // TODO: Update me
-    return 0;
+    return 1;
   }
 
   @Override
   public int intakeConeLimitSwitchID() {
     // TODO: Update me
-    return 0;
+    return 11;
   }
 }
