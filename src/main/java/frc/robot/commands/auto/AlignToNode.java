@@ -8,9 +8,9 @@ import frc.robot.FieldConstants.Grids;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
-public class DriveToNode extends QuickDriveToPose {
+public class AlignToNode extends QuickDriveToPose {
 
-  public DriveToNode(Drive drive, Supplier<Integer> row) {
+  public AlignToNode(Drive drive, Supplier<Integer> row) {
     super(
         drive,
         AllianceFlipUtil.apply(
