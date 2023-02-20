@@ -119,26 +119,29 @@ public class Arm extends SubsystemBase {
 
     switch (mode) {
       case MANUAL:
-        if (armIOInputs.extendPosition > RobotConstants.get().armExtendMax() && manualExtend > 0) {
+        if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
+            && manualExtend > 0) {
           armIO.setExtendVelocity(0);
-        } else if (armIOInputs.extendPosition < RobotConstants.get().armExtendMin()
+        } else if (armIOInputs.extendPosition < RobotConstants.get().armExtendMinMeters()
             && manualExtend < 0) {
-          armIO.setExtendVoltage(calculateExtendPid(RobotConstants.get().armExtendMin()));
+          armIO.setExtendVoltage(calculateExtendPid(RobotConstants.get().armExtendMinMeters()));
         } else {
           armIO.setExtendVelocity(manualExtend);
         }
-        if (hasExtend) {
-          if (armIOInputs.rotatePosition > RobotConstants.get().armRotateMax()
+        if (hasRotate) {
+          if (armIOInputs.rotatePosition > RobotConstants.get().armRotateMaxMeters()
               && manualRotate > 0) {
             armIO.setRotateVelocity(0);
-          } else if (armIOInputs.rotatePosition < RobotConstants.get().armRotateMin()
+          } else if (armIOInputs.rotatePosition < RobotConstants.get().armRotateMinMeters()
               && manualRotate < 0) {
-            armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMin()));
+            armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMinMeters()));
+          } else {
+            rotate(manualRotate);
           }
         }
-        rotate(manualRotate);
         logger.recordOutput("Arm/ManualRotate", manualRotate);
         break;
+
       case AUTO:
         if (finished()) {
           // Reached target.
@@ -243,13 +246,13 @@ public class Arm extends SubsystemBase {
     this.extendSetpoint =
         MathUtil.clamp(
             extendSetpoint,
-            RobotConstants.get().armExtendMin(),
-            RobotConstants.get().armExtendMax());
+            RobotConstants.get().armExtendMinMeters(),
+            RobotConstants.get().armExtendMaxMeters());
     this.rotateSetpoint =
         MathUtil.clamp(
             rotateSetpoint,
-            RobotConstants.get().armRotateMin(),
-            RobotConstants.get().armRotateMax());
+            RobotConstants.get().armRotateMinMeters(),
+            RobotConstants.get().armRotateMaxMeters());
   }
 
   public void characterizeExtend() {
@@ -312,6 +315,6 @@ public class Arm extends SubsystemBase {
   }
 
   private boolean isExtendSafe(double extendPosition) {
-    return isCalibrated && armIOInputs.rotatePosition > 0.1;
+    return isCalibrated && armIOInputs.rotatePosition > 0.2;
   }
 }

@@ -82,13 +82,13 @@ public interface Constants {
 
   double armExtendConversionFactor();
 
-  double armExtendMax();
+  double armExtendMaxMeters();
 
-  double armExtendMin();
+  double armExtendMinMeters();
 
-  double armRotateMax();
+  double armRotateMaxMeters();
 
-  double armRotateMin();
+  double armRotateMinMeters();
 
   int ratchetSolenoidId();
 

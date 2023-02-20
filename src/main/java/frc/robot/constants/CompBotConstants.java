@@ -157,23 +157,23 @@ public class CompBotConstants implements Constants {
   }
 
   @Override
-  public double armExtendMax() {
+  public double armExtendMaxMeters() {
     return 0.34;
   }
 
   @Override
-  public double armExtendMin() {
+  public double armExtendMinMeters() {
     return 0.02;
   }
 
   @Override
-  public double armRotateMax() {
-    return 10;
+  public double armRotateMaxMeters() {
+    return 0.28;
   }
 
   @Override
-  public double armRotateMin() {
-    return -10;
+  public double armRotateMinMeters() {
+    return 0;
   }
 
   @Override
