@@ -128,7 +128,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public int intakeMotorID() {
-    return 0; // TODO: Change Me
+    return 2; // TODO: Change Me
   }
 
   @Override
@@ -143,7 +143,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public int ledChannel() {
-    return 2; // TODO: Change Me
+    return 0; // TODO: Change Me
   }
 
   @Override

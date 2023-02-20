@@ -24,7 +24,7 @@ public class WantCubeCMD extends CommandBase {
   @Override
   public void execute() {
     intakerelease.setWants(Wants.CUBE);
-    ledStrip.set(COLORS_467.Blue);
+    ledStrip.set(COLORS_467.Purple);
     ledStrip.sendData();
   }
 

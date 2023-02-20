@@ -125,7 +125,6 @@ public class BriefcaseConstants implements Constants {
     return new FeedbackConstant(0.1);
   } // TODO: tune
 
-
   @Override
   public int ledChannel() {
     return 2;
@@ -135,8 +134,6 @@ public class BriefcaseConstants implements Constants {
   public int led2023LedCount() {
     return 10;
   }
-
-
 
   @Override
   public int intakeMotorID() {

@@ -27,12 +27,12 @@ public class IntakeCMD extends CommandBase {
     intakerelease.intake();
     if (intakerelease.getWants() == Wants.CUBE) {
       ledStrip.setColorMovingUp(
-          COLORS_467.White.getColor(), COLORS_467.Blue.getColor()); // Blue, black
+          COLORS_467.White.getColor(), COLORS_467.Purple.getColor()); // Purple, black
     } else if (intakerelease.getWants() == Wants.CONE) {
       ledStrip.setColorMovingUp(
-          COLORS_467.White.getColor(), COLORS_467.Green.getColor()); // Green, black
+          COLORS_467.White.getColor(), COLORS_467.Gold.getColor()); // Gold, black
     } else {
-      ledStrip.setTop(COLORS_467.Blue);
+      ledStrip.setTop(COLORS_467.Purple);
       ledStrip.setTop(COLORS_467.Gold);
     }
   }

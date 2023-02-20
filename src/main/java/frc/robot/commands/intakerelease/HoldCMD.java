@@ -24,10 +24,10 @@ public class HoldCMD extends CommandBase {
   public void execute() {
     intakerelease.hold();
     if (intakerelease.haveCube()) {
-      ledStrip.setTop(COLORS_467.Blue);
+      ledStrip.setTop(COLORS_467.Purple);
       ledStrip.setBottom(COLORS_467.White);
     } else {
-      ledStrip.setTop(COLORS_467.Green);
+      ledStrip.setTop(COLORS_467.Gold);
       ledStrip.setBottom(COLORS_467.White);
     }
   }
