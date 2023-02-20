@@ -31,7 +31,7 @@ public class ReleaseCMD extends CommandBase {
       ledStrip.setColorMovingUp(
           COLORS_467.Black.getColor(), COLORS_467.Gold.getColor()); // Gold, black
     } else {
-      ledStrip.setTop(COLORS_467.Purple);
+      ledStrip.setBottom(COLORS_467.Purple);
       ledStrip.setTop(COLORS_467.Gold);
     }
   }

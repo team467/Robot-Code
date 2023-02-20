@@ -33,7 +33,7 @@ public class IntakeCMD extends CommandBase {
           COLORS_467.White.getColor(), COLORS_467.Gold.getColor()); // Gold, black
     } else {
       ledStrip.setTop(COLORS_467.Purple);
-      ledStrip.setTop(COLORS_467.Gold);
+      ledStrip.setBottom(COLORS_467.Gold);
     }
   }
 

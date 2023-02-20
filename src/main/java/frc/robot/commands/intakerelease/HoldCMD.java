@@ -2,6 +2,7 @@ package frc.robot.commands.intakerelease;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.Led2023.COLORS_467;
 
@@ -23,7 +24,7 @@ public class HoldCMD extends CommandBase {
   @Override
   public void execute() {
     intakerelease.hold();
-    if (intakerelease.haveCube()) {
+    if (intakerelease.getWants() == Wants.CUBE) {
       ledStrip.setTop(COLORS_467.Purple);
       ledStrip.setBottom(COLORS_467.White);
     } else {
