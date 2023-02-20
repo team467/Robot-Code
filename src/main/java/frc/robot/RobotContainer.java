@@ -87,6 +87,13 @@ public class RobotContainer {
                     List.of(
                         new VisionIOAprilTag("front", front, FieldConstants.aprilTagFieldLayout),
                         new VisionIOAprilTag("right", right, FieldConstants.aprilTagFieldLayout)));
+            arm =
+                new Arm(
+                    new ArmIOPhysical(
+                        RobotConstants.get().armExtendMotorId(),
+                        RobotConstants.get().armRotateMotorId(),
+                        RobotConstants.get().armExtendLimitSwitchId(),
+                        RobotConstants.get().ratchetSolenoidId()));
           }
           case ROBOT_BRIEFCASE -> {
             drive =
@@ -137,14 +144,6 @@ public class RobotContainer {
                 List.of(new VisionIO() {}));
       }
     }
-
-    arm =
-        new Arm(
-            new ArmIOPhysical(
-                RobotConstants.get().armExtendMotorId(),
-                RobotConstants.get().armRotateMotorId(),
-                RobotConstants.get().armExtendLimitSwitchId(),
-                RobotConstants.get().ratchetSolenoidId()));
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
@@ -201,15 +200,17 @@ public class RobotContainer {
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
 
-    operatorController.start().onTrue(new ArmStopCMD(arm));
-    operatorController.leftBumper().whileTrue(new ArmManualExtendCMD(arm));
-    operatorController.rightBumper().whileTrue(new ArmManualRetractCMD(arm));
-    operatorController.leftTrigger().whileTrue(new ArmManualDownCMD(arm));
-    operatorController.rightTrigger().whileTrue(new ArmManualUpCMD(arm));
-    operatorController.a().onTrue(new ArmScoreCMD(arm, 0.0, 0)); // Retract full
-    operatorController.b().onTrue(new ArmScoreCMD(arm, 0.1, 0.05)); // Retract Mid
-    operatorController.y().onTrue(new ArmScoreCMD(arm, 0.2, 0.1));
-    operatorController.x().onTrue(new ArmScoreCMD(arm, 0.3, 0.2));
+    if (RobotConstants.get().mode() == Mode.REAL) {
+      operatorController.start().onTrue(new ArmStopCMD(arm));
+      operatorController.leftBumper().whileTrue(new ArmManualExtendCMD(arm));
+      operatorController.rightBumper().whileTrue(new ArmManualRetractCMD(arm));
+      operatorController.leftTrigger().whileTrue(new ArmManualDownCMD(arm));
+      operatorController.rightTrigger().whileTrue(new ArmManualUpCMD(arm));
+      operatorController.a().onTrue(new ArmScoreCMD(arm, 0.0, 0)); // Retract full
+      operatorController.b().onTrue(new ArmScoreCMD(arm, 0.1, 0.05)); // Retract Mid
+      operatorController.y().onTrue(new ArmScoreCMD(arm, 0.2, 0.1));
+      operatorController.x().onTrue(new ArmScoreCMD(arm, 0.3, 0.2));
+    }
   }
 
   /**
