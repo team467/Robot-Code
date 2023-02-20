@@ -92,8 +92,6 @@ public interface Constants {
 
   int ratchetSolenoidId();
 
-  int armExtendLimitSwitchId();
-
   int armRotateHighLimitSwitchId();
 
   int armRotateLowLimitSwitchId();

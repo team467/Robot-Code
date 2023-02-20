@@ -92,7 +92,6 @@ public class RobotContainer {
                     new ArmIOPhysical(
                         RobotConstants.get().armExtendMotorId(),
                         RobotConstants.get().armRotateMotorId(),
-                        RobotConstants.get().armExtendLimitSwitchId(),
                         RobotConstants.get().ratchetSolenoidId()));
           }
           case ROBOT_BRIEFCASE -> {
