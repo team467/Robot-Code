@@ -5,7 +5,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
-import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Value;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -16,13 +17,13 @@ public class ArmIOPhysical implements ArmIO {
   private final SparkMaxLimitSwitch extendLimitSwitch;
   private final SparkMaxLimitSwitch rotateHighLimitSwitch;
   private final SparkMaxLimitSwitch rotateLowLimitSwitch;
-  private final DigitalOutput ratchetSolenoid;
+  private final Relay ratchetSolenoid;
 
   private CANSparkMax rotateMotor;
   private RelativeEncoder rotateEncoder;
 
   public ArmIOPhysical(int extendMotorId, int rotateMotorId, int ratchetSolenoidId) {
-    ratchetSolenoid = new DigitalOutput(ratchetSolenoidId);
+    ratchetSolenoid = new Relay(ratchetSolenoidId);
 
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
@@ -65,7 +66,7 @@ public class ArmIOPhysical implements ArmIO {
 
   @Override
   public void setExtendVelocity(double velocity) {
-    ratchetSolenoid.set(velocity == 0);
+    setRatchetLocked(velocity == 0);
     extendMotor.set(velocity);
   }
 
@@ -76,7 +77,7 @@ public class ArmIOPhysical implements ArmIO {
 
   @Override
   public void setExtendVoltage(double volts) {
-    ratchetSolenoid.set(volts == 0);
+    setRatchetLocked(volts == 0);
     extendMotor.setVoltage(volts);
   }
 
@@ -97,6 +98,6 @@ public class ArmIOPhysical implements ArmIO {
 
   @Override
   public void setRatchetLocked(boolean locked) {
-    ratchetSolenoid.set(locked);
+    ratchetSolenoid.set(locked ? Value.kOff : Value.kOn);
   }
 }
