@@ -19,7 +19,6 @@ public class Arm extends SubsystemBase {
     EXTEND_CHARACTERIZATION,
     ROTATE_CHARACTERIZATION,
     MANUAL,
-    DISABLED,
     HOLD,
     CALIBRATE,
   }
@@ -132,7 +131,7 @@ public class Arm extends SubsystemBase {
     switch (mode) {
       case MANUAL:
         armIO.setExtendVelocity(manualExtendVelocity);
-        rotate(manualRotateVolts);
+        setRotateVoltage(manualRotateVolts);
         // TODO: Add back contraints for manual movement.
         // if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
         //     && manualExtendVelocity > 0) {
@@ -158,7 +157,7 @@ public class Arm extends SubsystemBase {
         break;
 
       case AUTO:
-        if (finished()) {
+        if (isFinished()) {
           // Reached target.
           hold();
         }
@@ -178,9 +177,9 @@ public class Arm extends SubsystemBase {
 
           case ROTATE:
             double rotateFbOutput = calculateRotatePid(rotateSetpoint);
-            rotate(rotateFbOutput);
+            setRotateVoltage(rotateFbOutput);
             logger.recordOutput("Arm/RotateFbOutput", rotateFbOutput);
-            if (rotateFinished()) {
+            if (isRotateFinished()) {
               autoMode = AutoMode.EXTEND;
               armIO.setExtendVoltage(0);
             }
@@ -202,10 +201,7 @@ public class Arm extends SubsystemBase {
         break;
 
       case ROTATE_CHARACTERIZATION:
-        rotate(characterizationVoltage);
-        break;
-
-      case DISABLED:
+        setRotateVoltage(characterizationVoltage);
         break;
 
       case HOLD:
@@ -227,7 +223,7 @@ public class Arm extends SubsystemBase {
         }
         if (hasExtend) {
           if (armIOInputs.extendLimitSwitch) {
-            armIO.resetEncoderPosition();
+            armIO.resetExtendEncoderPosition();
             calibrateMode = CalibrateMode.PHASE_TWO;
           } else {
             armIO.setExtendVoltage(-1);
@@ -252,7 +248,7 @@ public class Arm extends SubsystemBase {
         if (hasRotate) {
           armIO.setExtendVoltage(calculateExtendPid(EXTEND_CALIBRATION_POSITION));
           if (armIOInputs.rotateLowLimitSwitch) {
-            armIO.resetRotateEncoder();
+            armIO.resetRotateEncoderPosition();
             armIO.setRotateVoltage(0);
             calibrateMode = CalibrateMode.PHASE_FOUR;
           } else {
@@ -267,7 +263,7 @@ public class Arm extends SubsystemBase {
         // Drive Extend Motor until hit limit switch
         if (hasExtend) {
           if (armIOInputs.extendLimitSwitch) {
-            armIO.resetEncoderPosition();
+            armIO.resetExtendEncoderPosition();
             hold();
             isCalibrated = true;
           } else {
@@ -330,23 +326,19 @@ public class Arm extends SubsystemBase {
     return mode == ArmMode.MANUAL && manualExtendVelocity == 0 && manualRotateVolts == 0;
   }
 
-  public boolean finished() {
+  public boolean isFinished() {
     return ((!hasExtend
             || Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS)
-        && rotateFinished());
+        && isRotateFinished());
   }
 
-  public boolean rotateFinished() {
+  public boolean isRotateFinished() {
     return !hasRotate
         || Math.abs(armIOInputs.rotatePosition - rotateSetpoint) <= ROTATE_TOLERANCE_DEGREES;
   }
 
-  private void rotate(double volts) {
+  private void setRotateVoltage(double volts) {
     armIO.setRotateVoltage(volts);
-  }
-
-  public void resetEncoderPosition() {
-    armIO.resetEncoderPosition();
   }
 
   private double calculateExtendPid(double targetPosition) {

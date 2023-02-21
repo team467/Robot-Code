@@ -26,6 +26,6 @@ public class ArmPositionCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return arm.finished();
+    return arm.isFinished();
   }
 }

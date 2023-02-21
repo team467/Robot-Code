@@ -71,14 +71,15 @@ public class ArmIOPhysical implements ArmIO {
   }
 
   @Override
-  public void setRotateVelocity(double velocity) {
-    Logger.getInstance().recordOutput("Rotate Velocity", velocity);
-  }
-
-  @Override
   public void setExtendVoltage(double volts) {
     setRatchetLocked(volts == 0);
     extendMotor.setVoltage(volts);
+  }
+
+  @Override
+  public void setRotateVelocity(double velocity) {
+    Logger.getInstance().recordOutput("Rotate Velocity", velocity);
+    rotateMotor.set(velocity);
   }
 
   @Override
@@ -87,12 +88,12 @@ public class ArmIOPhysical implements ArmIO {
   }
 
   @Override
-  public void resetEncoderPosition() {
+  public void resetExtendEncoderPosition() {
     extendEncoder.setPosition(0);
   }
 
   @Override
-  public void resetRotateEncoder() {
+  public void resetRotateEncoderPosition() {
     rotateEncoder.setPosition(0);
   }
 

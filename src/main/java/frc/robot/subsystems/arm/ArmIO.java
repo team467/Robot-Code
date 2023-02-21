@@ -33,9 +33,9 @@ public interface ArmIO {
 
   default void setRotateVelocity(double speed) {}
 
-  default void resetEncoderPosition() {}
+  default void resetExtendEncoderPosition() {}
 
-  default void resetRotateEncoder() {}
+  default void resetRotateEncoderPosition() {}
 
   default void setRatchetLocked(boolean locked) {}
 }
