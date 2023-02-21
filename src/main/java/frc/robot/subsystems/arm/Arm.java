@@ -54,7 +54,7 @@ public class Arm extends SubsystemBase {
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.05;
 
-  private double manualExtendVelocity = 0.0;
+  private double manualExtendVolts = 0.0;
   private double manualRotateVolts = 0.0;
   private PIDController extendPidController = new PIDController(20, 0, 0);
   private PIDController rotatePidController = new PIDController(7, 0, 0);
@@ -80,13 +80,13 @@ public class Arm extends SubsystemBase {
     mode = ArmMode.MANUAL;
     armIO.setExtendVoltage(0.0);
     armIO.setRotateVoltage(0.0);
-    manualExtendVelocity = 0;
+    manualExtendVolts = 0;
     manualRotateVolts = 0;
   }
 
-  public void manualExtend(double velocity) {
+  public void manualExtend(double volts) {
     mode = ArmMode.MANUAL;
-    manualExtendVelocity = velocity;
+    manualExtendVolts = volts;
   }
 
   public void manualRotate(double volts) {
@@ -107,7 +107,7 @@ public class Arm extends SubsystemBase {
     armIO.setExtendVoltage(0.0);
     armIO.setRotateVoltage(0.0);
     manualRotateVolts = 0;
-    manualExtendVelocity = 0;
+    manualExtendVolts = 0;
   }
 
   public boolean isHolding() {
@@ -130,7 +130,7 @@ public class Arm extends SubsystemBase {
 
     switch (mode) {
       case MANUAL:
-        armIO.setExtendVelocity(manualExtendVelocity);
+        armIO.setExtendVoltage(manualExtendVolts);
         setRotateVoltage(manualRotateVolts);
         // TODO: Add back contraints for manual movement.
         // if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
@@ -323,7 +323,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isStopped() {
-    return mode == ArmMode.MANUAL && manualExtendVelocity == 0 && manualRotateVolts == 0;
+    return mode == ArmMode.MANUAL && manualExtendVolts == 0 && manualRotateVolts == 0;
   }
 
   public boolean isFinished() {
