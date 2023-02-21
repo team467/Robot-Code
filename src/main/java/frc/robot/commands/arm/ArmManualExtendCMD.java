@@ -17,7 +17,7 @@ public class ArmManualExtendCMD extends CommandBase {
 
   @Override
   public void execute() {
-    arm.manualExtend(0.1);
+    arm.manualExtend(0.2);
   }
 
   @Override
