@@ -23,13 +23,27 @@ public class HoldCMD extends CommandBase {
 
   @Override
   public void execute() {
-    intakerelease.hold();
-    if (intakerelease.getWants() == Wants.CUBE) {
+    if (intakerelease.getWants() == Wants.CUBE && intakerelease.haveCube()) {
       ledStrip.setTop(COLORS_467.Purple);
       ledStrip.setBottom(COLORS_467.White);
-    } else {
+      intakerelease.holdCube();
+    } else if (intakerelease.getWants() == Wants.CONE && intakerelease.haveCone()) {
       ledStrip.setTop(COLORS_467.Gold);
       ledStrip.setBottom(COLORS_467.White);
+      intakerelease.holdCone();
+    } else {
+      if (intakerelease.getWants() == Wants.CUBE) {
+        ledStrip.setTop(COLORS_467.Purple);
+        ledStrip.setBottom(COLORS_467.White);
+        intakerelease.holdCube();
+      } else if (intakerelease.getWants() == Wants.CONE) {
+          ledStrip.setTop(COLORS_467.Gold);
+          ledStrip.setBottom(COLORS_467.White);
+          intakerelease.holdCone();
+      }
+      ledStrip.setBottom(COLORS_467.Gold);
+      ledStrip.setTop(COLORS_467.Purple);
+      intakerelease.stop();
     }
   }
 

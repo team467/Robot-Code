@@ -32,8 +32,7 @@ public class IntakeCMD extends CommandBase {
       ledStrip.setColorMovingUp(
           COLORS_467.White.getColor(), COLORS_467.Gold.getColor()); // Gold, black
     } else {
-      ledStrip.setTop(COLORS_467.Purple);
-      ledStrip.setBottom(COLORS_467.Gold);
+      ledStrip.setColorMovingUpTwoClr(COLORS_467.Purple.getColor(), COLORS_467.Gold.getColor());
     }
   }
 
@@ -47,7 +46,6 @@ public class IntakeCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    // return intakerelease.haveCube() || intakerelease.haveCone();
-    return false;
+    return (intakerelease.getWants() == Wants.CUBE&&intakerelease.haveCube()) || intakerelease.haveCone();
   }
 }

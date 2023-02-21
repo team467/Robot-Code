@@ -12,8 +12,9 @@ public class IntakeRelease extends SubsystemBase {
     DISABLED,
     INTAKE,
     RELEASE,
-    HOLD,
-    STOP
+    HOLD_CUBE,
+    HOLD_CONE,
+    STOP;
   }
 
   private State state;
@@ -59,8 +60,12 @@ public class IntakeRelease extends SubsystemBase {
       case RELEASE:
         intakeReleaseIO.setVelocity(-0.3);
         break;
-      case HOLD:
+      case HOLD_CUBE:
         intakeReleaseIO.setVelocity(-0.01);
+        break;
+      case HOLD_CONE:
+        intakeReleaseIO.setVelocity(-0.01);
+        break;
       case STOP:
       default:
         intakeReleaseIO.setVelocity(0);
@@ -80,10 +85,13 @@ public class IntakeRelease extends SubsystemBase {
     state = State.STOP;
   }
 
-  public void hold() {
-    state = State.HOLD;
+  public void holdCone() {
+    state = State.HOLD_CONE;
   }
 
+  public void holdCube() {
+    state = State.HOLD_CUBE;
+  }
   public boolean haveCube() {
     return inputs.cubeLimitSwitch;
   }
