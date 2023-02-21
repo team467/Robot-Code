@@ -19,8 +19,8 @@ public class ArmIOPhysical implements ArmIO {
   private final SparkMaxLimitSwitch rotateLowLimitSwitch;
   private final Relay ratchetSolenoid;
 
-  private CANSparkMax rotateMotor;
-  private RelativeEncoder rotateEncoder;
+  private final CANSparkMax rotateMotor;
+  private final RelativeEncoder rotateEncoder;
 
   public ArmIOPhysical(int extendMotorId, int rotateMotorId, int ratchetSolenoidId) {
     ratchetSolenoid = new Relay(ratchetSolenoidId);
@@ -41,7 +41,7 @@ public class ArmIOPhysical implements ArmIO {
 
     // Invert motors
     extendMotor.setInverted(false);
-    rotateMotor.setInverted(false); // TODO: check if inverted
+    rotateMotor.setInverted(false);
 
     extendMotor.enableVoltageCompensation(12);
     rotateMotor.enableVoltageCompensation(12);
