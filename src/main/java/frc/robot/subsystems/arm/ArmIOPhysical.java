@@ -22,6 +22,8 @@ public class ArmIOPhysical implements ArmIO {
   private final CANSparkMax rotateMotor;
   private final RelativeEncoder rotateEncoder;
 
+  private boolean ratchetLocked = false;
+
   public ArmIOPhysical(int extendMotorId, int rotateMotorId, int ratchetSolenoidId) {
     ratchetSolenoid = new Relay(ratchetSolenoidId);
 
@@ -62,6 +64,7 @@ public class ArmIOPhysical implements ArmIO {
     inputs.rotateLowLimitSwitch = rotateLowLimitSwitch.isPressed();
     inputs.rotatePosition = rotateEncoder.getPosition();
     inputs.rotateVelocity = rotateEncoder.getVelocity();
+    inputs.ratchetLocked = ratchetLocked;
   }
 
   @Override
@@ -100,5 +103,6 @@ public class ArmIOPhysical implements ArmIO {
   @Override
   public void setRatchetLocked(boolean locked) {
     ratchetSolenoid.set(locked ? Value.kOff : Value.kOn);
+    ratchetLocked = locked;
   }
 }

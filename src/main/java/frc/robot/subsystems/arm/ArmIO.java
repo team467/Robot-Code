@@ -21,6 +21,8 @@ public interface ArmIO {
     public boolean extendLimitSwitch = false;
     public boolean rotateHighLimitSwitch = false;
     public boolean rotateLowLimitSwitch = false;
+
+    public boolean ratchetLocked = false;
   }
 
   default void updateInputs(ArmIOInputs inputs) {}
