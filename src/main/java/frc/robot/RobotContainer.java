@@ -24,6 +24,7 @@ import frc.lib.io.gyro3d.IMUPigeon2;
 import frc.lib.io.vision.VisionIO;
 import frc.lib.io.vision.VisionIOAprilTag;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.robot.commands.arm.ArmCalibrateCMD;
 import frc.robot.commands.arm.ArmHomeCMD;
 import frc.robot.commands.arm.ArmManualDownCMD;
 import frc.robot.commands.arm.ArmManualExtendCMD;
@@ -219,6 +220,7 @@ public class RobotContainer {
         operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm));
         operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm));
         operatorController.back().onTrue(new ArmRetractCMD(arm));
+        operatorController.rightTrigger().onTrue(new ArmCalibrateCMD(arm));
       }
       case REPLAY -> {}
       case SIM -> {}

@@ -95,6 +95,10 @@ public class Arm extends SubsystemBase {
     manualRotateVolts = volts;
   }
 
+  public void calibrate() {
+    mode = ArmMode.CALIBRATE;
+  }
+
   public void hold() {
     hold(armIOInputs.extendPosition);
   }
@@ -111,15 +115,6 @@ public class Arm extends SubsystemBase {
     return mode == ArmMode.HOLD;
   }
 
-  /* (non-Javadoc)
-   * @see edu.wpi.first.wpilibj2.command.Subsystem#periodic()
-   */
-  /* (non-Javadoc)
-   * @see edu.wpi.first.wpilibj2.command.Subsystem#periodic()
-   */
-  /* (non-Javadoc)
-   * @see edu.wpi.first.wpilibj2.command.Subsystem#periodic()
-   */
   @Override
   public void periodic() {
     if (DriverStation.isDisabled()) {
@@ -138,6 +133,7 @@ public class Arm extends SubsystemBase {
       case MANUAL:
         armIO.setExtendVelocity(manualExtendVelocity);
         rotate(manualRotateVolts);
+        // TODO: Add back contraints for manual movement.
         // if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
         //     && manualExtendVelocity > 0) {
         //   armIO.setExtendVelocity(0);
@@ -155,6 +151,7 @@ public class Arm extends SubsystemBase {
         //
         // armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMinMeters()));
         // } else {
+        //  armIO.setExtendVelocity(manualExtendVelocity);
         // }
         // }
         logger.recordOutput("Arm/ManualRotate", manualRotateVolts);
@@ -216,12 +213,12 @@ public class Arm extends SubsystemBase {
         break;
 
       case CALIBRATE:
-        calibrate();
+        calibratePeriodic();
         break;
     }
   }
 
-  private void calibrate() {
+  private void calibratePeriodic() {
     switch (calibrateMode) {
       case PHASE_ONE:
         // Drive Extend Motor until hit limit switch
