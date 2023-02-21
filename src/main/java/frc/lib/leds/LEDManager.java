@@ -71,11 +71,11 @@ public class LEDManager {
    * @param length TODO: explain what this means
    * @return A double LED strip that can be controlled.
    */
-  public DoubleLEDStrip createDoubleStrip(int length) {
+  public DoubleLEDStrip createDoubleStrip(int length, boolean secondInverted) {
     offsets.add(this.length);
     this.length += length * 2;
 
-    return new DoubleLEDStrip(length, offsets.size() - 1);
+    return new DoubleLEDStrip(length, offsets.size() - 1, secondInverted);
   }
 
   /** Initializes the LED manager */

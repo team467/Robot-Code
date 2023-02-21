@@ -25,10 +25,10 @@ public class ReleaseCMD extends CommandBase {
   public void execute() {
     intakerelease.release();
     if (intakerelease.haveCube()) {
-      ledStrip.setColorMovingUp(
+      ledStrip.setColorMovingDown(
           COLORS_467.Black.getColor(), COLORS_467.Purple.getColor()); // Purple,black
     } else if (intakerelease.haveCone()) {
-      ledStrip.setColorMovingUp(
+      ledStrip.setColorMovingDown(
           COLORS_467.Black.getColor(), COLORS_467.Gold.getColor()); // Gold, black
     } else {
       ledStrip.setBottom(COLORS_467.Purple);
