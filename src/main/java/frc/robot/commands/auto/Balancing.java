@@ -4,12 +4,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drive.Drive;
+import org.littletonrobotics.junction.Logger;
 
 public class Balancing extends CommandBase {
   private Drive drive;
   private Timer timer = new Timer();
-  private double prevZ = 0.0;
-  private double deltaZ = 0.0;
 
   public Balancing(Drive drive) {
     this.drive = drive;
@@ -18,7 +17,6 @@ public class Balancing extends CommandBase {
 
   @Override
   public void initialize() {
-    prevZ = drive.getGravVec()[2];
     timer.reset();
     timer.start();
   }
@@ -26,13 +24,11 @@ public class Balancing extends CommandBase {
   @Override
   public void execute() {
     double[] gravVec = drive.getGravVec();
-    deltaZ = gravVec[2] - prevZ;
-    prevZ = gravVec[2];
-    double nextZ = gravVec[2] + deltaZ;
-    //    if (Math.abs(gravVec[2]) < 0.8) {
-    if (Math.abs(nextZ) < 0.8) {
+    //    if (Math.abs(nextZ) < 0.98) {
+    Logger.getInstance().recordOutput("BalancingMag", Math.hypot(gravVec[0], gravVec[1]));
+    if (Math.abs(Math.hypot(gravVec[0], gravVec[1])) > 0.2) {
       timer.reset();
-      drive.runVelocity(new ChassisSpeeds(1.6 * gravVec[0], 1.6 * gravVec[1], 0.0));
+      drive.runVelocity(new ChassisSpeeds(1.4 * gravVec[0], 1.4 * gravVec[1], 0.0));
     } else {
       drive.runVelocity(new ChassisSpeeds());
     }
@@ -45,6 +41,8 @@ public class Balancing extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return timer.hasElapsed(1.0) && Math.abs(drive.getGravVec()[2]) > 0.8;
+    //    return timer.hasElapsed(1.0)
+    //        && Math.abs(drive.getGravVec()[0]) + Math.abs(drive.getGravVec()[1]) < 0.2;
+    return false;
   }
 }
