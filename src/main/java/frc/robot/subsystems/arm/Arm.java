@@ -157,9 +157,32 @@ public class Arm extends SubsystemBase {
         break;
 
       case AUTO:
+        autoPeriodic();
+        break;
+
+      case EXTEND_CHARACTERIZATION:
+        armIO.setExtendVoltage(characterizationVoltage);
+        break;
+
+      case ROTATE_CHARACTERIZATION:
+        setRotateVoltage(characterizationVoltage);
+        break;
+
+      case HOLD:
+        armIO.setExtendVoltage(0);
+        break;
+
+      case CALIBRATE:
+        calibratePeriodic();
+        break;
+    }
+  }
+
+  private void autoPeriodic() {
         if (isFinished()) {
           // Reached target.
           hold();
+          return;
         }
         switch (autoMode) {
           case RETRACT:
@@ -194,24 +217,6 @@ public class Arm extends SubsystemBase {
 
         logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
         logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
-        break;
-
-      case EXTEND_CHARACTERIZATION:
-        armIO.setExtendVoltage(characterizationVoltage);
-        break;
-
-      case ROTATE_CHARACTERIZATION:
-        setRotateVoltage(characterizationVoltage);
-        break;
-
-      case HOLD:
-        armIO.setExtendVoltage(0);
-        break;
-
-      case CALIBRATE:
-        calibratePeriodic();
-        break;
-    }
   }
 
   private void calibratePeriodic() {
