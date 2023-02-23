@@ -46,6 +46,7 @@ public class IntakeCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return (intakerelease.getWants() == Wants.CUBE&&intakerelease.haveCube()) || intakerelease.haveCone();
+    return (intakerelease.getWants() == Wants.CUBE && intakerelease.haveCube())
+        || intakerelease.haveCone();
   }
 }

@@ -35,15 +35,16 @@ public class HoldCMD extends CommandBase {
       if (intakerelease.getWants() == Wants.CUBE) {
         ledStrip.setTop(COLORS_467.Purple);
         ledStrip.setBottom(COLORS_467.White);
-        intakerelease.holdCube();
+        intakerelease.gripCube();
       } else if (intakerelease.getWants() == Wants.CONE) {
-          ledStrip.setTop(COLORS_467.Gold);
-          ledStrip.setBottom(COLORS_467.White);
-          intakerelease.holdCone();
+        ledStrip.setTop(COLORS_467.Gold);
+        ledStrip.setBottom(COLORS_467.White);
+        intakerelease.gripCone();
+      } else {
+        ledStrip.setBottom(COLORS_467.Gold);
+        ledStrip.setTop(COLORS_467.Purple);
+        intakerelease.stop();
       }
-      ledStrip.setBottom(COLORS_467.Gold);
-      ledStrip.setTop(COLORS_467.Purple);
-      intakerelease.stop();
     }
   }
 
