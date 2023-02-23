@@ -1,10 +1,9 @@
 package frc.robot.subsystems.intakerelease;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
