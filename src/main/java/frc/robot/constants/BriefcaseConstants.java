@@ -121,7 +121,7 @@ public class BriefcaseConstants implements Constants {
 
   @Override
   public int ledChannel() {
-    return 2;
+    return 0;
   }
 
   @Override
@@ -132,7 +132,7 @@ public class BriefcaseConstants implements Constants {
   @Override
   public int intakeMotorID() {
     // TODO Update me
-    return 0;
+    return 11;
   }
 
   @Override

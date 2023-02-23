@@ -14,9 +14,7 @@ public class IntakeRelease extends SubsystemBase {
     RELEASE,
     HOLD_CUBE,
     HOLD_CONE,
-    STOP,
-    GRIP_CONE,
-    GRIP_CUBE;
+    STOP
   }
 
   private State state;
@@ -60,19 +58,13 @@ public class IntakeRelease extends SubsystemBase {
         break;
 
       case RELEASE:
-        intakeReleaseIO.setVelocity(0.3);
+        intakeReleaseIO.setVelocity(0.2);
         break;
       case HOLD_CUBE:
         intakeReleaseIO.setVelocity(-0.03);
         break;
       case HOLD_CONE:
         intakeReleaseIO.setVelocity(-0.1);
-        break;
-      case GRIP_CUBE:
-        intakeReleaseIO.setVelocity(-0.1);
-        break;
-      case GRIP_CONE:
-        intakeReleaseIO.setVelocity(-0.2);
         break;
       case STOP:
       default:
@@ -99,14 +91,6 @@ public class IntakeRelease extends SubsystemBase {
 
   public void holdCube() {
     state = State.HOLD_CUBE;
-  }
-
-  public void gripCube() {
-    state = State.GRIP_CUBE;
-  }
-
-  public void gripCone() {
-    state = State.GRIP_CONE;
   }
 
   public boolean haveCube() {

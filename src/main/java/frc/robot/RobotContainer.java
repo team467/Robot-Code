@@ -41,7 +41,6 @@ import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.commands.intakerelease.HoldCMD;
 import frc.robot.commands.intakerelease.IntakeCMD;
 import frc.robot.commands.intakerelease.ReleaseCMD;
-import frc.robot.commands.intakerelease.StopCMD;
 import frc.robot.commands.intakerelease.WantConeCMD;
 import frc.robot.commands.intakerelease.WantCubeCMD;
 import frc.robot.commands.leds.LedRainbowCMD;
@@ -172,18 +171,17 @@ public class RobotContainer {
             new IntakeReleaseIOPhysical(
                 RobotConstants.get().intakeMotorID(),
                 RobotConstants.get().intakeCubeLimitSwitchID()));
-    intakeRelease.setDefaultCommand(new StopCMD(intakeRelease));
     led2023 = new Led2023();
     configureButtonBindings();
 
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
     HoldCMD holdCMD = new HoldCMD(intakeRelease, led2023);
-    driverController.a().whileTrue(new IntakeCMD(intakeRelease, led2023, holdCMD));
-    // Commands.startEnd(new IntakeCMD(intakeRelease, led2023), new HoldCMD(intakeRelease, led2023),
-    // null);
-    driverController.b().whileTrue(new ReleaseCMD(intakeRelease, led2023, holdCMD));
-    driverController.x().toggleOnTrue(new WantConeCMD(intakeRelease, led2023, holdCMD));
+    driverController.b().whileTrue(new IntakeCMD(intakeRelease, led2023));
+    driverController.leftTrigger().whileTrue(new ReleaseCMD(intakeRelease, led2023));
+    driverController.x().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
     driverController.y().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
+    driverController.a().onTrue(holdCMD);
+    intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
     led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
