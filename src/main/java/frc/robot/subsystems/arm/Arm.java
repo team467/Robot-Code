@@ -134,7 +134,7 @@ public class Arm extends SubsystemBase {
 
     switch (mode) {
       case MANUAL:
-        setExtendVoltageWithOffset(manualExtendVolts);
+        setExtendVoltage(manualExtendVolts);
         setRotateVoltage(manualRotateVolts);
         // TODO: Add back contraints for manual movement.
         // if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
