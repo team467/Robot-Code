@@ -32,7 +32,7 @@ public class SimBotConstants implements Constants {
       new Translation2d(0.65 / 2, 0.65 / 2),
       new Translation2d(0.65 / 2, -0.65 / 2),
       new Translation2d(-0.65 / 2, 0.65 / 2),
-      new Translation2d(-0.65 / 2, -0.65 / 2)
+      new Translation2d(-0.65 / 2, -0.65 / 2),
     };
   }
 
@@ -43,11 +43,11 @@ public class SimBotConstants implements Constants {
 
   @Override
   public double maxAngularSpeed() {
-    return maxLinearSpeed()
+    return (maxLinearSpeed()
         / Arrays.stream(moduleTranslations())
             .map(Translation2d::getNorm)
             .max(Double::compare)
-            .get();
+            .get());
   }
 
   @Override
@@ -118,5 +118,66 @@ public class SimBotConstants implements Constants {
   @Override
   public FeedbackConstant chassisTurnFB() {
     return new FeedbackConstant(1.0, 0);
+  }
+
+  @Override
+  public int armExtendMotorId() {
+    return 0;
+  }
+
+  @Override
+  public int armRotateMotorId() {
+    return 0;
+  }
+
+  @Override
+  public double armExtendConversionFactor() {
+    return 1;
+  }
+
+  @Override
+  public int armRotateHighLimitSwitchId() {
+    return 4; // DIO #4
+  }
+
+  @Override
+  public int armRotateLowLimitSwitchId() {
+    return 5; // DIO #5
+  }
+
+  @Override
+  public int ratchetSolenoidId() {
+    return 1;
+  }
+
+  @Override
+  public double armExtendMaxMeters() {
+    return 0.34;
+  }
+
+  @Override
+  public double armExtendMinMeters() {
+    return 0.02;
+  }
+
+  @Override
+  public double armRotateMaxMeters() {
+    return 180;
+  }
+
+  @Override
+  public double armRotateMinMeters() {
+    return 0;
+  }
+
+  @Override
+  public double armRotateConversionFactor() {
+    return 1;
+  }
+
+  @Override
+  public double armExtendMinDown() {
+    // TODO Auto-generated method stub
+    return 0;
   }
 }

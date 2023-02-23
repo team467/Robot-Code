@@ -18,8 +18,23 @@ import frc.lib.io.gyro3d.IMUPigeon2;
 import frc.lib.io.vision.VisionIO;
 import frc.lib.io.vision.VisionIOAprilTag;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmHomeCMD;
+import frc.robot.commands.arm.ArmManualDownCMD;
+import frc.robot.commands.arm.ArmManualExtendCMD;
+import frc.robot.commands.arm.ArmManualRetractCMD;
+import frc.robot.commands.arm.ArmManualUpCMD;
+import frc.robot.commands.arm.ArmRetractCMD;
+import frc.robot.commands.arm.ArmScoreHighNodeCMD;
+import frc.robot.commands.arm.ArmScoreLowNodeCMD;
+import frc.robot.commands.arm.ArmScoreMidNodeCMD;
+import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.auto.Balancing;
 import frc.robot.commands.drive.DriveWithJoysticks;
+import frc.robot.commands.drive.GoToTrajectory;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.arm.ArmIOPhysical;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -37,9 +52,11 @@ public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
   private Drive drive;
+  private final Arm arm;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser =
@@ -71,6 +88,12 @@ public class RobotContainer {
                     List.of(
                         new VisionIOAprilTag("front", front, FieldConstants.aprilTagFieldLayout),
                         new VisionIOAprilTag("right", right, FieldConstants.aprilTagFieldLayout)));
+            arm =
+                new Arm(
+                    new ArmIOPhysical(
+                        RobotConstants.get().armExtendMotorId(),
+                        RobotConstants.get().armRotateMotorId(),
+                        RobotConstants.get().ratchetSolenoidId()));
           }
           case ROBOT_BRIEFCASE -> {
             drive =
@@ -81,6 +104,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
+            arm = new Arm(new ArmIO() {});
           }
           default -> {
             drive =
@@ -91,6 +115,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
+            arm = new Arm(new ArmIO() {});
           }
         }
       }
@@ -106,6 +131,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 List.of(new VisionIO() {}));
+        arm = new Arm(new ArmIO() {});
       }
 
         // Replayed robot, disable IO implementations
@@ -119,6 +145,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 List.of(new VisionIO() {}));
+        arm = new Arm(new ArmIO() {});
       }
     }
 
@@ -188,6 +215,24 @@ public class RobotContainer {
             Commands.runOnce(() -> drive.setPose(AllianceFlipUtil.apply(new Pose2d())))
                 .ignoringDisable(true));
     driverController.a().whileTrue(new Balancing(drive));
+
+    switch (RobotConstants.get().mode()) {
+      case REAL -> {
+        operatorController.start().onTrue(new ArmStopCMD(arm));
+        operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));
+        operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm));
+        operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm));
+        operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm));
+        operatorController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
+        operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
+        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm));
+        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm));
+        operatorController.back().onTrue(new ArmRetractCMD(arm));
+        operatorController.rightTrigger().onTrue(new ArmCalibrateCMD(arm));
+      }
+      case REPLAY -> {}
+      case SIM -> {}
+    }
   }
 
   /**
