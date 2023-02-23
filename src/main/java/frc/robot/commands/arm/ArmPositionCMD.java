@@ -17,8 +17,13 @@ public class ArmPositionCMD extends CommandBase {
   }
 
   @Override
-  public void execute() {
+  public void initialize() {
     arm.setTargetPositions(extendSetpoint, rotateSetpoint);
+  }
+
+
+  @Override
+  public void execute() {
   }
 
   @Override
