@@ -146,10 +146,4 @@ public class BriefcaseConstants implements Constants {
     // TODO: Update me
     return 1;
   }
-
-  @Override
-  public int intakeConeLimitSwitchID() {
-    // TODO: Update me
-    return 11;
-  }
 }

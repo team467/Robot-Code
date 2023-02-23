@@ -1,23 +1,25 @@
 package frc.robot.subsystems.intakerelease;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxLimitSwitch;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   private final CANSparkMax motor;
   private final RelativeEncoder encoder;
   private final DigitalInput cubeLimitSwitch;
-  private final DigitalInput coneLimitSwitch;
+  private final SparkMaxLimitSwitch coneLimitSwitch;
 
-  public IntakeReleaseIOPhysical(int motorID, int cubeLimID, int coneLimID) {
+  public IntakeReleaseIOPhysical(int motorID, int cubeLimID) {
     motor = new CANSparkMax(motorID, MotorType.kBrushless);
     encoder = motor.getEncoder();
-    motor.setInverted(true);
+    motor.setInverted(false);
     motor.enableVoltageCompensation(12);
     cubeLimitSwitch = new DigitalInput(cubeLimID);
-    coneLimitSwitch = new DigitalInput(coneLimID);
+    coneLimitSwitch = motor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
   }
 
   @Override
@@ -38,6 +40,6 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
     inputs.motorCurrent = motor.getOutputCurrent();
     inputs.motorTemp = motor.getMotorTemperature();
     inputs.cubeLimitSwitch = cubeLimitSwitch.get();
-    inputs.coneLimitSwitch = coneLimitSwitch.get();
+    inputs.coneLimitSwitch = coneLimitSwitch.isPressed();
   }
 }

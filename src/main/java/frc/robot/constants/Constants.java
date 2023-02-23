@@ -81,8 +81,6 @@ public interface Constants {
 
   int intakeCubeLimitSwitchID();
 
-  int intakeConeLimitSwitchID();
-
   public int ledChannel();
 
   public int led2023LedCount();

@@ -145,8 +145,7 @@ public class RobotContainer {
         new IntakeRelease(
             new IntakeReleaseIOPhysical(
                 RobotConstants.get().intakeMotorID(),
-                RobotConstants.get().intakeCubeLimitSwitchID(),
-                RobotConstants.get().intakeConeLimitSwitchID()));
+                RobotConstants.get().intakeCubeLimitSwitchID()));
     intakeRelease.setDefaultCommand(new StopCMD(intakeRelease));
     led2023 = new Led2023();
     configureButtonBindings();

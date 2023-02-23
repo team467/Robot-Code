@@ -139,9 +139,4 @@ public class SimBotConstants implements Constants {
   public int intakeCubeLimitSwitchID() {
     return 0;
   }
-
-  @Override
-  public int intakeConeLimitSwitchID() {
-    return 0;
-  }
 }
