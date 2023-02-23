@@ -50,8 +50,8 @@ public class Arm extends SubsystemBase {
 
   private boolean hasRotate = true;
   private boolean hasExtend = true;
-  private static final double EXTEND_TOLERANCE_METERS = 0.005;
-  private static final double ROTATE_TOLERANCE_METERS = 0.005;
+  private static final double EXTEND_TOLERANCE_METERS = 0.01;
+  private static final double ROTATE_TOLERANCE_METERS = 0.01;
 
   private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.13;
   private static final double SAFE_EXTENSION_LENGTH = 0.1;
@@ -134,7 +134,7 @@ public class Arm extends SubsystemBase {
 
     switch (mode) {
       case MANUAL:
-        setExtendVoltage(manualExtendVolts);
+        setExtendVoltageWithOffset(manualExtendVolts);
         setRotateVoltage(manualRotateVolts);
         // TODO: Add back contraints for manual movement.
         // if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
@@ -157,7 +157,8 @@ public class Arm extends SubsystemBase {
         //  armIO.setExtendVelocity(manualExtendVelocity);
         // }
         // }
-        logger.recordOutput("Arm/ManualRotate", manualRotateVolts);
+        logger.recordOutput("Arm/ManualExtendVolts", manualRotateVolts);
+        logger.recordOutput("Arm/ManualRotateVolts", manualRotateVolts);
         break;
 
       case AUTO:
@@ -231,11 +232,11 @@ public class Arm extends SubsystemBase {
     switch (calibrateMode) {
       case PHASE_ONE:
         // Drive Extend Motor until hit limit switch
-        if (armIOInputs.extendLimitSwitch && armIOInputs.rotateLowLimitSwitch) {
+        if (armIOInputs.extendReverseLimitSwitch && armIOInputs.rotateLowLimitSwitch) {
           hold();
         }
         if (hasExtend) {
-          if (armIOInputs.extendLimitSwitch) {
+          if (armIOInputs.extendReverseLimitSwitch) {
             armIO.resetExtendEncoderPosition();
             calibrateMode = CalibrateMode.PHASE_TWO;
           } else {
@@ -275,7 +276,7 @@ public class Arm extends SubsystemBase {
       case PHASE_FOUR:
         // Drive Extend Motor until hit limit switch
         if (hasExtend) {
-          if (armIOInputs.extendLimitSwitch) {
+          if (armIOInputs.extendReverseLimitSwitch) {
             armIO.resetExtendEncoderPosition();
             hold();
             isCalibrated = true;
@@ -356,7 +357,11 @@ public class Arm extends SubsystemBase {
 
   private void setExtendVoltage(double volts) {
     if (!maybeKickback(volts)) {
-      armIO.setExtendVoltage(volts);
+      if (volts == 0) {
+        armIO.setExtendVoltage(0);
+      } else {
+        armIO.setExtendVoltage(volts + BACK_FORCE);
+      }
     }
   }
 
@@ -364,7 +369,7 @@ public class Arm extends SubsystemBase {
     if (!isExtendSafe(targetPosition)) {
       return 0;
     }
-    return (extendPidController.calculate(armIOInputs.extendPosition, targetPosition) + BACK_FORCE);
+    return (extendPidController.calculate(armIOInputs.extendPosition, targetPosition));
   }
 
   private double calculateRotatePid(double targetPosition) {
@@ -396,19 +401,19 @@ public class Arm extends SubsystemBase {
   private class Kickback {
     private final ArmMode returnToMode;
     private final double startPosition;
-    private static final double TRAVEL_DISTANCE_METERS = 0.01;
+    private static final double TRAVEL_DISTANCE_METERS = 0.03;
     private final double targetVolts;
 
     Kickback(double targetVolts) {
       returnToMode = mode;
       startPosition = armIOInputs.extendPosition;
-      armIO.setExtendVoltage(-5);
+      armIO.setExtendVoltage(-2);
       this.targetVolts = targetVolts;
     }
 
     void periodic() {
-      if (armIOInputs.extendPosition <= startPosition - TRAVEL_DISTANCE_METERS) {
-        armIO.setExtendVoltage(targetVolts);
+      if (armIOInputs.extendPosition <= startPosition + TRAVEL_DISTANCE_METERS) {
+        setExtendVoltage(targetVolts);
         mode = returnToMode;
         kickback = null;
       }

@@ -13,12 +13,12 @@ public class ArmManualRetractCMD extends CommandBase {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    arm.manualExtend(-1);
+  }
 
   @Override
-  public void execute() {
-    arm.manualExtend(3);
-  }
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {

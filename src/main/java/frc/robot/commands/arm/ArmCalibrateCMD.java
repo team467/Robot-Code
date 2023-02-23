@@ -13,9 +13,12 @@ public class ArmCalibrateCMD extends CommandBase {
   }
 
   @Override
-  public void execute() {
+  public void initialize() {
     arm.calibrate();
   }
+
+  @Override
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {}

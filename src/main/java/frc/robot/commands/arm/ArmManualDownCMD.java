@@ -13,9 +13,12 @@ public class ArmManualDownCMD extends CommandBase {
   }
 
   @Override
-  public void execute() {
+  public void initialize() {
     arm.manualRotate(-9);
   }
+
+  @Override
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {

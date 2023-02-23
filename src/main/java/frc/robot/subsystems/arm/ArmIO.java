@@ -18,7 +18,8 @@ public interface ArmIO {
     public double rotateCurrent = 0.0;
     public double rotateTemp = 0.0;
 
-    public boolean extendLimitSwitch = false;
+    public boolean extendForwardLimitSwitchUnused = false;
+    public boolean extendReverseLimitSwitch = false;
     public boolean rotateHighLimitSwitch = false;
     public boolean rotateLowLimitSwitch = false;
 

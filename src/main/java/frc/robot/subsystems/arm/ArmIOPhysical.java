@@ -14,7 +14,8 @@ public class ArmIOPhysical implements ArmIO {
 
   private final CANSparkMax extendMotor;
   private final RelativeEncoder extendEncoder;
-  private final SparkMaxLimitSwitch extendLimitSwitch;
+  private final SparkMaxLimitSwitch extendForwardLimitSwitchUnused;
+  private final SparkMaxLimitSwitch extendReverseLimitSwitch;
   private final SparkMaxLimitSwitch rotateHighLimitSwitch;
   private final SparkMaxLimitSwitch rotateLowLimitSwitch;
   private final Relay ratchetSolenoid;
@@ -33,7 +34,11 @@ public class ArmIOPhysical implements ArmIO {
         rotateMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
     rotateLowLimitSwitch =
         rotateMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
-    extendLimitSwitch = extendMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+
+    extendForwardLimitSwitchUnused =
+        extendMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
+    extendReverseLimitSwitch =
+        extendMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
 
     extendEncoder = extendMotor.getEncoder();
     extendEncoder.setPositionConversionFactor(RobotConstants.get().armExtendConversionFactor());
@@ -42,7 +47,7 @@ public class ArmIOPhysical implements ArmIO {
     rotateEncoder.setPositionConversionFactor(RobotConstants.get().armRotateConversionFactor());
 
     // Invert motors
-    extendMotor.setInverted(false);
+    extendMotor.setInverted(true);
     rotateMotor.setInverted(false);
 
     extendMotor.enableVoltageCompensation(12);
@@ -59,7 +64,8 @@ public class ArmIOPhysical implements ArmIO {
     inputs.extendAppliedVolts = extendMotor.getBusVoltage() * extendMotor.getAppliedOutput();
     inputs.extendCurrent = extendMotor.getOutputCurrent();
     inputs.extendTemp = extendMotor.getMotorTemperature();
-    inputs.extendLimitSwitch = extendLimitSwitch.isPressed();
+    inputs.extendForwardLimitSwitchUnused = extendForwardLimitSwitchUnused.isPressed();
+    inputs.extendReverseLimitSwitch = extendReverseLimitSwitch.isPressed();
     inputs.rotateHighLimitSwitch = rotateHighLimitSwitch.isPressed();
     inputs.rotateLowLimitSwitch = rotateLowLimitSwitch.isPressed();
     inputs.rotatePosition = rotateEncoder.getPosition();
