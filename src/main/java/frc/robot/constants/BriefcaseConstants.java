@@ -29,25 +29,22 @@ public class BriefcaseConstants implements Constants {
 
   private Translation2d[] moduleTranslations() {
     return new Translation2d[] {
-      new Translation2d(Units.inchesToMeters(11.50), Units.inchesToMeters(11.50)),
-      new Translation2d(Units.inchesToMeters(11.50), -Units.inchesToMeters(11.50)),
-      new Translation2d(-Units.inchesToMeters(11.50), Units.inchesToMeters(11.50)),
-      new Translation2d(-Units.inchesToMeters(11.50), -Units.inchesToMeters(11.50))
+      new Translation2d(), new Translation2d(), new Translation2d(), new Translation2d(),
     };
   }
 
   @Override
   public double maxLinearSpeed() {
-    return 3.0;
-  } // TODO: tune
+    return 0.1;
+  }
 
   @Override
   public double maxAngularSpeed() {
-    return maxLinearSpeed()
+    return (maxLinearSpeed()
         / Arrays.stream(moduleTranslations())
             .map(Translation2d::getNorm)
             .max(Double::compare)
-            .get();
+            .get());
   }
 
   @Override
@@ -88,10 +85,7 @@ public class BriefcaseConstants implements Constants {
   @Override
   public Rotation2d[] absoluteAngleOffset() {
     return new Rotation2d[] {
-      Rotation2d.fromDegrees(-46.75781250000001),
-      Rotation2d.fromDegrees(11.162109374999998),
-      Rotation2d.fromDegrees(110.478515625),
-      Rotation2d.fromDegrees(-100.19531250000001)
+      new Rotation2d(), new Rotation2d(), new Rotation2d(), new Rotation2d(),
     };
   }
 
@@ -145,5 +139,65 @@ public class BriefcaseConstants implements Constants {
   public int intakeCubeLimitSwitchID() {
     // TODO: Update me
     return 1;
+  }
+
+  @Override
+  public int armExtendMotorId() {
+    return 0;
+  }
+
+  @Override
+  public int armRotateMotorId() {
+    return 0;
+  }
+
+  @Override
+  public double armExtendConversionFactor() {
+    return 0;
+  }
+
+  @Override
+  public int armRotateHighLimitSwitchId() {
+    return 0;
+  }
+
+  @Override
+  public int armRotateLowLimitSwitchId() {
+    return 0;
+  }
+
+  @Override
+  public int ratchetSolenoidId() {
+    return 0;
+  }
+
+  @Override
+  public double armExtendMaxMeters() {
+    return 0;
+  }
+
+  @Override
+  public double armExtendMinMeters() {
+    return 0;
+  }
+
+  @Override
+  public double armRotateMaxMeters() {
+    return 0;
+  }
+
+  @Override
+  public double armRotateMinMeters() {
+    return 0;
+  }
+
+  @Override
+  public double armRotateConversionFactor() {
+    return 0;
+  }
+
+  @Override
+  public double armExtendMinDown() {
+    return 0;
   }
 }

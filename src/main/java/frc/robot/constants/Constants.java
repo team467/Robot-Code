@@ -8,7 +8,6 @@ import frc.robot.constants.controls.GearRatio;
 import frc.robot.constants.controls.SimpleFeedforwardConstant;
 
 public interface Constants {
-
   /**
    * @return Robot type/name
    */
@@ -33,13 +32,13 @@ public interface Constants {
   enum RobotType {
     ROBOT_COMP,
     ROBOT_SIMBOT,
-    ROBOT_BRIEFCASE
+    ROBOT_BRIEFCASE,
   }
 
   enum Mode {
     REAL,
     REPLAY,
-    SIM
+    SIM,
   }
 
   // Drive constants
@@ -84,4 +83,28 @@ public interface Constants {
   public int ledChannel();
 
   public int led2023LedCount();
+
+  int armExtendMotorId();
+
+  int armRotateMotorId();
+
+  double armExtendConversionFactor();
+
+  double armExtendMaxMeters();
+
+  double armExtendMinMeters();
+
+  double armRotateMaxMeters();
+
+  double armRotateMinMeters();
+
+  int ratchetSolenoidId();
+
+  int armRotateHighLimitSwitchId();
+
+  int armRotateLowLimitSwitchId();
+
+  double armRotateConversionFactor();
+
+  double armExtendMinDown();
 }
