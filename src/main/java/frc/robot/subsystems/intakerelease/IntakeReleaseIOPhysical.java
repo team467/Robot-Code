@@ -41,7 +41,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
     inputs.motorAppliedVolts = motor.getBusVoltage();
     inputs.motorCurrent = motor.getOutputCurrent();
     inputs.motorTemp = motor.getMotorTemperature();
-    inputs.cubeLimitSwitch = cubeLimitSwitch.get();
+    inputs.cubeLimitSwitch = false; // cubeLimitSwitch.get(); //TODO: Change back
     inputs.coneLimitSwitch = coneLimitSwitch.isPressed();
     inputs.wantsCone = wants == Wants.CONE ? true : false;
     inputs.wantsCube = wants == Wants.CUBE ? true : false;

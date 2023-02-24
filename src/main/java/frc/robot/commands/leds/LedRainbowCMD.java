@@ -1,6 +1,7 @@
 package frc.robot.commands.leds;
 
 import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 import frc.robot.subsystems.led.Led2023;
 
 public class LedRainbowCMD extends LedBaseCMD {
@@ -15,5 +16,6 @@ public class LedRainbowCMD extends LedBaseCMD {
   @Override
   public void execute() {
     ledStrip.defaultLights();
+    intakerelease.setWants(Wants.NONE);
   }
 }
