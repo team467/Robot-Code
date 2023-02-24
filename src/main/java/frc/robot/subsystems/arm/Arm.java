@@ -418,13 +418,13 @@ public class Arm extends SubsystemBase {
     return isSafe;
   }
 
-  private boolean isExtendSafe(double extendPosition) {
+  private boolean isExtendSafe(double targetPosition) {
     boolean isSafe =
         isCalibrated
-            && (extendPosition < armIOInputs.extendPosition
+            && (targetPosition < armIOInputs.extendPosition
                 || armIOInputs.rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION
                 || (armIOInputs.rotatePosition > SAFE_ROTATE_AT_PARTIAL_EXTENSION
-                    && extendPosition < SAFE_EXTEND_AT_PARTIAL_EXTENSION));
+                    && targetPosition < SAFE_EXTEND_AT_PARTIAL_EXTENSION));
     logger.recordOutput("Arm/IsExtendSafe", isSafe);
     return isSafe;
   }
