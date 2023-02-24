@@ -23,6 +23,7 @@ import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUPigeon2;
 import frc.lib.io.vision.VisionIO;
 import frc.lib.io.vision.VisionIOAprilTag;
+import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.arm.ArmCalibrateCMD;
 import frc.robot.commands.arm.ArmHomeCMD;
@@ -37,6 +38,12 @@ import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
+import frc.robot.commands.intakerelease.HoldCMD;
+import frc.robot.commands.intakerelease.IntakeCMD;
+import frc.robot.commands.intakerelease.ReleaseCMD;
+import frc.robot.commands.intakerelease.WantConeCMD;
+import frc.robot.commands.intakerelease.WantCubeCMD;
+import frc.robot.commands.leds.LedRainbowCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOPhysical;
@@ -44,6 +51,10 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
+import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.intakerelease.IntakeReleaseIO;
+import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
+import frc.robot.subsystems.led.Led2023;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -57,6 +68,8 @@ public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
   private Drive drive;
+  private final IntakeRelease intakeRelease;
+  private Led2023 led2023;
   private final Arm arm;
 
   // Controller
@@ -99,6 +112,11 @@ public class RobotContainer {
                         RobotConstants.get().armExtendMotorId(),
                         RobotConstants.get().armRotateMotorId(),
                         RobotConstants.get().ratchetSolenoidId()));
+            intakeRelease =
+                new IntakeRelease(
+                    new IntakeReleaseIOPhysical(
+                        RobotConstants.get().intakeMotorID(),
+                        RobotConstants.get().intakeCubeLimitSwitchID()));
           }
           case ROBOT_BRIEFCASE -> {
             drive =
@@ -110,6 +128,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
             arm = new Arm(new ArmIO() {});
+            intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
           }
           default -> {
             drive =
@@ -121,6 +140,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
             arm = new Arm(new ArmIO() {});
+            intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
           }
         }
       }
@@ -137,6 +157,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 List.of(new VisionIO() {}));
         arm = new Arm(new ArmIO() {});
+        intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
       }
 
         // Replayed robot, disable IO implementations
@@ -151,8 +172,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 List.of(new VisionIO() {}));
         arm = new Arm(new ArmIO() {});
+        intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
       }
     }
+
+    led2023 = new Led2023();
+    LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
@@ -165,8 +190,8 @@ public class RobotContainer {
                 new Waypoint(new Translation2d(1, 1)),
                 new Waypoint(new Translation2d(2, -1)),
                 Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
-    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
-    // Rotation2d()));
+    // autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0,
+    new Rotation2d();
     autoChooser.addOption(
         "Drive Characterization",
         Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
@@ -178,12 +203,10 @@ public class RobotContainer {
                     drive::runCharacterizationVolts,
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
-    // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
     // Configure the button bindings
     configureButtonBindings();
   }
-
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -209,8 +232,17 @@ public class RobotContainer {
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
 
+    led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
+    intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
+
     switch (RobotConstants.get().mode()) {
       case REAL -> {
+        driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023));
+        driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023));
+        operatorController.back().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
+        operatorController.start().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
+
+        operatorController.start().onTrue(new ArmStopCMD(arm));
         operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));
         operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm));
         operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm));
