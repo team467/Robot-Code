@@ -163,7 +163,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double armExtendMinMeters() {
-    return 0.02;
+    return 0;
   }
 
   @Override
