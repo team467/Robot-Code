@@ -38,6 +38,7 @@ import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOPhysical;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
@@ -108,7 +109,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
-            arm = null;
+            arm = new Arm(new ArmIO() {});
           }
           default -> {
             drive =
@@ -119,7 +120,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
-            arm = null;
+            arm = new Arm(new ArmIO() {});
           }
         }
       }
@@ -135,7 +136,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 List.of(new VisionIO() {}));
-        arm = null;
+        arm = new Arm(new ArmIO() {});
       }
 
         // Replayed robot, disable IO implementations
@@ -149,7 +150,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 List.of(new VisionIO() {}));
-        arm = null;
+        arm = new Arm(new ArmIO() {});
       }
     }
 

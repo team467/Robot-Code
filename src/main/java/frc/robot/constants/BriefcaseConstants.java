@@ -34,7 +34,7 @@ public class BriefcaseConstants implements Constants {
 
   @Override
   public double maxLinearSpeed() {
-    return 0.0;
+    return 0.1;
   }
 
   @Override
@@ -130,37 +130,37 @@ public class BriefcaseConstants implements Constants {
 
   @Override
   public double armExtendConversionFactor() {
-    return 1;
+    return 0;
   }
 
   @Override
   public int armRotateHighLimitSwitchId() {
-    return 4; // DIO #4
+    return 0;
   }
 
   @Override
   public int armRotateLowLimitSwitchId() {
-    return 5; // DIO #5
+    return 0;
   }
 
   @Override
   public int ratchetSolenoidId() {
-    return 1;
+    return 0;
   }
 
   @Override
   public double armExtendMaxMeters() {
-    return 0.34;
+    return 0;
   }
 
   @Override
   public double armExtendMinMeters() {
-    return 0.02;
+    return 0;
   }
 
   @Override
   public double armRotateMaxMeters() {
-    return 180;
+    return 0;
   }
 
   @Override
@@ -170,12 +170,11 @@ public class BriefcaseConstants implements Constants {
 
   @Override
   public double armRotateConversionFactor() {
-    return 1;
+    return 0;
   }
 
   @Override
   public double armExtendMinDown() {
-    // TODO Auto-generated method stub
     return 0;
   }
 }
