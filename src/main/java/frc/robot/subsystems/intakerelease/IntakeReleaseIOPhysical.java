@@ -7,6 +7,7 @@ import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
 public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   private final CANSparkMax motor;
@@ -35,7 +36,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   }
 
   @Override
-  public void updateInputs(IntakeReleaseIOInputs inputs) {
+  public void updateInputs(IntakeReleaseIOInputs inputs, Wants wants) {
     inputs.motorPosition = encoder.getPosition();
     inputs.motorVelocity = encoder.getVelocity();
     inputs.motorAppliedVolts = motor.getBusVoltage();
@@ -43,5 +44,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
     inputs.motorTemp = motor.getMotorTemperature();
     inputs.cubeLimitSwitch = cubeLimitSwitch.get();
     inputs.coneLimitSwitch = coneLimitSwitch.isPressed();
+    inputs.wantsCone = wants == Wants.CONE ? true : false;
+    inputs.wantsCube = wants == Wants.CUBE ? true : false;
   }
 }

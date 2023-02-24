@@ -23,7 +23,7 @@ public class IntakeRelease extends SubsystemBase {
     super();
     this.intakeReleaseIO = intakeReleaseIO;
     inputs = new IntakeReleaseIOInputsAutoLogged();
-    this.intakeReleaseIO.updateInputs(inputs);
+    this.intakeReleaseIO.updateInputs(inputs, Wants.NONE);
     state = State.STOP;
   }
 
@@ -45,7 +45,7 @@ public class IntakeRelease extends SubsystemBase {
 
   @Override
   public void periodic() {
-    intakeReleaseIO.updateInputs(inputs);
+    intakeReleaseIO.updateInputs(inputs, wants);
     logger.processInputs("IntakeRelease", inputs);
 
     switch (state) {
