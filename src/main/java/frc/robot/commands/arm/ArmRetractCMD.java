@@ -14,7 +14,7 @@ public class ArmRetractCMD extends CommandBase {
 
   @Override
   public void initialize() {
-    arm.setTargetPositionExtend(0);
+    arm.setTargetPositionExtend(0.05);
   }
 
   @Override

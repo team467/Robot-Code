@@ -33,6 +33,7 @@ public class Arm extends SubsystemBase {
 
   private enum AutoMode {
     RETRACT,
+    RETRACT_FULL,
     ROTATE,
     EXTEND
   }
@@ -50,24 +51,26 @@ public class Arm extends SubsystemBase {
 
   private boolean hasRotate = true;
   private boolean hasExtend = true;
-  private static final double EXTEND_TOLERANCE_METERS = 0.005;
-  private static final double ROTATE_TOLERANCE_METERS = 0.005;
+  private static final double EXTEND_TOLERANCE_METERS = 0.008;
+  private static final double ROTATE_TOLERANCE_METERS = 0.008;
 
   private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.13;
-  private static final double SAFE_EXTENSION_LENGTH = 0.03;
-  private static final double SAFE_ROTATE_AT_PARTIAL_EXTENSION = 0.21;
-  private static final double SAFE_EXTEND_AT_PARTIAL_EXTENSION = 0.04;
+  private static final double SAFE_EXTENSION_LENGTH = 0.02;
+  private static final double SAFE_ROTATE_AT_PARTIAL_EXTENSION = 0.051;
+  private static final double SAFE_EXTEND_AT_PARTIAL_EXTENSION = 0.229;
+
+  private static final double SAFE_RETRACT_NON_HOME = 0.05;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
 
   private double manualExtendVolts = 0.0;
   private double manualRotateVolts = 0.0;
-  private PIDController extendPidController = new PIDController(30, 0, 0);
+  private PIDController extendPidController = new PIDController(50, 0, 0);
   private PIDController rotatePidController = new PIDController(400, 0, 0);
-  private static final double BACK_FORCE = -1;
+  private static final double BACK_FORCE = -1.3;
 
   private static final double CALIBRATE_EXTEND_VOLTAGE = -1;
-  private static final double CALIBRATE_ROTATE_VOLTAGE = -3;
+  private static final double CALIBRATE_ROTATE_VOLTAGE = -7;
 
   /**
    * Configures the arm subsystem
@@ -202,32 +205,35 @@ public class Arm extends SubsystemBase {
     logger.recordOutput("Arm/AutoMode", autoMode.toString());
     switch (autoMode) {
       case RETRACT:
+        if (armIOInputs.extendPosition < SAFE_RETRACT_NON_HOME + EXTEND_TOLERANCE_METERS) {
+          setExtendVoltage(0);
+          autoMode = rotateSetpoint > 0 ? AutoMode.ROTATE : AutoMode.RETRACT_FULL;
+        } else {
+          setExtendVoltage(calculateExtendPid(SAFE_RETRACT_NON_HOME));
+        }
+        break;
+
+      case RETRACT_FULL:
         if (armIOInputs.extendPosition
             < RobotConstants.get().armExtendMinMeters() + EXTEND_TOLERANCE_METERS) {
           setExtendVoltage(0);
           autoMode = AutoMode.ROTATE;
         } else {
-          double extendFbOutput = calculateExtendPid(RobotConstants.get().armExtendMinMeters());
-          logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
-          setExtendVoltage(extendFbOutput);
+          setExtendVoltage(calculateExtendPid(RobotConstants.get().armExtendMinMeters()));
         }
-
         break;
 
       case ROTATE:
-        double rotateFbOutput = calculateRotatePid(rotateSetpoint);
-        setRotateVoltage(rotateFbOutput);
-        logger.recordOutput("Arm/RotateFbOutput", rotateFbOutput);
+        setRotateVoltage(calculateRotatePid(rotateSetpoint));
         if (isRotateFinished()) {
           autoMode = AutoMode.EXTEND;
-          setExtendVoltage(0);
+          setRotateVoltage(0);
         }
         break;
 
       case EXTEND:
         double extendFbOutput = calculateExtendPid(extendSetpoint);
         setExtendVoltage(extendFbOutput);
-        logger.recordOutput("Arm/ExtendFbOutput", extendFbOutput);
         break;
     }
 
@@ -260,8 +266,7 @@ public class Arm extends SubsystemBase {
         // Drive Extend Motor a little bit outwards
         if (hasExtend) {
           setExtendVoltage(calculateExtendPidUnsafe(EXTEND_CALIBRATION_POSITION));
-          if (Math.abs(armIOInputs.extendPosition - EXTEND_CALIBRATION_POSITION)
-              <= EXTEND_TOLERANCE_METERS) {
+          if (isExtendPositionNear(EXTEND_CALIBRATION_POSITION)) {
             calibrateMode = CalibrateMode.PHASE_THREE;
             setExtendVoltage(0);
           }
@@ -350,9 +355,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isFinished() {
-    return ((!hasExtend
-            || Math.abs(armIOInputs.extendPosition - extendSetpoint) <= EXTEND_TOLERANCE_METERS)
-        && isRotateFinished());
+    return ((!hasExtend || isExtendPositionNear(extendSetpoint)) && isRotateFinished());
   }
 
   public boolean isRotateFinished() {
@@ -384,33 +387,44 @@ public class Arm extends SubsystemBase {
   }
 
   private double calculateExtendPidUnsafe(double targetPosition) {
-    return extendPidController.calculate(armIOInputs.extendPosition, targetPosition);
+    double pidValue = extendPidController.calculate(armIOInputs.extendPosition, targetPosition);
+    logger.recordOutput("Arm/ExtendFbOutput", pidValue);
+    return pidValue;
   }
 
   private double calculateRotatePid(double targetPosition) {
     if (!isRotateSafe(targetPosition)) {
       return 0;
     }
-    return rotatePidController.calculate(armIOInputs.rotatePosition, targetPosition);
+    double pidValue = rotatePidController.calculate(armIOInputs.rotatePosition, targetPosition);
+    logger.recordOutput("Arm/RotateFbOutput", pidValue);
+    return pidValue;
+  }
+
+  private boolean isExtendPositionNear(double targetPosition) {
+    return Math.abs(armIOInputs.extendPosition - targetPosition) <= EXTEND_TOLERANCE_METERS;
   }
 
   private boolean isRotateSafe(double rotatePosition) {
     boolean isSafe =
         isCalibrated
-            && (rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION
+            && (rotatePosition > armIOInputs.rotatePosition
+                || rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION
                 || armIOInputs.extendPosition < SAFE_EXTENSION_LENGTH
-                || (rotatePosition > SAFE_ROTATE_AT_PARTIAL_EXTENSION
-                    && armIOInputs.extendPosition < SAFE_EXTEND_AT_PARTIAL_EXTENSION));
+                || (rotatePosition > SAFE_ROTATE_AT_PARTIAL_EXTENSION - ROTATE_TOLERANCE_METERS
+                    && armIOInputs.extendPosition
+                        < SAFE_EXTEND_AT_PARTIAL_EXTENSION - EXTEND_TOLERANCE_METERS));
     logger.recordOutput("Arm/IsRotateSafe", isSafe);
     return isSafe;
   }
 
-  private boolean isExtendSafe(double extendPosition) {
+  private boolean isExtendSafe(double targetPosition) {
     boolean isSafe =
         isCalibrated
-            && (armIOInputs.rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION
+            && (targetPosition < armIOInputs.extendPosition
+                || armIOInputs.rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION
                 || (armIOInputs.rotatePosition > SAFE_ROTATE_AT_PARTIAL_EXTENSION
-                    && extendPosition < SAFE_EXTEND_AT_PARTIAL_EXTENSION));
+                    && targetPosition < SAFE_EXTEND_AT_PARTIAL_EXTENSION));
     logger.recordOutput("Arm/IsExtendSafe", isSafe);
     return isSafe;
   }
