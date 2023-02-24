@@ -10,7 +10,6 @@ public interface IntakeReleaseIO {
     public double motorVelocity = 0.0;
     public double motorAppliedVolts = 0.0;
     public double motorCurrent = 0.0;
-    public double motorTemp = 0.0;
     public boolean cubeLimitSwitch = false;
     public boolean coneLimitSwitch = false;
     public boolean wantsCone = false;
@@ -21,5 +20,5 @@ public interface IntakeReleaseIO {
 
   default void setVoltage(double volts) {}
 
-  default void setVelocity(double speed) {}
+  default void setPercent(double percent) {}
 }

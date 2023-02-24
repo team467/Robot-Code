@@ -82,6 +82,7 @@ public class Drive extends SubsystemBase {
     // Update inputs for IOs
     gyroIO.updateInputs(gyroInputs);
     Logger.getInstance().processInputs("Drive/Gyro", gyroInputs);
+
     for (int i = 0; i < aprilTagCameraIO.size(); i++) {
       aprilTagCameraIO.get(i).updateInputs(aprilTagCameraInputs.get(i));
       Logger.getInstance().processInputs("Drive/Vision" + i, aprilTagCameraInputs.get(i));
@@ -89,12 +90,14 @@ public class Drive extends SubsystemBase {
     for (var module : modules) {
       module.periodic();
     }
+
     // Run modules
     if (DriverStation.isDisabled()) {
       // Disable output while disabled
       for (var module : modules) {
         module.stop();
       }
+
       // Clear setpoint logs
       Logger.getInstance().recordOutput("SwerveStates/Setpoints", new double[] {});
       Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
@@ -105,6 +108,7 @@ public class Drive extends SubsystemBase {
           for (var module : modules) {
             module.runCharacterization(characterizationVolts);
           }
+
           // Clear setpoint logs
           Logger.getInstance().recordOutput("SwerveStates/Setpoints", new double[] {});
           Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
@@ -126,26 +130,31 @@ public class Drive extends SubsystemBase {
               RobotConstants.get().kinematics().toSwerveModuleStates(adjustedSpeeds);
           SwerveDriveKinematics.desaturateWheelSpeeds(
               setpointStates, RobotConstants.get().maxLinearSpeed());
+
           // Set setpoints to modules
           boolean isStationary =
               Math.abs(setpoint.vxMetersPerSecond) < 1e-3
                   && Math.abs(setpoint.vyMetersPerSecond) < 1e-3
                   && Math.abs(setpoint.omegaRadiansPerSecond) < 1e-3;
+
           SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
           for (int i = 0; i < 4; i++) {
             optimizedStates[i] = modules[i].runSetpoint(setpointStates[i], isStationary);
           }
+
           // Log setpoint states
           Logger.getInstance().recordOutput("SwerveStates/Setpoints", setpointStates);
           Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", optimizedStates);
         }
       }
+
       // Log measured states
       SwerveModuleState[] measuredStates = new SwerveModuleState[4];
       for (int i = 0; i < 4; i++) {
         measuredStates[i] = modules[i].getState();
       }
       Logger.getInstance().recordOutput("SwerveStates/Measured", measuredStates);
+
       // Update odometry
       SwerveModulePosition[] measuredPositions = new SwerveModulePosition[4];
       for (int i = 0; i < 4; i++) {
@@ -154,6 +163,7 @@ public class Drive extends SubsystemBase {
       for (int i = 0; i < aprilTagCameraIO.size(); i++) {
         aprilTagCameraIO.get(i).updateInputs(aprilTagCameraInputs.get(i));
       }
+
       if (gyroInputs.connected) {
         odometry.update(Rotation2d.fromDegrees(gyroInputs.yaw), measuredPositions);
         simGyro = Units.degreesToRadians(gyroInputs.yaw);
@@ -161,6 +171,7 @@ public class Drive extends SubsystemBase {
         simGyro += kinematics.toChassisSpeeds(measuredStates).omegaRadiansPerSecond * 0.02;
         odometry.update(new Rotation2d(simGyro), measuredPositions);
       }
+
       for (VisionIOInputs aprilTagCameraInput : aprilTagCameraInputs) {
         aprilTagCameraInput.estimatedPose.ifPresent(
             estimatedRobotPose -> {
@@ -168,18 +179,21 @@ public class Drive extends SubsystemBase {
                   .recordOutput(
                       "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
                       estimatedRobotPose.estimatedPose.toPose2d());
+
               Vector<N3> std =
                   switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
                     case 0 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
                     case 1 -> VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these
                     default -> VecBuilder.fill(1.0, 1.0, 1.0);
                   };
+
               odometry.addVisionMeasurement(
                   estimatedRobotPose.estimatedPose.toPose2d(),
                   estimatedRobotPose.timestampSeconds,
                   std);
             });
       }
+
       Logger.getInstance().recordOutput("Odometry", getPose());
     }
   }

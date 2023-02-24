@@ -25,8 +25,8 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   }
 
   @Override
-  public void setVelocity(double speed) {
-    motor.set(speed);
+  public void setPercent(double percent) {
+    motor.set(percent);
   }
 
   @Override
@@ -38,12 +38,11 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   public void updateInputs(IntakeReleaseIOInputs inputs, Wants wants) {
     inputs.motorPosition = encoder.getPosition();
     inputs.motorVelocity = encoder.getVelocity();
-    inputs.motorAppliedVolts = motor.getBusVoltage();
+    inputs.motorAppliedVolts = motor.getBusVoltage() * motor.getAppliedOutput();
     inputs.motorCurrent = motor.getOutputCurrent();
-    inputs.motorTemp = motor.getMotorTemperature();
     inputs.cubeLimitSwitch = false; // cubeLimitSwitch.get(); //TODO: Change back
     inputs.coneLimitSwitch = coneLimitSwitch.isPressed();
-    inputs.wantsCone = wants == Wants.CONE ? true : false;
-    inputs.wantsCube = wants == Wants.CUBE ? true : false;
+    inputs.wantsCone = wants == Wants.CONE;
+    inputs.wantsCube = wants == Wants.CUBE;
   }
 }
