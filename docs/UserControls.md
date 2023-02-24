@@ -8,23 +8,25 @@
 
 # Operator Controls
 
-| Operation    | Controller button   |
-| ---          | ---                 |
-| Arm up       | DPAD UP             |
-| Arm down     | DPAD DOWN           |
-| Arm In       | DPAD LEFT           |
-| Arm Out      | DPAD RIGHT          |
-|              |                     |
-| Arm Retract  | LEFT TRIGGER        |
-| Arm Calibrate| RIGHT TRIGGER       |
-|              |                     |
-| Cone Mode    | BACK                |
-| Cube Mode    | START               |
-|              |                     |
-| Preset Shelf | LEFT BUMPER         |
-| Preset Floor | RIGHT BUMPER        |
-|              |                     |
-| Preset High  | Y                   |
-| Preset Mid   | B                   |
-| Preset Low   | A                   |
-| Preset Home  | X                   |
+| Operation    | Controller button      |
+| ---          | ---                    |
+| Arm up       | DPAD UP                |
+| Arm down     | DPAD DOWN              |
+| Arm In       | DPAD LEFT              |
+| Arm Out      | DPAD RIGHT             |
+|              |                        |
+| Arm Retract  | LEFT TRIGGER           |
+| Arm Calibrate| RIGHT TRIGGER          |
+|              |                        |
+| STOP         | Press Either Stick     |
+|              |                        |
+| Cone Mode    | BACK                   |
+| Cube Mode    | START                  |
+|              |                        |
+| Preset Shelf | LEFT BUMPER            |
+| Preset Floor | RIGHT BUMPER           |
+|              |                        |
+| Preset High  | Y                      |
+| Preset Mid   | B                      |
+| Preset Low   | A                      |
+| Preset Home  | X                      |

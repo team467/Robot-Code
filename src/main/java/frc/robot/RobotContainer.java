@@ -221,7 +221,8 @@ public class RobotContainer {
         operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm));
         operatorController.leftTrigger().onTrue(new ArmRetractCMD(arm));
         operatorController.rightTrigger().onTrue(new ArmCalibrateCMD(arm));
-        operatorController.leftBumper().onTrue(new ArmStopCMD(arm));
+        operatorController.leftStick().onTrue(new ArmStopCMD(arm));
+        operatorController.rightStick().onTrue(new ArmStopCMD(arm));
       }
       case REPLAY -> {}
       case SIM -> {}
