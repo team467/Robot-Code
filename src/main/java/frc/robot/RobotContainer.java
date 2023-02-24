@@ -259,6 +259,8 @@ public class RobotContainer {
         operatorController.rightStick().onTrue(new ArmStopCMD(arm));
         operatorController.leftBumper().onTrue(new ArmShelfCMD(arm));
         operatorController.rightBumper().onTrue(new ArmFloorCMD(arm));
+        driverController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
+
       }
       case REPLAY -> {}
       case SIM -> {}
