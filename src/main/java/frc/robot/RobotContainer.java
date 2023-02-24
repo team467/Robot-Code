@@ -171,18 +171,15 @@ public class RobotContainer {
             new IntakeReleaseIOPhysical(
                 RobotConstants.get().intakeMotorID(),
                 RobotConstants.get().intakeCubeLimitSwitchID()));
+
     led2023 = new Led2023();
+    LEDManager.getInstance().init(RobotConstants.get().ledChannel());
+
+    led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
+    intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
+
     configureButtonBindings();
 
-    LEDManager.getInstance().init(RobotConstants.get().ledChannel());
-    HoldCMD holdCMD = new HoldCMD(intakeRelease, led2023);
-    driverController.b().whileTrue(new IntakeCMD(intakeRelease, led2023));
-    driverController.leftTrigger().whileTrue(new ReleaseCMD(intakeRelease, led2023));
-    driverController.x().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
-    driverController.y().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
-    driverController.a().onTrue(holdCMD);
-    intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
-    led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     autoChooser.addOption(
@@ -235,6 +232,11 @@ public class RobotContainer {
 
     switch (RobotConstants.get().mode()) {
       case REAL -> {
+        driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023));
+        driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023));
+        operatorController.back().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
+        operatorController.start().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
+
         operatorController.start().onTrue(new ArmStopCMD(arm));
         operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));
         operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm));
