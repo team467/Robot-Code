@@ -10,7 +10,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class RobotConstants {
-  private static Constants constants;
+  /** TODO: Manually change this for simulation and Replay. */
+  private static Constants constants = new CompBotConstants();
 
   private RobotConstants() {
     throw new IllegalStateException("Utility class");
@@ -26,7 +27,7 @@ public class RobotConstants {
       FileReader reader = new FileReader(file);
       try (BufferedReader br = new BufferedReader(reader)) {
         String name = br.readLine().toLowerCase();
-        System.out.println("Name: " + name);
+        System.out.println("Pikachu Pika Pika Pika Pika Pika Pika Pika Pika Pika Name: " + name);
         switch (name) {
           case "von neumann":
             RobotConstants.set(new CompBotConstants());
