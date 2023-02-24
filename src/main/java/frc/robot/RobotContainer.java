@@ -249,8 +249,8 @@ public class RobotContainer {
         operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm));
         operatorController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
         operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
-        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm));
-        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm));
+        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease));
+        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease));
         operatorController.leftTrigger().onTrue(new ArmRetractCMD(arm));
         operatorController.rightTrigger().onTrue(new ArmCalibrateCMD(arm));
         operatorController.leftStick().onTrue(new ArmStopCMD(arm));

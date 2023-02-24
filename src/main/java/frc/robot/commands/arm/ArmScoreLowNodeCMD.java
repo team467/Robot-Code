@@ -1,10 +1,11 @@
 package frc.robot.commands.arm;
 
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmPositionConstants;
 
 public class ArmScoreLowNodeCMD extends ArmPositionCMD {
 
   public ArmScoreLowNodeCMD(Arm arm) {
-    super(arm, 0.22, 0.065);
+    super(arm, ArmPositionConstants.LOW_BOTH);
   }
 }
