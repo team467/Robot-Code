@@ -1,24 +1,31 @@
 package frc.robot.commands.arm;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmPositionConstants.ArmPosition;
 
 public class ArmPositionCMD extends CommandBase {
   private final Arm arm;
-  private double extendSetpoint;
-  private double rotateSetpoint;
+  private final Supplier<ArmPosition> armPositionSupplier;
 
-  public ArmPositionCMD(Arm arm, double extendSetpoint, double rotateSetpoint) {
+  public ArmPositionCMD(Arm arm, ArmPosition armPosition) {
     this.arm = arm;
-    this.extendSetpoint = extendSetpoint;
-    this.rotateSetpoint = rotateSetpoint;
+    this.armPositionSupplier = ()->armPosition;
+    addRequirements(arm);
+  }
 
+  public ArmPositionCMD(Arm arm, Supplier<ArmPosition> armPosition) {
+    this.arm = arm;
+    this.armPositionSupplier = armPosition;
     addRequirements(arm);
   }
 
   @Override
   public void initialize() {
-    arm.setTargetPositions(extendSetpoint, rotateSetpoint);
+    ArmPosition armPosition = armPositionSupplier.get();
+    arm.setTargetPositions(armPosition.extendSetpoint, armPosition.rotateSetpoint);
   }
 
   @Override
