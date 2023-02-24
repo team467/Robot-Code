@@ -29,6 +29,8 @@ public interface ArmIO {
   default void updateInputs(ArmIOInputs inputs) {}
 
   default void setExtendVoltage(double volts) {}
+  
+   default void setExtendVoltageWhileHold(double volts) {}
 
   default void setRotateVoltage(double volts) {}
 
@@ -41,4 +43,8 @@ public interface ArmIO {
   default void resetRotateEncoderPosition() {}
 
   default void setRatchetLocked(boolean locked) {}
+
+  
+  
+
 }

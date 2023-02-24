@@ -5,6 +5,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
+import frc.robot.subsystems.arm.ArmIO.ArmIOInputs;
+
+import javax.swing.text.Position;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
@@ -62,7 +66,8 @@ public class Arm extends SubsystemBase {
   private static final double SAFE_RETRACT_NON_HOME = 0.05;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
-
+ 
+  private double holdPosition;
   private double manualExtendVolts = 0.0;
   private double manualRotateVolts = 0.0;
   private PIDController extendPidController = new PIDController(50, 0, 0);
@@ -117,6 +122,7 @@ public class Arm extends SubsystemBase {
 
   public void hold(double position) {
     mode = ArmMode.HOLD;
+    holdPosition = position;
     setExtendVoltage(0.0);
     setRotateVoltage(0.0);
     manualRotateVolts = 0;
@@ -183,7 +189,7 @@ public class Arm extends SubsystemBase {
         break;
 
       case HOLD:
-        setExtendVoltage(0);
+        armIO.setExtendVoltageWhileHold(calculateExtendPid(holdPosition) + BACK_FORCE);
         break;
 
       case CALIBRATE:
