@@ -15,6 +15,9 @@
 | Arm In       | DPAD LEFT           |
 | Arm Out      | DPAD RIGHT          |
 |              |                     |
+| Arm Retract  | LEFT TRIGGER        |
+| Arm Calibrate| RIGHT TRIGGER       |
+|              |                     |
 | Cone Mode    | BACK                |
 | Cube Mode    | START               |
 |              |                     |

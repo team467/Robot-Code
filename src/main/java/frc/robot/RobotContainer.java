@@ -211,7 +211,6 @@ public class RobotContainer {
 
     switch (RobotConstants.get().mode()) {
       case REAL -> {
-        operatorController.start().onTrue(new ArmStopCMD(arm));
         operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));
         operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm));
         operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm));
@@ -220,8 +219,9 @@ public class RobotContainer {
         operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
         operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm));
         operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm));
-        operatorController.back().onTrue(new ArmRetractCMD(arm));
+        operatorController.leftTrigger().onTrue(new ArmRetractCMD(arm));
         operatorController.rightTrigger().onTrue(new ArmCalibrateCMD(arm));
+        operatorController.leftBumper().onTrue(new ArmStopCMD(arm));
       }
       case REPLAY -> {}
       case SIM -> {}
