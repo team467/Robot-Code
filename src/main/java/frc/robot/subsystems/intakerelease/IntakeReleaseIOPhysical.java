@@ -4,7 +4,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
 public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   private final CANSparkMax motor;
@@ -15,6 +18,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   public IntakeReleaseIOPhysical(int motorID, int cubeLimID) {
     motor = new CANSparkMax(motorID, MotorType.kBrushless);
     encoder = motor.getEncoder();
+    motor.setIdleMode(IdleMode.kBrake);
     motor.setInverted(false);
     motor.enableVoltageCompensation(12);
     cubeLimitSwitch = new DigitalInput(cubeLimID);
@@ -32,7 +36,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   }
 
   @Override
-  public void updateInputs(IntakeReleaseIOInputs inputs) {
+  public void updateInputs(IntakeReleaseIOInputs inputs, Wants wants) {
     inputs.motorPosition = encoder.getPosition();
     inputs.motorVelocity = encoder.getVelocity();
     inputs.motorAppliedVolts = motor.getBusVoltage();
@@ -40,5 +44,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
     inputs.motorTemp = motor.getMotorTemperature();
     inputs.cubeLimitSwitch = cubeLimitSwitch.get();
     inputs.coneLimitSwitch = coneLimitSwitch.isPressed();
+    inputs.wantsCone = wants == Wants.CONE ? true : false;
+    inputs.wantsCube = wants == Wants.CUBE ? true : false;
   }
 }

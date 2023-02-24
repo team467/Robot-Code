@@ -2,6 +2,8 @@ package frc.robot.subsystems.intakerelease;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
+
 public interface IntakeReleaseIO {
   @AutoLog
   class IntakeReleaseIOInputs {
@@ -12,9 +14,11 @@ public interface IntakeReleaseIO {
     public double motorTemp = 0.0;
     public boolean cubeLimitSwitch = false;
     public boolean coneLimitSwitch = false;
+    public boolean wantsCone = false;
+    public boolean wantsCube = false;
   }
 
-  default void updateInputs(IntakeReleaseIOInputs inputs) {}
+  default void updateInputs(IntakeReleaseIOInputs inputs, Wants wants) {}
 
   default void setVoltage(double volts) {}
 
