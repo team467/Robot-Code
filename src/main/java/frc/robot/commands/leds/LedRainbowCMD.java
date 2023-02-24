@@ -15,6 +15,5 @@ public class LedRainbowCMD extends LedBaseCMD {
   @Override
   public void execute() {
     ledStrip.defaultLights();
-    System.out.println("DEFAULT LIGHTS");
   }
 }

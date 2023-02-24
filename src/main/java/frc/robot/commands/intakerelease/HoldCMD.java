@@ -34,7 +34,6 @@ public class HoldCMD extends CommandBase {
     } else {
       intakerelease.stop();
     }
-    System.out.println("HoldCMD");
   }
 
   @Override

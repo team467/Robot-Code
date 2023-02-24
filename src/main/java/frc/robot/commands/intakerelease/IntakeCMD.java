@@ -19,12 +19,10 @@ public class IntakeCMD extends CommandBase {
 
   @Override
   public void initialize() {
-    System.out.println("Intake Started");
   }
 
   @Override
   public void execute() {
-    System.out.println("Intake");
     intakerelease.intake();
     if (intakerelease.getWants() == Wants.CUBE) {
       ledStrip.setColorMovingUp(

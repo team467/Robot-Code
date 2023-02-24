@@ -4,6 +4,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
@@ -15,6 +17,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   public IntakeReleaseIOPhysical(int motorID, int cubeLimID) {
     motor = new CANSparkMax(motorID, MotorType.kBrushless);
     encoder = motor.getEncoder();
+    motor.setIdleMode(IdleMode.kBrake);
     motor.setInverted(false);
     motor.enableVoltageCompensation(12);
     cubeLimitSwitch = new DigitalInput(cubeLimID);

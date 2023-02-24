@@ -31,7 +31,6 @@ public class ReleaseCMD extends CommandBase {
     } else {
       ledStrip.setColorMovingDownTwoClr(COLORS_467.Gold.getColor(), COLORS_467.Purple.getColor());
     }
-    System.out.println("RELEASECMD");
   }
 
   @Override
