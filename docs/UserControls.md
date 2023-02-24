@@ -18,7 +18,7 @@
 | Arm Retract  | LEFT TRIGGER        |
 | Arm Calibrate| RIGHT TRIGGER       |
 |              |                     |
-| STOP         | Press Either Stick  |
+| Arm Stop     | Press Either Stick  |
 |              |                     |
 | Cone Mode    | BACK                |
 | Cube Mode    | START               |
