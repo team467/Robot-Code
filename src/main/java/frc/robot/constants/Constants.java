@@ -76,6 +76,14 @@ public interface Constants {
 
   FeedbackConstant chassisTurnFB();
 
+  int intakeMotorID();
+
+  int intakeCubeLimitSwitchID();
+
+  public int ledChannel();
+
+  public int led2023LedCount();
+
   int armExtendMotorId();
 
   int armRotateMotorId();

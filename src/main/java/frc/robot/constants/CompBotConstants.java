@@ -127,6 +127,26 @@ public class CompBotConstants implements Constants {
   } // TODO: tune
 
   @Override
+  public int intakeMotorID() {
+    return 11;
+  }
+
+  @Override
+  public int intakeCubeLimitSwitchID() {
+    return 1; // TODO: Change Me, DIO xx
+  }
+
+  @Override
+  public int ledChannel() {
+    return 0;
+  }
+
+  @Override
+  public int led2023LedCount() {
+    return 10;
+  }
+
+  @Override
   public int armExtendMotorId() {
     return 10; // CAN #10
   }
@@ -158,7 +178,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double armExtendMaxMeters() {
-    return 0.34;
+    return 0.68;
   }
 
   @Override
@@ -168,7 +188,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double armRotateMaxMeters() {
-    return 0.28;
+    return 0.34;
   }
 
   @Override

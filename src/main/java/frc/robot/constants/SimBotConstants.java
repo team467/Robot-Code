@@ -121,6 +121,26 @@ public class SimBotConstants implements Constants {
   }
 
   @Override
+  public int ledChannel() {
+    return 0;
+  }
+
+  @Override
+  public int led2023LedCount() {
+    return 0;
+  }
+
+  @Override
+  public int intakeMotorID() {
+    return 0;
+  }
+
+  @Override
+  public int intakeCubeLimitSwitchID() {
+    return 0;
+  }
+
+  @Override
   public int armExtendMotorId() {
     return 0;
   }
