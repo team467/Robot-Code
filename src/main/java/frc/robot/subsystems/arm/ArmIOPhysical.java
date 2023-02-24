@@ -50,8 +50,8 @@ public class ArmIOPhysical implements ArmIO {
     extendMotor.setInverted(true);
     rotateMotor.setInverted(false);
 
-    extendMotor.enableVoltageCompensation(12);
-    rotateMotor.enableVoltageCompensation(12);
+    extendMotor.enableVoltageCompensation(11);
+    rotateMotor.enableVoltageCompensation(11);
 
     extendMotor.setIdleMode(IdleMode.kBrake);
     rotateMotor.setIdleMode(IdleMode.kBrake);
