@@ -52,6 +52,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.intakerelease.IntakeReleaseIO;
 import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
 import frc.robot.subsystems.led.Led2023;
 import java.util.List;
@@ -111,6 +112,11 @@ public class RobotContainer {
                         RobotConstants.get().armExtendMotorId(),
                         RobotConstants.get().armRotateMotorId(),
                         RobotConstants.get().ratchetSolenoidId()));
+            intakeRelease =
+                new IntakeRelease(
+                    new IntakeReleaseIOPhysical(
+                        RobotConstants.get().intakeMotorID(),
+                        RobotConstants.get().intakeCubeLimitSwitchID()));
           }
           case ROBOT_BRIEFCASE -> {
             drive =
@@ -122,6 +128,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
             arm = new Arm(new ArmIO() {});
+            intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
           }
           default -> {
             drive =
@@ -133,6 +140,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
             arm = new Arm(new ArmIO() {});
+            intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
           }
         }
       }
@@ -149,6 +157,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 List.of(new VisionIO() {}));
         arm = new Arm(new ArmIO() {});
+        intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
       }
 
         // Replayed robot, disable IO implementations
@@ -163,22 +172,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 List.of(new VisionIO() {}));
         arm = new Arm(new ArmIO() {});
+        intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
       }
     }
 
-    intakeRelease =
-        new IntakeRelease(
-            new IntakeReleaseIOPhysical(
-                RobotConstants.get().intakeMotorID(),
-                RobotConstants.get().intakeCubeLimitSwitchID()));
-
     led2023 = new Led2023();
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
-
-    led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
-    intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
-
-    configureButtonBindings();
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
@@ -204,6 +203,9 @@ public class RobotContainer {
                     drive::runCharacterizationVolts,
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
+
+    // Configure the button bindings
+    configureButtonBindings();
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -229,6 +231,9 @@ public class RobotContainer {
                             new Pose2d(
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
+
+    led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
+    intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
 
     switch (RobotConstants.get().mode()) {
       case REAL -> {

@@ -49,27 +49,13 @@ public class IntakeRelease extends SubsystemBase {
     logger.processInputs("IntakeRelease", inputs);
 
     switch (state) {
-      case DISABLED:
-        intakeReleaseIO.setVelocity(0);
-        break;
-
-      case INTAKE:
-        intakeReleaseIO.setVelocity(-0.5);
-        break;
-
-      case RELEASE:
-        intakeReleaseIO.setVelocity(0.2);
-        break;
-      case HOLD_CUBE:
-        intakeReleaseIO.setVelocity(-0.03);
-        break;
-      case HOLD_CONE:
-        intakeReleaseIO.setVelocity(-0.1);
-        break;
-      case STOP:
-      default:
-        intakeReleaseIO.setVelocity(0);
-        break;
+      case DISABLED -> intakeReleaseIO.setPercent(0);
+      case INTAKE -> intakeReleaseIO.setPercent(-0.5);
+      case RELEASE -> intakeReleaseIO.setPercent(0.2);
+      case HOLD_CUBE -> intakeReleaseIO.setPercent(-0.03);
+      case HOLD_CONE -> intakeReleaseIO.setPercent(-0.1);
+      case STOP -> intakeReleaseIO.setPercent(0);
+      default -> intakeReleaseIO.setPercent(0);
     }
   }
 

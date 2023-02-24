@@ -7,7 +7,7 @@ public abstract class LedBaseCMD extends CommandBase {
 
   protected Led2023 ledStrip;
 
-  public LedBaseCMD(Led2023 ledStrip) {
+  protected LedBaseCMD(Led2023 ledStrip) {
     this.ledStrip = ledStrip;
     addRequirements(ledStrip);
   }
@@ -15,13 +15,5 @@ public abstract class LedBaseCMD extends CommandBase {
   @Override
   public void initialize() {
     ledStrip.resetTimers();
-  }
-
-  @Override
-  public void end(boolean interrupted) {}
-
-  @Override
-  public boolean isFinished() {
-    return false;
   }
 }
