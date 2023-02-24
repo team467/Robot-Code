@@ -1,11 +1,10 @@
 package frc.robot.subsystems.intakerelease;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
-import com.revrobotics.CANSparkMax.IdleMode;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 

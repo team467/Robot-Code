@@ -1,8 +1,7 @@
 package frc.robot.subsystems.intakerelease;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeReleaseIO {
   @AutoLog
