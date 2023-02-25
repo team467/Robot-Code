@@ -6,7 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,14 +21,41 @@ import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacter
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUPigeon2;
+import frc.lib.io.vision.VisionIO;
+import frc.lib.io.vision.VisionIOAprilTag;
+import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmHomeCMD;
+import frc.robot.commands.arm.ArmManualDownCMD;
+import frc.robot.commands.arm.ArmManualExtendCMD;
+import frc.robot.commands.arm.ArmManualRetractCMD;
+import frc.robot.commands.arm.ArmManualUpCMD;
+import frc.robot.commands.arm.ArmRetractCMD;
+import frc.robot.commands.arm.ArmScoreHighNodeCMD;
+import frc.robot.commands.arm.ArmScoreLowNodeCMD;
+import frc.robot.commands.arm.ArmScoreMidNodeCMD;
+import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
+import frc.robot.commands.intakerelease.HoldCMD;
+import frc.robot.commands.intakerelease.IntakeCMD;
+import frc.robot.commands.intakerelease.ReleaseCMD;
+import frc.robot.commands.intakerelease.WantConeCMD;
+import frc.robot.commands.intakerelease.WantCubeCMD;
+import frc.robot.commands.leds.LedRainbowCMD;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.arm.ArmIOPhysical;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
+import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.intakerelease.IntakeReleaseIO;
+import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
+import frc.robot.subsystems.led.Led2023;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -38,10 +68,14 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
-  private final Drive drive;
+  private Drive drive;
+  private final IntakeRelease intakeRelease;
+  private Led2023 led2023;
+  private final Arm arm;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser =
@@ -56,13 +90,34 @@ public class RobotContainer {
       case REAL -> {
         switch (RobotConstants.get().robot()) {
           case ROBOT_COMP -> {
+            Transform3d front =
+                new Transform3d(
+                    new Translation3d(6 * 0.01, -10 * 0.01, 42 * 0.01), new Rotation3d());
+            Transform3d right =
+                new Transform3d(
+                    new Translation3d(2 * 0.01, -12 * 0.01, 42 * 0.01),
+                    new Rotation3d(0, 0, -0.5 * Math.PI));
             drive =
                 new Drive(
                     new IMUPigeon2(17),
                     new ModuleIOSparkMAX(3, 4, 13, 0),
                     new ModuleIOSparkMAX(5, 6, 14, 1),
                     new ModuleIOSparkMAX(1, 2, 15, 2),
-                    new ModuleIOSparkMAX(7, 8, 16, 3));
+                    new ModuleIOSparkMAX(7, 8, 16, 3),
+                    List.of(
+                        new VisionIOAprilTag("front", front, FieldConstants.aprilTagFieldLayout),
+                        new VisionIOAprilTag("right", right, FieldConstants.aprilTagFieldLayout)));
+            arm =
+                new Arm(
+                    new ArmIOPhysical(
+                        RobotConstants.get().armExtendMotorId(),
+                        RobotConstants.get().armRotateMotorId(),
+                        RobotConstants.get().ratchetSolenoidId()));
+            intakeRelease =
+                new IntakeRelease(
+                    new IntakeReleaseIOPhysical(
+                        RobotConstants.get().intakeMotorID(),
+                        RobotConstants.get().intakeCubeLimitSwitchID()));
           }
           case ROBOT_BRIEFCASE -> {
             drive =
@@ -71,7 +126,10 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
-                    new ModuleIO() {});
+                    new ModuleIO() {},
+                    List.of(new VisionIO() {}));
+            arm = new Arm(new ArmIO() {});
+            intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
           }
           default -> {
             drive =
@@ -80,7 +138,10 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
-                    new ModuleIO() {});
+                    new ModuleIO() {},
+                    List.of(new VisionIO() {}));
+            arm = new Arm(new ArmIO() {});
+            intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
           }
         }
       }
@@ -94,7 +155,10 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
-                new ModuleIOSim());
+                new ModuleIOSim(),
+                List.of(new VisionIO() {}));
+        arm = new Arm(new ArmIO() {});
+        intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
       }
 
         // Replayed robot, disable IO implementations
@@ -106,9 +170,15 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                List.of(new VisionIO() {}));
+        arm = new Arm(new ArmIO() {});
+        intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
       }
     }
+
+    led2023 = new Led2023();
+    LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
@@ -121,8 +191,8 @@ public class RobotContainer {
                 new Waypoint(new Translation2d(1, 1)),
                 new Waypoint(new Translation2d(2, -1)),
                 Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
-    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
-    // Rotation2d()));
+    // autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0,
+    new Rotation2d();
     autoChooser.addOption(
         "Drive Characterization",
         Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
@@ -134,12 +204,10 @@ public class RobotContainer {
                     drive::runCharacterizationVolts,
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
-    // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
     // Configure the button bindings
     configureButtonBindings();
   }
-
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -165,9 +233,33 @@ public class RobotContainer {
                                 new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
 
-    driverController
-        .povCenter()
-        .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
+    intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
+
+    switch (RobotConstants.get().mode()) {
+      case REAL -> {
+        driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023));
+        driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023));
+        operatorController.back().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
+        operatorController.start().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
+
+        operatorController.start().onTrue(new ArmStopCMD(arm));
+        operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));
+        operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm));
+        operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm));
+        operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm));
+        operatorController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
+        operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
+        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm));
+        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm));
+        operatorController.leftTrigger().onTrue(new ArmRetractCMD(arm));
+        operatorController.rightTrigger().onTrue(new ArmCalibrateCMD(arm));
+        operatorController.leftStick().onTrue(new ArmStopCMD(arm));
+        operatorController.rightStick().onTrue(new ArmStopCMD(arm));
+      }
+      case REPLAY -> {}
+      case SIM -> {}
+    }
   }
 
   /**
