@@ -58,6 +58,7 @@ import frc.robot.subsystems.intakerelease.IntakeReleaseIO;
 import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
 import frc.robot.subsystems.led.Led2023;
 import java.util.List;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -206,13 +207,6 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
 
-    // Set default LEDs
-    if (operatorController.back().getAsBoolean()) {
-      new WantCubeCMD(intakeRelease, led2023).schedule();
-    } else {
-      new WantConeCMD(intakeRelease, led2023).schedule();
-    }
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -266,6 +260,15 @@ public class RobotContainer {
         operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
         operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease));
         operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease));
+         Logger.getInstance()
+             .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
+        Logger.getInstance()
+             .recordOutput("CustomController/MiddleButton", operatorController.b().getAsBoolean());
+        Logger.getInstance()
+            .recordOutput("CustomController/HighButton", operatorController.y().getAsBoolean());
+          Logger.getInstance()
+             .recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
+        
 
         // Home will be for movement
         operatorController.x().onTrue(new ArmHomeCMD(arm));
@@ -279,6 +282,10 @@ public class RobotContainer {
         operatorController.rightStick().onTrue(new ArmStopCMD(arm));
         operatorController.leftBumper().onTrue(new ArmShelfCMD(arm));
         operatorController.rightBumper().onTrue(new ArmFloorCMD(arm));
+          Logger.getInstance()
+              .recordOutput("CustomController/FloorButton", operatorController.rightBumper().getAsBoolean());
+          Logger.getInstance()
+             .recordOutput("CustomController/ShelfButton", operatorController.leftBumper().getAsBoolean());
       }
       case REPLAY -> {}
       case SIM -> {}
@@ -292,5 +299,16 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void initLeds() {
+    // Set default LEDs
+    if (operatorController.back().getAsBoolean()) {
+      new WantCubeCMD(intakeRelease, led2023).schedule();
+    } else {
+      new WantConeCMD(intakeRelease, led2023).schedule();
+    }
+    Logger.getInstance()
+        .recordOutput("CustomController/WantSwitch", operatorController.back().getAsBoolean());
   }
 }
