@@ -47,6 +47,7 @@ public class Arm extends SubsystemBase {
   private double extendSetpoint = 0.0;
   private double rotateSetpoint = 0.0;
   private boolean isCalibrated = false;
+  private boolean isDropping = false;
 
   private boolean hasRotate = true;
   private boolean hasExtend = true;
@@ -59,6 +60,7 @@ public class Arm extends SubsystemBase {
   private static final double SAFE_EXTEND_AT_PARTIAL_EXTENSION = 0.04;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
+  private static final double ROTATE_DROP_METERS = 0.02;
 
   private double manualExtendVolts = 0.0;
   private double manualRotateVolts = 0.0;
@@ -122,6 +124,22 @@ public class Arm extends SubsystemBase {
 
   public boolean isHolding() {
     return mode == ArmMode.HOLD;
+  }
+
+  public void drop() {
+    if (isDropping) {
+      return;
+    }
+    setTargetPositionRotate(armIOInputs.rotatePosition - ROTATE_DROP_METERS);
+    isDropping = true;
+  }
+
+  public boolean hasDropped() {
+    if (isDropping && isFinished()) {
+      isDropping = false;
+      return true;
+    }
+    return false;
   }
 
   @Override
@@ -313,6 +331,7 @@ public class Arm extends SubsystemBase {
             rotateSetpoint,
             RobotConstants.get().armRotateMinMeters(),
             RobotConstants.get().armRotateMaxMeters());
+    isDropping = false;
   }
 
   public void setTargetPositionExtend(double extendSetpoint) {
