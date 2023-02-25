@@ -48,6 +48,7 @@ public class Arm extends SubsystemBase {
   private double extendSetpoint = 0.0;
   private double rotateSetpoint = 0.0;
   private boolean isCalibrated = false;
+  private double calibrateRotateOrigin = 0;
 
   private static final double EXTEND_TOLERANCE_METERS = 0.008;
   private static final double ROTATE_TOLERANCE_METERS = 0.008;
@@ -66,8 +67,9 @@ public class Arm extends SubsystemBase {
   private double manualRotateVolts = 0.0;
   private PIDController extendPidController = new PIDController(50, 0, 0);
   private PIDController rotatePidController = new PIDController(400, 0, 0);
+
   private static final double BACK_FORCE = -1.3;
-  private static final double HOLD_BACK_FORCE = -0.7;
+  private static final double HOLD_BACK_FORCE = -0.5;
 
   private static final double CALIBRATE_RETRACT_VOLTAGE = -1;
   private static final double CALIBRATE_ROTATE_VOLTAGE = -7;
@@ -109,6 +111,7 @@ public class Arm extends SubsystemBase {
   public void calibrate() {
     calibrateMode = CalibrateMode.RETRACT_ARM;
     mode = ArmMode.CALIBRATE;
+    calibrateRotateOrigin = armIOInputs.rotatePosition;
   }
 
   public void hold() {
@@ -271,7 +274,10 @@ public class Arm extends SubsystemBase {
         break;
       case LOWER_ARM:
         // Drive rotate motor until hit lower limit switch
-        if (armIOInputs.rotateLowLimitSwitch) {
+        if (calibrateRotateOrigin - armIOInputs.rotatePosition > 0.15) {
+          // If we've travelled a lot, start over so that we don't pull the belt too far.
+          calibrate();
+        } else if (armIOInputs.rotateLowLimitSwitch) {
           armIO.resetRotateEncoderPosition();
           armIO.setRotateVoltage(0);
           calibrateMode = CalibrateMode.RETRACT_ARM_AT_LOW_POSITION;
