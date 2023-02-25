@@ -39,10 +39,11 @@ public class Led2023 extends SubsystemBase {
     Red(0xFF, 0x00, 0x00, 0x99000000),
     Green(0x00, 0x80, 0x00, 0x33663300),
     Blue(0x00, 0x00, 0xCC, 0x1a339900),
-    Gold(0xFF, 0xC2, 0x0A, 0xe6e64d00),
+    Yellow(0xFF, 0xB1, 0x0A, 0xe6e69d00),
     Pink(0xDC, 0x26, 0x7F, 0xdc267f00),
     Orange(0xFE, 0x61, 0x00, 0xfe6100),
     Black(0x00, 0x00, 0x00, 0x00000000),
+    Gold(0xFF, 0xC2, 0x0A, 0xe6e64d00),
     Purple(0x69, 0x03, 0xA3, 0x8000ff00);
 
     public final int red;
@@ -367,15 +368,19 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-  public void setBlinkColors(COLORS_467 topColor, COLORS_467 bottomColor) {
-    setTop(topColor);
-    setBottom(bottomColor);
-    if (purpleTimer.hasElapsed(
-        SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
+  public void setBlinkColors(COLORS_467 topColor, COLORS_467 bottomColor, Color bgColor) {
+
+    if (purpleTimer.hasElapsed(0.25)) {
       purpleTimer.reset();
-      set(COLORS_467.Black);
+    } else if (purpleTimer.hasElapsed(0.17)) {
+      setTop(topColor);
+      setBottom(bottomColor);
+      ledStrip.update();
+    } else {
+
+      set(bgColor);
+      ledStrip.update();
     }
-    ledStrip.update();
   }
 
   public void setAlternateColorsUp(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {

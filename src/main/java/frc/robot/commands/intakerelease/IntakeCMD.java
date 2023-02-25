@@ -25,10 +25,15 @@ public class IntakeCMD extends CommandBase {
           COLORS_467.White.getColor(), COLORS_467.Purple.getColor()); // Purple, black
     } else if (intakerelease.getWants() == Wants.CONE) {
       ledStrip.setColorMovingUp(
-          COLORS_467.White.getColor(), COLORS_467.Gold.getColor()); // Gold, black
+          COLORS_467.White.getColor(), COLORS_467.Yellow.getColor()); // Gold, black
     } else {
-      ledStrip.setColorMovingUpTwoClr(COLORS_467.Purple.getColor(), COLORS_467.Gold.getColor());
+      ledStrip.setColorMovingUpTwoClr(COLORS_467.Purple.getColor(), COLORS_467.Yellow.getColor());
     }
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    ledStrip.defaultLights();
   }
 
   @Override

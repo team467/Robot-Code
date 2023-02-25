@@ -235,22 +235,22 @@ public class RobotContainer {
         operatorController.back().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
         operatorController.start().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
 
-        operatorController.start().onTrue(new ArmStopCMD(arm));
+        operatorController.start().onTrue(new ArmStopCMD(arm, led2023));
         operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, intakeRelease, led2023));
         operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm, intakeRelease, led2023));
         operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm, intakeRelease, led2023));
         operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, intakeRelease, led2023));
-        operatorController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
-        operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
-        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease));
-        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease));
+        operatorController.x().onTrue(new ArmHomeCMD(arm, led2023)); // Retract full
+        operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease, led2023));
+        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease, led2023));
+        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease, led2023));
         operatorController.leftTrigger().onTrue(new ArmRetractCMD(arm));
         operatorController.rightTrigger().onTrue(new ArmCalibrateCMD(arm, led2023));
-        operatorController.leftStick().onTrue(new ArmStopCMD(arm));
-        operatorController.rightStick().onTrue(new ArmStopCMD(arm));
-        operatorController.leftBumper().onTrue(new ArmShelfCMD(arm));
-        operatorController.rightBumper().onTrue(new ArmFloorCMD(arm));
-        driverController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
+        operatorController.leftStick().onTrue(new ArmStopCMD(arm, led2023));
+        operatorController.rightStick().onTrue(new ArmStopCMD(arm, led2023));
+        operatorController.leftBumper().onTrue(new ArmShelfCMD(arm, led2023));
+        operatorController.rightBumper().onTrue(new ArmFloorCMD(arm, led2023));
+        driverController.x().onTrue(new ArmHomeCMD(arm, led2023)); // Retract full
       }
       case REPLAY -> {}
       case SIM -> {}

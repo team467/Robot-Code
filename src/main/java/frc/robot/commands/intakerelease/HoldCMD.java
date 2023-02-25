@@ -19,15 +19,18 @@ public class HoldCMD extends CommandBase {
   @Override
   public void execute() {
     if (intakerelease.haveCube() && !intakerelease.haveCone()) {
-      ledStrip.setTop(COLORS_467.Purple);
-      ledStrip.setBottom(COLORS_467.White);
+      ledStrip.setBlinkColors(COLORS_467.Purple, COLORS_467.Purple, COLORS_467.White.getColor());
       intakerelease.holdCube();
     } else if (intakerelease.haveCone()) {
-      ledStrip.setTop(COLORS_467.Gold);
-      ledStrip.setBottom(COLORS_467.White);
+      ledStrip.setBlinkColors(COLORS_467.Yellow, COLORS_467.Yellow, COLORS_467.White.getColor());
       intakerelease.holdCone();
     } else {
       intakerelease.stop();
     }
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    ledStrip.defaultLights();
   }
 }

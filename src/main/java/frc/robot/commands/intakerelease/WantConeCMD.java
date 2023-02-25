@@ -20,7 +20,7 @@ public class WantConeCMD extends CommandBase {
   @Override
   public void execute() {
     intakerelease.setWants(Wants.CONE);
-    ledStrip.set(COLORS_467.Gold);
+    ledStrip.set(COLORS_467.Yellow);
     ledStrip.sendData();
   }
 }

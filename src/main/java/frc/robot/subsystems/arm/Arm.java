@@ -62,7 +62,7 @@ public class Arm extends SubsystemBase {
   private static final double SAFE_RETRACT_NON_HOME = 0.05;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
-  private static final double ROTATE_DROP_METERS = 0.02;
+  private static final double ROTATE_DROP_METERS = 0.06;
 
   private double holdPosition;
   private double manualExtendVolts = 0.0;

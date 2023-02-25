@@ -19,7 +19,7 @@ public class LedResetPoseCMD extends LedBaseCMD {
 
   @Override
   public void execute() {
-    ledStrip.setBlinkColors(COLORS_467.Orange, COLORS_467.Pink);
+    ledStrip.setBlinkColors(COLORS_467.Orange, COLORS_467.Pink, COLORS_467.Green.getColor());
     drive.setPose(new Pose2d(new Translation2d(), AllianceFlipUtil.apply(new Rotation2d())));
   }
 
