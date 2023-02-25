@@ -31,12 +31,12 @@ import frc.robot.commands.arm.ArmManualDownCMD;
 import frc.robot.commands.arm.ArmManualExtendCMD;
 import frc.robot.commands.arm.ArmManualRetractCMD;
 import frc.robot.commands.arm.ArmManualUpCMD;
-import frc.robot.commands.arm.ArmRetractCMD;
 import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
+import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.commands.intakerelease.HoldCMD;
@@ -58,6 +58,7 @@ import frc.robot.subsystems.intakerelease.IntakeReleaseIO;
 import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
 import frc.robot.subsystems.led.Led2023;
 import java.util.List;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -225,6 +226,9 @@ public class RobotContainer {
             () -> true // TODO: add toggle
             ));
     driverController.start().onTrue(new LedResetPoseCMD(led2023, drive));
+    driverController
+        .pov(-1)
+        .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
     intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
 
@@ -232,25 +236,47 @@ public class RobotContainer {
       case REAL -> {
         driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023));
         driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023, arm));
-        operatorController.back().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
-        operatorController.start().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
 
-        operatorController.start().onTrue(new ArmStopCMD(arm, led2023));
+        // Set the game piece type
+        operatorController.back().onFalse(new WantConeCMD(intakeRelease, led2023));
+        operatorController.back().onTrue(new WantCubeCMD(intakeRelease, led2023));
+
+        // Manual arm movements
         operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, intakeRelease, led2023));
         operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm, intakeRelease, led2023));
         operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm, intakeRelease, led2023));
         operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, intakeRelease, led2023));
-        operatorController.x().onTrue(new ArmHomeCMD(arm, led2023)); // Retract full
+
+        // Placing cone or cube, gets what it wants from in the command
         operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease, led2023));
         operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease, led2023));
         operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease, led2023));
-        operatorController.leftTrigger().onTrue(new ArmRetractCMD(arm));
-        operatorController.rightTrigger().onTrue(new ArmCalibrateCMD(arm, led2023));
+         Logger.getInstance()
+             .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
+        Logger.getInstance()
+             .recordOutput("CustomController/MiddleButton", operatorController.b().getAsBoolean());
+        Logger.getInstance()
+            .recordOutput("CustomController/HighButton", operatorController.y().getAsBoolean());
+          Logger.getInstance()
+             .recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
+        
+
+        // Home will be for movement
+        operatorController.x().onTrue(new ArmHomeCMD(arm, led2023));
+        driverController.x().onTrue(new ArmHomeCMD(arm, led2023));
+
+        // Need to set to use automated movements, should be set in Autonomous init.
+        driverController.back().onTrue(new ArmCalibrateCMD(arm, led2023));
+
+        // Manual arm movements
         operatorController.leftStick().onTrue(new ArmStopCMD(arm, led2023));
         operatorController.rightStick().onTrue(new ArmStopCMD(arm, led2023));
         operatorController.leftBumper().onTrue(new ArmShelfCMD(arm, led2023));
         operatorController.rightBumper().onTrue(new ArmFloorCMD(arm, led2023));
-        driverController.x().onTrue(new ArmHomeCMD(arm, led2023)); // Retract full
+          Logger.getInstance()
+              .recordOutput("CustomController/FloorButton", operatorController.rightBumper().getAsBoolean());
+          Logger.getInstance()
+             .recordOutput("CustomController/ShelfButton", operatorController.leftBumper().getAsBoolean());
       }
       case REPLAY -> {}
       case SIM -> {}
@@ -264,5 +290,16 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void initLeds() {
+    // Set default LEDs
+    if (operatorController.back().getAsBoolean()) {
+      new WantCubeCMD(intakeRelease, led2023).schedule();
+    } else {
+      new WantConeCMD(intakeRelease, led2023).schedule();
+    }
+    Logger.getInstance()
+        .recordOutput("CustomController/WantSwitch", operatorController.back().getAsBoolean());
   }
 }
