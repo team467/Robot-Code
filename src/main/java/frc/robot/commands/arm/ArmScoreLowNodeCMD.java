@@ -1,5 +1,6 @@
 package frc.robot.commands.arm;
 
+import frc.lib.leds.LEDStrip;
 import frc.robot.subsystems.arm.Arm;
 
 public class ArmScoreLowNodeCMD extends ArmPositionCMD {

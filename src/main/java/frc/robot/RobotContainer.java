@@ -234,10 +234,10 @@ public class RobotContainer {
         operatorController.start().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
 
         operatorController.start().onTrue(new ArmStopCMD(arm));
-        operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));
-        operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm));
-        operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm));
-        operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm));
+        operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, intakeRelease, led2023));
+        operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm, intakeRelease, led2023));
+        operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm, intakeRelease, led2023));
+        operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, intakeRelease, led2023));
         operatorController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
         operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
         operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm));
