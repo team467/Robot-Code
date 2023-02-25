@@ -8,7 +8,6 @@ public class ArmRetractCMD extends CommandBase {
 
   public ArmRetractCMD(Arm arm) {
     this.arm = arm;
-
     addRequirements(arm);
   }
 
@@ -16,9 +15,6 @@ public class ArmRetractCMD extends CommandBase {
   public void initialize() {
     arm.setTargetPositionExtend(0.05);
   }
-
-  @Override
-  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {

@@ -31,7 +31,9 @@ public class ArmPositionCMD extends CommandBase {
   public void execute() {}
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    arm.hold();
+  }
 
   @Override
   public boolean isFinished() {
