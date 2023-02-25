@@ -14,6 +14,7 @@
 | Arm down     | DPAD DOWN           |
 | Arm In       | DPAD LEFT           |
 | Arm Out      | DPAD RIGHT          |
+|ArmAutoRetract| X                   |
 |              |                     |
 | Arm Retract  | LEFT TRIGGER        |
 | Arm Calibrate| RIGHT TRIGGER       |
