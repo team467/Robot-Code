@@ -13,6 +13,7 @@ public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
   public static final boolean USE_BATTERY_CHECK = true;
   public static final double BATTER_MIN_VOLTAGE = 9.0;
+  public static final boolean CHECK_ARM_CALIBRATION = true;
 
   private final double SHOOTING_TIMER_SPEED = 0.1;
   private final double RAINBOW_TIMER_SPEED = 0.02;
@@ -22,6 +23,7 @@ public class Led2023 extends SubsystemBase {
   private Timer rainbowTimer = new Timer();
   private Timer purpleTimer = new Timer();
   protected double lastLoopTime = 0;
+  private boolean isArmCalibrated = false;
 
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
@@ -77,14 +79,24 @@ public class Led2023 extends SubsystemBase {
     purpleTimer.reset();
     lastLoopTime = Timer.getFPGATimestamp();
   }
+  
+  public void setArmCalibrated() {
+    isArmCalibrated = true;
+}
 
   public void defaultLights() {
+    
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       set(batteryCheckColor);
       sendData();
     } else {
+      if ((!isArmCalibrated)&&CHECK_ARM_CALIBRATION) {
+        set(COLORS_467.Red);
+        sendData();
+      } else {
       setRainbowMovingDownSecondInv();
       sendData();
+      }
     }
 
     sendData();
