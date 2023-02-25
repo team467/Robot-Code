@@ -25,10 +25,10 @@ public class Arm extends SubsystemBase {
   }
 
   private enum CalibrateMode {
-    PHASE_ONE,
-    PHASE_TWO,
-    PHASE_THREE,
-    PHASE_FOUR,
+    RETRACT_ARM,
+    EXTEND_ARM,
+    LOWER_ARM,
+    RETRACT_ARM_AT_LOW_POSITION,
   }
 
   private enum AutoMode {
@@ -40,7 +40,7 @@ public class Arm extends SubsystemBase {
 
   private ArmMode mode = ArmMode.MANUAL;
   private AutoMode autoMode = AutoMode.RETRACT;
-  private CalibrateMode calibrateMode = CalibrateMode.PHASE_ONE;
+  private CalibrateMode calibrateMode = CalibrateMode.RETRACT_ARM;
 
   private Kickback kickback;
 
@@ -69,7 +69,7 @@ public class Arm extends SubsystemBase {
   private static final double BACK_FORCE = -1.3;
   private static final double HOLD_BACK_FORCE = -0.7;
 
-  private static final double CALIBRATE_EXTEND_VOLTAGE = -1;
+  private static final double CALIBRATE_RETRACT_VOLTAGE = -1;
   private static final double CALIBRATE_ROTATE_VOLTAGE = -7;
 
   /**
@@ -107,7 +107,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void calibrate() {
-    calibrateMode = CalibrateMode.PHASE_ONE;
+    calibrateMode = CalibrateMode.RETRACT_ARM;
     mode = ArmMode.CALIBRATE;
   }
 
@@ -244,7 +244,7 @@ public class Arm extends SubsystemBase {
 
   private void calibratePeriodic() {
     switch (calibrateMode) {
-      case PHASE_ONE:
+      case RETRACT_ARM:
         // Drive Extend Motor until hit limit switch
         if (armIOInputs.extendReverseLimitSwitch && armIOInputs.rotateLowLimitSwitch) {
           isCalibrated = true;
@@ -253,39 +253,39 @@ public class Arm extends SubsystemBase {
         }
         if (armIOInputs.extendReverseLimitSwitch) {
           armIO.resetExtendEncoderPosition();
-          calibrateMode = CalibrateMode.PHASE_TWO;
+          calibrateMode = CalibrateMode.EXTEND_ARM;
         } else {
-          setExtendVoltage(CALIBRATE_EXTEND_VOLTAGE);
+          setExtendVoltage(CALIBRATE_RETRACT_VOLTAGE);
         }
 
         break;
-      case PHASE_TWO:
+      case EXTEND_ARM:
         // Drive Extend Motor a little bit outwards
         setExtendVoltage(calculateExtendPidUnsafe(EXTEND_CALIBRATION_POSITION));
         if (isExtendPositionNear(EXTEND_CALIBRATION_POSITION)) {
-          calibrateMode = CalibrateMode.PHASE_THREE;
+          calibrateMode = CalibrateMode.LOWER_ARM;
           setExtendVoltage(0);
         }
         break;
-      case PHASE_THREE:
+      case LOWER_ARM:
         // Drive rotate motor until hit lower limit switch
         if (armIOInputs.rotateLowLimitSwitch) {
           armIO.resetRotateEncoderPosition();
           armIO.setRotateVoltage(0);
-          calibrateMode = CalibrateMode.PHASE_FOUR;
+          calibrateMode = CalibrateMode.RETRACT_ARM_AT_LOW_POSITION;
         } else {
           setRotateVoltage(CALIBRATE_ROTATE_VOLTAGE);
         }
 
         break;
-      case PHASE_FOUR:
+      case RETRACT_ARM_AT_LOW_POSITION:
         // Drive Extend Motor until hit limit switch
         if (armIOInputs.extendReverseLimitSwitch) {
           armIO.resetExtendEncoderPosition();
           isCalibrated = true;
           hold();
         } else {
-          setExtendVoltage(CALIBRATE_EXTEND_VOLTAGE);
+          setExtendVoltage(CALIBRATE_RETRACT_VOLTAGE);
         }
         break;
     }
