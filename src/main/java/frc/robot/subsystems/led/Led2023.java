@@ -64,7 +64,7 @@ public class Led2023 extends SubsystemBase {
     super();
 
     ledStrip =
-        LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), true);
+        LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);
     for (int i = 0; i < ledStrip.getSize(); i++) {
       ledStrip.setRGB(i, 0, 0, 0);
     }
@@ -332,7 +332,8 @@ public class Led2023 extends SubsystemBase {
       if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * i)) {
         double timeUntilOff = Math.max(0, (SHOOTING_TIMER_SPEED * (i + 2)) - purpleTimer.get());
         double brightness = (255 * timeUntilOff);
-        Color currentColor = j >= RobotConstants.get().led2023LedCount() / 2 ? topColor : bottomColor;
+        Color currentColor =
+            j >= RobotConstants.get().led2023LedCount() / 2 ? topColor : bottomColor;
 
         if (brightness == 0) {
           ledStrip.setLED(j, currentColor);
@@ -346,7 +347,8 @@ public class Led2023 extends SubsystemBase {
           ledStrip.update();
         }
       } else {
-        Color currentColor = j >= RobotConstants.get().led2023LedCount() / 2 ? topColor : bottomColor;
+        Color currentColor =
+            j >= RobotConstants.get().led2023LedCount() / 2 ? topColor : bottomColor;
         ledStrip.setLED(j, currentColor);
         ledStrip.update();
       }
@@ -354,14 +356,44 @@ public class Led2023 extends SubsystemBase {
   }
 
   public void setBlinkColors(COLORS_467 topColor, COLORS_467 bottomColor) {
-    
+    setTop(topColor);
+    setBottom(bottomColor);
+    if (purpleTimer.hasElapsed(
+        SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
+      purpleTimer.reset();
+      set(COLORS_467.Black);
+    }
+    ledStrip.update();
   }
 
-  public void setAlternateColorsMovingUp(COLORS_467 colorOne, COLORS_467 colorTwo, COLORS_467 bgColor) {
-
+  public void setAlternateColorsUp(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
+    for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
+      if (i % 2 == 0) {
+        ledStrip.setLED(i, colorOne.getColor());
+      } else {
+        ledStrip.setLED(i, colorTwo.getColor());
+      }
+    }
+    ledStrip.update();
+    for (int j = 0; j < RobotConstants.get().led2023LedCount(); j++) {
+      ledStrip.setLED(j, bgColor);
+      ledStrip.update();
+    }
   }
-  
-  public void setAlternateColorsMovingDown(COLORS_467 colorOne, COLORS_467 colorTwo, COLORS_467 bgColor) {
-    
+
+  public void setAlternateColorsDown(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
+    for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
+      if (i % 2 == 0) {
+        ledStrip.setLED(i, colorOne.getColor());
+      } else {
+        ledStrip.setLED(i, colorTwo.getColor());
+      }
+    }
+    ledStrip.update();
+    for (int j = 0; j < RobotConstants.get().led2023LedCount(); j++) {
+      int l = RobotConstants.get().led2023LedCount() - 1 - j;
+      ledStrip.setLED(l, bgColor);
+      ledStrip.update();
+    }
   }
 }
