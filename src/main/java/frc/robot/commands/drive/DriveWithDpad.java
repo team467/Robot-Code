@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 public class DriveWithDpad extends CommandBase {
   private final Drive drive;
   private final Supplier<Integer> povSupplier;
-  private static final double SLOW_SPEED = Units.inchesToMeters(10);
+  private static final double SLOW_SPEED = Units.inchesToMeters(20);
 
   public DriveWithDpad(Drive drive, Supplier<Integer> povSupplier) {
     this.drive = drive;
@@ -23,9 +23,9 @@ public class DriveWithDpad extends CommandBase {
 
     switch (pov) {
       case 0 -> drive.runVelocity(new ChassisSpeeds(SLOW_SPEED, 0, 0));
-      case 90 -> drive.runVelocity(new ChassisSpeeds(0, SLOW_SPEED, 0));
+      case 90 -> drive.runVelocity(new ChassisSpeeds(0, -SLOW_SPEED, 0));
       case 180 -> drive.runVelocity(new ChassisSpeeds(-SLOW_SPEED, 0, 0));
-      case 270 -> drive.runVelocity(new ChassisSpeeds(0, -SLOW_SPEED, 0));
+      case 270 -> drive.runVelocity(new ChassisSpeeds(0, SLOW_SPEED, 0));
       default -> drive.stop();
     }
   }
