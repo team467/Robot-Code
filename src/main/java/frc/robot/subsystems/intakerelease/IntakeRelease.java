@@ -23,17 +23,16 @@ public class IntakeRelease extends SubsystemBase {
     super();
     this.intakeReleaseIO = intakeReleaseIO;
     inputs = new IntakeReleaseIOInputsAutoLogged();
-    this.intakeReleaseIO.updateInputs(inputs, Wants.NONE);
+    this.intakeReleaseIO.updateInputs(inputs, Wants.CONE);
     state = State.STOP;
   }
 
   public enum Wants {
     CONE,
-    CUBE,
-    NONE
+    CUBE
   }
 
-  private Wants wants = Wants.NONE;
+  private Wants wants = Wants.CUBE;
 
   public Wants getWants() {
     return (wants);

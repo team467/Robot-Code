@@ -225,7 +225,7 @@ public class RobotContainer {
             () -> true // TODO: add toggle
             ));
     driverController.start().onTrue(new LedResetPoseCMD(led2023, drive));
-    led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
+    led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
     intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
 
     switch (RobotConstants.get().mode()) {
