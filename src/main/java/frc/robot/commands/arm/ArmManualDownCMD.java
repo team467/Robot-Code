@@ -28,5 +28,6 @@ public class ArmManualDownCMD extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     arm.hold();
+    ledStrip.defaultLights();
   }
 }
