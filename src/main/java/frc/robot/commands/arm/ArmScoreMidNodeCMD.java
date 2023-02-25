@@ -9,6 +9,9 @@ public class ArmScoreMidNodeCMD extends ArmPositionCMD {
   public ArmScoreMidNodeCMD(Arm arm, IntakeRelease intakerelease) {
     super(
         arm,
-        intakerelease.haveCone() ? ArmPositionConstants.MID_CONE : ArmPositionConstants.MID_CUBE);
+        () ->
+            intakerelease.haveCone()
+                ? ArmPositionConstants.MID_CONE
+                : ArmPositionConstants.MID_CUBE);
   }
 }

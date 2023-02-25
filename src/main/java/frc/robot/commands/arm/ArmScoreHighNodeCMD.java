@@ -10,6 +10,9 @@ public class ArmScoreHighNodeCMD extends ArmPositionCMD {
 
     super(
         arm,
-        intakerelease.haveCone() ? ArmPositionConstants.HIGH_CONE : ArmPositionConstants.HIGH_CUBE);
+        () ->
+            intakerelease.haveCone()
+                ? ArmPositionConstants.HIGH_CONE
+                : ArmPositionConstants.HIGH_CUBE);
   }
 }
