@@ -32,7 +32,6 @@ import frc.robot.commands.arm.ArmManualDownCMD;
 import frc.robot.commands.arm.ArmManualExtendCMD;
 import frc.robot.commands.arm.ArmManualRetractCMD;
 import frc.robot.commands.arm.ArmManualUpCMD;
-import frc.robot.commands.arm.ArmRetractCMD;
 import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
@@ -207,6 +206,13 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
 
+    // Set default LEDs
+    if (operatorController.back().getAsBoolean()) {
+      new WantCubeCMD(intakeRelease, led2023).schedule();
+    } else {
+      new WantConeCMD(intakeRelease, led2023).schedule();
+    }
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -245,25 +251,34 @@ public class RobotContainer {
       case REAL -> {
         driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023));
         driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023));
-        operatorController.back().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
-        operatorController.start().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
 
-        operatorController.start().onTrue(new ArmStopCMD(arm));
+        // Set the game piece type
+        operatorController.back().onFalse(new WantConeCMD(intakeRelease, led2023));
+        operatorController.back().onTrue(new WantCubeCMD(intakeRelease, led2023));
+
+        // Manual arm movements
         operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));
         operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm));
         operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm));
         operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm));
-        operatorController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
+
+        // Placing cone or cube, gets what it wants from in the command
         operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
         operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease));
         operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease));
-        operatorController.leftTrigger().onTrue(new ArmRetractCMD(arm));
-        operatorController.rightTrigger().onTrue(new ArmCalibrateCMD(arm));
+
+        // Home will be for movement
+        operatorController.x().onTrue(new ArmHomeCMD(arm));
+        driverController.x().onTrue(new ArmHomeCMD(arm));
+
+        // Need to set to use automated movements, should be set in Autonomous init.
+        driverController.back().onTrue(new ArmCalibrateCMD(arm));
+
+        // Manual arm movements
         operatorController.leftStick().onTrue(new ArmStopCMD(arm));
         operatorController.rightStick().onTrue(new ArmStopCMD(arm));
         operatorController.leftBumper().onTrue(new ArmShelfCMD(arm));
         operatorController.rightBumper().onTrue(new ArmFloorCMD(arm));
-        driverController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
       }
       case REPLAY -> {}
       case SIM -> {}
