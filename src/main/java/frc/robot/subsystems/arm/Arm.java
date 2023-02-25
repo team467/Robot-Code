@@ -49,8 +49,6 @@ public class Arm extends SubsystemBase {
   private double rotateSetpoint = 0.0;
   private boolean isCalibrated = false;
 
-  private boolean hasRotate = true;
-  private boolean hasExtend = true;
   private static final double EXTEND_TOLERANCE_METERS = 0.008;
   private static final double ROTATE_TOLERANCE_METERS = 0.008;
 
@@ -253,56 +251,41 @@ public class Arm extends SubsystemBase {
           hold();
           break;
         }
-        if (hasExtend) {
-          if (armIOInputs.extendReverseLimitSwitch) {
-            armIO.resetExtendEncoderPosition();
-            calibrateMode = CalibrateMode.PHASE_TWO;
-          } else {
-            setExtendVoltage(CALIBRATE_EXTEND_VOLTAGE);
-          }
+        if (armIOInputs.extendReverseLimitSwitch) {
+          armIO.resetExtendEncoderPosition();
+          calibrateMode = CalibrateMode.PHASE_TWO;
         } else {
-          calibrateMode = CalibrateMode.PHASE_THREE;
+          setExtendVoltage(CALIBRATE_EXTEND_VOLTAGE);
         }
 
         break;
       case PHASE_TWO:
         // Drive Extend Motor a little bit outwards
-        if (hasExtend) {
-          setExtendVoltage(calculateExtendPidUnsafe(EXTEND_CALIBRATION_POSITION));
-          if (isExtendPositionNear(EXTEND_CALIBRATION_POSITION)) {
-            calibrateMode = CalibrateMode.PHASE_THREE;
-            setExtendVoltage(0);
-          }
+        setExtendVoltage(calculateExtendPidUnsafe(EXTEND_CALIBRATION_POSITION));
+        if (isExtendPositionNear(EXTEND_CALIBRATION_POSITION)) {
+          calibrateMode = CalibrateMode.PHASE_THREE;
+          setExtendVoltage(0);
         }
         break;
       case PHASE_THREE:
         // Drive rotate motor until hit lower limit switch
-        if (hasRotate) {
-          if (armIOInputs.rotateLowLimitSwitch) {
-            armIO.resetRotateEncoderPosition();
-            armIO.setRotateVoltage(0);
-            calibrateMode = CalibrateMode.PHASE_FOUR;
-          } else {
-            setRotateVoltage(CALIBRATE_ROTATE_VOLTAGE);
-          }
-        } else {
+        if (armIOInputs.rotateLowLimitSwitch) {
+          armIO.resetRotateEncoderPosition();
+          armIO.setRotateVoltage(0);
           calibrateMode = CalibrateMode.PHASE_FOUR;
+        } else {
+          setRotateVoltage(CALIBRATE_ROTATE_VOLTAGE);
         }
 
         break;
       case PHASE_FOUR:
         // Drive Extend Motor until hit limit switch
-        if (hasExtend) {
-          if (armIOInputs.extendReverseLimitSwitch) {
-            armIO.resetExtendEncoderPosition();
-            isCalibrated = true;
-            hold();
-          } else {
-            setExtendVoltage(CALIBRATE_EXTEND_VOLTAGE);
-          }
-        } else {
+        if (armIOInputs.extendReverseLimitSwitch) {
+          armIO.resetExtendEncoderPosition();
           isCalibrated = true;
           hold();
+        } else {
+          setExtendVoltage(CALIBRATE_EXTEND_VOLTAGE);
         }
         break;
     }
@@ -358,12 +341,11 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isFinished() {
-    return ((!hasExtend || isExtendPositionNear(extendSetpoint)) && isRotateFinished());
+    return isExtendPositionNear(extendSetpoint) && isRotateFinished();
   }
 
   public boolean isRotateFinished() {
-    return !hasRotate
-        || Math.abs(armIOInputs.rotatePosition - rotateSetpoint) <= ROTATE_TOLERANCE_METERS;
+    return Math.abs(armIOInputs.rotatePosition - rotateSetpoint) <= ROTATE_TOLERANCE_METERS;
   }
 
   private void setRotateVoltage(double volts) {
