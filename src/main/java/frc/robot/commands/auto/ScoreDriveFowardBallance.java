@@ -8,7 +8,7 @@ public class ScoreDriveFowardBallance extends SequentialCommandGroup {
   public ScoreDriveFowardBallance(Drive drive) {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands(
-      // add in driveless score
+        // add in driveless score
         new DriveFowardBallance(drive));
   }
 }

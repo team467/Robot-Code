@@ -9,10 +9,8 @@ import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.drive.Drive;
 import java.util.List;
 
-public class Tag8Balance extends SequentialCommandGroup 
-{
-  public Tag8Balance(Drive drive)
-  {
+public class Tag8Balance extends SequentialCommandGroup {
+  public Tag8Balance(Drive drive) {
     addCommands(
         new GoToTrajectory(
             drive,
@@ -21,12 +19,16 @@ public class Tag8Balance extends SequentialCommandGroup
                 new Waypoint(
                     new Translation2d(
                         FieldConstants.Community.outerX + 1,
-                        FieldConstants.aprilTags.get(8).getTranslation().toTranslation2d().getY()))),
+                        FieldConstants.aprilTags
+                            .get(8)
+                            .getTranslation()
+                            .toTranslation2d()
+                            .getY()))),
             0,
             0,
-            List.of(new MaxVelocityConstraint(0.4))),              
+            List.of(new MaxVelocityConstraint(0.4))),
         new GoToTrajectory(
-            drive, 
+            drive,
             List.of(
                 new Waypoint(
                     new Translation2d(
@@ -35,7 +37,11 @@ public class Tag8Balance extends SequentialCommandGroup
                 new Waypoint(
                     new Translation2d(
                         FieldConstants.Community.chargingStationOuterX,
-                        FieldConstants.aprilTags.get(7).getTranslation().toTranslation2d().getY()))),
+                        FieldConstants.aprilTags
+                            .get(7)
+                            .getTranslation()
+                            .toTranslation2d()
+                            .getY()))),
             0,
             0,
             List.of(new MaxVelocityConstraint(0.4))),
