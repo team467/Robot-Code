@@ -247,6 +247,8 @@ public class Arm extends SubsystemBase {
       case RETRACT_ARM:
         // Drive Extend Motor until hit limit switch
         if (armIOInputs.extendReverseLimitSwitch && armIOInputs.rotateLowLimitSwitch) {
+          armIO.resetExtendEncoderPosition();
+          armIO.resetRotateEncoderPosition();
           isCalibrated = true;
           hold();
           break;
