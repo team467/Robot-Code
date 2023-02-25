@@ -22,7 +22,7 @@ public class DriveWithJoysticks extends CommandBase {
   private final Supplier<Boolean> robotRelativeOverride;
 
   private static final double DEADBAND = 0.1;
-  private static final double TIME_TO_FULL_SPEED = 0.25;
+  private static final double TIME_TO_FULL_SPEED = 0.1;
   private final SlewRateLimiter leftXFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
   private final SlewRateLimiter leftYFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
   private final SlewRateLimiter rightXFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
@@ -45,12 +45,12 @@ public class DriveWithJoysticks extends CommandBase {
   @Override
   public void execute() {
     // Get values from double suppliers
-    //    double leftX = leftXFilter.calculate(leftXSupplier.get());
-    //    double leftY = leftYFilter.calculate(leftYSupplier.get());
-    //    double rightX = rightXFilter.calculate(rightXSupplier.get());
-    double leftX = leftXSupplier.get();
-    double leftY = leftYSupplier.get();
-    double rightX = rightXSupplier.get();
+    double leftX = leftXFilter.calculate(leftXSupplier.get());
+    double leftY = leftYFilter.calculate(leftYSupplier.get());
+    double rightX = rightXFilter.calculate(rightXSupplier.get());
+    //    double leftX = leftXSupplier.get();
+    //    double leftY = leftYSupplier.get();
+    //    double rightX = rightXSupplier.get();
 
     // Get direction and magnitude of linear axes
     double linearMagnitude = Math.hypot(leftX, leftY);

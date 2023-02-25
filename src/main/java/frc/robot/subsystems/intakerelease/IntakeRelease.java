@@ -53,7 +53,7 @@ public class IntakeRelease extends SubsystemBase {
       case INTAKE -> intakeReleaseIO.setPercent(-0.5);
       case RELEASE -> intakeReleaseIO.setPercent(0.2);
       case HOLD_CUBE -> intakeReleaseIO.setPercent(-0.03);
-      case HOLD_CONE -> intakeReleaseIO.setPercent(-0.1);
+      case HOLD_CONE -> intakeReleaseIO.setPercent(-0.3);
       case STOP -> intakeReleaseIO.setPercent(0);
       default -> intakeReleaseIO.setPercent(0);
     }

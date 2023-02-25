@@ -22,6 +22,7 @@ import frc.robot.RobotConstants;
 import java.util.ArrayList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
 
 public class Drive extends SubsystemBase {
   private final IMUIO gyroIO;
@@ -174,25 +175,43 @@ public class Drive extends SubsystemBase {
     }
 
     for (VisionIOInputs aprilTagCameraInput : aprilTagCameraInputs) {
-      aprilTagCameraInput.estimatedPose.ifPresent(
-          estimatedRobotPose -> {
-            Logger.getInstance()
-                .recordOutput(
-                    "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
-                    estimatedRobotPose.estimatedPose.toPose2d());
+      //      aprilTagCameraInput.estimatedPose.ifPresent(
+      //          estimatedRobotPose -> {
+      //            Logger.getInstance()
+      //                .recordOutput(
+      //                    "Odometry/VisionPose/" +
+      // aprilTagCameraInputs.indexOf(aprilTagCameraInput),
+      //                    estimatedRobotPose.estimatedPose.toPose2d());
+      //
+      //            Vector<N3> std =
+      //                switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
+      //                  case 0 -> VecBuilder.fill(0.1, 0.1, 0.1); // TODO: Tune these
+      //                  case 1 -> VecBuilder.fill(0.1, 0.1, 0.1); // TODO: Tune these
+      //                  default -> VecBuilder.fill(1.0, 1.0, 1.0);
+      //                };
+      //
+      //            odometry.addVisionMeasurement(
+      //                estimatedRobotPose.estimatedPose.toPose2d(),
+      //                estimatedRobotPose.timestampSeconds,
+      //                std);
+      //          });
+      if (aprilTagCameraInput.estimatedPose.isPresent()) {
+        EstimatedRobotPose estimatedRobotPose = aprilTagCameraInput.estimatedPose.get();
+        Logger.getInstance()
+            .recordOutput(
+                "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
+                estimatedRobotPose.estimatedPose.toPose2d());
 
-            Vector<N3> std =
-                switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
-                  case 0 -> VecBuilder.fill(0.1, 0.1, 0.1); // TODO: Tune these
-                  case 1 -> VecBuilder.fill(0.1, 0.1, 0.1); // TODO: Tune these
-                  default -> VecBuilder.fill(1.0, 1.0, 1.0);
-                };
+        Vector<N3> std =
+            switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
+              case 0 -> VecBuilder.fill(0.001, 0.001, 0.001); // TODO: Tune these
+              case 1 -> VecBuilder.fill(0.001, 0.001, 0.001); // TODO: Tune these
+              default -> VecBuilder.fill(1.0, 1.0, 1.0);
+            };
 
-            odometry.addVisionMeasurement(
-                estimatedRobotPose.estimatedPose.toPose2d(),
-                estimatedRobotPose.timestampSeconds,
-                std);
-          });
+        odometry.addVisionMeasurement(
+            estimatedRobotPose.estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds, std);
+      }
     }
 
     Logger.getInstance().recordOutput("Odometry", getPose());

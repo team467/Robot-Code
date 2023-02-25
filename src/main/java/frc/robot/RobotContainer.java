@@ -5,14 +5,20 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.characterization.FeedForwardCharacterization;
+import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUPigeon2;
 import frc.lib.io.vision.VisionIO;
@@ -30,7 +36,9 @@ import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmStopCMD;
+import frc.robot.commands.auto.AlignToNode;
 import frc.robot.commands.auto.Balancing;
+import frc.robot.commands.auto.better.MidToCommunity;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.commands.intakerelease.HoldCMD;
@@ -175,44 +183,46 @@ public class RobotContainer {
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines
-    //    autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
-    //    autoChooser.addOption(
-    //        "S shape",
-    //        new GoToTrajectory(
-    //            drive,
-    //            List.of(
-    //                Waypoint.fromHolonomicPose(new Pose2d()),
-    //                new Waypoint(new Translation2d(1, 1)),
-    //                new Waypoint(new Translation2d(2, -1)),
-    //                Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
-    //    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
-    //    // Rotation2d()));
-    //
-    //    autoChooser.addOption(
-    //        "Cross Community",
-    //        new GoToTrajectory(
-    //            drive,
-    //            List.of(
-    //                Waypoint.fromHolonomicPose(new Pose2d()),
-    //                new Waypoint(new Translation2d(FieldConstants.Community.outerX, 0)))));
-    //    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
-    //    // Rotation2d()));
-    //    autoChooser.addOption("Drive Then Balance", new DriveFowardBallance(drive));
-    //    autoChooser.addOption("Drive Foward and Come Back", new DriveFowardComeBack(drive));
-    //    autoChooser.addOption(
-    //        "Score then Drive Foward, then ballance", new ScoreDriveFowardBallance(drive));
-    //
-    //    autoChooser.addOption(
-    //        "Drive Characterization",
-    //        Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
-    //            .andThen(
-    //                new FeedForwardCharacterization(
-    //                    drive,
-    //                    true,
-    //                    new FeedForwardCharacterizationData("drive"),
-    //                    drive::runCharacterizationVolts,
-    //                    drive::getCharacterizationVelocity))
-    //            .andThen(() -> configureButtonBindings()));
+    autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
+    autoChooser.addOption(
+        "S shape",
+        new GoToTrajectory(
+            drive,
+            List.of(
+                Waypoint.fromHolonomicPose(new Pose2d()),
+                new Waypoint(new Translation2d(1, 1)),
+                new Waypoint(new Translation2d(2, -1)),
+                Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
+    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
+    // Rotation2d()));
+
+    autoChooser.addOption(
+        "Cross Community",
+        new GoToTrajectory(
+            drive,
+            List.of(
+                Waypoint.fromHolonomicPose(new Pose2d()),
+                new Waypoint(new Translation2d(FieldConstants.Community.outerX, 0)))));
+    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
+    // Rotation2d()));
+    //        autoChooser.addOption("Drive Then Balance", new DriveFowardBallance(drive));
+    //        autoChooser.addOption("Drive Foward and Come Back", new DriveFowardComeBack(drive));
+    //        autoChooser.addOption(
+    //            "Score then Drive Foward, then ballance", new ScoreDriveFowardBallance(drive));
+
+    autoChooser.addOption(
+        "Drive Characterization",
+        Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
+            .andThen(
+                new FeedForwardCharacterization(
+                    drive,
+                    true,
+                    new FeedForwardCharacterizationData("drive"),
+                    drive::runCharacterizationVolts,
+                    drive::getCharacterizationVelocity))
+            .andThen(() -> configureButtonBindings()));
+    autoChooser.addOption("Go to node", new AlignToNode(drive, () -> 1));
+    autoChooser.addOption("Mid to Community", new MidToCommunity(drive));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
     // Configure the button bindings

@@ -10,16 +10,25 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.utils.GeomUtils;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class QuickDriveToPose extends CommandBase {
   private final Drive drive;
   private final Supplier<Pose2d> poseSupplier;
-  private ProfiledPIDController driveController =
+  //  private final ProfiledPIDController driveController =
+  //      new ProfiledPIDController(
+  //          2.5, 0, 0.0, new Constraints(Units.inchesToMeters(150), Units.inchesToMeters(450.0)));
+  //  private final ProfiledPIDController thetaController =
+  //      new ProfiledPIDController(
+  //          7.0, 0, 0.0, new Constraints(Units.degreesToRadians(360),
+  // Units.degreesToRadians(720.0)));
+
+  private final ProfiledPIDController driveController =
       new ProfiledPIDController(
-          2.5, 0, 0.0, new Constraints(Units.inchesToMeters(150), Units.inchesToMeters(450.0)));
-  private ProfiledPIDController thetaController =
+          1.2, 0, 0.0, new Constraints(Units.inchesToMeters(150), Units.inchesToMeters(450.0)));
+  private final ProfiledPIDController thetaController =
       new ProfiledPIDController(
-          7.0, 0, 0.0, new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(720.0)));
+          4.0, 0, 0.5, new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(720.0)));
 
   private static final double DRIVE_TOLERANCE = 0.01;
   private static final double THETA_TOLERANCE = Units.degreesToRadians(2.0);
@@ -58,6 +67,9 @@ public class QuickDriveToPose extends CommandBase {
     double thetaVelocity =
         thetaController.calculate(
             currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+    Logger.getInstance().recordOutput("ThetaSetpoint", targetPose.getRotation().getRadians());
+    Logger.getInstance().recordOutput("ThetaCurrent", currentPose.getRotation().getRadians());
+    Logger.getInstance().recordOutput("ThetaFix", thetaVelocity);
     if (driveController.atGoal()) driveVelocityScalar = 0.0;
     if (thetaController.atGoal()) thetaVelocity = 0.0;
     Pose2d driveVelocity =
