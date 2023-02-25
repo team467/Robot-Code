@@ -79,23 +79,23 @@ public class Led2023 extends SubsystemBase {
     purpleTimer.reset();
     lastLoopTime = Timer.getFPGATimestamp();
   }
-  
+
   public void setArmCalibrated() {
     isArmCalibrated = true;
-}
+  }
 
   public void defaultLights() {
-    
+
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       set(batteryCheckColor);
       sendData();
     } else {
-      if ((!isArmCalibrated)&&CHECK_ARM_CALIBRATION) {
+      if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
         set(COLORS_467.Red);
         sendData();
       } else {
-      setRainbowMovingDownSecondInv();
-      sendData();
+        setRainbowMovingDownSecondInv();
+        sendData();
       }
     }
 
@@ -387,9 +387,13 @@ public class Led2023 extends SubsystemBase {
       }
     }
     ledStrip.update();
-    for (int j = 0; j < RobotConstants.get().led2023LedCount(); j++) {
-      ledStrip.setLED(j, bgColor);
-      ledStrip.update();
+    if (purpleTimer.hasElapsed(
+        SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
+      purpleTimer.reset();
+      for (int j = 0; j < RobotConstants.get().led2023LedCount(); j++) {
+        ledStrip.setLED(j, bgColor);
+        ledStrip.update();
+      }
     }
   }
 

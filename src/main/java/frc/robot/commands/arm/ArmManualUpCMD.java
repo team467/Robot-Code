@@ -26,7 +26,8 @@ public class ArmManualUpCMD extends CommandBase {
 
   @Override
   public void execute() {
-    if (intakerelease.getWants() == Wants.CUBE || intakerelease.haveCube()) {
+    if (intakerelease.getWants() == Wants.CUBE
+        || (intakerelease.haveCube() && !intakerelease.haveCone())) {
       ledStrip.setAlternateColorsUp(
           COLORS_467.Purple, COLORS_467.White, COLORS_467.Black.getColor());
     } else {

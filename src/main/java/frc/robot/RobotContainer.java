@@ -229,7 +229,7 @@ public class RobotContainer {
     switch (RobotConstants.get().mode()) {
       case REAL -> {
         driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023));
-        driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023));
+        driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023, arm));
         operatorController.back().toggleOnTrue(new WantConeCMD(intakeRelease, led2023));
         operatorController.start().toggleOnTrue(new WantCubeCMD(intakeRelease, led2023));
 
