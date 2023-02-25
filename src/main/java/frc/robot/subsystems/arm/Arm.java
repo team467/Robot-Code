@@ -344,6 +344,14 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  public double getRotation() {
+    return armIOInputs.rotatePosition;
+  }
+
+  public double getExtention() {
+    return armIOInputs.extendPosition;
+  }
+
   public boolean isStopped() {
     return mode == ArmMode.MANUAL && manualExtendVolts == 0 && manualRotateVolts == 0;
   }
