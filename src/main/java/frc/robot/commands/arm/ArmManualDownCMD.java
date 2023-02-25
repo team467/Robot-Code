@@ -8,7 +8,6 @@ public class ArmManualDownCMD extends CommandBase {
 
   public ArmManualDownCMD(Arm arm) {
     this.arm = arm;
-
     addRequirements(arm);
   }
 
@@ -18,15 +17,7 @@ public class ArmManualDownCMD extends CommandBase {
   }
 
   @Override
-  public void execute() {}
-
-  @Override
   public void end(boolean interrupted) {
     arm.hold();
-  }
-
-  @Override
-  public boolean isFinished() {
-    return false;
   }
 }

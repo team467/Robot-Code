@@ -26,6 +26,7 @@ import frc.lib.io.vision.VisionIOAprilTag;
 import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmFloorCMD;
 import frc.robot.commands.arm.ArmHomeCMD;
 import frc.robot.commands.arm.ArmManualDownCMD;
 import frc.robot.commands.arm.ArmManualExtendCMD;
@@ -35,6 +36,7 @@ import frc.robot.commands.arm.ArmRetractCMD;
 import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
+import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
@@ -249,12 +251,15 @@ public class RobotContainer {
         operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm));
         operatorController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
         operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
-        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm));
-        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm));
+        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease));
+        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease));
         operatorController.leftTrigger().onTrue(new ArmRetractCMD(arm));
         operatorController.rightTrigger().onTrue(new ArmCalibrateCMD(arm));
         operatorController.leftStick().onTrue(new ArmStopCMD(arm));
         operatorController.rightStick().onTrue(new ArmStopCMD(arm));
+        operatorController.leftBumper().onTrue(new ArmShelfCMD(arm));
+        operatorController.rightBumper().onTrue(new ArmFloorCMD(arm));
+        driverController.x().onTrue(new ArmHomeCMD(arm)); // Retract full
       }
       case REPLAY -> {}
       case SIM -> {}
