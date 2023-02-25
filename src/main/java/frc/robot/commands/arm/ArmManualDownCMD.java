@@ -8,7 +8,7 @@ import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.Led2023.COLORS_467;
 
 public class ArmManualDownCMD extends CommandBase {
-   private Arm arm;
+  private Arm arm;
   private Led2023 ledStrip;
   private IntakeRelease intakerelease;
 
@@ -17,7 +17,7 @@ public class ArmManualDownCMD extends CommandBase {
     this.ledStrip = ledStrip;
     this.intakerelease = intakerelease;
     addRequirements(arm, intakerelease, ledStrip);
-    }
+  }
 
   @Override
   public void initialize() {
@@ -26,11 +26,13 @@ public class ArmManualDownCMD extends CommandBase {
 
   @Override
   public void execute() {
-    if (intakerelease.getWants()==Wants.CUBE||intakerelease.haveCube()) {
-      ledStrip.setAlternateColorsDown(COLORS_467.Purple, COLORS_467.White, COLORS_467.Black.getColor());
-      } else {
-      ledStrip.setAlternateColorsDown(COLORS_467.Gold, COLORS_467.White, COLORS_467.Black.getColor());
-      }
+    if (intakerelease.getWants() == Wants.CUBE || intakerelease.haveCube()) {
+      ledStrip.setAlternateColorsDown(
+          COLORS_467.Purple, COLORS_467.White, COLORS_467.Black.getColor());
+    } else {
+      ledStrip.setAlternateColorsDown(
+          COLORS_467.Gold, COLORS_467.White, COLORS_467.Black.getColor());
+    }
   }
 
   @Override

@@ -17,7 +17,7 @@ public class ArmManualRetractCMD extends CommandBase {
     this.ledStrip = ledStrip;
     this.intakerelease = intakerelease;
     addRequirements(arm, intakerelease, ledStrip);
-    }
+  }
 
   @Override
   public void initialize() {
@@ -26,11 +26,13 @@ public class ArmManualRetractCMD extends CommandBase {
 
   @Override
   public void execute() {
-      if (intakerelease.getWants()==Wants.CUBE||intakerelease.haveCube()) {
-      ledStrip.setAlternateColorsDown(COLORS_467.Purple, COLORS_467.White, COLORS_467.Black.getColor());
-      } else {
-      ledStrip.setAlternateColorsDown(COLORS_467.Gold, COLORS_467.White, COLORS_467.Black.getColor());
-      }
+    if (intakerelease.getWants() == Wants.CUBE || intakerelease.haveCube()) {
+      ledStrip.setAlternateColorsDown(
+          COLORS_467.Purple, COLORS_467.White, COLORS_467.Black.getColor());
+    } else {
+      ledStrip.setAlternateColorsDown(
+          COLORS_467.Gold, COLORS_467.White, COLORS_467.Black.getColor());
+    }
   }
 
   @Override

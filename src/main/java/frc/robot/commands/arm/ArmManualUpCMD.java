@@ -11,7 +11,7 @@ public class ArmManualUpCMD extends CommandBase {
   private final Arm arm;
   private IntakeRelease intakerelease;
   private Led2023 ledStrip;
-  
+
   public ArmManualUpCMD(Arm arm, IntakeRelease intakerelease, Led2023 ledStrip) {
     this.arm = arm;
     this.ledStrip = ledStrip;
@@ -26,11 +26,12 @@ public class ArmManualUpCMD extends CommandBase {
 
   @Override
   public void execute() {
-    if (intakerelease.getWants()==Wants.CUBE||intakerelease.haveCube()) {
-      ledStrip.setAlternateColorsUp(COLORS_467.Purple, COLORS_467.White, COLORS_467.Black.getColor());
-      } else {
+    if (intakerelease.getWants() == Wants.CUBE || intakerelease.haveCube()) {
+      ledStrip.setAlternateColorsUp(
+          COLORS_467.Purple, COLORS_467.White, COLORS_467.Black.getColor());
+    } else {
       ledStrip.setAlternateColorsUp(COLORS_467.Gold, COLORS_467.White, COLORS_467.Black.getColor());
-      }
+    }
   }
 
   @Override

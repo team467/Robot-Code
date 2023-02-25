@@ -396,8 +396,9 @@ public class Led2023 extends SubsystemBase {
       ledStrip.update();
     }
   }
+
   public void setOneThird(COLORS_467 color, int t) {
-    //t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
+    // t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
     int start;
     int end;
     if (t == 1) {
@@ -414,8 +415,8 @@ public class Led2023 extends SubsystemBase {
       end = RobotConstants.get().led2023LedCount();
     }
     for (int i = start; i < end; i++) {
-        ledStrip.setLED(i, color.getColor());
-      }
-      ledStrip.update();
+      ledStrip.setLED(i, color.getColor());
+    }
+    ledStrip.update();
   }
 }
