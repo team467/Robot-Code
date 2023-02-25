@@ -30,6 +30,8 @@ public interface ArmIO {
 
   default void setExtendVoltage(double volts) {}
 
+  default void setExtendVoltageWhileHold(double volts) {}
+
   default void setRotateVoltage(double volts) {}
 
   default void setExtendVelocity(double speed) {}

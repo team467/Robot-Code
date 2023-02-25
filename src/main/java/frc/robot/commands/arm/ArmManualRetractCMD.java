@@ -40,9 +40,4 @@ public class ArmManualRetractCMD extends CommandBase {
   public void end(boolean interrupted) {
     arm.hold();
   }
-
-  @Override
-  public boolean isFinished() {
-    return arm.isHolding();
-  }
 }
