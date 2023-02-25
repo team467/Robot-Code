@@ -91,7 +91,6 @@ public class ArmIOPhysical implements ArmIO {
     extendMotor.setVoltage(volts);
   }
 
-
   @Override
   public void setRotateVelocity(double velocity) {
     Logger.getInstance().recordOutput("Rotate Velocity", velocity);
