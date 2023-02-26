@@ -86,6 +86,12 @@ public class ArmIOPhysical implements ArmIO {
   }
 
   @Override
+  public void setExtendVoltageWhileHold(double volts) {
+    setRatchetLocked(true);
+    extendMotor.setVoltage(volts);
+  }
+
+  @Override
   public void setRotateVelocity(double velocity) {
     Logger.getInstance().recordOutput("Rotate Velocity", velocity);
     rotateMotor.set(velocity);

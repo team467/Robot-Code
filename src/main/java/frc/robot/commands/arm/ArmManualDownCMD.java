@@ -8,25 +8,16 @@ public class ArmManualDownCMD extends CommandBase {
 
   public ArmManualDownCMD(Arm arm) {
     this.arm = arm;
-
     addRequirements(arm);
   }
 
   @Override
   public void initialize() {
-    arm.manualRotate(-9);
+    arm.manualRotate(-5);
   }
-
-  @Override
-  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {
     arm.hold();
-  }
-
-  @Override
-  public boolean isFinished() {
-    return false;
   }
 }

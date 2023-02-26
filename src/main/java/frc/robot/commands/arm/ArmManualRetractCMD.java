@@ -8,7 +8,6 @@ public class ArmManualRetractCMD extends CommandBase {
 
   public ArmManualRetractCMD(Arm arm) {
     this.arm = arm;
-
     addRequirements(arm);
   }
 
@@ -18,15 +17,7 @@ public class ArmManualRetractCMD extends CommandBase {
   }
 
   @Override
-  public void execute() {}
-
-  @Override
   public void end(boolean interrupted) {
     arm.hold();
-  }
-
-  @Override
-  public boolean isFinished() {
-    return arm.isHolding();
   }
 }

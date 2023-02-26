@@ -14,19 +14,11 @@ public class ArmManualUpCMD extends CommandBase {
 
   @Override
   public void initialize() {
-    arm.manualRotate(9);
+    arm.manualRotate(5);
   }
-
-  @Override
-  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {
     arm.hold();
-  }
-
-  @Override
-  public boolean isFinished() {
-    return arm.isHolding();
   }
 }
