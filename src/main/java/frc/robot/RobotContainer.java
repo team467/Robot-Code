@@ -38,6 +38,7 @@ import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.auto.AlignToNode;
 import frc.robot.commands.auto.Balancing;
+import frc.robot.commands.auto.ScoreConeHigh;
 import frc.robot.commands.auto.better.MidToCommunity;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
@@ -203,6 +204,7 @@ public class RobotContainer {
             List.of(
                 Waypoint.fromHolonomicPose(new Pose2d()),
                 new Waypoint(new Translation2d(FieldConstants.Community.outerX, 0)))));
+    autoChooser.addOption("Score cone high", new ScoreConeHigh(drive, arm));
     //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
     // Rotation2d()));
     //        autoChooser.addOption("Drive Then Balance", new DriveFowardBallance(drive));
