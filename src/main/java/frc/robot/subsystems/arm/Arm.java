@@ -3,7 +3,6 @@ package frc.robot.subsystems.arm;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
@@ -50,6 +49,7 @@ public class Arm extends SubsystemBase {
   private double rotateSetpoint = 0.0;
   private boolean isCalibrated = false;
   private double calibrateRotateOrigin = 0;
+  private boolean isDropping = false;
 
   private static final double EXTEND_TOLERANCE_METERS = 0.008;
   private static final double ROTATE_TOLERANCE_METERS = 0.008;
@@ -62,6 +62,7 @@ public class Arm extends SubsystemBase {
   private static final double SAFE_RETRACT_NON_HOME = 0.05;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
+  private static final double ROTATE_DROP_METERS = 0.01;
 
   private double holdPosition;
   private double manualExtendVolts = 0.0;
@@ -133,6 +134,41 @@ public class Arm extends SubsystemBase {
 
   public boolean isHolding() {
     return mode == ArmMode.HOLD;
+  }
+
+  public void raise() {
+    if (armIOInputs.rotatePosition < 0.1) {
+      mode = ArmMode.AUTO;
+      autoMode = AutoMode.ROTATE;
+      rotateSetpoint =
+          MathUtil.clamp(
+              armIOInputs.rotatePosition + ROTATE_DROP_METERS,
+              RobotConstants.get().armRotateMinMeters(),
+              RobotConstants.get().armRotateMaxMeters());
+      extendSetpoint = armIOInputs.extendPosition;
+    }
+  }
+
+  public void drop() {
+    if (!isDropping) {
+      mode = ArmMode.AUTO;
+      autoMode = AutoMode.ROTATE;
+      rotateSetpoint =
+          MathUtil.clamp(
+              armIOInputs.rotatePosition - ROTATE_DROP_METERS,
+              RobotConstants.get().armRotateMinMeters(),
+              RobotConstants.get().armRotateMaxMeters());
+      extendSetpoint = armIOInputs.extendPosition;
+    }
+    isDropping = true;
+  }
+
+  public boolean hasDropped() {
+    if (isDropping && isFinished()) {
+      isDropping = false;
+      return true;
+    }
+    return false;
   }
 
   @Override

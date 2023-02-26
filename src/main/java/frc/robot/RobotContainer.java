@@ -243,8 +243,8 @@ public class RobotContainer {
 
     switch (RobotConstants.get().mode()) {
       case REAL -> {
-        driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023));
-        driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023));
+        driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023, arm));
+        driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023, arm));
 
         // Set the game piece type
         operatorController.back().onFalse(new WantConeCMD(intakeRelease, led2023));
