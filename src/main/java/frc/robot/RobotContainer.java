@@ -251,15 +251,14 @@ public class RobotContainer {
         operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease, led2023));
         operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease, led2023));
         operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease, led2023));
-         Logger.getInstance()
-             .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
         Logger.getInstance()
-             .recordOutput("CustomController/MiddleButton", operatorController.b().getAsBoolean());
+            .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
+        Logger.getInstance()
+            .recordOutput("CustomController/MiddleButton", operatorController.b().getAsBoolean());
         Logger.getInstance()
             .recordOutput("CustomController/HighButton", operatorController.y().getAsBoolean());
-          Logger.getInstance()
-             .recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
-        
+        Logger.getInstance()
+            .recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
 
         // Home will be for movement
         operatorController.x().onTrue(new ArmHomeCMD(arm, led2023));
@@ -273,10 +272,12 @@ public class RobotContainer {
         operatorController.rightStick().onTrue(new ArmStopCMD(arm, led2023));
         operatorController.leftBumper().onTrue(new ArmShelfCMD(arm, led2023));
         operatorController.rightBumper().onTrue(new ArmFloorCMD(arm, led2023));
-          Logger.getInstance()
-              .recordOutput("CustomController/FloorButton", operatorController.rightBumper().getAsBoolean());
-          Logger.getInstance()
-             .recordOutput("CustomController/ShelfButton", operatorController.leftBumper().getAsBoolean());
+        Logger.getInstance()
+            .recordOutput(
+                "CustomController/FloorButton", operatorController.rightBumper().getAsBoolean());
+        Logger.getInstance()
+            .recordOutput(
+                "CustomController/ShelfButton", operatorController.leftBumper().getAsBoolean());
       }
       case REPLAY -> {}
       case SIM -> {}

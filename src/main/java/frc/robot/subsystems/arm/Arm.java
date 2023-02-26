@@ -62,7 +62,7 @@ public class Arm extends SubsystemBase {
   private static final double SAFE_RETRACT_NON_HOME = 0.05;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
-  private static final double ROTATE_DROP_METERS = 0.06;
+  private static final double ROTATE_DROP_METERS = 0.01;
 
   private double holdPosition;
   private double manualExtendVolts = 0.0;
@@ -134,10 +134,16 @@ public class Arm extends SubsystemBase {
   }
 
   public void drop() {
-    if (isDropping) {
-      return;
+    if (!isDropping) {
+      mode = ArmMode.AUTO;
+      autoMode = AutoMode.ROTATE;
+      rotateSetpoint =
+          MathUtil.clamp(
+              armIOInputs.rotatePosition - ROTATE_DROP_METERS,
+              RobotConstants.get().armRotateMinMeters(),
+              RobotConstants.get().armRotateMaxMeters());
+      extendSetpoint = armIOInputs.extendPosition;
     }
-    setTargetPositionRotate(armIOInputs.rotatePosition - ROTATE_DROP_METERS);
     isDropping = true;
   }
 
