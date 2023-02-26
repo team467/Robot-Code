@@ -39,6 +39,10 @@ public class IntakeRelease extends SubsystemBase {
     return (wants);
   }
 
+  public boolean wantsCone() {
+    return wants == Wants.CONE;
+  }
+
   public void setWants(Wants wants) {
     this.wants = wants;
   }
