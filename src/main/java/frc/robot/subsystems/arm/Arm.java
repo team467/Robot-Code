@@ -454,19 +454,18 @@ public class Arm extends SubsystemBase {
 
   private class Kickback {
     private final ArmMode returnToMode;
-    private final double startPosition;
-    private static final double TRAVEL_DISTANCE_METERS = 0.03;
     private final double targetVolts;
+    private final Timer timer = new Timer();
 
     Kickback(double targetVolts) {
       returnToMode = mode;
-      startPosition = armIOInputs.extendPosition;
       armIO.setExtendVoltage(-2);
       this.targetVolts = targetVolts;
+      timer.start();
     }
 
     void periodic() {
-      if (armIOInputs.extendPosition <= startPosition + TRAVEL_DISTANCE_METERS) {
+      if (timer.hasElapsed(0.03)) {
         setExtendVoltage(targetVolts);
         mode = returnToMode;
         kickback = null;
