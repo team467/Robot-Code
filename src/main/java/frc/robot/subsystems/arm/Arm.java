@@ -137,6 +137,19 @@ public class Arm extends SubsystemBase {
     return mode == ArmMode.HOLD;
   }
 
+  public void raise() {
+    if (armIOInputs.rotatePosition < 0.1) {
+      mode = ArmMode.AUTO;
+      autoMode = AutoMode.ROTATE;
+      rotateSetpoint =
+          MathUtil.clamp(
+              armIOInputs.rotatePosition + ROTATE_DROP_METERS,
+              RobotConstants.get().armRotateMinMeters(),
+              RobotConstants.get().armRotateMaxMeters());
+      extendSetpoint = armIOInputs.extendPosition;
+    }
+  }
+
   public void drop() {
     if (!isDropping) {
       mode = ArmMode.AUTO;
