@@ -13,7 +13,7 @@ public class ArmScoreMidNodeCMD extends ArmPositionCMD {
     super(
         arm,
         () ->
-            intakerelease.haveCone()
+            intakerelease.wantsCone()
                 ? ArmPositionConstants.MID_CONE
                 : ArmPositionConstants.MID_CUBE,
         ledStrip);

@@ -159,8 +159,7 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     if (DriverStation.isDisabled()) {
       // Disable output while disabled
-      setExtendVoltage(0.0);
-      setRotateVoltage(0.0);
+      stop();
       return;
     }
 

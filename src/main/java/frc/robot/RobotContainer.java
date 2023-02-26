@@ -253,10 +253,19 @@ public class RobotContainer {
         operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease, led2023));
         Logger.getInstance()
             .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
+        operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
+        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease));
+        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease));
         Logger.getInstance()
+            .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
+        Logger.getInstance()
+            .recordOutput("CustomController/MiddleButton", operatorController.b().getAsBoolean());
             .recordOutput("CustomController/MiddleButton", operatorController.b().getAsBoolean());
         Logger.getInstance()
             .recordOutput("CustomController/HighButton", operatorController.y().getAsBoolean());
+        Logger.getInstance()
+            .recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
+
         Logger.getInstance()
             .recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
 
@@ -268,10 +277,10 @@ public class RobotContainer {
         driverController.back().onTrue(new ArmCalibrateCMD(arm, led2023));
 
         // Manual arm movements
-        operatorController.leftStick().onTrue(new ArmStopCMD(arm, led2023));
-        operatorController.rightStick().onTrue(new ArmStopCMD(arm, led2023));
-        operatorController.leftBumper().onTrue(new ArmShelfCMD(arm, led2023));
-        operatorController.rightBumper().onTrue(new ArmFloorCMD(arm, led2023));
+        operatorController.leftStick().onTrue(new ArmStopCMD(arm));
+        operatorController.rightStick().onTrue(new ArmStopCMD(arm));
+        operatorController.leftBumper().onTrue(new ArmShelfCMD(arm));
+        operatorController.rightBumper().onTrue(new ArmFloorCMD(arm));
         Logger.getInstance()
             .recordOutput(
                 "CustomController/FloorButton", operatorController.rightBumper().getAsBoolean());
