@@ -5,7 +5,7 @@ import frc.robot.subsystems.arm.ArmPositionConstants;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 import frc.robot.subsystems.led.Led2023;
-import frc.robot.subsystems.led.Led2023.COLORS_467;
+import frc.robot.subsystems.led.Led2023.ColorScheme;
 
 public class ArmScoreLowNodeCMD extends ArmPositionCMD {
 
@@ -13,9 +13,9 @@ public class ArmScoreLowNodeCMD extends ArmPositionCMD {
     super(arm, ArmPositionConstants.LOW_BOTH, ledStrip);
     if (intakerelease.getWants() == Wants.CUBE
         || (intakerelease.haveCube() && !intakerelease.haveCone())) {
-      ledStrip.setOneThird(COLORS_467.Purple, 3);
+      ledStrip.setCmdColorScheme(ColorScheme.CUBE_LOW);
     } else {
-      ledStrip.setOneThird(COLORS_467.Yellow, 3);
+      ledStrip.setCmdColorScheme(ColorScheme.CONE_LOW);
     }
   }
 }

@@ -24,6 +24,7 @@ public class Led2023 extends SubsystemBase {
   private Timer purpleTimer = new Timer();
   protected double lastLoopTime = 0;
   private boolean isArmCalibrated = false;
+  private ColorScheme cmdColorScheme = ColorScheme.DEFAULT;
 
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
@@ -34,6 +35,7 @@ public class Led2023 extends SubsystemBase {
   /*
    * Color blind preferred pallet includes White, Black, Red, Blue, Gold
    */
+
   public enum COLORS_467 {
     White(0xFF, 0xFF, 0xFF, 0xdc267f00),
     Red(0xFF, 0x00, 0x00, 0x99000000),
@@ -63,6 +65,28 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
+  public enum ColorScheme {
+    WANT_CUBE,
+    WANT_CONE,
+    HOLD_CUBE,
+    HOLD_CONE,
+    INTAKE_CUBE,
+    INTAKE_CONE,
+    RELEASE_CUBE,
+    RELEASE_CONE,
+    DEFAULT,
+    BATTERY_LOW,
+    ARM_UNCALIBRATED,
+    CUBE_LOW,
+    CUBE_MID,
+    CUBE_HIGH,
+    CONE_LOW,
+    CONE_MID,
+    CONE_HIGH,
+    INTAKE_UNKNOWN,
+    RELEASE_UNKNOWN
+  }
+
   public Led2023() {
     super();
 
@@ -85,23 +109,108 @@ public class Led2023 extends SubsystemBase {
     isArmCalibrated = true;
   }
 
-  public void defaultLights() {
+  public void setCmdColorScheme(ColorScheme cs) {
+    cmdColorScheme = cs;
+  }
 
-    if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
-      set(batteryCheckColor);
-      sendData();
-    } else {
-      if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
+  @Override
+  public void periodic() {
+    ColorScheme colorScheme = getColorScheme();
+    switch (colorScheme) {
+      case BATTERY_LOW:
+        set(batteryCheckColor);
+        sendData();
+        break;
+      case ARM_UNCALIBRATED:
         set(COLORS_467.Red);
         sendData();
-      } else {
+        break;
+      case CONE_HIGH:
+        setOneThird(COLORS_467.Yellow, 1);
+        sendData();
+        break;
+      case CONE_LOW:
+        setOneThird(COLORS_467.Yellow, 3);
+        sendData();
+        break;
+      case CONE_MID:
+        setOneThird(COLORS_467.Yellow, 2);
+        sendData();
+        break;
+      case CUBE_HIGH:
+        setOneThird(COLORS_467.Purple, 1);
+        sendData();
+        break;
+      case CUBE_LOW:
+        setOneThird(COLORS_467.Purple, 3);
+        sendData();
+        break;
+      case CUBE_MID:
+        setOneThird(COLORS_467.Purple, 2);
+        sendData();
+        break;
+      case DEFAULT:
         setRainbowMovingDownSecondInv();
         sendData();
-      }
+        break;
+      case HOLD_CONE:
+        setBlinkColors(COLORS_467.Yellow, COLORS_467.Yellow, COLORS_467.White.getColor());
+        sendData();
+        break;
+      case HOLD_CUBE:
+        setBlinkColors(COLORS_467.Purple, COLORS_467.Purple, COLORS_467.White.getColor());
+        sendData();
+        break;
+      case INTAKE_CONE:
+        setColorMovingUp(COLORS_467.White.getColor(), COLORS_467.Yellow.getColor());
+        sendData();
+        break;
+      case INTAKE_CUBE:
+        setColorMovingUp(COLORS_467.White.getColor(), COLORS_467.Purple.getColor());
+        sendData();
+        break;
+      case RELEASE_CONE:
+        setColorMovingDown(COLORS_467.Black.getColor(), COLORS_467.Yellow.getColor());
+        sendData();
+        break;
+      case RELEASE_CUBE:
+        setColorMovingDown(COLORS_467.Black.getColor(), COLORS_467.Purple.getColor());
+        break;
+      case WANT_CONE:
+        set(COLORS_467.Yellow);
+        sendData();
+        break;
+      case WANT_CUBE:
+        set(COLORS_467.Purple);
+        sendData();
+        break;
+      case INTAKE_UNKNOWN:
+        setColorMovingUpTwoClr(COLORS_467.Purple.getColor(), COLORS_467.Yellow.getColor());
+        sendData();
+        break;
+      case RELEASE_UNKNOWN:
+        setColorMovingDownTwoClr(COLORS_467.Yellow.getColor(), COLORS_467.Purple.getColor());
+        sendData();
+        break;
+      default:
+        break;
     }
+  }
 
+  private ColorScheme getColorScheme() {
+    if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
+      return ColorScheme.BATTERY_LOW;
+    } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
+      return ColorScheme.ARM_UNCALIBRATED;
+    } else {
+      return cmdColorScheme;
+    }
+  }
+
+  public ColorScheme defaultLights() {
     sendData();
     lastLoopTime = Timer.getFPGATimestamp();
+    return ColorScheme.DEFAULT;
   }
 
   public void setLED(int index, Color color) {

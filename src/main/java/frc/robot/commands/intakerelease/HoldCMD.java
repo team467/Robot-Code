@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.Led2023.COLORS_467;
+import frc.robot.subsystems.led.Led2023.ColorScheme;
 
 public class HoldCMD extends CommandBase {
   private final IntakeRelease intakerelease;
@@ -17,14 +18,21 @@ public class HoldCMD extends CommandBase {
   }
 
   @Override
+  public void initialize() {
+    ledStrip.set(COLORS_467.Black);
+  }
+
+  @Override
   public void execute() {
+
     if (intakerelease.haveCube() && !intakerelease.haveCone()) {
-      ledStrip.setBlinkColors(COLORS_467.Purple, COLORS_467.Purple, COLORS_467.White.getColor());
+      ledStrip.setCmdColorScheme(ColorScheme.HOLD_CUBE);
       intakerelease.holdCube();
     } else if (intakerelease.haveCone()) {
-      ledStrip.setBlinkColors(COLORS_467.Yellow, COLORS_467.Yellow, COLORS_467.White.getColor());
+      ledStrip.setCmdColorScheme(ColorScheme.HOLD_CONE);
       intakerelease.holdCone();
     } else {
+      ledStrip.setCmdColorScheme(ColorScheme.DEFAULT);
       intakerelease.stop();
     }
   }

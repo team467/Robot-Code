@@ -5,7 +5,7 @@ import frc.robot.subsystems.arm.ArmPositionConstants;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 import frc.robot.subsystems.led.Led2023;
-import frc.robot.subsystems.led.Led2023.COLORS_467;
+import frc.robot.subsystems.led.Led2023.ColorScheme;
 
 public class ArmScoreMidNodeCMD extends ArmPositionCMD {
 
@@ -19,9 +19,9 @@ public class ArmScoreMidNodeCMD extends ArmPositionCMD {
         ledStrip);
     if (intakerelease.getWants() == Wants.CUBE
         || (intakerelease.haveCube() && !intakerelease.haveCone())) {
-      ledStrip.setOneThird(COLORS_467.Purple, 2);
+      ledStrip.setCmdColorScheme(ColorScheme.CUBE_MID);
     } else {
-      ledStrip.setOneThird(COLORS_467.Yellow, 2);
+      ledStrip.setCmdColorScheme(ColorScheme.CONE_MID);
     }
   }
 }
