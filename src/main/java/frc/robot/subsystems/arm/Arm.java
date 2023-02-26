@@ -3,6 +3,7 @@ package frc.robot.subsystems.arm;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
@@ -73,6 +74,9 @@ public class Arm extends SubsystemBase {
 
   private static final double CALIBRATE_RETRACT_VOLTAGE = -1;
   private static final double CALIBRATE_ROTATE_VOLTAGE = -7;
+
+  private static final double RETRACT_POSITION_CLOSE_TO_LIMIT = 0.1;
+  private static final double RETRACT_VOLTAGE_CLOSE_TO_LIMIT = -1;
 
   /**
    * Configures the arm subsystem
@@ -146,7 +150,13 @@ public class Arm extends SubsystemBase {
 
     switch (mode) {
       case MANUAL:
-        setExtendVoltage(manualExtendVolts);
+        if (isCalibrated
+            && armIOInputs.extendPosition < RETRACT_POSITION_CLOSE_TO_LIMIT
+            && manualExtendVolts < 0) {
+          setExtendVoltage(RETRACT_VOLTAGE_CLOSE_TO_LIMIT);
+        } else {
+          setExtendVoltage(manualExtendVolts);
+        }
         setRotateVoltage(manualRotateVolts);
         // TODO: Add back contraints for manual movement.
         // if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
@@ -382,6 +392,10 @@ public class Arm extends SubsystemBase {
   private double calculateExtendPid(double targetPosition) {
     if (!isExtendSafe(targetPosition)) {
       return 0;
+    }
+    if (targetPosition < armIOInputs.extendPosition
+        && armIOInputs.extendPosition < RETRACT_POSITION_CLOSE_TO_LIMIT) {
+      return Math.max(calculateExtendPidUnsafe(targetPosition), RETRACT_VOLTAGE_CLOSE_TO_LIMIT);
     }
     return calculateExtendPidUnsafe(targetPosition);
   }
