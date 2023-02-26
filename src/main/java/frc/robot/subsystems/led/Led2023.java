@@ -84,7 +84,8 @@ public class Led2023 extends SubsystemBase {
     CONE_MID,
     CONE_HIGH,
     INTAKE_UNKNOWN,
-    RELEASE_UNKNOWN
+    RELEASE_UNKNOWN,
+    CALIBRATING
   }
 
   public Led2023() {
@@ -190,6 +191,10 @@ public class Led2023 extends SubsystemBase {
         break;
       case RELEASE_UNKNOWN:
         setColorMovingDownTwoClr(COLORS_467.Yellow.getColor(), COLORS_467.Purple.getColor());
+        sendData();
+        break;
+      case CALIBRATING:
+        setBlinkColors(COLORS_467.Red, COLORS_467.Red, COLORS_467.Black.getColor());
         sendData();
         break;
       default:
@@ -479,14 +484,13 @@ public class Led2023 extends SubsystemBase {
 
   public void setBlinkColors(COLORS_467 topColor, COLORS_467 bottomColor, Color bgColor) {
 
-    if (purpleTimer.hasElapsed(0.25)) {
+    if (purpleTimer.hasElapsed(0.6)) {
       purpleTimer.reset();
-    } else if (purpleTimer.hasElapsed(0.17)) {
+    } else if (purpleTimer.hasElapsed(0.25)) {
       setTop(topColor);
       setBottom(bottomColor);
       ledStrip.update();
     } else {
-
       set(bgColor);
       ledStrip.update();
     }
