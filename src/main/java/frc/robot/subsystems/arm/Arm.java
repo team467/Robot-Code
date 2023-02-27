@@ -92,6 +92,9 @@ public class Arm extends SubsystemBase {
     return mode == ArmMode.MANUAL;
   }
 
+  public boolean getIsCalibrated() {
+    return isCalibrated;
+}
   public void stop() {
     mode = ArmMode.MANUAL;
     setExtendVoltage(0.0);

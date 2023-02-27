@@ -28,7 +28,7 @@ public class ArmCalibrateCMD extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-    if (arm.getExtention() == 0 && arm.getRotation() == 0) { // TODO Update values
+    if (arm.getIsCalibrated()) { 
       ledStrip.setArmCalibrated();
     }
   }
