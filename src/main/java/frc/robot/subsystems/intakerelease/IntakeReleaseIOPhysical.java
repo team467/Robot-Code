@@ -41,10 +41,10 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
 
   @Override
   public void updateInputs(IntakeReleaseIOInputs inputs, Wants wants) {
-    // inputs.motorPosition = encoder.getPosition();
-    // inputs.motorVelocity = encoder.getVelocity();
-    // inputs.motorAppliedVolts = motor.getBusVoltage() * motor.getAppliedOutput();
-    // inputs.motorCurrent = motor.getOutputCurrent();
+    inputs.motorPosition = motor.getSelectedSensorPosition();
+    inputs.motorVelocity = motor.getSelectedSensorVelocity();
+    inputs.motorCurrent = motor.getStatorCurrent();
+    inputs.motorAppliedVolts = motor.getBusVoltage() * motor.getMotorOutputVoltage();
     inputs.cubeLimitSwitch = !cubeLimitSwitch.get();
     inputs.coneLimitSwitch = motor.isRevLimitSwitchClosed()==1;
     inputs.wantsCone = wants == Wants.CONE;
