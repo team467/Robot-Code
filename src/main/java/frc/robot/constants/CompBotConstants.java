@@ -188,7 +188,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double armRotateMaxMeters() {
-    return 0.34;
+    return 0.4;
   }
 
   @Override
