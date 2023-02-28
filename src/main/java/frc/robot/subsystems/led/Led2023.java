@@ -25,6 +25,8 @@ public class Led2023 extends SubsystemBase {
   protected double lastLoopTime = 0;
   private boolean isArmCalibrated = false;
   private ColorScheme cmdColorScheme = ColorScheme.DEFAULT;
+  private boolean batteryWasLow = false;
+  private Timer batteryLowLedShown = new Timer();
 
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
@@ -205,6 +207,7 @@ public class Led2023 extends SubsystemBase {
   private ColorScheme getColorScheme() {
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
+
     } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
       return ColorScheme.ARM_UNCALIBRATED;
     } else {
@@ -215,7 +218,7 @@ public class Led2023 extends SubsystemBase {
   public ColorScheme defaultLights() {
     sendData();
     lastLoopTime = Timer.getFPGATimestamp();
-    if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
+    if ((USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE)) {
       return ColorScheme.BATTERY_LOW;
     } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
       return ColorScheme.ARM_UNCALIBRATED;
@@ -294,7 +297,7 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-  public void setColorMovingUp(Color fgColor, Color bgColor) {
+  public void setColorMovingDown(Color fgColor, Color bgColor) {
     if (purpleTimer.hasElapsed(
         SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
       purpleTimer.reset();
@@ -323,7 +326,7 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-  public void setColorMovingDown(Color fgColor, Color bgColor) {
+  public void setColorMovingUp(Color fgColor, Color bgColor) {
     if (purpleTimer.hasElapsed(
         SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
       purpleTimer.reset();
@@ -409,7 +412,7 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-  public void setColorMovingUpTwoClr(Color topColor, Color bottomColor) {
+  public void setColorMovingDownTwoClr(Color topColor, Color bottomColor) {
     if (purpleTimer.hasElapsed(
         SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
       purpleTimer.reset();
@@ -454,7 +457,7 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-  public void setColorMovingDownTwoClr(Color topColor, Color bottomColor) {
+  public void setColorMovingUpTwoClr(Color topColor, Color bottomColor) {
     if (purpleTimer.hasElapsed(
         SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
       purpleTimer.reset();
@@ -502,7 +505,7 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-  public void setAlternateColorsUp(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
+  public void setAlternateColorsDown(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
     for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
       if (i % 2 == 0) {
         ledStrip.setLED(i, colorOne.getColor());
@@ -521,7 +524,7 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-  public void setAlternateColorsDown(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
+  public void setAlternateColorsUp(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
     for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
       if (i % 2 == 0) {
         ledStrip.setLED(i, colorOne.getColor());
