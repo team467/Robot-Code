@@ -11,6 +11,7 @@ public class ReleaseCMD extends CommandBase {
   private final IntakeRelease intakerelease;
   private final Led2023 ledStrip;
   private final Arm arm;
+  private boolean needsDrop = true;
 
   public ReleaseCMD(IntakeRelease intakerelease, Led2023 ledStrip, Arm arm) {
     this.intakerelease = intakerelease;
@@ -23,6 +24,7 @@ public class ReleaseCMD extends CommandBase {
   @Override
   public void initialize() {
     ledStrip.set(COLORS_467.Black);
+    needsDrop = true;
   }
 
   @Override
@@ -33,6 +35,7 @@ public class ReleaseCMD extends CommandBase {
       arm.drop();
       return;
     }
+    needsDrop = false;
     if (intakerelease.haveCube()) {
       ledStrip.setCmdColorScheme(ColorScheme.RELEASE_CUBE);
     } else if (intakerelease.haveCone()) {

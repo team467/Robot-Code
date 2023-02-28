@@ -25,9 +25,7 @@ public class Led2023 extends SubsystemBase {
   protected double lastLoopTime = 0;
   private boolean isArmCalibrated = false;
   private ColorScheme cmdColorScheme = ColorScheme.DEFAULT;
-  private boolean batteryWasLow = false;
-  private Timer batteryLowLedShown = new Timer();
-
+  
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
   public static final double BALL_MAX_RANGE = 100.0;
@@ -218,7 +216,7 @@ public class Led2023 extends SubsystemBase {
   public ColorScheme defaultLights() {
     sendData();
     lastLoopTime = Timer.getFPGATimestamp();
-    if ((USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE)) {
+    if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
     } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
       return ColorScheme.ARM_UNCALIBRATED;
