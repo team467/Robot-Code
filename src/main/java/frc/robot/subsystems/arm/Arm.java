@@ -65,7 +65,7 @@ public class Arm extends SubsystemBase {
   private static final double SAFE_RETRACT_NON_HOME = 0.05;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
-  private static final double ROTATE_DROP_METERS = 0.05;
+  private static final double ROTATE_DROP_METERS = 0.0;
   private static final double ROTATE_RAISE_METERS = 0.05;
 
   private double holdPosition;
@@ -433,10 +433,6 @@ public class Arm extends SubsystemBase {
   private double calculateExtendPid(double targetPosition) {
     if (!isExtendSafe(targetPosition)) {
       return 0;
-    }
-    if (targetPosition < armIOInputs.extendPosition
-        && armIOInputs.extendPosition < RETRACT_POSITION_CLOSE_TO_LIMIT) {
-      return Math.max(calculateExtendPidUnsafe(targetPosition), RETRACT_VOLTAGE_CLOSE_TO_LIMIT);
     }
     return calculateExtendPidUnsafe(targetPosition);
   }
