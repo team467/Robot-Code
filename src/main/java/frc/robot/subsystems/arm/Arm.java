@@ -2,6 +2,8 @@ package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -68,7 +70,8 @@ public class Arm extends SubsystemBase {
   private double holdPosition;
   private double manualExtendVolts = 0.0;
   private double manualRotateVolts = 0.0;
-  private PIDController extendPidController = new PIDController(50, 0, 0);
+  private ProfiledPIDController extendPidController =
+      new ProfiledPIDController(50, 0, 0, new TrapezoidProfile.Constraints(10, 10));
   private PIDController rotatePidController = new PIDController(400, 0, 0);
 
   private static final double BACK_FORCE = -1.3;
@@ -430,10 +433,6 @@ public class Arm extends SubsystemBase {
   private double calculateExtendPid(double targetPosition) {
     if (!isExtendSafe(targetPosition)) {
       return 0;
-    }
-    if (targetPosition < armIOInputs.extendPosition
-        && armIOInputs.extendPosition < RETRACT_POSITION_CLOSE_TO_LIMIT) {
-      return Math.max(calculateExtendPidUnsafe(targetPosition), RETRACT_VOLTAGE_CLOSE_TO_LIMIT);
     }
     return calculateExtendPidUnsafe(targetPosition);
   }
