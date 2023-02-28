@@ -6,11 +6,6 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxLimitSwitch;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
@@ -26,7 +21,9 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
     motor.enableVoltageCompensation(true);
     motor.configVoltageCompSaturation(12, 0);
     cubeLimitSwitch = new DigitalInput(cubeLimID);
-    coneLimitSwitch = motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    coneLimitSwitch =
+        motor.configReverseLimitSwitchSource(
+            LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
   }
 
   @Override
@@ -36,7 +33,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
 
   @Override
   public void setVoltage(double volts) {
-    motor.set(ControlMode.PercentOutput, volts/12);
+    motor.set(ControlMode.PercentOutput, volts / 12);
   }
 
   @Override
@@ -46,7 +43,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
     inputs.motorCurrent = motor.getStatorCurrent();
     inputs.motorAppliedVolts = motor.getBusVoltage() * motor.getMotorOutputVoltage();
     inputs.cubeLimitSwitch = !cubeLimitSwitch.get();
-    inputs.coneLimitSwitch = motor.isRevLimitSwitchClosed()==1;
+    inputs.coneLimitSwitch = motor.isRevLimitSwitchClosed() == 1;
     inputs.wantsCone = wants == Wants.CONE;
     inputs.wantsCube = wants == Wants.CUBE;
   }
