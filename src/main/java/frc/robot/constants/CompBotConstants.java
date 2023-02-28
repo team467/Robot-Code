@@ -98,12 +98,12 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double chassisDriveMaxVelocity() {
-    return 1.7;
+    return 2.0;
   } // TODO: tune
 
   @Override
   public double chassisDriveMaxAcceleration() {
-    return 1.7;
+    return 2.0;
   } // TODO: tune
 
   @Override
