@@ -15,7 +15,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   private final SparkMaxLimitSwitch coneLimitSwitch;
 
   public IntakeReleaseIOPhysical(int motorID, int cubeLimID) {
-    motor = new CANSparkMax(motorID, MotorType.kBrushless);
+    motor = new CANSparkMax(motorID, MotorType.kBrushed);
     encoder = motor.getEncoder();
     motor.setIdleMode(IdleMode.kBrake);
     motor.setInverted(false);
