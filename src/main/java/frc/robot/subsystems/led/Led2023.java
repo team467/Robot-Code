@@ -12,12 +12,12 @@ import frc.robot.RobotConstants;
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
   public static final boolean USE_BATTERY_CHECK = true;
-  public static final double BATTER_MIN_VOLTAGE = 9.0;
+  public static final double BATTER_MIN_VOLTAGE = 10.0;
   public static final boolean CHECK_ARM_CALIBRATION = true;
 
   private final double SHOOTING_TIMER_SPEED = 0.1;
   private final double RAINBOW_TIMER_SPEED = 0.02;
-  private final int RAINBOW_AMOUNT = 10;
+  private final int RAINBOW_AMOUNT = 20;
 
   private double color = 0;
   private Timer rainbowTimer = new Timer();
@@ -215,7 +215,13 @@ public class Led2023 extends SubsystemBase {
   public ColorScheme defaultLights() {
     sendData();
     lastLoopTime = Timer.getFPGATimestamp();
-    return ColorScheme.DEFAULT;
+    if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
+      return ColorScheme.BATTERY_LOW;
+    } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
+      return ColorScheme.ARM_UNCALIBRATED;
+    } else {
+      return ColorScheme.DEFAULT;
+    }
   }
 
   public void setLED(int index, Color color) {
