@@ -14,8 +14,8 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import java.util.List;
 
-public class StraightBack extends SequentialCommandGroup {
-  public StraightBack(Drive drive, Arm arm) {
+public class LeaveStraight extends SequentialCommandGroup {
+  public LeaveStraight(Drive drive, Arm arm) {
     addCommands(new ArmCalibrateCMD(arm));
     addCommands(
         new GoToTrajectory(
@@ -29,8 +29,7 @@ public class StraightBack extends SequentialCommandGroup {
                             new Transform2d(new Translation2d(), Rotation2d.fromDegrees(180)))),
                 Waypoint.fromDifferentialPose(
                     new Pose2d(
-                        new Translation2d(
-                            Community.midX, (Community.chargingStationLeftY + Community.leftY) / 2),
+                        new Translation2d(Community.midX, FieldConstants.aprilTags.get(6).getY()),
                         new Rotation2d())))));
   }
 }

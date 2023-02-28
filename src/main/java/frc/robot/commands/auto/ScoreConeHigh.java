@@ -16,7 +16,8 @@ import java.util.List;
 
 public class ScoreConeHigh extends SequentialCommandGroup {
 
-  public ScoreConeHigh(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
+  public ScoreConeHigh(
+      Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip, int aprilTag) {
     addCommands(
         new ArmCalibrateCMD(arm),
         new WantConeCMD(intakeRelease, ledStrip),
