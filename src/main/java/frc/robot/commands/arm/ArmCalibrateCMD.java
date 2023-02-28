@@ -2,17 +2,14 @@ package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.led.Led2023;
 
 public class ArmCalibrateCMD extends CommandBase {
   private final Arm arm;
-  private final Led2023 ledStrip;
 
-  public ArmCalibrateCMD(Arm arm, Led2023 ledStrip) {
+  public ArmCalibrateCMD(Arm arm) {
     this.arm = arm;
-    this.ledStrip = ledStrip;
 
-    addRequirements(arm, ledStrip);
+    addRequirements(arm);
   }
 
   @Override
@@ -24,11 +21,7 @@ public class ArmCalibrateCMD extends CommandBase {
   public void execute() {}
 
   @Override
-  public void end(boolean interrupted) {
-    if (arm.getExtention() == 0 && arm.getRotation() == 0) { // TODO Update values
-      ledStrip.setArmCalibrated();
-    }
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {

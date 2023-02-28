@@ -11,7 +11,7 @@ public class LedBlueGoldCMD extends LedBaseCMD {
 
   @Override
   public void execute() {
-    ledStrip.setTop(COLORS_467.Yellow);
+    ledStrip.setTop(COLORS_467.Gold);
     ledStrip.setBottom(COLORS_467.Blue);
   }
 }

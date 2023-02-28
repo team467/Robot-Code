@@ -24,6 +24,7 @@ import frc.lib.io.gyro3d.IMUPigeon2;
 import frc.lib.io.vision.VisionIO;
 import frc.lib.io.vision.VisionIOAprilTag;
 import frc.lib.leds.LEDManager;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.arm.ArmCalibrateCMD;
 import frc.robot.commands.arm.ArmFloorCMD;
 import frc.robot.commands.arm.ArmHomeCMD;
@@ -45,7 +46,6 @@ import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.commands.intakerelease.WantConeCMD;
 import frc.robot.commands.intakerelease.WantCubeCMD;
 import frc.robot.commands.leds.LedRainbowCMD;
-import frc.robot.commands.leds.LedResetPoseCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOPhysical;
@@ -225,62 +225,62 @@ public class RobotContainer {
             () -> -driverController.getRightX(),
             () -> true // TODO: add toggle
             ));
-    driverController.start().onTrue(new LedResetPoseCMD(led2023, drive));
+    driverController
+        .start()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(
+                                new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
+                .ignoringDisable(true));
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
+
+    led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
     intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
 
     switch (RobotConstants.get().mode()) {
       case REAL -> {
         driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023));
-        driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023, arm));
+        driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023));
 
         // Set the game piece type
         operatorController.back().onFalse(new WantConeCMD(intakeRelease, led2023));
         operatorController.back().onTrue(new WantCubeCMD(intakeRelease, led2023));
 
         // Manual arm movements
-        operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, intakeRelease, led2023));
-        operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm, intakeRelease, led2023));
-        operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm, intakeRelease, led2023));
-        operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, intakeRelease, led2023));
+        operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));
+        operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm));
+        operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm));
+        operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm));
 
         // Placing cone or cube, gets what it wants from in the command
-        operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease, led2023));
-        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease, led2023));
-        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease, led2023));
-        Logger.getInstance()
-            .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
-        operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease, led2023));
-        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease, led2023));
-        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease, led2023));
+        operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
+        operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease));
+        operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease));
         Logger.getInstance()
             .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
         Logger.getInstance()
             .recordOutput("CustomController/MiddleButton", operatorController.b().getAsBoolean());
-
         Logger.getInstance()
             .recordOutput("CustomController/HighButton", operatorController.y().getAsBoolean());
         Logger.getInstance()
             .recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
 
-        Logger.getInstance()
-            .recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
-
         // Home will be for movement
-        operatorController.x().onTrue(new ArmHomeCMD(arm, led2023));
-        driverController.x().onTrue(new ArmHomeCMD(arm, led2023));
+        operatorController.x().onTrue(new ArmHomeCMD(arm));
+        driverController.x().onTrue(new ArmHomeCMD(arm));
 
         // Need to set to use automated movements, should be set in Autonomous init.
-        driverController.back().onTrue(new ArmCalibrateCMD(arm, led2023));
+        driverController.back().onTrue(new ArmCalibrateCMD(arm));
 
         // Manual arm movements
-        operatorController.leftStick().onTrue(new ArmStopCMD(arm, led2023));
-        operatorController.rightStick().onTrue(new ArmStopCMD(arm, led2023));
-        operatorController.leftBumper().onTrue(new ArmShelfCMD(arm, led2023));
-        operatorController.rightBumper().onTrue(new ArmFloorCMD(arm, led2023));
+        operatorController.leftStick().onTrue(new ArmStopCMD(arm));
+        operatorController.rightStick().onTrue(new ArmStopCMD(arm));
+        operatorController.leftBumper().onTrue(new ArmShelfCMD(arm));
+        operatorController.rightBumper().onTrue(new ArmFloorCMD(arm));
         Logger.getInstance()
             .recordOutput(
                 "CustomController/FloorButton", operatorController.rightBumper().getAsBoolean());

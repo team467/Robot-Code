@@ -133,7 +133,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public int intakeCubeLimitSwitchID() {
-    return 1; // DIO 1
+    return 1; // TODO: Change Me, DIO xx
   }
 
   @Override
