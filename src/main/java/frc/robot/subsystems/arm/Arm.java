@@ -2,7 +2,10 @@ package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
@@ -65,7 +68,8 @@ public class Arm extends SubsystemBase {
   private double holdPosition;
   private double manualExtendVolts = 0.0;
   private double manualRotateVolts = 0.0;
-  private PIDController extendPidController = new PIDController(50, 0, 0);
+  private ProfiledPIDController extendPidController =
+      new ProfiledPIDController(50, 0, 0, new TrapezoidProfile.Constraints(10, 10));
   private PIDController rotatePidController = new PIDController(400, 0, 0);
 
   private static final double BACK_FORCE = -1.3;
@@ -73,6 +77,9 @@ public class Arm extends SubsystemBase {
 
   private static final double CALIBRATE_RETRACT_VOLTAGE = -1;
   private static final double CALIBRATE_ROTATE_VOLTAGE = -7;
+
+  private static final double RETRACT_POSITION_CLOSE_TO_LIMIT = 0.1;
+  private static final double RETRACT_VOLTAGE_CLOSE_TO_LIMIT = -0.7;
 
   /**
    * Configures the arm subsystem
@@ -146,7 +153,13 @@ public class Arm extends SubsystemBase {
 
     switch (mode) {
       case MANUAL:
-        setExtendVoltage(manualExtendVolts);
+        if (isCalibrated
+            && armIOInputs.extendPosition < RETRACT_POSITION_CLOSE_TO_LIMIT
+            && manualExtendVolts < 0) {
+          setExtendVoltage(Math.max(manualExtendVolts, RETRACT_VOLTAGE_CLOSE_TO_LIMIT));
+        } else {
+          setExtendVoltage(manualExtendVolts);
+        }
         setRotateVoltage(manualRotateVolts);
         // TODO: Add back contraints for manual movement.
         // if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
@@ -440,19 +453,18 @@ public class Arm extends SubsystemBase {
 
   private class Kickback {
     private final ArmMode returnToMode;
-    private final double startPosition;
-    private static final double TRAVEL_DISTANCE_METERS = 0.03;
     private final double targetVolts;
+    private final Timer timer = new Timer();
 
     Kickback(double targetVolts) {
       returnToMode = mode;
-      startPosition = armIOInputs.extendPosition;
       armIO.setExtendVoltage(-2);
       this.targetVolts = targetVolts;
+      timer.start();
     }
 
     void periodic() {
-      if (armIOInputs.extendPosition <= startPosition + TRAVEL_DISTANCE_METERS) {
+      if (timer.hasElapsed(0.03)) {
         setExtendVoltage(targetVolts);
         mode = returnToMode;
         kickback = null;
