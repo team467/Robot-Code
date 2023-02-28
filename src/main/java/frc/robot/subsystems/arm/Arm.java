@@ -79,7 +79,7 @@ public class Arm extends SubsystemBase {
   private static final double CALIBRATE_ROTATE_VOLTAGE = -7;
 
   private static final double RETRACT_POSITION_CLOSE_TO_LIMIT = 0.1;
-  private static final double RETRACT_VOLTAGE_CLOSE_TO_LIMIT = -1;
+  private static final double RETRACT_VOLTAGE_CLOSE_TO_LIMIT = -0.7;
 
   /**
    * Configures the arm subsystem
@@ -156,7 +156,7 @@ public class Arm extends SubsystemBase {
         if (isCalibrated
             && armIOInputs.extendPosition < RETRACT_POSITION_CLOSE_TO_LIMIT
             && manualExtendVolts < 0) {
-          setExtendVoltage(RETRACT_VOLTAGE_CLOSE_TO_LIMIT);
+          setExtendVoltage(Math.max(manualExtendVolts, RETRACT_VOLTAGE_CLOSE_TO_LIMIT));
         } else {
           setExtendVoltage(manualExtendVolts);
         }
