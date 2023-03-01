@@ -40,13 +40,13 @@ import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.auto.AlignToNode;
 import frc.robot.commands.auto.ScoreConeHigh;
-import frc.robot.commands.auto.ScoreCubeNoMove;
 import frc.robot.commands.auto.ScoreThenMoveOut8;
 import frc.robot.commands.auto.better.Leave;
 import frc.robot.commands.auto.better.LeaveStraight6;
 import frc.robot.commands.auto.better.ScoreOneLeave;
 import frc.robot.commands.auto.better.ScoreOneLeaveBalance;
 import frc.robot.commands.auto.better.StraightBack;
+import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.commands.intakerelease.HoldCMD;
@@ -222,8 +222,8 @@ public class RobotContainer {
     //        autoChooser.addOption("Drive Foward and Come Back", new DriveFowardComeBack(drive));
     //        autoChooser.addOption(
     //            "Score then Drive Foward, then ballance", new ScoreDriveFowardBallance(drive));
-    autoChooser.addOption("Driveless Score", new ScoreCubeNoMove(arm, intakeRelease, led2023));
-    autoChooser.addOption("Score Then Move", new ScoreThenMoveOut8(drive, arm, intakeRelease, led2023));
+    autoChooser.addOption(
+        "Score Then Move", new ScoreThenMoveOut8(drive, arm, intakeRelease, led2023));
 
     autoChooser.addOption(
         "Drive Characterization",
@@ -282,8 +282,8 @@ public class RobotContainer {
     led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
     intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
 
-    driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023));
-    driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023));
+    driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023, arm));
+    driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023, arm));
 
     // Set the game piece type
     operatorController.back().onFalse(new WantConeCMD(intakeRelease, led2023));

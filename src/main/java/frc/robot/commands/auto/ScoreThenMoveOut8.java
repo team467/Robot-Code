@@ -1,7 +1,5 @@
 package frc.robot.commands.auto;
 
-import java.util.List;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
@@ -15,6 +13,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.led.Led2023;
+import java.util.List;
 
 public class ScoreThenMoveOut8 extends SequentialCommandGroup {
   public ScoreThenMoveOut8(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
@@ -28,8 +27,11 @@ public class ScoreThenMoveOut8 extends SequentialCommandGroup {
                 new Waypoint(
                     new Translation2d(
                         FieldConstants.Community.outerX,
-                FieldConstants.aprilTags.get(8).getTranslation().toTranslation2d().getY())))));
+                        FieldConstants.aprilTags
+                            .get(8)
+                            .getTranslation()
+                            .toTranslation2d()
+                            .getY())))));
     new ReleaseCMD(intakeRelease, ledStrip);
-
   }
 }
