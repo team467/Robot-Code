@@ -546,7 +546,8 @@ public class Led2023 extends SubsystemBase {
 
   public void setOneThird(COLORS_467 color, int t) {
     // t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
-    int start;
+    set(COLORS_467.Black);
+    int start; 
     int end;
     if (t == 1) {
       start = 0;
