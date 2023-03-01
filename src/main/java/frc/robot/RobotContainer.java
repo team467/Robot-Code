@@ -24,6 +24,7 @@ import frc.lib.io.gyro3d.IMUPigeon2;
 import frc.lib.io.vision.VisionIO;
 import frc.lib.io.vision.VisionIOAprilTag;
 import frc.lib.leds.LEDManager;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.arm.ArmCalibrateCMD;
 import frc.robot.commands.arm.ArmFloorCMD;
 import frc.robot.commands.arm.ArmHomeCMD;
@@ -45,10 +46,9 @@ import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.commands.intakerelease.WantConeCMD;
 import frc.robot.commands.intakerelease.WantCubeCMD;
 import frc.robot.commands.leds.LedRainbowCMD;
-import frc.robot.commands.leds.LedResetPoseCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
-import frc.robot.subsystems.arm.ArmIOPhysical;
+import frc.robot.subsystems.arm.ArmIOPhysical; 
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -225,7 +225,15 @@ public class RobotContainer {
             () -> -driverController.getRightX(),
             () -> true // TODO: add toggle
             ));
-    driverController.start().onTrue(new LedResetPoseCMD(led2023, drive));
+    driverController
+        .start()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(
+                                new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
+                .ignoringDisable(true));
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));

@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj.Relay.Value;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
@@ -26,7 +27,7 @@ public class ArmIOPhysical implements ArmIO {
   private boolean ratchetLocked = false;
 
   public ArmIOPhysical(int extendMotorId, int rotateMotorId, int ratchetSolenoidId) {
-    ratchetSolenoid = new Relay(ratchetSolenoidId);
+    ratchetSolenoid = new Relay(ratchetSolenoidId, Direction.kForward);
 
     extendMotor = new CANSparkMax(extendMotorId, MotorType.kBrushless);
     rotateMotor = new CANSparkMax(rotateMotorId, MotorType.kBrushless);
