@@ -25,7 +25,7 @@ public class Led2023 extends SubsystemBase {
   protected double lastLoopTime = 0;
   private boolean isArmCalibrated = false;
   private ColorScheme cmdColorScheme = ColorScheme.DEFAULT;
-
+  
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
   public static final double BALL_MAX_RANGE = 100.0;
@@ -35,17 +35,18 @@ public class Led2023 extends SubsystemBase {
   /*
    * Color blind preferred pallet includes White, Black, Red, Blue, Gold
    */
+
   public enum COLORS_467 {
     White(0xFF, 0xFF, 0xFF, 0xdc267f00),
     Red(0xFF, 0x00, 0x00, 0x99000000),
     Green(0x00, 0x80, 0x00, 0x33663300),
     Blue(0x00, 0x00, 0xCC, 0x1a339900),
-    Gold(0xFF, 0xC2, 0x0A, 0xe6e64d00),
+    Yellow(0xFF, 0xB1, 0x0A, 0xe6e69d00),
     Pink(0xDC, 0x26, 0x7F, 0xdc267f00),
     Orange(0xFE, 0x61, 0x00, 0xfe6100),
     Black(0x00, 0x00, 0x00, 0x00000000),
-    Purple(0x69, 0x03, 0xA3, 0x8000ff00),
-    Yellow(0xFF, 0xB0, 0x0A, 0xe6e64d32);
+    Gold(0xFF, 0xC2, 0x0A, 0xe6e64d00),
+    Purple(0x69, 0x03, 0xA3, 0x8000ff00);
 
     public final int red;
     public final int green;
@@ -91,7 +92,7 @@ public class Led2023 extends SubsystemBase {
     super();
 
     ledStrip =
-        LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), true);
+        LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);
     for (int i = 0; i < ledStrip.getSize(); i++) {
       ledStrip.setRGB(i, 0, 0, 0);
     }
@@ -208,10 +209,11 @@ public class Led2023 extends SubsystemBase {
     } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
       return ColorScheme.ARM_UNCALIBRATED;
     } else {
-      setRainbowMovingDownSecondInv();
-      sendData();
+      return cmdColorScheme;
     }
+  }
 
+  public ColorScheme defaultLights() {
     sendData();
     lastLoopTime = Timer.getFPGATimestamp();
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
@@ -460,18 +462,19 @@ public class Led2023 extends SubsystemBase {
     }
 
     for (int i = RobotConstants.get().led2023LedCount() - 1; i >= 0; i--) {
+      int j = RobotConstants.get().led2023LedCount() - 1 - i;
       if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * i)) {
         double timeUntilOff = Math.max(0, (SHOOTING_TIMER_SPEED * (i + 2)) - purpleTimer.get());
         double brightness = (255 * timeUntilOff);
         Color currentColor =
-            i >= RobotConstants.get().led2023LedCount() / 2 ? topColor : bottomColor;
+            j >= RobotConstants.get().led2023LedCount() / 2 ? topColor : bottomColor;
 
         if (brightness == 0) {
-          ledStrip.setLED(i, currentColor);
+          ledStrip.setLED(j, currentColor);
           ledStrip.update();
         } else {
           ledStrip.setRGB(
-              i,
+              j,
               (int) (currentColor.red * brightness),
               (int) (currentColor.green * brightness),
               (int) (currentColor.blue * brightness));
@@ -479,8 +482,8 @@ public class Led2023 extends SubsystemBase {
         }
       } else {
         Color currentColor =
-            i >= RobotConstants.get().led2023LedCount() / 2 ? topColor : bottomColor;
-        ledStrip.setLED(i, currentColor);
+            j >= RobotConstants.get().led2023LedCount() / 2 ? topColor : bottomColor;
+        ledStrip.setLED(j, currentColor);
         ledStrip.update();
       }
     }

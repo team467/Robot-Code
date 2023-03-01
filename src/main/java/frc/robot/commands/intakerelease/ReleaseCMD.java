@@ -5,6 +5,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.Led2023.COLORS_467;
+import frc.robot.subsystems.led.Led2023.ColorScheme;
 
 public class ReleaseCMD extends CommandBase {
   private final IntakeRelease intakerelease;
@@ -22,29 +23,31 @@ public class ReleaseCMD extends CommandBase {
 
   @Override
   public void initialize() {
+    ledStrip.set(COLORS_467.Black);
     needsDrop = true;
   }
 
   @Override
   public void execute() {
-    if (needsDrop
-        && !arm.hasDropped()
-        && (intakerelease.haveCone() || intakerelease.wantsCone())
+    if ((!arm.hasDropped())
+        && intakerelease.haveCone()
         && (arm.getExtention() >= 0.18 && arm.getRotation() >= 0.1)) {
       arm.drop();
       return;
     }
     needsDrop = false;
-
-    intakerelease.release();
     if (intakerelease.haveCube()) {
-      ledStrip.setColorMovingDown(
-          COLORS_467.Black.getColor(), COLORS_467.Purple.getColor()); // Purple,black
+      ledStrip.setCmdColorScheme(ColorScheme.RELEASE_CUBE);
     } else if (intakerelease.haveCone()) {
-      ledStrip.setColorMovingDown(
-          COLORS_467.Black.getColor(), COLORS_467.Gold.getColor()); // Gold, black
+      ledStrip.setCmdColorScheme(ColorScheme.RELEASE_CONE);
     } else {
-      ledStrip.setColorMovingDownTwoClr(COLORS_467.Gold.getColor(), COLORS_467.Purple.getColor());
+      ledStrip.setCmdColorScheme(ColorScheme.RELEASE_UNKNOWN);
     }
+    intakerelease.release();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    ledStrip.defaultLights();
   }
 }

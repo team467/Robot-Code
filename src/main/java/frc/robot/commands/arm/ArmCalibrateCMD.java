@@ -13,7 +13,7 @@ public class ArmCalibrateCMD extends CommandBase {
     this.arm = arm;
     this.ledStrip = ledStrip;
 
-    addRequirements(arm);
+    addRequirements(arm, ledStrip);
   }
 
   @Override

@@ -23,17 +23,16 @@ public class IntakeRelease extends SubsystemBase {
     super();
     this.intakeReleaseIO = intakeReleaseIO;
     inputs = new IntakeReleaseIOInputsAutoLogged();
-    this.intakeReleaseIO.updateInputs(inputs, Wants.NONE);
+    this.intakeReleaseIO.updateInputs(inputs, Wants.CONE);
     state = State.STOP;
   }
 
   public enum Wants {
     CONE,
-    CUBE,
-    NONE
+    CUBE
   }
 
-  private Wants wants = Wants.NONE;
+  private Wants wants = Wants.CUBE;
 
   public Wants getWants() {
     return (wants);
@@ -54,10 +53,10 @@ public class IntakeRelease extends SubsystemBase {
 
     switch (state) {
       case DISABLED -> intakeReleaseIO.setPercent(0);
-      case INTAKE -> intakeReleaseIO.setPercent(-0.5);
-      case RELEASE -> intakeReleaseIO.setPercent(0.2);
-      case HOLD_CUBE -> intakeReleaseIO.setPercent(-0.03);
-      case HOLD_CONE -> intakeReleaseIO.setPercent(-0.1);
+      case INTAKE -> intakeReleaseIO.setPercent(-0.7);
+      case RELEASE -> intakeReleaseIO.setPercent(0.4);
+      case HOLD_CUBE -> intakeReleaseIO.setPercent(-0.1);
+      case HOLD_CONE -> intakeReleaseIO.setPercent(-0.3);
       case STOP -> intakeReleaseIO.setPercent(0);
       default -> intakeReleaseIO.setPercent(0);
     }
