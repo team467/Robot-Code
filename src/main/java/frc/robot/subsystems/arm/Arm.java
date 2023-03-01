@@ -414,7 +414,8 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isRotateFinished() {
-    return Math.abs(armIOInputs.rotatePosition - rotateSetpoint) <= ROTATE_TOLERANCE_METERS;
+    return Math.abs(armIOInputs.rotatePosition - rotateSetpoint) <= ROTATE_TOLERANCE_METERS
+        || (armIOInputs.rotateHighLimitSwitch && armIOInputs.rotatePosition < rotateSetpoint);
   }
 
   private void setRotateVoltage(double volts) {
