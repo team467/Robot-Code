@@ -65,8 +65,8 @@ public class Arm extends SubsystemBase {
   private static final double SAFE_RETRACT_NON_HOME = 0.05;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
-  private static final double ROTATE_DROP_METERS = 0.0;
-  private static final double ROTATE_RAISE_METERS = 0.05;
+  private static final double ROTATE_DROP_METERS = 0.05;
+  private static final double ROTATE_RAISE_METERS = 0.07;
 
   private double holdPosition;
   private double manualExtendVolts = 0.0;
@@ -106,6 +106,7 @@ public class Arm extends SubsystemBase {
     setRotateVoltage(0.0);
     manualExtendVolts = 0;
     manualRotateVolts = 0;
+    extendPidController.reset(0);
   }
 
   public void manualExtend(double volts) {
@@ -135,6 +136,7 @@ public class Arm extends SubsystemBase {
     setRotateVoltage(0.0);
     manualRotateVolts = 0;
     manualExtendVolts = 0;
+    extendPidController.reset(0);
   }
 
   public boolean isHolding() {
@@ -362,6 +364,7 @@ public class Arm extends SubsystemBase {
             rotateSetpoint,
             RobotConstants.get().armRotateMinMeters(),
             RobotConstants.get().armRotateMaxMeters());
+    extendPidController.reset(0);
   }
 
   public void setTargetPositionExtend(double extendSetpoint) {
