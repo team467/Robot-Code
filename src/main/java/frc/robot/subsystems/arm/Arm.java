@@ -106,7 +106,7 @@ public class Arm extends SubsystemBase {
     setRotateVoltage(0.0);
     manualExtendVolts = 0;
     manualRotateVolts = 0;
-    extendPidController.reset(0);
+    extendPidController.reset(armIOInputs.extendPosition);
   }
 
   public void manualExtend(double volts) {
@@ -136,7 +136,7 @@ public class Arm extends SubsystemBase {
     setRotateVoltage(0.0);
     manualRotateVolts = 0;
     manualExtendVolts = 0;
-    extendPidController.reset(0);
+    extendPidController.reset(armIOInputs.extendPosition);
   }
 
   public boolean isHolding() {
@@ -364,7 +364,7 @@ public class Arm extends SubsystemBase {
             rotateSetpoint,
             RobotConstants.get().armRotateMinMeters(),
             RobotConstants.get().armRotateMaxMeters());
-    extendPidController.reset(0);
+    extendPidController.reset(armIOInputs.extendPosition);
   }
 
   public void setTargetPositionExtend(double extendSetpoint) {
