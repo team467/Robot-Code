@@ -5,22 +5,18 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Community;
-import frc.robot.commands.auto.Balancing;
+import frc.robot.commands.arm.ArmCalibrateCMD;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.intakerelease.IntakeRelease;
-import frc.robot.subsystems.led.Led2023;
 import java.util.List;
 
-public class ScoreOneLeaveBalance extends SequentialCommandGroup {
-  public ScoreOneLeaveBalance(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
-    // generic so that we can use this in SuperAuto
+public class LeaveStraight8Balance extends SequentialCommandGroup {
+  public LeaveStraight8Balance(Drive drive, Arm arm) {
     Pose2d startingPosition =
         new Pose2d(
             new Translation2d(
@@ -47,48 +43,20 @@ public class ScoreOneLeaveBalance extends SequentialCommandGroup {
             position0.getY(),
             position0.getRotation());
 
-    //    addCommands(new ArmCalibrateCMD(arm));
-    //    addCommands(new ScoreConeHigh(drive, arm, intakeRelease, ledStrip, 6));
-
+    addCommands(new ArmCalibrateCMD(arm));
     addCommands(
         new GoToTrajectory(
             drive,
             List.of(
                 Waypoint.fromHolonomicPose(
                     FieldConstants.aprilTags
-                        .get(6)
+                        .get(8)
                         .toPose2d()
                         .transformBy(
                             new Transform2d(new Translation2d(), Rotation2d.fromDegrees(180)))),
                 Waypoint.fromDifferentialPose(
                     new Pose2d(
-                        new Translation2d(
-                            Community.midX, (Community.chargingStationLeftY + Community.leftY) / 2),
-                        new Rotation2d())),
-                Waypoint.fromDifferentialPose(
-                    new Pose2d(
-                        new Translation2d(
-                            Community.outerX + 0.5,
-                            (Community.chargingStationLeftY + Community.leftY) / 2),
-                        new Rotation2d())),
-                new Waypoint(
-                    new Translation2d(
-                        Community.outerX + Community.chargingStationWidth,
-                        (Community.chargingStationLeftY + Community.chargingStationRightY) / 2)),
-                Waypoint.fromHolonomicPose(
-                    position0,
-                    enterFront ? Rotation2d.fromDegrees(0.0) : Rotation2d.fromDegrees(180.0)),
-                Waypoint.fromHolonomicPose(position1))));
-    //    addCommands(
-    //        new GoToTrajectory(
-    //            drive,
-    //            List.of(
-    //                Waypoint.fromHolonomicPose(startingPosition),
-    //                Waypoint.fromHolonomicPose(
-    //                    position0,
-    //                    enterFront ? Rotation2d.fromDegrees(0.0) : Rotation2d.fromDegrees(180.0)),
-    //                Waypoint.fromHolonomicPose(position1))));
-    addCommands(Commands.waitSeconds(0.3));
-    addCommands(new Balancing(drive));
+                        new Translation2d(Community.outerX, FieldConstants.aprilTags.get(6).getY()),
+                        new Rotation2d())))));
   }
 }

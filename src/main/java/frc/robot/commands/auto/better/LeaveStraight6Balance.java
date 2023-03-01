@@ -14,8 +14,8 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import java.util.List;
 
-public class LeaveStraight extends SequentialCommandGroup {
-  public LeaveStraight(Drive drive, Arm arm) {
+public class LeaveStraight6Balance extends SequentialCommandGroup {
+  public LeaveStraight6Balance(Drive drive, Arm arm) {
     addCommands(new ArmCalibrateCMD(arm));
     addCommands(
         new GoToTrajectory(

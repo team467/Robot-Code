@@ -41,7 +41,7 @@ import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.auto.AlignToNode;
 import frc.robot.commands.auto.ScoreConeHigh;
 import frc.robot.commands.auto.better.Leave;
-import frc.robot.commands.auto.better.LeaveStraight;
+import frc.robot.commands.auto.better.LeaveStraight6;
 import frc.robot.commands.auto.better.ScoreOneLeave;
 import frc.robot.commands.auto.better.ScoreOneLeaveBalance;
 import frc.robot.commands.auto.better.StraightBack;
@@ -81,6 +81,7 @@ public class RobotContainer {
   private final IntakeRelease intakeRelease;
   private Led2023 led2023;
   private final Arm arm;
+  private boolean isRobotOriented = false;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -234,7 +235,7 @@ public class RobotContainer {
     autoChooser.addOption("Go to node", new AlignToNode(drive, () -> 1));
     autoChooser.addOption("Straight Back", new StraightBack(drive, arm));
     autoChooser.addOption("Leave", new Leave(drive, arm));
-    autoChooser.addOption("Leave Straight", new LeaveStraight(drive, arm));
+    autoChooser.addOption("Leave Straight", new LeaveStraight6(drive, arm));
     autoChooser.addOption(
         "Score one and leave", new ScoreOneLeave(drive, arm, intakeRelease, led2023));
     autoChooser.addOption(
@@ -252,13 +253,14 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX(),
-            () -> true // TODO: add toggle
+            () -> isRobotOriented // TODO: add toggle
             ));
     driverController
         .start()
