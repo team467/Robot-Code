@@ -25,7 +25,7 @@ public class Led2023 extends SubsystemBase {
   protected double lastLoopTime = 0;
   private boolean isArmCalibrated = false;
   private ColorScheme cmdColorScheme = ColorScheme.DEFAULT;
-  
+
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
   public static final double BALL_MAX_RANGE = 100.0;
