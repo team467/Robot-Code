@@ -199,24 +199,19 @@ public class Led2023 extends SubsystemBase {
       default:
         break;
     }
-    
   }
 
-  public void defaultLights() {
+  private ColorScheme getColorScheme() {
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
-      set(batteryCheckColor);
+      return ColorScheme.BATTERY_LOW;
 
     } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
-      set(COLORS_467.Red);
+      return ColorScheme.ARM_UNCALIBRATED;
     } else {
       setRainbowMovingDownSecondInv();
       sendData();
     }
 
-    
-  }
-
-  private ColorScheme getColorScheme() {
     sendData();
     lastLoopTime = Timer.getFPGATimestamp();
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
@@ -562,6 +557,4 @@ public class Led2023 extends SubsystemBase {
     }
     ledStrip.update();
   }
-
- 
 }
