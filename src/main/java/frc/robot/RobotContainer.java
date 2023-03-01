@@ -269,8 +269,15 @@ public class RobotContainer {
     driverController
         .start()
         .onTrue(
-            Commands.runOnce(() -> drive.setPose(AllianceFlipUtil.apply(new Pose2d())))
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(
+                                new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
+    driverController
+        .pov(-1)
+        .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     led2023.setDefaultCommand(new LedRainbowCMD(led2023, intakeRelease).ignoringDisable(true));
     intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
