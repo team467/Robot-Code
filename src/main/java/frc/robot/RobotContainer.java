@@ -40,6 +40,8 @@ import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.auto.AlignToNode;
 import frc.robot.commands.auto.ScoreConeHigh;
+import frc.robot.commands.auto.ScoreCubeNoMove;
+import frc.robot.commands.auto.ScoreThenMoveOut8;
 import frc.robot.commands.auto.better.Leave;
 import frc.robot.commands.auto.better.LeaveStraight6;
 import frc.robot.commands.auto.better.ScoreOneLeave;
@@ -220,6 +222,8 @@ public class RobotContainer {
     //        autoChooser.addOption("Drive Foward and Come Back", new DriveFowardComeBack(drive));
     //        autoChooser.addOption(
     //            "Score then Drive Foward, then ballance", new ScoreDriveFowardBallance(drive));
+    autoChooser.addOption("Driveless Score", new ScoreCubeNoMove(arm, intakeRelease, led2023));
+    autoChooser.addOption("Score Then Move", new ScoreThenMoveOut8(drive, arm, intakeRelease, led2023));
 
     autoChooser.addOption(
         "Drive Characterization",
