@@ -5,7 +5,6 @@ import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.Led2023.COLORS_467;
-import frc.robot.subsystems.led.Led2023.ColorScheme;
 
 public class WantCubeCMD extends CommandBase {
   private final IntakeRelease intakerelease;
@@ -19,13 +18,9 @@ public class WantCubeCMD extends CommandBase {
   }
 
   @Override
-  public void initialize() {
-    ledStrip.set(COLORS_467.Black);
-  }
-
-  @Override
   public void execute() {
     intakerelease.setWants(Wants.CUBE);
-    ledStrip.setCmdColorScheme(ColorScheme.WANT_CUBE);
+    ledStrip.set(COLORS_467.Purple);
+    ledStrip.sendData();
   }
 }

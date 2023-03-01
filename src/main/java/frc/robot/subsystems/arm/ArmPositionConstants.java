@@ -18,5 +18,5 @@ public class ArmPositionConstants {
   public static final ArmPosition LOW_BOTH = new ArmPosition(0.164, 0.071);
   public static final ArmPosition HOME = new ArmPosition(0.02, 0.0);
   public static final ArmPosition FLOOR = new ArmPosition(0.22, 0.065);
-  public static final ArmPosition SHELF = new ArmPosition(0.086, 0.290);
+  public static final ArmPosition SHELF = new ArmPosition(0.086, 0.300);
 }
