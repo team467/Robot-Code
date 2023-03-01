@@ -1,7 +1,5 @@
 package frc.robot.subsystems.led;
 
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
-
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
@@ -130,11 +128,11 @@ public class Led2023 extends SubsystemBase {
         sendData();
         break;
       case CONE_HIGH:
-        setOneThird(COLORS_467.Yellow, 1);
+        setOneThird(COLORS_467.Yellow, 3);
         sendData();
         break;
       case CONE_LOW:
-        setOneThird(COLORS_467.Yellow, 3);
+        setOneThird(COLORS_467.Yellow, 1);
         sendData();
         break;
       case CONE_MID:
@@ -142,11 +140,11 @@ public class Led2023 extends SubsystemBase {
         sendData();
         break;
       case CUBE_HIGH:
-        setOneThird(COLORS_467.Purple, 1);
+        setOneThird(COLORS_467.Purple, 3);
         sendData();
         break;
       case CUBE_LOW:
-        setOneThird(COLORS_467.Purple, 3);
+        setOneThird(COLORS_467.Purple, 1);
         sendData();
         break;
       case CUBE_MID:
@@ -204,6 +202,8 @@ public class Led2023 extends SubsystemBase {
         setBlinkColors(COLORS_467.Orange, COLORS_467.Pink, COLORS_467.Green.getColor());
         sendData();
       default:
+        setRainbowMovingDownSecondInv();
+        sendData();
         break;
     }
   }

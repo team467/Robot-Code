@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.Led2023;
-import frc.robot.subsystems.led.Led2023.COLORS_467;
 import frc.robot.subsystems.led.Led2023.ColorScheme;
 
 public class LedResetPoseCMD extends LedBaseCMD {
