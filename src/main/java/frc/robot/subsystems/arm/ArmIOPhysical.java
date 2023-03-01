@@ -89,7 +89,9 @@ public class ArmIOPhysical implements ArmIO {
   @Override
   public void setExtendVoltageWhileHold(double volts) {
     setRatchetLocked(true);
-    extendMotor.setVoltage(volts);
+    if (volts <= 0 && volts >= -1) {
+      extendMotor.setVoltage(volts);
+    }
   }
 
   @Override
