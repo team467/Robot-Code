@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.leds.DoubleLEDStrip;
 import frc.lib.leds.LEDManager;
 import frc.robot.RobotConstants;
+import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
@@ -18,6 +20,7 @@ public class Led2023 extends SubsystemBase {
   private final double SHOOTING_TIMER_SPEED = 0.1;
   private final double RAINBOW_TIMER_SPEED = 0.02;
   private final int RAINBOW_AMOUNT = 20;
+  private IntakeRelease intakerelease;
 
   private double color = 0;
   private Timer rainbowTimer = new Timer();
@@ -86,7 +89,9 @@ public class Led2023 extends SubsystemBase {
     INTAKE_UNKNOWN,
     RELEASE_UNKNOWN,
     CALIBRATING,
-    RESET_POSE
+    RESET_POSE,
+    FLOOR,
+    SHELF
   }
 
   public Led2023() {
@@ -201,6 +206,22 @@ public class Led2023 extends SubsystemBase {
       case RESET_POSE:
         setBlinkColors(COLORS_467.Orange, COLORS_467.Pink, COLORS_467.Green.getColor());
         sendData();
+      case SHELF:
+        if (intakerelease.getWants() == Wants.CONE) {
+          setTop(COLORS_467.Yellow);
+        } else {
+          setTop(COLORS_467.Purple);
+        }
+        sendData();
+        break;
+      case FLOOR:
+        if (intakerelease.getWants() == Wants.CONE) {
+          setBottom(COLORS_467.Yellow);
+        } else {
+          setBottom(COLORS_467.Purple);
+        }
+        sendData();
+        break;
       default:
         setRainbowMovingDownSecondInv();
         sendData();
@@ -547,7 +568,7 @@ public class Led2023 extends SubsystemBase {
   public void setOneThird(COLORS_467 color, int t) {
     // t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
     set(COLORS_467.Black);
-    int start; 
+    int start;
     int end;
     if (t == 1) {
       start = 0;
