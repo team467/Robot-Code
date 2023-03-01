@@ -30,7 +30,7 @@ public class Balancing extends CommandBase {
     Logger.getInstance().recordOutput("BalancingMag", Math.hypot(gravVec[0], gravVec[1]));
     if (Math.abs(Math.hypot(gravVec[0], gravVec[1])) > 0.1) {
       timer.reset();
-      drive.runVelocity(new ChassisSpeeds(1.3 * gravVec[0], 1.3 * gravVec[1], 0.0));
+      drive.runVelocity(new ChassisSpeeds(1.5 * gravVec[0], 1.5 * gravVec[1], 0.0));
     } else {
       drive.runVelocity(new ChassisSpeeds());
     }

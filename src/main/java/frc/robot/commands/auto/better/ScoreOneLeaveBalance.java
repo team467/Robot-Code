@@ -5,24 +5,28 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Community;
+import frc.robot.commands.arm.ArmCalibrateCMD;
 import frc.robot.commands.auto.Balancing;
 import frc.robot.commands.drive.GoToTrajectory;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.led.Led2023;
 import java.util.List;
 
-public class MidToCommunity extends SequentialCommandGroup {
-  public MidToCommunity(Drive drive) {
+public class ScoreOneLeaveBalance extends SequentialCommandGroup {
+  public ScoreOneLeaveBalance(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
     // generic so that we can use this in SuperAuto
     Pose2d startingPosition =
         new Pose2d(
             new Translation2d(
-                Community.outerX + 1.5, (Community.chargingStationLeftY + Community.leftY) / 2),
+                Community.outerX + 1.5,
+                (Community.chargingStationLeftY + Community.chargingStationRightY) / 2),
             new Rotation2d(Math.PI));
     boolean enterFront =
         startingPosition.getX()
@@ -33,15 +37,18 @@ public class MidToCommunity extends SequentialCommandGroup {
                 ? Community.chargingStationInnerX - 0.6
                 : Community.chargingStationOuterX + 0.6,
             MathUtil.clamp(
-                startingPosition.getY() + Units.feetToMeters(12.0),
-                Community.chargingStationRightY + 0.8,
-                Community.chargingStationLeftY - 0.8),
+                startingPosition.getY(),
+                Community.chargingStationRightY + 0.6,
+                Community.chargingStationLeftY - 0.6),
             Rotation2d.fromDegrees(startingPosition.getRotation().getCos() > 0.0 ? 0.0 : 180.0));
     Pose2d position1 =
         new Pose2d(
             (Community.chargingStationOuterX + Community.chargingStationInnerX) / 2.0,
             position0.getY(),
             position0.getRotation());
+
+    addCommands(new ArmCalibrateCMD(arm));
+    //    addCommands(new ScoreConeHigh(drive, arm, intakeRelease, ledStrip, 6));
 
     addCommands(
         new GoToTrajectory(
@@ -61,7 +68,7 @@ public class MidToCommunity extends SequentialCommandGroup {
                 new Waypoint(
                     new Translation2d(
                         Community.outerX + 0.1,
-                        (Community.chargingStationLeftY + Community.leftY) / 2)),
+                        (Community.chargingStationLeftY + Community.chargingStationRightY) / 2)),
                 Waypoint.fromHolonomicPose(
                     position0,
                     enterFront ? Rotation2d.fromDegrees(0.0) : Rotation2d.fromDegrees(180.0)),
