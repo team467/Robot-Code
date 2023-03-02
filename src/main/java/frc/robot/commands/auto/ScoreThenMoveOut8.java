@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.FieldConstants;
-import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmCalibrateZeroAtHomeCMD;
 import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.commands.intakerelease.ReleaseCMD;
@@ -18,7 +18,7 @@ import java.util.List;
 public class ScoreThenMoveOut8 extends SequentialCommandGroup {
   public ScoreThenMoveOut8(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
     addCommands(
-        new ArmCalibrateCMD(arm, ledStrip),
+        new ArmCalibrateZeroAtHomeCMD(arm, ledStrip),
         new WantCubeCMD(intakeRelease, ledStrip),
         new ArmScoreHighNodeCMD(arm, intakeRelease, ledStrip),
         new GoToTrajectory(

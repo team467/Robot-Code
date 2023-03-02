@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Community;
-import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmCalibrateZeroAtHomeCMD;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -17,7 +17,7 @@ import java.util.List;
 
 public class LeaveStraight8 extends SequentialCommandGroup {
   public LeaveStraight8(Drive drive, Arm arm, Led2023 led2023) {
-    addCommands(new ArmCalibrateCMD(arm, led2023));
+    addCommands(new ArmCalibrateZeroAtHomeCMD(arm, led2023));
     addCommands(
         new GoToTrajectory(
             drive,

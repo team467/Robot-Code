@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.FieldConstants;
-import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmCalibrateZeroAtHomeCMD;
 import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
@@ -16,7 +16,7 @@ import java.util.List;
 public class ScoreConeLow extends SequentialCommandGroup {
   public ScoreConeLow(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 led2023) {
     addCommands(
-        new ArmCalibrateCMD(arm, led2023),
+        new ArmCalibrateZeroAtHomeCMD(arm, led2023),
         new GoToTrajectory(
             drive,
             List.of(

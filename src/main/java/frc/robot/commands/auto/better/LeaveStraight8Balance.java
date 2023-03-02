@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Community;
-import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmCalibrateZeroAtHomeCMD;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -44,7 +44,7 @@ public class LeaveStraight8Balance extends SequentialCommandGroup {
             position0.getY(),
             position0.getRotation());
 
-    addCommands(new ArmCalibrateCMD(arm, led2023));
+    addCommands(new ArmCalibrateZeroAtHomeCMD(arm, led2023));
     addCommands(
         new GoToTrajectory(
             drive,
