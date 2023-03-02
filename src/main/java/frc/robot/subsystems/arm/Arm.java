@@ -54,6 +54,8 @@ public class Arm extends SubsystemBase {
   private double calibrateRotateOrigin = 0;
   private boolean isDropping = false;
 
+  private Timer autoRetractTimer = new Timer();
+
   private static final double EXTEND_TOLERANCE_METERS = 0.008;
   private static final double ROTATE_TOLERANCE_METERS = 0.008;
 
@@ -265,7 +267,8 @@ public class Arm extends SubsystemBase {
     logger.recordOutput("Arm/AutoMode", autoMode.toString());
     switch (autoMode) {
       case RETRACT:
-        if (armIOInputs.extendPosition < SAFE_RETRACT_NON_HOME + EXTEND_TOLERANCE_METERS) {
+        if (autoRetractTimer.hasElapsed(1)
+            || armIOInputs.extendPosition < SAFE_RETRACT_NON_HOME + EXTEND_TOLERANCE_METERS) {
           setExtendVoltage(0);
           autoMode = rotateSetpoint > 0 ? AutoMode.ROTATE : AutoMode.RETRACT_FULL;
         } else {
@@ -274,8 +277,9 @@ public class Arm extends SubsystemBase {
         break;
 
       case RETRACT_FULL:
-        if (armIOInputs.extendPosition
-            < RobotConstants.get().armExtendMinMeters() + EXTEND_TOLERANCE_METERS) {
+        if (autoRetractTimer.hasElapsed(1.5)
+            || armIOInputs.extendPosition
+                < RobotConstants.get().armExtendMinMeters() + EXTEND_TOLERANCE_METERS) {
           setExtendVoltage(0);
           autoMode = AutoMode.ROTATE;
         } else {
@@ -359,6 +363,8 @@ public class Arm extends SubsystemBase {
   public void setTargetPositions(double extendSetpoint, double rotateSetpoint) {
     mode = ArmMode.AUTO;
     autoMode = AutoMode.RETRACT;
+    autoRetractTimer.reset();
+    autoRetractTimer.start();
     this.extendSetpoint =
         MathUtil.clamp(
             extendSetpoint,
