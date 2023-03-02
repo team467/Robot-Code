@@ -17,7 +17,7 @@ import java.util.List;
 public class ScoreConeMid extends SequentialCommandGroup {
   public ScoreConeMid(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
     addCommands(
-        new ArmCalibrateCMD(arm),
+        new ArmCalibrateCMD(arm, ledStrip),
         new WantConeCMD(intakeRelease, ledStrip),
         new GoToTrajectory(
             drive,
@@ -29,6 +29,6 @@ public class ScoreConeMid extends SequentialCommandGroup {
                             + 0.3,
                         FieldConstants.aprilTags.get(7).getTranslation().toTranslation2d().getY()
                             + FieldConstants.Grids.nodeSeparationY)))),
-        new ArmScoreMidNodeCMD(arm, intakeRelease));
+        new ArmScoreMidNodeCMD(arm, intakeRelease, ledStrip));
   }
 }

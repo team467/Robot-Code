@@ -13,10 +13,11 @@ import frc.robot.commands.arm.ArmCalibrateCMD;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.led.Led2023;
 import java.util.List;
 
 public class LeaveStraight8Balance extends SequentialCommandGroup {
-  public LeaveStraight8Balance(Drive drive, Arm arm) {
+  public LeaveStraight8Balance(Drive drive, Arm arm, Led2023 led2023) {
     Pose2d startingPosition =
         new Pose2d(
             new Translation2d(
@@ -43,7 +44,7 @@ public class LeaveStraight8Balance extends SequentialCommandGroup {
             position0.getY(),
             position0.getRotation());
 
-    addCommands(new ArmCalibrateCMD(arm));
+    addCommands(new ArmCalibrateCMD(arm, led2023));
     addCommands(
         new GoToTrajectory(
             drive,

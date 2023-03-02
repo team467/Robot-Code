@@ -19,7 +19,7 @@ public class ScoreConeHigh extends SequentialCommandGroup {
   public ScoreConeHigh(
       Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip, int aprilTag) {
     addCommands(
-        new ArmCalibrateCMD(arm),
+        new ArmCalibrateCMD(arm, ledStrip),
         new WantConeCMD(intakeRelease, ledStrip),
         new GoToTrajectory(
             drive,
@@ -31,6 +31,6 @@ public class ScoreConeHigh extends SequentialCommandGroup {
                             + 0.3,
                         FieldConstants.aprilTags.get(7).getTranslation().toTranslation2d().getY()
                             + FieldConstants.Grids.nodeSeparationY)))),
-        new ArmScoreHighNodeCMD(arm, intakeRelease));
+        new ArmScoreHighNodeCMD(arm, intakeRelease, ledStrip));
   }
 }

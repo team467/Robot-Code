@@ -9,12 +9,14 @@ import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.led.Led2023;
 import java.util.List;
 
 public class ScoreConeLow extends SequentialCommandGroup {
-  public ScoreConeLow(Drive drive, Arm arm) {
+  public ScoreConeLow(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 led2023) {
     addCommands(
-        new ArmCalibrateCMD(arm),
+        new ArmCalibrateCMD(arm, led2023),
         new GoToTrajectory(
             drive,
             List.of(
@@ -25,6 +27,6 @@ public class ScoreConeLow extends SequentialCommandGroup {
                             + 0.3,
                         FieldConstants.aprilTags.get(7).getTranslation().toTranslation2d().getY()
                             + FieldConstants.Grids.nodeSeparationY)))),
-        new ArmScoreLowNodeCMD(arm));
+        new ArmScoreLowNodeCMD(arm, intakeRelease, led2023));
   }
 }

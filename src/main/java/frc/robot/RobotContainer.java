@@ -237,9 +237,9 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
     autoChooser.addOption("Go to node", new AlignToNode(drive, () -> 1));
-    autoChooser.addOption("Straight Back", new StraightBack(drive, arm));
-    autoChooser.addOption("Leave", new Leave(drive, arm));
-    autoChooser.addOption("Leave Straight", new LeaveStraight6(drive, arm));
+    autoChooser.addOption("Straight Back", new StraightBack(drive, arm, led2023));
+    autoChooser.addOption("Leave", new Leave(drive, arm, led2023));
+    autoChooser.addOption("Leave Straight", new LeaveStraight6(drive, arm, led2023));
     autoChooser.addOption(
         "Score one and leave", new ScoreOneLeave(drive, arm, intakeRelease, led2023));
     autoChooser.addOption(

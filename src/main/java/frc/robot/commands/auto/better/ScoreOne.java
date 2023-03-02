@@ -10,7 +10,7 @@ import frc.robot.subsystems.led.Led2023;
 
 public class ScoreOne extends SequentialCommandGroup {
   public ScoreOne(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
-    addCommands(new ArmCalibrateCMD(arm));
+    addCommands(new ArmCalibrateCMD(arm, ledStrip));
     addCommands(new ScoreConeHigh(drive, arm, intakeRelease, ledStrip, 6));
   }
 }

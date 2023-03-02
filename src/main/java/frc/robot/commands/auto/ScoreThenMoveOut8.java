@@ -18,9 +18,9 @@ import java.util.List;
 public class ScoreThenMoveOut8 extends SequentialCommandGroup {
   public ScoreThenMoveOut8(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
     addCommands(
-        new ArmCalibrateCMD(arm),
+        new ArmCalibrateCMD(arm, ledStrip),
         new WantCubeCMD(intakeRelease, ledStrip),
-        new ArmScoreHighNodeCMD(arm, intakeRelease),
+        new ArmScoreHighNodeCMD(arm, intakeRelease, ledStrip),
         new GoToTrajectory(
             drive,
             List.of(

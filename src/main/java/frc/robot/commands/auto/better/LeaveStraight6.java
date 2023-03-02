@@ -12,11 +12,12 @@ import frc.robot.commands.arm.ArmCalibrateCMD;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.led.Led2023;
 import java.util.List;
 
 public class LeaveStraight6 extends SequentialCommandGroup {
-  public LeaveStraight6(Drive drive, Arm arm) {
-    addCommands(new ArmCalibrateCMD(arm));
+  public LeaveStraight6(Drive drive, Arm arm, Led2023 led2023) {
+    addCommands(new ArmCalibrateCMD(arm, led2023));
     addCommands(
         new GoToTrajectory(
             drive,

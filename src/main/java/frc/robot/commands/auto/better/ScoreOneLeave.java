@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ScoreOneLeave extends SequentialCommandGroup {
   public ScoreOneLeave(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
-    addCommands(new ArmCalibrateCMD(arm));
+    addCommands(new ArmCalibrateCMD(arm, ledStrip));
     addCommands(new ScoreConeHigh(drive, arm, intakeRelease, ledStrip, 7));
     addCommands(
         new GoToTrajectory(
