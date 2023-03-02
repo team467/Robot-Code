@@ -1,5 +1,6 @@
 package frc.robot.commands.drive;
 
+import edu.wpi.first.math.spline.SplineParameterizer.MalformedSplineException;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGenerationException;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -47,7 +48,7 @@ public class GoToTrajectory extends CommandBase {
 
     try {
       customGenerator.generate(config, waypoints);
-    } catch (TrajectoryGenerationException e) {
+    } catch (TrajectoryGenerationException | MalformedSplineException e) {
       DriverStation.reportError("Failed to generate trajectory.", e.getStackTrace());
     }
 
