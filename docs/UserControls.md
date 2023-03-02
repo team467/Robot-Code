@@ -1,9 +1,14 @@
 # Driver Controls
 
-| Operation | Controller button   |
-| ---       | ---                 |
-| Grab      | DRIVER LEFT BUMPER  |
-| Release   | DRIVER RIGHT BUMPER |
+| Operation           | Controller button   |
+| ---                 | ---                 |
+| Grab                | LEFT BUMPER         |
+| Release             | RIGHT BUMPER        |
+|                     |                     |
+| Arm Calibrate       | BACK                |
+| Arm Zero when home  | A                   |
+|                     |                     |
+| Arm Home            | X                   |
 
 
 # Operator Controls
