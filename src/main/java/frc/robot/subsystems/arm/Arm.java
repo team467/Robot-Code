@@ -311,6 +311,7 @@ public class Arm extends SubsystemBase {
         if (armIOInputs.extendReverseLimitSwitch) {
           armIO.resetExtendEncoderPosition();
           calibrateMode = CalibrateMode.EXTEND_ARM;
+          extendPidController.reset(0, 0);
         } else {
           setExtendVoltage(CALIBRATE_RETRACT_VOLTAGE);
         }
