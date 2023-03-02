@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Community;
-import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmCalibrateZeroAtHomeCMD;
 import frc.robot.commands.auto.ScoreConeHigh;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ScoreOneLeave extends SequentialCommandGroup {
   public ScoreOneLeave(Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
-    addCommands(new ArmCalibrateCMD(arm, ledStrip));
+    addCommands(new ArmCalibrateZeroAtHomeCMD(arm, ledStrip));
     addCommands(new ScoreConeHigh(drive, arm, intakeRelease, ledStrip, 7));
     addCommands(
         new GoToTrajectory(

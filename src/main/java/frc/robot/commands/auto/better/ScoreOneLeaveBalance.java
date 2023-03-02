@@ -47,7 +47,7 @@ public class ScoreOneLeaveBalance extends SequentialCommandGroup {
             position0.getY(),
             position0.getRotation());
 
-    //    addCommands(new ArmCalibrateCMD(arm));
+    //    addCommands(new ArmCalibrateZeroAtHomeCMD(arm));
     //    addCommands(new ScoreConeHigh(drive, arm, intakeRelease, ledStrip, 6));
 
     addCommands(

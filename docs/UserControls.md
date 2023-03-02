@@ -6,7 +6,7 @@
 | Release             | RIGHT BUMPER        |
 |                     |                     |
 | Arm Calibrate       | BACK                |
-| Arm Zero when home  | A                   |
+| Arm Zero when home  | B                   |
 |                     |                     |
 | Arm Home            | X                   |
 
