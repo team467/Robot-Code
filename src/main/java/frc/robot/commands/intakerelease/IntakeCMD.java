@@ -41,6 +41,9 @@ public class IntakeCMD extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     ledStrip.defaultLights();
+    if (isFinished()) {
+      arm.raise();
+    }
   }
 
   @Override

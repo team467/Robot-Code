@@ -11,7 +11,7 @@ public class ReleaseCMD extends CommandBase {
   private final IntakeRelease intakerelease;
   private final Led2023 ledStrip;
   private final Arm arm;
-  private boolean needsDrop = true;
+  private boolean needsDrop;
 
   public ReleaseCMD(IntakeRelease intakerelease, Led2023 ledStrip, Arm arm) {
     this.intakerelease = intakerelease;
@@ -29,9 +29,9 @@ public class ReleaseCMD extends CommandBase {
 
   @Override
   public void execute() {
-    if (needsDrop&&(!arm.hasDropped())
+    if ((!arm.hasDropped())
         && intakerelease.haveCone()
-        && (arm.getExtention() >= 0.18 && arm.getRotation() >= 0.1)) {
+        && (arm.getExtention() >= 0.18 && arm.getRotation() >= 0.1)&&needsDrop) {
       arm.drop();
       return;
     }
