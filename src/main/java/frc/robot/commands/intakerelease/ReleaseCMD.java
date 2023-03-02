@@ -31,7 +31,8 @@ public class ReleaseCMD extends CommandBase {
   public void execute() {
     if ((!arm.hasDropped())
         && intakerelease.haveCone()
-        && (arm.getExtention() >= 0.18 && arm.getRotation() >= 0.1)&&needsDrop) {
+        && (arm.getExtention() >= 0.2 && arm.getRotation() >= 0.15)
+        && needsDrop) {
       arm.drop();
       return;
     }
