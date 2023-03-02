@@ -565,18 +565,17 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-  public void setOneThird(COLORS_467 color, int t) {
+  public void setOneThird(COLORS_467 color, int preSet) {
     // t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
-    set(COLORS_467.Black);
     int start;
     int end;
-    if (t == 1) {
+    if (preSet == 1) {
       start = 0;
       end = RobotConstants.get().led2023LedCount() / 3;
-    } else if (t == 2) {
+    } else if (preSet == 2) {
       start = RobotConstants.get().led2023LedCount() / 3;
       end = RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
-    } else if (t == 3) {
+    } else if (preSet == 3) {
       start = RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
       end = RobotConstants.get().led2023LedCount();
     } else {
