@@ -127,6 +127,14 @@ public class Arm extends SubsystemBase {
     calibrateRotateOrigin = armIOInputs.rotatePosition;
   }
 
+  /** Zeros the positions of both motors, assuming that we're already at HOME position. */
+  public void setCalibratedAssumeHomePosition() {
+    armIO.resetExtendEncoderPosition();
+    armIO.resetRotateEncoderPosition();
+    isCalibrated = true;
+    hold();
+  }
+
   public void hold() {
     hold(armIOInputs.extendPosition);
   }

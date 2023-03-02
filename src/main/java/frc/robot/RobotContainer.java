@@ -27,6 +27,7 @@ import frc.lib.io.vision.VisionIOAprilTag;
 import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmCalibrateZeroAtHomeCMD;
 import frc.robot.commands.arm.ArmFloorCMD;
 import frc.robot.commands.arm.ArmHomeCMD;
 import frc.robot.commands.arm.ArmManualDownCMD;
@@ -313,6 +314,7 @@ public class RobotContainer {
 
     // Need to set to use automated movements, should be set in Autonomous init.
     driverController.back().onTrue(new ArmCalibrateCMD(arm, led2023));
+    driverController.a().onTrue(new ArmCalibrateZeroAtHomeCMD(arm, led2023));
 
     // Manual arm movements
     operatorController.leftStick().onTrue(new ArmStopCMD(arm, led2023));
