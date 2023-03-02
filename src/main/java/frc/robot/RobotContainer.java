@@ -314,7 +314,7 @@ public class RobotContainer {
 
     // Need to set to use automated movements, should be set in Autonomous init.
     driverController.back().onTrue(new ArmCalibrateCMD(arm, led2023));
-    driverController.a().onTrue(new ArmCalibrateZeroAtHomeCMD(arm, led2023));
+    driverController.b().onTrue(new ArmCalibrateZeroAtHomeCMD(arm, led2023));
 
     // Manual arm movements
     operatorController.leftStick().onTrue(new ArmStopCMD(arm, led2023));
