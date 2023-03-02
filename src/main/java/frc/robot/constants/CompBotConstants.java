@@ -68,7 +68,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public SimpleFeedforwardConstant moduleDriveFF() {
-    return new SimpleFeedforwardConstant(0.15026, 0.13682);
+    return new SimpleFeedforwardConstant(0.23186, 0.13656);
   } // TODO: tune
 
   @Override
@@ -98,22 +98,22 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double chassisDriveMaxVelocity() {
-    return 1.2;
+    return 2.0;
   } // TODO: tune
 
   @Override
   public double chassisDriveMaxAcceleration() {
-    return 1.2;
+    return 2.0;
   } // TODO: tune
 
   @Override
   public double chassisTurnMaxVelocity() {
-    return 0.2;
+    return 0.4;
   } // TODO: tune
 
   @Override
   public double chassisTurnMaxAcceleration() {
-    return 0.2;
+    return 0.4;
   } // TODO: tune
 
   @Override
@@ -123,7 +123,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public FeedbackConstant chassisTurnFB() {
-    return new FeedbackConstant(0.1);
+    return new FeedbackConstant(0.5);
   } // TODO: tune
 
   @Override

@@ -19,6 +19,15 @@ public class AllianceFlipUtil {
     throw new IllegalStateException("Utility class");
   }
 
+  /** Flips an x coordinate to the correct side of the field based on the current alliance color. */
+  public static double apply(double xCoordinate) {
+    if (shouldFlip()) {
+      return FieldConstants.fieldLength - xCoordinate;
+    } else {
+      return xCoordinate;
+    }
+  }
+
   /** Flips a translation to the correct side of the field based on the current alliance color. */
   public static Translation2d apply(Translation2d translation) {
     if (shouldFlip()) {

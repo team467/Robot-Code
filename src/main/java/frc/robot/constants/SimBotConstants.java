@@ -13,7 +13,7 @@ public class SimBotConstants implements Constants {
 
   @Override
   public RobotType robot() {
-    return RobotType.ROBOT_COMP;
+    return RobotType.ROBOT_SIMBOT;
   }
 
   @Override
@@ -112,12 +112,12 @@ public class SimBotConstants implements Constants {
 
   @Override
   public FeedbackConstant chassisDriveFB() {
-    return new FeedbackConstant(0, 0);
+    return new FeedbackConstant(1.0, 0);
   }
 
   @Override
   public FeedbackConstant chassisTurnFB() {
-    return new FeedbackConstant(0, 0);
+    return new FeedbackConstant(1.0, 0);
   }
 
   @Override
