@@ -178,6 +178,10 @@ public class Arm extends SubsystemBase {
     return false;
   }
 
+  public boolean isCalibrated() {
+    return isCalibrated;
+  }
+
   @Override
   public void periodic() {
     if (DriverStation.isDisabled()) {
