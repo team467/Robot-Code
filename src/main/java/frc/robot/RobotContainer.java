@@ -83,7 +83,7 @@ public class RobotContainer {
   private final IntakeRelease intakeRelease;
   private Led2023 led2023;
   private final Arm arm;
-  private boolean isRobotOriented = false;
+  private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
