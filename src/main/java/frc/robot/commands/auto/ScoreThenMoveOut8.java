@@ -32,6 +32,6 @@ public class ScoreThenMoveOut8 extends SequentialCommandGroup {
                             .getTranslation()
                             .toTranslation2d()
                             .getY())))));
-    new ReleaseCMD(intakeRelease, ledStrip);
+    new ReleaseCMD(intakeRelease, ledStrip, arm);
   }
 }
