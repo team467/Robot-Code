@@ -5,6 +5,7 @@ import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.Led2023.COLORS_467;
+import frc.robot.subsystems.led.Led2023.ColorScheme;
 
 public class WantConeCMD extends CommandBase {
   private final IntakeRelease intakerelease;
@@ -18,9 +19,14 @@ public class WantConeCMD extends CommandBase {
   }
 
   @Override
+  public void initialize() {
+    ledStrip.set(COLORS_467.Black);
+  }
+
+  @Override
   public void execute() {
+
     intakerelease.setWants(Wants.CONE);
-    ledStrip.set(COLORS_467.Gold);
-    ledStrip.sendData();
+    ledStrip.setCmdColorScheme(ColorScheme.WANT_CONE);
   }
 }
