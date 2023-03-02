@@ -281,7 +281,7 @@ public class RobotContainer {
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
     intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
 
-    driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023));
+    driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023, arm));
     driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023, arm));
 
     // Set the game piece type
