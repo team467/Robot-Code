@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.Led2023;
-import frc.robot.subsystems.led.Led2023.COLORS_467;
+import frc.robot.subsystems.led.Led2023.ColorScheme;
 
 public class LedResetPoseCMD extends LedBaseCMD {
   private Drive drive;
@@ -19,7 +19,7 @@ public class LedResetPoseCMD extends LedBaseCMD {
 
   @Override
   public void execute() {
-    ledStrip.setBlinkColors(COLORS_467.Orange, COLORS_467.Pink, COLORS_467.Green.getColor());
+    ledStrip.setCmdColorScheme(ColorScheme.RESET_POSE);
     drive.setPose(new Pose2d(new Translation2d(), AllianceFlipUtil.apply(new Rotation2d())));
   }
 
