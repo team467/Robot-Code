@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.leds.DoubleLEDStrip;
 import frc.lib.leds.LEDManager;
 import frc.robot.RobotConstants;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
@@ -21,6 +22,7 @@ public class Led2023 extends SubsystemBase {
   private final double RAINBOW_TIMER_SPEED = 0.02;
   private final int RAINBOW_AMOUNT = 20;
   private IntakeRelease intakerelease;
+  private Arm arm;
 
   private double color = 0;
   private Timer rainbowTimer = new Timer();
@@ -93,7 +95,6 @@ public class Led2023 extends SubsystemBase {
     FLOOR,
     SHELF
   }
-
   public Led2023() {
     super();
 
@@ -233,7 +234,7 @@ public class Led2023 extends SubsystemBase {
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
 
-    } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
+    } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION&&!arm.isCalibrated()) {
       return ColorScheme.ARM_UNCALIBRATED;
     } else {
       return cmdColorScheme;
