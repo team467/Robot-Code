@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Community;
-import frc.robot.commands.arm.ArmCalibrateZeroAtHomeCMD;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -17,7 +16,8 @@ import java.util.List;
 
 public class Leave extends SequentialCommandGroup {
   public Leave(Drive drive, Arm arm, Led2023 led2023) {
-    addCommands(new ArmCalibrateZeroAtHomeCMD(arm, led2023));
+    arm.setCalibratedAssumeHomePosition();
+    led2023.setArmCalibrated();
     addCommands(
         new GoToTrajectory(
             drive,

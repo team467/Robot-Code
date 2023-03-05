@@ -17,9 +17,7 @@ public class ArmCalibrateZeroAtHomeCMD extends CommandBase {
 
   @Override
   public void initialize() {
-    if (!arm.isCalibrated()) {
-      arm.setCalibratedAssumeHomePosition();
-    }
+    arm.setCalibratedAssumeHomePosition();
   }
 
   @Override

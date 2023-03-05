@@ -2,8 +2,6 @@ package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -73,8 +71,7 @@ public class Arm extends SubsystemBase {
   private double holdPosition;
   private double manualExtendVolts = 0.0;
   private double manualRotateVolts = 0.0;
-  private ProfiledPIDController extendPidController =
-      new ProfiledPIDController(50, 0, 0, new TrapezoidProfile.Constraints(10, 10));
+  private PIDController extendPidController = new PIDController(50, 0, 0);
   private PIDController rotatePidController = new PIDController(400, 0, 0);
 
   private static final double BACK_FORCE = -1.3;
@@ -108,7 +105,7 @@ public class Arm extends SubsystemBase {
     setRotateVoltage(0.0);
     manualExtendVolts = 0;
     manualRotateVolts = 0;
-    extendPidController.reset(armIOInputs.extendPosition, armIOInputs.extendVelocity);
+    // extendPidController.reset(armIOInputs.extendPosition, armIOInputs.extendVelocity);
   }
 
   public void manualExtend(double volts) {
@@ -132,7 +129,7 @@ public class Arm extends SubsystemBase {
     armIO.resetExtendEncoderPosition();
     armIO.resetRotateEncoderPosition();
     isCalibrated = true;
-    hold();
+    mode = ArmMode.AUTO;
   }
 
   public void hold() {
@@ -146,7 +143,7 @@ public class Arm extends SubsystemBase {
     setRotateVoltage(0.0);
     manualRotateVolts = 0;
     manualExtendVolts = 0;
-    extendPidController.reset(armIOInputs.extendPosition, armIOInputs.extendVelocity);
+    // extendPidController.reset(armIOInputs.extendPosition, armIOInputs.extendVelocity);
   }
 
   public boolean isHolding() {
@@ -327,7 +324,7 @@ public class Arm extends SubsystemBase {
         if (armIOInputs.extendReverseLimitSwitch) {
           armIO.resetExtendEncoderPosition();
           calibrateMode = CalibrateMode.EXTEND_ARM;
-          extendPidController.reset(0, 0);
+          // extendPidController.reset(0, 0);
         } else {
           setExtendVoltage(CALIBRATE_RETRACT_VOLTAGE);
         }
@@ -383,7 +380,7 @@ public class Arm extends SubsystemBase {
             rotateSetpoint,
             RobotConstants.get().armRotateMinMeters(),
             RobotConstants.get().armRotateMaxMeters());
-    extendPidController.reset(armIOInputs.extendPosition, armIOInputs.extendVelocity);
+    // extendPidController.reset(armIOInputs.extendPosition, armIOInputs.extendVelocity);
   }
 
   public void setTargetPositionExtend(double extendSetpoint) {

@@ -94,8 +94,10 @@ public class Led2023 extends SubsystemBase {
     SHELF
   }
 
-  public Led2023() {
+  public Led2023(IntakeRelease intakerelease) {
     super();
+
+    this.intakerelease = intakerelease;
 
     ledStrip =
         LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);

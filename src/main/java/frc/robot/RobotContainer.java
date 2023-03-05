@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
@@ -40,12 +39,9 @@ import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.auto.AlignToNode;
+import frc.robot.commands.auto.Balancing;
 import frc.robot.commands.auto.ScoreConeHigh;
-import frc.robot.commands.auto.better.Leave;
-import frc.robot.commands.auto.better.LeaveStraight6;
-import frc.robot.commands.auto.better.ScoreOneLeave;
-import frc.robot.commands.auto.better.ScoreOneLeaveBalance;
-import frc.robot.commands.auto.better.StraightBack;
+import frc.robot.commands.auto.better.*;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.drive.GoToTrajectory;
@@ -64,7 +60,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeReleaseIO;
-import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
+import frc.robot.subsystems.intakerelease.IntakeReleaseIOBrushed;
 import frc.robot.subsystems.led.Led2023;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -128,7 +124,7 @@ public class RobotContainer {
                         RobotConstants.get().ratchetSolenoidId()));
             intakeRelease =
                 new IntakeRelease(
-                    new IntakeReleaseIOPhysical(
+                    new IntakeReleaseIOBrushed(
                         RobotConstants.get().intakeMotorID(),
                         RobotConstants.get().intakeCubeLimitSwitchID()));
           }
@@ -190,11 +186,11 @@ public class RobotContainer {
       }
     }
 
-    led2023 = new Led2023();
+    led2023 = new Led2023(intakeRelease);
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines
-    autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
+    autoChooser.addDefaultOption("Do Nothing", new ArmCalibrateZeroAtHomeCMD(arm, led2023));
     autoChooser.addOption(
         "S shape",
         new GoToTrajectory(
@@ -239,7 +235,12 @@ public class RobotContainer {
     autoChooser.addOption("Go to node", new AlignToNode(drive, () -> 1));
     autoChooser.addOption("Straight Back", new StraightBack(drive, arm, led2023));
     autoChooser.addOption("Leave", new Leave(drive, arm, led2023));
-    autoChooser.addOption("Leave Straight", new LeaveStraight6(drive, arm, led2023));
+    autoChooser.addOption("Leave Straight 6", new LeaveStraight6(drive, arm, led2023));
+    autoChooser.addOption("Leave Straight 8", new LeaveStraight8(drive, arm, led2023));
+    autoChooser.addOption(
+        "Leave Straight 6 Balance", new LeaveStraight6Balance(drive, arm, led2023));
+    autoChooser.addOption(
+        "Leave Straight 8 Balance", new LeaveStraight8Balance(drive, arm, led2023));
     autoChooser.addOption(
         "Score one and leave", new ScoreOneLeave(drive, arm, intakeRelease, led2023));
     autoChooser.addOption(
@@ -273,7 +274,8 @@ public class RobotContainer {
                     () ->
                         drive.setPose(
                             new Pose2d(
-                                new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
+                                drive.getPose().getTranslation(),
+                                AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
     driverController
         .pov(-1)
@@ -315,6 +317,8 @@ public class RobotContainer {
     // Need to set to use automated movements, should be set in Autonomous init.
     driverController.back().onTrue(new ArmCalibrateCMD(arm, led2023));
     driverController.b().onTrue(new ArmCalibrateZeroAtHomeCMD(arm, led2023));
+
+    driverController.a().onTrue(new Balancing(drive));
 
     // Manual arm movements
     operatorController.leftStick().onTrue(new ArmStopCMD(arm, led2023));

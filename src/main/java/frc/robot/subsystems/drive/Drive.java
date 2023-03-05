@@ -70,11 +70,17 @@ public class Drive extends SubsystemBase {
     if (gyroInputs.connected) {
       odometry =
           new SwerveDrivePoseEstimator(
-              kinematics, Rotation2d.fromDegrees(gyroInputs.yaw), modulePositions, new Pose2d());
+              kinematics,
+              Rotation2d.fromDegrees(gyroInputs.yaw),
+              modulePositions,
+              new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
     } else {
       odometry =
           new SwerveDrivePoseEstimator(
-              kinematics, new Rotation2d(simGyro), modulePositions, new Pose2d());
+              kinematics,
+              new Rotation2d(simGyro),
+              modulePositions,
+              new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
     }
   }
 

@@ -4,11 +4,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Community;
-import frc.robot.commands.arm.ArmCalibrateZeroAtHomeCMD;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -17,7 +17,11 @@ import java.util.List;
 
 public class StraightBack extends SequentialCommandGroup {
   public StraightBack(Drive drive, Arm arm, Led2023 led2023) {
-    addCommands(new ArmCalibrateZeroAtHomeCMD(arm, led2023));
+    arm.setCalibratedAssumeHomePosition();
+    led2023.setArmCalibrated();
+
+    addCommands(Commands.runOnce(() -> drive.setPose(FieldConstants.aprilTags.get(6).toPose2d())));
+
     addCommands(
         new GoToTrajectory(
             drive,

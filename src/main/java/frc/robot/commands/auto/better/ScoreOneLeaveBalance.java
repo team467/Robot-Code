@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Community;
+import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.auto.Balancing;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
@@ -47,8 +48,11 @@ public class ScoreOneLeaveBalance extends SequentialCommandGroup {
             position0.getY(),
             position0.getRotation());
 
-    //    addCommands(new ArmCalibrateZeroAtHomeCMD(arm));
-    //    addCommands(new ScoreConeHigh(drive, arm, intakeRelease, ledStrip, 6));
+    arm.setCalibratedAssumeHomePosition();
+    ledStrip.setArmCalibrated();
+    addCommands(new ArmScoreHighNodeCMD(arm, intakeRelease, ledStrip));
+
+    addCommands(Commands.runOnce(() -> drive.setPose(FieldConstants.aprilTags.get(6).toPose2d())));
 
     addCommands(
         new GoToTrajectory(

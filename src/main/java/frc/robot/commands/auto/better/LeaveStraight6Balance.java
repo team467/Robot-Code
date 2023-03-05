@@ -1,14 +1,16 @@
 package frc.robot.commands.auto.better;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.holonomictrajectory.Waypoint;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Community;
-import frc.robot.commands.arm.ArmCalibrateZeroAtHomeCMD;
+import frc.robot.commands.auto.Balancing;
 import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -17,8 +19,38 @@ import java.util.List;
 
 public class LeaveStraight6Balance extends SequentialCommandGroup {
   public LeaveStraight6Balance(Drive drive, Arm arm, Led2023 led2023) {
-    addCommands(new ArmCalibrateZeroAtHomeCMD(arm, led2023));
+    // generic so that we can use this in SuperAuto
+    Pose2d startingPosition =
+        new Pose2d(
+            new Translation2d(
+                Community.outerX + 1.5,
+                (Community.chargingStationLeftY + Community.chargingStationRightY) / 2),
+            new Rotation2d(Math.PI));
+    boolean enterFront =
+        startingPosition.getX()
+            < (Community.chargingStationInnerX + Community.chargingStationOuterX) / 2.0;
+    Pose2d position0 =
+        new Pose2d(
+            enterFront ? Community.chargingStationInnerX : Community.chargingStationOuterX,
+            //            enterFront
+            //                ? Community.chargingStationInnerX - 0.6
+            //                : Community.chargingStationOuterX + 0.6,
+            MathUtil.clamp(
+                startingPosition.getY(),
+                Community.chargingStationRightY + 0.6,
+                Community.chargingStationLeftY - 0.6),
+            Rotation2d.fromDegrees(startingPosition.getRotation().getCos() > 0.0 ? 0.0 : 180.0));
+    Pose2d position1 =
+        new Pose2d(
+            (Community.chargingStationOuterX + Community.chargingStationInnerX) / 2.0,
+            position0.getY(),
+            position0.getRotation());
+
+    arm.setCalibratedAssumeHomePosition();
+    led2023.setArmCalibrated();
+
     addCommands(
+        Commands.runOnce(() -> drive.setPose(FieldConstants.aprilTags.get(6).toPose2d())),
         new GoToTrajectory(
             drive,
             List.of(
@@ -30,7 +62,33 @@ public class LeaveStraight6Balance extends SequentialCommandGroup {
                             new Transform2d(new Translation2d(), Rotation2d.fromDegrees(180)))),
                 Waypoint.fromDifferentialPose(
                     new Pose2d(
-                        new Translation2d(Community.midX, FieldConstants.aprilTags.get(6).getY()),
-                        new Rotation2d())))));
+                        new Translation2d(
+                            Community.midX, (Community.chargingStationLeftY + Community.leftY) / 2),
+                        new Rotation2d())),
+                Waypoint.fromDifferentialPose(
+                    new Pose2d(
+                        new Translation2d(
+                            Community.outerX + 0.5,
+                            (Community.chargingStationLeftY + Community.leftY) / 2),
+                        new Rotation2d())),
+                new Waypoint(
+                    new Translation2d(
+                        Community.outerX + Community.chargingStationWidth,
+                        (Community.chargingStationLeftY + Community.chargingStationRightY) / 2)),
+                Waypoint.fromHolonomicPose(
+                    position0,
+                    enterFront ? Rotation2d.fromDegrees(0.0) : Rotation2d.fromDegrees(180.0)),
+                Waypoint.fromHolonomicPose(position1))),
+        Commands.waitSeconds(0.3),
+        new Balancing(drive));
+    //    addCommands(
+    //        new GoToTrajectory(
+    //            drive,
+    //            List.of(
+    //                Waypoint.fromHolonomicPose(startingPosition),
+    //                Waypoint.fromHolonomicPose(
+    //                    position0,
+    //                    enterFront ? Rotation2d.fromDegrees(0.0) : Rotation2d.fromDegrees(180.0)),
+    //                Waypoint.fromHolonomicPose(position1))));
   }
 }
