@@ -32,7 +32,7 @@ public class LeaveStraight8 extends SequentialCommandGroup {
                 Waypoint.fromDifferentialPose(
                     new Pose2d(
                         new Translation2d(
-                            Community.outerX, FieldConstants.aprilTags.getTagPose(6).get() .getY()),
+                            Community.outerX, FieldConstants.aprilTags.getTagPose(6).get().getY()),
                         new Rotation2d())))));
   }
 }
