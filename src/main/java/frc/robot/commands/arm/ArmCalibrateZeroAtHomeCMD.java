@@ -18,13 +18,7 @@ public class ArmCalibrateZeroAtHomeCMD extends CommandBase {
   @Override
   public void initialize() {
     arm.setCalibratedAssumeHomePosition();
-  }
-
-  @Override
-  public void end(boolean interrupted) {
-    if (arm.isCalibrated()) {
-      ledStrip.setArmCalibrated();
-    }
+    ledStrip.setArmCalibrated();
   }
 
   @Override
