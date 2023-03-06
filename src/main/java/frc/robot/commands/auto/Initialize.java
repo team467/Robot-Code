@@ -13,21 +13,23 @@ import frc.robot.subsystems.led.Led2023;
 
 public class Initialize extends SequentialCommandGroup {
   public Initialize(int aprilTag, String relativePosition, Drive drive, Arm arm, Led2023 ledStrip) {
-    Translation2d aprilTagLocation = FieldConstants.aprilTags.get(aprilTag).getTranslation().toTranslation2d();
+    Translation2d aprilTagLocation =
+        FieldConstants.aprilTags.get(aprilTag).getTranslation().toTranslation2d();
     double relativePositionOffset = 0;
     if (relativePosition.equals("Left")) {
-      relativePositionOffset = - 22;
+      relativePositionOffset = -22;
     } else if (relativePosition.equals("Right")) {
       relativePositionOffset = 22;
     }
-    Pose2d initialPose = new Pose2d(new Translation2d(
-        aprilTagLocation.getX() + Units.inchesToMeters(16),
-        aprilTagLocation.getY() + Units.inchesToMeters(relativePositionOffset)),
-        Rotation2d.fromDegrees(180));
+    Pose2d initialPose =
+        new Pose2d(
+            new Translation2d(
+                aprilTagLocation.getX() + Units.inchesToMeters(16),
+                aprilTagLocation.getY() + Units.inchesToMeters(relativePositionOffset)),
+            Rotation2d.fromDegrees(180));
     addCommands(
-      Commands.runOnce(() -> arm.setCalibratedAssumeHomePosition()),
-      Commands.runOnce(() -> ledStrip.setArmCalibrated()),
-      Commands.runOnce(() -> drive.setPose(initialPose))
-    );
+        Commands.runOnce(() -> arm.setCalibratedAssumeHomePosition()),
+        Commands.runOnce(() -> ledStrip.setArmCalibrated()),
+        Commands.runOnce(() -> drive.setPose(initialPose)));
   }
 }

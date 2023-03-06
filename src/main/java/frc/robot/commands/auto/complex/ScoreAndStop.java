@@ -9,13 +9,17 @@ import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.led.Led2023;
 
 public class ScoreAndStop extends SequentialCommandGroup {
-  public ScoreAndStop (
-      int aprilTag, String relativePosition,
-      String gamePieceType, String location,
-      Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
+  public ScoreAndStop(
+      int aprilTag,
+      String relativePosition,
+      String gamePieceType,
+      String location,
+      Drive drive,
+      Arm arm,
+      IntakeRelease intakeRelease,
+      Led2023 ledStrip) {
     addCommands(
         new Initialize(aprilTag, relativePosition, drive, arm, ledStrip),
         new Score(gamePieceType, location, arm, intakeRelease, ledStrip));
   }
-     
 }

@@ -218,11 +218,21 @@ public class RobotContainer {
     //    autoChooser.addOption(
     //        "Score Then Move", new ScoreThenMoveOut8(drive, arm, intakeRelease, led2023));
 
-    autoChooser.addOption("Score Cube 6", new ScoreAndStop(6, "Center", "Cube", "High", drive, arm, intakeRelease, led2023));
-    autoChooser.addOption("Score Cone 6 Right", new ScoreAndStop(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
-    autoChooser.addOption("Score Cone 6 Right and Back Up", new ScoreAndBackUp(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
-    autoChooser.addOption("Score and Balance", new ScoreAndBalance("Right", "Cone", "High", drive, arm, intakeRelease, led2023));
-    autoChooser.addOption("Score, Back Up and Balance", new ScoreAndBackUp(7, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption(
+        "Score Cube 6",
+        new ScoreAndStop(6, "Center", "Cube", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption(
+        "Score Cone 6 Right",
+        new ScoreAndStop(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption(
+        "Score Cone 6 Right and Back Up",
+        new ScoreAndBackUp(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption(
+        "Score and Balance",
+        new ScoreAndBalance("Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption(
+        "Score, Back Up and Balance",
+        new ScoreAndBackUp(7, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
 
     autoChooser.addOption(
         "Drive Characterization",

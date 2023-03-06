@@ -69,17 +69,19 @@ public class Drive extends SubsystemBase {
     }
 
     if (gyroInputs.connected) {
-      odometry = new SwerveDrivePoseEstimator(
-          kinematics,
-          Rotation2d.fromDegrees(gyroInputs.yaw),
-          modulePositions,
-          new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
+      odometry =
+          new SwerveDrivePoseEstimator(
+              kinematics,
+              Rotation2d.fromDegrees(gyroInputs.yaw),
+              modulePositions,
+              new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
     } else {
-      odometry = new SwerveDrivePoseEstimator(
-          kinematics,
-          new Rotation2d(simGyro),
-          modulePositions,
-          new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
+      odometry =
+          new SwerveDrivePoseEstimator(
+              kinematics,
+              new Rotation2d(simGyro),
+              modulePositions,
+              new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
     }
   }
 
@@ -120,24 +122,28 @@ public class Drive extends SubsystemBase {
           Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
         }
         case NORMAL -> {
-          Twist2d setpointTwist = new Pose2d()
-              .log(
-                  new Pose2d(
-                      setpoint.vxMetersPerSecond * 0.020,
-                      setpoint.vyMetersPerSecond * 0.020,
-                      new Rotation2d(setpoint.omegaRadiansPerSecond * 0.020)));
-          ChassisSpeeds adjustedSpeeds = new ChassisSpeeds(
-              setpointTwist.dx / 0.020, setpointTwist.dy / 0.020, setpointTwist.dtheta / 0.020);
+          Twist2d setpointTwist =
+              new Pose2d()
+                  .log(
+                      new Pose2d(
+                          setpoint.vxMetersPerSecond * 0.020,
+                          setpoint.vyMetersPerSecond * 0.020,
+                          new Rotation2d(setpoint.omegaRadiansPerSecond * 0.020)));
+          ChassisSpeeds adjustedSpeeds =
+              new ChassisSpeeds(
+                  setpointTwist.dx / 0.020, setpointTwist.dy / 0.020, setpointTwist.dtheta / 0.020);
           // In normal mode, run the controllers for turning and driving based on the current
           // setpoint
-          SwerveModuleState[] setpointStates = RobotConstants.get().kinematics().toSwerveModuleStates(adjustedSpeeds);
+          SwerveModuleState[] setpointStates =
+              RobotConstants.get().kinematics().toSwerveModuleStates(adjustedSpeeds);
           SwerveDriveKinematics.desaturateWheelSpeeds(
               setpointStates, RobotConstants.get().maxLinearSpeed());
 
           // Set setpoints to modules
-          boolean isStationary = Math.abs(setpoint.vxMetersPerSecond) < 1e-3
-              && Math.abs(setpoint.vyMetersPerSecond) < 1e-3
-              && Math.abs(setpoint.omegaRadiansPerSecond) < 1e-3;
+          boolean isStationary =
+              Math.abs(setpoint.vxMetersPerSecond) < 1e-3
+                  && Math.abs(setpoint.vyMetersPerSecond) < 1e-3
+                  && Math.abs(setpoint.omegaRadiansPerSecond) < 1e-3;
 
           SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
           for (int i = 0; i < 4; i++) {

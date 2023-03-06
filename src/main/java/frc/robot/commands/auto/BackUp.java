@@ -11,26 +11,20 @@ import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.Led2023;
-
 import java.util.List;
 
 public class BackUp extends ParallelCommandGroup {
   public BackUp(Drive drive, Arm arm, Led2023 ledStrip) {
     addCommands(
-      new GoToTrajectory(
-        drive,
-        List.of(
-          Waypoint.fromDifferentialPose(
-            new Pose2d(
-              new Translation2d(
-                drive.getPose().getTranslation().getX() + Units.inchesToMeters(150),
-                drive.getPose().getTranslation().getY()),
-              new Rotation2d()
-            )
-          )
-        )
-      ),
-      new ArmHomeCMD(arm, ledStrip)
-    );
+        new GoToTrajectory(
+            drive,
+            List.of(
+                Waypoint.fromDifferentialPose(
+                    new Pose2d(
+                        new Translation2d(
+                            drive.getPose().getTranslation().getX() + Units.inchesToMeters(150),
+                            drive.getPose().getTranslation().getY()),
+                        new Rotation2d())))),
+        new ArmHomeCMD(arm, ledStrip));
   }
 }

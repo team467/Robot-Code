@@ -15,13 +15,16 @@ import frc.robot.subsystems.led.Led2023;
 
 public class Score extends SequentialCommandGroup {
 
-  public Score(String gamePieceType, String location,
-      Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
-        add(gamePieceType, location, arm, intakeRelease, ledStrip);
+  public Score(
+      String gamePieceType,
+      String location,
+      Arm arm,
+      IntakeRelease intakeRelease,
+      Led2023 ledStrip) {
+    add(gamePieceType, location, arm, intakeRelease, ledStrip);
   }
 
-  public Score(String location,
-      Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
+  public Score(String location, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
     if (intakeRelease.getWants() == Wants.CONE) {
       add("Cone", location, arm, intakeRelease, ledStrip);
     } else {
@@ -29,16 +32,20 @@ public class Score extends SequentialCommandGroup {
     }
   }
 
-  private void add(String gamePieceType, String location,
-      Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
+  private void add(
+      String gamePieceType,
+      String location,
+      Arm arm,
+      IntakeRelease intakeRelease,
+      Led2023 ledStrip) {
     addCommands(
-      pieceType(gamePieceType, intakeRelease, ledStrip),
-      armLocationCommand(location, arm, intakeRelease, ledStrip),
-      new ReleaseCMD(intakeRelease, ledStrip, arm)
-    );
+        pieceType(gamePieceType, intakeRelease, ledStrip),
+        armLocationCommand(location, arm, intakeRelease, ledStrip),
+        new ReleaseCMD(intakeRelease, ledStrip, arm));
   }
-  
-  private Command armLocationCommand(String location, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
+
+  private Command armLocationCommand(
+      String location, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
     if (location.equalsIgnoreCase("high")) {
       return new ArmScoreHighNodeCMD(arm, intakeRelease, ledStrip);
     } else if (location.equalsIgnoreCase("mid")) {
@@ -55,5 +62,4 @@ public class Score extends SequentialCommandGroup {
       return new WantCubeCMD(intakeRelease, ledStrip);
     }
   }
-
 }

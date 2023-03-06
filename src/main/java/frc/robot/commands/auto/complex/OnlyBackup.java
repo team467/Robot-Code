@@ -10,12 +10,15 @@ import frc.robot.subsystems.led.Led2023;
 
 public class OnlyBackup extends SequentialCommandGroup {
 
-    public OnlyBackup(
-      int aprilTag, String relativePosition,
-      Drive drive, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
+  public OnlyBackup(
+      int aprilTag,
+      String relativePosition,
+      Drive drive,
+      Arm arm,
+      IntakeRelease intakeRelease,
+      Led2023 ledStrip) {
     addCommands(
         new Initialize(aprilTag, relativePosition, drive, arm, ledStrip),
         new BackUp(drive, arm, ledStrip));
   }
-  
 }
