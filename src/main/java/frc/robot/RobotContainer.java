@@ -118,8 +118,8 @@ public class RobotContainer {
                     new ModuleIOSparkMAX(1, 2, 15, 2),
                     new ModuleIOSparkMAX(7, 8, 16, 3),
                     List.of(
-                        new VisionIOAprilTag("front", front, FieldConstants.aprilTagFieldLayout),
-                        new VisionIOAprilTag("right", right, FieldConstants.aprilTagFieldLayout)));
+                        new VisionIOAprilTag("front", front, FieldConstants.aprilTags),
+                        new VisionIOAprilTag("right", right, FieldConstants.aprilTags)));
             arm =
                 new Arm(
                     new ArmIOPhysical(

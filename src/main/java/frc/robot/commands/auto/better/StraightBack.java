@@ -24,7 +24,8 @@ public class StraightBack extends SequentialCommandGroup {
             List.of(
                 Waypoint.fromHolonomicPose(
                     FieldConstants.aprilTags
-                        .get(6)
+                        .getTagPose(6)
+                        .get()
                         .toPose2d()
                         .transformBy(
                             new Transform2d(new Translation2d(), Rotation2d.fromDegrees(180)))),

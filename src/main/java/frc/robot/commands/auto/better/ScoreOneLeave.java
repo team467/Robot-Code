@@ -27,7 +27,8 @@ public class ScoreOneLeave extends SequentialCommandGroup {
             List.of(
                 Waypoint.fromHolonomicPose(
                     FieldConstants.aprilTags
-                        .get(7)
+                        .getTagPose(7)
+                        .get()
                         .toPose2d()
                         .transformBy(
                             new Transform2d(new Translation2d(), Rotation2d.fromDegrees(180)))),

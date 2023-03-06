@@ -24,13 +24,15 @@ public class LeaveStraight6 extends SequentialCommandGroup {
             List.of(
                 Waypoint.fromHolonomicPose(
                     FieldConstants.aprilTags
-                        .get(6)
+                        .getTagPose(6)
+                        .get()
                         .toPose2d()
                         .transformBy(
                             new Transform2d(new Translation2d(), Rotation2d.fromDegrees(180)))),
                 Waypoint.fromDifferentialPose(
                     new Pose2d(
-                        new Translation2d(Community.midX, FieldConstants.aprilTags.get(6).getY()),
+                        new Translation2d(
+                            Community.midX, FieldConstants.aprilTags.getTagPose(6).get().getY()),
                         new Rotation2d())))));
   }
 }

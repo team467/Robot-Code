@@ -22,12 +22,27 @@ public class ScoreConeMid extends SequentialCommandGroup {
         new GoToTrajectory(
             drive,
             List.of(
-                new Waypoint(FieldConstants.aprilTags.get(7).getTranslation().toTranslation2d()),
+                new Waypoint(
+                    FieldConstants.aprilTags
+                        .getTagPose(7)
+                        .get()
+                        .getTranslation()
+                        .toTranslation2d()),
                 new Waypoint(
                     new Translation2d(
-                        FieldConstants.aprilTags.get(7).getTranslation().toTranslation2d().getX()
+                        FieldConstants.aprilTags
+                                .getTagPose(7)
+                                .get()
+                                .getTranslation()
+                                .toTranslation2d()
+                                .getX()
                             + 0.3,
-                        FieldConstants.aprilTags.get(7).getTranslation().toTranslation2d().getY()
+                        FieldConstants.aprilTags
+                                .getTagPose(7)
+                                .get()
+                                .getTranslation()
+                                .toTranslation2d()
+                                .getY()
                             + FieldConstants.Grids.nodeSeparationY)))),
         new ArmScoreMidNodeCMD(arm, intakeRelease, ledStrip));
   }

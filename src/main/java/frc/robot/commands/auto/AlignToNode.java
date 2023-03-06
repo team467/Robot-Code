@@ -18,8 +18,9 @@ public class AlignToNode extends QuickDriveToPose {
         AllianceFlipUtil.apply(
             new Pose2d(
                 new Translation2d(
-                    FieldConstants.aprilTags.get(7).getX() + Units.inchesToMeters(12 + 4),
-                    Grids.nodeFirstY + Grids.nodeSeparationY * 5), // TODO: tune x
+                    FieldConstants.aprilTags.getTagPose(7).get().getX()
+                        + Units.inchesToMeters(12.0 + 4.0),
+                    Grids.nodeY[5]), // TODO: tune x
                 new Rotation2d(Math.PI))));
   }
 }

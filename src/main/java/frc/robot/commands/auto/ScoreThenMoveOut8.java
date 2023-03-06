@@ -28,7 +28,8 @@ public class ScoreThenMoveOut8 extends SequentialCommandGroup {
                     new Translation2d(
                         FieldConstants.Community.outerX,
                         FieldConstants.aprilTags
-                            .get(8)
+                            .getTagPose(8)
+                            .get()
                             .getTranslation()
                             .toTranslation2d()
                             .getY())))));
