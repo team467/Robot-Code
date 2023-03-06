@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -18,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
-import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUPigeon2;
 import frc.lib.io.vision.VisionIO;
@@ -38,13 +36,12 @@ import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
-import frc.robot.commands.auto.AlignToNode;
 import frc.robot.commands.auto.Balancing;
-import frc.robot.commands.auto.ScoreConeHigh;
-import frc.robot.commands.auto.better.*;
+import frc.robot.commands.auto.complex.ScoreAndBackUp;
+import frc.robot.commands.auto.complex.ScoreAndBalance;
+import frc.robot.commands.auto.complex.ScoreAndStop;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
-import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.commands.intakerelease.HoldCMD;
 import frc.robot.commands.intakerelease.IntakeCMD;
 import frc.robot.commands.intakerelease.ReleaseCMD;
@@ -191,27 +188,27 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new ArmCalibrateZeroAtHomeCMD(arm, led2023));
-    autoChooser.addOption(
-        "S shape",
-        new GoToTrajectory(
-            drive,
-            List.of(
-                Waypoint.fromHolonomicPose(new Pose2d()),
-                new Waypoint(new Translation2d(1, 1)),
-                new Waypoint(new Translation2d(2, -1)),
-                Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
+    // autoChooser.addOption(
+    //     "S shape",
+    //     new GoToTrajectory(
+    //         drive,
+    //         List.of(
+    //             Waypoint.fromHolonomicPose(new Pose2d()),
+    //             new Waypoint(new Translation2d(1, 1)),
+    //             new Waypoint(new Translation2d(2, -1)),
+    //             Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
     //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
     // Rotation2d()));
 
-    autoChooser.addOption(
-        "Cross Community",
-        new GoToTrajectory(
-            drive,
-            List.of(
-                Waypoint.fromHolonomicPose(new Pose2d()),
-                new Waypoint(new Translation2d(FieldConstants.Community.outerX, 0)))));
-    autoChooser.addOption(
-        "Score cone high", new ScoreConeHigh(drive, arm, intakeRelease, led2023, 6));
+    // autoChooser.addOption(
+    //     "Cross Community",
+    //     new GoToTrajectory(
+    //         drive,
+    //         List.of(
+    //             Waypoint.fromHolonomicPose(new Pose2d()),
+    //             new Waypoint(new Translation2d(FieldConstants.Community.outerX, 0)))));
+    // autoChooser.addOption(
+    //     "Score cone high", new Score("Cone", "High", arm, intakeRelease, led2023));
     //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
     // Rotation2d()));
     //        autoChooser.addOption("Drive Then Balance", new DriveFowardBallance(drive));
@@ -220,6 +217,12 @@ public class RobotContainer {
     //            "Score then Drive Foward, then ballance", new ScoreDriveFowardBallance(drive));
     //    autoChooser.addOption(
     //        "Score Then Move", new ScoreThenMoveOut8(drive, arm, intakeRelease, led2023));
+
+    autoChooser.addOption("Score Cube 6", new ScoreAndStop(6, "Center", "Cube", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption("Score Cone 6 Right", new ScoreAndStop(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption("Score Cone 6 Right and Back Up", new ScoreAndBackUp(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption("Score and Balance", new ScoreAndBalance("Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption("Score, Back Up and Balance", new ScoreAndBackUp(7, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
 
     autoChooser.addOption(
         "Drive Characterization",
@@ -232,20 +235,21 @@ public class RobotContainer {
                     drive::runCharacterizationVolts,
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
-    autoChooser.addOption("Go to node", new AlignToNode(drive, () -> 1));
-    autoChooser.addOption("Straight Back", new StraightBack(drive, arm, led2023));
-    autoChooser.addOption("Leave", new Leave(drive, arm, led2023));
-    autoChooser.addOption("Leave Straight 6", new LeaveStraight6(drive, arm, led2023));
-    autoChooser.addOption("Leave Straight 8", new LeaveStraight8(drive, arm, led2023));
-    autoChooser.addOption(
-        "Leave Straight 6 Balance", new LeaveStraight6Balance(drive, arm, led2023));
-    autoChooser.addOption(
-        "Leave Straight 8 Balance", new LeaveStraight8Balance(drive, arm, led2023));
-    autoChooser.addOption(
-        "Score one and leave", new ScoreOneLeave(drive, arm, intakeRelease, led2023));
-    autoChooser.addOption(
-        "Score one, leave and balance",
-        new ScoreOneLeaveBalance(drive, arm, intakeRelease, led2023));
+
+    // autoChooser.addOption("Go to node", new AlignToNode(drive, () -> 1));
+    // autoChooser.addOption("Straight Back", new StraightBack(drive, arm, led2023));
+    // autoChooser.addOption("Leave", new Leave(drive, arm, led2023));
+    // autoChooser.addOption("Leave Straight 6", new LeaveStraight6(drive, arm, led2023));
+    // autoChooser.addOption("Leave Straight 8", new LeaveStraight8(drive, arm, led2023));
+    // autoChooser.addOption(
+    //     "Leave Straight 6 Balance", new LeaveStraight6Balance(drive, arm, led2023));
+    // autoChooser.addOption(
+    //     "Leave Straight 8 Balance", new LeaveStraight8Balance(drive, arm, led2023));
+    // autoChooser.addOption(
+    //     "Score one and leave", new ScoreOneLeave(drive, arm, intakeRelease, led2023));
+    // autoChooser.addOption(
+    //     "Score one, leave and balance",
+    //     new ScoreOneLeaveBalance(drive, arm, intakeRelease, led2023));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
     // Configure the button bindings
