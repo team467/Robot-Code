@@ -48,6 +48,7 @@ public class IntakeRelease extends SubsystemBase {
   public void setWants(Wants wants) {
     this.wants = wants;
     hasCone = false;
+    hasCube = false;
   }
 
   @Override
@@ -61,6 +62,7 @@ public class IntakeRelease extends SubsystemBase {
       case RELEASE -> {
         intakeReleaseIO.setPercent(0.4);
         hasCone = false;
+        hasCube = false;
       }
       case HOLD_CUBE -> intakeReleaseIO.setPercent(-0.3);
       case HOLD_CONE -> intakeReleaseIO.setPercent(-0.8);
@@ -71,6 +73,7 @@ public class IntakeRelease extends SubsystemBase {
 
   public void intake() {
     hasCone = false;
+    hasCube = false;
     state = State.INTAKE;
   }
 
@@ -91,8 +94,8 @@ public class IntakeRelease extends SubsystemBase {
   }
 
   public boolean haveCube() {
-    hasCube = inputs.cubeLimitSwitch;
-    return inputs.cubeLimitSwitch;
+    hasCube = hasCube || inputs.cubeLimitSwitch;
+    return hasCube;
   }
 
   public boolean haveCone() {
