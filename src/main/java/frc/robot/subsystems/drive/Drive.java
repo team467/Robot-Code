@@ -68,23 +68,18 @@ public class Drive extends SubsystemBase {
       modulePositions[i] = modules[i].getPosition();
     }
 
-    initialPose(0, 0, 180);
-
-  }
-  
-  public void initialPose(int x, int y, int angle) {
     if (gyroInputs.connected) {
       odometry = new SwerveDrivePoseEstimator(
           kinematics,
           Rotation2d.fromDegrees(gyroInputs.yaw),
           modulePositions,
-          new Pose2d(x, y, Rotation2d.fromDegrees(angle)));
+          new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
     } else {
       odometry = new SwerveDrivePoseEstimator(
           kinematics,
           new Rotation2d(simGyro),
           modulePositions,
-          new Pose2d(x, y, Rotation2d.fromDegrees(angle)));
+          new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
     }
   }
 
