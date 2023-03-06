@@ -154,11 +154,7 @@ public class Arm extends SubsystemBase {
     if (armIOInputs.rotatePosition < 0.1) {
       mode = ArmMode.AUTO;
       autoMode = AutoMode.ROTATE;
-      rotateSetpoint =
-          MathUtil.clamp(
-              armIOInputs.rotatePosition + ROTATE_RAISE_METERS,
-              RobotConstants.get().armRotateMinMeters(),
-              RobotConstants.get().armRotateMaxMeters());
+      rotateSetpoint = armIOInputs.rotatePosition + ROTATE_RAISE_METERS;
       extendSetpoint = armIOInputs.extendPosition;
     }
   }
@@ -167,11 +163,7 @@ public class Arm extends SubsystemBase {
     if (!isDropping) {
       mode = ArmMode.AUTO;
       autoMode = AutoMode.ROTATE;
-      rotateSetpoint =
-          MathUtil.clamp(
-              armIOInputs.rotatePosition - ROTATE_DROP_METERS,
-              RobotConstants.get().armRotateMinMeters(),
-              RobotConstants.get().armRotateMaxMeters());
+      rotateSetpoint = armIOInputs.rotatePosition - ROTATE_DROP_METERS;
       extendSetpoint = armIOInputs.extendPosition;
     }
     isDropping = true;
@@ -212,27 +204,7 @@ public class Arm extends SubsystemBase {
           setExtendVoltage(manualExtendVolts);
         }
         setRotateVoltage(manualRotateVolts);
-        // TODO: Add back contraints for manual movement.
-        // if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
-        //     && manualExtendVelocity > 0) {
-        //   armIO.setExtendVelocity(0);
-        // } else if (armIOInputs.extendPosition < RobotConstants.get().armExtendMinMeters()
-        //     && manualExtendVelocity < 0) {
-        //   setExtendVoltage(calculateExtendPid(RobotConstants.get().armExtendMinMeters()));
-        // } else {
-        // }
-        // if (hasRotate) {
-        // if (armIOInputs.rotatePosition > RobotConstants.get().armRotateMaxMeters()
-        //     && manualRotateVolts > 0) {
-        //   armIO.setRotateVelocity(0);
-        // } else if (armIOInputs.rotatePosition < RobotConstants.get().armRotateMinMeters()
-        //     && manualRotateVolts < 0) {
-        //
-        // armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMinMeters()));
-        // } else {
-        //  armIO.setExtendVelocity(manualExtendVelocity);
-        // }
-        // }
+
         logger.recordOutput("Arm/ManualExtendVolts", manualRotateVolts);
         logger.recordOutput("Arm/ManualRotateVolts", manualRotateVolts);
         break;
@@ -431,7 +403,8 @@ public class Arm extends SubsystemBase {
 
   public boolean isRotateFinished() {
     return Math.abs(armIOInputs.rotatePosition - rotateSetpoint) <= ROTATE_TOLERANCE_METERS
-        || (armIOInputs.rotateHighLimitSwitch && armIOInputs.rotatePosition < rotateSetpoint);
+        || (armIOInputs.rotateHighLimitSwitch && armIOInputs.rotatePosition < rotateSetpoint)
+        || (armIOInputs.rotateLowLimitSwitch && armIOInputs.rotatePosition > rotateSetpoint);
   }
 
   private void setRotateVoltage(double volts) {
