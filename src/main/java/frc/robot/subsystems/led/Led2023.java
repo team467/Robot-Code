@@ -28,7 +28,6 @@ public class Led2023 extends SubsystemBase {
   private Timer rainbowTimer = new Timer();
   private Timer purpleTimer = new Timer();
   protected double lastLoopTime = 0;
-  private boolean isArmCalibrated = false;
   private ColorScheme cmdColorScheme = ColorScheme.DEFAULT;
 
   public static final double TARGET_MAX_RANGE = 100.0;
@@ -114,9 +113,6 @@ public class Led2023 extends SubsystemBase {
     lastLoopTime = Timer.getFPGATimestamp();
   }
 
-  public void setArmCalibrated() {
-    isArmCalibrated = true;
-  }
 
   public void setCmdColorScheme(ColorScheme cs) {
     cmdColorScheme = cs;
@@ -235,7 +231,7 @@ public class Led2023 extends SubsystemBase {
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
 
-    } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION && !arm.isCalibrated()) {
+    } else if (CHECK_ARM_CALIBRATION && !arm.isCalibrated()) {
       return ColorScheme.ARM_UNCALIBRATED;
     } else {
       return cmdColorScheme;
@@ -247,7 +243,7 @@ public class Led2023 extends SubsystemBase {
     lastLoopTime = Timer.getFPGATimestamp();
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
-    } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
+    } else if ((!arm.isCalibrated()) && CHECK_ARM_CALIBRATION) {
       return ColorScheme.ARM_UNCALIBRATED;
     } else {
       return ColorScheme.DEFAULT;
