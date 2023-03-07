@@ -12,6 +12,7 @@ public class ReleaseCMD extends CommandBase {
   private final Led2023 ledStrip;
   private final Arm arm;
   private boolean needsDrop;
+  private boolean isDropping;
 
   public ReleaseCMD(IntakeRelease intakerelease, Led2023 ledStrip, Arm arm) {
     this.intakerelease = intakerelease;
@@ -24,19 +25,26 @@ public class ReleaseCMD extends CommandBase {
   @Override
   public void initialize() {
     ledStrip.set(COLORS_467.Black);
-    needsDrop = true;
+    needsDrop =
+        intakerelease.haveCone()
+            && arm.getExtention() >= 0.2
+            && arm.getRotation() >= 0.15; // Not ground
+    isDropping = false;
   }
 
   @Override
   public void execute() {
-    if ((!arm.hasDropped())
-        && intakerelease.haveCone()
-        && (arm.getExtention() >= 0.2 && arm.getRotation() >= 0.15)
-        && needsDrop) {
+    if (needsDrop) {
       arm.drop();
+      needsDrop = false;
+      isDropping = true;
       return;
+    } else if (isDropping && !arm.isFinished()) {
+      return; // Wait for arm to finish dropping.
     }
-    needsDrop = false;
+
+    isDropping = false;
+
     if (intakerelease.haveCube()) {
       ledStrip.setCmdColorScheme(ColorScheme.RELEASE_CUBE);
     } else if (intakerelease.haveCone()) {

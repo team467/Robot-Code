@@ -52,7 +52,6 @@ public class Arm extends SubsystemBase {
   private double rotateSetpoint = 0.0;
   private boolean isCalibrated = false;
   private double calibrateRotateOrigin = 0;
-  private boolean isDropping = false;
 
   private Timer autoRetractTimer = new Timer();
 
@@ -132,7 +131,7 @@ public class Arm extends SubsystemBase {
     armIO.resetExtendEncoderPosition();
     armIO.resetRotateEncoderPosition();
     isCalibrated = true;
-    hold();
+    hold(0);
   }
 
   public void hold() {
@@ -167,25 +166,14 @@ public class Arm extends SubsystemBase {
   }
 
   public void drop() {
-    if (!isDropping) {
-      mode = ArmMode.AUTO;
-      autoMode = AutoMode.ROTATE;
-      rotateSetpoint =
-          MathUtil.clamp(
-              armIOInputs.rotatePosition - ROTATE_DROP_METERS,
-              RobotConstants.get().armRotateMinMeters(),
-              RobotConstants.get().armRotateMaxMeters());
-      extendSetpoint = armIOInputs.extendPosition;
-    }
-    isDropping = true;
-  }
-
-  public boolean hasDropped() {
-    if (isDropping && isFinished()) {
-      isDropping = false;
-      return true;
-    }
-    return false;
+    mode = ArmMode.AUTO;
+    autoMode = AutoMode.ROTATE;
+    rotateSetpoint =
+        MathUtil.clamp(
+            armIOInputs.rotatePosition - ROTATE_DROP_METERS,
+            RobotConstants.get().armRotateMinMeters(),
+            RobotConstants.get().armRotateMaxMeters());
+    extendSetpoint = armIOInputs.extendPosition;
   }
 
   public boolean isCalibrated() {
