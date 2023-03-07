@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.leds.DoubleLEDStrip;
 import frc.lib.leds.LEDManager;
 import frc.robot.RobotConstants;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
@@ -21,12 +22,12 @@ public class Led2023 extends SubsystemBase {
   private final double RAINBOW_TIMER_SPEED = 0.02;
   private final int RAINBOW_AMOUNT = 20;
   private IntakeRelease intakerelease;
+  private Arm arm;
 
   private double color = 0;
   private Timer rainbowTimer = new Timer();
   private Timer purpleTimer = new Timer();
   protected double lastLoopTime = 0;
-  private boolean isArmCalibrated = false;
   private ColorScheme cmdColorScheme = ColorScheme.DEFAULT;
 
   public static final double TARGET_MAX_RANGE = 100.0;
@@ -94,9 +95,9 @@ public class Led2023 extends SubsystemBase {
     SHELF
   }
 
-  public Led2023() {
+  public Led2023(Arm arm) {
     super();
-
+    this.arm = arm;
     ledStrip =
         LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);
     for (int i = 0; i < ledStrip.getSize(); i++) {
@@ -110,10 +111,6 @@ public class Led2023 extends SubsystemBase {
     rainbowTimer.reset();
     purpleTimer.reset();
     lastLoopTime = Timer.getFPGATimestamp();
-  }
-
-  public void setArmCalibrated() {
-    isArmCalibrated = true;
   }
 
   public void setCmdColorScheme(ColorScheme cs) {
@@ -233,7 +230,7 @@ public class Led2023 extends SubsystemBase {
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
 
-    } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
+    } else if (CHECK_ARM_CALIBRATION && !arm.isCalibrated()) {
       return ColorScheme.ARM_UNCALIBRATED;
     } else {
       return cmdColorScheme;
@@ -245,7 +242,7 @@ public class Led2023 extends SubsystemBase {
     lastLoopTime = Timer.getFPGATimestamp();
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
-    } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION) {
+    } else if ((!arm.isCalibrated()) && CHECK_ARM_CALIBRATION) {
       return ColorScheme.ARM_UNCALIBRATED;
     } else {
       return ColorScheme.DEFAULT;
