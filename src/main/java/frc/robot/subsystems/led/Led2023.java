@@ -113,7 +113,6 @@ public class Led2023 extends SubsystemBase {
     lastLoopTime = Timer.getFPGATimestamp();
   }
 
-
   public void setCmdColorScheme(ColorScheme cs) {
     cmdColorScheme = cs;
   }
