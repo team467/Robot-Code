@@ -95,9 +95,10 @@ public class Led2023 extends SubsystemBase {
     FLOOR,
     SHELF
   }
-  public Led2023() {
-    super();
 
+  public Led2023(Arm arm) {
+    super();
+    this.arm = arm;
     ledStrip =
         LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);
     for (int i = 0; i < ledStrip.getSize(); i++) {
@@ -234,7 +235,7 @@ public class Led2023 extends SubsystemBase {
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
 
-    } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION&&!arm.isCalibrated()) {
+    } else if ((!isArmCalibrated) && CHECK_ARM_CALIBRATION && !arm.isCalibrated()) {
       return ColorScheme.ARM_UNCALIBRATED;
     } else {
       return cmdColorScheme;
