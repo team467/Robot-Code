@@ -18,8 +18,7 @@ public class ArmScoreHighNodeCMD extends ArmPositionCMD {
                 ? ArmPositionConstants.HIGH_CONE
                 : ArmPositionConstants.HIGH_CUBE,
         ledStrip);
-    if (intakerelease.getWants() == Wants.CUBE
-        || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+    if (intakerelease.getWants() == Wants.CUBE) {
       ledStrip.setCmdColorScheme(ColorScheme.CUBE_HIGH);
     } else {
       ledStrip.setCmdColorScheme(ColorScheme.CONE_HIGH);

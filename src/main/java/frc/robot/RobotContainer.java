@@ -80,7 +80,7 @@ public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
   private Drive drive;
-  private final IntakeRelease intakeRelease;
+  private final IntakeRelease intakerelease;
   private Led2023 led2023;
   private final Arm arm;
   private boolean isRobotOriented = true; // Workaround, change if needed
@@ -126,7 +126,7 @@ public class RobotContainer {
                         RobotConstants.get().armExtendMotorId(),
                         RobotConstants.get().armRotateMotorId(),
                         RobotConstants.get().ratchetSolenoidId()));
-            intakeRelease =
+            intakerelease =
                 new IntakeRelease(
                     new IntakeReleaseIOPhysical(
                         RobotConstants.get().intakeMotorID(),
@@ -142,7 +142,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
             arm = new Arm(new ArmIO() {});
-            intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
+            intakerelease = new IntakeRelease(new IntakeReleaseIO() {});
           }
           default -> {
             drive =
@@ -154,7 +154,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     List.of(new VisionIO() {}));
             arm = new Arm(new ArmIO() {});
-            intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
+            intakerelease = new IntakeRelease(new IntakeReleaseIO() {});
           }
         }
       }
@@ -171,7 +171,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 List.of(new VisionIO() {}));
         arm = new Arm(new ArmIO() {});
-        intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
+        intakerelease = new IntakeRelease(new IntakeReleaseIO() {});
       }
 
         // Replayed robot, disable IO implementations
@@ -186,11 +186,11 @@ public class RobotContainer {
                 new ModuleIO() {},
                 List.of(new VisionIO() {}));
         arm = new Arm(new ArmIO() {});
-        intakeRelease = new IntakeRelease(new IntakeReleaseIO() {});
+        intakerelease = new IntakeRelease(new IntakeReleaseIO() {});
       }
     }
 
-    led2023 = new Led2023(arm);
+    led2023 = new Led2023(arm, intakerelease);
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines
@@ -215,7 +215,7 @@ public class RobotContainer {
                 Waypoint.fromHolonomicPose(new Pose2d()),
                 new Waypoint(new Translation2d(FieldConstants.Community.outerX, 0)))));
     autoChooser.addOption(
-        "Score cone high", new ScoreConeHigh(drive, arm, intakeRelease, led2023, 6));
+        "Score cone high", new ScoreConeHigh(drive, arm, intakerelease, led2023, 6));
     //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
     // Rotation2d()));
     //        autoChooser.addOption("Drive Then Balance", new DriveFowardBallance(drive));
@@ -241,10 +241,10 @@ public class RobotContainer {
     autoChooser.addOption("Leave", new Leave(drive, arm, led2023));
     autoChooser.addOption("Leave Straight", new LeaveStraight6(drive, arm, led2023));
     autoChooser.addOption(
-        "Score one and leave", new ScoreOneLeave(drive, arm, intakeRelease, led2023));
+        "Score one and leave", new ScoreOneLeave(drive, arm, intakerelease, led2023));
     autoChooser.addOption(
         "Score one, leave and balance",
-        new ScoreOneLeaveBalance(drive, arm, intakeRelease, led2023));
+        new ScoreOneLeaveBalance(drive, arm, intakerelease, led2023));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
     // Configure the button bindings
@@ -280,25 +280,25 @@ public class RobotContainer {
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
-    intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
+    intakerelease.setDefaultCommand(new HoldCMD(intakerelease, led2023));
 
-    driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023, arm));
-    driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023, arm));
+    driverController.leftBumper().whileTrue(new IntakeCMD(intakerelease, led2023, arm));
+    driverController.rightBumper().whileTrue(new ReleaseCMD(intakerelease, led2023, arm));
 
     // Set the game piece type
-    operatorController.back().onFalse(new WantConeCMD(intakeRelease, led2023));
-    operatorController.back().onTrue(new WantCubeCMD(intakeRelease, led2023));
+    operatorController.back().onFalse(new WantConeCMD(intakerelease, led2023));
+    operatorController.back().onTrue(new WantCubeCMD(intakerelease, led2023));
 
     // Manual arm movements
-    operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, intakeRelease, led2023));
-    operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm, intakeRelease, led2023));
-    operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm, intakeRelease, led2023));
-    operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, intakeRelease, led2023));
+    operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, intakerelease, led2023));
+    operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm, intakerelease, led2023));
+    operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm, intakerelease, led2023));
+    operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, intakerelease, led2023));
 
     // Placing cone or cube, gets what it wants from in the command
-    operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease, led2023));
-    operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease, led2023));
-    operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease, led2023));
+    operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakerelease, led2023));
+    operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakerelease, led2023));
+    operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakerelease, led2023));
     Logger.getInstance()
         .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
     Logger.getInstance()
@@ -341,9 +341,9 @@ public class RobotContainer {
   public void initLeds() {
     // Set default LEDs
     if (operatorController.back().getAsBoolean()) {
-      new WantCubeCMD(intakeRelease, led2023).schedule();
+      new WantCubeCMD(intakerelease, led2023).schedule();
     } else {
-      new WantConeCMD(intakeRelease, led2023).schedule();
+      new WantConeCMD(intakerelease, led2023).schedule();
     }
     Logger.getInstance()
         .recordOutput("CustomController/WantSwitch", operatorController.back().getAsBoolean());
