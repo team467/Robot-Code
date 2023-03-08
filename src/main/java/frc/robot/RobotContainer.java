@@ -39,6 +39,7 @@ import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.auto.Balancing;
 import frc.robot.commands.auto.complex.OnlyBackup;
 import frc.robot.commands.auto.complex.ScoreAndBackUp;
+import frc.robot.commands.auto.complex.ScoreAndBackUpAndBalance;
 import frc.robot.commands.auto.complex.ScoreAndBalance;
 import frc.robot.commands.auto.complex.ScoreAndStop;
 import frc.robot.commands.drive.DriveWithDpad;
@@ -236,7 +237,8 @@ public class RobotContainer {
         new ScoreAndBalance("Right", "Cone", "High", drive, arm, intakeRelease, led2023));
     autoChooser.addOption(
         "Score, Back Up and Balance",
-        new ScoreAndBackUp(7, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+        new ScoreAndBackUpAndBalance(
+            7, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
 
     autoChooser.addOption(
         "Drive Characterization",

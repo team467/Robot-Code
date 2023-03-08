@@ -14,12 +14,12 @@ public class AlignToNode extends StraightDriveToPose {
 
   public AlignToNode(Drive drive, Supplier<Integer> row) {
     super(
-        drive,
         AllianceFlipUtil.apply(
             new Pose2d(
                 new Translation2d(
                     FieldConstants.aprilTags.get(7).getX() + Units.inchesToMeters(12 + 4),
                     Grids.nodeFirstY + Grids.nodeSeparationY * 5), // TODO: tune x
-                new Rotation2d(Math.PI))));
+                new Rotation2d(Math.PI))),
+        drive);
   }
 }
