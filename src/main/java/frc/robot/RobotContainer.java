@@ -37,6 +37,7 @@ import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.auto.Balancing;
+import frc.robot.commands.auto.complex.OnlyBackup;
 import frc.robot.commands.auto.complex.ScoreAndBackUp;
 import frc.robot.commands.auto.complex.ScoreAndBalance;
 import frc.robot.commands.auto.complex.ScoreAndStop;
@@ -217,6 +218,9 @@ public class RobotContainer {
     //            "Score then Drive Foward, then ballance", new ScoreDriveFowardBallance(drive));
     //    autoChooser.addOption(
     //        "Score Then Move", new ScoreThenMoveOut8(drive, arm, intakeRelease, led2023));
+
+    autoChooser.addOption(
+        "Back up", new OnlyBackup(6, "center", drive, arm, intakeRelease, led2023));
 
     autoChooser.addOption(
         "Score Cube 6",

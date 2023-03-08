@@ -2,6 +2,7 @@ package frc.robot.commands.auto;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -12,7 +13,7 @@ import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
-public class QuickDriveToPose extends CommandBase {
+public class StraightDriveToPose extends CommandBase {
   private final Drive drive;
   private final Supplier<Pose2d> poseSupplier;
   //  private final ProfiledPIDController driveController =
@@ -33,13 +34,25 @@ public class QuickDriveToPose extends CommandBase {
   private static final double DRIVE_TOLERANCE = 0.01;
   private static final double THETA_TOLERANCE = Units.degreesToRadians(2.0);
 
-  public QuickDriveToPose(Drive drive, Pose2d pose) {
-    this(drive, () -> pose);
+  public StraightDriveToPose(
+      double deltaXMeters, double deltaYMeters, double deltaThetaRad, Drive drive) {
+    this(
+        drive,
+        () ->
+            new Pose2d(
+                new Translation2d(
+                    drive.getPose().getTranslation().getX() + deltaXMeters,
+                    drive.getPose().getTranslation().getY() + deltaYMeters),
+                drive.getPose().getRotation().plus(new Rotation2d(deltaThetaRad))));
   }
 
-  public QuickDriveToPose(Drive drive, Supplier<Pose2d> poseSupplier) {
+  public StraightDriveToPose(Drive drive, Pose2d targetPose) {
+    this(drive, () -> targetPose);
+  }
+
+  public StraightDriveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
     this.drive = drive;
-    this.poseSupplier = poseSupplier;
+    this.poseSupplier = targetPoseSupplier;
     addRequirements(drive);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }
