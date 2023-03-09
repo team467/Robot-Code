@@ -312,10 +312,10 @@ public class RobotContainer {
     operatorController.back().onTrue(new WantCubeCMD(intakeRelease, led2023));
 
     // Manual arm movements
-    operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, intakeRelease, led2023));
-    operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm, intakeRelease, led2023));
-    operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm, intakeRelease, led2023));
-    operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, intakeRelease, led2023));
+    operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, led2023));
+    operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm, led2023));
+    operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm, led2023));
+    operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, led2023));
 
     // Placing cone or cube, gets what it wants from in the command
     operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease, led2023));
