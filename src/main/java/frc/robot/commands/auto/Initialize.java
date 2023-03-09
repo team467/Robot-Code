@@ -25,25 +25,27 @@ public class Initialize extends ParallelCommandGroup {
       relativePositionOffset = 0;
     }
 
+    double distanceAprilTagToEdgeOfNode = 16;
+    double distanceRobotFrontToCenter = 12.75;
+    Pose2d expectedPose =
+        AllianceFlipUtil.apply(
+            new Pose2d(
+                new Translation2d(
+                    aprilTagLocation.getX()
+                        + Units.inchesToMeters(
+                            distanceAprilTagToEdgeOfNode + distanceRobotFrontToCenter),
+                    aprilTagLocation.getY()
+                        + Units.inchesToMeters(relativePositionOffset)),
+                Rotation2d.fromDegrees(180)));
+
     addCommands(
         Commands.runOnce(arm::setCalibratedAssumeHomePosition),
         Commands.runOnce(
             () -> {
               Pose2d measuredPose = drive.getPose();
               if (measuredPose == null
-                  || (measuredPose.getX() < 0.1 && measuredPose.getY() <= 0.0)) {
-                double distanceAprilTagToEdgeOfNode = 16;
-                double distanceRobotFrontToCenter = 12.75;
-                Pose2d expectedPose =
-                    AllianceFlipUtil.apply(
-                        new Pose2d(
-                            new Translation2d(
-                                aprilTagLocation.getX()
-                                    + Units.inchesToMeters(
-                                        distanceAprilTagToEdgeOfNode + distanceRobotFrontToCenter),
-                                aprilTagLocation.getY()
-                                    + Units.inchesToMeters(relativePositionOffset)),
-                            Rotation2d.fromDegrees(180)));
+                  || (measuredPose.getX() < 0.1 && measuredPose.getY() <= 0.0)
+                  || measuredPose.getTranslation().getDistance(expectedPose.getTranslation()) > Units.inchesToMeters(18.0)) {
                 drive.setPose(expectedPose);
                 DriverStation.reportWarning(
                     "WARNING: Robot pose is not accurate. \n"
