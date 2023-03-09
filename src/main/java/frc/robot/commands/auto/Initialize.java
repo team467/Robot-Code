@@ -15,8 +15,7 @@ import frc.robot.subsystems.led.Led2023;
 
 public class Initialize extends ParallelCommandGroup {
   public Initialize(int aprilTag, String relativePosition, Drive drive, Arm arm, Led2023 ledStrip) {
-    Translation2d aprilTagLocation =
-        FieldConstants.aprilTags.get(aprilTag).getTranslation().toTranslation2d();
+    Translation2d aprilTagLocation = FieldConstants.aprilTags.getTagPose(aprilTag).get().getTranslation().toTranslation2d();
     final double relativePositionOffset;
     if (relativePosition.equals("Left")) {
       relativePositionOffset = -22;
