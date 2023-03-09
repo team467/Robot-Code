@@ -28,7 +28,6 @@ public class Initialize extends ParallelCommandGroup {
 
     addCommands(
         Commands.runOnce(arm::setCalibratedAssumeHomePosition),
-        Commands.runOnce(ledStrip::setArmCalibrated),
         Commands.runOnce(
             () -> {
               Pose2d measuredPose = drive.getPose();

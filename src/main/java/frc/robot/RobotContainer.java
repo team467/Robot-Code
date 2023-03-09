@@ -37,7 +37,6 @@ import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.auto.Balancing;
-import frc.robot.commands.auto.complex.OnlyBackup;
 import frc.robot.commands.auto.complex.ScoreAndBackUp;
 import frc.robot.commands.auto.complex.ScoreAndBackUpAndBalance;
 import frc.robot.commands.auto.complex.ScoreAndBalance;
@@ -91,9 +90,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (RobotConstants.get().mode()) {
-        // Real robot, instantiate hardware IO implementations
-        // Init subsystems
-        // subsystem = new Subsystem(new SubsystemIOImpl());
+      // Real robot, instantiate hardware IO implementations
       case REAL -> {
         switch (RobotConstants.get().robot()) {
           case ROBOT_COMP -> {
@@ -185,43 +182,11 @@ public class RobotContainer {
       }
     }
 
-    led2023 = new Led2023(intakeRelease);
+    led2023 = new Led2023(arm, intakeRelease);
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines
-    autoChooser.addDefaultOption("Do Nothing", new ArmCalibrateZeroAtHomeCMD(arm, led2023));
-    // autoChooser.addOption(
-    //     "S shape",
-    //     new GoToTrajectory(
-    //         drive,
-    //         List.of(
-    //             Waypoint.fromHolonomicPose(new Pose2d()),
-    //             new Waypoint(new Translation2d(1, 1)),
-    //             new Waypoint(new Translation2d(2, -1)),
-    //             Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
-    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
-    // Rotation2d()));
-
-    // autoChooser.addOption(
-    //     "Cross Community",
-    //     new GoToTrajectory(
-    //         drive,
-    //         List.of(
-    //             Waypoint.fromHolonomicPose(new Pose2d()),
-    //             new Waypoint(new Translation2d(FieldConstants.Community.outerX, 0)))));
-    // autoChooser.addOption(
-    //     "Score cone high", new Score("Cone", "High", arm, intakeRelease, led2023));
-    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
-    // Rotation2d()));
-    //        autoChooser.addOption("Drive Then Balance", new DriveFowardBallance(drive));
-    //        autoChooser.addOption("Drive Foward and Come Back", new DriveFowardComeBack(drive));
-    //        autoChooser.addOption(
-    //            "Score then Drive Foward, then ballance", new ScoreDriveFowardBallance(drive));
-    //    autoChooser.addOption(
-    //        "Score Then Move", new ScoreThenMoveOut8(drive, arm, intakeRelease, led2023));
-
-    autoChooser.addOption(
-        "Back up", new OnlyBackup(6, "center", drive, arm, intakeRelease, led2023));
+    autoChooser.addDefaultOption("Do Nothing", new ArmCalibrateZeroAtHomeCMD(arm));
 
     autoChooser.addOption(
         "Score Cube 6",
@@ -251,21 +216,6 @@ public class RobotContainer {
                     drive::runCharacterizationVolts,
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
-
-    // autoChooser.addOption("Go to node", new AlignToNode(drive, () -> 1));
-    // autoChooser.addOption("Straight Back", new StraightBack(drive, arm, led2023));
-    // autoChooser.addOption("Leave", new Leave(drive, arm, led2023));
-    // autoChooser.addOption("Leave Straight 6", new LeaveStraight6(drive, arm, led2023));
-    // autoChooser.addOption("Leave Straight 8", new LeaveStraight8(drive, arm, led2023));
-    // autoChooser.addOption(
-    //     "Leave Straight 6 Balance", new LeaveStraight6Balance(drive, arm, led2023));
-    // autoChooser.addOption(
-    //     "Leave Straight 8 Balance", new LeaveStraight8Balance(drive, arm, led2023));
-    // autoChooser.addOption(
-    //     "Score one and leave", new ScoreOneLeave(drive, arm, intakeRelease, led2023));
-    // autoChooser.addOption(
-    //     "Score one, leave and balance",
-    //     new ScoreOneLeaveBalance(drive, arm, intakeRelease, led2023));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
     // Configure the button bindings
@@ -336,7 +286,7 @@ public class RobotContainer {
 
     // Need to set to use automated movements, should be set in Autonomous init.
     driverController.back().onTrue(new ArmCalibrateCMD(arm, led2023));
-    driverController.b().onTrue(new ArmCalibrateZeroAtHomeCMD(arm, led2023));
+    driverController.b().onTrue(new ArmCalibrateZeroAtHomeCMD(arm));
 
     driverController.a().onTrue(new Balancing(drive));
 

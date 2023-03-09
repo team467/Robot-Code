@@ -11,8 +11,7 @@ public class ArmScoreLowNodeCMD extends ArmPositionCMD {
 
   public ArmScoreLowNodeCMD(Arm arm, IntakeRelease intakerelease, Led2023 ledStrip) {
     super(arm, ArmPositionConstants.LOW_BOTH, ledStrip);
-    if (intakerelease.getWants() == Wants.CUBE
-        || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+    if (intakerelease.getWants() == Wants.CUBE) {
       ledStrip.setCmdColorScheme(ColorScheme.CUBE_LOW);
     } else {
       ledStrip.setCmdColorScheme(ColorScheme.CONE_LOW);
