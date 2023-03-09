@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Contains various field dimensions and useful reference points. Dimensions are in meters, and sets
@@ -28,7 +27,6 @@ public final class FieldConstants {
   public static final double fieldLength = Units.inchesToMeters(651.25);
   public static final double fieldWidth = Units.inchesToMeters(315.5);
   public static final double tapeWidth = Units.inchesToMeters(2.0);
-  public static final double aprilTagWidth = Units.inchesToMeters(6.0);
 
   // Dimensions for community and charging station, including the tape.
   public static final class Community {
@@ -94,6 +92,19 @@ public final class FieldConstants {
     public static final double nodeFirstY = Units.inchesToMeters(20.19);
     public static final double nodeSeparationY = Units.inchesToMeters(22.0);
 
+    public static final double[] nodeY =
+        new double[] {
+          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 0),
+          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 1),
+          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 2),
+          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 3),
+          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 4),
+          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 5),
+          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 6),
+          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 7),
+          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 8)
+        };
+
     // Z layout
     public static final double cubeEdgeHigh = Units.inchesToMeters(3.0);
     public static final double highCubeZ = Units.inchesToMeters(35.5) - cubeEdgeHigh;
@@ -112,15 +123,12 @@ public final class FieldConstants {
     static {
       for (int i = 0; i < nodeRowCount; i++) {
         boolean isCube = i == 1 || i == 4 || i == 7;
-        lowTranslations[i] = new Translation2d(lowX, nodeFirstY + nodeSeparationY * i);
-        low3dTranslations[i] = new Translation3d(lowX, nodeFirstY + nodeSeparationY * i, 0.0);
-        midTranslations[i] = new Translation2d(midX, nodeFirstY + nodeSeparationY * i);
-        mid3dTranslations[i] =
-            new Translation3d(midX, nodeFirstY + nodeSeparationY * i, isCube ? midCubeZ : midConeZ);
-        high3dTranslations[i] =
-            new Translation3d(
-                highX, nodeFirstY + nodeSeparationY * i, isCube ? highCubeZ : highConeZ);
-        highTranslations[i] = new Translation2d(highX, nodeFirstY + nodeSeparationY * i);
+        lowTranslations[i] = new Translation2d(lowX, nodeY[i]);
+        low3dTranslations[i] = new Translation3d(lowX, nodeY[i], 0.0);
+        midTranslations[i] = new Translation2d(midX, nodeY[i]);
+        mid3dTranslations[i] = new Translation3d(midX, nodeY[i], isCube ? midCubeZ : midConeZ);
+        highTranslations[i] = new Translation2d(highX, nodeY[i]);
+        high3dTranslations[i] = new Translation3d(highX, nodeY[i], isCube ? highCubeZ : highConeZ);
       }
     }
 
@@ -129,34 +137,32 @@ public final class FieldConstants {
         outerX - Units.inchesToMeters(16.0) / 2.0; // Centered X under cone nodes
     public static final double complexLowXCubes = lowX; // Centered X under cube nodes
     public static final double complexLowOuterYOffset =
-        nodeFirstY - Units.inchesToMeters(3.0) - (Units.inchesToMeters(25.75) / 2.0);
+        nodeY[0] - (Units.inchesToMeters(3.0) + (Units.inchesToMeters(25.75) / 2.0));
 
     public static final Translation2d[] complexLowTranslations =
         new Translation2d[] {
-          new Translation2d(complexLowXCones, nodeFirstY - complexLowOuterYOffset),
-          new Translation2d(complexLowXCubes, nodeFirstY + nodeSeparationY * 1),
-          new Translation2d(complexLowXCones, nodeFirstY + nodeSeparationY * 2),
-          new Translation2d(complexLowXCones, nodeFirstY + nodeSeparationY * 3),
-          new Translation2d(complexLowXCubes, nodeFirstY + nodeSeparationY * 4),
-          new Translation2d(complexLowXCones, nodeFirstY + nodeSeparationY * 5),
-          new Translation2d(complexLowXCones, nodeFirstY + nodeSeparationY * 6),
-          new Translation2d(complexLowXCubes, nodeFirstY + nodeSeparationY * 7),
-          new Translation2d(
-              complexLowXCones, nodeFirstY + nodeSeparationY * 8 + complexLowOuterYOffset),
+          new Translation2d(complexLowXCones, nodeY[0] - complexLowOuterYOffset),
+          new Translation2d(complexLowXCubes, nodeY[1]),
+          new Translation2d(complexLowXCones, nodeY[2]),
+          new Translation2d(complexLowXCones, nodeY[3]),
+          new Translation2d(complexLowXCubes, nodeY[4]),
+          new Translation2d(complexLowXCones, nodeY[5]),
+          new Translation2d(complexLowXCones, nodeY[6]),
+          new Translation2d(complexLowXCubes, nodeY[7]),
+          new Translation2d(complexLowXCones, nodeY[8] + complexLowOuterYOffset),
         };
 
     public static final Translation3d[] complexLow3dTranslations =
         new Translation3d[] {
-          new Translation3d(complexLowXCones, nodeFirstY - complexLowOuterYOffset, 0.0),
-          new Translation3d(complexLowXCubes, nodeFirstY + nodeSeparationY * 1, 0.0),
-          new Translation3d(complexLowXCones, nodeFirstY + nodeSeparationY * 2, 0.0),
-          new Translation3d(complexLowXCones, nodeFirstY + nodeSeparationY * 3, 0.0),
-          new Translation3d(complexLowXCubes, nodeFirstY + nodeSeparationY * 4, 0.0),
-          new Translation3d(complexLowXCones, nodeFirstY + nodeSeparationY * 5, 0.0),
-          new Translation3d(complexLowXCones, nodeFirstY + nodeSeparationY * 6, 0.0),
-          new Translation3d(complexLowXCubes, nodeFirstY + nodeSeparationY * 7, 0.0),
-          new Translation3d(
-              complexLowXCones, nodeFirstY + nodeSeparationY * 8 + complexLowOuterYOffset, 0.0),
+          new Translation3d(complexLowXCones, nodeY[0] - complexLowOuterYOffset, 0.0),
+          new Translation3d(complexLowXCubes, nodeY[1], 0.0),
+          new Translation3d(complexLowXCones, nodeY[2], 0.0),
+          new Translation3d(complexLowXCones, nodeY[3], 0.0),
+          new Translation3d(complexLowXCubes, nodeY[4], 0.0),
+          new Translation3d(complexLowXCones, nodeY[5], 0.0),
+          new Translation3d(complexLowXCones, nodeY[6], 0.0),
+          new Translation3d(complexLowXCubes, nodeY[7], 0.0),
+          new Translation3d(complexLowXCones, nodeY[8] + complexLowOuterYOffset, 0.0),
         };
   }
 
@@ -185,7 +191,7 @@ public final class FieldConstants {
     public static final double doubleSubstationLength = Units.inchesToMeters(14.0);
     public static final double doubleSubstationX = innerX - doubleSubstationLength;
     public static final double doubleSubstationShelfZ = Units.inchesToMeters(37.375);
-    public static final double doubleSubstationCenterY = Units.inchesToMeters(265.74);
+    public static final double doubleSubstationCenterY = fieldWidth - Units.inchesToMeters(49.76);
 
     // Single substation dimensions
     public static final double singleSubstationWidth = Units.inchesToMeters(22.75);
@@ -221,69 +227,68 @@ public final class FieldConstants {
     }
   }
 
-  // AprilTag locations (do not flip for red alliance)
-  public static final Map<Integer, Pose3d> aprilTags =
-      Map.of(
-          1,
-          new Pose3d(
-              Units.inchesToMeters(610.77),
-              Units.inchesToMeters(42.19),
-              Units.inchesToMeters(18.22),
-              new Rotation3d(0.0, 0.0, Math.PI)),
-          2,
-          new Pose3d(
-              Units.inchesToMeters(610.77),
-              Units.inchesToMeters(108.19),
-              Units.inchesToMeters(18.22),
-              new Rotation3d(0.0, 0.0, Math.PI)),
-          3,
-          new Pose3d(
-              Units.inchesToMeters(610.77),
-              Units.inchesToMeters(174.19), // FIRST's diagram has a typo (it says 147.19)
-              Units.inchesToMeters(18.22),
-              new Rotation3d(0.0, 0.0, Math.PI)),
-          4,
-          new Pose3d(
-              Units.inchesToMeters(636.96),
-              Units.inchesToMeters(265.74),
-              Units.inchesToMeters(27.38),
-              new Rotation3d(0.0, 0.0, Math.PI)),
-          5,
-          new Pose3d(
-              Units.inchesToMeters(14.25),
-              Units.inchesToMeters(265.74),
-              Units.inchesToMeters(27.38),
-              new Rotation3d()),
-          6,
-          new Pose3d(
-              Units.inchesToMeters(40.45),
-              Units.inchesToMeters(174.19), // FIRST's diagram has a typo (it says 147.19)
-              Units.inchesToMeters(18.22),
-              new Rotation3d()),
-          7,
-          new Pose3d(
-              Units.inchesToMeters(40.45),
-              Units.inchesToMeters(108.19),
-              Units.inchesToMeters(18.22),
-              new Rotation3d()),
-          8,
-          new Pose3d(
-              Units.inchesToMeters(40.45),
-              Units.inchesToMeters(42.19),
-              Units.inchesToMeters(18.22),
-              new Rotation3d()));
+  // AprilTag constants
+  public static final double aprilTagWidth = Units.inchesToMeters(6.0);
 
-  public static final AprilTagFieldLayout aprilTagFieldLayout =
+  public static final AprilTagFieldLayout aprilTags =
       new AprilTagFieldLayout(
           List.of(
-              new AprilTag(1, aprilTags.get(1)),
-              new AprilTag(2, aprilTags.get(2)),
-              new AprilTag(3, aprilTags.get(3)),
-              new AprilTag(4, aprilTags.get(4)),
-              new AprilTag(5, aprilTags.get(5)),
-              new AprilTag(6, aprilTags.get(6)),
-              new AprilTag(7, aprilTags.get(7)),
-              new AprilTag(8, aprilTags.get(8))),
+              new AprilTag(
+                  1,
+                  new Pose3d(
+                      Units.inchesToMeters(610.77),
+                      Grids.nodeY[1],
+                      Units.inchesToMeters(18.22),
+                      new Rotation3d(0.0, 0.0, Math.PI))),
+              new AprilTag(
+                  2,
+                  new Pose3d(
+                      Units.inchesToMeters(610.77),
+                      Grids.nodeY[4],
+                      Units.inchesToMeters(18.22),
+                      new Rotation3d(0.0, 0.0, Math.PI))),
+              new AprilTag(
+                  3,
+                  new Pose3d(
+                      Units.inchesToMeters(610.77),
+                      Grids.nodeY[7],
+                      Units.inchesToMeters(18.22),
+                      new Rotation3d(0.0, 0.0, Math.PI))),
+              new AprilTag(
+                  4,
+                  new Pose3d(
+                      Units.inchesToMeters(636.96),
+                      LoadingZone.doubleSubstationCenterY,
+                      Units.inchesToMeters(27.38),
+                      new Rotation3d(0.0, 0.0, Math.PI))),
+              new AprilTag(
+                  5,
+                  new Pose3d(
+                      Units.inchesToMeters(14.25),
+                      LoadingZone.doubleSubstationCenterY,
+                      Units.inchesToMeters(27.38),
+                      new Rotation3d())),
+              new AprilTag(
+                  6,
+                  new Pose3d(
+                      Units.inchesToMeters(40.45),
+                      Grids.nodeY[7],
+                      Units.inchesToMeters(18.22),
+                      new Rotation3d())),
+              new AprilTag(
+                  7,
+                  new Pose3d(
+                      Units.inchesToMeters(40.45),
+                      Grids.nodeY[4],
+                      Units.inchesToMeters(18.22),
+                      new Rotation3d())),
+              new AprilTag(
+                  8,
+                  new Pose3d(
+                      Units.inchesToMeters(40.45),
+                      Grids.nodeY[1],
+                      Units.inchesToMeters(18.22),
+                      new Rotation3d()))),
           fieldLength,
           fieldWidth);
 }

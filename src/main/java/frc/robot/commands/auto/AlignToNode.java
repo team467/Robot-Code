@@ -17,7 +17,7 @@ public class AlignToNode extends StraightDriveToPose {
         AllianceFlipUtil.apply(
             new Pose2d(
                 new Translation2d(
-                    FieldConstants.aprilTags.get(7).getX() + Units.inchesToMeters(12 + 4),
+                    FieldConstants.aprilTags.getTagPose(7).get().getTranslation().getX() + Units.inchesToMeters(16),
                     Grids.nodeFirstY + Grids.nodeSeparationY * 5), // TODO: tune x
                 new Rotation2d(Math.PI))),
         drive);
