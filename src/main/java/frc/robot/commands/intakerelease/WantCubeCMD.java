@@ -26,5 +26,4 @@ public class WantCubeCMD extends CommandBase {
   public boolean isFinished() {
     return intakerelease.wantsCube();
   }
-
 }

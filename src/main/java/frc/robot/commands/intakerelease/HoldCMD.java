@@ -18,7 +18,9 @@ public class HoldCMD extends CommandBase {
 
   @Override
   public void execute() {
-    if (intakerelease.haveCube() && !intakerelease.haveCone() && intakerelease.getWants() == Wants.CUBE) {
+    if (intakerelease.haveCube()
+        && !intakerelease.haveCone()
+        && intakerelease.getWants() == Wants.CUBE) {
       ledStrip.setCmdColorScheme(ColorScheme.HOLD_CUBE);
       intakerelease.holdCube();
     } else if (intakerelease.haveCone() && intakerelease.getWants() == Wants.CONE) {
@@ -38,5 +40,4 @@ public class HoldCMD extends CommandBase {
   public boolean isFinished() {
     return intakerelease.wantsCone() || intakerelease.wantsCube();
   }
-
 }

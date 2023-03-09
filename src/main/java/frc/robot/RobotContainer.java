@@ -90,7 +90,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (RobotConstants.get().mode()) {
-      // Real robot, instantiate hardware IO implementations
+        // Real robot, instantiate hardware IO implementations
       case REAL -> {
         switch (RobotConstants.get().robot()) {
           case ROBOT_COMP -> {

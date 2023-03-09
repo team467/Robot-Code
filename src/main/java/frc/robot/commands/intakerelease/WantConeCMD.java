@@ -26,5 +26,4 @@ public class WantConeCMD extends CommandBase {
   public boolean isFinished() {
     return intakerelease.wantsCone();
   }
-  
-  }
+}

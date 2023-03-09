@@ -56,5 +56,4 @@ public class ReleaseCMD extends CommandBase {
   public boolean isFinished() {
     return !intakerelease.haveCone() && !intakerelease.haveCube();
   }
-  
 }
