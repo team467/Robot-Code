@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 import frc.robot.subsystems.led.Led2023;
-import frc.robot.subsystems.led.Led2023.COLORS_467;
 import frc.robot.subsystems.led.Led2023.ColorScheme;
 
 public class WantConeCMD extends CommandBase {
@@ -14,19 +13,18 @@ public class WantConeCMD extends CommandBase {
   public WantConeCMD(IntakeRelease intakerelease, Led2023 ledStrip) {
     this.intakerelease = intakerelease;
     this.ledStrip = ledStrip;
-
     addRequirements(intakerelease, ledStrip);
   }
 
   @Override
   public void initialize() {
-    ledStrip.set(COLORS_467.Black);
-  }
-
-  @Override
-  public void execute() {
-
     intakerelease.setWants(Wants.CONE);
     ledStrip.setCmdColorScheme(ColorScheme.WANT_CONE);
   }
-}
+
+  @Override
+  public boolean isFinished() {
+    return intakerelease.wantsCone();
+  }
+  
+  }
