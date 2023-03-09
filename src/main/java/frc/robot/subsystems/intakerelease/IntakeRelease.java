@@ -32,10 +32,11 @@ public class IntakeRelease extends SubsystemBase {
 
   public enum Wants {
     CONE,
-    CUBE
+    CUBE,
+    NONE
   }
 
-  private Wants wants = Wants.CUBE;
+  private Wants wants = Wants.NONE;
 
   public Wants getWants() {
     return (wants);
