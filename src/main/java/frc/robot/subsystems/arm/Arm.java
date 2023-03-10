@@ -495,10 +495,12 @@ public class Arm extends SubsystemBase {
     }
 
     void periodic() {
-      if (timer.hasElapsed(0.03)) {
+      if (timer.hasElapsed(0.1)) {
         setExtendVoltage(targetVolts);
         mode = returnToMode;
         kickback = null;
+      } else {
+        armIO.setExtendVoltage(-2);
       }
     }
   }
