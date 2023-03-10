@@ -47,7 +47,7 @@ import frc.robot.commands.auto.complex.OnlyScore;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.intakerelease.HoldCMD;
-import frc.robot.commands.intakerelease.IntakeCMD;
+import frc.robot.commands.intakerelease.IntakeAndRaise;
 import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.commands.intakerelease.WantConeCMD;
 import frc.robot.commands.intakerelease.WantCubeCMD;
@@ -277,8 +277,8 @@ public class RobotContainer {
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
     intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
 
-    driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023, arm));
-    driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023, arm));
+    driverController.leftBumper().onTrue(new IntakeAndRaise(arm, intakeRelease, led2023));
+    driverController.rightBumper().onTrue(new ReleaseCMD(intakeRelease, led2023, arm));
 
     // Set the game piece type
     operatorController.back().onFalse(new WantConeCMD(intakeRelease, led2023));
