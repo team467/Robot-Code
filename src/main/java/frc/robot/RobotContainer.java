@@ -37,13 +37,13 @@ import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.auto.Balancing;
-import frc.robot.commands.auto.complex.ScoreAndBackUp;
-import frc.robot.commands.auto.complex.ScoreAndBackUpAndBalance;
-import frc.robot.commands.auto.complex.ScoreAndBalance;
 import frc.robot.commands.auto.complex.BackUpAndBalance;
 import frc.robot.commands.auto.complex.OnlyBackup;
 import frc.robot.commands.auto.complex.OnlyBalance;
 import frc.robot.commands.auto.complex.OnlyScore;
+import frc.robot.commands.auto.complex.ScoreAndBackUp;
+import frc.robot.commands.auto.complex.ScoreAndBackUpAndBalance;
+import frc.robot.commands.auto.complex.ScoreAndBalance;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.intakerelease.HoldCMD;
@@ -193,8 +193,7 @@ public class RobotContainer {
 
     // AprilTag 3 or 6
     autoChooser.addOption(
-        "Tag 3/6: Only Back Up",
-        new OnlyBackup(6, "Right", drive, arm, intakeRelease, led2023));
+        "Tag 3/6: Only Back Up", new OnlyBackup(6, "Right", drive, arm, intakeRelease, led2023));
     autoChooser.addOption(
         "Tag 3/6: Only Score Cone",
         new OnlyScore(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
@@ -203,24 +202,19 @@ public class RobotContainer {
         new ScoreAndBackUp(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
 
     // AprilTag 2 or 7
+    autoChooser.addOption("Tag 2/7: Only Balance", new OnlyBalance("Center", drive, arm, led2023));
     autoChooser.addOption(
-        "Tag 2/7: Only Balance",
-        new OnlyBalance("Center", drive, arm, led2023));
-    autoChooser.addOption(
-        "Tag 2/7: Back Up and Balance",
-        new BackUpAndBalance("Center", drive, arm, led2023));
+        "Tag 2/7: Back Up and Balance", new BackUpAndBalance("Center", drive, arm, led2023));
     autoChooser.addOption(
         "Tag 2/7: Score and Balance",
         new ScoreAndBalance("Right", "Cone", "High", drive, arm, intakeRelease, led2023));
     autoChooser.addOption(
         "Tag 2/7: Score, Back Up and Balance",
-        new ScoreAndBackUpAndBalance(
-            "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+        new ScoreAndBackUpAndBalance("Right", "Cone", "High", drive, arm, intakeRelease, led2023));
 
     // AprilTag 1 or 8
     autoChooser.addOption(
-        "Tag 1/8: Only Back Up",
-        new OnlyBackup(8, "Left", drive, arm, intakeRelease, led2023));
+        "Tag 1/8: Only Back Up", new OnlyBackup(8, "Left", drive, arm, intakeRelease, led2023));
     autoChooser.addOption(
         "Tag 1/8: Only Score Cone",
         new OnlyScore(8, "Left", "Cone", "High", drive, arm, intakeRelease, led2023));

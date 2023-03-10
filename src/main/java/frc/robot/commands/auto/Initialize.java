@@ -15,7 +15,8 @@ import frc.robot.subsystems.led.Led2023;
 
 public class Initialize extends ParallelCommandGroup {
   public Initialize(int aprilTag, String relativePosition, Drive drive, Arm arm, Led2023 ledStrip) {
-    Translation2d aprilTagLocation = FieldConstants.aprilTags.getTagPose(aprilTag).get().getTranslation().toTranslation2d();
+    Translation2d aprilTagLocation =
+        FieldConstants.aprilTags.getTagPose(aprilTag).get().getTranslation().toTranslation2d();
     final double relativePositionOffset;
     if (relativePosition.equals("Left")) {
       relativePositionOffset = -22;
@@ -34,8 +35,7 @@ public class Initialize extends ParallelCommandGroup {
                     aprilTagLocation.getX()
                         + Units.inchesToMeters(
                             distanceAprilTagToEdgeOfNode + distanceRobotFrontToCenter),
-                    aprilTagLocation.getY()
-                        + Units.inchesToMeters(relativePositionOffset)),
+                    aprilTagLocation.getY() + Units.inchesToMeters(relativePositionOffset)),
                 Rotation2d.fromDegrees(180)));
 
     addCommands(
@@ -45,7 +45,8 @@ public class Initialize extends ParallelCommandGroup {
               Pose2d measuredPose = drive.getPose();
               if (measuredPose == null
                   || (measuredPose.getX() < 0.1 && measuredPose.getY() <= 0.0)
-                  || measuredPose.getTranslation().getDistance(expectedPose.getTranslation()) > Units.inchesToMeters(18.0)) {
+                  || measuredPose.getTranslation().getDistance(expectedPose.getTranslation())
+                      > Units.inchesToMeters(18.0)) {
                 drive.setPose(expectedPose);
                 DriverStation.reportWarning(
                     "WARNING: Robot pose is not accurate. \n"

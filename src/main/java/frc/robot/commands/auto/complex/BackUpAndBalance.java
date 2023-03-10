@@ -10,11 +10,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.Led2023;
 
 public class BackUpAndBalance extends SequentialCommandGroup {
-  public BackUpAndBalance(
-      String relativePosition,
-      Drive drive,
-      Arm arm,
-      Led2023 ledStrip) {
+  public BackUpAndBalance(String relativePosition, Drive drive, Arm arm, Led2023 ledStrip) {
     int aprilTag = 7;
     addCommands(
         new Initialize(aprilTag, relativePosition, drive, arm, ledStrip),
