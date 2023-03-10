@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,105 +29,26 @@ public interface VisionIO {
     /** The estimated pose of the robot. */
     public Optional<EstimatedRobotPose> estimatedPose = Optional.empty();
 
+    private boolean isBroken = false;
+
     @Override
     public void toLog(LogTable table) {
-      for (int i = 0; i < 7; i++) {
-        PhotonTrackedTarget target;
-        if (i < targets.size()) {
-          target = targets.get(i).orElse(null);
-        } else {
-          target = null;
-        }
-        if (target != null) {
-          table.put("Target" + i + "/Valid", true);
-          table.put("Target" + i + "/Yaw", target.getYaw());
-          table.put("Target" + i + "/Pitch", target.getPitch());
-          table.put("Target" + i + "/Area", target.getArea());
-          table.put("Target" + i + "/Skew", target.getSkew());
-          table.put("Target" + i + "/FiducialId", target.getFiducialId());
-          double[] serializedBestCameraToTarget = new double[7];
-          serializedBestCameraToTarget[0] = target.getBestCameraToTarget().getTranslation().getX();
-          serializedBestCameraToTarget[1] = target.getBestCameraToTarget().getTranslation().getY();
-          serializedBestCameraToTarget[2] = target.getBestCameraToTarget().getTranslation().getZ();
-          serializedBestCameraToTarget[3] =
-              target.getBestCameraToTarget().getRotation().getQuaternion().getW();
-          serializedBestCameraToTarget[4] =
-              target.getBestCameraToTarget().getRotation().getQuaternion().getX();
-          serializedBestCameraToTarget[5] =
-              target.getBestCameraToTarget().getRotation().getQuaternion().getY();
-          serializedBestCameraToTarget[6] =
-              target.getBestCameraToTarget().getRotation().getQuaternion().getZ();
-          table.put("Target" + i + "/BestCameraToTarget", serializedBestCameraToTarget);
-          double[] serializedAltCameraToTarget = new double[7];
-          serializedAltCameraToTarget[0] =
-              target.getAlternateCameraToTarget().getTranslation().getX();
-          serializedAltCameraToTarget[1] =
-              target.getAlternateCameraToTarget().getTranslation().getY();
-          serializedAltCameraToTarget[2] =
-              target.getAlternateCameraToTarget().getTranslation().getZ();
-          serializedAltCameraToTarget[3] =
-              target.getAlternateCameraToTarget().getRotation().getQuaternion().getW();
-          serializedAltCameraToTarget[4] =
-              target.getAlternateCameraToTarget().getRotation().getQuaternion().getX();
-          serializedAltCameraToTarget[5] =
-              target.getAlternateCameraToTarget().getRotation().getQuaternion().getY();
-          serializedAltCameraToTarget[6] =
-              target.getAlternateCameraToTarget().getRotation().getQuaternion().getZ();
-          table.put("Target" + i + "/AltCameraToTarget", serializedAltCameraToTarget);
-          table.put("Target" + i + "/PoseAmbiguity", target.getPoseAmbiguity());
-          for (int j = 0; j < 4; j++) {
-            table.put(
-                "Target" + i + "/MinAreaRectCorners/" + j + "/X",
-                target.getMinAreaRectCorners().get(j).x);
-            table.put(
-                "Target" + i + "/MinAreaRectCorners/" + j + "/Y",
-                target.getMinAreaRectCorners().get(j).y);
-            table.put(
-                "Target" + i + "/DetectedCorners/" + j + "/X",
-                target.getDetectedCorners().get(j).x);
-            table.put(
-                "Target" + i + "/DetectedCorners/" + j + "/Y",
-                target.getDetectedCorners().get(j).y);
-          }
-        } else {
-          table.put("Target" + i + "/Valid", false);
-        }
-      }
-      table.put("HasTargets", hasTargets);
-      table.put("LatencyMillis", latencyMillis);
-      table.put("TimestampSeconds", timestampSeconds);
-      EstimatedRobotPose estimatedPose = this.estimatedPose.orElse(null);
-      if (estimatedPose != null) {
-        double[] serializedEstimatedPose = new double[7];
-        serializedEstimatedPose[0] = estimatedPose.estimatedPose.getTranslation().getX();
-        serializedEstimatedPose[1] = estimatedPose.estimatedPose.getTranslation().getY();
-        serializedEstimatedPose[2] = estimatedPose.estimatedPose.getTranslation().getZ();
-        serializedEstimatedPose[3] =
-            estimatedPose.estimatedPose.getRotation().getQuaternion().getW();
-        serializedEstimatedPose[4] =
-            estimatedPose.estimatedPose.getRotation().getQuaternion().getX();
-        serializedEstimatedPose[5] =
-            estimatedPose.estimatedPose.getRotation().getQuaternion().getY();
-        serializedEstimatedPose[6] =
-            estimatedPose.estimatedPose.getRotation().getQuaternion().getZ();
-        table.put("EstimatedPose/Valid", true);
-        table.put("EstimatedPose/Pose", serializedEstimatedPose);
-        table.put("EstimatedPose/TimestampSeconds", estimatedPose.timestampSeconds);
-        {
+      if (!isBroken) {
+        try {
           for (int i = 0; i < 7; i++) {
             PhotonTrackedTarget target;
             if (i < targets.size()) {
-              target = estimatedPose.targetsUsed.get(i);
+              target = targets.get(i).orElse(null);
             } else {
               target = null;
             }
             if (target != null) {
-              table.put("EstimatedPose/TargetsUsed" + i + "/Valid", true);
-              table.put("EstimatedPose/TargetsUsed" + i + "/Yaw", target.getYaw());
-              table.put("EstimatedPose/TargetsUsed" + i + "/Pitch", target.getPitch());
-              table.put("EstimatedPose/TargetsUsed" + i + "/Area", target.getArea());
-              table.put("EstimatedPose/TargetsUsed" + i + "/Skew", target.getSkew());
-              table.put("EstimatedPose/TargetsUsed" + i + "/FiducialId", target.getFiducialId());
+              table.put("Target" + i + "/Valid", true);
+              table.put("Target" + i + "/Yaw", target.getYaw());
+              table.put("Target" + i + "/Pitch", target.getPitch());
+              table.put("Target" + i + "/Area", target.getArea());
+              table.put("Target" + i + "/Skew", target.getSkew());
+              table.put("Target" + i + "/FiducialId", target.getFiducialId());
               double[] serializedBestCameraToTarget = new double[7];
               serializedBestCameraToTarget[0] =
                   target.getBestCameraToTarget().getTranslation().getX();
@@ -142,9 +64,7 @@ public interface VisionIO {
                   target.getBestCameraToTarget().getRotation().getQuaternion().getY();
               serializedBestCameraToTarget[6] =
                   target.getBestCameraToTarget().getRotation().getQuaternion().getZ();
-              table.put(
-                  "EstimatedPose/TargetsUsed" + i + "/BestCameraToTarget",
-                  serializedBestCameraToTarget);
+              table.put("Target" + i + "/BestCameraToTarget", serializedBestCameraToTarget);
               double[] serializedAltCameraToTarget = new double[7];
               serializedAltCameraToTarget[0] =
                   target.getAlternateCameraToTarget().getTranslation().getX();
@@ -160,37 +80,140 @@ public interface VisionIO {
                   target.getAlternateCameraToTarget().getRotation().getQuaternion().getY();
               serializedAltCameraToTarget[6] =
                   target.getAlternateCameraToTarget().getRotation().getQuaternion().getZ();
-              table.put(
-                  "EstimatedPose/TargetsUsed" + i + "/AltCameraToTarget",
-                  serializedAltCameraToTarget);
-              table.put(
-                  "EstimatedPose/TargetsUsed" + i + "/PoseAmbiguity", target.getPoseAmbiguity());
+              table.put("Target" + i + "/AltCameraToTarget", serializedAltCameraToTarget);
+              table.put("Target" + i + "/PoseAmbiguity", target.getPoseAmbiguity());
               for (int j = 0; j < 4; j++) {
                 table.put(
-                    "EstimatedPose/TargetsUsed" + i + "/MinAreaRectCorners/" + j + "/X",
+                    "Target" + i + "/MinAreaRectCorners/" + j + "/X",
                     target.getMinAreaRectCorners().get(j).x);
                 table.put(
-                    "EstimatedPose/TargetsUsed" + i + "/MinAreaRectCorners/" + j + "/Y",
+                    "Target" + i + "/MinAreaRectCorners/" + j + "/Y",
                     target.getMinAreaRectCorners().get(j).y);
                 table.put(
-                    "EstimatedPose/TargetsUsed" + i + "/DetectedCorners/" + j + "/X",
+                    "Target" + i + "/DetectedCorners/" + j + "/X",
                     target.getDetectedCorners().get(j).x);
                 table.put(
-                    "EstimatedPose/TargetsUsed" + i + "/DetectedCorners/" + j + "/Y",
+                    "Target" + i + "/DetectedCorners/" + j + "/Y",
                     target.getDetectedCorners().get(j).y);
               }
             } else {
-              table.put("EstimatedPose/TargetsUsed" + i + "/Valid", false);
+              table.put("Target" + i + "/Valid", false);
             }
           }
+          EstimatedRobotPose estimatedPose = this.estimatedPose.orElse(null);
+          if (estimatedPose != null) {
+            double[] serializedEstimatedPose = new double[7];
+            serializedEstimatedPose[0] = estimatedPose.estimatedPose.getTranslation().getX();
+            serializedEstimatedPose[1] = estimatedPose.estimatedPose.getTranslation().getY();
+            serializedEstimatedPose[2] = estimatedPose.estimatedPose.getTranslation().getZ();
+            serializedEstimatedPose[3] =
+                estimatedPose.estimatedPose.getRotation().getQuaternion().getW();
+            serializedEstimatedPose[4] =
+                estimatedPose.estimatedPose.getRotation().getQuaternion().getX();
+            serializedEstimatedPose[5] =
+                estimatedPose.estimatedPose.getRotation().getQuaternion().getY();
+            serializedEstimatedPose[6] =
+                estimatedPose.estimatedPose.getRotation().getQuaternion().getZ();
+            table.put("EstimatedPose/Valid", true);
+            table.put("EstimatedPose/Pose", serializedEstimatedPose);
+            table.put("EstimatedPose/TimestampSeconds", estimatedPose.timestampSeconds);
+            {
+              for (int i = 0; i < 7; i++) {
+                PhotonTrackedTarget target;
+                if (i < targets.size()) {
+                  target = estimatedPose.targetsUsed.get(i);
+                } else {
+                  target = null;
+                }
+                if (target != null) {
+                  table.put("EstimatedPose/TargetsUsed" + i + "/Valid", true);
+                  table.put("EstimatedPose/TargetsUsed" + i + "/Yaw", target.getYaw());
+                  table.put("EstimatedPose/TargetsUsed" + i + "/Pitch", target.getPitch());
+                  table.put("EstimatedPose/TargetsUsed" + i + "/Area", target.getArea());
+                  table.put("EstimatedPose/TargetsUsed" + i + "/Skew", target.getSkew());
+                  table.put(
+                      "EstimatedPose/TargetsUsed" + i + "/FiducialId", target.getFiducialId());
+                  double[] serializedBestCameraToTarget = new double[7];
+                  serializedBestCameraToTarget[0] =
+                      target.getBestCameraToTarget().getTranslation().getX();
+                  serializedBestCameraToTarget[1] =
+                      target.getBestCameraToTarget().getTranslation().getY();
+                  serializedBestCameraToTarget[2] =
+                      target.getBestCameraToTarget().getTranslation().getZ();
+                  serializedBestCameraToTarget[3] =
+                      target.getBestCameraToTarget().getRotation().getQuaternion().getW();
+                  serializedBestCameraToTarget[4] =
+                      target.getBestCameraToTarget().getRotation().getQuaternion().getX();
+                  serializedBestCameraToTarget[5] =
+                      target.getBestCameraToTarget().getRotation().getQuaternion().getY();
+                  serializedBestCameraToTarget[6] =
+                      target.getBestCameraToTarget().getRotation().getQuaternion().getZ();
+                  table.put(
+                      "EstimatedPose/TargetsUsed" + i + "/BestCameraToTarget",
+                      serializedBestCameraToTarget);
+                  double[] serializedAltCameraToTarget = new double[7];
+                  serializedAltCameraToTarget[0] =
+                      target.getAlternateCameraToTarget().getTranslation().getX();
+                  serializedAltCameraToTarget[1] =
+                      target.getAlternateCameraToTarget().getTranslation().getY();
+                  serializedAltCameraToTarget[2] =
+                      target.getAlternateCameraToTarget().getTranslation().getZ();
+                  serializedAltCameraToTarget[3] =
+                      target.getAlternateCameraToTarget().getRotation().getQuaternion().getW();
+                  serializedAltCameraToTarget[4] =
+                      target.getAlternateCameraToTarget().getRotation().getQuaternion().getX();
+                  serializedAltCameraToTarget[5] =
+                      target.getAlternateCameraToTarget().getRotation().getQuaternion().getY();
+                  serializedAltCameraToTarget[6] =
+                      target.getAlternateCameraToTarget().getRotation().getQuaternion().getZ();
+                  table.put(
+                      "EstimatedPose/TargetsUsed" + i + "/AltCameraToTarget",
+                      serializedAltCameraToTarget);
+                  table.put(
+                      "EstimatedPose/TargetsUsed" + i + "/PoseAmbiguity",
+                      target.getPoseAmbiguity());
+                  for (int j = 0; j < 4; j++) {
+                    table.put(
+                        "EstimatedPose/TargetsUsed" + i + "/MinAreaRectCorners/" + j + "/X",
+                        target.getMinAreaRectCorners().get(j).x);
+                    table.put(
+                        "EstimatedPose/TargetsUsed" + i + "/MinAreaRectCorners/" + j + "/Y",
+                        target.getMinAreaRectCorners().get(j).y);
+                    table.put(
+                        "EstimatedPose/TargetsUsed" + i + "/DetectedCorners/" + j + "/X",
+                        target.getDetectedCorners().get(j).x);
+                    table.put(
+                        "EstimatedPose/TargetsUsed" + i + "/DetectedCorners/" + j + "/Y",
+                        target.getDetectedCorners().get(j).y);
+                  }
+                } else {
+                  table.put("EstimatedPose/TargetsUsed" + i + "/Valid", false);
+                }
+              }
+            }
+          } else {
+            table.put("EstimatedPose/Valid", false);
+          }
+        } catch (Exception e) {
+          DriverStation.reportError(
+              "[VisionIO] Camera returning bad values! Invalidating all future values.",
+              e.getStackTrace());
+          isBroken = true;
         }
       } else {
-        table.put("EstimatedPose/Valid", false);
+        for (int i = 0; i < 7; i++) {
+          table.put("Target" + i + "/Valid", false);
+          table.put("EstimatedPose/Valid", false);
+        }
       }
+      table.put("HasTargets", hasTargets);
+      table.put("LatencyMillis", latencyMillis);
+      table.put("TimestampSeconds", timestampSeconds);
     }
 
     @Override
     public void fromLog(LogTable table) {
+      // This is safe from null or missing values, as it defaults to 0.
       for (int i = 0; i < 7; i++) {
         if (table.get("Target" + i + "/Valid").getBoolean()) {
           PhotonTrackedTarget target =
