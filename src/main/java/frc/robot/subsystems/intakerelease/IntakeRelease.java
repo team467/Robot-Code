@@ -80,7 +80,6 @@ public class IntakeRelease extends SubsystemBase {
 
   public void release() {
     state = State.RELEASE;
-    wants = Wants.NONE;
     hasCone = false;
     hasCube = false;
   }
