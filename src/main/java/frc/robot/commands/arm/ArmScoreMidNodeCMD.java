@@ -15,8 +15,7 @@ public class ArmScoreMidNodeCMD extends ArmPositionCMD {
         () ->
             intakerelease.wantsCone()
                 ? ArmPositionConstants.MID_CONE
-                : ArmPositionConstants.MID_CUBE,
-        ledStrip);
+                : ArmPositionConstants.MID_CUBE);
     if (intakerelease.getWants() == Wants.CUBE) {
       ledStrip.setCmdColorScheme(ColorScheme.CUBE_MID);
     } else {

@@ -24,9 +24,7 @@ public class ArmStopCMD extends CommandBase {
   }
 
   @Override
-  public void end(boolean interrupted) {
-    ledStrip.defaultLights();
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {

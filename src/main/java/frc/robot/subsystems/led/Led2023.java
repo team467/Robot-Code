@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.leds.DoubleLEDStrip;
 import frc.lib.leds.LEDManager;
 import frc.robot.RobotConstants;
+import frc.robot.commands.intakerelease.HoldCMD;
+import frc.robot.commands.intakerelease.IntakeCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
@@ -229,27 +231,60 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-  private ColorScheme getColorScheme() {
-    if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
-      return ColorScheme.BATTERY_LOW;
-
-    } else if (CHECK_ARM_CALIBRATION && !arm.isCalibrated()) {
-      return ColorScheme.ARM_UNCALIBRATED;
-    } else {
-      return cmdColorScheme;
-    }
-  }
-
-  public ColorScheme defaultLights() {
+  public ColorScheme getColorScheme() {
     sendData();
     lastLoopTime = Timer.getFPGATimestamp();
+
+    // Check if battery is low
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
-    } else if ((!arm.isCalibrated()) && CHECK_ARM_CALIBRATION) {
-      return ColorScheme.ARM_UNCALIBRATED;
-    } else {
-      return ColorScheme.DEFAULT;
     }
+
+    // Check if arm is calibrated
+    if ((!arm.isCalibrated()) && CHECK_ARM_CALIBRATION) {
+      return ColorScheme.ARM_UNCALIBRATED;
+    }
+
+    // If trying to hold on to something
+    if (intakerelease.getCurrentCommand() instanceof HoldCMD) {
+      // If holding on to Cubes
+      if (intakerelease.haveCube() && !intakerelease.haveCone()) {
+        return ColorScheme.HOLD_CUBE;
+      }
+      // If holding on to Cones
+      if (intakerelease.haveCone()) {
+        return ColorScheme.HOLD_CONE;
+      }
+    }
+
+    // If trying to intake something
+    if (intakerelease.getCurrentCommand() instanceof IntakeCMD) {
+      // If intaking Cubes
+      if (intakerelease.getWants() == Wants.CUBE) {
+        return ColorScheme.INTAKE_CUBE;
+      }
+      // If intaking Cones
+      if (intakerelease.getWants() == Wants.CONE) {
+        return ColorScheme.INTAKE_CONE;
+      } else {
+        return ColorScheme.INTAKE_UNKNOWN;
+      }
+    }
+
+    // If trying to release something
+    if (intakerelease.getCurrentCommand() instanceof IntakeCMD) {
+      // If releasing Cubes
+      if (intakerelease.getWants() == Wants.CUBE) {
+        return ColorScheme.RELEASE_CUBE;
+      }
+      // If releasing Cones
+      if (intakerelease.getWants() == Wants.CONE) {
+        return ColorScheme.RELEASE_CONE;
+      } else {
+        return ColorScheme.RELEASE_UNKNOWN;
+      }
+    }
+    return ColorScheme.DEFAULT;
   }
 
   public void setLED(int index, Color color) {

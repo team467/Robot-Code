@@ -9,7 +9,7 @@ public class ArmShelfCMD extends ArmPositionCMD {
 
   public ArmShelfCMD(Arm arm, Led2023 ledStrip) {
 
-    super(arm, ArmPositionConstants.SHELF, ledStrip);
+    super(arm, ArmPositionConstants.SHELF);
     ledStrip.setCmdColorScheme(ColorScheme.SHELF);
   }
 }

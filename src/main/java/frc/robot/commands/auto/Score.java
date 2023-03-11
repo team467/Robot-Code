@@ -41,13 +41,13 @@ public class Score extends SequentialCommandGroup {
     addCommands(
         pieceType(gamePieceType, intakeRelease, ledStrip),
         armLocationCommand(location, arm, intakeRelease, ledStrip),
-        new ReleaseCMD(intakeRelease, ledStrip, arm));
+        new ReleaseCMD(intakeRelease, arm));
   }
 
   private Command armLocationCommand(
       String location, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
     if (location.equalsIgnoreCase("high")) {
-      return new ArmScoreHighNodeCMD(arm, intakeRelease, ledStrip);
+      return new ArmScoreHighNodeCMD(arm, intakeRelease);
     } else if (location.equalsIgnoreCase("mid")) {
       return new ArmScoreMidNodeCMD(arm, intakeRelease, ledStrip);
     } else {

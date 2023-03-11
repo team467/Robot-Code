@@ -7,6 +7,6 @@ import frc.robot.subsystems.led.Led2023;
 public class ArmHomeCMD extends ArmPositionCMD {
 
   public ArmHomeCMD(Arm arm, Led2023 ledStrip) {
-    super(arm, ArmPositionConstants.HOME, ledStrip);
+    super(arm, ArmPositionConstants.HOME);
   }
 }

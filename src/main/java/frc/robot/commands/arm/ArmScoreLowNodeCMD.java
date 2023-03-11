@@ -10,7 +10,7 @@ import frc.robot.subsystems.led.Led2023.ColorScheme;
 public class ArmScoreLowNodeCMD extends ArmPositionCMD {
 
   public ArmScoreLowNodeCMD(Arm arm, IntakeRelease intakerelease, Led2023 ledStrip) {
-    super(arm, ArmPositionConstants.LOW_BOTH, ledStrip);
+    super(arm, ArmPositionConstants.LOW_BOTH);
     if (intakerelease.getWants() == Wants.CUBE) {
       ledStrip.setCmdColorScheme(ColorScheme.CUBE_LOW);
     } else {

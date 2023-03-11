@@ -269,10 +269,10 @@ public class RobotContainer {
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
-    intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
+    intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease));
 
-    driverController.leftBumper().onTrue(new IntakeAndRaise(arm, intakeRelease, led2023));
-    driverController.rightBumper().onTrue(new ReleaseCMD(intakeRelease, led2023, arm));
+    driverController.leftBumper().onTrue(new IntakeAndRaise(arm, intakeRelease));
+    driverController.rightBumper().onTrue(new ReleaseCMD(intakeRelease, arm));
 
     // Set the game piece type
     operatorController.back().onFalse(new WantConeCMD(intakeRelease, led2023));
@@ -287,7 +287,7 @@ public class RobotContainer {
     // Placing cone or cube, gets what it wants from in the command
     operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease, led2023));
     operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease, led2023));
-    operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease, led2023));
+    operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease));
     Logger.getInstance()
         .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
     Logger.getInstance()

@@ -10,6 +10,6 @@ public class LedRainbowCMD extends LedBaseCMD {
 
   @Override
   public void execute() {
-    ledStrip.defaultLights();
+    ledStrip.getColorScheme();
   }
 }
