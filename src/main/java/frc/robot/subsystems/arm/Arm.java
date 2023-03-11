@@ -193,6 +193,7 @@ public class Arm extends SubsystemBase {
     }
     logger.recordOutput("Arm/Mode", mode.toString());
     logger.recordOutput("Arm/CalibrateMode", calibrateMode.toString());
+    logger.recordOutput("Arm/IsCalibrated", isCalibrated);
 
     switch (mode) {
       case MANUAL -> {

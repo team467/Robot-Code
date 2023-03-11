@@ -1,8 +1,9 @@
 package frc.robot.commands.auto.complex;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.auto.Balancing;
+import frc.robot.commands.auto.BetterBalancing;
 import frc.robot.commands.auto.Initialize;
 import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.arm.Arm;
@@ -15,7 +16,8 @@ public class BackUpAndBalance extends SequentialCommandGroup {
     addCommands(
         new Initialize(aprilTag, relativePosition, drive, arm, ledStrip),
         new StraightDriveToPose(Units.inchesToMeters(170.0), 0.0, 0.0, drive),
-        new StraightDriveToPose(Units.inchesToMeters(-75.0), 0.0, 0.0, drive),
-        new Balancing(drive));
+        new StraightDriveToPose(Units.inchesToMeters(-75.0), 0.0, 0.0, drive).withTimeout(3.0),
+        Commands.print("NOW BALANCE YAYAYA"),
+        new BetterBalancing(drive));
   }
 }
