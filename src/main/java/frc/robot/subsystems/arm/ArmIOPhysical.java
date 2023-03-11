@@ -88,9 +88,7 @@ public class ArmIOPhysical implements ArmIO {
 
   @Override
   public void setExtendVoltage(double volts) {
-    if (volts > 5.0) {
-      volts = 5.0;
-    }
+    volts = Math.min(volts, 5.0);
     setRatchetLocked(volts == 0);
     extendMotor.setVoltage(volts);
   }
