@@ -17,12 +17,13 @@ public class ArmManualRetractCMD extends CommandBase {
 
   @Override
   public void initialize() {
-    arm.manualExtend(-1);
     ledStrip.set(COLORS_467.Black);
   }
 
   @Override
-  public void execute() {}
+  public void execute() {
+    arm.manualExtend(-1);
+  }
 
   @Override
   public void end(boolean interrupted) {

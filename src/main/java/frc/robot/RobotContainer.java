@@ -37,7 +37,7 @@ import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
-import frc.robot.commands.auto.Balancing;
+import frc.robot.commands.auto.BetterBalancing;
 import frc.robot.commands.auto.complex.BackUpAndBalance;
 import frc.robot.commands.auto.complex.OnlyBackup;
 import frc.robot.commands.auto.complex.OnlyBalance;
@@ -204,7 +204,10 @@ public class RobotContainer {
         new ScoreAndBackUp(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
 
     // AprilTag 2 or 7
-    autoChooser.addOption("Tag 2/7: Only Balance", new OnlyBalance("Center", drive, arm, led2023));
+    autoChooser.addOption(
+        "Tag 2/7: Only Score Cone",
+        new OnlyScore(7, "Right", "cone", "high", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption("Tag 2/7: Only Balance", new OnlyBalance("Right", drive, arm, led2023));
     autoChooser.addOption(
         "Tag 2/7: Back Up and Balance", new BackUpAndBalance("Center", drive, arm, led2023));
     autoChooser.addOption(
@@ -277,7 +280,7 @@ public class RobotContainer {
     driverController.rightBumper().onTrue(new ReleaseCMD(intakeRelease, arm));
 
     // Set the game piece type
-    operatorController.back().onFalse(new WantConeCMD(intakeRelease, led2023));
+    operatorController.back().whileFalse(new WantConeCMD(intakeRelease, led2023));
     operatorController.back().onTrue(new WantCubeCMD(intakeRelease, led2023));
 
     // Manual arm movements
@@ -307,7 +310,7 @@ public class RobotContainer {
     driverController.back().onTrue(new ArmCalibrateCMD(arm));
     driverController.b().onTrue(new ArmCalibrateZeroAtHomeCMD(arm));
 
-    driverController.a().onTrue(new Balancing(drive));
+    driverController.a().onTrue(new BetterBalancing(drive));
 
     // Manual arm movements
     operatorController.leftStick().onTrue(new ArmStopCMD(arm));

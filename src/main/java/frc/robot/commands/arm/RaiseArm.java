@@ -12,13 +12,11 @@ public class RaiseArm extends CommandBase {
     addRequirements(arm);
   }
 
-  // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
+  public void execute() {
     arm.raise();
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return arm.isFinished();

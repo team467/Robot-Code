@@ -17,12 +17,13 @@ public class ArmManualDownCMD extends CommandBase {
 
   @Override
   public void initialize() {
-    arm.manualRotate(-5);
     ledStrip.set(COLORS_467.Black);
   }
 
   @Override
-  public void execute() {}
+  public void execute() {
+    arm.manualRotate(-7);
+  }
 
   @Override
   public void end(boolean interrupted) {

@@ -57,8 +57,8 @@ public class ArmIOPhysical implements ArmIO {
     extendMotor.setIdleMode(IdleMode.kBrake);
     rotateMotor.setIdleMode(IdleMode.kBrake);
 
-    extendMotor.setSmartCurrentLimit(40);
-    rotateMotor.setSmartCurrentLimit(40);
+    extendMotor.setSmartCurrentLimit(80);
+    rotateMotor.setSmartCurrentLimit(80);
   }
 
   @Override
@@ -88,9 +88,7 @@ public class ArmIOPhysical implements ArmIO {
 
   @Override
   public void setExtendVoltage(double volts) {
-    if (volts > 7.0) {
-      volts = 5.0;
-    }
+    volts = Math.min(volts, 5.0);
     setRatchetLocked(volts == 0);
     extendMotor.setVoltage(volts);
   }

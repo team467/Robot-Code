@@ -259,6 +259,22 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  public Rotation2d getRoll() {
+    return Rotation2d.fromDegrees(gyroInputs.roll);
+  }
+
+  public Rotation2d getPitch() {
+    return Rotation2d.fromDegrees(gyroInputs.pitch);
+  }
+
+  public double getRollVelocity() {
+    return Units.degreesToRadians(gyroInputs.rollRate);
+  }
+
+  public double getPitchVelocity() {
+    return Units.degreesToRadians(gyroInputs.pitchRate);
+  }
+
   public void runCharacterizationVolts(double volts) {
     driveMode = DriveMode.CHARACTERIZATION;
     characterizationVolts = volts;
