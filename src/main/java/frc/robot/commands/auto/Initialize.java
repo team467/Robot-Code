@@ -29,15 +29,16 @@ public class Initialize extends ParallelCommandGroup {
 
     double distanceAprilTagToEdgeOfNode = 16;
     double distanceRobotFrontToCenter = 12.75;
-    Supplier<Pose2d> expectedPose = () ->
-        AllianceFlipUtil.apply(
-            new Pose2d(
-                new Translation2d(
-                    aprilTagLocation.getX()
-                        + Units.inchesToMeters(
-                            distanceAprilTagToEdgeOfNode + distanceRobotFrontToCenter),
-                    aprilTagLocation.getY() + Units.inchesToMeters(relativePositionOffset)),
-                Rotation2d.fromDegrees(180)));
+    Supplier<Pose2d> expectedPose =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(
+                        aprilTagLocation.getX()
+                            + Units.inchesToMeters(
+                                distanceAprilTagToEdgeOfNode + distanceRobotFrontToCenter),
+                        aprilTagLocation.getY() + Units.inchesToMeters(relativePositionOffset)),
+                    Rotation2d.fromDegrees(180)));
 
     addCommands(
         Commands.runOnce(arm::setCalibratedAssumeHomePosition),
