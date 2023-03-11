@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -81,7 +80,6 @@ public class RobotContainer {
   private final IntakeRelease intakeRelease;
   private Led2023 led2023;
   private final Arm arm;
-  private RobotBase robotBase;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -187,7 +185,7 @@ public class RobotContainer {
       }
     }
 
-    led2023 = new Led2023(arm, intakeRelease, null);
+    led2023 = new Led2023(arm, intakeRelease);
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines

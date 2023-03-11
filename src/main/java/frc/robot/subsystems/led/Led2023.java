@@ -1,6 +1,6 @@
 package frc.robot.subsystems.led;
 
-import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
@@ -27,14 +27,13 @@ public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
   public static final boolean USE_BATTERY_CHECK = true;
   public static final double BATTER_MIN_VOLTAGE = 10.0;
-  public static final boolean CHECK_ARM_CALIBRATION = true;
+  public static final boolean CHECK_ARM_CALIBRATION = false;
 
   private final double SHOOTING_TIMER_SPEED = 0.1;
   private final double RAINBOW_TIMER_SPEED = 0.02;
   private final int RAINBOW_AMOUNT = 20;
   private IntakeRelease intakerelease;
   private Arm arm;
-  private RobotBase robotBase;
 
   private double color = 0;
   private Timer rainbowTimer = new Timer();
@@ -108,10 +107,8 @@ public class Led2023 extends SubsystemBase {
     SHELF
   }
 
-  public Led2023(Arm arm, IntakeRelease intakerelease, RobotBase robotBase) {
+  public Led2023(Arm arm, IntakeRelease intakerelease) {
     super();
-
-    this.robotBase = robotBase;
     this.intakerelease = intakerelease;
     this.arm = arm;
 
@@ -137,110 +134,7 @@ public class Led2023 extends SubsystemBase {
   @Override
   public void periodic() {
     ColorScheme colorScheme = getColorScheme();
-    switch (colorScheme) {
-      case BATTERY_LOW:
-        set(batteryCheckColor);
-        sendData();
-        break;
-      case ARM_UNCALIBRATED:
-        set(COLORS_467.Red);
-        sendData();
-        break;
-      case CONE_HIGH:
-        setOneThird(COLORS_467.Yellow, 3);
-        sendData();
-        break;
-      case CONE_LOW:
-        setOneThird(COLORS_467.Yellow, 1);
-        sendData();
-        break;
-      case CONE_MID:
-        setOneThird(COLORS_467.Yellow, 2);
-        sendData();
-        break;
-      case CUBE_HIGH:
-        setOneThird(COLORS_467.Purple, 3);
-        sendData();
-        break;
-      case CUBE_LOW:
-        setOneThird(COLORS_467.Purple, 1);
-        sendData();
-        break;
-      case CUBE_MID:
-        setOneThird(COLORS_467.Purple, 2);
-        sendData();
-        break;
-      case DEFAULT:
-        setRainbowMovingDownSecondInv();
-        sendData();
-        break;
-      case HOLD_CONE:
-        setBlinkColors(COLORS_467.Yellow, COLORS_467.Yellow, COLORS_467.White.getColor());
-        sendData();
-        break;
-      case HOLD_CUBE:
-        setBlinkColors(COLORS_467.Purple, COLORS_467.Purple, COLORS_467.White.getColor());
-        sendData();
-        break;
-      case INTAKE_CONE:
-        setColorMovingUp(COLORS_467.White.getColor(), COLORS_467.Yellow.getColor());
-        sendData();
-        break;
-      case INTAKE_CUBE:
-        setColorMovingUp(COLORS_467.White.getColor(), COLORS_467.Purple.getColor());
-        sendData();
-        break;
-      case RELEASE_CONE:
-        setColorMovingDown(COLORS_467.Black.getColor(), COLORS_467.Yellow.getColor());
-        sendData();
-        break;
-      case RELEASE_CUBE:
-        setColorMovingDown(COLORS_467.Black.getColor(), COLORS_467.Purple.getColor());
-        break;
-      case WANT_CONE:
-        set(COLORS_467.Yellow);
-        sendData();
-        break;
-      case WANT_CUBE:
-        set(COLORS_467.Purple);
-        sendData();
-        break;
-      case INTAKE_UNKNOWN:
-        setColorMovingUpTwoClr(COLORS_467.Purple.getColor(), COLORS_467.Yellow.getColor());
-        sendData();
-        break;
-      case RELEASE_UNKNOWN:
-        setColorMovingDownTwoClr(COLORS_467.Yellow.getColor(), COLORS_467.Purple.getColor());
-        sendData();
-        break;
-      case CALIBRATING:
-        setBlinkColors(COLORS_467.Red, COLORS_467.Red, COLORS_467.Black.getColor());
-        sendData();
-        break;
-      case RESET_POSE:
-        setBlinkColors(COLORS_467.Orange, COLORS_467.Pink, COLORS_467.Green.getColor());
-        sendData();
-      case SHELF:
-        if (intakerelease.getWants() == Wants.CONE) {
-          setTop(COLORS_467.Yellow);
-        } else {
-          setTop(COLORS_467.Purple);
-        }
-        sendData();
-        break;
-      case FLOOR:
-        if (intakerelease.getWants() == Wants.CONE) {
-          setBottom(COLORS_467.Yellow);
-        } else {
-          setBottom(COLORS_467.Purple);
-        }
-        sendData();
-        break;
-      default:
-        setRainbowMovingDownSecondInv();
-        sendData();
-        break;
-    }
+    applyColorScheme(colorScheme);
   }
 
   public ColorScheme getColorScheme() {
@@ -258,7 +152,7 @@ public class Led2023 extends SubsystemBase {
     }
 
     // When robot is disabled
-    if (robotBase.isDisabled()) {
+    if (DriverStation.isDisabled()) {
       return ColorScheme.DEFAULT;
     }
 
@@ -373,6 +267,113 @@ public class Led2023 extends SubsystemBase {
         }
       }
       return ColorScheme.DEFAULT;
+    }
+  }
+
+  public void applyColorScheme(ColorScheme colorScheme) {
+    switch (colorScheme) {
+      case BATTERY_LOW:
+        set(batteryCheckColor);
+        sendData();
+        break;
+      case ARM_UNCALIBRATED:
+        set(COLORS_467.Red);
+        sendData();
+        break;
+      case CONE_HIGH:
+        setOneThird(COLORS_467.Yellow, 3);
+        sendData();
+        break;
+      case CONE_LOW:
+        setOneThird(COLORS_467.Yellow, 1);
+        sendData();
+        break;
+      case CONE_MID:
+        setOneThird(COLORS_467.Yellow, 2);
+        sendData();
+        break;
+      case CUBE_HIGH:
+        setOneThird(COLORS_467.Purple, 3);
+        sendData();
+        break;
+      case CUBE_LOW:
+        setOneThird(COLORS_467.Purple, 1);
+        sendData();
+        break;
+      case CUBE_MID:
+        setOneThird(COLORS_467.Purple, 2);
+        sendData();
+        break;
+      case DEFAULT:
+        setRainbowMovingDownSecondInv();
+        sendData();
+        break;
+      case HOLD_CONE:
+        setBlinkColors(COLORS_467.Yellow, COLORS_467.Yellow, COLORS_467.White.getColor());
+        sendData();
+        break;
+      case HOLD_CUBE:
+        setBlinkColors(COLORS_467.Purple, COLORS_467.Purple, COLORS_467.White.getColor());
+        sendData();
+        break;
+      case INTAKE_CONE:
+        setColorMovingUp(COLORS_467.White.getColor(), COLORS_467.Yellow.getColor());
+        sendData();
+        break;
+      case INTAKE_CUBE:
+        setColorMovingUp(COLORS_467.White.getColor(), COLORS_467.Purple.getColor());
+        sendData();
+        break;
+      case RELEASE_CONE:
+        setColorMovingDown(COLORS_467.Black.getColor(), COLORS_467.Yellow.getColor());
+        sendData();
+        break;
+      case RELEASE_CUBE:
+        setColorMovingDown(COLORS_467.Black.getColor(), COLORS_467.Purple.getColor());
+        break;
+      case WANT_CONE:
+        set(COLORS_467.Yellow);
+        sendData();
+        break;
+      case WANT_CUBE:
+        set(COLORS_467.Purple);
+        sendData();
+        break;
+      case INTAKE_UNKNOWN:
+        setColorMovingUpTwoClr(COLORS_467.Purple.getColor(), COLORS_467.Yellow.getColor());
+        sendData();
+        break;
+      case RELEASE_UNKNOWN:
+        setColorMovingDownTwoClr(COLORS_467.Yellow.getColor(), COLORS_467.Purple.getColor());
+        sendData();
+        break;
+      case CALIBRATING:
+        setBlinkColors(COLORS_467.Red, COLORS_467.Red, COLORS_467.Black.getColor());
+        sendData();
+        break;
+      case RESET_POSE:
+        setBlinkColors(COLORS_467.Orange, COLORS_467.Pink, COLORS_467.Green.getColor());
+        sendData();
+      case SHELF:
+        if (intakerelease.getWants() == Wants.CONE) {
+          setTop(COLORS_467.Yellow);
+        } else {
+          setTop(COLORS_467.Purple);
+        }
+        sendData();
+        break;
+      case FLOOR:
+        if (intakerelease.getWants() == Wants.CONE) {
+          setBottom(COLORS_467.Yellow);
+        } else {
+          setBottom(COLORS_467.Purple);
+        }
+        sendData();
+        break;
+      default:
+        setRainbowMovingDownSecondInv();
+        sendData();
+        break;
     }
   }
 
