@@ -2,13 +2,15 @@ package frc.robot.commands.auto;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drive.Drive;
 import org.littletonrobotics.junction.Logger;
 
 public class BetterBalancing extends CommandBase {
-  private Drive drive;
+  private final Drive drive;
   private double angleDegrees;
+  private final Timer timer = new Timer();
 
   public BetterBalancing(Drive drive) {
     this.drive = drive;
@@ -18,6 +20,8 @@ public class BetterBalancing extends CommandBase {
   @Override
   public void initialize() {
     angleDegrees = Double.POSITIVE_INFINITY;
+    timer.reset();
+    timer.start();
   }
 
   @Override
@@ -60,6 +64,6 @@ public class BetterBalancing extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return Math.abs(angleDegrees) < 3.0;
+    return Math.abs(angleDegrees) < 3.0 && timer.hasElapsed(2.0);
   }
 }

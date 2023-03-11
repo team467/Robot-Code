@@ -66,7 +66,7 @@ public class Arm extends SubsystemBase {
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
   private static final double ROTATE_DROP_METERS = 0.05;
-  private static final double ROTATE_RAISE_METERS = 0.07;
+  private static final double ROTATE_RAISE_METERS = 0.1;
 
   private double holdPosition;
   private double manualExtendVolts = 0.0;
