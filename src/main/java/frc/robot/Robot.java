@@ -4,12 +4,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.RobotType;
+import java.io.IOException;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -35,6 +38,16 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     Logger logger = Logger.getInstance();
 
+    if (RobotConstants.get().mode() == Constants.Mode.REAL) {
+      ProcessBuilder builder = new ProcessBuilder();
+      builder.command("sudo", "mount", "/dev/sda1", "/media");
+      try {
+        builder.start();
+      } catch (IOException e) {
+        DriverStation.reportWarning("USB has not been mounted!", e.getStackTrace());
+      }
+    }
+
     // Record metadata
     logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -54,7 +67,7 @@ public class Robot extends LoggedRobot {
         logger.addDataReceiver(new NT4Publisher());
         String folder = RobotConstants.get().logFolder();
         if (folder != null) {
-          //          logger.addDataReceiver(new WPILOGWriter(folder));
+          logger.addDataReceiver(new WPILOGWriter(folder));
         }
         if (RobotConstants.get().robot() == RobotType.ROBOT_COMP) {
           new PowerDistribution(20, ModuleType.kRev);

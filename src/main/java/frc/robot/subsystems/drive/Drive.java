@@ -37,7 +37,8 @@ public class Drive extends SubsystemBase {
   private double characterizationVolts = 0.0;
   private ChassisSpeeds setpoint = new ChassisSpeeds();
 
-  private final SwerveDrivePoseEstimator odometry;
+  private final SwerveModulePosition[] modulePositions;
+  private SwerveDrivePoseEstimator odometry;
   private double simGyro = 0.0;
 
   public Drive(
@@ -62,7 +63,7 @@ public class Drive extends SubsystemBase {
     }
     this.gyroIO.updateInputs(gyroInputs);
 
-    SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+    modulePositions = new SwerveModulePosition[4];
     for (int i = 0; i < 4; i++) {
       modulePositions[i] = modules[i].getPosition();
     }
@@ -70,11 +71,17 @@ public class Drive extends SubsystemBase {
     if (gyroInputs.connected) {
       odometry =
           new SwerveDrivePoseEstimator(
-              kinematics, Rotation2d.fromDegrees(gyroInputs.yaw), modulePositions, new Pose2d());
+              kinematics,
+              Rotation2d.fromDegrees(gyroInputs.yaw),
+              modulePositions,
+              new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
     } else {
       odometry =
           new SwerveDrivePoseEstimator(
-              kinematics, new Rotation2d(simGyro), modulePositions, new Pose2d());
+              kinematics,
+              new Rotation2d(simGyro),
+              modulePositions,
+              new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
     }
   }
 
@@ -250,6 +257,22 @@ public class Drive extends SubsystemBase {
     } else {
       runVelocity(new ChassisSpeeds(x, y, rot));
     }
+  }
+
+  public Rotation2d getRoll() {
+    return Rotation2d.fromDegrees(gyroInputs.roll);
+  }
+
+  public Rotation2d getPitch() {
+    return Rotation2d.fromDegrees(gyroInputs.pitch);
+  }
+
+  public double getRollVelocity() {
+    return Units.degreesToRadians(gyroInputs.rollRate);
+  }
+
+  public double getPitchVelocity() {
+    return Units.degreesToRadians(gyroInputs.pitchRate);
   }
 
   public void runCharacterizationVolts(double volts) {

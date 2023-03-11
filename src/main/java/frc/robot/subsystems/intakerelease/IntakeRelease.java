@@ -19,6 +19,9 @@ public class IntakeRelease extends SubsystemBase {
 
   private State state;
 
+  private boolean hasCone = false;
+  private boolean hasCube = false;
+
   public IntakeRelease(IntakeReleaseIO intakeReleaseIO) {
     super();
     this.intakeReleaseIO = intakeReleaseIO;
@@ -29,10 +32,11 @@ public class IntakeRelease extends SubsystemBase {
 
   public enum Wants {
     CONE,
-    CUBE
+    CUBE,
+    NONE
   }
 
-  private Wants wants = Wants.CUBE;
+  private Wants wants = Wants.NONE;
 
   public Wants getWants() {
     return (wants);
@@ -42,8 +46,14 @@ public class IntakeRelease extends SubsystemBase {
     return wants == Wants.CONE;
   }
 
+  public boolean wantsCube() {
+    return wants == Wants.CUBE;
+  }
+
   public void setWants(Wants wants) {
     this.wants = wants;
+    hasCone = false;
+    hasCube = false;
   }
 
   @Override
@@ -53,21 +63,26 @@ public class IntakeRelease extends SubsystemBase {
 
     switch (state) {
       case DISABLED -> intakeReleaseIO.setPercent(0);
-      case INTAKE -> intakeReleaseIO.setPercent(-0.7);
+      case INTAKE -> intakeReleaseIO.setPercent(-1.0);
       case RELEASE -> intakeReleaseIO.setPercent(0.4);
-      case HOLD_CUBE -> intakeReleaseIO.setPercent(-0.1);
-      case HOLD_CONE -> intakeReleaseIO.setPercent(-0.3);
+      case HOLD_CUBE -> intakeReleaseIO.setPercent(-0.3);
+      case HOLD_CONE -> intakeReleaseIO.setPercent(-0.8);
       case STOP -> intakeReleaseIO.setPercent(0);
       default -> intakeReleaseIO.setPercent(0);
     }
   }
 
   public void intake() {
+    hasCone = false;
+    hasCube = false;
     state = State.INTAKE;
   }
 
   public void release() {
     state = State.RELEASE;
+    wants = Wants.NONE;
+    hasCone = false;
+    hasCube = false;
   }
 
   public void stop() {
@@ -83,11 +98,13 @@ public class IntakeRelease extends SubsystemBase {
   }
 
   public boolean haveCube() {
-    return inputs.cubeLimitSwitch;
+    hasCube = hasCube || inputs.cubeLimitSwitch;
+    return hasCube;
   }
 
   public boolean haveCone() {
-    return inputs.coneLimitSwitch;
+    hasCone = hasCone || inputs.coneLimitSwitch;
+    return hasCone;
   }
 
   public boolean isFinished() {

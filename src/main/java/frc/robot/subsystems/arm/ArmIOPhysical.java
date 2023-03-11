@@ -56,6 +56,9 @@ public class ArmIOPhysical implements ArmIO {
 
     extendMotor.setIdleMode(IdleMode.kBrake);
     rotateMotor.setIdleMode(IdleMode.kBrake);
+
+    extendMotor.setSmartCurrentLimit(80);
+    rotateMotor.setSmartCurrentLimit(80);
   }
 
   @Override
@@ -71,6 +74,9 @@ public class ArmIOPhysical implements ArmIO {
     inputs.rotateLowLimitSwitch = rotateLowLimitSwitch.isPressed();
     inputs.rotatePosition = rotateEncoder.getPosition();
     inputs.rotateVelocity = rotateEncoder.getVelocity();
+    inputs.rotateAppliedVolts = rotateMotor.getBusVoltage() * rotateMotor.getAppliedOutput();
+    inputs.rotateCurrent = rotateMotor.getOutputCurrent();
+    inputs.rotateTemp = rotateMotor.getMotorTemperature();
     inputs.ratchetLocked = ratchetLocked;
   }
 
@@ -82,6 +88,7 @@ public class ArmIOPhysical implements ArmIO {
 
   @Override
   public void setExtendVoltage(double volts) {
+    volts = Math.min(volts, 5.0);
     setRatchetLocked(volts == 0);
     extendMotor.setVoltage(volts);
   }

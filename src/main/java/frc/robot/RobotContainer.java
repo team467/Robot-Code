@@ -8,18 +8,15 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
-import frc.lib.holonomictrajectory.Waypoint;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUPigeon2;
 import frc.lib.io.vision.VisionIO;
@@ -39,18 +36,18 @@ import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
-import frc.robot.commands.auto.AlignToNode;
-import frc.robot.commands.auto.ScoreConeHigh;
-import frc.robot.commands.auto.better.Leave;
-import frc.robot.commands.auto.better.LeaveStraight6;
-import frc.robot.commands.auto.better.ScoreOneLeave;
-import frc.robot.commands.auto.better.ScoreOneLeaveBalance;
-import frc.robot.commands.auto.better.StraightBack;
+import frc.robot.commands.auto.BetterBalancing;
+import frc.robot.commands.auto.complex.BackUpAndBalance;
+import frc.robot.commands.auto.complex.OnlyBackup;
+import frc.robot.commands.auto.complex.OnlyBalance;
+import frc.robot.commands.auto.complex.OnlyScore;
+import frc.robot.commands.auto.complex.ScoreAndBackUp;
+import frc.robot.commands.auto.complex.ScoreAndBackUpAndBalance;
+import frc.robot.commands.auto.complex.ScoreAndBalance;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
-import frc.robot.commands.drive.GoToTrajectory;
 import frc.robot.commands.intakerelease.HoldCMD;
-import frc.robot.commands.intakerelease.IntakeCMD;
+import frc.robot.commands.intakerelease.IntakeAndRaise;
 import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.commands.intakerelease.WantConeCMD;
 import frc.robot.commands.intakerelease.WantCubeCMD;
@@ -64,7 +61,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeReleaseIO;
-import frc.robot.subsystems.intakerelease.IntakeReleaseIOPhysical;
+import frc.robot.subsystems.intakerelease.IntakeReleaseIOBrushed;
 import frc.robot.subsystems.led.Led2023;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -97,8 +94,6 @@ public class RobotContainer {
   public RobotContainer() {
     switch (RobotConstants.get().mode()) {
         // Real robot, instantiate hardware IO implementations
-        // Init subsystems
-        // subsystem = new Subsystem(new SubsystemIOImpl());
       case REAL -> {
         switch (RobotConstants.get().robot()) {
           case ROBOT_COMP -> {
@@ -118,8 +113,8 @@ public class RobotContainer {
                     new ModuleIOSparkMAX(1, 2, 15, 2),
                     new ModuleIOSparkMAX(7, 8, 16, 3),
                     List.of(
-                        new VisionIOAprilTag("front", front, FieldConstants.aprilTagFieldLayout),
-                        new VisionIOAprilTag("right", right, FieldConstants.aprilTagFieldLayout)));
+                        new VisionIOAprilTag("front", front, FieldConstants.aprilTags),
+                        new VisionIOAprilTag("right", right, FieldConstants.aprilTags)));
             arm =
                 new Arm(
                     new ArmIOPhysical(
@@ -128,7 +123,7 @@ public class RobotContainer {
                         RobotConstants.get().ratchetSolenoidId()));
             intakeRelease =
                 new IntakeRelease(
-                    new IntakeReleaseIOPhysical(
+                    new IntakeReleaseIOBrushed(
                         RobotConstants.get().intakeMotorID(),
                         RobotConstants.get().intakeCubeLimitSwitchID()));
           }
@@ -190,40 +185,45 @@ public class RobotContainer {
       }
     }
 
-    led2023 = new Led2023(arm);
+    led2023 = new Led2023(arm, intakeRelease);
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines
-    autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
-    autoChooser.addOption(
-        "S shape",
-        new GoToTrajectory(
-            drive,
-            List.of(
-                Waypoint.fromHolonomicPose(new Pose2d()),
-                new Waypoint(new Translation2d(1, 1)),
-                new Waypoint(new Translation2d(2, -1)),
-                Waypoint.fromHolonomicPose(new Pose2d(3, 0, Rotation2d.fromDegrees(90))))));
-    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
-    // Rotation2d()));
+    autoChooser.addDefaultOption("Do Nothing", new ArmCalibrateZeroAtHomeCMD(arm));
 
+    // AprilTag 3 or 6
     autoChooser.addOption(
-        "Cross Community",
-        new GoToTrajectory(
-            drive,
-            List.of(
-                Waypoint.fromHolonomicPose(new Pose2d()),
-                new Waypoint(new Translation2d(FieldConstants.Community.outerX, 0)))));
+        "Tag 3/6: Only Back Up", new OnlyBackup(6, "Right", drive, arm, intakeRelease, led2023));
     autoChooser.addOption(
-        "Score cone high", new ScoreConeHigh(drive, arm, intakeRelease, led2023, 6));
-    //    autoChooser.addOption("Forward 1 meter", new GoToDistanceAngle(drive, 1.0, new
-    // Rotation2d()));
-    //        autoChooser.addOption("Drive Then Balance", new DriveFowardBallance(drive));
-    //        autoChooser.addOption("Drive Foward and Come Back", new DriveFowardComeBack(drive));
-    //        autoChooser.addOption(
-    //            "Score then Drive Foward, then ballance", new ScoreDriveFowardBallance(drive));
-    //    autoChooser.addOption(
-    //        "Score Then Move", new ScoreThenMoveOut8(drive, arm, intakeRelease, led2023));
+        "Tag 3/6: Only Score Cone",
+        new OnlyScore(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption(
+        "Tag 3/6: Score Cone and Back Up",
+        new ScoreAndBackUp(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+
+    // AprilTag 2 or 7
+    autoChooser.addOption(
+        "Tag 2/7: Only Score Cone",
+        new OnlyScore(7, "Right", "cone", "high", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption("Tag 2/7: Only Balance", new OnlyBalance("Right", drive, arm, led2023));
+    autoChooser.addOption(
+        "Tag 2/7: Back Up and Balance", new BackUpAndBalance("Center", drive, arm, led2023));
+    autoChooser.addOption(
+        "Tag 2/7: Score and Balance",
+        new ScoreAndBalance("Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption(
+        "Tag 2/7: Score, Back Up and Balance",
+        new ScoreAndBackUpAndBalance("Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+
+    // AprilTag 1 or 8
+    autoChooser.addOption(
+        "Tag 1/8: Only Back Up", new OnlyBackup(8, "Left", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption(
+        "Tag 1/8: Only Score Cone",
+        new OnlyScore(8, "Left", "Cone", "High", drive, arm, intakeRelease, led2023));
+    autoChooser.addOption(
+        "Tag 1/8: Score Cone and Back Up",
+        new ScoreAndBackUp(8, "Left", "Cone", "High", drive, arm, intakeRelease, led2023));
 
     autoChooser.addOption(
         "Drive Characterization",
@@ -236,15 +236,6 @@ public class RobotContainer {
                     drive::runCharacterizationVolts,
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
-    autoChooser.addOption("Go to node", new AlignToNode(drive, () -> 1));
-    autoChooser.addOption("Straight Back", new StraightBack(drive, arm, led2023));
-    autoChooser.addOption("Leave", new Leave(drive, arm, led2023));
-    autoChooser.addOption("Leave Straight", new LeaveStraight6(drive, arm, led2023));
-    autoChooser.addOption(
-        "Score one and leave", new ScoreOneLeave(drive, arm, intakeRelease, led2023));
-    autoChooser.addOption(
-        "Score one, leave and balance",
-        new ScoreOneLeaveBalance(drive, arm, intakeRelease, led2023));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
     // Configure the button bindings
@@ -273,7 +264,8 @@ public class RobotContainer {
                     () ->
                         drive.setPose(
                             new Pose2d(
-                                new Translation2d(), AllianceFlipUtil.apply(new Rotation2d()))))
+                                drive.getPose().getTranslation(),
+                                AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
     driverController
         .pov(-1)
@@ -282,18 +274,18 @@ public class RobotContainer {
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
     intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease, led2023));
 
-    driverController.leftBumper().whileTrue(new IntakeCMD(intakeRelease, led2023, arm));
-    driverController.rightBumper().whileTrue(new ReleaseCMD(intakeRelease, led2023, arm));
+    driverController.leftBumper().toggleOnTrue(new IntakeAndRaise(arm, intakeRelease, led2023));
+    driverController.rightBumper().toggleOnTrue(new ReleaseCMD(intakeRelease, led2023, arm));
 
     // Set the game piece type
-    operatorController.back().onFalse(new WantConeCMD(intakeRelease, led2023));
+    operatorController.back().whileFalse(new WantConeCMD(intakeRelease, led2023));
     operatorController.back().onTrue(new WantCubeCMD(intakeRelease, led2023));
 
     // Manual arm movements
-    operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, intakeRelease, led2023));
-    operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm, intakeRelease, led2023));
-    operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm, intakeRelease, led2023));
-    operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, intakeRelease, led2023));
+    operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, led2023));
+    operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm, led2023));
+    operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm, led2023));
+    operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, led2023));
 
     // Placing cone or cube, gets what it wants from in the command
     operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease, led2023));
@@ -314,7 +306,9 @@ public class RobotContainer {
 
     // Need to set to use automated movements, should be set in Autonomous init.
     driverController.back().onTrue(new ArmCalibrateCMD(arm, led2023));
-    driverController.b().onTrue(new ArmCalibrateZeroAtHomeCMD(arm, led2023));
+    driverController.b().onTrue(new ArmCalibrateZeroAtHomeCMD(arm));
+
+    driverController.a().onTrue(new BetterBalancing(drive));
 
     // Manual arm movements
     operatorController.leftStick().onTrue(new ArmStopCMD(arm, led2023));

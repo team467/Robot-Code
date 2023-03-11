@@ -2,8 +2,6 @@ package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -68,13 +66,12 @@ public class Arm extends SubsystemBase {
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
   private static final double ROTATE_DROP_METERS = 0.05;
-  private static final double ROTATE_RAISE_METERS = 0.07;
+  private static final double ROTATE_RAISE_METERS = 0.1;
 
   private double holdPosition;
   private double manualExtendVolts = 0.0;
   private double manualRotateVolts = 0.0;
-  private ProfiledPIDController extendPidController =
-      new ProfiledPIDController(50, 0, 0, new TrapezoidProfile.Constraints(10, 10));
+  private PIDController extendPidController = new PIDController(50, 0, 0);
   private PIDController rotatePidController = new PIDController(400, 0, 0);
 
   private static final double BACK_FORCE = -1.3;
@@ -108,7 +105,6 @@ public class Arm extends SubsystemBase {
     setRotateVoltage(0.0);
     manualExtendVolts = 0;
     manualRotateVolts = 0;
-    extendPidController.reset(armIOInputs.extendPosition, armIOInputs.extendVelocity);
   }
 
   public void manualExtend(double volts) {
@@ -132,7 +128,7 @@ public class Arm extends SubsystemBase {
     armIO.resetExtendEncoderPosition();
     armIO.resetRotateEncoderPosition();
     isCalibrated = true;
-    hold();
+    mode = ArmMode.AUTO;
   }
 
   public void hold() {
@@ -146,7 +142,6 @@ public class Arm extends SubsystemBase {
     setRotateVoltage(0.0);
     manualRotateVolts = 0;
     manualExtendVolts = 0;
-    extendPidController.reset(armIOInputs.extendPosition, armIOInputs.extendVelocity);
   }
 
   public boolean isHolding() {
@@ -157,11 +152,7 @@ public class Arm extends SubsystemBase {
     if (armIOInputs.rotatePosition < 0.1) {
       mode = ArmMode.AUTO;
       autoMode = AutoMode.ROTATE;
-      rotateSetpoint =
-          MathUtil.clamp(
-              armIOInputs.rotatePosition + ROTATE_RAISE_METERS,
-              RobotConstants.get().armRotateMinMeters(),
-              RobotConstants.get().armRotateMaxMeters());
+      rotateSetpoint = armIOInputs.rotatePosition + ROTATE_RAISE_METERS;
       extendSetpoint = armIOInputs.extendPosition;
     }
   }
@@ -170,11 +161,7 @@ public class Arm extends SubsystemBase {
     if (!isDropping) {
       mode = ArmMode.AUTO;
       autoMode = AutoMode.ROTATE;
-      rotateSetpoint =
-          MathUtil.clamp(
-              armIOInputs.rotatePosition - ROTATE_DROP_METERS,
-              RobotConstants.get().armRotateMinMeters(),
-              RobotConstants.get().armRotateMaxMeters());
+      rotateSetpoint = armIOInputs.rotatePosition - ROTATE_DROP_METERS;
       extendSetpoint = armIOInputs.extendPosition;
     }
     isDropping = true;
@@ -194,19 +181,19 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
+    armIO.updateInputs(armIOInputs);
+    logger.processInputs("Arm", armIOInputs);
+
     if (DriverStation.isDisabled()) {
       // Disable output while disabled
       stop();
       return;
     }
-
-    armIO.updateInputs(armIOInputs);
-    logger.processInputs("Arm", armIOInputs);
     logger.recordOutput("Arm/Mode", mode.toString());
     logger.recordOutput("Arm/CalibrateMode", calibrateMode.toString());
 
     switch (mode) {
-      case MANUAL:
+      case MANUAL -> {
         if (isCalibrated
             && armIOInputs.extendPosition < RETRACT_POSITION_CLOSE_TO_LIMIT
             && manualExtendVolts < 0) {
@@ -215,54 +202,16 @@ public class Arm extends SubsystemBase {
           setExtendVoltage(manualExtendVolts);
         }
         setRotateVoltage(manualRotateVolts);
-        // TODO: Add back contraints for manual movement.
-        // if (armIOInputs.extendPosition > RobotConstants.get().armExtendMaxMeters()
-        //     && manualExtendVelocity > 0) {
-        //   armIO.setExtendVelocity(0);
-        // } else if (armIOInputs.extendPosition < RobotConstants.get().armExtendMinMeters()
-        //     && manualExtendVelocity < 0) {
-        //   setExtendVoltage(calculateExtendPid(RobotConstants.get().armExtendMinMeters()));
-        // } else {
-        // }
-        // if (hasRotate) {
-        // if (armIOInputs.rotatePosition > RobotConstants.get().armRotateMaxMeters()
-        //     && manualRotateVolts > 0) {
-        //   armIO.setRotateVelocity(0);
-        // } else if (armIOInputs.rotatePosition < RobotConstants.get().armRotateMinMeters()
-        //     && manualRotateVolts < 0) {
-        //
-        // armIO.setRotateVoltage(calculateRotatePid(RobotConstants.get().armRotateMinMeters()));
-        // } else {
-        //  armIO.setExtendVelocity(manualExtendVelocity);
-        // }
-        // }
         logger.recordOutput("Arm/ManualExtendVolts", manualRotateVolts);
         logger.recordOutput("Arm/ManualRotateVolts", manualRotateVolts);
-        break;
-
-      case AUTO:
-        autoPeriodic();
-        break;
-
-      case EXTEND_CHARACTERIZATION:
-        setExtendVoltage(characterizationVoltage);
-        break;
-
-      case ROTATE_CHARACTERIZATION:
-        setRotateVoltage(characterizationVoltage);
-        break;
-
-      case HOLD:
-        armIO.setExtendVoltageWhileHold(calculateExtendPid(holdPosition) + HOLD_BACK_FORCE);
-        break;
-
-      case CALIBRATE:
-        calibratePeriodic();
-        break;
-
-      case KICKBACK:
-        kickback.periodic();
-        break;
+      }
+      case AUTO -> autoPeriodic();
+      case EXTEND_CHARACTERIZATION -> setExtendVoltage(characterizationVoltage);
+      case ROTATE_CHARACTERIZATION -> setRotateVoltage(characterizationVoltage);
+      case HOLD -> armIO.setExtendVoltageWhileHold(
+          calculateExtendPid(holdPosition) + HOLD_BACK_FORCE);
+      case CALIBRATE -> calibratePeriodic();
+      case KICKBACK -> kickback.periodic();
     }
   }
 
@@ -274,7 +223,7 @@ public class Arm extends SubsystemBase {
     }
     logger.recordOutput("Arm/AutoMode", autoMode.toString());
     switch (autoMode) {
-      case RETRACT:
+      case RETRACT -> {
         if (autoRetractTimer.hasElapsed(1)
             || armIOInputs.extendPosition < SAFE_RETRACT_NON_HOME + EXTEND_TOLERANCE_METERS) {
           setExtendVoltage(0);
@@ -282,9 +231,8 @@ public class Arm extends SubsystemBase {
         } else {
           setExtendVoltage(calculateExtendPid(SAFE_RETRACT_NON_HOME));
         }
-        break;
-
-      case RETRACT_FULL:
+      }
+      case RETRACT_FULL -> {
         if (autoRetractTimer.hasElapsed(1.5)
             || armIOInputs.extendPosition
                 < RobotConstants.get().armExtendMinMeters() + EXTEND_TOLERANCE_METERS) {
@@ -293,20 +241,18 @@ public class Arm extends SubsystemBase {
         } else {
           setExtendVoltage(calculateExtendPid(RobotConstants.get().armExtendMinMeters()));
         }
-        break;
-
-      case ROTATE:
+      }
+      case ROTATE -> {
         setRotateVoltage(calculateRotatePid(rotateSetpoint));
         if (isRotateFinished()) {
           autoMode = AutoMode.EXTEND;
           setRotateVoltage(0);
         }
-        break;
-
-      case EXTEND:
+      }
+      case EXTEND -> {
         double extendFbOutput = calculateExtendPid(extendSetpoint);
         setExtendVoltage(extendFbOutput);
-        break;
+      }
     }
 
     logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
@@ -315,7 +261,7 @@ public class Arm extends SubsystemBase {
 
   private void calibratePeriodic() {
     switch (calibrateMode) {
-      case RETRACT_ARM:
+      case RETRACT_ARM -> {
         // Drive Extend Motor until hit limit switch
         if (armIOInputs.extendReverseLimitSwitch && armIOInputs.rotateLowLimitSwitch) {
           armIO.resetExtendEncoderPosition();
@@ -327,21 +273,19 @@ public class Arm extends SubsystemBase {
         if (armIOInputs.extendReverseLimitSwitch) {
           armIO.resetExtendEncoderPosition();
           calibrateMode = CalibrateMode.EXTEND_ARM;
-          extendPidController.reset(0, 0);
         } else {
           setExtendVoltage(CALIBRATE_RETRACT_VOLTAGE);
         }
-
-        break;
-      case EXTEND_ARM:
+      }
+      case EXTEND_ARM -> {
         // Drive Extend Motor a little bit outwards
         setExtendVoltage(calculateExtendPidUnsafe(EXTEND_CALIBRATION_POSITION));
         if (isExtendPositionNear(EXTEND_CALIBRATION_POSITION)) {
           calibrateMode = CalibrateMode.LOWER_ARM;
           setExtendVoltage(0);
         }
-        break;
-      case LOWER_ARM:
+      }
+      case LOWER_ARM -> {
         // Drive rotate motor until hit lower limit switch
         if (calibrateRotateOrigin - armIOInputs.rotatePosition > 0.15) {
           // If we've travelled a lot, start over so that we don't pull the belt too far.
@@ -353,9 +297,8 @@ public class Arm extends SubsystemBase {
         } else {
           setRotateVoltage(CALIBRATE_ROTATE_VOLTAGE);
         }
-
-        break;
-      case RETRACT_ARM_AT_LOW_POSITION:
+      }
+      case RETRACT_ARM_AT_LOW_POSITION -> {
         // Drive Extend Motor until hit limit switch
         if (armIOInputs.extendReverseLimitSwitch) {
           armIO.resetExtendEncoderPosition();
@@ -364,7 +307,7 @@ public class Arm extends SubsystemBase {
         } else {
           setExtendVoltage(CALIBRATE_RETRACT_VOLTAGE);
         }
-        break;
+      }
     }
   }
 
@@ -383,7 +326,6 @@ public class Arm extends SubsystemBase {
             rotateSetpoint,
             RobotConstants.get().armRotateMinMeters(),
             RobotConstants.get().armRotateMaxMeters());
-    extendPidController.reset(armIOInputs.extendPosition, armIOInputs.extendVelocity);
   }
 
   public void setTargetPositionExtend(double extendSetpoint) {
@@ -434,7 +376,8 @@ public class Arm extends SubsystemBase {
 
   public boolean isRotateFinished() {
     return Math.abs(armIOInputs.rotatePosition - rotateSetpoint) <= ROTATE_TOLERANCE_METERS
-        || (armIOInputs.rotateHighLimitSwitch && armIOInputs.rotatePosition < rotateSetpoint);
+        || (armIOInputs.rotateHighLimitSwitch && armIOInputs.rotatePosition < rotateSetpoint)
+        || (armIOInputs.rotateLowLimitSwitch && armIOInputs.rotatePosition > rotateSetpoint);
   }
 
   private void setRotateVoltage(double volts) {
@@ -521,14 +464,17 @@ public class Arm extends SubsystemBase {
       returnToMode = mode;
       armIO.setExtendVoltage(-2);
       this.targetVolts = targetVolts;
+      timer.reset();
       timer.start();
     }
 
     void periodic() {
-      if (timer.hasElapsed(0.03)) {
+      if (timer.hasElapsed(0.1)) {
         setExtendVoltage(targetVolts);
         mode = returnToMode;
         kickback = null;
+      } else {
+        armIO.setExtendVoltage(-2);
       }
     }
   }

@@ -20,6 +20,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
     motor.setIdleMode(IdleMode.kBrake);
     motor.setInverted(false);
     motor.enableVoltageCompensation(12);
+    motor.setSmartCurrentLimit(20);
     cubeLimitSwitch = new DigitalInput(cubeLimID);
     coneLimitSwitch = motor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
   }

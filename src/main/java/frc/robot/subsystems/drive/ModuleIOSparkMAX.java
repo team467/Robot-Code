@@ -51,6 +51,9 @@ public class ModuleIOSparkMAX implements ModuleIO {
     driveMotor.enableVoltageCompensation(12);
     turnMotor.enableVoltageCompensation(12);
 
+    driveMotor.setSmartCurrentLimit(80);
+    turnMotor.setSmartCurrentLimit(80);
+
     turnEncoderAbsolute.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
     this.index = index;

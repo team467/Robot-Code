@@ -51,4 +51,9 @@ public class ReleaseCMD extends CommandBase {
   public void end(boolean interrupted) {
     ledStrip.defaultLights();
   }
+
+  @Override
+  public boolean isFinished() {
+    return !intakerelease.haveCone() && !intakerelease.haveCube();
+  }
 }

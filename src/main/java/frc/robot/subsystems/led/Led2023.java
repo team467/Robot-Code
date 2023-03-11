@@ -95,9 +95,12 @@ public class Led2023 extends SubsystemBase {
     SHELF
   }
 
-  public Led2023(Arm arm) {
+  public Led2023(Arm arm, IntakeRelease intakerelease) {
     super();
+
+    this.intakerelease = intakerelease;
     this.arm = arm;
+
     ledStrip =
         LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);
     for (int i = 0; i < ledStrip.getSize(); i++) {
@@ -564,22 +567,28 @@ public class Led2023 extends SubsystemBase {
 
   public void setOneThird(COLORS_467 color, int preSet) {
     // t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
-    int start;
-    int end;
+    double start;
+    double end;
     if (preSet == 1) {
       start = 0;
-      end = RobotConstants.get().led2023LedCount() / 3;
+      end = Math.ceil(RobotConstants.get().led2023LedCount() / 3);
     } else if (preSet == 2) {
-      start = RobotConstants.get().led2023LedCount() / 3;
-      end = RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
+      start = Math.floor(RobotConstants.get().led2023LedCount() / 3);
+      end =
+          Math.ceil(
+              RobotConstants.get().led2023LedCount()
+                  - (RobotConstants.get().led2023LedCount() / 3));
     } else if (preSet == 3) {
-      start = RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
-      end = RobotConstants.get().led2023LedCount();
+      start =
+          Math.floor(
+              RobotConstants.get().led2023LedCount()
+                  - (RobotConstants.get().led2023LedCount() / 3));
+      end = Math.ceil(RobotConstants.get().led2023LedCount());
     } else {
       start = 0;
       end = RobotConstants.get().led2023LedCount();
     }
-    for (int i = start; i < end; i++) {
+    for (int i = (int) start; i < end; i++) {
       ledStrip.setLED(i, color.getColor());
     }
     ledStrip.update();
