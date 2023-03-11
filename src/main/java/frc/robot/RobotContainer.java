@@ -279,7 +279,7 @@ public class RobotContainer {
 
     // Set the game piece type
     operatorController.back().whileFalse(new WantConeCMD(intakeRelease, led2023));
-    operatorController.back().onTrue(new WantCubeCMD(intakeRelease, led2023));
+    operatorController.back().whileTrue(new WantCubeCMD(intakeRelease, led2023));
 
     // Manual arm movements
     operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, led2023));
