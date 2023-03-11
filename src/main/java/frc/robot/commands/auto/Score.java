@@ -57,9 +57,9 @@ public class Score extends SequentialCommandGroup {
 
   private Command pieceType(String gamePiece, IntakeRelease intakeRelease, Led2023 ledStrip) {
     if (gamePiece.equalsIgnoreCase("cone")) {
-      return new WantConeCMD(intakeRelease, ledStrip);
+      return new WantConeCMD(intakeRelease);
     } else {
-      return new WantCubeCMD(intakeRelease, ledStrip);
+      return new WantCubeCMD(intakeRelease);
     }
   }
 }

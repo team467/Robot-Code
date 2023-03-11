@@ -15,6 +15,7 @@ import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.intakerelease.HoldCMD;
+import frc.robot.commands.intakerelease.IntakeAndRaise;
 import frc.robot.commands.intakerelease.IntakeCMD;
 import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.commands.intakerelease.WantConeCMD;
@@ -25,7 +26,7 @@ import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
-  public static final boolean USE_BATTERY_CHECK = true;
+  public static final boolean USE_BATTERY_CHECK = false;
   public static final double BATTER_MIN_VOLTAGE = 10.0;
   public static final boolean CHECK_ARM_CALIBRATION = false;
 
@@ -124,7 +125,6 @@ public class Led2023 extends SubsystemBase {
   public void resetTimers() {
     rainbowTimer.reset();
     purpleTimer.reset();
-    lastLoopTime = Timer.getFPGATimestamp();
   }
 
   public void setCmdColorScheme(ColorScheme cs) {
@@ -139,7 +139,6 @@ public class Led2023 extends SubsystemBase {
   }
 
   public ColorScheme getColorScheme() {
-    lastLoopTime = Timer.getFPGATimestamp();
 
     // Check if battery is low
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
@@ -174,13 +173,14 @@ public class Led2023 extends SubsystemBase {
     }
 
     // If trying to intake something
-    if (intakerelease.getCurrentCommand() instanceof IntakeCMD) {
+    if (intakerelease.getCurrentCommand() instanceof IntakeCMD
+        || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
       // If intaking Cubes
-      if (intakerelease.getWants() == Wants.CUBE) {
+      if (intakerelease.wantsCube()) {
         return ColorScheme.INTAKE_CUBE;
       }
       // If intaking Cones
-      if (intakerelease.getWants() == Wants.CONE) {
+      if (intakerelease.wantsCone()) {
         return ColorScheme.INTAKE_CONE;
       } else {
         return ColorScheme.INTAKE_UNKNOWN;
@@ -199,16 +199,6 @@ public class Led2023 extends SubsystemBase {
       } else {
         return ColorScheme.RELEASE_UNKNOWN;
       }
-    }
-
-    // If we want cubes
-    if (intakerelease.getCurrentCommand() instanceof WantCubeCMD) {
-      return ColorScheme.WANT_CUBE;
-    }
-
-    // If we want cones
-    if (intakerelease.getCurrentCommand() instanceof WantConeCMD) {
-      return ColorScheme.WANT_CONE;
     }
 
     // When picking up from shelf
@@ -249,6 +239,16 @@ public class Led2023 extends SubsystemBase {
       } else {
         return ColorScheme.CONE_HIGH;
       }
+    }
+
+    // If we want cubes
+    if (intakerelease.wantsCube()) {
+      return ColorScheme.WANT_CUBE;
+    }
+
+    // If we want cones
+    if (intakerelease.wantsCone()) {
+      return ColorScheme.WANT_CONE;
     }
 
     // Sets default only for 5 secs

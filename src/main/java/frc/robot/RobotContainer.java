@@ -278,8 +278,8 @@ public class RobotContainer {
     driverController.rightBumper().onTrue(new ReleaseCMD(intakeRelease, arm));
 
     // Set the game piece type
-    operatorController.back().whileFalse(new WantConeCMD(intakeRelease, led2023));
-    operatorController.back().onTrue(new WantCubeCMD(intakeRelease, led2023));
+    operatorController.back().whileFalse(new WantConeCMD(intakeRelease));
+    operatorController.back().onTrue(new WantCubeCMD(intakeRelease));
 
     // Manual arm movements
     operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, led2023));
@@ -335,9 +335,9 @@ public class RobotContainer {
   public void initLeds() {
     // Set default LEDs
     if (operatorController.back().getAsBoolean()) {
-      new WantCubeCMD(intakeRelease, led2023).schedule();
+      new WantCubeCMD(intakeRelease).schedule();
     } else {
-      new WantConeCMD(intakeRelease, led2023).schedule();
+      new WantConeCMD(intakeRelease).schedule();
     }
     Logger.getInstance()
         .recordOutput("CustomController/WantSwitch", operatorController.back().getAsBoolean());
