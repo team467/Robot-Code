@@ -1,5 +1,6 @@
 package frc.robot.subsystems.led;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
@@ -8,8 +9,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.leds.DoubleLEDStrip;
 import frc.lib.leds.LEDManager;
 import frc.robot.RobotConstants;
+import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmFloorCMD;
+import frc.robot.commands.arm.ArmScoreHighNodeCMD;
+import frc.robot.commands.arm.ArmScoreMidNodeCMD;
+import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.intakerelease.HoldCMD;
 import frc.robot.commands.intakerelease.IntakeCMD;
+import frc.robot.commands.intakerelease.ReleaseCMD;
+import frc.robot.commands.intakerelease.WantConeCMD;
+import frc.robot.commands.intakerelease.WantCubeCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
@@ -25,12 +34,14 @@ public class Led2023 extends SubsystemBase {
   private final int RAINBOW_AMOUNT = 20;
   private IntakeRelease intakerelease;
   private Arm arm;
+  private RobotBase robotBase;
 
   private double color = 0;
   private Timer rainbowTimer = new Timer();
   private Timer purpleTimer = new Timer();
   protected double lastLoopTime = 0;
   private ColorScheme cmdColorScheme = ColorScheme.DEFAULT;
+  private Timer defaultTimer = new Timer();
 
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
@@ -97,9 +108,10 @@ public class Led2023 extends SubsystemBase {
     SHELF
   }
 
-  public Led2023(Arm arm, IntakeRelease intakerelease) {
+  public Led2023(Arm arm, IntakeRelease intakerelease, RobotBase robotBase) {
     super();
 
+    this.robotBase = robotBase;
     this.intakerelease = intakerelease;
     this.arm = arm;
 
@@ -245,6 +257,16 @@ public class Led2023 extends SubsystemBase {
       return ColorScheme.ARM_UNCALIBRATED;
     }
 
+    // When robot is disabled
+    if (robotBase.isDisabled()) {
+      return ColorScheme.DEFAULT;
+    }
+
+    // When the arm is calibrating
+    if (arm.getCurrentCommand() instanceof ArmCalibrateCMD) {
+      return ColorScheme.CALIBRATING;
+    }
+
     // If trying to hold on to something
     if (intakerelease.getCurrentCommand() instanceof HoldCMD) {
       // If holding on to Cubes
@@ -272,7 +294,7 @@ public class Led2023 extends SubsystemBase {
     }
 
     // If trying to release something
-    if (intakerelease.getCurrentCommand() instanceof IntakeCMD) {
+    if (intakerelease.getCurrentCommand() instanceof ReleaseCMD) {
       // If releasing Cubes
       if (intakerelease.getWants() == Wants.CUBE) {
         return ColorScheme.RELEASE_CUBE;
@@ -284,7 +306,74 @@ public class Led2023 extends SubsystemBase {
         return ColorScheme.RELEASE_UNKNOWN;
       }
     }
-    return ColorScheme.DEFAULT;
+
+    // If we want cubes
+    if (intakerelease.getCurrentCommand() instanceof WantCubeCMD) {
+      return ColorScheme.WANT_CUBE;
+    }
+
+    // If we want cones
+    if (intakerelease.getCurrentCommand() instanceof WantConeCMD) {
+      return ColorScheme.WANT_CONE;
+    }
+
+    // When picking up from shelf
+    if (arm.getCurrentCommand() instanceof ArmShelfCMD) {
+      return ColorScheme.SHELF;
+    }
+
+    // When picking up from floor
+    if (arm.getCurrentCommand() instanceof ArmFloorCMD) {
+      return ColorScheme.FLOOR;
+    }
+
+    // When arm is scoring high
+    if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD) {
+      if (intakerelease.getWants() == Wants.CUBE
+          || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+        return ColorScheme.CUBE_HIGH;
+      } else {
+        return ColorScheme.CONE_HIGH;
+      }
+    }
+
+    // When arm is scoring mid node
+    if (arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD) {
+      if (intakerelease.getWants() == Wants.CUBE
+          || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+        return ColorScheme.CUBE_HIGH;
+      } else {
+        return ColorScheme.CONE_HIGH;
+      }
+    }
+
+    // When arm is scoring hybrid/low node
+    if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD) {
+      if (intakerelease.getWants() == Wants.CUBE
+          || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+        return ColorScheme.CUBE_HIGH;
+      } else {
+        return ColorScheme.CONE_HIGH;
+      }
+    }
+
+    // Sets default only for 5 secs
+    else {
+      defaultTimer.start();
+      if (defaultTimer.hasElapsed(5)) {
+        if (intakerelease.getCurrentCommand() instanceof WantCubeCMD) {
+          defaultTimer.stop();
+          defaultTimer.reset();
+          return ColorScheme.WANT_CUBE;
+        }
+        if (intakerelease.getCurrentCommand() instanceof WantConeCMD) {
+          defaultTimer.stop();
+          defaultTimer.reset();
+          return ColorScheme.WANT_CONE;
+        }
+      }
+      return ColorScheme.DEFAULT;
+    }
   }
 
   public void setLED(int index, Color color) {

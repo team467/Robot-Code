@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -80,6 +81,7 @@ public class RobotContainer {
   private final IntakeRelease intakeRelease;
   private Led2023 led2023;
   private final Arm arm;
+  private RobotBase robotBase;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -185,7 +187,7 @@ public class RobotContainer {
       }
     }
 
-    led2023 = new Led2023(arm, intakeRelease);
+    led2023 = new Led2023(arm, intakeRelease, null);
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines
@@ -285,8 +287,8 @@ public class RobotContainer {
     operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, led2023));
 
     // Placing cone or cube, gets what it wants from in the command
-    operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease, led2023));
-    operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease, led2023));
+    operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease));
+    operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease));
     operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease));
     Logger.getInstance()
         .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
@@ -302,16 +304,16 @@ public class RobotContainer {
     driverController.x().onTrue(new ArmHomeCMD(arm, led2023));
 
     // Need to set to use automated movements, should be set in Autonomous init.
-    driverController.back().onTrue(new ArmCalibrateCMD(arm, led2023));
+    driverController.back().onTrue(new ArmCalibrateCMD(arm));
     driverController.b().onTrue(new ArmCalibrateZeroAtHomeCMD(arm));
 
     driverController.a().onTrue(new Balancing(drive));
 
     // Manual arm movements
-    operatorController.leftStick().onTrue(new ArmStopCMD(arm, led2023));
-    operatorController.rightStick().onTrue(new ArmStopCMD(arm, led2023));
-    operatorController.leftBumper().onTrue(new ArmShelfCMD(arm, led2023));
-    operatorController.rightBumper().onTrue(new ArmFloorCMD(arm, led2023));
+    operatorController.leftStick().onTrue(new ArmStopCMD(arm));
+    operatorController.rightStick().onTrue(new ArmStopCMD(arm));
+    operatorController.leftBumper().onTrue(new ArmShelfCMD(arm));
+    operatorController.rightBumper().onTrue(new ArmFloorCMD(arm));
     Logger.getInstance()
         .recordOutput(
             "CustomController/FloorButton", operatorController.rightBumper().getAsBoolean());

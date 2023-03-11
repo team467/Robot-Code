@@ -49,9 +49,9 @@ public class Score extends SequentialCommandGroup {
     if (location.equalsIgnoreCase("high")) {
       return new ArmScoreHighNodeCMD(arm, intakeRelease);
     } else if (location.equalsIgnoreCase("mid")) {
-      return new ArmScoreMidNodeCMD(arm, intakeRelease, ledStrip);
+      return new ArmScoreMidNodeCMD(arm, intakeRelease);
     } else {
-      return new ArmScoreLowNodeCMD(arm, intakeRelease, ledStrip);
+      return new ArmScoreLowNodeCMD(arm, intakeRelease);
     }
   }
 
