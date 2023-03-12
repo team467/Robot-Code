@@ -12,7 +12,7 @@ public class ArmManualUpCMD extends CommandBase {
   public ArmManualUpCMD(Arm arm, Led2023 ledStrip) {
     this.arm = arm;
     this.ledStrip = ledStrip;
-    addRequirements(arm, ledStrip);
+    addRequirements(arm);
   }
 
   @Override
@@ -22,7 +22,7 @@ public class ArmManualUpCMD extends CommandBase {
 
   @Override
   public void execute() {
-    arm.manualRotate(7);
+    arm.manualRotate(12);
   }
 
   @Override

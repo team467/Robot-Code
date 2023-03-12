@@ -13,13 +13,17 @@ public class WantConeCMD extends CommandBase {
   public WantConeCMD(IntakeRelease intakerelease, Led2023 ledStrip) {
     this.intakerelease = intakerelease;
     this.ledStrip = ledStrip;
-    addRequirements(intakerelease, ledStrip);
+    addRequirements(intakerelease);
   }
 
   @Override
   public void initialize() {
-    intakerelease.setWants(Wants.CONE);
     ledStrip.setCmdColorScheme(ColorScheme.WANT_CONE);
+  }
+
+  @Override
+  public void execute() {
+    intakerelease.setWants(Wants.CONE);
   }
 
   @Override

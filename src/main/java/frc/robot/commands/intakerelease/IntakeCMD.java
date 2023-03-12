@@ -15,7 +15,7 @@ public class IntakeCMD extends CommandBase {
     this.intakerelease = intakerelease;
     this.ledStrip = ledStrip;
 
-    addRequirements(intakerelease, ledStrip);
+    addRequirements(intakerelease);
   }
 
   @Override

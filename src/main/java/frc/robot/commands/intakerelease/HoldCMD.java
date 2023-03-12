@@ -13,7 +13,7 @@ public class HoldCMD extends CommandBase {
   public HoldCMD(IntakeRelease intakerelease, Led2023 ledStrip) {
     this.intakerelease = intakerelease;
     this.ledStrip = ledStrip;
-    addRequirements(intakerelease, ledStrip);
+    addRequirements(intakerelease);
   }
 
   @Override
@@ -27,7 +27,7 @@ public class HoldCMD extends CommandBase {
       ledStrip.setCmdColorScheme(ColorScheme.HOLD_CONE);
       intakerelease.holdCone();
     } else {
-      ledStrip.setCmdColorScheme(ColorScheme.DEFAULT);
+      //      ledStrip.setCmdColorScheme(ColorScheme.DEFAULT);
       intakerelease.stop();
     }
   }

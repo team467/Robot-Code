@@ -27,7 +27,9 @@ public class StraightDriveToPose extends CommandBase {
 
   private final ProfiledPIDController driveController =
       new ProfiledPIDController(
-          2.0, 0, 0.0, new Constraints(Units.inchesToMeters(150), Units.inchesToMeters(450.0)));
+          //          2.0, 0, 0.0, new Constraints(Units.inchesToMeters(150),
+          // Units.inchesToMeters(450.0)));
+          2.0, 0, 0.0, new Constraints(Units.inchesToMeters(90), Units.inchesToMeters(450.0)));
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(
           5.0, 0, 0.0, new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(720.0)));
