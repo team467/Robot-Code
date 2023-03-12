@@ -274,7 +274,7 @@ public class RobotContainer {
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
     intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease));
 
-    driverController.leftBumper().onTrue(new IntakeAndRaise(arm, intakeRelease));
+    driverController.leftBumper().toggleOnTrue(new IntakeAndRaise(arm, intakeRelease));
     driverController.rightBumper().onTrue(new ReleaseCMD(intakeRelease, arm));
 
     // Set the game piece type
@@ -282,10 +282,10 @@ public class RobotContainer {
     operatorController.back().onTrue(new WantCubeCMD(intakeRelease));
 
     // Manual arm movements
-    operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm, led2023));
-    operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm, led2023));
-    operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm, led2023));
-    operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm, led2023));
+    operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));
+    operatorController.pov(270).whileTrue(new ArmManualRetractCMD(arm));
+    operatorController.pov(180).whileTrue(new ArmManualDownCMD(arm));
+    operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm));
 
     // Placing cone or cube, gets what it wants from in the command
     operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease));

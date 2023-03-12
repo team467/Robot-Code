@@ -18,17 +18,15 @@ import frc.robot.commands.intakerelease.HoldCMD;
 import frc.robot.commands.intakerelease.IntakeAndRaise;
 import frc.robot.commands.intakerelease.IntakeCMD;
 import frc.robot.commands.intakerelease.ReleaseCMD;
-import frc.robot.commands.intakerelease.WantConeCMD;
-import frc.robot.commands.intakerelease.WantCubeCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
-  public static final boolean USE_BATTERY_CHECK = false;
+  public static final boolean USE_BATTERY_CHECK = true;
   public static final double BATTER_MIN_VOLTAGE = 10.0;
-  public static final boolean CHECK_ARM_CALIBRATION = false;
+  public static final boolean CHECK_ARM_CALIBRATION = true;
 
   private final double SHOOTING_TIMER_SPEED = 0.1;
   private final double RAINBOW_TIMER_SPEED = 0.02;
@@ -40,7 +38,6 @@ public class Led2023 extends SubsystemBase {
   private Timer rainbowTimer = new Timer();
   private Timer purpleTimer = new Timer();
   protected double lastLoopTime = 0;
-  private ColorScheme cmdColorScheme = ColorScheme.DEFAULT;
   private Timer defaultTimer = new Timer();
 
   public static final double TARGET_MAX_RANGE = 100.0;
@@ -127,14 +124,9 @@ public class Led2023 extends SubsystemBase {
     purpleTimer.reset();
   }
 
-  public void setCmdColorScheme(ColorScheme cs) {
-    cmdColorScheme = cs;
-  }
-
   @Override
   public void periodic() {
-    ColorScheme colorScheme = getColorScheme();
-    applyColorScheme(colorScheme);
+    applyColorScheme(getColorScheme());
     sendData();
   }
 
@@ -255,12 +247,12 @@ public class Led2023 extends SubsystemBase {
     else {
       defaultTimer.start();
       if (defaultTimer.hasElapsed(5)) {
-        if (intakerelease.getCurrentCommand() instanceof WantCubeCMD) {
+        if (intakerelease.wantsCube()) {
           defaultTimer.stop();
           defaultTimer.reset();
           return ColorScheme.WANT_CUBE;
         }
-        if (intakerelease.getCurrentCommand() instanceof WantConeCMD) {
+        if (intakerelease.wantsCone()) {
           defaultTimer.stop();
           defaultTimer.reset();
           return ColorScheme.WANT_CONE;
@@ -336,14 +328,14 @@ public class Led2023 extends SubsystemBase {
         setBlinkColors(COLORS_467.Orange, COLORS_467.Pink, COLORS_467.Green.getColor());
         break;
       case SHELF:
-        if (intakerelease.getWants() == Wants.CONE) {
+        if (intakerelease.wantsCone()) {
           setTop(COLORS_467.Yellow);
         } else {
           setTop(COLORS_467.Purple);
         }
         break;
       case FLOOR:
-        if (intakerelease.getWants() == Wants.CONE) {
+        if (intakerelease.wantsCone()) {
           setBottom(COLORS_467.Yellow);
         } else {
           setBottom(COLORS_467.Purple);
