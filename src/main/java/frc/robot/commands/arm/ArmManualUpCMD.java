@@ -22,7 +22,7 @@ public class ArmManualUpCMD extends CommandBase {
 
   @Override
   public void execute() {
-    arm.manualRotate(7);
+    arm.manualRotate(12);
   }
 
   @Override
