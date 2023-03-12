@@ -274,12 +274,12 @@ public class RobotContainer {
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
     intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease));
 
-    driverController.leftBumper().toggleOnTrue(new IntakeAndRaise(arm, intakeRelease));
-    driverController.rightBumper().onTrue(new ReleaseCMD(intakeRelease, arm));
+    driverController.leftBumper().toggleOnTrue(new IntakeAndRaise(arm, intakeRelease, led2023));
+    driverController.rightBumper().toggleOnTrue(new ReleaseCMD(intakeRelease, led2023, arm));
 
     // Set the game piece type
-    operatorController.back().whileFalse(new WantConeCMD(intakeRelease));
-    operatorController.back().onTrue(new WantCubeCMD(intakeRelease));
+    operatorController.back().whileFalse(new WantConeCMD(intakeRelease, led2023));
+    operatorController.back().whileTrue(new WantCubeCMD(intakeRelease, led2023));
 
     // Manual arm movements
     operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));

@@ -94,15 +94,16 @@ public final class FieldConstants {
 
     public static final double[] nodeY =
         new double[] {
-          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 0),
-          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 1),
-          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 2),
-          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 3),
-          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 4),
-          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 5),
-          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 6),
-          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 7),
-          Units.inchesToMeters(nodeFirstY + nodeSeparationY * 8)
+          nodeFirstY + nodeSeparationY * 0,
+          nodeFirstY + nodeSeparationY * 1,
+          nodeFirstY + nodeSeparationY * 1,
+          nodeFirstY + nodeSeparationY * 2,
+          nodeFirstY + nodeSeparationY * 3,
+          nodeFirstY + nodeSeparationY * 4,
+          nodeFirstY + nodeSeparationY * 5,
+          nodeFirstY + nodeSeparationY * 6,
+          nodeFirstY + nodeSeparationY * 7,
+          nodeFirstY + nodeSeparationY * 8
         };
 
     // Z layout

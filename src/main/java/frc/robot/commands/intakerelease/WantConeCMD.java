@@ -18,6 +18,11 @@ public class WantConeCMD extends CommandBase {
   }
 
   @Override
+  public void execute() {
+    intakerelease.setWants(Wants.CONE);
+  }
+
+  @Override
   public boolean isFinished() {
     return intakerelease.wantsCone();
   }

@@ -18,6 +18,11 @@ public class WantCubeCMD extends CommandBase {
   }
 
   @Override
+  public void execute() {
+    intakerelease.setWants(Wants.CUBE);
+  }
+
+  @Override
   public boolean isFinished() {
     return intakerelease.wantsCube();
   }
