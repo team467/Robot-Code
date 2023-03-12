@@ -10,7 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class RobotConstants {
-  private static Constants constants = new BriefcaseConstants();
+  private static Constants constants = new CompBotConstants();
 
   private RobotConstants() {
     throw new IllegalStateException("Utility class");
