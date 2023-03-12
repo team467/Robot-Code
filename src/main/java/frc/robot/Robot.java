@@ -40,7 +40,7 @@ public class Robot extends LoggedRobot {
 
     if (RobotConstants.get().mode() == Constants.Mode.REAL) {
       ProcessBuilder builder = new ProcessBuilder();
-      builder.command("sudo", "mount", "/dev/sda1", "/media");
+      builder.command("sudo", "mount", "/dev/sda1", "/media/sda1");
       try {
         builder.start();
       } catch (IOException e) {
