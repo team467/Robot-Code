@@ -18,8 +18,12 @@ public class WantCubeCMD extends CommandBase {
 
   @Override
   public void initialize() {
-    intakerelease.setWants(Wants.CUBE);
     ledStrip.setCmdColorScheme(ColorScheme.WANT_CUBE);
+  }
+
+  @Override
+  public void execute() {
+    intakerelease.setWants(Wants.CUBE);
   }
 
   @Override

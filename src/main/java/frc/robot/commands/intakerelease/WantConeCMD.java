@@ -18,8 +18,12 @@ public class WantConeCMD extends CommandBase {
 
   @Override
   public void initialize() {
-    intakerelease.setWants(Wants.CONE);
     ledStrip.setCmdColorScheme(ColorScheme.WANT_CONE);
+  }
+
+  @Override
+  public void execute() {
+    intakerelease.setWants(Wants.CONE);
   }
 
   @Override
