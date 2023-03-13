@@ -199,11 +199,11 @@ public class Led2023 extends SubsystemBase {
     // If trying to release something
     if (intakerelease.getCurrentCommand() instanceof ReleaseCMD) {
       // If releasing Cubes
-      if (intakerelease.getWants() == Wants.CUBE) {
+      if (intakerelease.wantsCube()) {
         return ColorScheme.RELEASE_CUBE;
       }
       // If releasing Cones
-      if (intakerelease.getWants() == Wants.CONE) {
+      if (intakerelease.wantsCone()) {
         return ColorScheme.RELEASE_CONE;
       } else {
         return ColorScheme.RELEASE_UNKNOWN;
@@ -222,7 +222,7 @@ public class Led2023 extends SubsystemBase {
 
     // When arm is scoring high
     if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD) {
-      if (intakerelease.getWants() == Wants.CUBE
+      if (intakerelease.wantsCube()
           || (intakerelease.haveCube() && !intakerelease.haveCone())) {
         return ColorScheme.CUBE_HIGH;
       } else {
@@ -232,7 +232,7 @@ public class Led2023 extends SubsystemBase {
 
     // When arm is scoring mid node
     if (arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD) {
-      if (intakerelease.getWants() == Wants.CUBE
+      if (intakerelease.wantsCube()
           || (intakerelease.haveCube() && !intakerelease.haveCone())) {
         return ColorScheme.CUBE_HIGH;
       } else {
@@ -242,7 +242,7 @@ public class Led2023 extends SubsystemBase {
 
     // When arm is scoring hybrid/low node
     if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD) {
-      if (intakerelease.getWants() == Wants.CUBE
+      if (intakerelease.wantsCube()
           || (intakerelease.haveCube() && !intakerelease.haveCone())) {
         return ColorScheme.CUBE_HIGH;
       } else {
