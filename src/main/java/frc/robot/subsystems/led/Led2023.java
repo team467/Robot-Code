@@ -328,15 +328,19 @@ public class Led2023 extends SubsystemBase {
       case SHELF:
         if (intakerelease.wantsCone()) {
           setTop(COLORS_467.Yellow);
+          setBottom(COLORS_467.Black);
         } else {
           setTop(COLORS_467.Purple);
+          setBottom(COLORS_467.Black);
         }
         break;
       case FLOOR:
         if (intakerelease.wantsCone()) {
           setBottom(COLORS_467.Yellow);
+          setTop(COLORS_467.Black);
         } else {
           setBottom(COLORS_467.Purple);
+          setTop(COLORS_467.Black);
         }
         break;
       default:
@@ -662,27 +666,61 @@ public class Led2023 extends SubsystemBase {
     // t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
     double start;
     double end;
+    int othersLow = 190;
+    int othersHi = 190;
+    int othLow = 190;
+    int othHi = 190;
+    boolean valid = true;
     if (preSet == 1) {
       start = 0;
       end = Math.ceil(RobotConstants.get().led2023LedCount() / 3);
+      othersLow = (int) Math.ceil(RobotConstants.get().led2023LedCount() / 3) + 1;
+      othersHi = (int) Math.ceil(RobotConstants.get().led2023LedCount()) - 1;
     } else if (preSet == 2) {
       start = Math.floor(RobotConstants.get().led2023LedCount() / 3);
       end =
           Math.ceil(
               RobotConstants.get().led2023LedCount()
                   - (RobotConstants.get().led2023LedCount() / 3));
+      othersLow = 0;
+      othersHi = (int) Math.floor(RobotConstants.get().led2023LedCount() / 3) - 1;
+      othLow =
+          (int)
+                  Math.ceil(
+                      RobotConstants.get().led2023LedCount()
+                          - (RobotConstants.get().led2023LedCount() / 3))
+              + 1;
+      othHi = RobotConstants.get().led2023LedCount() - 1;
+
     } else if (preSet == 3) {
       start =
           Math.floor(
               RobotConstants.get().led2023LedCount()
                   - (RobotConstants.get().led2023LedCount() / 3));
       end = Math.ceil(RobotConstants.get().led2023LedCount());
+      othersLow =
+          (int)
+                  Math.floor(
+                      RobotConstants.get().led2023LedCount()
+                          - (RobotConstants.get().led2023LedCount() / 3))
+              + 1;
+      othersHi = RobotConstants.get().led2023LedCount() - 1;
     } else {
       start = 0;
       end = RobotConstants.get().led2023LedCount();
     }
     for (int i = (int) start; i < end; i++) {
       ledStrip.setLED(i, color.getColor());
+    }
+    if (othersHi == 190 || othHi == 190 || othersHi == 190 || othersLow == 190) {
+      valid = false;
+    } else if (valid == true) {
+      for (int i = othersLow; i <= othersHi; i++) {
+        ledStrip.setLED(i, COLORS_467.Black.getColor());
+      }
+      for (int i = othLow; i <= othHi; i++) {
+        ledStrip.setLED(i, COLORS_467.Black.getColor());
+      }
     }
     ledStrip.update();
   }

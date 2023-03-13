@@ -13,9 +13,7 @@ public class WantCubeCMD extends CommandBase {
   }
 
   @Override
-  public void initialize() {
-    intakerelease.setWants(Wants.CUBE);
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
