@@ -20,7 +20,6 @@ import frc.robot.commands.intakerelease.IntakeCMD;
 import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
-import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
@@ -222,8 +221,7 @@ public class Led2023 extends SubsystemBase {
 
     // When arm is scoring high
     if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD) {
-      if (intakerelease.wantsCube()
-          || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
         return ColorScheme.CUBE_HIGH;
       } else {
         return ColorScheme.CONE_HIGH;
@@ -232,8 +230,7 @@ public class Led2023 extends SubsystemBase {
 
     // When arm is scoring mid node
     if (arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD) {
-      if (intakerelease.wantsCube()
-          || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
         return ColorScheme.CUBE_HIGH;
       } else {
         return ColorScheme.CONE_HIGH;
@@ -242,8 +239,7 @@ public class Led2023 extends SubsystemBase {
 
     // When arm is scoring hybrid/low node
     if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD) {
-      if (intakerelease.wantsCube()
-          || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
         return ColorScheme.CUBE_HIGH;
       } else {
         return ColorScheme.CONE_HIGH;
