@@ -1,6 +1,7 @@
 package frc.robot.constants;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.constants.controls.FeedbackConstant;
@@ -43,6 +44,8 @@ public interface Constants {
 
   // Drive constants
   double driveMaxCoastVelocity();
+
+  Translation2d[] moduleTranslations();
 
   double maxLinearSpeed();
 

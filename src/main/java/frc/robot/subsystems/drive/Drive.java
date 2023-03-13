@@ -36,6 +36,13 @@ public class Drive extends SubsystemBase {
   private DriveMode driveMode = DriveMode.NORMAL;
   private double characterizationVolts = 0.0;
   private ChassisSpeeds setpoint = new ChassisSpeeds();
+  private SwerveModuleState[] lastSetpointStates =
+      new SwerveModuleState[] {
+        new SwerveModuleState(),
+        new SwerveModuleState(),
+        new SwerveModuleState(),
+        new SwerveModuleState()
+      };
 
   private final SwerveModulePosition[] modulePositions;
   private SwerveDrivePoseEstimator odometry;
@@ -139,11 +146,22 @@ public class Drive extends SubsystemBase {
           SwerveDriveKinematics.desaturateWheelSpeeds(
               setpointStates, RobotConstants.get().maxLinearSpeed());
 
+          // Set to last angles if zero
+          if (adjustedSpeeds.vxMetersPerSecond == 0.0
+              && adjustedSpeeds.vyMetersPerSecond == 0.0
+              && adjustedSpeeds.omegaRadiansPerSecond == 0) {
+            for (int i = 0; i < 4; i++) {
+              setpointStates[i] = new SwerveModuleState(0.0, lastSetpointStates[i].angle);
+            }
+          }
+          lastSetpointStates = setpointStates;
+
           // Set setpoints to modules
-          boolean isStationary =
-              Math.abs(setpoint.vxMetersPerSecond) < 1e-3
-                  && Math.abs(setpoint.vyMetersPerSecond) < 1e-3
-                  && Math.abs(setpoint.omegaRadiansPerSecond) < 1e-3;
+          // boolean isStationary =
+          //    Math.abs(setpoint.vxMetersPerSecond) < 1e-3
+          //        && Math.abs(setpoint.vyMetersPerSecond) < 1e-3
+          //        && Math.abs(setpoint.omegaRadiansPerSecond) < 1e-3;
+          boolean isStationary = false; // TODO: can this be removed?
 
           SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
           for (int i = 0; i < 4; i++) {
@@ -233,6 +251,16 @@ public class Drive extends SubsystemBase {
   public void stop() {
     driveMode = DriveMode.NORMAL;
     runVelocity(new ChassisSpeeds());
+  }
+
+  public void stopWithX() {
+    stop();
+    for (int i = 0; i < 4; i++) {
+      lastSetpointStates[i] =
+          new SwerveModuleState(
+              lastSetpointStates[i].speedMetersPerSecond,
+              RobotConstants.get().moduleTranslations()[i].getAngle());
+    }
   }
 
   public double[] getGravVec() {

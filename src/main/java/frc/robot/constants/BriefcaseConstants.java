@@ -27,7 +27,8 @@ public class BriefcaseConstants implements Constants {
     return 0.5;
   } // TODO: tune
 
-  private Translation2d[] moduleTranslations() {
+  @Override
+  public Translation2d[] moduleTranslations() {
     return new Translation2d[] {
       new Translation2d(), new Translation2d(), new Translation2d(), new Translation2d(),
     };

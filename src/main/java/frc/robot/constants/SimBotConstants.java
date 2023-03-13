@@ -27,7 +27,8 @@ public class SimBotConstants implements Constants {
     return 0;
   }
 
-  private Translation2d[] moduleTranslations() {
+  @Override
+  public Translation2d[] moduleTranslations() {
     return new Translation2d[] {
       new Translation2d(0.65 / 2, 0.65 / 2),
       new Translation2d(0.65 / 2, -0.65 / 2),
