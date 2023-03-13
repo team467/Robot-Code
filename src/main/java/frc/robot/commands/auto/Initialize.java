@@ -12,6 +12,7 @@ import frc.robot.FieldConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.Led2023;
+import java.util.function.Supplier;
 
 public class Initialize extends ParallelCommandGroup {
   public Initialize(int aprilTag, String relativePosition, Drive drive, Arm arm, Led2023 ledStrip) {
@@ -28,15 +29,16 @@ public class Initialize extends ParallelCommandGroup {
 
     double distanceAprilTagToEdgeOfNode = 16;
     double distanceRobotFrontToCenter = 12.75;
-    Pose2d expectedPose =
-        AllianceFlipUtil.apply(
-            new Pose2d(
-                new Translation2d(
-                    aprilTagLocation.getX()
-                        + Units.inchesToMeters(
-                            distanceAprilTagToEdgeOfNode + distanceRobotFrontToCenter),
-                    aprilTagLocation.getY() + Units.inchesToMeters(relativePositionOffset)),
-                Rotation2d.fromDegrees(180)));
+    Supplier<Pose2d> expectedPose =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(
+                        aprilTagLocation.getX()
+                            + Units.inchesToMeters(
+                                distanceAprilTagToEdgeOfNode + distanceRobotFrontToCenter),
+                        aprilTagLocation.getY() + Units.inchesToMeters(relativePositionOffset)),
+                    Rotation2d.fromDegrees(180)));
 
     addCommands(
         Commands.runOnce(arm::setCalibratedAssumeHomePosition),
@@ -45,9 +47,9 @@ public class Initialize extends ParallelCommandGroup {
               Pose2d measuredPose = drive.getPose();
               if (measuredPose == null
                   || (measuredPose.getX() < 0.1 && measuredPose.getY() <= 0.0)
-                  || measuredPose.getTranslation().getDistance(expectedPose.getTranslation())
+                  || measuredPose.getTranslation().getDistance(expectedPose.get().getTranslation())
                       > Units.inchesToMeters(18.0)) {
-                drive.setPose(expectedPose);
+                drive.setPose(expectedPose.get());
                 DriverStation.reportWarning(
                     "WARNING: Robot pose is not accurate. \n"
                         + "Expected pose: "

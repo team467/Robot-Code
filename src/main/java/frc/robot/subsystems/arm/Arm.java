@@ -157,6 +157,10 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  public boolean shouldRaise() {
+    return armIOInputs.rotatePosition < 0.1;
+  }
+
   public void drop() {
     if (!isDropping) {
       mode = ArmMode.AUTO;
@@ -191,6 +195,7 @@ public class Arm extends SubsystemBase {
     }
     logger.recordOutput("Arm/Mode", mode.toString());
     logger.recordOutput("Arm/CalibrateMode", calibrateMode.toString());
+    logger.recordOutput("Arm/IsCalibrated", isCalibrated);
 
     switch (mode) {
       case MANUAL -> {

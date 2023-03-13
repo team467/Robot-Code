@@ -36,7 +36,6 @@ import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
-import frc.robot.commands.auto.BetterBalancing;
 import frc.robot.commands.auto.complex.BackUpAndBalance;
 import frc.robot.commands.auto.complex.OnlyBackup;
 import frc.robot.commands.auto.complex.OnlyBalance;
@@ -275,11 +274,11 @@ public class RobotContainer {
     intakeRelease.setDefaultCommand(new HoldCMD(intakeRelease));
 
     driverController.leftBumper().toggleOnTrue(new IntakeAndRaise(arm, intakeRelease));
-    driverController.rightBumper().onTrue(new ReleaseCMD(intakeRelease, arm));
+    driverController.rightBumper().toggleOnTrue(new ReleaseCMD(intakeRelease, arm));
 
     // Set the game piece type
     operatorController.back().whileFalse(new WantConeCMD(intakeRelease));
-    operatorController.back().onTrue(new WantCubeCMD(intakeRelease));
+    operatorController.back().whileTrue(new WantCubeCMD(intakeRelease));
 
     // Manual arm movements
     operatorController.pov(90).whileTrue(new ArmManualExtendCMD(arm));
@@ -308,13 +307,13 @@ public class RobotContainer {
     driverController.back().onTrue(new ArmCalibrateCMD(arm));
     driverController.b().onTrue(new ArmCalibrateZeroAtHomeCMD(arm));
 
-    driverController.a().onTrue(new BetterBalancing(drive));
+    driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX(), drive));
 
     // Manual arm movements
     operatorController.leftStick().onTrue(new ArmStopCMD(arm));
     operatorController.rightStick().onTrue(new ArmStopCMD(arm));
-    operatorController.leftBumper().onTrue(new ArmShelfCMD(arm));
-    operatorController.rightBumper().onTrue(new ArmFloorCMD(arm));
+    operatorController.leftBumper().onTrue(new ArmShelfCMD(arm, intakeRelease));
+    operatorController.rightBumper().onTrue(new ArmFloorCMD(arm, intakeRelease));
     Logger.getInstance()
         .recordOutput(
             "CustomController/FloorButton", operatorController.rightBumper().getAsBoolean());

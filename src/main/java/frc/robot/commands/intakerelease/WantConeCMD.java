@@ -13,7 +13,7 @@ public class WantConeCMD extends CommandBase {
   }
 
   @Override
-  public void initialize() {
+  public void execute() {
     intakerelease.setWants(Wants.CONE);
   }
 

@@ -1,10 +1,12 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
+import frc.robot.commands.intakerelease.IntakeCMD;
 import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.commands.intakerelease.WantConeCMD;
 import frc.robot.commands.intakerelease.WantCubeCMD;
@@ -40,7 +42,9 @@ public class Score extends SequentialCommandGroup {
       Led2023 ledStrip) {
     addCommands(
         pieceType(gamePieceType, intakeRelease, ledStrip),
-        armLocationCommand(location, arm, intakeRelease, ledStrip),
+        Commands.parallel(
+            new IntakeCMD(intakeRelease),
+            armLocationCommand(location, arm, intakeRelease, ledStrip)),
         new ReleaseCMD(intakeRelease, arm));
   }
 

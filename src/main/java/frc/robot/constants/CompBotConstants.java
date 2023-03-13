@@ -28,7 +28,8 @@ public class CompBotConstants implements Constants {
     return 0.5;
   } // TODO: tune
 
-  private Translation2d[] moduleTranslations() {
+  @Override
+  public Translation2d[] moduleTranslations() {
     return new Translation2d[] {
       new Translation2d(Units.inchesToMeters(12.75), Units.inchesToMeters(9.25)),
       new Translation2d(Units.inchesToMeters(12.75), -Units.inchesToMeters(9.25)),
@@ -198,7 +199,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double armRotateConversionFactor() {
-    return 0.00236706;
+    return 0.00236706 / 2; // Rotations to Meters
   }
 
   @Override

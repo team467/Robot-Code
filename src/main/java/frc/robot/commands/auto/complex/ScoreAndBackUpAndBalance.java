@@ -26,10 +26,10 @@ public class ScoreAndBackUpAndBalance extends SequentialCommandGroup {
     addCommands(
         new Initialize(aprilTag, relativePosition, drive, arm, ledStrip),
         new Score(gamePieceType, location, arm, intakeRelease, ledStrip),
-        Commands.sequence(
-            new ArmHomeCMD(arm, ledStrip).withTimeout(4.0),
+        Commands.parallel(
+            new ArmHomeCMD(arm).withTimeout(4.0),
             new StraightDriveToPose(Units.inchesToMeters(170.0), 0.0, 0.0, drive)),
-        new StraightDriveToPose(Units.inchesToMeters(-75.0), 0.0, 0.0, drive).withTimeout(3.0),
+        new StraightDriveToPose(Units.inchesToMeters(-75.0), 0.0, 0.0, drive).withTimeout(2.5),
         new BetterBalancing(drive));
   }
 }
