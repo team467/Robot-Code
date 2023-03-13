@@ -36,7 +36,6 @@ import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
-import frc.robot.commands.auto.BetterBalancing;
 import frc.robot.commands.auto.complex.BackUpAndBalance;
 import frc.robot.commands.auto.complex.OnlyBackup;
 import frc.robot.commands.auto.complex.OnlyBalance;
@@ -308,13 +307,13 @@ public class RobotContainer {
     driverController.back().onTrue(new ArmCalibrateCMD(arm, led2023));
     driverController.b().onTrue(new ArmCalibrateZeroAtHomeCMD(arm));
 
-    driverController.a().onTrue(new BetterBalancing(drive));
+    driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX(), drive));
 
     // Manual arm movements
     operatorController.leftStick().onTrue(new ArmStopCMD(arm, led2023));
     operatorController.rightStick().onTrue(new ArmStopCMD(arm, led2023));
-    operatorController.leftBumper().onTrue(new ArmShelfCMD(arm, led2023));
-    operatorController.rightBumper().onTrue(new ArmFloorCMD(arm, led2023));
+    operatorController.leftBumper().onTrue(new ArmShelfCMD(arm, intakeRelease, led2023));
+    operatorController.rightBumper().onTrue(new ArmFloorCMD(arm, intakeRelease, led2023));
     Logger.getInstance()
         .recordOutput(
             "CustomController/FloorButton", operatorController.rightBumper().getAsBoolean());
