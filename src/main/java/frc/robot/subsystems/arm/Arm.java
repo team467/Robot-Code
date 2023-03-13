@@ -157,6 +157,10 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  public boolean shouldRaise() {
+    return armIOInputs.rotatePosition < 0.1;
+  }
+
   public void drop() {
     if (!isDropping) {
       mode = ArmMode.AUTO;

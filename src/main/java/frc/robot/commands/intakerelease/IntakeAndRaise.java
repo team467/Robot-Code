@@ -9,6 +9,7 @@ import frc.robot.subsystems.led.Led2023;
 public class IntakeAndRaise extends SequentialCommandGroup {
 
   public IntakeAndRaise(Arm arm, IntakeRelease intakerelease, Led2023 ledStrip) {
-    addCommands(new IntakeCMD(intakerelease, ledStrip), new RaiseArm(arm));
+    addCommands(
+        new IntakeCMD(intakerelease, ledStrip), new RaiseArm(arm).unless(() -> !arm.shouldRaise()));
   }
 }

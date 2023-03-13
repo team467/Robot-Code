@@ -59,7 +59,7 @@ public class BetterBalancing extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-    drive.stop();
+    drive.stopWithX();
   }
 
   @Override
