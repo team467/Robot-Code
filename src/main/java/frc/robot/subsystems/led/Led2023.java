@@ -168,7 +168,7 @@ public class Led2023 extends SubsystemBase {
       FINISHED_RAINBOW_ONCE = true;
     }
 
-     // When picking up from shelf
+    // When picking up from shelf
     if (arm.getCurrentCommand() instanceof ArmShelfCMD) {
       return ColorScheme.SHELF;
     }
