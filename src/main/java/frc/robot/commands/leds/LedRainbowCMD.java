@@ -1,15 +1,18 @@
 package frc.robot.commands.leds;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.led.Led2023;
 
-public class LedRainbowCMD extends LedBaseCMD {
+public class LedRainbowCMD extends CommandBase {
+  private Led2023 ledStrip;
 
   public LedRainbowCMD(Led2023 ledStrip) {
-    super(ledStrip);
+    this.ledStrip = ledStrip;
+    addRequirements(ledStrip);
   }
 
   @Override
-  public void execute() {
-    ledStrip.defaultLights();
+  public void initialize() {
+    ledStrip.resetTimers();
   }
 }

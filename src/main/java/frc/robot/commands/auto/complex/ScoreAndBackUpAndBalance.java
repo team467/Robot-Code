@@ -11,7 +11,6 @@ import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
-import frc.robot.subsystems.led.Led2023;
 
 public class ScoreAndBackUpAndBalance extends SequentialCommandGroup {
   public ScoreAndBackUpAndBalance(
@@ -20,14 +19,13 @@ public class ScoreAndBackUpAndBalance extends SequentialCommandGroup {
       String location,
       Drive drive,
       Arm arm,
-      IntakeRelease intakeRelease,
-      Led2023 ledStrip) {
+      IntakeRelease intakeRelease) {
     int aprilTag = 7;
     addCommands(
-        new Initialize(aprilTag, relativePosition, drive, arm, ledStrip),
-        new Score(gamePieceType, location, arm, intakeRelease, ledStrip),
+        new Initialize(aprilTag, relativePosition, drive, arm),
+        new Score(gamePieceType, location, arm, intakeRelease),
         Commands.parallel(
-            new ArmHomeCMD(arm, ledStrip).withTimeout(4.0),
+            new ArmHomeCMD(arm).withTimeout(4.0),
             new StraightDriveToPose(Units.inchesToMeters(170.0), 0.0, 0.0, drive)),
         new StraightDriveToPose(Units.inchesToMeters(-75.0), 0.0, 0.0, drive).withTimeout(2.5),
         new BetterBalancing(drive));

@@ -13,57 +13,44 @@ import frc.robot.commands.intakerelease.WantCubeCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
-import frc.robot.subsystems.led.Led2023;
 
 public class Score extends SequentialCommandGroup {
 
-  public Score(
-      String gamePieceType,
-      String location,
-      Arm arm,
-      IntakeRelease intakeRelease,
-      Led2023 ledStrip) {
-    add(gamePieceType, location, arm, intakeRelease, ledStrip);
+  public Score(String gamePieceType, String location, Arm arm, IntakeRelease intakeRelease) {
+    add(gamePieceType, location, arm, intakeRelease);
   }
 
-  public Score(String location, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
+  public Score(String location, Arm arm, IntakeRelease intakeRelease) {
     if (intakeRelease.getWants() == Wants.CONE) {
-      add("Cone", location, arm, intakeRelease, ledStrip);
+      add("Cone", location, arm, intakeRelease);
     } else {
-      add("Cube", location, arm, intakeRelease, ledStrip);
+      add("Cube", location, arm, intakeRelease);
     }
   }
 
-  private void add(
-      String gamePieceType,
-      String location,
-      Arm arm,
-      IntakeRelease intakeRelease,
-      Led2023 ledStrip) {
+  private void add(String gamePieceType, String location, Arm arm, IntakeRelease intakeRelease) {
     addCommands(
-        pieceType(gamePieceType, intakeRelease, ledStrip),
+        pieceType(gamePieceType, intakeRelease),
         Commands.parallel(
-            new IntakeCMD(intakeRelease, ledStrip),
-            armLocationCommand(location, arm, intakeRelease, ledStrip)),
-        new ReleaseCMD(intakeRelease, ledStrip, arm));
+            new IntakeCMD(intakeRelease), armLocationCommand(location, arm, intakeRelease)),
+        new ReleaseCMD(intakeRelease, arm));
   }
 
-  private Command armLocationCommand(
-      String location, Arm arm, IntakeRelease intakeRelease, Led2023 ledStrip) {
+  private Command armLocationCommand(String location, Arm arm, IntakeRelease intakeRelease) {
     if (location.equalsIgnoreCase("high")) {
-      return new ArmScoreHighNodeCMD(arm, intakeRelease, ledStrip);
+      return new ArmScoreHighNodeCMD(arm, intakeRelease);
     } else if (location.equalsIgnoreCase("mid")) {
-      return new ArmScoreMidNodeCMD(arm, intakeRelease, ledStrip);
+      return new ArmScoreMidNodeCMD(arm, intakeRelease);
     } else {
-      return new ArmScoreLowNodeCMD(arm, intakeRelease, ledStrip);
+      return new ArmScoreLowNodeCMD(arm, intakeRelease);
     }
   }
 
-  private Command pieceType(String gamePiece, IntakeRelease intakeRelease, Led2023 ledStrip) {
+  private Command pieceType(String gamePiece, IntakeRelease intakeRelease) {
     if (gamePiece.equalsIgnoreCase("cone")) {
-      return new WantConeCMD(intakeRelease, ledStrip);
+      return new WantConeCMD(intakeRelease);
     } else {
-      return new WantCubeCMD(intakeRelease, ledStrip);
+      return new WantCubeCMD(intakeRelease);
     }
   }
 }

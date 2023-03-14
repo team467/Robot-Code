@@ -11,11 +11,10 @@ import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.led.Led2023;
 import java.util.function.Supplier;
 
 public class Initialize extends ParallelCommandGroup {
-  public Initialize(int aprilTag, String relativePosition, Drive drive, Arm arm, Led2023 ledStrip) {
+  public Initialize(int aprilTag, String relativePosition, Drive drive, Arm arm) {
     Translation2d aprilTagLocation =
         FieldConstants.aprilTags.getTagPose(aprilTag).get().getTranslation().toTranslation2d();
     final double relativePositionOffset;

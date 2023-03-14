@@ -7,7 +7,6 @@ import frc.robot.commands.auto.Score;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
-import frc.robot.subsystems.led.Led2023;
 
 public class OnlyScore extends SequentialCommandGroup {
   public OnlyScore(
@@ -17,11 +16,10 @@ public class OnlyScore extends SequentialCommandGroup {
       String location,
       Drive drive,
       Arm arm,
-      IntakeRelease intakeRelease,
-      Led2023 ledStrip) {
+      IntakeRelease intakeRelease) {
     addCommands(
-        new Initialize(aprilTag, relativePosition, drive, arm, ledStrip),
-        new Score(gamePieceType, location, arm, intakeRelease, ledStrip),
-        new ArmHomeCMD(arm, ledStrip));
+        new Initialize(aprilTag, relativePosition, drive, arm),
+        new Score(gamePieceType, location, arm, intakeRelease),
+        new ArmHomeCMD(arm));
   }
 }

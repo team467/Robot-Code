@@ -39,7 +39,7 @@ public class IntakeRelease extends SubsystemBase {
   private Wants wants = Wants.NONE;
 
   public Wants getWants() {
-    return (wants);
+    return wants;
   }
 
   public boolean wantsCone() {

@@ -1,5 +1,6 @@
 package frc.robot.subsystems.led;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
@@ -8,15 +9,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.leds.DoubleLEDStrip;
 import frc.lib.leds.LEDManager;
 import frc.robot.RobotConstants;
+import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmFloorCMD;
+import frc.robot.commands.arm.ArmScoreHighNodeCMD;
+import frc.robot.commands.arm.ArmScoreMidNodeCMD;
+import frc.robot.commands.arm.ArmShelfCMD;
+import frc.robot.commands.intakerelease.HoldCMD;
+import frc.robot.commands.intakerelease.IntakeAndRaise;
+import frc.robot.commands.intakerelease.IntakeCMD;
+import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
-import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
-  public static final boolean USE_BATTERY_CHECK = true;
-  public static final double BATTER_MIN_VOLTAGE = 10.0;
-  public static final boolean CHECK_ARM_CALIBRATION = true;
+  private final boolean USE_BATTERY_CHECK = true;
+  private final double BATTER_MIN_VOLTAGE = 10.0;
+  private final boolean CHECK_ARM_CALIBRATION = true;
+  private boolean FINISHED_RAINBOW_ONCE = false;
 
   private final double SHOOTING_TIMER_SPEED = 0.1;
   private final double RAINBOW_TIMER_SPEED = 0.02;
@@ -28,7 +38,7 @@ public class Led2023 extends SubsystemBase {
   private Timer rainbowTimer = new Timer();
   private Timer purpleTimer = new Timer();
   protected double lastLoopTime = 0;
-  private ColorScheme cmdColorScheme = ColorScheme.DEFAULT;
+  private Timer defaultTimer = new Timer();
 
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
@@ -97,7 +107,6 @@ public class Led2023 extends SubsystemBase {
 
   public Led2023(Arm arm, IntakeRelease intakerelease) {
     super();
-
     this.intakerelease = intakerelease;
     this.arm = arm;
 
@@ -113,142 +122,230 @@ public class Led2023 extends SubsystemBase {
   public void resetTimers() {
     rainbowTimer.reset();
     purpleTimer.reset();
-    lastLoopTime = Timer.getFPGATimestamp();
-  }
-
-  public void setCmdColorScheme(ColorScheme cs) {
-    cmdColorScheme = cs;
   }
 
   @Override
   public void periodic() {
-    ColorScheme colorScheme = getColorScheme();
+    applyColorScheme(getColorScheme());
+    sendData();
+  }
+
+  public ColorScheme getColorScheme() {
+
+    // Check if battery is low
+    if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
+      return ColorScheme.BATTERY_LOW;
+    }
+
+    // When robot is disabled
+    if (DriverStation.isDisabled()) {
+      defaultTimer.stop();
+      defaultTimer.reset();
+      return ColorScheme.DEFAULT;
+    }
+
+    // Check if arm is calibrated
+    if ((!arm.isCalibrated()) && CHECK_ARM_CALIBRATION) {
+      return ColorScheme.ARM_UNCALIBRATED;
+    }
+
+    // When the arm is calibrating
+    if (arm.getCurrentCommand() instanceof ArmCalibrateCMD) {
+      return ColorScheme.CALIBRATING;
+    }
+
+    // Sets rainbow for 5 secs after calibrating
+    if ((arm.isCalibrated() || !CHECK_ARM_CALIBRATION)
+        && !defaultTimer.hasElapsed(5)
+        && DriverStation.isTeleopEnabled()
+        && !FINISHED_RAINBOW_ONCE) {
+      defaultTimer.start();
+      return ColorScheme.DEFAULT;
+    }
+    if (defaultTimer.hasElapsed(3) && !FINISHED_RAINBOW_ONCE) {
+      defaultTimer.reset();
+      defaultTimer.stop();
+      FINISHED_RAINBOW_ONCE = true;
+    }
+
+    // When picking up from shelf
+    if (arm.getCurrentCommand() instanceof ArmShelfCMD) {
+      return ColorScheme.SHELF;
+    }
+
+    // When picking up from floor
+    if (arm.getCurrentCommand() instanceof ArmFloorCMD) {
+      return ColorScheme.FLOOR;
+    }
+
+    // When arm is scoring high
+    if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD) {
+      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+        return ColorScheme.CUBE_HIGH;
+      } else {
+        return ColorScheme.CONE_HIGH;
+      }
+    }
+
+    // When arm is scoring mid node
+    if (arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD) {
+      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+        return ColorScheme.CUBE_HIGH;
+      } else {
+        return ColorScheme.CONE_HIGH;
+      }
+    }
+
+    // When arm is scoring hybrid/low node
+    if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD) {
+      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+        return ColorScheme.CUBE_HIGH;
+      } else {
+        return ColorScheme.CONE_HIGH;
+      }
+    }
+
+    // If trying to hold on to something
+    if (intakerelease.getCurrentCommand() instanceof HoldCMD) {
+      // If holding on to Cubes
+      if (intakerelease.haveCube() && !intakerelease.haveCone()) {
+        return ColorScheme.HOLD_CUBE;
+      }
+      // If holding on to Cones
+      if (intakerelease.haveCone()) {
+        return ColorScheme.HOLD_CONE;
+      }
+    }
+
+    // If trying to intake something
+    if (intakerelease.getCurrentCommand() instanceof IntakeCMD
+        || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
+      // If intaking Cubes
+      if (intakerelease.wantsCube()) {
+        return ColorScheme.INTAKE_CUBE;
+      }
+      // If intaking Cones
+      if (intakerelease.wantsCone()) {
+        return ColorScheme.INTAKE_CONE;
+      } else {
+        return ColorScheme.INTAKE_UNKNOWN;
+      }
+    }
+
+    // If trying to release something
+    if (intakerelease.getCurrentCommand() instanceof ReleaseCMD) {
+      // If releasing Cubes
+      if (intakerelease.wantsCube()) {
+        return ColorScheme.RELEASE_CUBE;
+      }
+      // If releasing Cones
+      if (intakerelease.wantsCone()) {
+        return ColorScheme.RELEASE_CONE;
+      } else {
+        return ColorScheme.RELEASE_UNKNOWN;
+      }
+    }
+
+    // If we want cubes
+    if (intakerelease.wantsCube()) {
+      return ColorScheme.WANT_CUBE;
+    }
+
+    // If we want cones
+    if (intakerelease.wantsCone()) {
+      return ColorScheme.WANT_CONE;
+    }
+
+    // Sets default (never used)
+    return ColorScheme.DEFAULT;
+  }
+
+  public void applyColorScheme(ColorScheme colorScheme) {
     switch (colorScheme) {
       case BATTERY_LOW:
         set(batteryCheckColor);
-        sendData();
         break;
       case ARM_UNCALIBRATED:
         set(COLORS_467.Red);
-        sendData();
         break;
       case CONE_HIGH:
         setOneThird(COLORS_467.Yellow, 3);
-        sendData();
         break;
       case CONE_LOW:
         setOneThird(COLORS_467.Yellow, 1);
-        sendData();
         break;
       case CONE_MID:
         setOneThird(COLORS_467.Yellow, 2);
-        sendData();
         break;
       case CUBE_HIGH:
         setOneThird(COLORS_467.Purple, 3);
-        sendData();
         break;
       case CUBE_LOW:
         setOneThird(COLORS_467.Purple, 1);
-        sendData();
         break;
       case CUBE_MID:
         setOneThird(COLORS_467.Purple, 2);
-        sendData();
         break;
       case DEFAULT:
         setRainbowMovingDownSecondInv();
-        sendData();
         break;
       case HOLD_CONE:
         setBlinkColors(COLORS_467.Yellow, COLORS_467.Yellow, COLORS_467.White.getColor());
-        sendData();
         break;
       case HOLD_CUBE:
         setBlinkColors(COLORS_467.Purple, COLORS_467.Purple, COLORS_467.White.getColor());
-        sendData();
         break;
       case INTAKE_CONE:
         setColorMovingUp(COLORS_467.White.getColor(), COLORS_467.Yellow.getColor());
-        sendData();
         break;
       case INTAKE_CUBE:
         setColorMovingUp(COLORS_467.White.getColor(), COLORS_467.Purple.getColor());
-        sendData();
         break;
       case RELEASE_CONE:
         setColorMovingDown(COLORS_467.Black.getColor(), COLORS_467.Yellow.getColor());
-        sendData();
         break;
       case RELEASE_CUBE:
         setColorMovingDown(COLORS_467.Black.getColor(), COLORS_467.Purple.getColor());
         break;
       case WANT_CONE:
         set(COLORS_467.Yellow);
-        sendData();
         break;
       case WANT_CUBE:
         set(COLORS_467.Purple);
-        sendData();
         break;
       case INTAKE_UNKNOWN:
         setColorMovingUpTwoClr(COLORS_467.Purple.getColor(), COLORS_467.Yellow.getColor());
-        sendData();
         break;
       case RELEASE_UNKNOWN:
         setColorMovingDownTwoClr(COLORS_467.Yellow.getColor(), COLORS_467.Purple.getColor());
-        sendData();
         break;
       case CALIBRATING:
         setBlinkColors(COLORS_467.Red, COLORS_467.Red, COLORS_467.Black.getColor());
-        sendData();
         break;
       case RESET_POSE:
         setBlinkColors(COLORS_467.Orange, COLORS_467.Pink, COLORS_467.Green.getColor());
-        sendData();
+        break;
       case SHELF:
-        if (intakerelease.getWants() == Wants.CONE) {
+        if (intakerelease.wantsCone()) {
           setTop(COLORS_467.Yellow);
+          setBottom(COLORS_467.Black);
         } else {
           setTop(COLORS_467.Purple);
+          setBottom(COLORS_467.Black);
         }
-        sendData();
         break;
       case FLOOR:
-        if (intakerelease.getWants() == Wants.CONE) {
+        if (intakerelease.wantsCone()) {
           setBottom(COLORS_467.Yellow);
+          setTop(COLORS_467.Black);
         } else {
           setBottom(COLORS_467.Purple);
+          setTop(COLORS_467.Black);
         }
-        sendData();
         break;
       default:
         setRainbowMovingDownSecondInv();
-        sendData();
         break;
-    }
-  }
-
-  private ColorScheme getColorScheme() {
-    if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
-      return ColorScheme.BATTERY_LOW;
-
-    } else if (CHECK_ARM_CALIBRATION && !arm.isCalibrated()) {
-      return ColorScheme.ARM_UNCALIBRATED;
-    } else {
-      return cmdColorScheme;
-    }
-  }
-
-  public ColorScheme defaultLights() {
-    sendData();
-    lastLoopTime = Timer.getFPGATimestamp();
-    if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
-      return ColorScheme.BATTERY_LOW;
-    } else if ((!arm.isCalibrated()) && CHECK_ARM_CALIBRATION) {
-      return ColorScheme.ARM_UNCALIBRATED;
-    } else {
-      return ColorScheme.DEFAULT;
     }
   }
 
@@ -569,27 +666,61 @@ public class Led2023 extends SubsystemBase {
     // t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
     double start;
     double end;
+    int othersLow = 190;
+    int othersHi = 190;
+    int othLow = 190;
+    int othHi = 190;
+    boolean valid = true;
     if (preSet == 1) {
       start = 0;
       end = Math.ceil(RobotConstants.get().led2023LedCount() / 3);
+      othersLow = (int) Math.ceil(RobotConstants.get().led2023LedCount() / 3) + 1;
+      othersHi = (int) Math.ceil(RobotConstants.get().led2023LedCount()) - 1;
     } else if (preSet == 2) {
       start = Math.floor(RobotConstants.get().led2023LedCount() / 3);
       end =
           Math.ceil(
               RobotConstants.get().led2023LedCount()
                   - (RobotConstants.get().led2023LedCount() / 3));
+      othersLow = 0;
+      othersHi = (int) Math.floor(RobotConstants.get().led2023LedCount() / 3) - 1;
+      othLow =
+          (int)
+                  Math.ceil(
+                      RobotConstants.get().led2023LedCount()
+                          - (RobotConstants.get().led2023LedCount() / 3))
+              + 1;
+      othHi = RobotConstants.get().led2023LedCount() - 1;
+
     } else if (preSet == 3) {
       start =
           Math.floor(
               RobotConstants.get().led2023LedCount()
                   - (RobotConstants.get().led2023LedCount() / 3));
       end = Math.ceil(RobotConstants.get().led2023LedCount());
+      othersLow =
+          (int)
+                  Math.floor(
+                      RobotConstants.get().led2023LedCount()
+                          - (RobotConstants.get().led2023LedCount() / 3))
+              + 1;
+      othersHi = RobotConstants.get().led2023LedCount() - 1;
     } else {
       start = 0;
       end = RobotConstants.get().led2023LedCount();
     }
     for (int i = (int) start; i < end; i++) {
       ledStrip.setLED(i, color.getColor());
+    }
+    if (othersHi == 190 || othHi == 190 || othersHi == 190 || othersLow == 190) {
+      valid = false;
+    } else if (valid == true) {
+      for (int i = othersLow; i <= othersHi; i++) {
+        ledStrip.setLED(i, COLORS_467.Black.getColor());
+      }
+      for (int i = othLow; i <= othHi; i++) {
+        ledStrip.setLED(i, COLORS_467.Black.getColor());
+      }
     }
     ledStrip.update();
   }
