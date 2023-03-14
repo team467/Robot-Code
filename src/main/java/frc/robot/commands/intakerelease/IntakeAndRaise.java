@@ -8,7 +8,6 @@ import frc.robot.subsystems.intakerelease.IntakeRelease;
 public class IntakeAndRaise extends SequentialCommandGroup {
 
   public IntakeAndRaise(Arm arm, IntakeRelease intakerelease) {
-    addCommands(
-        new IntakeCMD(intakerelease), new RaiseArm(arm).unless(() -> !arm.shouldRaise()));
+    addCommands(new IntakeCMD(intakerelease), new RaiseArm(arm).unless(() -> !arm.shouldRaise()));
   }
 }
