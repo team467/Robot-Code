@@ -192,37 +192,37 @@ public class RobotContainer {
 
     // AprilTag 3 or 6
     autoChooser.addOption(
-        "Tag 3/6: Only Back Up", new OnlyBackup(6, "Right", drive, arm, intakeRelease, led2023));
+        "Tag 3/6: Only Back Up", new OnlyBackup(6, "Right", drive, arm, intakeRelease));
     autoChooser.addOption(
         "Tag 3/6: Only Score Cone",
-        new OnlyScore(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+        new OnlyScore(6, "Right", "Cone", "High", drive, arm, intakeRelease));
     autoChooser.addOption(
         "Tag 3/6: Score Cone and Back Up",
-        new ScoreAndBackUp(6, "Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+        new ScoreAndBackUp(6, "Right", "Cone", "High", drive, arm, intakeRelease));
 
     // AprilTag 2 or 7
     autoChooser.addOption(
         "Tag 2/7: Only Score Cone",
-        new OnlyScore(7, "Right", "cone", "high", drive, arm, intakeRelease, led2023));
-    autoChooser.addOption("Tag 2/7: Only Balance", new OnlyBalance("Right", drive, arm, led2023));
+        new OnlyScore(7, "Right", "cone", "high", drive, arm, intakeRelease));
+    autoChooser.addOption("Tag 2/7: Only Balance", new OnlyBalance("Right", drive, arm));
     autoChooser.addOption(
-        "Tag 2/7: Back Up and Balance", new BackUpAndBalance("Center", drive, arm, led2023));
+        "Tag 2/7: Back Up and Balance", new BackUpAndBalance("Center", drive, arm));
     autoChooser.addOption(
         "Tag 2/7: Score and Balance",
-        new ScoreAndBalance("Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+        new ScoreAndBalance("Right", "Cone", "High", drive, arm, intakeRelease));
     autoChooser.addOption(
         "Tag 2/7: Score, Back Up and Balance",
-        new ScoreAndBackUpAndBalance("Right", "Cone", "High", drive, arm, intakeRelease, led2023));
+        new ScoreAndBackUpAndBalance("Right", "Cone", "High", drive, arm, intakeRelease));
 
     // AprilTag 1 or 8
     autoChooser.addOption(
-        "Tag 1/8: Only Back Up", new OnlyBackup(8, "Left", drive, arm, intakeRelease, led2023));
+        "Tag 1/8: Only Back Up", new OnlyBackup(8, "Left", drive, arm, intakeRelease));
     autoChooser.addOption(
         "Tag 1/8: Only Score Cone",
-        new OnlyScore(8, "Left", "Cone", "High", drive, arm, intakeRelease, led2023));
+        new OnlyScore(8, "Left", "Cone", "High", drive, arm, intakeRelease));
     autoChooser.addOption(
         "Tag 1/8: Score Cone and Back Up",
-        new ScoreAndBackUp(8, "Left", "Cone", "High", drive, arm, intakeRelease, led2023));
+        new ScoreAndBackUp(8, "Left", "Cone", "High", drive, arm, intakeRelease));
 
     autoChooser.addOption(
         "Drive Characterization",
@@ -300,8 +300,8 @@ public class RobotContainer {
         .recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
 
     // Home will be for movement
-    operatorController.x().onTrue(new ArmHomeCMD(arm, led2023));
-    driverController.x().onTrue(new ArmHomeCMD(arm, led2023));
+    operatorController.x().onTrue(new ArmHomeCMD(arm));
+    driverController.x().onTrue(new ArmHomeCMD(arm));
 
     // Need to set to use automated movements, should be set in Autonomous init.
     driverController.back().onTrue(new ArmCalibrateCMD(arm));
