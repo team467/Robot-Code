@@ -139,7 +139,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public int ledChannel() {
-    return 4;
+    return 0;
   }
 
   @Override
