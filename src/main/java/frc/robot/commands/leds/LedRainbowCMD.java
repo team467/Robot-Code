@@ -8,6 +8,7 @@ public class LedRainbowCMD extends CommandBase {
 
   public LedRainbowCMD(Led2023 ledStrip) {
     this.ledStrip = ledStrip;
+    addRequirements(ledStrip );
   }
 
   @Override
