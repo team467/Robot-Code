@@ -24,7 +24,7 @@ import frc.robot.subsystems.intakerelease.IntakeRelease;
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
   private final boolean USE_BATTERY_CHECK = true;
-  private final double BATTER_MIN_VOLTAGE = 10.0;
+  private final double BATTER_MIN_VOLTAGE = 9.0; // 10.0
   private final boolean CHECK_ARM_CALIBRATION = true;
   private boolean FINISHED_RAINBOW_ONCE = false;
 
