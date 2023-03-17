@@ -31,6 +31,7 @@ public class ReleaseCMD extends CommandBase {
         && intakerelease.haveCone()
         && intakerelease.wantsCone()
         && (arm.getExtention() >= 0.2 && arm.getRotation() >= 0.15)
+        && !timer.hasElapsed(1.0)
         && needsDrop) {
       arm.drop();
       return;
@@ -44,6 +45,6 @@ public class ReleaseCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return !intakerelease.haveCone() && !intakerelease.haveCube() && timer.hasElapsed(1.0);
+    return timer.hasElapsed(1.5);
   }
 }
