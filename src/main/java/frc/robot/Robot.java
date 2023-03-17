@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -37,6 +38,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
     Logger logger = Logger.getInstance();
+
+    PortForwarder.add(5888, "photonvision.local", 5800);
+    PortForwarder.add(5889, "photonvision-2.local", 5800);
 
     if (RobotConstants.get().mode() == Constants.Mode.REAL) {
       ProcessBuilder builder = new ProcessBuilder();
