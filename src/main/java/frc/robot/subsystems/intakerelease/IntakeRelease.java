@@ -60,12 +60,13 @@ public class IntakeRelease extends SubsystemBase {
   public void periodic() {
     intakeReleaseIO.updateInputs(inputs, wants);
     logger.processInputs("IntakeRelease", inputs);
+    logger.recordOutput("IntakeRelease/State", state.toString());
 
     switch (state) {
       case DISABLED -> intakeReleaseIO.setPercent(0);
       case INTAKE -> intakeReleaseIO.setPercent(-1.0);
       case RELEASE -> intakeReleaseIO.setPercent(0.6);
-      case HOLD_CUBE -> intakeReleaseIO.setPercent(-0.3);
+      case HOLD_CUBE -> intakeReleaseIO.setPercent(0.0); // -0.3
       case HOLD_CONE -> intakeReleaseIO.setPercent(-0.8);
       case STOP -> intakeReleaseIO.setPercent(0);
       default -> intakeReleaseIO.setPercent(0);

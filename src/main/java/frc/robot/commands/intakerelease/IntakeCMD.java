@@ -22,7 +22,14 @@ public class IntakeCMD extends CommandBase {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    if (intakerelease.getWants() == Wants.CONE) {
+      intakerelease.holdCone();
+    }
+    {
+      intakerelease.holdCube();
+    }
+  }
 
   @Override
   public boolean isFinished() {
