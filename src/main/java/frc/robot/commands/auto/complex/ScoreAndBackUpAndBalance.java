@@ -26,7 +26,7 @@ public class ScoreAndBackUpAndBalance extends SequentialCommandGroup {
         new Score(gamePieceType, location, arm, intakeRelease),
         Commands.parallel(
             new ArmHomeCMD(arm).withTimeout(4.0),
-            new StraightDriveToPose(Units.inchesToMeters(170.0), 0.0, 0.0, drive)),
+            new StraightDriveToPose(Units.inchesToMeters(173.0), 0.0, 0.0, drive)),
         new StraightDriveToPose(Units.inchesToMeters(-75.0), 0.0, 0.0, drive).withTimeout(2.5),
         new BetterBalancing(drive));
   }
