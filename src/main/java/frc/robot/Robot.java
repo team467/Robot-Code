@@ -39,9 +39,6 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     Logger logger = Logger.getInstance();
 
-    PortForwarder.add(5888, "photonvision.local", 5800);
-    PortForwarder.add(5889, "photonvision-2.local", 5800);
-
     if (RobotConstants.get().mode() == Constants.Mode.REAL) {
       ProcessBuilder builder = new ProcessBuilder();
       builder.command("sudo", "mount", "/dev/sda1", "/media/sda1");
