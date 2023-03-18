@@ -159,13 +159,13 @@ public class Led2023 extends SubsystemBase {
         && !defaultTimer.hasElapsed(5)
         && DriverStation.isTeleopEnabled()
         && !FINISHED_RAINBOW_ONCE) {
+      if (defaultTimer.hasElapsed(3) && !FINISHED_RAINBOW_ONCE) {
+        defaultTimer.reset();
+        defaultTimer.stop();
+        FINISHED_RAINBOW_ONCE = true;
+      }
       defaultTimer.start();
       return ColorScheme.DEFAULT;
-    }
-    if (defaultTimer.hasElapsed(3) && !FINISHED_RAINBOW_ONCE) {
-      defaultTimer.reset();
-      defaultTimer.stop();
-      FINISHED_RAINBOW_ONCE = true;
     }
 
     // When picking up from shelf
@@ -204,19 +204,6 @@ public class Led2023 extends SubsystemBase {
         return ColorScheme.CONE_HIGH;
       }
     }
-
-    // If trying to hold on to something
-    if (intakerelease.getCurrentCommand() instanceof HoldCMD) {
-      // If holding on to Cubes
-      if (intakerelease.haveCube() && !intakerelease.haveCone()) {
-        return ColorScheme.HOLD_CUBE;
-      }
-      // If holding on to Cones
-      if (intakerelease.haveCone()) {
-        return ColorScheme.HOLD_CONE;
-      }
-    }
-
     // If trying to intake something
     if (intakerelease.getCurrentCommand() instanceof IntakeCMD
         || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
@@ -243,6 +230,18 @@ public class Led2023 extends SubsystemBase {
         return ColorScheme.RELEASE_CONE;
       } else {
         return ColorScheme.RELEASE_UNKNOWN;
+      }
+    }
+
+    // If trying to hold on to something
+    if (intakerelease.getCurrentCommand() instanceof HoldCMD) {
+      // If holding on to Cubes
+      if (intakerelease.haveCube() && !intakerelease.haveCone()) {
+        return ColorScheme.HOLD_CUBE;
+      }
+      // If holding on to Cones
+      if (intakerelease.haveCone()) {
+        return ColorScheme.HOLD_CONE;
       }
     }
 
@@ -666,62 +665,28 @@ public class Led2023 extends SubsystemBase {
     // t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
     double start;
     double end;
-    int othersLow = 190;
-    int othersHi = 190;
-    int othLow = 190;
-    int othHi = 190;
-    boolean valid = true;
+    set(COLORS_467.Black);
     if (preSet == 1) {
       start = 0;
       end = Math.ceil(RobotConstants.get().led2023LedCount() / 3);
-      othersLow = (int) Math.ceil(RobotConstants.get().led2023LedCount() / 3) + 1;
-      othersHi = (int) Math.ceil(RobotConstants.get().led2023LedCount()) - 1;
     } else if (preSet == 2) {
       start = Math.floor(RobotConstants.get().led2023LedCount() / 3);
       end =
           Math.ceil(
               RobotConstants.get().led2023LedCount()
                   - (RobotConstants.get().led2023LedCount() / 3));
-      othersLow = 0;
-      othersHi = (int) Math.floor(RobotConstants.get().led2023LedCount() / 3) - 1;
-      othLow =
-          (int)
-                  Math.ceil(
-                      RobotConstants.get().led2023LedCount()
-                          - (RobotConstants.get().led2023LedCount() / 3))
-              + 1;
-      othHi = RobotConstants.get().led2023LedCount() - 1;
 
-    } else if (preSet == 3) {
+    } else {
       start =
           Math.floor(
               RobotConstants.get().led2023LedCount()
                   - (RobotConstants.get().led2023LedCount() / 3));
       end = Math.ceil(RobotConstants.get().led2023LedCount());
-      othersLow =
-          (int)
-                  Math.floor(
-                      RobotConstants.get().led2023LedCount()
-                          - (RobotConstants.get().led2023LedCount() / 3))
-              + 1;
-      othersHi = RobotConstants.get().led2023LedCount() - 1;
-    } else {
-      start = 0;
-      end = RobotConstants.get().led2023LedCount();
     }
     for (int i = (int) start; i < end; i++) {
       ledStrip.setLED(i, color.getColor());
     }
-    if (othersHi == 190 || othHi == 190 || othersHi == 190 || othersLow == 190) {
-      valid = false;
-    } else if (valid == true) {
-      for (int i = othersLow; i <= othersHi; i++) {
-        ledStrip.setLED(i, COLORS_467.Black.getColor());
-      }
-      for (int i = othLow; i <= othHi; i++) {
-        ledStrip.setLED(i, COLORS_467.Black.getColor());
-      }
-    }
+
     ledStrip.update();
   }
 }
