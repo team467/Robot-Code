@@ -79,6 +79,11 @@ public class IntakeRelease extends SubsystemBase {
     state = State.INTAKE;
   }
 
+  public void resetHas() {
+    hasCone = false;
+    hasCube = false;
+  }
+
   public void release() {
     state = State.RELEASE;
     hasCone = false;
@@ -87,6 +92,7 @@ public class IntakeRelease extends SubsystemBase {
 
   public void stop() {
     state = State.STOP;
+    resetHas();
   }
 
   public void holdCone() {
@@ -100,6 +106,14 @@ public class IntakeRelease extends SubsystemBase {
   public boolean haveCube() {
     hasCube = hasCube || inputs.cubeLimitSwitch;
     return hasCube;
+  }
+
+  public boolean cubeLimitSwitch() {
+    return inputs.cubeLimitSwitch;
+  }
+
+  public boolean coneLimitSwitch() {
+    return inputs.coneLimitSwitch;
   }
 
   public boolean haveCone() {
