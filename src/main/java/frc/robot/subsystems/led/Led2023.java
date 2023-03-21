@@ -40,7 +40,7 @@ public class Led2023 extends SubsystemBase {
   private Timer purpleTimer = new Timer();
   protected double lastLoopTime = 0;
   private Timer defaultTimer = new Timer();
-  private ColorScheme color;
+  private ColorScheme lastColorScheme;
 
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
@@ -128,10 +128,13 @@ public class Led2023 extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getColorScheme() != color) {
+    ColorScheme color = getColorScheme();
+    //Clears leds if colorSceme changed
+    if (color != lastColorScheme) {
       set(COLORS_467.Black);
+      lastColorScheme = color;
     }
-    applyColorScheme(getColorScheme());
+    applyColorScheme(color);
     sendData();
   }
 
@@ -161,7 +164,7 @@ public class Led2023 extends SubsystemBase {
 
     // Sets rainbow for 5 secs after calibrating
     if ((arm.isCalibrated() || !CHECK_ARM_CALIBRATION)
-        && !defaultTimer.hasElapsed(AFTER_CALIBRATED_CLRSCM+0.1)
+        && !defaultTimer.hasElapsed(AFTER_CALIBRATED_CLRSCM + 0.1)
         && DriverStation.isTeleopEnabled()
         && !FINISHED_RAINBOW_ONCE) {
       if (defaultTimer.hasElapsed(AFTER_CALIBRATED_CLRSCM) && !FINISHED_RAINBOW_ONCE) {
@@ -173,6 +176,17 @@ public class Led2023 extends SubsystemBase {
       return ColorScheme.DEFAULT;
     }
 
+    // If trying to hold on to something
+    if (intakerelease.getCurrentCommand() instanceof HoldCMD) {
+      // If holding on to Cubes
+      if (intakerelease.haveCube() && !intakerelease.haveCone()) {
+        return ColorScheme.HOLD_CUBE;
+      }
+      // If holding on to Cones
+      if (intakerelease.haveCone()) {
+        return ColorScheme.HOLD_CONE;
+      }
+    }
     // When picking up from shelf
     if (arm.getCurrentCommand() instanceof ArmShelfCMD) {
       return ColorScheme.SHELF;
@@ -209,6 +223,7 @@ public class Led2023 extends SubsystemBase {
         return ColorScheme.CONE_HIGH;
       }
     }
+
     // If trying to intake something
     if (intakerelease.getCurrentCommand() instanceof IntakeCMD
         || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
@@ -235,18 +250,6 @@ public class Led2023 extends SubsystemBase {
         return ColorScheme.RELEASE_CONE;
       } else {
         return ColorScheme.RELEASE_UNKNOWN;
-      }
-    }
-
-    // If trying to hold on to something
-    if (intakerelease.getCurrentCommand() instanceof HoldCMD) {
-      // If holding on to Cubes
-      if (intakerelease.haveCube() && !intakerelease.haveCone()) {
-        return ColorScheme.HOLD_CUBE;
-      }
-      // If holding on to Cones
-      if (intakerelease.haveCone()) {
-        return ColorScheme.HOLD_CONE;
       }
     }
 
@@ -492,7 +495,10 @@ public class Led2023 extends SubsystemBase {
 
     for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
       ledStrip.setHSB(
-          i, ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
+          i,
+          ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
+          255,
+          127);
       ledStrip.update();
     }
   }
@@ -507,7 +513,10 @@ public class Led2023 extends SubsystemBase {
 
     for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
       ledStrip.setHSB(
-          i, ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
+          i,
+          ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
+          255,
+          127);
       ledStrip.update();
     }
   }
@@ -522,9 +531,15 @@ public class Led2023 extends SubsystemBase {
 
     for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
       ledStrip.setLeftHSB(
-          i, ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
+          i,
+          ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
+          255,
+          127);
       ledStrip.setRightHSB(
-          i, ((int) rainbowColor - (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
+          i,
+          ((int) rainbowColor - (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
+          255,
+          127);
       ledStrip.update();
     }
   }
@@ -533,7 +548,10 @@ public class Led2023 extends SubsystemBase {
     rainbowTimer.reset();
     for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
       ledStrip.setHSB(
-          i, ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
+          i,
+          ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
+          255,
+          127);
       ledStrip.update();
     }
   }
@@ -676,15 +694,11 @@ public class Led2023 extends SubsystemBase {
       end = (RobotConstants.get().led2023LedCount() / 3);
     } else if (preSet == 2) {
       start = (RobotConstants.get().led2023LedCount() / 3);
-      end =
-              RobotConstants.get().led2023LedCount()
-                  - (RobotConstants.get().led2023LedCount() / 3);
+      end = RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
 
     } else {
       start =
-          (
-              RobotConstants.get().led2023LedCount()
-                  - (RobotConstants.get().led2023LedCount() / 3));
+          (RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3));
       end = (RobotConstants.get().led2023LedCount());
     }
     for (int i = (int) start; i < end; i++) {
