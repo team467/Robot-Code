@@ -40,6 +40,7 @@ public class Led2023 extends SubsystemBase {
   private Timer purpleTimer = new Timer();
   protected double lastLoopTime = 0;
   private Timer defaultTimer = new Timer();
+  private ColorScheme color;
   private ColorScheme lastColorScheme;
 
   public static final double TARGET_MAX_RANGE = 100.0;
@@ -128,8 +129,8 @@ public class Led2023 extends SubsystemBase {
 
   @Override
   public void periodic() {
-    ColorScheme color = getColorScheme();
-    //Clears leds if colorSceme changed
+    color = getColorScheme();
+    // Clears leds if colorSceme changed
     if (color != lastColorScheme) {
       set(COLORS_467.Black);
       lastColorScheme = color;
