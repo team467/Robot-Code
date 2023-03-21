@@ -27,6 +27,7 @@ public class Led2023 extends SubsystemBase {
   private final double BATTER_MIN_VOLTAGE = 9.0; // 10.0
   private final boolean CHECK_ARM_CALIBRATION = true;
   private boolean FINISHED_RAINBOW_ONCE = false;
+  private final double AFTER_CALIBRATED_CLRSCM = 2.5;
 
   private final double SHOOTING_TIMER_SPEED = 0.1;
   private final double RAINBOW_TIMER_SPEED = 0.02;
@@ -34,11 +35,12 @@ public class Led2023 extends SubsystemBase {
   private IntakeRelease intakerelease;
   private Arm arm;
 
-  private double color = 0;
+  private double rainbowColor = 0;
   private Timer rainbowTimer = new Timer();
   private Timer purpleTimer = new Timer();
   protected double lastLoopTime = 0;
   private Timer defaultTimer = new Timer();
+  private ColorScheme color;
 
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
@@ -126,6 +128,9 @@ public class Led2023 extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (getColorScheme() != color) {
+      set(COLORS_467.Black);
+    }
     applyColorScheme(getColorScheme());
     sendData();
   }
@@ -156,10 +161,10 @@ public class Led2023 extends SubsystemBase {
 
     // Sets rainbow for 5 secs after calibrating
     if ((arm.isCalibrated() || !CHECK_ARM_CALIBRATION)
-        && !defaultTimer.hasElapsed(5)
+        && !defaultTimer.hasElapsed(AFTER_CALIBRATED_CLRSCM+0.1)
         && DriverStation.isTeleopEnabled()
         && !FINISHED_RAINBOW_ONCE) {
-      if (defaultTimer.hasElapsed(3) && !FINISHED_RAINBOW_ONCE) {
+      if (defaultTimer.hasElapsed(AFTER_CALIBRATED_CLRSCM) && !FINISHED_RAINBOW_ONCE) {
         defaultTimer.reset();
         defaultTimer.stop();
         FINISHED_RAINBOW_ONCE = true;
@@ -479,47 +484,47 @@ public class Led2023 extends SubsystemBase {
 
   public void setRainbowMovingUp() {
     if (rainbowTimer.hasElapsed(RAINBOW_TIMER_SPEED)) {
-      color -= RAINBOW_AMOUNT;
+      rainbowColor -= RAINBOW_AMOUNT;
 
-      if (color > 360) color = 0;
+      if (rainbowColor > 360) rainbowColor = 0;
       rainbowTimer.reset();
     }
 
     for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
       ledStrip.setHSB(
-          i, ((int) color + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
+          i, ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
       ledStrip.update();
     }
   }
 
   public void setRainbowMovingDown() {
     if (rainbowTimer.hasElapsed(RAINBOW_TIMER_SPEED)) {
-      color += RAINBOW_AMOUNT;
+      rainbowColor += RAINBOW_AMOUNT;
       ledStrip.update();
-      if (color < 0) color = 360;
+      if (rainbowColor < 0) rainbowColor = 360;
       rainbowTimer.reset();
     }
 
     for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
       ledStrip.setHSB(
-          i, ((int) color + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
+          i, ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
       ledStrip.update();
     }
   }
 
   public void setRainbowMovingDownSecondInv() {
     if (rainbowTimer.hasElapsed(RAINBOW_TIMER_SPEED)) {
-      color += RAINBOW_AMOUNT;
+      rainbowColor += RAINBOW_AMOUNT;
       ledStrip.update();
-      if (color < 0) color = 360;
+      if (rainbowColor < 0) rainbowColor = 360;
       rainbowTimer.reset();
     }
 
     for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
       ledStrip.setLeftHSB(
-          i, ((int) color + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
+          i, ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
       ledStrip.setRightHSB(
-          i, ((int) color - (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
+          i, ((int) rainbowColor - (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
       ledStrip.update();
     }
   }
@@ -528,7 +533,7 @@ public class Led2023 extends SubsystemBase {
     rainbowTimer.reset();
     for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
       ledStrip.setHSB(
-          i, ((int) color + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
+          i, ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360, 255, 127);
       ledStrip.update();
     }
   }
@@ -665,23 +670,22 @@ public class Led2023 extends SubsystemBase {
     // t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
     double start;
     double end;
-    set(COLORS_467.Black);
+
     if (preSet == 1) {
       start = 0;
-      end = Math.ceil(RobotConstants.get().led2023LedCount() / 3);
+      end = (RobotConstants.get().led2023LedCount() / 3);
     } else if (preSet == 2) {
-      start = Math.floor(RobotConstants.get().led2023LedCount() / 3);
+      start = (RobotConstants.get().led2023LedCount() / 3);
       end =
-          Math.ceil(
               RobotConstants.get().led2023LedCount()
-                  - (RobotConstants.get().led2023LedCount() / 3));
+                  - (RobotConstants.get().led2023LedCount() / 3);
 
     } else {
       start =
-          Math.floor(
+          (
               RobotConstants.get().led2023LedCount()
                   - (RobotConstants.get().led2023LedCount() / 3));
-      end = Math.ceil(RobotConstants.get().led2023LedCount());
+      end = (RobotConstants.get().led2023LedCount());
     }
     for (int i = (int) start; i < end; i++) {
       ledStrip.setLED(i, color.getColor());
