@@ -42,6 +42,14 @@ public class Led2023 extends SubsystemBase {
   private Timer defaultTimer = new Timer();
   private ColorScheme color;
   private ColorScheme lastColorScheme;
+  private static final double topStart = 0;
+  private static final double topEnd = RobotConstants.get().led2023LedCount() / 3;
+  private static final double midStart = RobotConstants.get().led2023LedCount() / 3;
+  private static final double midEnd =
+      RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
+  private static final double bottomStart =
+      RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
+  private static final double bottomEnd = RobotConstants.get().led2023LedCount();
 
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
@@ -687,22 +695,21 @@ public class Led2023 extends SubsystemBase {
 
   public void setOneThird(COLORS_467 color, int preSet) {
     // t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
-    double start;
-    double end;
+    int start;
+    int end;
 
     if (preSet == 1) {
-      start = 0;
-      end = (RobotConstants.get().led2023LedCount() / 3);
+      start = (int) topStart;
+      end = (int) topEnd;
     } else if (preSet == 2) {
-      start = (RobotConstants.get().led2023LedCount() / 3);
-      end = RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
+      start = (int) midStart;
+      end = (int) midEnd;
 
     } else {
-      start =
-          (RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3));
-      end = (RobotConstants.get().led2023LedCount());
+      start = (int) bottomStart;
+      end = (int) bottomEnd;
     }
-    for (int i = (int) start; i < end; i++) {
+    for (int i = start; i < end; i++) {
       ledStrip.setLED(i, color.getColor());
     }
 
