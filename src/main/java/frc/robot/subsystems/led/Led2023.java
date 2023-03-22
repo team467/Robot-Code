@@ -30,8 +30,8 @@ public class Led2023 extends SubsystemBase {
   private final double AFTER_CALIBRATED_CLRSCM = 2.5;
 
   private final double SHOOTING_TIMER_SPEED = 0.1;
-  private final double RAINBOW_TIMER_SPEED = 0.02;
-  private final int RAINBOW_AMOUNT = 20;
+  private final double RAINBOW_TIMER_SPEED = 0.04;
+  private final int RAINBOW_AMOUNT = 10;
   private IntakeRelease intakerelease;
   private Arm arm;
 
