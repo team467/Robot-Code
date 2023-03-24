@@ -2,24 +2,31 @@ package frc.robot.subsystems.led;
 
 import java.sql.Driver;
 
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.leds.DoubleLEDStrip;
 import frc.lib.leds.LEDManager;
 import frc.robot.RobotConstants;
 import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmCalibrateZeroAtHomeCMD;
 import frc.robot.commands.arm.ArmFloorCMD;
 import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.auto.Balancing;
 import frc.robot.commands.auto.BetterBalancing;
+import frc.robot.commands.auto.complex.OnlyBackup;
+import frc.robot.commands.auto.complex.OnlyScore;
+import frc.robot.commands.auto.complex.ScoreAndBackUp;
 import frc.robot.commands.intakerelease.HoldCMD;
 import frc.robot.commands.intakerelease.IntakeAndRaise;
 import frc.robot.commands.intakerelease.IntakeCMD;
@@ -42,6 +49,7 @@ public class Led2023 extends SubsystemBase {
   private IntakeRelease intakerelease;
   private Arm arm;
   private Drive drive;
+  private LoggedDashboardChooser<Command> autoChooser;
 
   private double rainbowColor = 0;
   private Timer rainbowTimer = new Timer();
@@ -49,9 +57,8 @@ public class Led2023 extends SubsystemBase {
   private Timer balanceTimer = new Timer();
   protected double lastLoopTime = 0;
   private Timer defaultTimer = new Timer();
-  private ColorScheme color;
+  private Timer victoryTimer = new Timer();
   private ColorScheme lastColorScheme;
-  private static boolean balanceStart;
   private static final double topStart = 0;
   private static final double topEnd = RobotConstants.get().led2023LedCount() / 3;
   private static final double midStart = RobotConstants.get().led2023LedCount() / 3;
@@ -61,11 +68,19 @@ public class Led2023 extends SubsystemBase {
       RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
   private static final double bottomEnd = RobotConstants.get().led2023LedCount();
   private boolean doneBalancing = false;
+  private double angleDegrees =
+        drive.getPose().getRotation().getCos() * drive.getPitch().getDegrees()
+            + drive.getPose().getRotation().getSin() * drive.getRoll().getDegrees();
+  private double angleVelocityDegreesPerSec =
+        drive.getPose().getRotation().getCos() * Units.radiansToDegrees(drive.getPitchVelocity())
+            + drive.getPose().getRotation().getSin()
+                * Units.radiansToDegrees(drive.getRollVelocity());
 
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
   public static final double BALL_MAX_RANGE = 100.0;
   public static final double BALL_MAX_ANGLE = 15.0;
+  private static final double MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND = 8.0;
   private COLORS_467 batteryCheckColor = COLORS_467.Orange;
 
   /*
@@ -129,11 +144,12 @@ public class Led2023 extends SubsystemBase {
     AUTO_SCORE
   }
 
-  public Led2023(Arm arm, IntakeRelease intakerelease, Drive drive) {
+  public Led2023(Arm arm, IntakeRelease intakerelease, Drive drive, LoggedDashboardChooser<Command> autoChooser) {
     super();
     this.intakerelease = intakerelease;
     this.arm = arm;
     this.drive = drive;
+    this.autoChooser = autoChooser;
 
     ledStrip =
         LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);
@@ -148,17 +164,18 @@ public class Led2023 extends SubsystemBase {
     rainbowTimer.reset();
     purpleTimer.reset();
     balanceTimer.reset();
+    victoryTimer.reset();
   }
 
-  public boolean checkBalancing() {
-    //if (V.get()) {
-      return true;
-    //}
+  public boolean needsBalance() {
+    return !(autoChooser.get() instanceof OnlyBackup || autoChooser.get() instanceof OnlyScore
+        || autoChooser.get() instanceof ScoreAndBackUp || autoChooser.get() instanceof ArmCalibrateZeroAtHomeCMD
+        || doneBalancing);
   }
 
   @Override
   public void periodic() {
-    color = getColorScheme();
+    ColorScheme color = getColorScheme();
     // Clears leds if colorSceme changed
     if (color != lastColorScheme) {
       set(COLORS_467.Black);
@@ -170,34 +187,29 @@ public class Led2023 extends SubsystemBase {
 
   public ColorScheme getColorScheme() {
 
-    doneBalancing = checkBalancing() ? true : false;
+    doneBalancing = !needsBalance();
+
     // Check if battery is low
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
     }
 
     // When robot is disabled
-    if (DriverStation.isDisabled() && (balanceTimer.hasElapsed(4) || doneBalancing)) {
-      defaultTimer.stop();
-      defaultTimer.reset();
-      balanceTimer.reset();
-      doneBalancing = true;
-      return ColorScheme.DEFAULT;
+    if (DriverStation.isDisabled()) {
+      if (!(balanceTimer.hasElapsed(4) || doneBalancing)) {
+        return ColorScheme.BALANCE_VICTORY;
+      }
+        defaultTimer.stop();
+        defaultTimer.reset();
+        balanceTimer.reset();
+        doneBalancing = true;
+        return ColorScheme.DEFAULT;
     }
 
     // When robot is balanced in teleop
     if (DriverStation.isAutonomousEnabled()) {
-      balanceStart = drive.getCurrentCommand() instanceof BetterBalancing ? true : false;
-      if ((balanceStart && !(drive.getCurrentCommand() instanceof BetterBalancing)) || ((((drive.getPose().getRotation().getCos() * drive.getPitch().getDegrees()
-          + drive.getPose().getRotation().getSin() * drive.getRoll().getDegrees() < 0)
-          && (drive.getPose().getRotation().getCos() * Units.radiansToDegrees(drive.getPitchVelocity())
-            + drive.getPose().getRotation().getSin()
-                * Units.radiansToDegrees(drive.getRollVelocity()))>8) 
-                || ((drive.getPose().getRotation().getCos() * drive.getPitch().getDegrees()
-          + drive.getPose().getRotation().getSin() * drive.getRoll().getDegrees() < 0)
-          && (drive.getPose().getRotation().getCos() * Units.radiansToDegrees(drive.getPitchVelocity())
-            + drive.getPose().getRotation().getSin()
-                * Units.radiansToDegrees(drive.getRollVelocity()))<-8)) && drive.getCurrentCommand() instanceof BetterBalancing) || !balanceTimer.hasElapsed(3.99)) {
+      if ((((angleDegrees < 0.0 && angleVelocityDegreesPerSec > MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND)
+            || (angleDegrees > 0.0 && angleVelocityDegreesPerSec < -MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND)) && drive.getCurrentCommand() instanceof BetterBalancing) || !balanceTimer.hasElapsed(3.99)) {
         balanceTimer.start();
         return ColorScheme.BALANCE_VICTORY;
       }
@@ -218,7 +230,7 @@ public class Led2023 extends SubsystemBase {
 
     // Sets rainbow for 5 secs after calibrating
     if ((arm.isCalibrated() || !CHECK_ARM_CALIBRATION)
-        && !defaultTimer.hasElapsed(AFTER_CALIBRATED_CLRSCM + 0.1)
+        && !defaultTimer.hasElapsed(AFTER_CALIBRATED_CLRSCM + 0.02)
         && DriverStation.isTeleopEnabled()
         && !FINISHED_RAINBOW_ONCE) {
       if (defaultTimer.hasElapsed(AFTER_CALIBRATED_CLRSCM) && !FINISHED_RAINBOW_ONCE) {
@@ -405,10 +417,10 @@ public class Led2023 extends SubsystemBase {
         }
         break;
       case BALANCE_VICTORY:
-        victoryLeds(COLORS_467.Blue, COLORS_467.Blue, COLORS_467.Gold);
+        victoryLeds(COLORS_467.Blue, COLORS_467.Gold);
         break;
       case AUTO_SCORE:
-        victoryLeds(COLORS_467.Yellow, COLORS_467.Yellow, COLORS_467.Purple);
+        victoryLeds(COLORS_467.Yellow, COLORS_467.Purple);
         break;
       default:
         setRainbowMovingDownSecondInv();
@@ -767,14 +779,13 @@ public class Led2023 extends SubsystemBase {
     ledStrip.update();
   }
 
-  public void victoryLeds(COLORS_467 topColor, COLORS_467 bottomColor, COLORS_467 bgColor) {
-    if (purpleTimer.hasElapsed(0.9)) {
-      purpleTimer.reset();
-    } else if (purpleTimer.hasElapsed(0.4)) {
+  public void victoryLeds(COLORS_467 fgColor, COLORS_467 bgColor) {
+    if (victoryTimer.hasElapsed(0.9)) {
+      victoryTimer.reset();
+    } else if (victoryTimer.hasElapsed(0.4)) {
       for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
         for (int brightness = 0; brightness <= 256; brightness++) {
-      ledStrip.setRGB(i, topColor.red * brightness, topColor.blue * brightness, topColor.green * brightness);
-      ledStrip.setRGB(i, bottomColor.red * brightness, bottomColor.blue * brightness, bottomColor.green * brightness);
+      ledStrip.setRGB(i, fgColor.red * brightness, fgColor.blue * brightness, fgColor.green * brightness);
       ledStrip.update();
         }
       }
