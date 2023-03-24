@@ -1,9 +1,5 @@
 package frc.robot.subsystems.led;
 
-import java.sql.Driver;
-
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -11,7 +7,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.leds.DoubleLEDStrip;
 import frc.lib.leds.LEDManager;
@@ -22,7 +17,6 @@ import frc.robot.commands.arm.ArmFloorCMD;
 import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
-import frc.robot.commands.auto.Balancing;
 import frc.robot.commands.auto.BetterBalancing;
 import frc.robot.commands.auto.complex.OnlyBackup;
 import frc.robot.commands.auto.complex.OnlyScore;
@@ -34,6 +28,7 @@ import frc.robot.commands.intakerelease.ReleaseCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
@@ -69,12 +64,12 @@ public class Led2023 extends SubsystemBase {
   private static final double bottomEnd = RobotConstants.get().led2023LedCount();
   private boolean doneBalancing = false;
   private double angleDegrees =
-        drive.getPose().getRotation().getCos() * drive.getPitch().getDegrees()
-            + drive.getPose().getRotation().getSin() * drive.getRoll().getDegrees();
+      drive.getPose().getRotation().getCos() * drive.getPitch().getDegrees()
+          + drive.getPose().getRotation().getSin() * drive.getRoll().getDegrees();
   private double angleVelocityDegreesPerSec =
-        drive.getPose().getRotation().getCos() * Units.radiansToDegrees(drive.getPitchVelocity())
-            + drive.getPose().getRotation().getSin()
-                * Units.radiansToDegrees(drive.getRollVelocity());
+      drive.getPose().getRotation().getCos() * Units.radiansToDegrees(drive.getPitchVelocity())
+          + drive.getPose().getRotation().getSin()
+              * Units.radiansToDegrees(drive.getRollVelocity());
 
   public static final double TARGET_MAX_RANGE = 100.0;
   public static final double TARGET_MAX_ANGLE = 15.0;
@@ -144,7 +139,11 @@ public class Led2023 extends SubsystemBase {
     AUTO_SCORE
   }
 
-  public Led2023(Arm arm, IntakeRelease intakerelease, Drive drive, LoggedDashboardChooser<Command> autoChooser) {
+  public Led2023(
+      Arm arm,
+      IntakeRelease intakerelease,
+      Drive drive,
+      LoggedDashboardChooser<Command> autoChooser) {
     super();
     this.intakerelease = intakerelease;
     this.arm = arm;
@@ -168,14 +167,21 @@ public class Led2023 extends SubsystemBase {
   }
 
   public boolean needsBalance() {
-    return !(autoChooser.get() instanceof OnlyBackup || autoChooser.get() instanceof OnlyScore
-        || autoChooser.get() instanceof ScoreAndBackUp || autoChooser.get() instanceof ArmCalibrateZeroAtHomeCMD
-        || doneBalancing);
+    if (autoChooser.get() instanceof OnlyBackup
+        || autoChooser.get() instanceof OnlyScore
+        || autoChooser.get() instanceof ScoreAndBackUp
+        || autoChooser.get() instanceof ArmCalibrateZeroAtHomeCMD
+        || doneBalancing) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   @Override
   public void periodic() {
     ColorScheme color = getColorScheme();
+
     // Clears leds if colorSceme changed
     if (color != lastColorScheme) {
       set(COLORS_467.Black);
@@ -199,21 +205,27 @@ public class Led2023 extends SubsystemBase {
       if (!(balanceTimer.hasElapsed(4) || doneBalancing)) {
         return ColorScheme.BALANCE_VICTORY;
       }
-        defaultTimer.stop();
-        defaultTimer.reset();
-        balanceTimer.reset();
-        doneBalancing = true;
-        return ColorScheme.DEFAULT;
+      defaultTimer.stop();
+      defaultTimer.reset();
+      balanceTimer.reset();
+      doneBalancing = true;
+      return ColorScheme.DEFAULT;
     }
 
     // When robot is balanced in teleop
     if (DriverStation.isAutonomousEnabled()) {
-      if ((((angleDegrees < 0.0 && angleVelocityDegreesPerSec > MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND)
-            || (angleDegrees > 0.0 && angleVelocityDegreesPerSec < -MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND)) && drive.getCurrentCommand() instanceof BetterBalancing) || !balanceTimer.hasElapsed(3.99)) {
+      if ((((angleDegrees < 0.0
+                      && angleVelocityDegreesPerSec > MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND)
+                  || (angleDegrees > 0.0
+                      && angleVelocityDegreesPerSec < -MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND))
+              && drive.getCurrentCommand() instanceof BetterBalancing)
+          || !balanceTimer.hasElapsed(3.99)) {
         balanceTimer.start();
         return ColorScheme.BALANCE_VICTORY;
       }
-      if (intakerelease.getCurrentCommand() instanceof ReleaseCMD || intakerelease.getCurrentCommand() instanceof IntakeCMD || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
+      if (intakerelease.getCurrentCommand() instanceof ReleaseCMD
+          || intakerelease.getCurrentCommand() instanceof IntakeCMD
+          || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
         return ColorScheme.AUTO_SCORE;
       }
     }
@@ -785,15 +797,17 @@ public class Led2023 extends SubsystemBase {
     } else if (victoryTimer.hasElapsed(0.4)) {
       for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
         for (int brightness = 0; brightness <= 256; brightness++) {
-      ledStrip.setRGB(i, fgColor.red * brightness, fgColor.blue * brightness, fgColor.green * brightness);
-      ledStrip.update();
+          ledStrip.setRGB(
+              i, fgColor.red * brightness, fgColor.blue * brightness, fgColor.green * brightness);
+          ledStrip.update();
         }
       }
     } else {
       for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
         for (int brightness = 0; brightness <= 256; brightness++) {
-      ledStrip.setRGB(i, bgColor.red * brightness, bgColor.blue * brightness, bgColor.green * brightness);
-      ledStrip.update();
+          ledStrip.setRGB(
+              i, bgColor.red * brightness, bgColor.blue * brightness, bgColor.green * brightness);
+          ledStrip.update();
         }
       }
     }
