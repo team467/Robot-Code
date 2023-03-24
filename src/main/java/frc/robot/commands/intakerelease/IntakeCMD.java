@@ -25,8 +25,7 @@ public class IntakeCMD extends CommandBase {
   public void end(boolean interrupted) {
     if (intakerelease.getWants() == Wants.CONE) {
       intakerelease.holdCone();
-    }
-    {
+    } else {
       intakerelease.holdCube();
     }
   }
