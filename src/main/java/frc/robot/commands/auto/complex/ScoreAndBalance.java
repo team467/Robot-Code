@@ -26,8 +26,8 @@ public class ScoreAndBalance extends SequentialCommandGroup {
         new Initialize(aprilTag, relativePosition, drive, arm),
         new Score(gamePieceType, location, arm, intakeRelease),
         Commands.sequence(
-            new ArmHomeCMD(arm),
-            new StraightDriveToPose(Units.inchesToMeters(95.25), 0.0, 0.0, drive)),
+            new ArmHomeCMD(arm).withTimeout(3.5),
+            new StraightDriveToPose(Units.inchesToMeters(95.25), 0.0, 0.0, drive).withTimeout(2.5)),
         new BetterBalancing(drive));
   }
 }

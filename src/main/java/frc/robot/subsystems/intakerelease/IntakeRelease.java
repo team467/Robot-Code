@@ -60,12 +60,13 @@ public class IntakeRelease extends SubsystemBase {
   public void periodic() {
     intakeReleaseIO.updateInputs(inputs, wants);
     logger.processInputs("IntakeRelease", inputs);
+    logger.recordOutput("IntakeRelease/State", state.toString());
 
     switch (state) {
       case DISABLED -> intakeReleaseIO.setPercent(0);
       case INTAKE -> intakeReleaseIO.setPercent(-1.0);
       case RELEASE -> intakeReleaseIO.setPercent(0.6);
-      case HOLD_CUBE -> intakeReleaseIO.setPercent(-0.3);
+      case HOLD_CUBE -> intakeReleaseIO.setPercent(0.0); // -0.3
       case HOLD_CONE -> intakeReleaseIO.setPercent(-0.8);
       case STOP -> intakeReleaseIO.setPercent(0);
       default -> intakeReleaseIO.setPercent(0);
@@ -78,6 +79,11 @@ public class IntakeRelease extends SubsystemBase {
     state = State.INTAKE;
   }
 
+  public void resetHas() {
+    hasCone = false;
+    hasCube = false;
+  }
+
   public void release() {
     state = State.RELEASE;
     hasCone = false;
@@ -86,6 +92,7 @@ public class IntakeRelease extends SubsystemBase {
 
   public void stop() {
     state = State.STOP;
+    resetHas();
   }
 
   public void holdCone() {
@@ -99,6 +106,14 @@ public class IntakeRelease extends SubsystemBase {
   public boolean haveCube() {
     hasCube = hasCube || inputs.cubeLimitSwitch;
     return hasCube;
+  }
+
+  public boolean cubeLimitSwitch() {
+    return inputs.cubeLimitSwitch;
+  }
+
+  public boolean coneLimitSwitch() {
+    return inputs.coneLimitSwitch;
   }
 
   public boolean haveCone() {

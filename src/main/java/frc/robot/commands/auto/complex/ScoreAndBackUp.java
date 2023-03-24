@@ -25,7 +25,7 @@ public class ScoreAndBackUp extends SequentialCommandGroup {
         new Initialize(aprilTag, relativePosition, drive, arm),
         new Score(gamePieceType, location, arm, intakeRelease),
         Commands.parallel(
-            new StraightDriveToPose(Units.inchesToMeters(150.0), 0.0, 0.0, drive),
+            new StraightDriveToPose(Units.inchesToMeters(156.0), 0.0, 0.0, drive),
             new ArmHomeCMD(arm)));
   }
 }

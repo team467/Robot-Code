@@ -1,11 +1,12 @@
 package frc.robot.commands.intakerelease;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
-import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
 
 public class HoldCMD extends CommandBase {
   private final IntakeRelease intakerelease;
+  private Timer timer = new Timer();
 
   public HoldCMD(IntakeRelease intakerelease) {
     this.intakerelease = intakerelease;
@@ -13,13 +14,26 @@ public class HoldCMD extends CommandBase {
   }
 
   @Override
+  public void initialize() {
+    timer.reset();
+    timer.start();
+  }
+
+  @Override
   public void execute() {
     if (intakerelease.haveCube()
         && !intakerelease.haveCone()
-        && intakerelease.getWants() == Wants.CUBE) {
+        && intakerelease.wantsCube()
+        && !timer.hasElapsed(3.0)) {
       intakerelease.holdCube();
-    } else if (intakerelease.haveCone() && intakerelease.getWants() == Wants.CONE) {
+      if (intakerelease.cubeLimitSwitch()) {
+        timer.restart();
+      }
+    } else if (intakerelease.haveCone() && intakerelease.wantsCone() && !timer.hasElapsed(3.0)) {
       intakerelease.holdCone();
+      if (intakerelease.coneLimitSwitch()) {
+        timer.restart();
+      }
     } else {
       intakerelease.stop();
     }
@@ -29,6 +43,6 @@ public class HoldCMD extends CommandBase {
   public void end(boolean interrupted) {}
 
   public boolean isFinished() {
-    return intakerelease.wantsCone() || intakerelease.wantsCube();
+    return false;
   }
 }
