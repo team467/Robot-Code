@@ -33,7 +33,7 @@ public class Led2023 extends SubsystemBase {
   private static final boolean USE_BATTERY_CHECK = true;
   private static final double BATTER_MIN_VOLTAGE = 9.0;
   private static final boolean CHECK_ARM_CALIBRATION = true;
-  private static final double RAINBOW_TIME_AFTER_CALIBRATION = 2.5;
+  private static final double RAINBOW_TIME_AFTER_CALIBRATION = 3;
   private static final COLORS_467 BATTERY_LOW_COLOR = COLORS_467.Orange;
   private static final COLORS_467 ARM_UNCALIBRATED_COLOR = COLORS_467.Red;
 
@@ -157,7 +157,7 @@ public class Led2023 extends SubsystemBase {
     }
     // When robot is disabled
     if (DriverStation.isDisabled()) {
-      if (balanceTimer.get()>0.01&&!balanceTimer.hasElapsed(3)&&!doneBalanceLeds) {
+      if (balanceTimer.get()>0.0&&!balanceTimer.hasElapsed(2)&&!doneBalanceLeds) {
         return ColorScheme.BALANCE_VICTORY;
       }
       defaultTimer.stop();
