@@ -199,7 +199,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double armRotateConversionFactor() {
-    return 0.00236706 / 2; // Rotations to Meters
+    return 0.00236706; // Rotations to Meters
   }
 
   @Override
