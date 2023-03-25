@@ -215,15 +215,6 @@ public class Led2023 extends SubsystemBase {
         return ColorScheme.HOLD_CONE;
       }
     }
-    // When picking up from shelf
-    if (arm.getCurrentCommand() instanceof ArmShelfCMD) {
-      return ColorScheme.SHELF;
-    }
-
-    // When picking up from floor
-    if (arm.getCurrentCommand() instanceof ArmFloorCMD) {
-      return ColorScheme.FLOOR;
-    }
 
     // When arm is scoring high
     if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD) {
@@ -279,6 +270,16 @@ public class Led2023 extends SubsystemBase {
       } else {
         return ColorScheme.RELEASE_UNKNOWN;
       }
+    }
+
+    // When picking up from shelf
+    if (arm.getCurrentCommand() instanceof ArmShelfCMD) {
+      return ColorScheme.SHELF;
+    }
+
+    // When picking up from floor
+    if (arm.getCurrentCommand() instanceof ArmFloorCMD) {
+      return ColorScheme.FLOOR;
     }
 
     // If we want cubes
