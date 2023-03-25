@@ -40,7 +40,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public double maxLinearSpeed() {
-    return 3.0;
+    return Units.feetToMeters(14.5);
   } // TODO: tune
 
   @Override
@@ -69,7 +69,7 @@ public class CompBotConstants implements Constants {
 
   @Override
   public SimpleFeedforwardConstant moduleDriveFF() {
-    return new SimpleFeedforwardConstant(0.23186, 0.13656);
+    return new SimpleFeedforwardConstant(0.20266, 0.13711);
   } // TODO: tune
 
   @Override
@@ -90,10 +90,10 @@ public class CompBotConstants implements Constants {
   @Override
   public Rotation2d[] absoluteAngleOffset() {
     return new Rotation2d[] {
-      Rotation2d.fromDegrees(20.5),
-      Rotation2d.fromDegrees(42.0),
-      Rotation2d.fromDegrees(168.4),
-      Rotation2d.fromDegrees(99.9),
+      Rotation2d.fromDegrees(24.3),
+      Rotation2d.fromDegrees(42.4),
+      Rotation2d.fromDegrees(169.7),
+      Rotation2d.fromDegrees(101.5),
     };
   }
 
