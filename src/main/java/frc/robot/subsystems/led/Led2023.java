@@ -13,6 +13,7 @@ import frc.robot.commands.arm.ArmFloorCMD;
 import frc.robot.commands.arm.ArmScoreHighNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
+import frc.robot.commands.auto.BetterBalancing;
 import frc.robot.commands.intakerelease.HoldCMD;
 import frc.robot.commands.intakerelease.IntakeAndRaise;
 import frc.robot.commands.intakerelease.IntakeCMD;
@@ -29,6 +30,7 @@ public class Led2023 extends SubsystemBase {
   private ColorScheme lastColorScheme;
   private boolean finishedRainbowOnce = false;
   private boolean doneBalanceLeds = false;
+  boolean balanceStarted = false;
 
   private static final boolean USE_BATTERY_CHECK = true;
   private static final double BATTER_MIN_VOLTAGE = 9.0;
@@ -157,20 +159,24 @@ public class Led2023 extends SubsystemBase {
     }
     // When robot is disabled
     if (DriverStation.isDisabled()) {
-      if (balanceTimer.get()>0.0&&!balanceTimer.hasElapsed(2)&&!doneBalanceLeds) {
+      if (balanceTimer.get()>0.0&&!balanceTimer.hasElapsed(1)&&!doneBalanceLeds) {
         return ColorScheme.BALANCE_VICTORY;
       }
       defaultTimer.stop();
       defaultTimer.reset();
       balanceTimer.reset();
       doneBalanceLeds = true;
+      balanceStarted = false;
       return ColorScheme.DEFAULT;
     }
 
     
     if (DriverStation.isAutonomousEnabled()) {
       // When robot is balanced in Autonomous
-      if (drive.isUpright()) {
+      if (drive.getCurrentCommand() instanceof BetterBalancing) {
+        balanceStarted = true;
+      }
+      if (drive.isUpright()&&balanceStarted) {
         doneBalanceLeds = false;
         balanceTimer.start();
         return ColorScheme.BALANCE_VICTORY;
