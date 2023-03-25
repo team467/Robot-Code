@@ -30,7 +30,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
-  
+
   private Timer balanceTimer = new Timer();
   private Timer defaultTimer = new Timer();
   private ColorScheme lastColorScheme;
@@ -38,12 +38,12 @@ public class Led2023 extends SubsystemBase {
   private boolean FINISHED_RAINBOW_ONCE = false;
 
   private static final boolean USE_BATTERY_CHECK = true;
-  private static final double BATTER_MIN_VOLTAGE = 9.0; // 10.0
+  private static final double BATTER_MIN_VOLTAGE = 9.0;
   private static final boolean CHECK_ARM_CALIBRATION = true;
   private static final double AFTER_CALIBRATED_CLRSCM = 2.5;
   private static final double MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND = 8.0;
   private static final COLORS_467 batteryCheckColor = COLORS_467.Orange;
-
+  private static final COLORS_467 armUncalibratedColor = COLORS_467.Red;
 
   private IntakeRelease intakerelease;
   private Arm arm;
@@ -128,7 +128,8 @@ public class Led2023 extends SubsystemBase {
     this.drive = drive;
     this.autoChooser = autoChooser;
 
-    ledStrip = LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);
+    ledStrip =
+        LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);
     for (int i = 0; i < ledStrip.getSize(); i++) {
       ledStrip.setRGB(i, 0, 0, 0);
     }
@@ -137,14 +138,14 @@ public class Led2023 extends SubsystemBase {
   }
 
   private double getAngleDegrees() {
-      return (drive.getPose().getRotation().getCos() * drive.getPitch().getDegrees()
-       + drive.getPose().getRotation().getSin() * drive.getRoll().getDegrees());
+    return (drive.getPose().getRotation().getCos() * drive.getPitch().getDegrees()
+        + drive.getPose().getRotation().getSin() * drive.getRoll().getDegrees());
   }
-  
+
   private double getAngleVelocityDegreesPerSec() {
-    return (drive.getPose().getRotation().getCos() * Units.radiansToDegrees(drive.getPitchVelocity())
-       + drive.getPose().getRotation().getSin()
-       * Units.radiansToDegrees(drive.getRollVelocity()));
+    return (drive.getPose().getRotation().getCos()
+            * Units.radiansToDegrees(drive.getPitchVelocity())
+        + drive.getPose().getRotation().getSin() * Units.radiansToDegrees(drive.getRollVelocity()));
   }
 
   public void resetTimers() {
@@ -167,7 +168,7 @@ public class Led2023 extends SubsystemBase {
 
   @Override
   public void periodic() {
-    ColorScheme color = ColorScheme.BALANCE_VICTORY; // getColorScheme();
+    ColorScheme color = getColorScheme();
 
     // Clears leds if colorSceme changed
     if (color != lastColorScheme) {
@@ -186,7 +187,10 @@ public class Led2023 extends SubsystemBase {
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
     }
-
+    // Check if arm is calibrated
+    if ((!arm.isCalibrated()) && CHECK_ARM_CALIBRATION && !DriverStation.isDisabled()) {
+      return ColorScheme.ARM_UNCALIBRATED;
+    }
     // When robot is disabled
     if (DriverStation.isDisabled()) {
       if (!doneBalancing) {
@@ -213,11 +217,6 @@ public class Led2023 extends SubsystemBase {
           || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
         return ColorScheme.AUTO_SCORE;
       }
-    }
-
-    // Check if arm is calibrated
-    if ((!arm.isCalibrated()) && CHECK_ARM_CALIBRATION) {
-      return ColorScheme.ARM_UNCALIBRATED;
     }
 
     // When the arm is calibrating
@@ -336,7 +335,7 @@ public class Led2023 extends SubsystemBase {
         set(batteryCheckColor);
         break;
       case ARM_UNCALIBRATED:
-        set(COLORS_467.Red);
+        set(armUncalibratedColor);
         break;
       case CONE_HIGH:
         setOneThird.setOneThird(COLORS_467.Yellow, 3);
@@ -394,7 +393,8 @@ public class Led2023 extends SubsystemBase {
             COLORS_467.Yellow.getColor(), COLORS_467.Purple.getColor());
         break;
       case CALIBRATING:
-        colorPatterns.setBlinkColors(COLORS_467.Red, COLORS_467.Red, COLORS_467.Black.getColor());
+        colorPatterns.setBlinkColors(
+            armUncalibratedColor, armUncalibratedColor, COLORS_467.Black.getColor());
         break;
       case RESET_POSE:
         colorPatterns.setBlinkColors(
@@ -750,8 +750,9 @@ public class Led2023 extends SubsystemBase {
   public class setThirdLeds {
     private static final int topStart = 0;
     private static final int topEndandMidStart = (int) (RobotConstants.get().led2023LedCount() / 3);
-    private static final int midEndandBottomStart = (int)
-        (RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3));
+    private static final int midEndandBottomStart =
+        (int)
+            (RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3));
     private static final int bottomEnd = (RobotConstants.get().led2023LedCount());
 
     public void setOneThird(COLORS_467 color, int preSet) {
