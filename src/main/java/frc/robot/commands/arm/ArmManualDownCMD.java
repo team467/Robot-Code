@@ -16,7 +16,7 @@ public class ArmManualDownCMD extends CommandBase {
 
   @Override
   public void execute() {
-    arm.manualRotate(-12);
+    arm.manualRotate(-12 * .5);
   }
 
   @Override
