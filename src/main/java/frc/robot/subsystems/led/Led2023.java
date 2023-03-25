@@ -743,11 +743,11 @@ public class Led2023 extends SubsystemBase {
   }
 
   public class setThirdLeds {
-    private static final double topStart = 0;
-    private static final double topEndandMidStart = RobotConstants.get().led2023LedCount() / 3;
-    private static final double midEndandBottomStart =
-        RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
-    private static final double bottomEnd = RobotConstants.get().led2023LedCount();
+    private static final int topStart = 0;
+    private static final int topEndandMidStart = (int) (RobotConstants.get().led2023LedCount() / 3);
+    private static final int midEndandBottomStart = (int)
+        (RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3));
+    private static final int bottomEnd = (RobotConstants.get().led2023LedCount());
 
     public void setOneThird(COLORS_467 color, int preSet) {
       // t=1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
@@ -755,15 +755,15 @@ public class Led2023 extends SubsystemBase {
       int end;
 
       if (preSet == 1) {
-        start = (int) topStart;
-        end = (int) topEndandMidStart;
+        start = topStart;
+        end = topEndandMidStart;
       } else if (preSet == 2) {
-        start = (int) topEndandMidStart;
-        end = (int) midEndandBottomStart;
+        start = topEndandMidStart;
+        end = midEndandBottomStart;
 
       } else {
-        start = (int) midEndandBottomStart;
-        end = (int) bottomEnd;
+        start = midEndandBottomStart;
+        end = bottomEnd;
       }
       for (int i = start; i < end; i++) {
         ledStrip.setLED(i, color.getColor());
