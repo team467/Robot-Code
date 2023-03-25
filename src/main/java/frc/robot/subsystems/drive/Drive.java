@@ -129,20 +129,17 @@ public class Drive extends SubsystemBase {
           Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
         }
         case NORMAL -> {
-          Twist2d setpointTwist =
-              new Pose2d()
-                  .log(
-                      new Pose2d(
-                          setpoint.vxMetersPerSecond * 0.020,
-                          setpoint.vyMetersPerSecond * 0.020,
-                          new Rotation2d(setpoint.omegaRadiansPerSecond * 0.020)));
-          ChassisSpeeds adjustedSpeeds =
-              new ChassisSpeeds(
-                  setpointTwist.dx / 0.020, setpointTwist.dy / 0.020, setpointTwist.dtheta / 0.020);
+          Twist2d setpointTwist = new Pose2d()
+              .log(
+                  new Pose2d(
+                      setpoint.vxMetersPerSecond * 0.020,
+                      setpoint.vyMetersPerSecond * 0.020,
+                      new Rotation2d(setpoint.omegaRadiansPerSecond * 0.020)));
+          ChassisSpeeds adjustedSpeeds = new ChassisSpeeds(
+              setpointTwist.dx / 0.020, setpointTwist.dy / 0.020, setpointTwist.dtheta / 0.020);
           // In normal mode, run the controllers for turning and driving based on the current
           // setpoint
-          SwerveModuleState[] setpointStates =
-              RobotConstants.get().kinematics().toSwerveModuleStates(adjustedSpeeds);
+          SwerveModuleState[] setpointStates = RobotConstants.get().kinematics().toSwerveModuleStates(adjustedSpeeds);
           SwerveDriveKinematics.desaturateWheelSpeeds(
               setpointStates, RobotConstants.get().maxLinearSpeed());
 
@@ -227,12 +224,11 @@ public class Drive extends SubsystemBase {
                 "Odometry/VisionPose/" + aprilTagCameraInputs.indexOf(aprilTagCameraInput),
                 estimatedRobotPose.estimatedPose.toPose2d());
 
-        Vector<N3> std =
-            switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
-              case 0 -> VecBuilder.fill(0.001, 0.001, 0.001); // TODO: Tune these
-              case 1 -> VecBuilder.fill(0.001, 0.001, 0.001); // TODO: Tune these
-              default -> VecBuilder.fill(1.0, 1.0, 1.0);
-            };
+        Vector<N3> std = switch (aprilTagCameraInputs.indexOf(aprilTagCameraInput)) {
+          case 0 -> VecBuilder.fill(0.001, 0.001, 0.001); // TODO: Tune these
+          case 1 -> VecBuilder.fill(0.001, 0.001, 0.001); // TODO: Tune these
+          default -> VecBuilder.fill(1.0, 1.0, 1.0);
+        };
 
         odometry.addVisionMeasurement(
             estimatedRobotPose.estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds, std);
@@ -242,6 +238,10 @@ public class Drive extends SubsystemBase {
     Logger.getInstance().recordOutput("Odometry", getPose());
   }
 
+  public boolean isUpright() {
+    return Math.abs(getPose().getRotation().getCos() * getPitch().getDegrees()
+        + getPose().getRotation().getSin() * getRoll().getDegrees()) < 2.5;
+  }
   public void runVelocity(ChassisSpeeds speeds) {
     driveMode = DriveMode.NORMAL;
     isCharacterizing = false;

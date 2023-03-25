@@ -63,6 +63,8 @@ import frc.robot.subsystems.intakerelease.IntakeReleaseIO;
 import frc.robot.subsystems.intakerelease.IntakeReleaseIOBrushed;
 import frc.robot.subsystems.led.Led2023;
 import java.util.List;
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -184,7 +186,7 @@ public class RobotContainer {
       }
     }
 
-    led2023 = new Led2023(arm, intakeRelease, drive, autoChooser);
+    led2023 = new Led2023(arm, intakeRelease, drive);
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines
