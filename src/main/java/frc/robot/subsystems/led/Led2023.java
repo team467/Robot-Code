@@ -774,11 +774,11 @@ public class Led2023 extends SubsystemBase {
   }
 
   private class VictoryLeds {
-    private COLORS_467 currentColor;
-    private COLORS_467 otherColor;
+    private COLORS_467 topClr;
+    private COLORS_467 bottomClr;
     private boolean bright = false;
-    private int brightness = 10;
-    private static final int FADE_DURATION = 20;
+    private int brightness = 5;
+    private static final int FADE_DURATION = 30;
     private static int fadeToWhite = 0;
 
     COLORS_467 fgColor;
@@ -790,26 +790,26 @@ public class Led2023 extends SubsystemBase {
     }
 
     public void periodic() {
-      if (currentColor == null) {
-        currentColor = fgColor;
+      if (topClr == null) {
+        topClr = fgColor;
       }
-      if (otherColor == null) {
-        otherColor = bgColor;
+      if (bottomClr == null) {
+        bottomClr = bgColor;
       }
       if (brightness >= FADE_DURATION * 1.3 || bright) {
         if (brightness >= FADE_DURATION * 1.3) {
-          if (currentColor == fgColor) {
-            currentColor = bgColor;
-            otherColor = fgColor;
+          if (topClr == fgColor) {
+            topClr = bgColor;
+            bottomClr = fgColor;
           } else {
-            currentColor = fgColor;
-            otherColor = bgColor;
+            topClr = fgColor;
+            bottomClr = bgColor;
           }
         }
         brightness = brightness - 2;
         bright = true;
       }
-      if (brightness <= 10 || !bright) {
+      if (brightness <= 5 || !bright) {
         brightness = brightness + 2;
         bright = false;
       }
@@ -820,9 +820,9 @@ public class Led2023 extends SubsystemBase {
 
         ledStrip.setRGB(
             i,
-            Math.min((int) (currentColor.red * brightness / FADE_DURATION) + fadeToWhite, 255),
-            Math.min((int) (currentColor.green * brightness / FADE_DURATION) + fadeToWhite, 255),
-            Math.min((int) (currentColor.blue * brightness / FADE_DURATION) + fadeToWhite, 255));
+            Math.min((int) (topClr.red * brightness / FADE_DURATION) + fadeToWhite, 255),
+            Math.min((int) (topClr.green * brightness / FADE_DURATION) + fadeToWhite, 255),
+            Math.min((int) (topClr.blue * brightness / FADE_DURATION) + fadeToWhite, 255));
       }
       for (int i = (int) RobotConstants.get().led2023LedCount() / 2;
           i < RobotConstants.get().led2023LedCount();
@@ -830,9 +830,9 @@ public class Led2023 extends SubsystemBase {
 
         ledStrip.setRGB(
             i,
-            Math.min((int) (otherColor.red * brightness / FADE_DURATION) + fadeToWhite, 255),
-            Math.min((int) (otherColor.green * brightness / FADE_DURATION) + fadeToWhite, 255),
-            Math.min((int) (otherColor.blue * brightness / FADE_DURATION) + fadeToWhite, 255));
+            Math.min((int) (bottomClr.red * brightness / FADE_DURATION) + fadeToWhite, 255),
+            Math.min((int) (bottomClr.green * brightness / FADE_DURATION) + fadeToWhite, 255),
+            Math.min((int) (bottomClr.blue * brightness / FADE_DURATION) + fadeToWhite, 255));
       }
     }
   }
