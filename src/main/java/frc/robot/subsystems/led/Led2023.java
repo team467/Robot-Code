@@ -35,15 +35,15 @@ public class Led2023 extends SubsystemBase {
   private Timer defaultTimer = new Timer();
   private ColorScheme lastColorScheme;
   private boolean doneBalancing = false;
-  private boolean FINISHED_RAINBOW_ONCE = false;
+  private boolean finishedRainbowOnce = false;
 
   private static final boolean USE_BATTERY_CHECK = true;
   private static final double BATTER_MIN_VOLTAGE = 9.0;
   private static final boolean CHECK_ARM_CALIBRATION = true;
   private static final double AFTER_CALIBRATED_CLRSCM = 2.5;
   private static final double MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND = 8.0;
-  private static final COLORS_467 batteryCheckColor = COLORS_467.Orange;
-  private static final COLORS_467 armUncalibratedColor = COLORS_467.Red;
+  private static final COLORS_467 BATTERY_CHECK_COLOR = COLORS_467.Orange;
+  private static final COLORS_467 ARM_UNCALIBRATED_COLOR = COLORS_467.Red;
 
   private IntakeRelease intakerelease;
   private Arm arm;
@@ -53,8 +53,8 @@ public class Led2023 extends SubsystemBase {
   private VictoryLeds balanceVictoryLeds = new VictoryLeds(COLORS_467.Blue, COLORS_467.Gold);
   private VictoryLeds scoreVictoryLeds = new VictoryLeds(COLORS_467.Yellow, COLORS_467.Purple);
   private Rainbows rainbowLed = new Rainbows();
-  private patterns colorPatterns = new patterns();
-  private setThirdLeds setOneThird = new setThirdLeds();
+  private Patterns colorPatterns = new Patterns();
+  private SetThirdLeds setOneThird = new SetThirdLeds();
 
   /*
    * Color blind preferred pallet includes White, Black, Red, Blue, Gold
@@ -203,7 +203,7 @@ public class Led2023 extends SubsystemBase {
       return ColorScheme.DEFAULT;
     }
 
-    // When robot is balanced in autonoumouse
+    // When robot is balanced in Autonomous
     if (DriverStation.isAutonomousEnabled()) {
       if (((getAngleDegrees() < 0.0
               && getAngleVelocityDegreesPerSec() > MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND)
@@ -228,11 +228,11 @@ public class Led2023 extends SubsystemBase {
     if ((arm.isCalibrated() || !CHECK_ARM_CALIBRATION)
         && !defaultTimer.hasElapsed(AFTER_CALIBRATED_CLRSCM + 0.02)
         && DriverStation.isTeleopEnabled()
-        && !FINISHED_RAINBOW_ONCE) {
-      if (defaultTimer.hasElapsed(AFTER_CALIBRATED_CLRSCM) && !FINISHED_RAINBOW_ONCE) {
+        && !finishedRainbowOnce) {
+      if (defaultTimer.hasElapsed(AFTER_CALIBRATED_CLRSCM) && !finishedRainbowOnce) {
         defaultTimer.reset();
         defaultTimer.stop();
-        FINISHED_RAINBOW_ONCE = true;
+        finishedRainbowOnce = true;
       }
       defaultTimer.start();
       return ColorScheme.DEFAULT;
@@ -332,10 +332,10 @@ public class Led2023 extends SubsystemBase {
   public void applyColorScheme(ColorScheme colorScheme) {
     switch (colorScheme) {
       case BATTERY_LOW:
-        set(batteryCheckColor);
+        set(BATTERY_CHECK_COLOR);
         break;
       case ARM_UNCALIBRATED:
-        set(armUncalibratedColor);
+        set(ARM_UNCALIBRATED_COLOR);
         break;
       case CONE_HIGH:
         setOneThird.setOneThird(COLORS_467.Yellow, 3);
@@ -394,7 +394,7 @@ public class Led2023 extends SubsystemBase {
         break;
       case CALIBRATING:
         colorPatterns.setBlinkColors(
-            armUncalibratedColor, armUncalibratedColor, COLORS_467.Black.getColor());
+            ARM_UNCALIBRATED_COLOR, ARM_UNCALIBRATED_COLOR, COLORS_467.Black.getColor());
         break;
       case RESET_POSE:
         colorPatterns.setBlinkColors(
@@ -476,7 +476,7 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-  public class patterns {
+  public class Patterns {
     private Timer purpleTimer = new Timer();
     private final double SHOOTING_TIMER_SPEED = 0.1;
 
@@ -747,7 +747,7 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-  public class setThirdLeds {
+  public class SetThirdLeds {
     private static final int topStart = 0;
     private static final int topEndandMidStart = (int) (RobotConstants.get().led2023LedCount() / 3);
     private static final int midEndandBottomStart =
