@@ -240,7 +240,7 @@ public class Drive extends SubsystemBase {
 
   public boolean isUpright() {
     return Math.abs(getPose().getRotation().getCos() * getPitch().getDegrees()
-        + getPose().getRotation().getSin() * getRoll().getDegrees()) < 2.5;
+        + getPose().getRotation().getSin() * getRoll().getDegrees()) < 2.3;
   }
   public void runVelocity(ChassisSpeeds speeds) {
     driveMode = DriveMode.NORMAL;
