@@ -55,18 +55,18 @@ public class Arm extends SubsystemBase {
   private Timer autoRetractTimer = new Timer();
 
   private static final double EXTEND_TOLERANCE_METERS = 0.008;
-  private static final double ROTATE_TOLERANCE_METERS = 0.008;
+  private static final double ROTATE_TOLERANCE_METERS = 0.001;
 
-  private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.13;
+  private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.069;
   private static final double SAFE_EXTENSION_LENGTH = 0.02;
-  private static final double SAFE_ROTATE_AT_PARTIAL_EXTENSION = 0.051;
+  private static final double SAFE_ROTATE_AT_PARTIAL_EXTENSION = 0.026;
   private static final double SAFE_EXTEND_AT_PARTIAL_EXTENSION = 0.229;
 
   private static final double SAFE_RETRACT_NON_HOME = 0.05;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
-  private static final double ROTATE_DROP_METERS = 0.05;
-  private static final double ROTATE_RAISE_METERS = 0.1;
+  private static final double ROTATE_DROP_METERS = 0.025;
+  private static final double ROTATE_RAISE_METERS = 0.05;
 
   private double holdPosition;
   private double manualExtendVolts = 0.0;
