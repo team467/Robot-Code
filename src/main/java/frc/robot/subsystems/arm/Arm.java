@@ -55,7 +55,7 @@ public class Arm extends SubsystemBase {
   private Timer autoRetractTimer = new Timer();
 
   private static final double EXTEND_TOLERANCE_METERS = 0.008;
-  private static final double ROTATE_TOLERANCE_METERS = 0.001;
+  private static final double ROTATE_TOLERANCE_METERS = 0.0015;
 
   private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.069;
   private static final double SAFE_EXTENSION_LENGTH = 0.02;
@@ -72,7 +72,7 @@ public class Arm extends SubsystemBase {
   private double manualExtendVolts = 0.0;
   private double manualRotateVolts = 0.0;
   private PIDController extendPidController = new PIDController(50, 0, 0);
-  private PIDController rotatePidController = new PIDController(400, 0, 0);
+  private PIDController rotatePidController = new PIDController(600, 0, 0);
 
   private static final double BACK_FORCE = -1.3;
   private static final double HOLD_BACK_FORCE = -0.5;
