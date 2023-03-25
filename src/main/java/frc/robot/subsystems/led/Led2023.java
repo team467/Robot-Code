@@ -110,10 +110,7 @@ public class Led2023 extends SubsystemBase {
     AUTO_SCORE
   }
 
-  public Led2023(
-      Arm arm,
-      IntakeRelease intakerelease,
-      Drive drive) {
+  public Led2023(Arm arm, IntakeRelease intakerelease, Drive drive) {
     super();
     this.intakerelease = intakerelease;
     this.arm = arm;
@@ -159,7 +156,7 @@ public class Led2023 extends SubsystemBase {
     }
     // When robot is disabled
     if (DriverStation.isDisabled()) {
-      if (balanceTimer.get()>0.0&&!balanceTimer.hasElapsed(1)&&!doneBalanceLeds) {
+      if (balanceTimer.get() > 0.0 && !balanceTimer.hasElapsed(1) && !doneBalanceLeds) {
         return ColorScheme.BALANCE_VICTORY;
       }
       defaultTimer.stop();
@@ -170,13 +167,12 @@ public class Led2023 extends SubsystemBase {
       return ColorScheme.DEFAULT;
     }
 
-    
     if (DriverStation.isAutonomousEnabled()) {
       // When robot is balanced in Autonomous
       if (drive.getCurrentCommand() instanceof BetterBalancing) {
         balanceStarted = true;
       }
-      if (drive.isUpright()&&balanceStarted) {
+      if (drive.isUpright() && balanceStarted) {
         doneBalanceLeds = false;
         balanceTimer.start();
         return ColorScheme.BALANCE_VICTORY;
