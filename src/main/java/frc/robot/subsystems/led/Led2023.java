@@ -40,17 +40,16 @@ public class Led2023 extends SubsystemBase {
   private final boolean CHECK_ARM_CALIBRATION = true;
   private boolean FINISHED_RAINBOW_ONCE = false;
   private final double AFTER_CALIBRATED_CLRSCM = 2.5;
+  private Timer balanceTimer = new Timer();
+  private Timer defaultTimer = new Timer();
+  private ColorScheme lastColorScheme;
+  private boolean doneBalancing = false;
 
   private IntakeRelease intakerelease;
   private Arm arm;
   private Drive drive;
   private LoggedDashboardChooser<Command> autoChooser;
 
-  private Timer balanceTimer = new Timer();
-  protected double lastLoopTime = 0;
-  private Timer defaultTimer = new Timer();
-  private ColorScheme lastColorScheme;
-  private boolean doneBalancing = false;
   private double angleDegrees =
       drive.getPose().getRotation().getCos() * drive.getPitch().getDegrees()
           + drive.getPose().getRotation().getSin() * drive.getRoll().getDegrees();
@@ -66,7 +65,7 @@ public class Led2023 extends SubsystemBase {
   private VictoryLeds scoreVictoryLeds = new VictoryLeds(COLORS_467.Yellow, COLORS_467.Purple);
   private Rainbows rainbowLed = new Rainbows();
   private patterns colorPatterns = new patterns();
-  private setOneThird setOneThird = new setOneThird();
+  private setThirdLeds setOneThird = new setThirdLeds();
 
   /*
    * Color blind preferred pallet includes White, Black, Red, Blue, Gold
@@ -741,13 +740,10 @@ public class Led2023 extends SubsystemBase {
     }
   }
 }
-  public class setOneThird {
+  public class setThirdLeds {
     private static final double topStart = 0;
-  private static final double topEnd = RobotConstants.get().led2023LedCount() / 3;
-  private static final double midStart = RobotConstants.get().led2023LedCount() / 3;
-  private static final double midEnd =
-      RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
-  private static final double bottomStart =
+  private static final double topEndandMidStart = RobotConstants.get().led2023LedCount() / 3;
+  private static final double midEndandBottomStart =
       RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3);
   private static final double bottomEnd = RobotConstants.get().led2023LedCount();
 
@@ -758,13 +754,13 @@ public class Led2023 extends SubsystemBase {
 
     if (preSet == 1) {
       start = (int) topStart;
-      end = (int) topEnd;
+      end = (int) topEndandMidStart;
     } else if (preSet == 2) {
-      start = (int) midStart;
-      end = (int) midEnd;
+      start = (int) topEndandMidStart;
+      end = (int) midEndandBottomStart;
 
     } else {
-      start = (int) bottomStart;
+      start = (int) midEndandBottomStart;
       end = (int) bottomEnd;
     }
     for (int i = start; i < end; i++) {
