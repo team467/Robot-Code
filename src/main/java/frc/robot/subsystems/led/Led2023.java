@@ -1,5 +1,6 @@
 package frc.robot.subsystems.led;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -29,31 +30,25 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
-  private final boolean USE_BATTERY_CHECK = true;
-  private final double BATTER_MIN_VOLTAGE = 9.0; // 10.0
-  private final boolean CHECK_ARM_CALIBRATION = true;
-  private boolean FINISHED_RAINBOW_ONCE = false;
-  private final double AFTER_CALIBRATED_CLRSCM = 2.5;
+  
   private Timer balanceTimer = new Timer();
   private Timer defaultTimer = new Timer();
   private ColorScheme lastColorScheme;
   private boolean doneBalancing = false;
+  private boolean FINISHED_RAINBOW_ONCE = false;
+
+  private static final boolean USE_BATTERY_CHECK = true;
+  private static final double BATTER_MIN_VOLTAGE = 9.0; // 10.0
+  private static final boolean CHECK_ARM_CALIBRATION = true;
+  private static final double AFTER_CALIBRATED_CLRSCM = 2.5;
+  private static final double MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND = 8.0;
+  private static final COLORS_467 batteryCheckColor = COLORS_467.Orange;
+
 
   private IntakeRelease intakerelease;
   private Arm arm;
   private Drive drive;
   private LoggedDashboardChooser<Command> autoChooser;
-
-  private double angleDegrees = 0;
-  // drive.getPose().getRotation().getCos() * drive.getPitch().getDegrees()
-  //     + drive.getPose().getRotation().getSin() * drive.getRoll().getDegrees();
-  private double angleVelocityDegreesPerSec = 0;
-  // drive.getPose().getRotation().getCos() * Units.radiansToDegrees(drive.getPitchVelocity())
-  //     + drive.getPose().getRotation().getSin()
-  //         * Units.radiansToDegrees(drive.getRollVelocity());
-
-  private static final double MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND = 8.0;
-  private COLORS_467 batteryCheckColor = COLORS_467.Orange;
 
   private VictoryLeds balanceVictoryLeds = new VictoryLeds(COLORS_467.Blue, COLORS_467.Gold);
   private VictoryLeds scoreVictoryLeds = new VictoryLeds(COLORS_467.Yellow, COLORS_467.Purple);
@@ -133,13 +128,23 @@ public class Led2023 extends SubsystemBase {
     this.drive = drive;
     this.autoChooser = autoChooser;
 
-    ledStrip =
-        LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);
+    ledStrip = LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);
     for (int i = 0; i < ledStrip.getSize(); i++) {
       ledStrip.setRGB(i, 0, 0, 0);
     }
     rainbowLed.rainbowTimer.start();
     colorPatterns.purpleTimer.start();
+  }
+
+  private double getAngleDegrees() {
+      return (drive.getPose().getRotation().getCos() * drive.getPitch().getDegrees()
+       + drive.getPose().getRotation().getSin() * drive.getRoll().getDegrees());
+  }
+  
+  private double getAngleVelocityDegreesPerSec() {
+    return (drive.getPose().getRotation().getCos() * Units.radiansToDegrees(drive.getPitchVelocity())
+       + drive.getPose().getRotation().getSin()
+       * Units.radiansToDegrees(drive.getRollVelocity()));
   }
 
   public void resetTimers() {
@@ -196,10 +201,10 @@ public class Led2023 extends SubsystemBase {
 
     // When robot is balanced in autonoumouse
     if (DriverStation.isAutonomousEnabled()) {
-      if (((angleDegrees < 0.0
-              && angleVelocityDegreesPerSec > MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND)
-          || (angleDegrees > 0.0
-              && angleVelocityDegreesPerSec < -MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND))) {
+      if (((getAngleDegrees() < 0.0
+              && getAngleVelocityDegreesPerSec() > MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND)
+          || (getAngleDegrees() > 0.0
+              && getAngleVelocityDegreesPerSec() < -MAX_ANGLE_VELOCITY_DEGREES_PER_SECOND))) {
         balanceTimer.start();
         return ColorScheme.BALANCE_VICTORY;
       }
