@@ -17,7 +17,8 @@ public class ArmPositionConstants {
   public static final ArmPosition HIGH_CUBE = new ArmPosition(0.444, 0.154);
   public static final ArmPosition LOW_BOTH = new ArmPosition(0.088, 0.035);
   public static final ArmPosition HOME = new ArmPosition(0.02, 0.0);
-  public static final ArmPosition FLOOR = new ArmPosition(0.185, 0.025);
+  public static final ArmPosition CONE_FLOOR = new ArmPosition(0.233, 0.035);
+  public static final ArmPosition CUBE_FLOOR = new ArmPosition(0.234, 0.040);
   public static final ArmPosition SHELF_CONE = new ArmPosition(0.086, 0.159);
   public static final ArmPosition SHELF_CUBE = new ArmPosition(0.086, 0.153);
 }
