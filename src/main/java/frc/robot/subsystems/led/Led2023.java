@@ -28,7 +28,7 @@ public class Led2023 extends SubsystemBase {
 
   private Timer balanceTimer = new Timer();
   private Timer defaultTimer = new Timer();
-  private Timer armTimer = new Timer();
+  private Timer armCMDsTimer = new Timer();
   private ColorScheme lastColorScheme;
   private boolean finishedRainbowOnce = false;
   private boolean doneBalanceLeds = false;
@@ -153,7 +153,7 @@ public class Led2023 extends SubsystemBase {
         || arm.getCurrentCommand() instanceof ArmScoreLowNodeCMD
         || arm.getCurrentCommand() instanceof ArmShelfCMD
         || arm.getCurrentCommand() instanceof ArmFloorCMD)) {
-      armTimer.reset();
+      armCMDsTimer.reset();
     }
 
     // Check if battery is low
@@ -184,7 +184,7 @@ public class Led2023 extends SubsystemBase {
       }
       if (drive.isUpright() && balanceStarted) {
         doneBalanceLeds = false;
-        balanceTimer.start();
+        balanceTimer.restart();
         return ColorScheme.BALANCE_VICTORY;
       }
       // When robot scores in autonomous
@@ -215,8 +215,8 @@ public class Led2023 extends SubsystemBase {
     }
 
     // When arm is scoring high
-    if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD && !armTimer.hasElapsed(2)) {
-      armTimer.start();
+    if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD && !armCMDsTimer.hasElapsed(2)) {
+      armCMDsTimer.start();
       if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
         return ColorScheme.CUBE_HIGH;
       } else {
@@ -225,8 +225,8 @@ public class Led2023 extends SubsystemBase {
     }
 
     // When arm is scoring mid node
-    if (arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD && !armTimer.hasElapsed(2)) {
-      armTimer.start();
+    if (arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD && !armCMDsTimer.hasElapsed(2)) {
+      armCMDsTimer.start();
       if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
         return ColorScheme.CUBE_HIGH;
       } else {
@@ -235,8 +235,8 @@ public class Led2023 extends SubsystemBase {
     }
 
     // When arm is scoring hybrid/low node
-    if (arm.getCurrentCommand() instanceof ArmScoreLowNodeCMD && !armTimer.hasElapsed(2)) {
-      armTimer.start();
+    if (arm.getCurrentCommand() instanceof ArmScoreLowNodeCMD && !armCMDsTimer.hasElapsed(2)) {
+      armCMDsTimer.start();
       if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
         return ColorScheme.CUBE_LOW;
       } else {
@@ -245,14 +245,14 @@ public class Led2023 extends SubsystemBase {
     }
 
     // When picking up from shelf
-    if (arm.getCurrentCommand() instanceof ArmShelfCMD && !armTimer.hasElapsed(2)) {
-      armTimer.start();
+    if (arm.getCurrentCommand() instanceof ArmShelfCMD && !armCMDsTimer.hasElapsed(2)) {
+      armCMDsTimer.start();
       return ColorScheme.SHELF;
     }
 
     // When picking up from floor
-    if (arm.getCurrentCommand() instanceof ArmFloorCMD && !armTimer.hasElapsed(2)) {
-      armTimer.start();
+    if (arm.getCurrentCommand() instanceof ArmFloorCMD && !armCMDsTimer.hasElapsed(2)) {
+      armCMDsTimer.start();
       return ColorScheme.FLOOR;
     }
 
