@@ -2,6 +2,8 @@ package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -214,8 +216,7 @@ public class Arm extends SubsystemBase {
       case AUTO -> autoPeriodic();
       case EXTEND_CHARACTERIZATION -> setExtendVoltage(characterizationVoltage);
       case ROTATE_CHARACTERIZATION -> setRotateVoltage(characterizationVoltage);
-      case HOLD -> armIO.setExtendVoltageWhileHold(
-          calculateExtendPid(holdPosition) + HOLD_BACK_FORCE);
+      case HOLD -> armIO.setExtendVoltageWhileHold(HOLD_BACK_FORCE);
       case CALIBRATE -> calibratePeriodic();
       case KICKBACK -> kickback.periodic();
     }
@@ -476,7 +477,8 @@ public class Arm extends SubsystemBase {
   }
 
   private class Pids {
-    private PIDController extendPidController = new PIDController(20, 0, 0);
+    private ProfiledPIDController extendPidController =
+        new ProfiledPIDController(20, 0, 0, new TrapezoidProfile.Constraints(10, 10));
     private PIDController rotatePidController = new PIDController(600, 0, 0);
     private boolean calculatedOnPeriodic = false;
 
@@ -503,7 +505,7 @@ public class Arm extends SubsystemBase {
     public Pids setExtendSetpoint(double target) {
       if (this.extendSetpoint != target) {
         this.extendSetpoint = target;
-        extendPidController.setSetpoint(target);
+        extendPidController.setGoal(target);
       }
       return this;
     }
