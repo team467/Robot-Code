@@ -122,6 +122,7 @@ public class IntakeRelease extends SubsystemBase {
   }
 
   public boolean isFinished() {
-    return (inputs.coneLimitSwitch || (Wants.CUBE == wants && inputs.cubeLimitSwitch));
+    // return (inputs.coneLimitSwitch || (Wants.CUBE == wants && inputs.cubeLimitSwitch));
+    return true;
   }
 }

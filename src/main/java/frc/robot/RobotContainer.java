@@ -11,10 +11,12 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.io.gyro3d.IMUIO;
@@ -236,10 +238,16 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
-
+    // Trigger haptics when you pick up something
+    new Trigger(() -> intakeRelease.isFinished()).onTrue(
+            Commands.runEnd(
+                    () -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0.5),
+                    () -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0))
+                .withTimeout(0.5));
     // Configure the button bindings
     configureButtonBindings();
   }
+
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -247,7 +255,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
+
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,
