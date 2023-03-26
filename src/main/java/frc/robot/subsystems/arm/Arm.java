@@ -261,9 +261,6 @@ public class Arm extends SubsystemBase {
         setExtendVoltage(extendFbOutput);
       }
     }
-
-    logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
-    logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
   }
 
   private void calibratePeriodic() {
@@ -286,7 +283,7 @@ public class Arm extends SubsystemBase {
       }
       case EXTEND_ARM -> {
         // Drive Extend Motor a little bit outwards
-        setExtendVoltage(pids.setExtendTarget(EXTEND_CALIBRATION_POSITION).calculateExtend());
+        setExtendVoltage(pids.setExtendSetpoint(EXTEND_CALIBRATION_POSITION).calculateExtend());
         if (isExtendPositionNear(EXTEND_CALIBRATION_POSITION)) {
           calibrateMode = CalibrateMode.LOWER_ARM;
           setExtendVoltage(0);
@@ -407,14 +404,14 @@ public class Arm extends SubsystemBase {
     if (!isExtendSafe(targetPosition)) {
       return 0;
     }
-    return pids.setExtendTarget(targetPosition).calculateExtend();
+    return pids.setExtendSetpoint(targetPosition).calculateExtend();
   }
 
   private double calculateRotatePid(double targetPosition) {
     if (!isRotateSafe(targetPosition)) {
       return 0;
     }
-    return pids.setRotateTarget(targetPosition).calculateRotate();
+    return pids.setRotateSetpoint(targetPosition).calculateRotate();
   }
 
   private boolean isExtendPositionNear(double targetPosition) {
@@ -486,8 +483,8 @@ public class Arm extends SubsystemBase {
     private double extendValue = 0;
     private double rotateValue = 0;
 
-    private double extendTarget = 0;
-    private double rotateTarget = 0;
+    private double extendSetpoint = 0;
+    private double rotateSetpoint = 0;
 
     private void maybeCalculate() {
       if (calculatedOnPeriodic) {
@@ -498,20 +495,22 @@ public class Arm extends SubsystemBase {
       rotateValue = rotatePidController.calculate(armIOInputs.rotatePosition);
       logger.recordOutput("Arm/ExtendFbOutput", extendValue);
       logger.recordOutput("Arm/RotateFbOutput", rotateValue);
+      logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
+      logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
       calculatedOnPeriodic = true;
     }
 
-    public Pids setExtendTarget(double target) {
-      if (this.extendTarget != target) {
-        this.extendTarget = target;
+    public Pids setExtendSetpoint(double target) {
+      if (this.extendSetpoint != target) {
+        this.extendSetpoint = target;
         extendPidController.setSetpoint(target);
       }
       return this;
     }
 
-    public Pids setRotateTarget(double target) {
-      if (this.rotateTarget != target) {
-        this.rotateTarget = target;
+    public Pids setRotateSetpoint(double target) {
+      if (this.rotateSetpoint != target) {
+        this.rotateSetpoint = target;
         rotatePidController.setSetpoint(target);
       }
       return this;
