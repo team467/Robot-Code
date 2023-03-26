@@ -44,7 +44,7 @@ public class Arm extends SubsystemBase {
   private CalibrateMode calibrateMode = CalibrateMode.RETRACT_ARM;
 
   private Kickback kickback;
-  private Pids pids;
+  private Pids pids = new Pids();
 
   private double characterizationVoltage = 0.0;
   private double extendSetpoint = 0.0;
@@ -60,7 +60,7 @@ public class Arm extends SubsystemBase {
 
   private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.069;
   private static final double SAFE_EXTENSION_LENGTH = 0.02;
-  private static final double SAFE_ROTATE_AT_PARTIAL_EXTENSION = 0.026;
+  private static final double SAFE_ROTATE_AT_PARTIAL_EXTENSION = 0.019;
   private static final double SAFE_EXTEND_AT_PARTIAL_EXTENSION = 0.229;
 
   private static final double SAFE_RETRACT_NON_HOME = 0.05;
