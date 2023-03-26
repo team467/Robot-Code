@@ -2,8 +2,6 @@ package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -62,7 +60,7 @@ public class Arm extends SubsystemBase {
 
   private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.069;
   private static final double SAFE_EXTENSION_LENGTH = 0.02;
-  private static final double SAFE_ROTATE_AT_PARTIAL_EXTENSION = 0.019;
+  private static final double SAFE_ROTATE_AT_PARTIAL_EXTENSION = 0.026;
   private static final double SAFE_EXTEND_AT_PARTIAL_EXTENSION = 0.229;
 
   private static final double SAFE_RETRACT_NON_HOME = 0.05;
@@ -478,8 +476,7 @@ public class Arm extends SubsystemBase {
   }
 
   private class Pids {
-    private ProfiledPIDController extendPidController =
-        new ProfiledPIDController(50, 0, 0, new TrapezoidProfile.Constraints(10, 10));
+    private PIDController extendPidController = new PIDController(50, 0, 0);
     private PIDController rotatePidController = new PIDController(600, 0, 0);
     private boolean calculatedOnPeriodic = false;
 
@@ -506,7 +503,7 @@ public class Arm extends SubsystemBase {
     public Pids setExtendSetpoint(double target) {
       if (this.extendSetpoint != target) {
         this.extendSetpoint = target;
-        extendPidController.setGoal(target);
+        extendPidController.setSetpoint(target);
       }
       return this;
     }
