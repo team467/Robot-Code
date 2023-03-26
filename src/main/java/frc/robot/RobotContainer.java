@@ -36,6 +36,7 @@ import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
+import frc.robot.commands.auto.NewAlignToNode;
 import frc.robot.commands.auto.complex.BackUpAndBalance;
 import frc.robot.commands.auto.complex.OnlyBackup;
 import frc.robot.commands.auto.complex.OnlyBalance;
@@ -320,6 +321,9 @@ public class RobotContainer {
     Logger.getInstance()
         .recordOutput(
             "CustomController/ShelfButton", operatorController.leftBumper().getAsBoolean());
+
+    // Auto grid align
+    driverController.rightTrigger().whileTrue(new NewAlignToNode(drive, intakeRelease));
   }
 
   /**
