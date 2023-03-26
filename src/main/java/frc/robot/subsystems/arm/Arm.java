@@ -57,17 +57,17 @@ public class Arm extends SubsystemBase {
 
   private static final double EXTEND_TOLERANCE_METERS = 0.008;
   private static final double ROTATE_TOLERANCE_METERS = 0.0015;
-
-  private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.069;
+  // TODO: tweak all safety values, they are currently wrong
+  private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.0; // 0.069
   private static final double SAFE_EXTENSION_LENGTH = 0.02;
-  private static final double SAFE_ROTATE_AT_PARTIAL_EXTENSION = 0.026;
-  private static final double SAFE_EXTEND_AT_PARTIAL_EXTENSION = 0.229;
+  private static final double SAFE_ROTATE_AT_PARTIAL_EXTENSION = 0.0; // 0.026
+  private static final double SAFE_EXTEND_AT_PARTIAL_EXTENSION = 0.0; // 0.229
 
   private static final double SAFE_RETRACT_NON_HOME = 0.05;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
   private static final double ROTATE_DROP_METERS = 0.025;
-  private static final double ROTATE_RAISE_METERS = 0.05;
+  private static final double ROTATE_RAISE_METERS = 0.025;
 
   private double holdPosition;
   private double manualExtendVolts = 0.0;
@@ -76,7 +76,7 @@ public class Arm extends SubsystemBase {
   private static final double BACK_FORCE = -1.3;
   private static final double HOLD_BACK_FORCE = -0.5;
 
-  private static final double CALIBRATE_RETRACT_VOLTAGE = -1;
+  private static final double CALIBRATE_RETRACT_VOLTAGE = -1.5;
   private static final double CALIBRATE_ROTATE_VOLTAGE = -7;
 
   private static final double RETRACT_POSITION_CLOSE_TO_LIMIT = 0.1;
@@ -152,7 +152,7 @@ public class Arm extends SubsystemBase {
       mode = ArmMode.AUTO;
       autoMode = AutoMode.ROTATE;
       rotateSetpoint = armIOInputs.rotatePosition + ROTATE_RAISE_METERS;
-      extendSetpoint = armIOInputs.extendPosition;
+      extendSetpoint = 0.02;
     }
   }
 
@@ -476,7 +476,7 @@ public class Arm extends SubsystemBase {
   }
 
   private class Pids {
-    private PIDController extendPidController = new PIDController(50, 0, 0);
+    private PIDController extendPidController = new PIDController(20, 0, 0);
     private PIDController rotatePidController = new PIDController(600, 0, 0);
     private boolean calculatedOnPeriodic = false;
 

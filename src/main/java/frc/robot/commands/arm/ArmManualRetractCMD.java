@@ -16,7 +16,7 @@ public class ArmManualRetractCMD extends CommandBase {
 
   @Override
   public void execute() {
-    arm.manualExtend(-1);
+    arm.manualExtend(-1.5);
   }
 
   @Override
