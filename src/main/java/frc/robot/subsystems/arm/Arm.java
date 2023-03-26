@@ -44,6 +44,7 @@ public class Arm extends SubsystemBase {
   private CalibrateMode calibrateMode = CalibrateMode.RETRACT_ARM;
 
   private Kickback kickback;
+  private Pids pids;
 
   private double characterizationVoltage = 0.0;
   private double extendSetpoint = 0.0;
@@ -71,8 +72,6 @@ public class Arm extends SubsystemBase {
   private double holdPosition;
   private double manualExtendVolts = 0.0;
   private double manualRotateVolts = 0.0;
-  private PIDController extendPidController = new PIDController(50, 0, 0);
-  private PIDController rotatePidController = new PIDController(600, 0, 0);
 
   private static final double BACK_FORCE = -1.3;
   private static final double HOLD_BACK_FORCE = -0.5;
@@ -187,10 +186,12 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     armIO.updateInputs(armIOInputs);
     logger.processInputs("Arm", armIOInputs);
+    pids.onPeriodicStart();
 
     if (DriverStation.isDisabled()) {
       // Disable output while disabled
       stop();
+      pids.onPeriodicEnd();
       return;
     }
     logger.recordOutput("Arm/Mode", mode.toString());
@@ -218,6 +219,7 @@ public class Arm extends SubsystemBase {
       case CALIBRATE -> calibratePeriodic();
       case KICKBACK -> kickback.periodic();
     }
+    pids.onPeriodicEnd();
   }
 
   private void autoPeriodic() {
@@ -284,7 +286,7 @@ public class Arm extends SubsystemBase {
       }
       case EXTEND_ARM -> {
         // Drive Extend Motor a little bit outwards
-        setExtendVoltage(calculateExtendPidUnsafe(EXTEND_CALIBRATION_POSITION));
+        setExtendVoltage(pids.setExtendTarget(EXTEND_CALIBRATION_POSITION).calculateExtend());
         if (isExtendPositionNear(EXTEND_CALIBRATION_POSITION)) {
           calibrateMode = CalibrateMode.LOWER_ARM;
           setExtendVoltage(0);
@@ -405,22 +407,14 @@ public class Arm extends SubsystemBase {
     if (!isExtendSafe(targetPosition)) {
       return 0;
     }
-    return calculateExtendPidUnsafe(targetPosition);
-  }
-
-  private double calculateExtendPidUnsafe(double targetPosition) {
-    double pidValue = extendPidController.calculate(armIOInputs.extendPosition, targetPosition);
-    logger.recordOutput("Arm/ExtendFbOutput", pidValue);
-    return pidValue;
+    return pids.setExtendTarget(targetPosition).calculateExtend();
   }
 
   private double calculateRotatePid(double targetPosition) {
     if (!isRotateSafe(targetPosition)) {
       return 0;
     }
-    double pidValue = rotatePidController.calculate(armIOInputs.rotatePosition, targetPosition);
-    logger.recordOutput("Arm/RotateFbOutput", pidValue);
-    return pidValue;
+    return pids.setRotateTarget(targetPosition).calculateRotate();
   }
 
   private boolean isExtendPositionNear(double targetPosition) {
@@ -481,6 +475,64 @@ public class Arm extends SubsystemBase {
       } else {
         armIO.setExtendVoltage(-2);
       }
+    }
+  }
+
+  private class Pids {
+    private PIDController extendPidController = new PIDController(50, 0, 0);
+    private PIDController rotatePidController = new PIDController(600, 0, 0);
+    private boolean calculatedOnPeriodic = false;
+
+    private double extendValue = 0;
+    private double rotateValue = 0;
+
+    private double extendTarget = 0;
+    private double rotateTarget = 0;
+
+    private void maybeCalculate() {
+      if (calculatedOnPeriodic) {
+        return;
+      }
+
+      extendValue = extendPidController.calculate(armIOInputs.extendPosition);
+      rotateValue = rotatePidController.calculate(armIOInputs.rotatePosition);
+      logger.recordOutput("Arm/ExtendFbOutput", extendValue);
+      logger.recordOutput("Arm/RotateFbOutput", rotateValue);
+      calculatedOnPeriodic = true;
+    }
+
+    public Pids setExtendTarget(double target) {
+      if (this.extendTarget != target) {
+        this.extendTarget = target;
+        extendPidController.setSetpoint(target);
+      }
+      return this;
+    }
+
+    public Pids setRotateTarget(double target) {
+      if (this.rotateTarget != target) {
+        this.rotateTarget = target;
+        rotatePidController.setSetpoint(target);
+      }
+      return this;
+    }
+
+    public double calculateExtend() {
+      maybeCalculate();
+      return extendValue;
+    }
+
+    public double calculateRotate() {
+      maybeCalculate();
+      return rotateValue;
+    }
+
+    public void onPeriodicStart() {
+      calculatedOnPeriodic = false;
+    }
+
+    public void onPeriodicEnd() {
+      maybeCalculate();
     }
   }
 }
