@@ -147,7 +147,7 @@ public class Led2023 extends SubsystemBase {
   }
 
   public ColorScheme getColorScheme() {
-    //reset timer after arm cmd completes
+    // reset timer after arm cmd completes
     if (!(arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD
         || arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD
         || arm.getCurrentCommand() instanceof ArmScoreLowNodeCMD
@@ -225,7 +225,7 @@ public class Led2023 extends SubsystemBase {
     }
 
     // When arm is scoring mid node
-    if (arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD&&!armTimer.hasElapsed(2)) {
+    if (arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD && !armTimer.hasElapsed(2)) {
       armTimer.start();
       if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
         return ColorScheme.CUBE_HIGH;
@@ -267,7 +267,7 @@ public class Led2023 extends SubsystemBase {
         return ColorScheme.HOLD_CONE;
       }
     }
-  
+
     // If trying to intake something
     if (intakerelease.getCurrentCommand() instanceof IntakeCMD
         || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
