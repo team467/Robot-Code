@@ -77,7 +77,7 @@ public class Arm extends SubsystemBase {
   private static final double BACK_FORCE = -1.3;
   private static final double HOLD_BACK_FORCE = -0.5;
 
-  private static final double CALIBRATE_RETRACT_VOLTAGE = -1;
+  private static final double CALIBRATE_RETRACT_VOLTAGE = -1.5;
   private static final double CALIBRATE_ROTATE_VOLTAGE = -7;
 
   private static final double RETRACT_POSITION_CLOSE_TO_LIMIT = 0.1;
