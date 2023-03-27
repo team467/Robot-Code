@@ -142,6 +142,7 @@ public class Arm extends SubsystemBase {
     setRotateVoltage(0.0);
     manualRotateVolts = 0;
     manualExtendVolts = 0;
+    isDropping = false;
   }
 
   public boolean isHolding() {
