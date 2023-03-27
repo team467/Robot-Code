@@ -238,12 +238,6 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(() -> configureButtonBindings()));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
-    // Trigger haptics when you pick up something
-    new Trigger(() -> intakeRelease.isFinished()).onTrue(
-            Commands.runEnd(
-                    () -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0.5),
-                    () -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0))
-                .withTimeout(0.5));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -255,6 +249,14 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    // Trigger haptics when you pick up something
+    new Trigger(() -> intakeRelease.isFinished())
+        .onTrue(
+            Commands.runEnd(
+                    () -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0.5),
+                    () -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0))
+                .withTimeout(0.5));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
 
