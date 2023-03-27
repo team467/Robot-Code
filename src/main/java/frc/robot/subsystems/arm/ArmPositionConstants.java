@@ -10,13 +10,15 @@ public class ArmPositionConstants {
       this.rotateSetpoint = rotateSetpoint;
     }
   }
-  // TODO: UPDATE ME
-  public static final ArmPosition MID_CONE = new ArmPosition(0.302, 0.289);
-  public static final ArmPosition MID_CUBE = new ArmPosition(0.192, 0.221);
-  public static final ArmPosition HIGH_CONE = new ArmPosition(0.616, 0.341);
-  public static final ArmPosition HIGH_CUBE = new ArmPosition(0.479, 0.291);
-  public static final ArmPosition LOW_BOTH = new ArmPosition(0.164, 0.071);
+
+  public static final ArmPosition MID_CONE = new ArmPosition(0.303, 0.156);
+  public static final ArmPosition MID_CUBE = new ArmPosition(0.144, 0.114);
+  public static final ArmPosition HIGH_CONE = new ArmPosition(0.610, 0.187);
+  public static final ArmPosition HIGH_CUBE = new ArmPosition(0.444, 0.154);
+  public static final ArmPosition LOW_BOTH = new ArmPosition(0.088, 0.035);
   public static final ArmPosition HOME = new ArmPosition(0.02, 0.0);
-  public static final ArmPosition FLOOR = new ArmPosition(0.22, 0.065);
-  public static final ArmPosition SHELF = new ArmPosition(0.086, 0.310);
+  public static final ArmPosition CONE_FLOOR = new ArmPosition(0.233, 0.035);
+  public static final ArmPosition CUBE_FLOOR = new ArmPosition(0.234, 0.040);
+  public static final ArmPosition SHELF_CONE = new ArmPosition(0.086, 0.159);
+  public static final ArmPosition SHELF_CUBE = new ArmPosition(0.086, 0.153);
 }
