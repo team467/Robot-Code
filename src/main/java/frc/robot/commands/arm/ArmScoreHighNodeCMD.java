@@ -2,17 +2,14 @@ package frc.robot.commands.arm;
 
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmPositionConstants;
-import frc.robot.subsystems.intakerelease.IntakeRelease;
+import java.util.function.Supplier;
 
 public class ArmScoreHighNodeCMD extends ArmPositionCMD {
 
-  public ArmScoreHighNodeCMD(Arm arm, IntakeRelease intakerelease) {
+  public ArmScoreHighNodeCMD(Arm arm, Supplier<Boolean> wantsCone) {
 
     super(
         arm,
-        () ->
-            intakerelease.wantsCone()
-                ? ArmPositionConstants.HIGH_CONE
-                : ArmPositionConstants.HIGH_CUBE);
+        () -> wantsCone.get() ? ArmPositionConstants.HIGH_CONE : ArmPositionConstants.HIGH_CUBE);
   }
 }

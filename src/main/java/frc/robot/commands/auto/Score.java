@@ -38,11 +38,11 @@ public class Score extends SequentialCommandGroup {
 
   private Command armLocationCommand(String location, Arm arm, IntakeRelease intakeRelease) {
     if (location.equalsIgnoreCase("high")) {
-      return new ArmScoreHighNodeCMD(arm, intakeRelease);
+      return new ArmScoreHighNodeCMD(arm, intakeRelease::wantsCone);
     } else if (location.equalsIgnoreCase("mid")) {
-      return new ArmScoreMidNodeCMD(arm, intakeRelease);
+      return new ArmScoreMidNodeCMD(arm, intakeRelease::wantsCone);
     } else {
-      return new ArmScoreLowNodeCMD(arm, intakeRelease);
+      return new ArmScoreLowNodeCMD(arm);
     }
   }
 
