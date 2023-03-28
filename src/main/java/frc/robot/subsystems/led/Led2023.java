@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.leds.DoubleLEDStrip;
 import frc.lib.leds.LEDManager;
@@ -133,9 +134,23 @@ public class Led2023 extends SubsystemBase {
     balanceTimer.reset();
   }
 
+  private boolean isArmCommandRunning(Command command) {
+    return command instanceof ArmScoreHighNodeCMD
+        || command instanceof ArmScoreMidNodeCMD
+        || command instanceof ArmScoreLowNodeCMD
+        || command instanceof ArmShelfCMD
+        || command instanceof ArmFloorCMD;
+  }
+
   @Override
   public void periodic() {
-    ColorScheme colorScheme = getColorScheme();
+    ColorScheme colorScheme;
+    // // Testing TODO: Remove
+    // if (drive.isUpright()) {
+    //   colorScheme = ColorScheme.BALANCE_VICTORY;
+    // } else {
+      colorScheme = getColorScheme();
+    //}
 
     // Clears leds if colorSceme changed
     if (colorScheme != lastColorScheme) {
@@ -148,11 +163,7 @@ public class Led2023 extends SubsystemBase {
 
   public ColorScheme getColorScheme() {
     // reset timer after arm cmd completes
-    if (!(arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD
-        || arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD
-        || arm.getCurrentCommand() instanceof ArmScoreLowNodeCMD
-        || arm.getCurrentCommand() instanceof ArmShelfCMD
-        || arm.getCurrentCommand() instanceof ArmFloorCMD)) {
+    if (isArmCommandRunning(arm.getCurrentCommand())) {
       armCMDsTimer.reset();
     }
 
