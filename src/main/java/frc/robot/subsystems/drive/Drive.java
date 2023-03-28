@@ -242,11 +242,20 @@ public class Drive extends SubsystemBase {
     Logger.getInstance().recordOutput("Odometry", getPose());
   }
 
+  // Checks if the robot is upright within a certain threshold (checks if it will be considered
+  // balanced by the charge station)
   public boolean isUpright() {
-    return Math.abs(
-            getPose().getRotation().getCos() * getPitch().getDegrees()
-                + getPose().getRotation().getSin() * getRoll().getDegrees())
-        < 2.3;
+    // return (Math.abs(
+    //         getPose().getRotation().getCos() * getPitch().getDegrees()
+    //             + getPose().getRotation().getSin() * getRoll().getDegrees())
+    //     < 2.3);
+  
+    double pitch = getPose().getRotation().getCos() * getPitch().getDegrees();
+    double roll = getPose().getRotation().getSin() * getRoll().getDegrees();
+    double magnitude = Math.sqrt(Math.pow(pitch, 2) + Math.pow(roll, 2));
+
+  return magnitude < 2.3;
+
   }
 
   public void runVelocity(ChassisSpeeds speeds) {
