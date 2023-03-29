@@ -300,9 +300,9 @@ public class RobotContainer {
     operatorController.pov(0).whileTrue(new ArmManualUpCMD(arm));
 
     // Placing cone or cube, gets what it wants from in the command
-    operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm, intakeRelease));
-    operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease));
-    operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease));
+    operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
+    operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, intakeRelease::wantsCone));
+    operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, intakeRelease::wantsCone));
     Logger.getInstance()
         .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
     Logger.getInstance()
