@@ -252,9 +252,9 @@ public class Drive extends SubsystemBase {
   
     double pitch = getPose().getRotation().getCos() * getPitch().getDegrees();
     double roll = getPose().getRotation().getSin() * getRoll().getDegrees();
-    double magnitude = Math.sqrt(Math.pow(pitch, 2) + Math.pow(roll, 2));
-
-  return magnitude < 2.3;
+    
+  return roll < 2.3 && pitch < 2.3;
+  
 
   }
 
