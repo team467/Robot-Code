@@ -149,8 +149,8 @@ public class Led2023 extends SubsystemBase {
     // if (drive.isUpright()) {
     //   colorScheme = ColorScheme.BALANCE_VICTORY;
     // } else {
-      colorScheme = getColorScheme();
-    //}
+    colorScheme = getColorScheme();
+    // }
 
     // Clears leds if colorSceme changed
     if (colorScheme != lastColorScheme) {
