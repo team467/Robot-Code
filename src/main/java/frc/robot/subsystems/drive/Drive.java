@@ -250,10 +250,10 @@ public class Drive extends SubsystemBase {
     //             + getPose().getRotation().getSin() * getRoll().getDegrees())
     //     < 2.3);
 
-    double pitch = getPose().getRotation().getCos() * getPitch().getDegrees();
-    double roll = getPose().getRotation().getSin() * getRoll().getDegrees();
+    double pitch = getPitch().getDegrees();
+    double roll = getRoll().getDegrees();
 
-    return roll < 2.3 && pitch < 2.3;
+    return Math.abs(roll) < 2.3 && Math.abs(pitch) < 2.3;
   }
 
   public void runVelocity(ChassisSpeeds speeds) {
