@@ -11,21 +11,19 @@ import frc.robot.subsystems.intakerelease.IntakeRelease;
 public class ReleaseCMD extends SequentialCommandGroup {
   public ReleaseCMD(IntakeRelease intakerelease, Arm arm) {
     addCommands(
-      new ConditionalCommand(
-        Commands.sequence(
-          new ArmDropCMD(intakerelease::haveCone, intakerelease::wantsCone, arm).withTimeout(0.3),
-          Commands.parallel(
-                  Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
-                  new ArmHomeCMD(arm))
-              .withTimeout(5.0)
-        ),
-        Commands.sequence(
-          new ArmDropCMD(intakerelease::haveCone, intakerelease::wantsCone, arm).withTimeout(0.3),
-          Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
-          new ArmHomeCMD(arm).withTimeout(5.0)
-        ),
-        intakerelease::wantsCone
-      )
-    );
+        new ConditionalCommand(
+            Commands.sequence(
+                new ArmDropCMD(intakerelease::haveCone, intakerelease::wantsCone, arm)
+                    .withTimeout(0.3),
+                Commands.parallel(
+                        Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
+                        new ArmHomeCMD(arm))
+                    .withTimeout(5.0)),
+            Commands.sequence(
+                new ArmDropCMD(intakerelease::haveCone, intakerelease::wantsCone, arm)
+                    .withTimeout(0.3),
+                Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
+                new ArmHomeCMD(arm).withTimeout(5.0)),
+            intakerelease::wantsCone));
   }
 }
