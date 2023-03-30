@@ -340,6 +340,7 @@ public class Arm extends SubsystemBase {
 
   public void setTargetPositionRotate(double rotateSetpoint) {
     setTargetPositions(armIOInputs.extendPosition, rotateSetpoint);
+    autoMode = AutoMode.ROTATE;
   }
 
   public void characterizeExtend() {
