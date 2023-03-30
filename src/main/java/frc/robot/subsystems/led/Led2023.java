@@ -419,7 +419,7 @@ public class Led2023 extends SubsystemBase {
   }
 
   public void sendData() {
-     ledStrip.update();
+    ledStrip.update();
   }
 
   public void set(Color color) {
@@ -430,7 +430,6 @@ public class Led2023 extends SubsystemBase {
   public void setTop(Color color) {
     for (int i = 0; i < RobotConstants.get().led2023LedCount() / 2; i++) {
       ledStrip.setLED(i, color);
-      
     }
   }
 
@@ -439,7 +438,6 @@ public class Led2023 extends SubsystemBase {
         i < RobotConstants.get().led2023LedCount();
         i++) {
       ledStrip.setLED(i, color);
-      
     }
   }
 
@@ -453,14 +451,12 @@ public class Led2023 extends SubsystemBase {
         i < RobotConstants.get().led2023LedCount();
         i++) {
       ledStrip.setRGB(i, color.red, color.green, color.blue);
-      
     }
   }
 
   public void setBottom(COLORS_467 color) {
     for (int i = 0; i < RobotConstants.get().led2023LedCount() / 2; i++) {
       ledStrip.setRGB(i, color.red, color.green, color.blue);
-      
     }
   }
 
@@ -481,18 +477,16 @@ public class Led2023 extends SubsystemBase {
 
           if (brightness == 0) {
             ledStrip.setLED(i, bgColor);
-            
+
           } else {
             ledStrip.setRGB(
                 i,
                 (int) (fgColor.red * brightness),
                 (int) (fgColor.green * brightness),
                 (int) (fgColor.blue * brightness));
-            
           }
         } else {
           ledStrip.setLED(i, bgColor);
-          
         }
       }
     }
@@ -511,18 +505,16 @@ public class Led2023 extends SubsystemBase {
 
           if (brightness == 0) {
             ledStrip.setLED(j, bgColor);
-            
+
           } else {
             ledStrip.setRGB(
                 j,
                 (int) (fgColor.red * brightness),
                 (int) (fgColor.green * brightness),
                 (int) (fgColor.blue * brightness));
-            
           }
         } else {
           ledStrip.setLED(j, bgColor);
-          
         }
       }
     }
@@ -543,20 +535,18 @@ public class Led2023 extends SubsystemBase {
 
           if (brightness == 0) {
             ledStrip.setLED(j, currentColor);
-            
+
           } else {
             ledStrip.setRGB(
                 j,
                 (int) (currentColor.red * brightness),
                 (int) (currentColor.green * brightness),
                 (int) (currentColor.blue * brightness));
-            
           }
         } else {
           Color currentColor =
               j >= RobotConstants.get().led2023LedCount() / 2 ? topColor : bottomColor;
           ledStrip.setLED(j, currentColor);
-          
         }
       }
     }
@@ -568,10 +558,9 @@ public class Led2023 extends SubsystemBase {
       } else if (purpleTimer.hasElapsed(0.25)) {
         setTop(topColor);
         setBottom(bottomColor);
-        
+
       } else {
         set(bgColor);
-        
       }
     }
 
@@ -583,13 +572,12 @@ public class Led2023 extends SubsystemBase {
           ledStrip.setLED(i, colorTwo.getColor());
         }
       }
-      
+
       if (purpleTimer.hasElapsed(
           SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
         purpleTimer.reset();
         for (int j = 0; j < RobotConstants.get().led2023LedCount(); j++) {
           ledStrip.setLED(j, bgColor);
-          
         }
       }
     }
@@ -602,11 +590,10 @@ public class Led2023 extends SubsystemBase {
           ledStrip.setLED(i, colorTwo.getColor());
         }
       }
-      
+
       for (int j = 0; j < RobotConstants.get().led2023LedCount(); j++) {
         int l = RobotConstants.get().led2023LedCount() - 1 - j;
         ledStrip.setLED(l, bgColor);
-        
       }
     }
 
@@ -627,7 +614,7 @@ public class Led2023 extends SubsystemBase {
             } else {
               ledStrip.setLED(i, bottomColor);
             }
-            
+
           } else {
             if (i < RobotConstants.get().led2023LedCount() / 2) {
               ledStrip.setRGB(
@@ -642,7 +629,6 @@ public class Led2023 extends SubsystemBase {
                   (int) (bottomColor.green * brightness),
                   (int) (bottomColor.blue * brightness));
             }
-            
           }
         } else {
           if (i < RobotConstants.get().led2023LedCount() / 2) {
@@ -650,7 +636,6 @@ public class Led2023 extends SubsystemBase {
           } else {
             ledStrip.setLED(i, bottomColor);
           }
-          
         }
       }
     }
@@ -677,14 +662,13 @@ public class Led2023 extends SubsystemBase {
             ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
             255,
             127);
-        
       }
     }
 
     public void setRainbowMovingDown() {
       if (rainbowTimer.hasElapsed(RAINBOW_TIMER_SPEED)) {
         rainbowColor += RAINBOW_AMOUNT;
-        
+
         if (rainbowColor < 0) rainbowColor = 360;
         rainbowTimer.reset();
       }
@@ -695,14 +679,13 @@ public class Led2023 extends SubsystemBase {
             ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
             255,
             127);
-        
       }
     }
 
     public void setRainbowMovingDownSecondInv() {
       if (rainbowTimer.hasElapsed(RAINBOW_TIMER_SPEED)) {
         rainbowColor += RAINBOW_AMOUNT;
-        
+
         if (rainbowColor < 0) rainbowColor = 360;
         rainbowTimer.reset();
       }
@@ -718,7 +701,6 @@ public class Led2023 extends SubsystemBase {
             ((int) rainbowColor - (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
             255,
             127);
-        
       }
     }
 
@@ -730,7 +712,6 @@ public class Led2023 extends SubsystemBase {
             ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
             255,
             127);
-        
       }
     }
   }
@@ -762,8 +743,6 @@ public class Led2023 extends SubsystemBase {
       for (int i = start; i < end; i++) {
         ledStrip.setLED(i, color.getColor());
       }
-
-       
     }
   }
 
