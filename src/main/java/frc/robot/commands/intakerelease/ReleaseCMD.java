@@ -13,15 +13,14 @@ public class ReleaseCMD extends SequentialCommandGroup {
       addCommands(
           new ArmDropCMD(intakerelease::haveCone, intakerelease::wantsCone, arm).withTimeout(0.3),
           Commands.parallel(
-              Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
-              new ArmHomeCMD(arm)).withTimeout(5.0)
-      );
+                  Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
+                  new ArmHomeCMD(arm))
+              .withTimeout(5.0));
     } else {
       addCommands(
           new ArmDropCMD(intakerelease::haveCone, intakerelease::wantsCone, arm).withTimeout(0.3),
           Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
-          new ArmHomeCMD(arm).withTimeout(5.0)
-      );
+          new ArmHomeCMD(arm).withTimeout(5.0));
     }
   }
 }
