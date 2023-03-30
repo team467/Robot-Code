@@ -186,7 +186,7 @@ public class RobotContainer {
       }
     }
 
-    led2023 = new Led2023(arm, intakeRelease);
+    led2023 = new Led2023(arm, intakeRelease, drive);
     LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines
