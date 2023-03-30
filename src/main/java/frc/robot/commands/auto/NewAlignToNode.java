@@ -3,7 +3,6 @@ package frc.robot.commands.auto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Grids;
@@ -48,13 +47,10 @@ public class NewAlignToNode extends CommandBase {
         }
       }
     }
-    double alignX = AllianceFlipUtil.apply(Grids.outerX + Units.inchesToMeters(19));
     alignPose =
-        new Pose2d(
-            alignX,
-            closestNodeY,
-            new Rotation2d(
-                DriverStation.getAlliance() == DriverStation.Alliance.Blue ? Math.PI : 0));
+        AllianceFlipUtil.apply(
+            new Pose2d(
+                Grids.outerX + Units.inchesToMeters(19), closestNodeY, new Rotation2d(Math.PI)));
     alignCommand = new StraightDriveToPose(alignPose, drive);
     alignCommand.initialize();
   }
