@@ -50,7 +50,6 @@ public class Arm extends SubsystemBase {
   private double rotateSetpoint = 0.0;
   private boolean isCalibrated = false;
   private double calibrateRotateOrigin = 0;
-  private boolean isDropping = false;
 
   private Timer autoRetractTimer = new Timer();
 
@@ -65,7 +64,6 @@ public class Arm extends SubsystemBase {
   private static final double SAFE_RETRACT_NON_HOME = 0.05;
 
   private static final double EXTEND_CALIBRATION_POSITION = 0.01;
-  private static final double ROTATE_DROP_METERS = 0.025;
   private static final double ROTATE_RAISE_METERS = 0.025;
 
   private double holdPosition;
@@ -142,7 +140,6 @@ public class Arm extends SubsystemBase {
     setRotateVoltage(0.0);
     manualRotateVolts = 0;
     manualExtendVolts = 0;
-    isDropping = false;
   }
 
   public boolean isHolding() {
@@ -160,24 +157,6 @@ public class Arm extends SubsystemBase {
 
   public boolean shouldRaise() {
     return armIOInputs.rotatePosition < 0.1;
-  }
-
-  public void drop() {
-    if (!isDropping) {
-      mode = ArmMode.AUTO;
-      autoMode = AutoMode.ROTATE;
-      rotateSetpoint = armIOInputs.rotatePosition - ROTATE_DROP_METERS;
-      extendSetpoint = armIOInputs.extendPosition;
-    }
-    isDropping = true;
-  }
-
-  public boolean hasDropped() {
-    if (isDropping && isFinished()) {
-      isDropping = false;
-      return true;
-    }
-    return false;
   }
 
   public boolean isCalibrated() {
