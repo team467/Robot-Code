@@ -7,8 +7,7 @@ public class ArmRotateCMD extends CommandBase {
   private Arm arm;
   private double rotatePosition;
 
-  public ArmRotateCMD(
-      Arm arm, double rotatePosition) {
+  public ArmRotateCMD(Arm arm, double rotatePosition) {
     this.arm = arm;
     this.rotatePosition = rotatePosition;
     addRequirements(arm);
@@ -28,5 +27,4 @@ public class ArmRotateCMD extends CommandBase {
   public boolean isFinished() {
     return arm.isFinished();
   }
-
 }
