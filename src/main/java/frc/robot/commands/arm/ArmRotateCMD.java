@@ -15,7 +15,18 @@ public class ArmRotateCMD extends CommandBase {
   }
 
   @Override
-  public void execute() {
+  public void initialize() {
     arm.setTargetPositionRotate(rotatePosition);
   }
+
+  @Override
+  public void end(boolean interrupted) {
+    arm.hold();
+  }
+
+  @Override
+  public boolean isFinished() {
+    return arm.isFinished();
+  }
+
 }
