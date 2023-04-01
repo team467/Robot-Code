@@ -11,10 +11,8 @@ public class ArmFloorCMD extends SequentialCommandGroup {
 
   public ArmFloorCMD(Arm arm, IntakeRelease intakeRelease) {
     addCommands(
-        new ArmSetPosition(
+        new ArmRotateCMD(
             arm,
-            intakeRelease,
-            arm.getExtention(),
             intakeRelease.wantsCone()
                 ? ArmPositionConstants.CONE_FLOOR.rotateSetpoint
                 : ArmPositionConstants.CUBE_FLOOR.rotateSetpoint),
