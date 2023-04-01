@@ -11,11 +11,11 @@ public class ArmShelfCMD extends SequentialCommandGroup {
 
   public ArmShelfCMD(Arm arm, IntakeRelease intakeRelease) {
     addCommands(
-        new ArmRotateCMD(
+        new ArmPositionCMD(
             arm,
-            intakeRelease.wantsCone()
-                ? ArmPositionConstants.SHELF_CONE.rotateSetpoint
-                : ArmPositionConstants.SHELF_CUBE.rotateSetpoint),
+            () -> intakeRelease.wantsCone()
+                ? ArmPositionConstants.SHELF_CONE_RETRACT
+                : ArmPositionConstants.SHELF_CUBE_RETRACT),
         Commands.parallel(
             new ArmPositionCMD(
                 arm,
