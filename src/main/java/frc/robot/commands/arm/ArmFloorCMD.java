@@ -13,9 +13,10 @@ public class ArmFloorCMD extends SequentialCommandGroup {
     addCommands(
         new ArmPositionCMD(
             arm,
-            () -> intakeRelease.wantsCone()
-                ? ArmPositionConstants.CONE_FLOOR_RETRACT
-                : ArmPositionConstants.CUBE_FLOOR_RETRACT),
+            () ->
+                intakeRelease.wantsCone()
+                    ? ArmPositionConstants.CONE_FLOOR_RETRACT
+                    : ArmPositionConstants.CUBE_FLOOR_RETRACT),
         Commands.parallel(
             new ArmPositionCMD(
                 arm,
