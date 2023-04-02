@@ -158,7 +158,7 @@ public class Led2023 extends SubsystemBase {
 
   public ColorScheme getColorScheme() {
     // reset timer after arm cmd completes
-    if (isArmCommandRunning(arm.getCurrentCommand())) {
+    if (!isArmCommandRunning(arm.getCurrentCommand())) {
       armCMDsTimer.reset();
     }
 
@@ -731,13 +731,13 @@ public class Led2023 extends SubsystemBase {
 
       if (preSet == 1) {
         start = topStart;
-        end = topEndandMidStart + 1;
+        end = topEndandMidStart;
       } else if (preSet == 2) {
         start = topEndandMidStart;
-        end = midEndandBottomStart;
+        end = midEndandBottomStart-1;
 
       } else {
-        start = midEndandBottomStart - 1;
+        start = midEndandBottomStart;
         end = bottomEnd;
       }
       for (int i = start; i < end; i++) {
