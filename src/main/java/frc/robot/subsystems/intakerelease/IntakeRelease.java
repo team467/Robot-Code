@@ -14,7 +14,8 @@ public class IntakeRelease extends SubsystemBase {
     RELEASE,
     HOLD_CUBE,
     HOLD_CONE,
-    STOP
+    STOP,
+    GRIP_CUBE
   }
 
   private State state;
@@ -66,7 +67,8 @@ public class IntakeRelease extends SubsystemBase {
       case DISABLED -> intakeReleaseIO.setPercent(0);
       case INTAKE -> intakeReleaseIO.setPercent(-1.0);
       case RELEASE -> intakeReleaseIO.setPercent(0.6);
-      case HOLD_CUBE -> intakeReleaseIO.setVoltage(-2.0); // -0.3 percent
+      case HOLD_CUBE -> intakeReleaseIO.setPercent(-0.35);
+      case GRIP_CUBE -> intakeReleaseIO.setPercent(-0.1);
       case HOLD_CONE -> intakeReleaseIO.setPercent(-0.8);
       case STOP -> intakeReleaseIO.setPercent(0);
       default -> intakeReleaseIO.setPercent(0);
@@ -100,7 +102,11 @@ public class IntakeRelease extends SubsystemBase {
   }
 
   public void holdCube() {
-    state = State.HOLD_CUBE;
+    if (inputs.cubeLimitSwitch) {
+      state = State.GRIP_CUBE;
+    } else {
+      state = State.HOLD_CUBE;
+    }
   }
 
   public boolean haveCube() {
