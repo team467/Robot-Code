@@ -734,7 +734,7 @@ public class Led2023 extends SubsystemBase {
         end = topEndandMidStart;
       } else if (preSet == 2) {
         start = topEndandMidStart;
-        end = midEndandBottomStart-1;
+        end = midEndandBottomStart - 1;
 
       } else {
         start = midEndandBottomStart;
