@@ -54,7 +54,7 @@ public class Arm extends SubsystemBase {
   private Timer autoRetractTimer = new Timer();
 
   private static final double EXTEND_TOLERANCE_METERS = 0.008;
-  private static final double ROTATE_TOLERANCE_METERS = 0.0015;
+  private static final double ROTATE_TOLERANCE_METERS = 0.002;
   // TODO: tweak all safety values, they are currently wrong
   private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.0; // 0.069
   private static final double SAFE_EXTENSION_LENGTH = 0.02;
