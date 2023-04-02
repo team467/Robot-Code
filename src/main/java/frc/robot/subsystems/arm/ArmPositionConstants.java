@@ -21,4 +21,6 @@ public class ArmPositionConstants {
   public static final ArmPosition CUBE_FLOOR = new ArmPosition(0.234, 0.040);
   public static final ArmPosition SHELF_CONE = new ArmPosition(0.086, 0.159);
   public static final ArmPosition SHELF_CUBE = new ArmPosition(0.086, 0.153);
+  public static final ArmPosition FLOOR_RETRACT =
+      new ArmPosition(HOME.extendSetpoint, CONE_FLOOR.rotateSetpoint);
 }
