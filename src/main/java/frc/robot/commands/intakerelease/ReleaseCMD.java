@@ -3,6 +3,7 @@ package frc.robot.commands.intakerelease;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.arm.ArmDropCMD;
 import frc.robot.commands.arm.ArmHomeCMD;
 import frc.robot.subsystems.arm.Arm;
@@ -15,6 +16,8 @@ public class ReleaseCMD extends SequentialCommandGroup {
             Commands.sequence(
                 new ArmDropCMD(intakerelease::haveCone, intakerelease::wantsCone, arm)
                     .withTimeout(0.3),
+                  
+                      new WaitCommand(.3),
                 Commands.parallel(
                         Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
                         new ArmHomeCMD(arm))
