@@ -16,7 +16,7 @@ public class ReleaseCMD extends SequentialCommandGroup {
             Commands.sequence(
                 new ArmDropCMD(intakerelease::haveCone, intakerelease::wantsCone, arm)
                     .withTimeout(0.3),
-                new WaitCommand(.1),
+                new WaitCommand(.2),
                 Commands.parallel(
                         Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
                         new ArmHomeCMD(arm))
