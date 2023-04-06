@@ -15,15 +15,15 @@ public class ReleaseCMD extends SequentialCommandGroup {
         new ConditionalCommand(
             Commands.sequence(
                 new ArmDropCMD(intakerelease::haveCone, intakerelease::wantsCone, arm)
-                    .withTimeout(0.3),
-                new WaitCommand(.2),
+                    .withTimeout(0.4),
+                new WaitCommand(0.3),
                 Commands.parallel(
                         Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
                         new ArmHomeCMD(arm))
                     .withTimeout(5.0)),
             Commands.sequence(
                 new ArmDropCMD(intakerelease::haveCone, intakerelease::wantsCone, arm)
-                    .withTimeout(0.3),
+                    .withTimeout(0.4),
                 Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
                 new ArmHomeCMD(arm).withTimeout(5.0)),
             intakerelease::wantsCone));
