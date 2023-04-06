@@ -39,13 +39,7 @@ import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.arm.ArmStopCMD;
 import frc.robot.commands.auto.NewAlignToNode;
-import frc.robot.commands.auto.complex.BackUpAndBalance;
-import frc.robot.commands.auto.complex.OnlyBackup;
-import frc.robot.commands.auto.complex.OnlyBalance;
-import frc.robot.commands.auto.complex.OnlyScore;
-import frc.robot.commands.auto.complex.ScoreAndBackUp;
-import frc.robot.commands.auto.complex.ScoreAndBackUpAndBalance;
-import frc.robot.commands.auto.complex.ScoreAndBalance;
+import frc.robot.commands.auto.complex.*;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.intakerelease.HoldCMD;
@@ -195,13 +189,13 @@ public class RobotContainer {
 
     // AprilTag 3 or 6
     autoChooser.addOption(
-        "Tag 3/6: Only Back Up", new OnlyBackup(6, "Right", drive, arm, intakeRelease));
+        "Tag 3/6: Only Back Up", new OnlyBackupClearSide(6, "Right", drive, arm, intakeRelease));
     autoChooser.addOption(
         "Tag 3/6: Only Score Cone",
         new OnlyScore(6, "Right", "Cone", "High", drive, arm, intakeRelease));
     autoChooser.addOption(
         "Tag 3/6: Score Cone and Back Up",
-        new ScoreAndBackUp(6, "Right", "Cone", "High", drive, arm, intakeRelease));
+        new ScoreAndBackUpClearSide(6, "Right", "Cone", "High", drive, arm, intakeRelease));
 
     // AprilTag 2 or 7
     autoChooser.addOption(
@@ -219,13 +213,13 @@ public class RobotContainer {
 
     // AprilTag 1 or 8
     autoChooser.addOption(
-        "Tag 1/8: Only Back Up", new OnlyBackup(8, "Left", drive, arm, intakeRelease));
+        "Tag 1/8: Only Back Up", new OnlyBackupBumpSide(8, "Left", drive, arm, intakeRelease));
     autoChooser.addOption(
         "Tag 1/8: Only Score Cone",
         new OnlyScore(8, "Left", "Cone", "High", drive, arm, intakeRelease));
     autoChooser.addOption(
         "Tag 1/8: Score Cone and Back Up",
-        new ScoreAndBackUp(8, "Left", "Cone", "High", drive, arm, intakeRelease));
+        new ScoreAndBackUpBumpSide(8, "Left", "Cone", "High", drive, arm, intakeRelease));
 
     autoChooser.addOption(
         "Drive Characterization",

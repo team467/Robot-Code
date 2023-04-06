@@ -11,9 +11,9 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
 
-public class ScoreAndBackUp extends SequentialCommandGroup {
+public class ScoreAndBackUpClearSide extends SequentialCommandGroup {
 
-  public ScoreAndBackUp(
+  public ScoreAndBackUpClearSide(
       int aprilTag,
       String relativePosition,
       String gamePieceType,
@@ -25,7 +25,7 @@ public class ScoreAndBackUp extends SequentialCommandGroup {
         new Initialize(aprilTag, relativePosition, drive, arm),
         new Score(gamePieceType, location, arm, intakeRelease),
         Commands.parallel(
-            new StraightDriveToPose(Units.inchesToMeters(156.0), 0.0, 0.0, drive),
+            new StraightDriveToPose(Units.inchesToMeters(160.0), 0.0, 0.0, drive),
             new ArmHomeCMD(arm)));
   }
 }
