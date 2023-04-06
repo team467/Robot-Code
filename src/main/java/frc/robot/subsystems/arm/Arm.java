@@ -57,7 +57,7 @@ public class Arm extends SubsystemBase {
   private static final double ROTATE_TOLERANCE_METERS = 0.002;
   // TODO: tweak all safety values, they are currently wrong
   private static final double SAFE_ROTATE_AT_FULL_EXTENSION = 0.0; // 0.069
-  private static final double SAFE_EXTENSION_LENGTH = 0.02;
+  private static final double SAFE_EXTENSION_LENGTH = 0.0; // 0.02
   private static final double SAFE_ROTATE_AT_PARTIAL_EXTENSION = 0.0; // 0.026
   private static final double SAFE_EXTEND_AT_PARTIAL_EXTENSION = 0.0; // 0.229
 
@@ -69,10 +69,10 @@ public class Arm extends SubsystemBase {
   private double holdPosition;
   private double manualExtendVolts = 0.0;
   private double manualRotateVolts = 0.0;
-  private PIDController extendPidController = new PIDController(20, 0, 0);
+  private PIDController extendPidController = new PIDController(60, 0, 0);
   private PIDController rotatePidController = new PIDController(600, 0, 0);
 
-  private static final double BACK_FORCE = -1.3;
+  private static final double BACK_FORCE = -1.4; // -1.3
   private static final double HOLD_BACK_FORCE = -0.5;
 
   private static final double CALIBRATE_RETRACT_VOLTAGE = -1.5;
