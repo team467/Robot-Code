@@ -212,13 +212,13 @@ public class Arm extends SubsystemBase {
         if (autoRetractTimer.hasElapsed(1)
             || armIOInputs.extendPosition < SAFE_RETRACT_NON_HOME + EXTEND_TOLERANCE_METERS) {
           setExtendVoltage(0);
-          autoMode = rotateSetpoint > 0 ? AutoMode.ROTATE : AutoMode.RETRACT_FULL;
+          autoMode = rotateSetpoint > 0.013 ? AutoMode.ROTATE : AutoMode.RETRACT_FULL;
         } else {
           setExtendVoltage(calculateExtendPid(SAFE_RETRACT_NON_HOME));
         }
       }
       case RETRACT_FULL -> {
-        if (autoRetractTimer.hasElapsed(1.5)
+        if (autoRetractTimer.hasElapsed(2.0) // 1.5
             || armIOInputs.extendPosition
                 < RobotConstants.get().armExtendMinMeters() + EXTEND_TOLERANCE_METERS) {
           setExtendVoltage(0);
