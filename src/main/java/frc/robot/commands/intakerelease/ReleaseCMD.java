@@ -19,13 +19,13 @@ public class ReleaseCMD extends SequentialCommandGroup {
                 new WaitCommand(0.5),
                 Commands.parallel(
                         Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
-                        new ArmHomeCMD(arm))
+                        new ArmHomeCMD(arm, intakerelease))
                     .withTimeout(5.0)),
             Commands.sequence(
                 new ArmDropCMD(intakerelease::haveCone, intakerelease::wantsCone, arm)
                     .withTimeout(0.4),
                 Commands.run(intakerelease::release, intakerelease).withTimeout(0.5),
-                new ArmHomeCMD(arm).withTimeout(5.0)),
+                new ArmHomeCMD(arm, intakerelease).withTimeout(5.0)),
             intakerelease::wantsCone));
   }
 }

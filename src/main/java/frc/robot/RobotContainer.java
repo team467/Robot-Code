@@ -308,8 +308,8 @@ public class RobotContainer {
         .recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
 
     // Home will be for movement
-    operatorController.x().onTrue(new ArmHomeCMD(arm));
-    driverController.x().onTrue(new ArmHomeCMD(arm));
+    operatorController.x().onTrue(new ArmHomeCMD(arm, intakeRelease));
+    driverController.x().onTrue(new ArmHomeCMD(arm, intakeRelease));
 
     // Need to set to use automated movements, should be set in Autonomous init.
     driverController.back().onTrue(new ArmCalibrateCMD(arm));
