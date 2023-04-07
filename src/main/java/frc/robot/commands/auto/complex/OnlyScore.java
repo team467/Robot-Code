@@ -20,6 +20,6 @@ public class OnlyScore extends SequentialCommandGroup {
     addCommands(
         new Initialize(aprilTag, relativePosition, drive, arm),
         new Score(gamePieceType, location, arm, intakeRelease),
-        new ArmHomeCMD(arm, intakeRelease));
+        new ArmHomeCMD(arm, intakeRelease::wantsCone));
   }
 }

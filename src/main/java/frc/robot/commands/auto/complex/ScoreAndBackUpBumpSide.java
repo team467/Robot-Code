@@ -26,6 +26,6 @@ public class ScoreAndBackUpBumpSide extends SequentialCommandGroup {
         new Score(gamePieceType, location, arm, intakeRelease),
         Commands.parallel(
             new StraightDriveToPose(Units.inchesToMeters(175.0), 0.0, 0.0, drive),
-            new ArmHomeCMD(arm, intakeRelease)));
+            new ArmHomeCMD(arm, intakeRelease::wantsCone)));
   }
 }
