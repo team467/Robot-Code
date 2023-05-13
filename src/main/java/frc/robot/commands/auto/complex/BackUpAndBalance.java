@@ -2,6 +2,7 @@ package frc.robot.commands.auto.complex;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.FieldConstants;
 import frc.robot.commands.auto.BetterBalancing;
 import frc.robot.commands.auto.Initialize;
 import frc.robot.commands.auto.StraightDriveToPose;
@@ -13,6 +14,7 @@ public class BackUpAndBalance extends SequentialCommandGroup {
     int aprilTag = 7;
     addCommands(
         new Initialize(aprilTag, relativePosition, drive, arm),
+        new StraightDriveToPose(0.0, -FieldConstants.Grids.nodeSeparationY, 0.0, drive),
         new StraightDriveToPose(Units.inchesToMeters(175.0), 0.0, 0.0, drive),
         new StraightDriveToPose(Units.inchesToMeters(-75.0), 0.0, 0.0, drive).withTimeout(2.5),
         new BetterBalancing(drive));

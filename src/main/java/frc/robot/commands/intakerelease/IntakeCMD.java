@@ -14,7 +14,9 @@ public class IntakeCMD extends CommandBase {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    intakerelease.resetHas();
+  }
 
   @Override
   public void execute() {
