@@ -213,13 +213,13 @@ public class RobotContainer {
 
     // AprilTag 1 or 8
     autoChooser.addOption(
-        "Tag 1/8: Only Back Up", new OnlyBackupBumpSide(8, "Left", drive, arm, intakeRelease));
+        "Tag 1/8: Only Back Up", new OnlyBackupClearSide(8, "Left", drive, arm, intakeRelease));
     autoChooser.addOption(
         "Tag 1/8: Only Score Cone",
         new OnlyScore(8, "Left", "Cone", "High", drive, arm, intakeRelease));
     autoChooser.addOption(
         "Tag 1/8: Score Cone and Back Up",
-        new ScoreAndBackUpBumpSide(8, "Left", "Cone", "High", drive, arm, intakeRelease));
+        new ScoreAndBackUpClearSide(8, "Left", "Cone", "High", drive, arm, intakeRelease));
 
     autoChooser.addOption(
         "Drive Characterization",
