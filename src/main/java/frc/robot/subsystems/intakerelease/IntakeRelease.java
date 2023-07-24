@@ -73,49 +73,75 @@ public class IntakeRelease extends SubsystemBase {
     }
   }
 
+  /** Instructs the system to actively grab a game piece */
   public void intake() {
     hasCone = false;
     hasCube = false;
     state = State.INTAKE;
   }
 
+  /** Resets the flags indicating if the system is holding a cone or a cube game piece. */
   public void resetHas() {
     hasCone = false;
     hasCube = false;
   }
 
+  /** Instructs the system to release whatever game piece it's holding. */
   public void release() {
     state = State.RELEASE;
     hasCone = false;
     hasCube = false;
   }
 
+  /** Instructs the system to stop its current operation. */
   public void stop() {
     state = State.STOP;
     resetHas();
   }
 
+  /** Instructs the system to hold ont a cone. */
   public void holdCone() {
     state = State.HOLD_CONE;
   }
 
+  /** Instructs the system to hold onto a cube. */
   public void holdCube() {
     state = State.HOLD_CUBE;
   }
 
+  /**
+   * Checks if the system is currently holding a cube.
+   *
+   * @return true of a cone is detected, false if a cube is not detected
+   */
   public boolean haveCube() {
     hasCube = hasCube || inputs.cubeLimitSwitch;
     return hasCube;
   }
 
+  /**
+   * Checks the status of the cube limit switch to determine if a cube is currently detected.
+   *
+   * @return true if a cube is detected, false if a cube is not detected
+   */
   public boolean cubeLimitSwitch() {
     return inputs.cubeLimitSwitch;
   }
 
+  /**
+   * Checks the status of the cone limit switch to determine if a cone is currently detected.
+   *
+   * @return true if a cone is detected, false if a cone is not detected
+   */
   public boolean coneLimitSwitch() {
     return inputs.coneLimitSwitch;
   }
 
+  /**
+   * Checks if the system is currently holding a cone.
+   *
+   * @return true of a cone is detected, false if a cone is not detected
+   */
   public boolean haveCone() {
     hasCone = hasCone || inputs.coneLimitSwitch;
     return hasCone;

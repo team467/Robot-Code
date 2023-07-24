@@ -48,6 +48,16 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator odometry;
   private double simGyro = 0.0;
 
+  /**
+   * Initializes a new instance of the Drive class.
+   *
+   * @param gyroIO The gyro IO object.
+   * @param flModuleIO The IO object for the front left module.
+   * @param frModuleIO The IO object for the front right module.
+   * @param blModuleIO The IO object for the back left module.
+   * @param brModuleIO The IO object for the back right module.
+   * @param aprilTagCameraIO The list of IO objects for the AprilTag cameras.
+   */
   public Drive(
       IMUIO gyroIO,
       ModuleIO flModuleIO,
@@ -242,8 +252,11 @@ public class Drive extends SubsystemBase {
     Logger.getInstance().recordOutput("Odometry", getPose());
   }
 
-  // Checks if the robot is upright within a certain threshold (checks if it will be considered
-  // balanced by the charge station)
+  /**
+   * Checks if the robot is upright within a certain threshold.
+   *
+   * @return True if the robot is upright, otherwise false.
+   */
   public boolean isUpright() {
     // return (Math.abs(
     //         getPose().getRotation().getCos() * getPitch().getDegrees()
@@ -256,17 +269,26 @@ public class Drive extends SubsystemBase {
     return Math.abs(roll) < 2.3 && Math.abs(pitch) < 2.3;
   }
 
+  /**
+   * Sets the velocity of the robot to the specified speeds.
+   *
+   * @param speeds The desired velocity of the robot.
+   */
   public void runVelocity(ChassisSpeeds speeds) {
     driveMode = DriveMode.NORMAL;
     isCharacterizing = false;
     setpoint = speeds;
   }
 
+  /** Stops the robot by setting its velocity to zero. */
   public void stop() {
     driveMode = DriveMode.NORMAL;
     runVelocity(new ChassisSpeeds());
   }
 
+  /**
+   * Stops the robot by setting its velocity to zero and sets the wheel angle to prevent movement.
+   */
   public void stopWithX() {
     stop();
     for (int i = 0; i < 4; i++) {
@@ -277,14 +299,29 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  /**
+   * Retrieves the gravity vector from the gyro inputs.
+   *
+   * @return The gravity vector as an array of doubles.
+   */
   public double[] getGravVec() {
     return gyroInputs.gravVector;
   }
 
+  /**
+   * Retrieves the current pose from the odometry system.
+   *
+   * @return The current pose as Pose2d object.
+   */
   public Pose2d getPose() {
     return odometry.getEstimatedPosition();
   }
 
+  /**
+   * Sets the current pose in the odometry system.
+   *
+   * @param pose The new pose to set, represented as a Pose2d object.
+   */
   public void setPose(Pose2d pose) {
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
     for (int i = 0; i < 4; i++) {
@@ -293,6 +330,14 @@ public class Drive extends SubsystemBase {
     odometry.resetPosition(Rotation2d.fromDegrees(gyroInputs.yaw), modulePositions, pose);
   }
 
+  /**
+   * Drives the chassis using specified x, y, and rotate values.
+   *
+   * @param x The linear velocity in the x-axis direction (forwards in robot-relative).
+   * @param y The linear velocity in the y-axis direction (left in robot-relative).
+   * @param rot The rotational velocity, counter-clockwise.
+   * @param fieldRelative Determines whether the velocities are field-relative or robot-relative.
+   */
   public void chassisDrive(double x, double y, double rot, boolean fieldRelative) {
     if (fieldRelative) {
       runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(x, y, rot, getPose().getRotation()));
@@ -301,27 +346,57 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  /**
+   * Returns the roll angle of the robot.
+   *
+   * @return The roll angle of the robot as a Rotation2d object.
+   */
   public Rotation2d getRoll() {
     return Rotation2d.fromDegrees(gyroInputs.roll);
   }
 
+  /**
+   * Returns the pitch angle of the robot.
+   *
+   * @return The pitch angle of the robot as a Rotation2d object.
+   */
   public Rotation2d getPitch() {
     return Rotation2d.fromDegrees(gyroInputs.pitch);
   }
 
+  /**
+   * Returns the roll velocity of the robot.
+   *
+   * @return The roll velocity of the robot in radians per second.
+   */
   public double getRollVelocity() {
     return Units.degreesToRadians(gyroInputs.rollRate);
   }
 
+  /**
+   * Returns the pitch velocity of the robot.
+   *
+   * @return The pitch velocity of the robot in radians per second.
+   */
   public double getPitchVelocity() {
     return Units.degreesToRadians(gyroInputs.pitchRate);
   }
 
+  /**
+   * Sets the drive mode to CHARACTERIZATION and assigns the input voltage for characterization.
+   *
+   * @param volts The input voltage for characterization.
+   */
   public void runCharacterizationVolts(double volts) {
     driveMode = DriveMode.CHARACTERIZATION;
     characterizationVolts = volts;
   }
 
+  /**
+   * Calculates the average characterization velocity of all modules.
+   *
+   * @return The average characterization velocity.
+   */
   public double getCharacterizationVelocity() {
     double driveVelocityAverage = 0.0;
     for (var module : modules) {

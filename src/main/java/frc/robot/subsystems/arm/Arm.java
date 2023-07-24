@@ -82,9 +82,9 @@ public class Arm extends SubsystemBase {
   private static final double RETRACT_VOLTAGE_CLOSE_TO_LIMIT = -0.7;
 
   /**
-   * Configures the arm subsystem
+   * Constructs a new Arm object with the given ArmIO instance.
    *
-   * @param armIO Arm IO
+   * @param armIO the ArmIO instance to be used by the Arm object
    */
   public Arm(ArmIO armIO) {
     super();
@@ -93,10 +93,21 @@ public class Arm extends SubsystemBase {
     armIO.updateInputs(armIOInputs);
   }
 
+  /**
+   * Returns whether the Arm object is currently in manual mode.
+   *
+   * @return true if the Arm object is in manual mode, false otherwise
+   */
   public boolean isManual() {
     return mode == ArmMode.MANUAL;
   }
 
+  /**
+   * Stops the Arm object by setting it to manual mode and setting all voltage outputs to zero.
+   *
+   * <p>After calling this method, the Arm object will be in manual mode with zero extend and rotate
+   * voltages.
+   */
   public void stop() {
     mode = ArmMode.MANUAL;
     setExtendVoltage(0.0);
@@ -105,16 +116,33 @@ public class Arm extends SubsystemBase {
     manualRotateVolts = 0;
   }
 
+  /**
+   * Sets the extend voltage of the Arm object to the specified value in manual mode.
+   *
+   * @param volts the voltage value to set for extend
+   */
   public void manualExtend(double volts) {
     mode = ArmMode.MANUAL;
     manualExtendVolts = volts;
   }
 
+  /**
+   * Sets the rotate voltage of the Arm object to the specified value in manual mode.
+   *
+   * @param volts the voltage value to set for rotate
+   */
   public void manualRotate(double volts) {
     mode = ArmMode.MANUAL;
     manualRotateVolts = volts;
   }
 
+  /**
+   * Initiates the calibration process for the Arm object.
+   *
+   * <p>This method sets the Arm mode to CALIBRATE and sets the calibration mode to RETRACT_ARM.
+   *
+   * <p>The calibration process is used to establish the starting position of the Arm's rotation.
+   */
   public void calibrate() {
     calibrateMode = CalibrateMode.RETRACT_ARM;
     mode = ArmMode.CALIBRATE;
@@ -129,10 +157,16 @@ public class Arm extends SubsystemBase {
     mode = ArmMode.AUTO;
   }
 
+  /** Holds the current arm position by setting the target position to the current position. */
   public void hold() {
     hold(armIOInputs.extendPosition);
   }
 
+  /**
+   * Holds the current arm position by setting the target position to a given position.
+   *
+   * @param position The position to hold.
+   */
   public void hold(double position) {
     mode = ArmMode.HOLD;
     holdPosition = position;
@@ -142,10 +176,16 @@ public class Arm extends SubsystemBase {
     manualExtendVolts = 0;
   }
 
+  /**
+   * Checks if the arm is currently holding its position.
+   *
+   * @return true if the arm is holding its position, false otherwise.
+   */
   public boolean isHolding() {
     return mode == ArmMode.HOLD;
   }
 
+  /** Raises the arm by a predetermined position. */
   public void raise() {
     if (armIOInputs.rotatePosition < 0.1) {
       mode = ArmMode.AUTO;
@@ -155,10 +195,20 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  /**
+   * Determines if the arm should be raised.
+   *
+   * @return true if the arm should be raised, otherwise false.
+   */
   public boolean shouldRaise() {
     return armIOInputs.rotatePosition < 0.1;
   }
 
+  /**
+   * Checks whether the arm is calibrated or not.
+   *
+   * @return true if the arm is calibrated, false otherwise.
+   */
   public boolean isCalibrated() {
     return isCalibrated;
   }
@@ -296,6 +346,12 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  /**
+   * Sets the target positions for extending and rotating the arm.
+   *
+   * @param extendSetpoint The target position for extending the arm.
+   * @param rotateSetpoint The target position for rotating the arm.
+   */
   public void setTargetPositions(double extendSetpoint, double rotateSetpoint) {
     mode = ArmMode.AUTO;
     autoMode = AutoMode.RETRACT;
@@ -313,10 +369,20 @@ public class Arm extends SubsystemBase {
             RobotConstants.get().armRotateMaxMeters());
   }
 
+  /**
+   * Sets the target position for extending the arm.
+   *
+   * @param extendSetpoint The target position for extending the arm.
+   */
   public void setTargetPositionExtend(double extendSetpoint) {
     setTargetPositions(extendSetpoint, armIOInputs.rotatePosition);
   }
 
+  /**
+   * Sets the target position for rotating the arm.
+   *
+   * @param rotateSetpoint The target position for rotating the arm.
+   */
   public void setTargetPositionRotate(double rotateSetpoint) {
     setTargetPositions(armIOInputs.extendPosition, rotateSetpoint);
     autoMode = AutoMode.ROTATE;
@@ -344,14 +410,32 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  /**
+   * Retrieves the current rotation position of the arm.
+   *
+   * @return The current rotation position of the arm.
+   */
   public double getRotation() {
     return armIOInputs.rotatePosition;
   }
 
+  /**
+   * Retrieves the current extension position of the arm.
+   *
+   * @return The current extension position of the arm.
+   */
   public double getExtention() {
     return armIOInputs.extendPosition;
   }
 
+  /**
+   * Checks if the arm is stopped.
+   *
+   * <p>The arm is considered stopped if it is in MANUAL mode and both the manualExtendVolts and
+   * manualRotateVolts are equal to 0.
+   *
+   * @return true if the arm is stopped, false otherwise.
+   */
   public boolean isStopped() {
     return mode == ArmMode.MANUAL && manualExtendVolts == 0 && manualRotateVolts == 0;
   }
@@ -360,16 +444,44 @@ public class Arm extends SubsystemBase {
     return isExtendPositionNear(extendSetpoint) && isRotateFinished();
   }
 
+  /**
+   * Checks if the rotation of the arm is finished.
+   *
+   * <p>The rotation is considered finished if any of the following conditions are met:
+   *
+   * <ul>
+   *   <li>The absolute difference between the current rotate position and the rotate setpoint is
+   *       less than or equal to the rotation tolerance in meters.
+   *   <li>The rotate high limit switch is activated and the current rotate position is less than
+   *       the rotate setpoint.
+   *   <li>The rotate low limit switch is activated and the current rotate position is greater than
+   *       the rotate setpoint.
+   * </ul>
+   *
+   * @return true if the rotation of the arm is finished, false otherwise.
+   */
   public boolean isRotateFinished() {
     return Math.abs(armIOInputs.rotatePosition - rotateSetpoint) <= ROTATE_TOLERANCE_METERS
         || (armIOInputs.rotateHighLimitSwitch && armIOInputs.rotatePosition < rotateSetpoint)
         || (armIOInputs.rotateLowLimitSwitch && armIOInputs.rotatePosition > rotateSetpoint);
   }
 
+  /**
+   * Sets the voltage for rotating the arm.
+   *
+   * @param volts the voltage value to set for rotating the arm.
+   */
   private void setRotateVoltage(double volts) {
     armIO.setRotateVoltage(volts);
   }
 
+  /**
+   * Sets the voltage for extending the arm.
+   *
+   * @param volts the voltage value to set for extending the arm. Positive voltages extend the arm,
+   *     negative voltages retract the arm. A voltage of 0 stops the arm from extending or
+   *     retracting.
+   */
   private void setExtendVoltage(double volts) {
     if (!maybeKickback(volts)) {
       if (volts == 0) {
@@ -382,6 +494,13 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  /**
+   * Calculates the PID value for extending the arm based on the target position.
+   *
+   * @param targetPosition the target position to extend the arm.
+   * @return the PID value calculated for extending the arm. Returns 0 if the target position is not
+   *     safe to extend.
+   */
   private double calculateExtendPid(double targetPosition) {
     if (!isExtendSafe(targetPosition)) {
       return 0;
@@ -389,12 +508,25 @@ public class Arm extends SubsystemBase {
     return calculateExtendPidUnsafe(targetPosition);
   }
 
+  /**
+   * Calculates the PID value for extending the arm.
+   *
+   * @param targetPosition the desired position for extending the arm.
+   * @return the PID value calculated for extending the arm.
+   */
   private double calculateExtendPidUnsafe(double targetPosition) {
     double pidValue = extendPidController.calculate(armIOInputs.extendPosition, targetPosition);
     logger.recordOutput("Arm/ExtendFbOutput", pidValue);
     return pidValue;
   }
 
+  /**
+   * Calculates the PID value for rotating the arm.
+   *
+   * @param targetPosition the desired position for rotating the arm.
+   * @return the PID value calculated for rotating the arm. Returns 0 if it is not safe to rotate to
+   *     the target position.
+   */
   private double calculateRotatePid(double targetPosition) {
     if (!isRotateSafe(targetPosition)) {
       return 0;
@@ -404,10 +536,23 @@ public class Arm extends SubsystemBase {
     return pidValue;
   }
 
+  /**
+   * Determines if the target position is near the extend position.
+   *
+   * @param targetPosition the desired position to check for proximity.
+   * @return true if the target position is near the extend position within the tolerance defined by
+   *     EXTEND_TOLERANCE_METERS, false otherwise.
+   */
   private boolean isExtendPositionNear(double targetPosition) {
     return Math.abs(armIOInputs.extendPosition - targetPosition) <= EXTEND_TOLERANCE_METERS;
   }
 
+  /**
+   * Checks if it is safe to rotate the arm to the specified position.
+   *
+   * @param rotatePosition the position to which the arm intends to rotate.
+   * @return true if it is safe to rotate to the target position, false otherwise.
+   */
   private boolean isRotateSafe(double rotatePosition) {
     boolean isSafe =
         isCalibrated
@@ -421,6 +566,12 @@ public class Arm extends SubsystemBase {
     return isSafe;
   }
 
+  /**
+   * Checks if it is safe to extend the arm to the specified position.
+   *
+   * @param targetPosition the position to which the arm intends to extend.
+   * @return true if it is safe to extend to the target position, false otherwise.
+   */
   private boolean isExtendSafe(double targetPosition) {
     boolean isSafe =
         isCalibrated
@@ -432,6 +583,13 @@ public class Arm extends SubsystemBase {
     return isSafe;
   }
 
+  /**
+   * Checks if it is possible to initiate a kickback movement of the arm to the specified target
+   * volts.
+   *
+   * @param targetVolts the voltage to which the arm intends to kickback.
+   * @return true if the kickback can be initiated, false otherwise.
+   */
   private boolean maybeKickback(double targetVolts) {
     if (mode != ArmMode.KICKBACK && targetVolts > 0 && armIOInputs.ratchetLocked) {
       kickback = new Kickback(targetVolts);

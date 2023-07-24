@@ -26,6 +26,12 @@ public class Module {
 
   private final double wheelRadius = (RobotConstants.get().moduleWheelDiameter() / 2);
 
+  /**
+   * Constructs a new Module object.
+   *
+   * @param io the ModuleIO instance for this module
+   * @param index the index of this module
+   */
   public Module(ModuleIO io, int index) {
     this.io = io;
     this.index = index;
@@ -40,8 +46,15 @@ public class Module {
     Logger.getInstance().processInputs("Drive/Module" + index, inputs);
   }
 
+  /**
+   * Runs the setpoint for the swerve module.
+   *
+   * @param state the desired swerve module state
+   * @param isStationary indicates if the module is stationary
+   * @return the optimized swerve module state after running the setpoint
+   */
   public SwerveModuleState runSetpoint(SwerveModuleState state, boolean isStationary) {
-    // Optimize state based on current angle
+    // Optimize state based on the current angle
     SwerveModuleState optimizedState = SwerveModuleState.optimize(state, getAngle());
 
     io.setTurnVoltage(
@@ -60,6 +73,11 @@ public class Module {
     return optimizedState;
   }
 
+  /**
+   * Runs the characterization for the swerve module.
+   *
+   * @param volts the voltage to be applied for the characterization
+   */
   public void runCharacterization(double volts) {
     io.setTurnVoltage(
         turnFB.calculate(getAngle().getRadians(), 0.0)
@@ -67,36 +85,72 @@ public class Module {
     io.setDriveVoltage(volts);
   }
 
+  /** Stops the swerve module. */
   public void stop() {
     io.setTurnVoltage(0.0);
     io.setDriveVoltage(0.0);
   }
 
+  /**
+   * Sets the brake mode for the swerve module.
+   *
+   * @param enabled true to enable brake mode, false to disable brake mode
+   */
   public void setBrakeMode(boolean enabled) {
     io.setDriveBrakeMode(enabled);
     io.setTurnBrakeMode(enabled);
   }
 
+  /**
+   * Returns the angle of the swerve module.
+   *
+   * @return the angle of the swerve module as a Rotation2d object
+   */
   public Rotation2d getAngle() {
     return new Rotation2d(MathUtil.angleModulus(inputs.turnPositionAbsoluteRad));
   }
 
+  /**
+   * Returns the position of the swerve module in radians.
+   *
+   * @return the position of the swerve module in radians as a double value
+   */
   public double getPositionMeters() {
     return inputs.drivePositionRad * wheelRadius;
   }
 
+  /**
+   * Returns the velocity of the swerve module in radians per second.
+   *
+   * @return the velocity of the swerve module in radians per second as a double value
+   */
   public double getVelocityMetersPerSec() {
     return inputs.driveVelocityRadPerSec * wheelRadius;
   }
 
+  /**
+   * Returns the current position of the swerve module.
+   *
+   * @return the current position of the swerve module as a SwerveModulePosition object
+   */
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(getPositionMeters(), getAngle());
   }
 
+  /**
+   * Returns the current state of the swerve module.
+   *
+   * @return the current state of the swerve module as a SwerveModuleState object
+   */
   public SwerveModuleState getState() {
     return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
   }
 
+  /**
+   * Returns the characterization velocity of the swerve module.
+   *
+   * @return the characterization velocity of the swerve module as a double value
+   */
   public double getCharacterizationVelocity() {
     return inputs.driveVelocityRadPerSec;
   }
