@@ -18,7 +18,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
  * Currently, abstraction is used to simulate vision.
  */
 public interface VisionIO {
-  public static class VisionIOInputs implements LoggableInputs {
+  class VisionIOInputs implements LoggableInputs {
     PhotonPipelineResult lastResult = new PhotonPipelineResult(0, new ArrayList<>());
     double lastTimestamp = 0.0;
 
@@ -54,12 +54,12 @@ public interface VisionIO {
    *
    * @param inputs the inputs to update
    */
-  public default void updateInputs(VisionIOInputs inputs) {}
+  default void updateInputs(VisionIOInputs inputs) {}
 
   /**
    * Sets the origin of the AprilTag field layout. This is invoked once the alliance color is known.
    *
    * @param origin the origin of the AprilTag field layout
    */
-  public default void setLayoutOrigin(OriginPosition origin) {}
+  default void setLayoutOrigin(OriginPosition origin) {}
 }
