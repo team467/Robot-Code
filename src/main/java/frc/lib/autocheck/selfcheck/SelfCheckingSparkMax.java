@@ -3,7 +3,6 @@ package frc.lib.autocheck.selfcheck;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import frc.lib.autocheck.SubsystemFault;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,7 @@ public class SelfCheckingSparkMax implements SelfChecking {
   /**
    * Creates a new instance of SelfCheckingSparkMax.
    *
-   * @param label    the label for the SelfCheckingSparkMax
+   * @param label the label for the SelfCheckingSparkMax
    * @param motor the CANSparkMax object
    */
   public SelfCheckingSparkMax(String label, CANSparkMax spark) {

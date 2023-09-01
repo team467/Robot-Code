@@ -4,7 +4,6 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import frc.lib.autocheck.SubsystemFault;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class SelfCheckingPhoenixMotor implements SelfChecking {
   /**
    * Creates a new instance of SelfCheckingPhoenixMotor.
    *
-   * @param label    the label for the SelfCheckingPhoenixMotor
+   * @param label the label for the SelfCheckingPhoenixMotor
    * @param motor the BaseMotorController object
    */
   public SelfCheckingPhoenixMotor(String label, BaseMotorController motor) {

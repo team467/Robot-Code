@@ -4,7 +4,6 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.Pigeon2_Faults;
 import frc.lib.autocheck.SubsystemFault;
-
 import java.util.ArrayList;
 import java.util.List;
 

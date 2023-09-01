@@ -2,7 +2,6 @@ package frc.lib.autocheck.selfcheck;
 
 import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
 import frc.lib.autocheck.SubsystemFault;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,7 @@ public class SelfCheckingPWMMotor implements SelfChecking {
   /**
    * Creates a new instance of SelfCheckingPWMMotor.
    *
-   * @param label    the label for the SelfCheckingPWMMotor
+   * @param label the label for the SelfCheckingPWMMotor
    * @param motor the PWMMotorController object
    */
   public SelfCheckingPWMMotor(String label, PWMMotorController motor) {

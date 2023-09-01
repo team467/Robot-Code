@@ -4,7 +4,6 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderFaults;
 import frc.lib.autocheck.SubsystemFault;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class SelfCheckingCANCoder implements SelfChecking {
   /**
    * Creates a new instance of SelfCheckingCANCoder.
    *
-   * @param label    the label for the SelfCheckingCANCoder
+   * @param label the label for the SelfCheckingCANCoder
    * @param canCoder the CANCoder object
    */
   public SelfCheckingCANCoder(String label, CANCoder canCoder) {
