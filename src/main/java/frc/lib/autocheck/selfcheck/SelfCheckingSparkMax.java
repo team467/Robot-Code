@@ -14,7 +14,7 @@ public class SelfCheckingSparkMax implements SelfChecking {
    * Creates a new instance of SelfCheckingSparkMax.
    *
    * @param label the label for the SelfCheckingSparkMax
-   * @param motor the CANSparkMax object
+   * @param spark the CANSparkMax object
    */
   public SelfCheckingSparkMax(String label, CANSparkMax spark) {
     this.label = label;
