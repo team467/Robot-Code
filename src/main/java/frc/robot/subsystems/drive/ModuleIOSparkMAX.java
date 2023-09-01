@@ -60,7 +60,8 @@ public class ModuleIOSparkMAX implements ModuleIO {
     this.index = index;
 
     String subsystemName = "SwerveModule" + index;
-    FaultReporter.getInstance().registerHardware(subsystemName, "angle encoder", turnEncoderAbsolute);
+    FaultReporter.getInstance()
+        .registerHardware(subsystemName, "angle encoder", turnEncoderAbsolute);
     FaultReporter.getInstance().registerHardware(subsystemName, "angle motor", turnMotor);
     FaultReporter.getInstance().registerHardware(subsystemName, "drive motor", driveMotor);
   }
