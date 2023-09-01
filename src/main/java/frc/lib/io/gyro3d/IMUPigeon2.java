@@ -2,6 +2,7 @@ package frc.lib.io.gyro3d;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import frc.lib.autocheck.FaultReporter;
 
 public class IMUPigeon2 implements IMUIO {
   private final WPI_Pigeon2 pigeon;
@@ -10,6 +11,8 @@ public class IMUPigeon2 implements IMUIO {
 
   public IMUPigeon2(int deviceID) {
     pigeon = new WPI_Pigeon2(deviceID);
+
+    FaultReporter.getInstance().registerHardware("Drive", "gyro", pigeon);
   }
 
   @Override

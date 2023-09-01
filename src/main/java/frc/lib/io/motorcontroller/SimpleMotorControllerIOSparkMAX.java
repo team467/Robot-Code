@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
+import frc.lib.autocheck.FaultReporter;
 
 /** A Motor Controller IO class that interacts with a Spark MAX. */
 public class SimpleMotorControllerIOSparkMAX implements SimpleMotorControllerIO {
@@ -16,14 +17,20 @@ public class SimpleMotorControllerIOSparkMAX implements SimpleMotorControllerIO 
    * @param motorId The ID of the motor
    * @param inverted Whether the motor is inverted
    * @param gearRatio The gear ratio in inputs/outputs
+   * @param subsystemName The name of the subsystem using the motor controller, for use with the
+   *     self-check tool
    */
-  public SimpleMotorControllerIOSparkMAX(int motorId, boolean inverted, double gearRatio) {
+  public SimpleMotorControllerIOSparkMAX(
+      int motorId, boolean inverted, double gearRatio, String subsystemName) {
     this.motor = new CANSparkMax(motorId, MotorType.kBrushless);
     this.motor.setInverted(inverted);
     this.motor.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) * gearRatio);
     this.motor
         .getEncoder()
         .setVelocityConversionFactor(Units.rotationsPerMinuteToRadiansPerSecond(1));
+
+    FaultReporter.getInstance()
+        .registerHardware(subsystemName, String.format("Motor %d", motorId), this.motor);
   }
 
   @Override
