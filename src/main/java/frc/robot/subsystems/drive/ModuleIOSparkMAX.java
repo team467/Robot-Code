@@ -9,6 +9,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
+import frc.lib.autocheck.FaultReporter;
 import frc.robot.RobotConstants;
 
 public class ModuleIOSparkMAX implements ModuleIO {
@@ -57,6 +58,11 @@ public class ModuleIOSparkMAX implements ModuleIO {
     turnEncoderAbsolute.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
     this.index = index;
+
+    String subsystemName = "SwerveModule" + index;
+    FaultReporter.getInstance().registerHardware(subsystemName, "angle encoder", turnEncoderAbsolute);
+    FaultReporter.getInstance().registerHardware(subsystemName, "angle motor", turnMotor);
+    FaultReporter.getInstance().registerHardware(subsystemName, "drive motor", driveMotor);
   }
 
   @Override

@@ -13,7 +13,10 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.autocheck.CheckableSubsystem;
+import frc.lib.autocheck.FaultReporter;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUIOInputsAutoLogged;
 import frc.lib.io.newvision.VisionIO;
@@ -24,7 +27,7 @@ import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 
-public class Drive extends SubsystemBase {
+public class Drive extends CheckableSubsystem {
   private final IMUIO gyroIO;
   private final IMUIOInputsAutoLogged gyroInputs = new IMUIOInputsAutoLogged();
   private final List<VisionIO> aprilTagCameraIO = new ArrayList<>();
@@ -328,6 +331,43 @@ public class Drive extends SubsystemBase {
       driveVelocityAverage += module.getCharacterizationVelocity();
     }
     return driveVelocityAverage / 4.0;
+  }
+
+  @Override
+  public CommandBase systemCheckCommand() {
+    return Commands.sequence(
+            Commands.parallel(
+                modules[0].getCheckCommand(),
+                modules[1].getCheckCommand(),
+                modules[2].getCheckCommand(),
+                modules[3].getCheckCommand()),
+            Commands.runOnce(() -> chassisDrive(0, 0, 0.5, false), this),
+            Commands.waitSeconds(2.0),
+            Commands.runOnce(
+                () -> {
+                  chassisDrive(0, 0, 0, false);
+
+                  if (gyroInputs.yawRate < 20) {
+                    FaultReporter.getInstance()
+                        .addFault(
+                            this.getName(), "[System Check] rotation rate too low", false, true);
+                  }
+                },
+                this),
+            Commands.runOnce(() -> chassisDrive(0, 0, -0.5, false), this),
+            Commands.waitSeconds(2.0),
+            Commands.runOnce(
+                () -> {
+                  chassisDrive(0, 0, 0, false);
+                  if (gyroInputs.yawRate > -20) {
+                    FaultReporter.getInstance()
+                        .addFault(
+                            this.getName(), "[System Check] rotation rate too low", false, true);
+                  }
+                },
+                this))
+        .until(() -> !FaultReporter.getInstance().getFaults(this.getName()).isEmpty())
+        .andThen(Commands.runOnce(() -> chassisDrive(0, 0, 0, false), this));
   }
 
   private enum DriveMode {

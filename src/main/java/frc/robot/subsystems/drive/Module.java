@@ -7,10 +7,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.autocheck.FaultReporter;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
+  private String subsystemName;
+  private CommandBase wrappedSystemCheckCommand;
+
   private final ModuleIO io;
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
@@ -27,12 +34,18 @@ public class Module {
   private final double wheelRadius = (RobotConstants.get().moduleWheelDiameter() / 2);
 
   public Module(ModuleIO io, int index) {
+    this.subsystemName = "Module" + index;
+
     this.io = io;
     this.index = index;
 
     turnFB.enableContinuousInput(-Math.PI, Math.PI);
     this.io.updateInputs(this.inputs);
     turnFB.reset(this.inputs.turnPositionAbsoluteRad);
+
+    this.wrappedSystemCheckCommand =
+        FaultReporter.getInstance()
+            .registerSystemCheck(this.subsystemName, getSystemCheckCommand());
   }
 
   public void periodic() {
@@ -99,5 +112,46 @@ public class Module {
 
   public double getCharacterizationVelocity() {
     return inputs.driveVelocityRadPerSec;
+  }
+
+  private CommandBase getSystemCheckCommand() {
+    return Commands.sequence(
+            Commands.run(
+                    () -> runSetpoint(new SwerveModuleState(0, Rotation2d.fromDegrees(90)), false))
+                .withTimeout(1.0),
+            Commands.runOnce(
+                () -> {
+                  if (Units.radiansToDegrees(inputs.turnPositionRad) < 70
+                      || Units.radiansToDegrees(inputs.turnPositionRad) > 110) {
+                    FaultReporter.getInstance()
+                        .addFault(
+                            this.subsystemName,
+                            "[System Check] Rotation Motor did not reach target position",
+                            false,
+                            true);
+                  }
+                }),
+            Commands.waitSeconds(0.25),
+            Commands.run(
+                    () -> runSetpoint(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), false))
+                .withTimeout(1.0),
+            Commands.runOnce(
+                () -> {
+                  if (Units.radiansToDegrees(inputs.turnPositionRad) < -20
+                      || Units.radiansToDegrees(inputs.turnPositionRad) > 20) {
+                    FaultReporter.getInstance()
+                        .addFault(
+                            this.subsystemName,
+                            "[System Check] Rotation Motor did not reach target position",
+                            false,
+                            true);
+                  }
+                }))
+        .until(() -> !FaultReporter.getInstance().getFaults(this.subsystemName).isEmpty())
+        .andThen(Commands.runOnce(() -> io.setDriveVoltage(0.0)));
+  }
+
+  public CommandBase getCheckCommand() {
+    return this.wrappedSystemCheckCommand;
   }
 }
