@@ -4,8 +4,13 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.autocheck.FaultReporter;
 import frc.robot.RobotConstants;
+import frc.robot.commands.arm.ArmCalibrateCMD;
+import frc.robot.commands.arm.ArmPositionCMD;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
@@ -91,6 +96,8 @@ public class Arm extends SubsystemBase {
     this.armIO = armIO;
 
     armIO.updateInputs(armIOInputs);
+
+    FaultReporter.getInstance().registerSystemCheck(this.getName(), systemCheckCommand());
   }
 
   public boolean isManual() {
@@ -439,6 +446,60 @@ public class Arm extends SubsystemBase {
       return true;
     }
     return false;
+  }
+
+  public CommandBase systemCheckCommand() {
+    return Commands.sequence(
+            new ArmCalibrateCMD(this).withTimeout(5),
+            Commands.runOnce(
+                () -> {
+                  stop();
+
+                  if (!isCalibrated) {
+                    FaultReporter.getInstance()
+                        .addFault(
+                            this.getName(),
+                            "[System Check] calibration took too long",
+                            false,
+                            true);
+                  }
+                },
+                this),
+            Commands.sequence(
+                    // I forgot why this is in ArmShelfCMD
+                    new ArmPositionCMD(this, ArmPositionConstants.SHELF_CUBE_RETRACT),
+                    new ArmPositionCMD(this, ArmPositionConstants.SHELF_CUBE))
+                .withTimeout(20),
+            Commands.runOnce(
+                () -> {
+                  stop();
+
+                  if (armIOInputs.extendPosition
+                          > ArmPositionConstants.SHELF_CUBE.extendSetpoint + 0.1
+                      || armIOInputs.extendPosition
+                          < ArmPositionConstants.SHELF_CUBE.extendSetpoint - 0.1) {
+                    FaultReporter.getInstance()
+                        .addFault(
+                            this.getName(),
+                            "[System Check] arm extension did not reach target position",
+                            false,
+                            true);
+                  }
+                  if (armIOInputs.extendPosition
+                          > ArmPositionConstants.SHELF_CUBE.rotateSetpoint + 0.1
+                      || armIOInputs.extendPosition
+                          < ArmPositionConstants.SHELF_CUBE.rotateSetpoint - 0.1) {
+                    FaultReporter.getInstance()
+                        .addFault(
+                            this.getName(),
+                            "[System Check] arm rotation did not reach target position",
+                            false,
+                            true);
+                  }
+                },
+                this))
+        .until(() -> !FaultReporter.getInstance().getFaults(this.getName()).isEmpty())
+        .andThen(this::stop, this);
   }
 
   private class Kickback {
