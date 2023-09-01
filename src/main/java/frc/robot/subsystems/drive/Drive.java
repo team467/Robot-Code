@@ -15,7 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.lib.autocheck.CheckableSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.autocheck.FaultReporter;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUIOInputsAutoLogged;
@@ -27,7 +27,7 @@ import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 
-public class Drive extends CheckableSubsystem {
+public class Drive extends SubsystemBase {
   private final IMUIO gyroIO;
   private final IMUIOInputsAutoLogged gyroInputs = new IMUIOInputsAutoLogged();
   private final List<VisionIO> aprilTagCameraIO = new ArrayList<>();
@@ -93,6 +93,8 @@ public class Drive extends CheckableSubsystem {
               modulePositions,
               new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
     }
+
+    FaultReporter.getInstance().registerSystemCheck(this.getName(), systemCheckCommand());
   }
 
   @Override
@@ -333,7 +335,6 @@ public class Drive extends CheckableSubsystem {
     return driveVelocityAverage / 4.0;
   }
 
-  @Override
   public CommandBase systemCheckCommand() {
     return Commands.sequence(
             Commands.parallel(
