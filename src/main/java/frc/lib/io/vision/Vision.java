@@ -6,7 +6,9 @@ import static frc.lib.io.vision.VisionConstants.POSE_DIFFERENCE_THRESHOLD_METERS
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.numbers.N5;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -26,7 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.estimation.VisionEstimation;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.targeting.TargetCorner;
 
 /**
  * The Vision subsystem is responsible for updating the robot's estimated pose based on a collection
@@ -38,7 +43,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class Vision extends SubsystemBase {
   private List<VisionIO> visionIOs;
   private List<Transform3d> camerasToRobots;
-  private final VisionIOInputs[] ios;
+  private final VisionIOInputs[] inputs;
   private double[] lastTimestamps;
 
   private AprilTagFieldLayout layout;
@@ -74,9 +79,9 @@ public class Vision extends SubsystemBase {
     this.visionIOs = visionIOs;
     this.camerasToRobots = camerasToRobots;
     this.lastTimestamps = new double[visionIOs.size()];
-    this.ios = new VisionIOInputs[visionIOs.size()];
+    this.inputs = new VisionIOInputs[visionIOs.size()];
     for (int i = 0; i < visionIOs.size(); i++) {
-      this.ios[i] = new VisionIOInputs();
+      this.inputs[i] = new VisionIOInputs();
     }
 
     // retrieve a reference to the pose estimator singleton
@@ -112,13 +117,13 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     isVisionUpdating = false;
     for (int i = 0; i < visionIOs.size(); i++) {
-      visionIOs.get(i).updateInputs(ios[i]);
-      Logger.getInstance().processInputs("Vision" + i, ios[i]);
+      visionIOs.get(i).updateInputs(inputs[i]);
+      Logger.getInstance().processInputs("Vision" + i, inputs[i]);
 
       // only process the vision data if the timestamp is newer than the last one
-      if (lastTimestamps[i] < ios[i].lastTimestamp) {
-        lastTimestamps[i] = ios[i].lastTimestamp;
-        RobotPoseFromAprilTag poseAndDistance = getRobotPose(i);
+      if (lastTimestamps[i] < inputs[i].lastTimestamp) {
+        lastTimestamps[i] = inputs[i].lastTimestamp;
+        RobotPoseFromAprilTag poseAndDistance = getRobotPoseMultiTag(i);
         Pose3d robotPose = poseAndDistance.robotPose;
 
         if (robotPose == null) return;
@@ -139,7 +144,7 @@ public class Vision extends SubsystemBase {
             // in the measurement)
             poseEstimator.addVisionMeasurement(
                 robotPose.toPose2d(),
-                ios[i].lastTimestamp,
+                inputs[i].lastTimestamp,
                 getStandardDeviations(poseAndDistance.distanceToAprilTag));
             isVisionUpdating = true;
           }
@@ -169,7 +174,7 @@ public class Vision extends SubsystemBase {
     Pose3d robotPoseFromClosestTarget = null;
     double closestTargetDistance = Double.MAX_VALUE;
     for (int i = 0; i < visionIOs.size(); i++) {
-      RobotPoseFromAprilTag poseAndDistance = getRobotPose(i);
+      RobotPoseFromAprilTag poseAndDistance = getRobotPoseSingleTag(i);
       Pose3d robotPose = poseAndDistance.robotPose;
       double distanceToAprilTag = poseAndDistance.distanceToAprilTag;
       if (robotPose != null && distanceToAprilTag < closestTargetDistance) {
@@ -199,7 +204,7 @@ public class Vision extends SubsystemBase {
    */
   public boolean posesHaveConverged() {
     for (int i = 0; i < visionIOs.size(); i++) {
-      Pose3d robotPose = getRobotPose(i).robotPose;
+      Pose3d robotPose = getRobotPoseSingleTag(i).robotPose;
       if (robotPose != null
           && poseEstimator
                   .getEstimatedPosition()
@@ -240,7 +245,7 @@ public class Vision extends SubsystemBase {
    * @return the robot pose based on vision data and distance to the AprilTag that is closest to the
    *     robot
    */
-  private RobotPoseFromAprilTag getRobotPose(int index) {
+  private RobotPoseFromAprilTag getRobotPoseSingleTag(int index) {
     int targetCount = 0;
     Pose3d robotPoseFromClosestTarget = null;
     double closestTargetDistance = Double.MAX_VALUE;
@@ -253,7 +258,7 @@ public class Vision extends SubsystemBase {
       Logger.getInstance().recordOutput("Vision/NVRobotPose" + index + "_" + i, new Pose2d());
     }
 
-    for (PhotonTrackedTarget target : ios[index].lastResult.getTargets()) {
+    for (PhotonTrackedTarget target : inputs[index].lastResult.getTargets()) {
       if (isValidTarget(target)) {
         Transform3d cameraToTarget = target.getBestCameraToTarget();
         Optional<Pose3d> tagPoseOptional = layout.getTagPose(target.getFiducialId());
@@ -282,6 +287,71 @@ public class Vision extends SubsystemBase {
     }
 
     return new RobotPoseFromAprilTag(robotPoseFromClosestTarget, closestTargetDistance);
+  }
+
+  /**
+   * Returns the robot pose based on vision data and distance to multiple AprilTags. The robot pose
+   * is calculated using a multi-tag solvePNP algorithm. If camera calibration data is available,
+   * the solvePNP algorithm is used to estimate the robot pose. Otherwise, the robot pose is
+   * calculated using the {@link #getRobotPoseSingleTag(int)} method.
+   *
+   * @param index the index of the VisionIO object to use
+   * @return the robot pose based on vision data and distance to multiple AprilTags
+   */
+  @SuppressWarnings({"java:S3655", "OptionalGetWithoutIsPresent"})
+  private RobotPoseFromAprilTag getRobotPoseMultiTag(int index) {
+    // Arrays we need declared up front
+    var visCorners = new ArrayList<TargetCorner>();
+    var knownVisTags = new ArrayList<AprilTag>();
+
+    double distance = Double.MAX_VALUE;
+
+    for (PhotonTrackedTarget target : inputs[index].lastResult.getTargets()) {
+      visCorners.addAll(target.getDetectedCorners());
+
+      if (isValidTarget(target)) {
+        continue;
+      }
+
+      var tagPose = layout.getTagPose(target.getFiducialId()).get();
+
+      if (target.getBestCameraToTarget().getTranslation().toTranslation2d().getNorm() < distance) {
+        distance = target.getBestCameraToTarget().getTranslation().toTranslation2d().getNorm();
+      }
+
+      // actual layout poses of visible tags -- not exposed, so have to recreate
+      knownVisTags.add(new AprilTag(target.getFiducialId(), tagPose));
+    }
+
+    Optional<Matrix<N3, N3>> cameraMatrixOpt;
+
+    var cameraMatrixTmp = inputs[index].cameraMatrix;
+    if (cameraMatrixTmp != null && cameraMatrixTmp.length == 9) {
+      cameraMatrixOpt = Optional.of(new MatBuilder<>(Nat.N3(), Nat.N3()).fill(cameraMatrixTmp));
+    } else cameraMatrixOpt = Optional.empty();
+
+    Optional<Matrix<N5, N1>> distCoeffsOpt;
+    var distCoeffsTmp = inputs[index].distCoeffs;
+    if (distCoeffsTmp != null && distCoeffsTmp.length == 5) {
+      distCoeffsOpt = Optional.of(new MatBuilder<>(Nat.N5(), Nat.N1()).fill(distCoeffsTmp));
+    } else distCoeffsOpt = Optional.empty();
+
+    boolean hasCalibData = cameraMatrixOpt.isPresent() && distCoeffsOpt.isPresent();
+
+    // multi-target solvePNP
+    if (hasCalibData) {
+      var cameraMatrix = cameraMatrixOpt.get();
+      var distCoeffs = distCoeffsOpt.get();
+      var pnpResults =
+              VisionEstimation.estimateCamPosePNP(cameraMatrix, distCoeffs, visCorners, knownVisTags);
+      var best = new Pose3d()
+                      .plus(pnpResults.best) // field-to-camera
+                      .plus(camerasToRobots.get(index).inverse());
+      return new RobotPoseFromAprilTag(best, distance);
+    } else {
+      // TODO fallback strategy? Should we just always do solvePNP?
+      return getRobotPoseSingleTag(index);
+    }
   }
 
   /**

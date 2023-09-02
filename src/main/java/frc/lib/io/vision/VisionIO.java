@@ -21,6 +21,8 @@ public interface VisionIO {
   class VisionIOInputs implements LoggableInputs {
     PhotonPipelineResult lastResult = new PhotonPipelineResult(0, new ArrayList<>());
     double lastTimestamp = 0.0;
+    double[] cameraMatrix;
+    double[] distCoeffs;
 
     public void toLog(LogTable table) {
       // since AdvantageKit doesn't support the PhotonPipelineResult type, log it as a byte array
@@ -29,6 +31,9 @@ public interface VisionIO {
       table.put("photonPacketBytes", photonPacketBytes);
 
       table.put("lastTimestamp", lastTimestamp);
+
+      table.put("cameraMatrix", cameraMatrix);
+      table.put("distCoeffs", distCoeffs);
 
       // log targets in a human-readable way
       List<PhotonTrackedTarget> targets = lastResult.getTargets();
