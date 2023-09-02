@@ -105,35 +105,6 @@ public class Vision extends SubsystemBase {
   }
 
   /**
-   * This method should be invoked once the alliance color is known. Refer to the RobotContainer's
-   * checkAllianceColor method for best practices on when to check the alliance's color. It updates
-   * the AprilTag field layout, logs the new location of the tags, and updates all the VisionIO
-   * objects with the new alliance color.
-   *
-   * @param newAlliance the new alliance color
-   */
-  public void updateAlliance(DriverStation.Alliance newAlliance) {
-
-    if (newAlliance == DriverStation.Alliance.Red) {
-      layout.setOrigin(OriginPosition.kRedAllianceWallRightSide);
-      for (VisionIO visionIO : visionIOs) {
-        visionIO.setLayoutOrigin(OriginPosition.kRedAllianceWallRightSide);
-      }
-    } else {
-      layout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
-      for (VisionIO visionIO : visionIOs) {
-        visionIO.setLayoutOrigin(OriginPosition.kBlueAllianceWallRightSide);
-      }
-    }
-
-    for (AprilTag tag : layout.getTags()) {
-      layout
-          .getTagPose(tag.ID)
-          .ifPresent(pose -> Logger.getInstance().recordOutput("Vision/AprilTags/" + tag.ID, pose));
-    }
-  }
-
-  /**
    * This method is invoked each iteration of the scheduler. It updates the inputs for each of the
    * VisionIO objects and, for each, updates the pose estimator based on the most recent detected
    * AprilTags.

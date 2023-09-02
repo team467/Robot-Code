@@ -353,12 +353,4 @@ public class RobotContainer {
     Logger.getInstance()
         .recordOutput("CustomController/WantSwitch", operatorController.back().getAsBoolean());
   }
-
-  /** Check if the alliance color has changed; if so, update the vision subsystem. */
-  public void checkAllianceColor() {
-    if (DriverStation.getAlliance() != lastAlliance) {
-      lastAlliance = DriverStation.getAlliance();
-      vision.updateAlliance(lastAlliance);
-    }
-  }
 }

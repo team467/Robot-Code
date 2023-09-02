@@ -125,10 +125,6 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // check if the alliance color has changed based on the FMS data; the current alliance color is
-    // not guaranteed to be correct until the start of autonomous
-    robotContainer.checkAllianceColor();
-
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -151,11 +147,6 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-
-    // check if the alliance color has changed based on the FMS data; if the robot power cycled
-    // during a match, this would be the first opportunity to check the alliance color based on FMS
-    // data.
-    robotContainer.checkAllianceColor();
 
     robotContainer.initLeds();
   }
