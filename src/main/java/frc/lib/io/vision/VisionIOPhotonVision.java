@@ -1,13 +1,9 @@
 package frc.lib.io.vision;
 
-import edu.wpi.first.math.MatBuilder;
-import edu.wpi.first.math.Nat;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import java.util.EnumSet;
-import java.util.Optional;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 
@@ -59,7 +55,13 @@ public class VisionIOPhotonVision implements VisionIO {
   public synchronized void updateInputs(VisionIOInputs inputs) {
     inputs.lastTimestamp = this.lastTimestamp;
     inputs.lastResult = this.lastResult;
-    inputs.cameraMatrix = camera.getCameraMatrix().isPresent() ? camera.getCameraMatrix().get().getData() : new double[] {};
-    inputs.distCoeffs = camera.getDistCoeffs().isPresent() ? camera.getDistCoeffs().get().getData() : new double[] {};
+    inputs.cameraMatrix =
+        camera.getCameraMatrix().isPresent()
+            ? camera.getCameraMatrix().get().getData()
+            : new double[] {};
+    inputs.distCoeffs =
+        camera.getDistCoeffs().isPresent()
+            ? camera.getDistCoeffs().get().getData()
+            : new double[] {};
   }
 }

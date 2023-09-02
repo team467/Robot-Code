@@ -343,10 +343,11 @@ public class Vision extends SubsystemBase {
       var cameraMatrix = cameraMatrixOpt.get();
       var distCoeffs = distCoeffsOpt.get();
       var pnpResults =
-              VisionEstimation.estimateCamPosePNP(cameraMatrix, distCoeffs, visCorners, knownVisTags);
-      var best = new Pose3d()
-                      .plus(pnpResults.best) // field-to-camera
-                      .plus(camerasToRobots.get(index).inverse());
+          VisionEstimation.estimateCamPosePNP(cameraMatrix, distCoeffs, visCorners, knownVisTags);
+      var best =
+          new Pose3d()
+              .plus(pnpResults.best) // field-to-camera
+              .plus(camerasToRobots.get(index).inverse());
       return new RobotPoseFromAprilTag(best, distance);
     } else {
       // TODO fallback strategy? Should we just always do solvePNP?
