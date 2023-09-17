@@ -133,10 +133,20 @@ public class Drive extends SubsystemBase {
       Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
     } else {
       switch (driveMode) {
-        case CHARACTERIZATION -> {
+        case DRIVE_CHARACTERIZATION -> {
           // Run in characterization mode
           for (var module : modules) {
-            module.runCharacterization(characterizationVolts);
+            module.runDriveCharacterization(characterizationVolts);
+          }
+
+          // Clear setpoint logs
+          Logger.getInstance().recordOutput("SwerveStates/Setpoints", new double[] {});
+          Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
+        }
+        case TURN_CHARACTERIZATION -> {
+          // Run in characterization mode
+          for (var module : modules) {
+            module.runTurnCharacterization(characterizationVolts);
           }
 
           // Clear setpoint logs
@@ -334,12 +344,17 @@ public class Drive extends SubsystemBase {
     return Units.degreesToRadians(gyroInputs.pitchRate);
   }
 
-  public void runCharacterizationVolts(double volts) {
-    driveMode = DriveMode.CHARACTERIZATION;
+  public void runDriveCharacterizationVolts(double volts) {
+    driveMode = DriveMode.DRIVE_CHARACTERIZATION;
     characterizationVolts = volts;
   }
 
-  public double getCharacterizationVelocity() {
+  public void runTurnCharacterizationVolts(double volts) {
+    driveMode = DriveMode.TURN_CHARACTERIZATION;
+    characterizationVolts = volts;
+  }
+
+  public double getDriveCharacterizationVelocity() {
     ChassisSpeeds speeds = kinematics.toChassisSpeeds(swerveModuleStates);
     return Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));
   }
@@ -349,7 +364,7 @@ public class Drive extends SubsystemBase {
    *
    * @return the average drive velocity in meters/sec
    */
-  public double getCharacterizationAcceleration() {
+  public double getDriveCharacterizationAcceleration() {
     ChassisSpeeds prevSpeeds = kinematics.toChassisSpeeds(prevSwerveModuleStates);
     ChassisSpeeds speeds = kinematics.toChassisSpeeds(swerveModuleStates);
     return Math.sqrt(
@@ -358,8 +373,31 @@ public class Drive extends SubsystemBase {
         / 0.02;
   }
 
+  public double getTurnCharacterizationVelocity() {
+    double avgVelocity = 0.0;
+
+    for (Module mod : modules) {
+      avgVelocity += mod.getTurnVelocity();
+    }
+
+    avgVelocity /= modules.length;
+    return avgVelocity;
+  }
+
+  public double getTurnCharacterizationAcceleration() {
+    double avgAcceleration = 0.0;
+
+    for (Module mod : modules) {
+      avgAcceleration += mod.getTurnAcceleration();
+    }
+
+    avgAcceleration /= modules.length;
+    return avgAcceleration;
+  }
+
   private enum DriveMode {
     NORMAL,
-    CHARACTERIZATION
+    DRIVE_CHARACTERIZATION,
+    TURN_CHARACTERIZATION
   }
 }

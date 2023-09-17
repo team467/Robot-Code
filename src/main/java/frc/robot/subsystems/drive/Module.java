@@ -24,6 +24,8 @@ public class Module {
           .moduleTurnFB()
           .getProfiledPIDController(new TrapezoidProfile.Constraints(550.6, 7585));
 
+  private double lastTurnVelocity = 0.0;
+
   public Module(ModuleIO io, int index) {
     this.io = io;
     this.index = index;
@@ -34,6 +36,7 @@ public class Module {
   }
 
   public void periodic() {
+    this.lastTurnVelocity = inputs.turnVelocityRadPerSec;
     io.updateInputs(inputs);
     Logger.getInstance().processInputs("Drive/Module" + index, inputs);
   }
@@ -56,11 +59,24 @@ public class Module {
     return optimizedState;
   }
 
-  public void runCharacterization(double volts) {
+  public void runDriveCharacterization(double volts) {
     io.setTurnVoltage(
         turnFB.calculate(getAngle().getRadians(), 0.0)
             + turnFB.calculate(turnFB.getSetpoint().velocity));
     io.setDriveVoltage(volts);
+  }
+
+  public void runTurnCharacterization(double volts) {
+    io.setTurnVoltage(volts);
+    io.setDriveVoltage(0);
+  }
+
+  public double getTurnVelocity() {
+    return inputs.turnVelocityRadPerSec;
+  }
+
+  public double getTurnAcceleration() {
+    return (inputs.turnVelocityRadPerSec - this.lastTurnVelocity) / 0.02;
   }
 
   public void stop() {
@@ -83,9 +99,5 @@ public class Module {
 
   public SwerveModuleState getState() {
     return new SwerveModuleState(inputs.driveVelocityMetersPerSec, getAngle());
-  }
-
-  public double getCharacterizationVelocity() {
-    return inputs.driveVelocityMetersPerSec;
   }
 }
