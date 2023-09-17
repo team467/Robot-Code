@@ -24,8 +24,6 @@ public class Module {
           .moduleTurnFB()
           .getProfiledPIDController(new TrapezoidProfile.Constraints(550.6, 7585));
 
-  private final double wheelRadius = (RobotConstants.get().moduleWheelDiameter() / 2);
-
   public Module(ModuleIO io, int index) {
     this.io = io;
     this.index = index;
@@ -53,9 +51,7 @@ public class Module {
     // Update velocity based on turn error
     optimizedState.speedMetersPerSecond *= Math.cos(turnFB.getPositionError());
 
-    // Run drive controller
-    double velocityRadPerSec = optimizedState.speedMetersPerSecond / wheelRadius;
-    io.setDriveVoltage(driveFF.calculate(velocityRadPerSec));
+    io.setDriveVoltage(driveFF.calculate(optimizedState.speedMetersPerSecond));
 
     return optimizedState;
   }
@@ -81,23 +77,15 @@ public class Module {
     return new Rotation2d(MathUtil.angleModulus(inputs.turnPositionAbsoluteRad));
   }
 
-  public double getPositionMeters() {
-    return inputs.drivePositionRad * wheelRadius;
-  }
-
-  public double getVelocityMetersPerSec() {
-    return inputs.driveVelocityRadPerSec * wheelRadius;
-  }
-
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(getPositionMeters(), getAngle());
+    return new SwerveModulePosition(inputs.drivePositionMeters, getAngle());
   }
 
   public SwerveModuleState getState() {
-    return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
+    return new SwerveModuleState(inputs.driveVelocityMetersPerSec, getAngle());
   }
 
   public double getCharacterizationVelocity() {
-    return inputs.driveVelocityRadPerSec;
+    return inputs.driveVelocityMetersPerSec;
   }
 }

@@ -30,16 +30,17 @@ public class ModuleIOSparkMAX implements ModuleIO {
     turnEncoder = turnMotor.getEncoder();
     turnEncoderAbsolute = new WPI_CANCoder(turnAbsEncoderId);
 
-    // Convert rotations to radians
-    double rotsToRads =
+    // Convert rotations to meters
+    double rotsToMeters =
         Units.rotationsToRadians(1)
+            * (RobotConstants.get().moduleWheelDiameter() / 2)
             * RobotConstants.get().moduleDriveGearRatio().getRotationsPerInput();
-    driveEncoder.setPositionConversionFactor(rotsToRads);
-    turnEncoder.setPositionConversionFactor(rotsToRads);
+    driveEncoder.setPositionConversionFactor(rotsToMeters);
+    turnEncoder.setPositionConversionFactor(rotsToMeters);
 
-    // Convert rotations per minute to radians per second
-    driveEncoder.setVelocityConversionFactor(rotsToRads / 60);
-    turnEncoder.setVelocityConversionFactor(rotsToRads / 60);
+    // Convert rotations per minute to meters per second
+    driveEncoder.setVelocityConversionFactor(rotsToMeters / 60);
+    turnEncoder.setVelocityConversionFactor(rotsToMeters / 60);
 
     // Invert motors
     driveMotor.setInverted(false);
@@ -61,8 +62,8 @@ public class ModuleIOSparkMAX implements ModuleIO {
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-    inputs.driveVelocityRadPerSec = driveEncoder.getVelocity();
-    inputs.drivePositionRad = driveEncoder.getPosition();
+    inputs.driveVelocityMetersPerSec = driveEncoder.getVelocity();
+    inputs.drivePositionMeters = driveEncoder.getPosition();
     inputs.driveAppliedVolts = driveMotor.getAppliedOutput() * RobotController.getBatteryVoltage();
     inputs.driveCurrentAmps = new double[] {driveMotor.getOutputCurrent()};
     inputs.turnVelocityRadPerSec = turnEncoder.getVelocity();
