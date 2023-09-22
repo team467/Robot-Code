@@ -99,7 +99,7 @@ public class IntakeRelease extends SubsystemBase {
     resetHas();
   }
 
-  /** Instructs the system to hold ont a cone. */
+  /** Instructs the system to hold onto a cone. */
   public void holdCone() {
     state = State.HOLD_CONE;
   }
