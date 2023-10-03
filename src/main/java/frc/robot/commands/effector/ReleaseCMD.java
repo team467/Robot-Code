@@ -21,8 +21,7 @@ public class ReleaseCMD extends SequentialCommandGroup {
                         new ArmHomeCMD(arm, effector::wantsCone))
                     .withTimeout(5.0)),
             Commands.sequence(
-                new ArmDropCMD(effector::haveCone, effector::wantsCone, arm)
-                    .withTimeout(0.4),
+                new ArmDropCMD(effector::haveCone, effector::wantsCone, arm).withTimeout(0.4),
                 Commands.run(effector::release, effector).withTimeout(0.5),
                 new ArmHomeCMD(arm, effector::wantsCone).withTimeout(5.0)),
             effector::wantsCone));

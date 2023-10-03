@@ -215,8 +215,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Tag 1/8: Only Back Up", new OnlyBackupBumpSide(8, "Left", drive, arm, effector));
     autoChooser.addOption(
-        "Tag 1/8: Only Score Cone",
-        new OnlyScore(8, "Left", "Cone", "High", drive, arm, effector));
+        "Tag 1/8: Only Score Cone", new OnlyScore(8, "Left", "Cone", "High", drive, arm, effector));
     autoChooser.addOption(
         "Tag 1/8: Score Cone and Back Up",
         new ScoreAndBackUpBumpSide(8, "Left", "Cone", "High", drive, arm, effector));

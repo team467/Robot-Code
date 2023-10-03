@@ -34,7 +34,6 @@ public class IntakeCMD extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return (effector.getWants() == Wants.CUBE && effector.haveCube())
-        || effector.haveCone();
+    return (effector.getWants() == Wants.CUBE && effector.haveCube()) || effector.haveCone();
   }
 }
