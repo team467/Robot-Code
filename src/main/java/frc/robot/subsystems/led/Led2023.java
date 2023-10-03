@@ -130,21 +130,19 @@ public class Led2023 extends SubsystemBase {
     colorPatterns.purpleTimer.start();
   }
 
-  /**
-   * resets the timers of the LED patterns that require timing
-   */
+  /** resets the timers of the LED patterns that require timing */
   public void resetTimers() {
     rainbowLed.rainbowTimer.reset();
     colorPatterns.purpleTimer.reset();
     balanceTimer.reset();
   }
 
-/**
- * checks if an arm command is running
- * 
- * @param command
- * @return the arm comand running
- */
+  /**
+   * checks if an arm command is running
+   *
+   * @param command
+   * @return the arm comand running
+   */
   private boolean isArmCommandRunning(Command command) {
     return command instanceof ArmScoreHighNodeCMD
         || command instanceof ArmScoreMidNodeCMD
@@ -167,11 +165,12 @@ public class Led2023 extends SubsystemBase {
     sendData();
   }
 
-/**
- * Checks many differed variables in order to decide the ColorScheme that will eventually be applied
- * 
- * @return x ColorScheme, the display option that will eventually be shown on the robot
- */
+  /**
+   * Checks many differed variables in order to decide the ColorScheme that will eventually be
+   * applied
+   *
+   * @return x ColorScheme, the display option that will eventually be shown on the robot
+   */
   public ColorScheme getColorScheme() {
     // reset timer after arm cmd completes
     if (!isArmCommandRunning(arm.getCurrentCommand())) {
@@ -186,7 +185,8 @@ public class Led2023 extends SubsystemBase {
     if ((!arm.isCalibrated()) && CHECK_ARM_CALIBRATION && !DriverStation.isDisabled()) {
       return ColorScheme.ARM_UNCALIBRATED;
     }
-    // When robot is disabled and balanced, play the balance victory LEDs, if we did not balance, run the default LEDs
+    // When robot is disabled and balanced, play the balance victory LEDs, if we did not balance,
+    // run the default LEDs
 
     if (DriverStation.isDisabled()) {
       if (balanceTimer.get() > 0.0 && !balanceTimer.hasElapsed(2.5) && !doneBalanceLeds) {
@@ -335,11 +335,12 @@ public class Led2023 extends SubsystemBase {
   }
 
   /**
-   * Applies the ColorScheme based on the current ColorScheme.
-   * in short, it is used to turn the current ColorScheme into instructions for the robot.
-   * Used right before updating the Leds in periodic.
-   * 
-   * @param colorScheme the display option the leds should use, set by the if statements in getColorScheme()
+   * Applies the ColorScheme based on the current ColorScheme. in short, it is used to turn the
+   * current ColorScheme into instructions for the robot. Used right before updating the Leds in
+   * periodic.
+   *
+   * @param colorScheme the display option the leds should use, set by the if statements in
+   *     getColorScheme()
    */
   public void applyColorScheme(ColorScheme colorScheme) {
     switch (colorScheme) {
@@ -442,38 +443,36 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
-/**
- *Updates the ledStrips, used last in periodic() to change the leds to their next state
- */
+  /** Updates the ledStrips, used last in periodic() to change the leds to their next state */
   public void sendData() {
     ledStrip.update();
   }
 
-/**
- * Sets the colors of all the LEDs to the inputed color
- * 
- * @param color the color you want to set the LEDs to
- */
-public void set(Color color) {
-  setTop(color);
-  setBottom(color);
-}
+  /**
+   * Sets the colors of all the LEDs to the inputed color
+   *
+   * @param color the color you want to set the LEDs to
+   */
+  public void set(Color color) {
+    setTop(color);
+    setBottom(color);
+  }
 
-/**
- * Sets the top half of the LEDs to the inputed color
- * 
- * @param color the color you want to set the top half of the LEDs to
- */
+  /**
+   * Sets the top half of the LEDs to the inputed color
+   *
+   * @param color the color you want to set the top half of the LEDs to
+   */
   public void setTop(Color color) {
     for (int i = 0; i < RobotConstants.get().led2023LedCount() / 2; i++) {
       ledStrip.setLED(i, color);
     }
   }
-/**
- * Sets the bottom half of the LEDs to the inputed color
- * 
- * @param color the color you want to set the bottom half of the LEDs to
- */
+  /**
+   * Sets the bottom half of the LEDs to the inputed color
+   *
+   * @param color the color you want to set the bottom half of the LEDs to
+   */
   public void setBottom(Color color) {
     for (int i = RobotConstants.get().led2023LedCount() / 2;
         i < RobotConstants.get().led2023LedCount();
@@ -482,20 +481,20 @@ public void set(Color color) {
     }
   }
 
-/**
- * Sets the colors of all the LEDs to the inputed color based on the COLORS_467 Enum
- * 
- * @param color the color you want to set the LEDs to
- */
+  /**
+   * Sets the colors of all the LEDs to the inputed color based on the COLORS_467 Enum
+   *
+   * @param color the color you want to set the LEDs to
+   */
   public void set(COLORS_467 color) {
     setTop(color);
     setBottom(color);
   }
-/**
- * Sets the colors of the top half of the LEDs to the inputed color based on the COLORS_467 Enum
- * 
- * @param color the color you want to set the LEDs to
- */
+  /**
+   * Sets the colors of the top half of the LEDs to the inputed color based on the COLORS_467 Enum
+   *
+   * @param color the color you want to set the LEDs to
+   */
   public void setTop(COLORS_467 color) {
     for (int i = RobotConstants.get().led2023LedCount() / 2;
         i < RobotConstants.get().led2023LedCount();
@@ -503,11 +502,12 @@ public void set(Color color) {
       ledStrip.setRGB(i, color.red, color.green, color.blue);
     }
   }
-/**
- * Sets the colors of the bottom half of the LEDs to the inputed color based on the COLORS_467 Enum
- * 
- * @param color the color you want to set the LEDs to
- */
+  /**
+   * Sets the colors of the bottom half of the LEDs to the inputed color based on the COLORS_467
+   * Enum
+   *
+   * @param color the color you want to set the LEDs to
+   */
   public void setBottom(COLORS_467 color) {
     for (int i = 0; i < RobotConstants.get().led2023LedCount() / 2; i++) {
       ledStrip.setRGB(i, color.red, color.green, color.blue);
@@ -520,7 +520,7 @@ public void set(Color color) {
 
     /**
      * sets a color to run in a moving down animation
-     * 
+     *
      * @param fgColor the forground color
      * @param bgColor your background color
      */
@@ -551,12 +551,12 @@ public void set(Color color) {
       }
     }
 
-/**
- * sets a color to run in a moving up animation
- * 
- * @param fgColor the forground color
- * @param bgColor the background color
- */
+    /**
+     * sets a color to run in a moving up animation
+     *
+     * @param fgColor the forground color
+     * @param bgColor the background color
+     */
     public void setColorMovingUp(Color fgColor, Color bgColor) {
       if (purpleTimer.hasElapsed(
           SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
@@ -585,7 +585,7 @@ public void set(Color color) {
       }
     }
 
-//TODO : Delete this and its uses as it is never actually used and not shown on the robot
+    // TODO : Delete this and its uses as it is never actually used and not shown on the robot
     public void setColorMovingUpTwoClr(Color topColor, Color bottomColor) {
       if (purpleTimer.hasElapsed(
           SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
@@ -618,27 +618,27 @@ public void set(Color color) {
       }
     }
 
-/**
- * Makes colors blink, can have seperate colors for the top and bottom when blinking
- * 
- * @param topColor color of the top half during first phase of blinking
- * @param bottomColor color of the bottom half during first phase of blinking
- * @param bgColor background or alternate color when in second phase of blinking
- */
-public void setBlinkColors(COLORS_467 topColor, COLORS_467 bottomColor, Color bgColor) {
+    /**
+     * Makes colors blink, can have seperate colors for the top and bottom when blinking
+     *
+     * @param topColor color of the top half during first phase of blinking
+     * @param bottomColor color of the bottom half during first phase of blinking
+     * @param bgColor background or alternate color when in second phase of blinking
+     */
+    public void setBlinkColors(COLORS_467 topColor, COLORS_467 bottomColor, Color bgColor) {
 
-  if (purpleTimer.hasElapsed(0.6)) {
-    purpleTimer.reset();
-  } else if (purpleTimer.hasElapsed(0.25)) {
-    setTop(topColor);
-    setBottom(bottomColor);
+      if (purpleTimer.hasElapsed(0.6)) {
+        purpleTimer.reset();
+      } else if (purpleTimer.hasElapsed(0.25)) {
+        setTop(topColor);
+        setBottom(bottomColor);
 
-  } else {
-    set(bgColor);
-  }
-}
+      } else {
+        set(bgColor);
+      }
+    }
 
-//TODO: Delete this it is never used
+    // TODO: Delete this it is never used
     public void setAlternateColorsDown(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
       for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
         if (i % 2 == 0) {
@@ -657,7 +657,7 @@ public void setBlinkColors(COLORS_467 topColor, COLORS_467 bottomColor, Color bg
       }
     }
 
-    //TODO: Delete this as it is never used
+    // TODO: Delete this as it is never used
     public void setAlternateColorsUp(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
       for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
         if (i % 2 == 0) {
@@ -672,7 +672,7 @@ public void setBlinkColors(COLORS_467 topColor, COLORS_467 bottomColor, Color bg
         ledStrip.setLED(l, bgColor);
       }
     }
-    //TODO: Delete this and its refrences, not actually usefull on robot
+    // TODO: Delete this and its refrences, not actually usefull on robot
     public void setColorMovingDownTwoClr(Color topColor, Color bottomColor) {
       if (purpleTimer.hasElapsed(
           SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
@@ -716,7 +716,7 @@ public void setBlinkColors(COLORS_467 topColor, COLORS_467 bottomColor, Color bg
       }
     }
   }
-//TODO: Most methods in this class never used, delete them.
+  // TODO: Most methods in this class never used, delete them.
   private class Rainbows {
 
     private final double RAINBOW_TIMER_SPEED = 0.04;
