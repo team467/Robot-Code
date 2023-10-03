@@ -1,26 +1,23 @@
-package frc.robot.subsystems.intakerelease;
+package frc.robot.subsystems.effector;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
+import frc.robot.subsystems.effector.Effector.Wants;
 
-public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
+public class EffectorIOBrushed implements EffectorIO {
   private final CANSparkMax motor;
-  private final RelativeEncoder encoder;
   private final DigitalInput cubeLimitSwitch;
   private final SparkMaxLimitSwitch coneLimitSwitch;
 
-  public IntakeReleaseIOPhysical(int motorID, int cubeLimID) {
-    motor = new CANSparkMax(motorID, MotorType.kBrushless);
-    encoder = motor.getEncoder();
+  public EffectorIOBrushed(int motorID, int cubeLimID) {
+    motor = new CANSparkMax(motorID, MotorType.kBrushed);
     motor.setIdleMode(IdleMode.kBrake);
     motor.setInverted(false);
     motor.enableVoltageCompensation(12);
-    motor.setSmartCurrentLimit(20);
+    motor.setSmartCurrentLimit(40);
     cubeLimitSwitch = new DigitalInput(cubeLimID);
     coneLimitSwitch = motor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
   }
@@ -36,9 +33,7 @@ public class IntakeReleaseIOPhysical implements IntakeReleaseIO {
   }
 
   @Override
-  public void updateInputs(IntakeReleaseIOInputs inputs, Wants wants) {
-    inputs.motorPosition = encoder.getPosition();
-    inputs.motorVelocity = encoder.getVelocity();
+  public void updateInputs(EffectorIOInputs inputs, Wants wants) {
     inputs.motorAppliedVolts = motor.getBusVoltage() * motor.getAppliedOutput();
     inputs.motorCurrent = motor.getOutputCurrent();
     inputs.cubeLimitSwitch = !cubeLimitSwitch.get();
