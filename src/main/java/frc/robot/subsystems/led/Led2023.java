@@ -16,13 +16,13 @@ import frc.robot.commands.arm.ArmScoreLowNodeCMD;
 import frc.robot.commands.arm.ArmScoreMidNodeCMD;
 import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.auto.BetterBalancing;
-import frc.robot.commands.intakerelease.HoldCMD;
-import frc.robot.commands.intakerelease.IntakeAndRaise;
-import frc.robot.commands.intakerelease.IntakeCMD;
-import frc.robot.commands.intakerelease.ReleaseCMD;
+import frc.robot.commands.effector.HoldCMD;
+import frc.robot.commands.effector.IntakeAndRaise;
+import frc.robot.commands.effector.IntakeCMD;
+import frc.robot.commands.effector.ReleaseCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.effector.Effector;
 
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
@@ -42,7 +42,7 @@ public class Led2023 extends SubsystemBase {
   private static final COLORS_467 BATTERY_LOW_COLOR = COLORS_467.Orange;
   private static final COLORS_467 ARM_UNCALIBRATED_COLOR = COLORS_467.Red;
 
-  private IntakeRelease intakerelease;
+  private Effector effector;
   private Arm arm;
   private Drive drive;
 
@@ -113,9 +113,9 @@ public class Led2023 extends SubsystemBase {
     AUTO_SCORE
   }
 
-  public Led2023(Arm arm, IntakeRelease intakerelease, Drive drive) {
+  public Led2023(Arm arm, Effector effector, Drive drive) {
     super();
-    this.intakerelease = intakerelease;
+    this.effector = effector;
     this.arm = arm;
     this.drive = drive;
 
@@ -194,9 +194,9 @@ public class Led2023 extends SubsystemBase {
         return ColorScheme.BALANCE_VICTORY;
       }
       // When robot scores in autonomous
-      if (intakerelease.getCurrentCommand() instanceof ReleaseCMD
-          || intakerelease.getCurrentCommand() instanceof IntakeCMD
-          || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
+      if (effector.getCurrentCommand() instanceof ReleaseCMD
+          || effector.getCurrentCommand() instanceof IntakeCMD
+          || effector.getCurrentCommand() instanceof IntakeAndRaise) {
         return ColorScheme.AUTO_SCORE;
       }
     }
@@ -223,7 +223,7 @@ public class Led2023 extends SubsystemBase {
     // When arm is scoring high
     if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD && !armCMDsTimer.hasElapsed(2)) {
       armCMDsTimer.start();
-      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+      if (effector.wantsCube() || (effector.haveCube() && !effector.haveCone())) {
         return ColorScheme.CUBE_HIGH;
       } else {
         return ColorScheme.CONE_HIGH;
@@ -233,7 +233,7 @@ public class Led2023 extends SubsystemBase {
     // When arm is scoring mid node
     if (arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD && !armCMDsTimer.hasElapsed(2)) {
       armCMDsTimer.start();
-      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+      if (effector.wantsCube() || (effector.haveCube() && !effector.haveCone())) {
         return ColorScheme.CUBE_HIGH;
       } else {
         return ColorScheme.CONE_HIGH;
@@ -243,7 +243,7 @@ public class Led2023 extends SubsystemBase {
     // When arm is scoring hybrid/low node
     if (arm.getCurrentCommand() instanceof ArmScoreLowNodeCMD && !armCMDsTimer.hasElapsed(2)) {
       armCMDsTimer.start();
-      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+      if (effector.wantsCube() || (effector.haveCube() && !effector.haveCone())) {
         return ColorScheme.CUBE_LOW;
       } else {
         return ColorScheme.CONE_LOW;
@@ -263,26 +263,26 @@ public class Led2023 extends SubsystemBase {
     }
 
     // If trying to hold on to something
-    if (intakerelease.getCurrentCommand() instanceof HoldCMD) {
+    if (effector.getCurrentCommand() instanceof HoldCMD) {
       // If holding on to Cubes
-      if (intakerelease.haveCube() && !intakerelease.haveCone()) {
+      if (effector.haveCube() && !effector.haveCone()) {
         return ColorScheme.HOLD_CUBE;
       }
       // If holding on to Cones
-      if (intakerelease.haveCone()) {
+      if (effector.haveCone()) {
         return ColorScheme.HOLD_CONE;
       }
     }
 
     // If trying to intake something
-    if (intakerelease.getCurrentCommand() instanceof IntakeCMD
-        || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
+    if (effector.getCurrentCommand() instanceof IntakeCMD
+        || effector.getCurrentCommand() instanceof IntakeAndRaise) {
       // If intaking Cubes
-      if (intakerelease.wantsCube()) {
+      if (effector.wantsCube()) {
         return ColorScheme.INTAKE_CUBE;
       }
       // If intaking Cones
-      if (intakerelease.wantsCone()) {
+      if (effector.wantsCone()) {
         return ColorScheme.INTAKE_CONE;
       } else {
         return ColorScheme.INTAKE_UNKNOWN;
@@ -290,13 +290,13 @@ public class Led2023 extends SubsystemBase {
     }
 
     // If trying to release something
-    if (intakerelease.getCurrentCommand() instanceof ReleaseCMD) {
+    if (effector.getCurrentCommand() instanceof ReleaseCMD) {
       // If releasing Cubes
-      if (intakerelease.wantsCube()) {
+      if (effector.wantsCube()) {
         return ColorScheme.RELEASE_CUBE;
       }
       // If releasing Cones
-      if (intakerelease.wantsCone()) {
+      if (effector.wantsCone()) {
         return ColorScheme.RELEASE_CONE;
       } else {
         return ColorScheme.RELEASE_UNKNOWN;
@@ -304,12 +304,12 @@ public class Led2023 extends SubsystemBase {
     }
 
     // If we want cubes
-    if (intakerelease.wantsCube()) {
+    if (effector.wantsCube()) {
       return ColorScheme.WANT_CUBE;
     }
 
     // If we want cones
-    if (intakerelease.wantsCone()) {
+    if (effector.wantsCone()) {
       return ColorScheme.WANT_CONE;
     }
 
@@ -389,7 +389,7 @@ public class Led2023 extends SubsystemBase {
             COLORS_467.Orange, COLORS_467.Pink, COLORS_467.Green.getColor());
         break;
       case SHELF:
-        if (intakerelease.wantsCone()) {
+        if (effector.wantsCone()) {
           setTop(COLORS_467.Yellow);
           setBottom(COLORS_467.Black);
         } else {
@@ -398,7 +398,7 @@ public class Led2023 extends SubsystemBase {
         }
         break;
       case FLOOR:
-        if (intakerelease.wantsCone()) {
+        if (effector.wantsCone()) {
           setBottom(COLORS_467.Yellow);
           setTop(COLORS_467.Black);
         } else {
