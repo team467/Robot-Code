@@ -9,12 +9,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.arm.Arm;
+// import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
 public class Initialize extends ParallelCommandGroup {
-  public Initialize(int aprilTag, String relativePosition, Drive drive, Arm arm) {
+  public Initialize(int aprilTag, String relativePosition, Drive drive) {
     Translation2d aprilTagLocation =
         FieldConstants.aprilTags.getTagPose(aprilTag).get().getTranslation().toTranslation2d();
     final double relativePositionOffset;
@@ -40,7 +40,7 @@ public class Initialize extends ParallelCommandGroup {
                     Rotation2d.fromDegrees(180)));
 
     addCommands(
-        Commands.runOnce(arm::setCalibratedAssumeHomePosition),
+        //Commands.runOnce(arm::setCalibratedAssumeHomePosition),
         Commands.runOnce(
             () -> {
               Pose2d measuredPose = drive.getPose();

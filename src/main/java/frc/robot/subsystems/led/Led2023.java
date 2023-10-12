@@ -9,20 +9,22 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.leds.DoubleLEDStrip;
 import frc.lib.leds.LEDManager;
 import frc.robot.RobotConstants;
-import frc.robot.commands.arm.ArmCalibrateCMD;
-import frc.robot.commands.arm.ArmFloorCMD;
-import frc.robot.commands.arm.ArmScoreHighNodeCMD;
-import frc.robot.commands.arm.ArmScoreLowNodeCMD;
-import frc.robot.commands.arm.ArmScoreMidNodeCMD;
-import frc.robot.commands.arm.ArmShelfCMD;
+// import frc.robot.commands.arm.ArmCalibrateCMD;
+// import frc.robot.commands.arm.ArmFloorCMD;
+// import frc.robot.commands.arm.ArmScoreHighNodeCMD;
+// import frc.robot.commands.arm.ArmScoreLowNodeCMD;
+// import frc.robot.commands.arm.ArmScoreMidNodeCMD;
+// import frc.robot.commands.arm.ArmShelfCMD;
 import frc.robot.commands.auto.BetterBalancing;
 import frc.robot.commands.intakerelease.HoldCMD;
 import frc.robot.commands.intakerelease.IntakeAndRaise;
 import frc.robot.commands.intakerelease.IntakeCMD;
-import frc.robot.commands.intakerelease.ReleaseCMD;
-import frc.robot.subsystems.arm.Arm;
+// import frc.robot.commands.intakerelease.ReleaseCMD;
+// import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intakerelease.IntakeRelease;
+
+// TODO: add documentation to this subsystem.
 
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
@@ -43,7 +45,7 @@ public class Led2023 extends SubsystemBase {
   private static final COLORS_467 ARM_UNCALIBRATED_COLOR = COLORS_467.Red;
 
   private IntakeRelease intakerelease;
-  private Arm arm;
+  // private Arm arm;
   private Drive drive;
 
   private VictoryLeds balanceVictoryLeds = new VictoryLeds(COLORS_467.Blue, COLORS_467.Gold);
@@ -113,10 +115,10 @@ public class Led2023 extends SubsystemBase {
     AUTO_SCORE
   }
 
-  public Led2023(Arm arm, IntakeRelease intakerelease, Drive drive) {
+  public Led2023(IntakeRelease intakerelease, Drive drive) {
     super();
     this.intakerelease = intakerelease;
-    this.arm = arm;
+    // this.arm = arm;
     this.drive = drive;
 
     ledStrip =
@@ -128,19 +130,26 @@ public class Led2023 extends SubsystemBase {
     colorPatterns.purpleTimer.start();
   }
 
+  /** resets the timers of the LED patterns that require timing */
   public void resetTimers() {
     rainbowLed.rainbowTimer.reset();
     colorPatterns.purpleTimer.reset();
     balanceTimer.reset();
   }
 
-  private boolean isArmCommandRunning(Command command) {
-    return command instanceof ArmScoreHighNodeCMD
-        || command instanceof ArmScoreMidNodeCMD
-        || command instanceof ArmScoreLowNodeCMD
-        || command instanceof ArmShelfCMD
-        || command instanceof ArmFloorCMD;
-  }
+  /**
+   * checks if an arm command is running
+   *
+   * @param command
+   * @return the arm comand running
+   */
+  // private boolean isArmCommandRunning(Command command) {
+  //   return command instanceof ArmScoreHighNodeCMD
+  //       || command instanceof ArmScoreMidNodeCMD
+  //       || command instanceof ArmScoreLowNodeCMD
+  //       || command instanceof ArmShelfCMD
+  //       || command instanceof ArmFloorCMD;
+  // }
 
   @Override
   public void periodic() {
@@ -156,21 +165,32 @@ public class Led2023 extends SubsystemBase {
     sendData();
   }
 
+  /**
+   * Checks many differed variables in order to decide the ColorScheme that will eventually be
+   * applied
+   *
+   * @return x ColorScheme, the display option that will eventually be shown on the robot
+   */
   public ColorScheme getColorScheme() {
     // reset timer after arm cmd completes
-    if (!isArmCommandRunning(arm.getCurrentCommand())) {
-      armCMDsTimer.reset();
-    }
 
-    // Check if battery is low
+    // if (!isArmCommandRunning(arm.getCurrentCommand())) {
+    //   armCMDsTimer.reset();
+    // }
+
+    // Check if battery is low, if the battery is too low, play the battery low LEDs
     if (USE_BATTERY_CHECK && RobotController.getBatteryVoltage() <= BATTER_MIN_VOLTAGE) {
       return ColorScheme.BATTERY_LOW;
     }
-    // Check if arm is calibrated
-    if ((!arm.isCalibrated()) && CHECK_ARM_CALIBRATION && !DriverStation.isDisabled()) {
-      return ColorScheme.ARM_UNCALIBRATED;
-    }
-    // When robot is disabled
+    // Check if arm is calibrated, if uncalibrated play the arm uncalibrated LEDs
+
+    // if ((!arm.isCalibrated()) && CHECK_ARM_CALIBRATION && !DriverStation.isDisabled()) {
+    //   return ColorScheme.ARM_UNCALIBRATED;
+    // }
+
+    // When robot is disabled and balanced, play the balance victory LEDs, if we did not balance,
+    // run the default LEDs
+
     if (DriverStation.isDisabled()) {
       if (balanceTimer.get() > 0.0 && !balanceTimer.hasElapsed(2.5) && !doneBalanceLeds) {
         return ColorScheme.BALANCE_VICTORY;
@@ -194,129 +214,142 @@ public class Led2023 extends SubsystemBase {
         return ColorScheme.BALANCE_VICTORY;
       }
       // When robot scores in autonomous
-      if (intakerelease.getCurrentCommand() instanceof ReleaseCMD
-          || intakerelease.getCurrentCommand() instanceof IntakeCMD
+      //   if (intakerelease.getCurrentCommand() instanceof ReleaseCMD
+      //       || intakerelease.getCurrentCommand() instanceof IntakeCMD
+      //       || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
+      //     return ColorScheme.AUTO_SCORE;
+      //   }
+      }
+
+      // When the arm is calibrating
+
+      // if (arm.getCurrentCommand() instanceof ArmCalibrateCMD) {
+      //   return ColorScheme.CALIBRATING;
+      // }
+
+      // Sets rainbow for 5 secs after calibrating
+
+      // if ((arm.isCalibrated() || !CHECK_ARM_CALIBRATION)
+      //     && !defaultTimer.hasElapsed(RAINBOW_TIME_AFTER_CALIBRATION + 0.02)
+      //     && DriverStation.isTeleopEnabled()
+      //     && !finishedRainbowOnce) {
+      //   if (defaultTimer.hasElapsed(RAINBOW_TIME_AFTER_CALIBRATION) && !finishedRainbowOnce) {
+      //     defaultTimer.reset();
+      //     defaultTimer.stop();
+      //     finishedRainbowOnce = true;
+      //   }
+      //   defaultTimer.start();
+      //   return ColorScheme.DEFAULT;
+      // }
+
+      // When arm is scoring high
+
+      // if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD && !armCMDsTimer.hasElapsed(2)) {
+      //   armCMDsTimer.start();
+      //   if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+      //     return ColorScheme.CUBE_HIGH;
+      //   } else {
+      //     return ColorScheme.CONE_HIGH;
+      //   }
+      // }
+
+      // When arm is scoring mid node
+
+      // if (arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD && !armCMDsTimer.hasElapsed(2)) {
+      //   armCMDsTimer.start();
+      //   if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+      //     return ColorScheme.CUBE_HIGH;
+      //   } else {
+      //     return ColorScheme.CONE_HIGH;
+      //   }
+      // }
+
+      // When arm is scoring hybrid/low node
+
+      // if (arm.getCurrentCommand() instanceof ArmScoreLowNodeCMD && !armCMDsTimer.hasElapsed(2)) {
+      //   armCMDsTimer.start();
+      //   if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
+      //     return ColorScheme.CUBE_LOW;
+      //   } else {
+      //     return ColorScheme.CONE_LOW;
+      //   }
+      // }
+
+      // When picking up from shelf
+
+      // if (arm.getCurrentCommand() instanceof ArmShelfCMD && !armCMDsTimer.hasElapsed(2)) {
+      //   armCMDsTimer.start();
+      //   return ColorScheme.SHELF;
+      // }
+
+      // When picking up from floor
+
+      // if (arm.getCurrentCommand() instanceof ArmFloorCMD && !armCMDsTimer.hasElapsed(2)) {
+      //   armCMDsTimer.start();
+      //   return ColorScheme.FLOOR;
+      // }
+
+      // If trying to hold on to something
+      if (intakerelease.getCurrentCommand() instanceof HoldCMD) {
+        // If holding on to Cubes
+        if (intakerelease.haveCube() && !intakerelease.haveCone()) {
+          return ColorScheme.HOLD_CUBE;
+        }
+        // If holding on to Cones
+        if (intakerelease.haveCone()) {
+          return ColorScheme.HOLD_CONE;
+        }
+      }
+
+      // If trying to intake something
+      if (intakerelease.getCurrentCommand() instanceof IntakeCMD
           || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
-        return ColorScheme.AUTO_SCORE;
+        // If intaking Cubes
+        if (intakerelease.wantsCube()) {
+          return ColorScheme.INTAKE_CUBE;
+        }
+        // If intaking Cones
+        if (intakerelease.wantsCone()) {
+          return ColorScheme.INTAKE_CONE;
+        } else {
+          return ColorScheme.INTAKE_UNKNOWN;
+        }
       }
-    }
 
-    // When the arm is calibrating
-    if (arm.getCurrentCommand() instanceof ArmCalibrateCMD) {
-      return ColorScheme.CALIBRATING;
-    }
+      // // If trying to release something
+      // if (intakerelease.getCurrentCommand() instanceof ReleaseCMD) {
+      //   // If releasing Cubes
+      //   if (intakerelease.wantsCube()) {
+      //     return ColorScheme.RELEASE_CUBE;
+      //   }
+      //   // If releasing Cones
+      //   if (intakerelease.wantsCone()) {
+      //     return ColorScheme.RELEASE_CONE;
+      //   } else {
+      //     return ColorScheme.RELEASE_UNKNOWN;
+      //   }
+      // }
 
-    // Sets rainbow for 5 secs after calibrating
-    if ((arm.isCalibrated() || !CHECK_ARM_CALIBRATION)
-        && !defaultTimer.hasElapsed(RAINBOW_TIME_AFTER_CALIBRATION + 0.02)
-        && DriverStation.isTeleopEnabled()
-        && !finishedRainbowOnce) {
-      if (defaultTimer.hasElapsed(RAINBOW_TIME_AFTER_CALIBRATION) && !finishedRainbowOnce) {
-        defaultTimer.reset();
-        defaultTimer.stop();
-        finishedRainbowOnce = true;
+      // If we want cubes
+      if (intakerelease.wantsCube()) {
+        return ColorScheme.WANT_CUBE;
       }
-      defaultTimer.start();
+
+      // If we want cones
+      if (intakerelease.wantsCone()) {
+        return ColorScheme.WANT_CONE;
+      }
       return ColorScheme.DEFAULT;
-    }
-
-    // When arm is scoring high
-    if (arm.getCurrentCommand() instanceof ArmScoreHighNodeCMD && !armCMDsTimer.hasElapsed(2)) {
-      armCMDsTimer.start();
-      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
-        return ColorScheme.CUBE_HIGH;
-      } else {
-        return ColorScheme.CONE_HIGH;
-      }
-    }
-
-    // When arm is scoring mid node
-    if (arm.getCurrentCommand() instanceof ArmScoreMidNodeCMD && !armCMDsTimer.hasElapsed(2)) {
-      armCMDsTimer.start();
-      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
-        return ColorScheme.CUBE_HIGH;
-      } else {
-        return ColorScheme.CONE_HIGH;
-      }
-    }
-
-    // When arm is scoring hybrid/low node
-    if (arm.getCurrentCommand() instanceof ArmScoreLowNodeCMD && !armCMDsTimer.hasElapsed(2)) {
-      armCMDsTimer.start();
-      if (intakerelease.wantsCube() || (intakerelease.haveCube() && !intakerelease.haveCone())) {
-        return ColorScheme.CUBE_LOW;
-      } else {
-        return ColorScheme.CONE_LOW;
-      }
-    }
-
-    // When picking up from shelf
-    if (arm.getCurrentCommand() instanceof ArmShelfCMD && !armCMDsTimer.hasElapsed(2)) {
-      armCMDsTimer.start();
-      return ColorScheme.SHELF;
-    }
-
-    // When picking up from floor
-    if (arm.getCurrentCommand() instanceof ArmFloorCMD && !armCMDsTimer.hasElapsed(2)) {
-      armCMDsTimer.start();
-      return ColorScheme.FLOOR;
-    }
-
-    // If trying to hold on to something
-    if (intakerelease.getCurrentCommand() instanceof HoldCMD) {
-      // If holding on to Cubes
-      if (intakerelease.haveCube() && !intakerelease.haveCone()) {
-        return ColorScheme.HOLD_CUBE;
-      }
-      // If holding on to Cones
-      if (intakerelease.haveCone()) {
-        return ColorScheme.HOLD_CONE;
-      }
-    }
-
-    // If trying to intake something
-    if (intakerelease.getCurrentCommand() instanceof IntakeCMD
-        || intakerelease.getCurrentCommand() instanceof IntakeAndRaise) {
-      // If intaking Cubes
-      if (intakerelease.wantsCube()) {
-        return ColorScheme.INTAKE_CUBE;
-      }
-      // If intaking Cones
-      if (intakerelease.wantsCone()) {
-        return ColorScheme.INTAKE_CONE;
-      } else {
-        return ColorScheme.INTAKE_UNKNOWN;
-      }
-    }
-
-    // If trying to release something
-    if (intakerelease.getCurrentCommand() instanceof ReleaseCMD) {
-      // If releasing Cubes
-      if (intakerelease.wantsCube()) {
-        return ColorScheme.RELEASE_CUBE;
-      }
-      // If releasing Cones
-      if (intakerelease.wantsCone()) {
-        return ColorScheme.RELEASE_CONE;
-      } else {
-        return ColorScheme.RELEASE_UNKNOWN;
-      }
-    }
-
-    // If we want cubes
-    if (intakerelease.wantsCube()) {
-      return ColorScheme.WANT_CUBE;
-    }
-
-    // If we want cones
-    if (intakerelease.wantsCone()) {
-      return ColorScheme.WANT_CONE;
-    }
-
-    // Sets default (never used)
-    return ColorScheme.DEFAULT;
   }
 
+  /**
+   * Applies the ColorScheme based on the current ColorScheme. in short, it is used to turn the
+   * current ColorScheme into instructions for the robot. Used right before updating the Leds in
+   * periodic.
+   *
+   * @param colorScheme the display option the leds should use, set by the if statements in
+   *     getColorScheme()
+   */
   public void applyColorScheme(ColorScheme colorScheme) {
     switch (colorScheme) {
       case BATTERY_LOW:
@@ -418,21 +451,36 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
+  /** Updates the ledStrips, used last in periodic() to change the leds to their next state */
   public void sendData() {
     ledStrip.update();
   }
 
+  /**
+   * Sets the colors of all the LEDs to the inputed color
+   *
+   * @param color the color you want to set the LEDs to
+   */
   public void set(Color color) {
     setTop(color);
     setBottom(color);
   }
 
+  /**
+   * Sets the top half of the LEDs to the inputed color
+   *
+   * @param color the color you want to set the top half of the LEDs to
+   */
   public void setTop(Color color) {
     for (int i = 0; i < RobotConstants.get().led2023LedCount() / 2; i++) {
       ledStrip.setLED(i, color);
     }
   }
-
+  /**
+   * Sets the bottom half of the LEDs to the inputed color
+   *
+   * @param color the color you want to set the bottom half of the LEDs to
+   */
   public void setBottom(Color color) {
     for (int i = RobotConstants.get().led2023LedCount() / 2;
         i < RobotConstants.get().led2023LedCount();
@@ -441,11 +489,20 @@ public class Led2023 extends SubsystemBase {
     }
   }
 
+  /**
+   * Sets the colors of all the LEDs to the inputed color based on the COLORS_467 Enum
+   *
+   * @param color the color you want to set the LEDs to
+   */
   public void set(COLORS_467 color) {
     setTop(color);
     setBottom(color);
   }
-
+  /**
+   * Sets the colors of the top half of the LEDs to the inputed color based on the COLORS_467 Enum
+   *
+   * @param color the color you want to set the LEDs to
+   */
   public void setTop(COLORS_467 color) {
     for (int i = RobotConstants.get().led2023LedCount() / 2;
         i < RobotConstants.get().led2023LedCount();
@@ -453,7 +510,12 @@ public class Led2023 extends SubsystemBase {
       ledStrip.setRGB(i, color.red, color.green, color.blue);
     }
   }
-
+  /**
+   * Sets the colors of the bottom half of the LEDs to the inputed color based on the COLORS_467
+   * Enum
+   *
+   * @param color the color you want to set the LEDs to
+   */
   public void setBottom(COLORS_467 color) {
     for (int i = 0; i < RobotConstants.get().led2023LedCount() / 2; i++) {
       ledStrip.setRGB(i, color.red, color.green, color.blue);
@@ -464,6 +526,12 @@ public class Led2023 extends SubsystemBase {
     private Timer purpleTimer = new Timer();
     private final double SHOOTING_TIMER_SPEED = 0.1;
 
+    /**
+     * sets a color to run in a moving down animation
+     *
+     * @param fgColor the forground color
+     * @param bgColor your background color
+     */
     public void setColorMovingDown(Color fgColor, Color bgColor) {
       if (purpleTimer.hasElapsed(
           SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
@@ -491,6 +559,12 @@ public class Led2023 extends SubsystemBase {
       }
     }
 
+    /**
+     * sets a color to run in a moving up animation
+     *
+     * @param fgColor the forground color
+     * @param bgColor the background color
+     */
     public void setColorMovingUp(Color fgColor, Color bgColor) {
       if (purpleTimer.hasElapsed(
           SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
@@ -519,6 +593,7 @@ public class Led2023 extends SubsystemBase {
       }
     }
 
+    // TODO : Delete this and its uses as it is never actually used and not shown on the robot
     public void setColorMovingUpTwoClr(Color topColor, Color bottomColor) {
       if (purpleTimer.hasElapsed(
           SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
@@ -551,6 +626,13 @@ public class Led2023 extends SubsystemBase {
       }
     }
 
+    /**
+     * Makes colors blink, can have seperate colors for the top and bottom when blinking
+     *
+     * @param topColor color of the top half during first phase of blinking
+     * @param bottomColor color of the bottom half during first phase of blinking
+     * @param bgColor background or alternate color when in second phase of blinking
+     */
     public void setBlinkColors(COLORS_467 topColor, COLORS_467 bottomColor, Color bgColor) {
 
       if (purpleTimer.hasElapsed(0.6)) {
@@ -564,6 +646,7 @@ public class Led2023 extends SubsystemBase {
       }
     }
 
+    // TODO: Delete this it is never used
     public void setAlternateColorsDown(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
       for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
         if (i % 2 == 0) {
@@ -582,6 +665,7 @@ public class Led2023 extends SubsystemBase {
       }
     }
 
+    // TODO: Delete this as it is never used
     public void setAlternateColorsUp(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
       for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
         if (i % 2 == 0) {
@@ -596,7 +680,7 @@ public class Led2023 extends SubsystemBase {
         ledStrip.setLED(l, bgColor);
       }
     }
-
+    // TODO: Delete this and its refrences, not actually usefull on robot
     public void setColorMovingDownTwoClr(Color topColor, Color bottomColor) {
       if (purpleTimer.hasElapsed(
           SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
@@ -640,7 +724,7 @@ public class Led2023 extends SubsystemBase {
       }
     }
   }
-
+  // TODO: Most methods in this class never used, delete them.
   private class Rainbows {
 
     private final double RAINBOW_TIMER_SPEED = 0.04;
