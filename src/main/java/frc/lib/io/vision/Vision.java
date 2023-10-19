@@ -302,7 +302,7 @@ public class Vision extends SubsystemBase {
     for (PhotonTrackedTarget target : inputs[index].lastResult.getTargets()) {
       visCorners.addAll(target.getDetectedCorners());
 
-      if (isValidTarget(target)) {
+      if (!isValidTarget(target)) {
         continue;
       }
 
