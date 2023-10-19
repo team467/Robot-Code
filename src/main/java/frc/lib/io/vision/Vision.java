@@ -5,7 +5,6 @@ import static frc.lib.io.vision.VisionConstants.POSE_DIFFERENCE_THRESHOLD_METERS
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
@@ -17,14 +16,13 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.vision.VisionIO.VisionIOInputs;
 import frc.lib.utils.RobotOdometry;
 import frc.lib.utils.TunableNumber;
-import java.io.IOException;
+import frc.robot.FieldConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,17 +39,17 @@ import org.photonvision.targeting.TargetCorner;
  * PhotonVision.
  */
 public class Vision extends SubsystemBase {
-  private List<VisionIO> visionIOs;
-  private List<Transform3d> camerasToRobots;
+  private final List<VisionIO> visionIOs;
+  private final List<Transform3d> camerasToRobots;
   private final VisionIOInputs[] inputs;
-  private double[] lastTimestamps;
+  private final double[] lastTimestamps;
 
-  private AprilTagFieldLayout layout;
+  private final AprilTagFieldLayout layout;
 
   private boolean isEnabled = true;
   private boolean isVisionUpdating = false;
 
-  private SwerveDrivePoseEstimator poseEstimator;
+  private final SwerveDrivePoseEstimator poseEstimator;
   private final TunableNumber poseDifferenceThreshold =
       new TunableNumber("Vision/VisionPoseThreshold", POSE_DIFFERENCE_THRESHOLD_METERS);
   private final TunableNumber stdDevSlope = new TunableNumber("Vision/stdDevSlope", 0.10);
@@ -96,12 +94,7 @@ public class Vision extends SubsystemBase {
         .withSize(1, 2);
 
     // load and log all the AprilTags in the field layout file
-    try {
-      layout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
-    } catch (IOException e) {
-      layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
-      DriverStation.reportWarning("No AprilTag layout file found.", false);
-    }
+    layout = FieldConstants.aprilTags;
 
     for (AprilTag tag : layout.getTags()) {
       Logger.getInstance().recordOutput("Vision/AprilTags/" + tag.ID, tag.pose);
