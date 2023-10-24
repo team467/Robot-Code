@@ -21,8 +21,8 @@ public interface VisionIO {
   class VisionIOInputs implements LoggableInputs {
     PhotonPipelineResult lastResult = new PhotonPipelineResult(0, new ArrayList<>());
     double lastTimestamp = 0.0;
-    double[] cameraMatrix;
-    double[] distCoeffs;
+    double[] cameraMatrix = new double[] {};
+    double[] distCoeffs = new double[] {};
 
     public void toLog(LogTable table) {
       // since AdvantageKit doesn't support the PhotonPipelineResult type, log it as a byte array

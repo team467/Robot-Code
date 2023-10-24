@@ -8,7 +8,7 @@ public final class VisionConstants {
   }
 
   /** the pose ambiguity must be less than this value for the target to be considered valid */
-  public static final double MAXIMUM_AMBIGUITY = 0.2;
+  public static final double MAXIMUM_AMBIGUITY = 0.5;
 
   /**
    * the maximum distance between the robot's pose derived from the target and the current robot's
