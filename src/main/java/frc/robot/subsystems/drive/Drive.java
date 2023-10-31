@@ -143,16 +143,6 @@ public class Drive extends SubsystemBase {
           Logger.getInstance().recordOutput("SwerveStates/Setpoints", new double[] {});
           Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
         }
-        case TURN_CHARACTERIZATION -> {
-          // Run in characterization mode
-          for (var module : modules) {
-            module.runTurnCharacterization(characterizationVolts);
-          }
-
-          // Clear setpoint logs
-          Logger.getInstance().recordOutput("SwerveStates/Setpoints", new double[] {});
-          Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
-        }
         case NORMAL -> {
           Twist2d setpointTwist =
               new Pose2d()
@@ -349,11 +339,6 @@ public class Drive extends SubsystemBase {
     characterizationVolts = volts;
   }
 
-  public void runTurnCharacterizationVolts(double volts) {
-    driveMode = DriveMode.TURN_CHARACTERIZATION;
-    characterizationVolts = volts;
-  }
-
   public double getDriveCharacterizationVelocity() {
     ChassisSpeeds speeds = kinematics.toChassisSpeeds(swerveModuleStates);
     return Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));
@@ -373,31 +358,8 @@ public class Drive extends SubsystemBase {
         / 0.02;
   }
 
-  public double getTurnCharacterizationVelocity() {
-    double avgVelocity = 0.0;
-
-    for (Module mod : modules) {
-      avgVelocity += mod.getTurnVelocity();
-    }
-
-    avgVelocity /= modules.length;
-    return avgVelocity;
-  }
-
-  public double getTurnCharacterizationAcceleration() {
-    double avgAcceleration = 0.0;
-
-    for (Module mod : modules) {
-      avgAcceleration += mod.getTurnAcceleration();
-    }
-
-    avgAcceleration /= modules.length;
-    return avgAcceleration;
-  }
-
   private enum DriveMode {
     NORMAL,
-    DRIVE_CHARACTERIZATION,
-    TURN_CHARACTERIZATION
+    DRIVE_CHARACTERIZATION
   }
 }

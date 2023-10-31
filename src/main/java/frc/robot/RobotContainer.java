@@ -235,19 +235,6 @@ public class RobotContainer {
             .andThen(() -> configureButtonBindings()));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
-    autoChooser.addOption(
-        "Turn Characterization",
-        Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
-            .andThen(
-                new FeedForwardCharacterization(
-                    drive,
-                    true,
-                    new FeedForwardCharacterizationData("turn"),
-                    drive::runTurnCharacterizationVolts,
-                    drive::getTurnCharacterizationVelocity,
-                    drive::getTurnCharacterizationAcceleration))
-            .andThen(() -> configureButtonBindings()));
-
     // Trigger haptics when you pick up something
     new Trigger(() -> intakeRelease.haveCone() || intakeRelease.haveCube())
         .onTrue(
