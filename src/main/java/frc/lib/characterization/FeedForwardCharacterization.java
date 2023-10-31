@@ -14,7 +14,7 @@ import org.ejml.simple.SimpleMatrix;
 public class FeedForwardCharacterization extends CommandBase {
   private static final double START_DELAY_SECS = 2.0;
   // TODO: tune such that we hit 12 V before we run out of carpet
-  private static final double RAMP_RATE_VOLTS_PER_SECOND = 0.5;
+  private static final double RAMP_RATE_VOLTS_PER_SECOND = 1;
 
   private final boolean forwards;
   private final boolean isDrive;
