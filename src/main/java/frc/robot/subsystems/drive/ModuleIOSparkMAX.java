@@ -35,12 +35,14 @@ public class ModuleIOSparkMAX implements ModuleIO {
         Units.rotationsToRadians(1)
             * (RobotConstants.get().moduleWheelDiameter() / 2)
             * RobotConstants.get().moduleDriveGearRatio().getRotationsPerInput();
+    double rotsToRads = Units.rotationsToRadians(1);
+
     driveEncoder.setPositionConversionFactor(rotsToMeters);
-    turnEncoder.setPositionConversionFactor(rotsToMeters);
+    turnEncoder.setPositionConversionFactor(rotsToRads);
 
     // Convert rotations per minute to meters per second
     driveEncoder.setVelocityConversionFactor(rotsToMeters / 60);
-    turnEncoder.setVelocityConversionFactor(rotsToMeters / 60);
+    turnEncoder.setVelocityConversionFactor(rotsToRads / 60);
 
     // Invert motors
     driveMotor.setInverted(false);
