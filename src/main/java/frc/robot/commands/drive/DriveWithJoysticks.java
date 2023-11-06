@@ -84,7 +84,7 @@ public class DriveWithJoysticks extends CommandBase {
     // Convert from field relative
     if (robotRelativeOverride.get()) {
       Rotation2d driveRotation = drive.getPose().getRotation();
-      if (DriverStation.getAlliance() == Alliance.Red) {
+      if (DriverStation.getAlliance().get() == Alliance.Red) {
         driveRotation = driveRotation.plus(new Rotation2d(Math.PI));
       }
       speeds =

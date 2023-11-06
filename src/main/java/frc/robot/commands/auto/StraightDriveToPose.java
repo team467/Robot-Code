@@ -52,16 +52,16 @@ public class StraightDriveToPose extends CommandBase {
             new Pose2d(
                 new Translation2d(
                     drive.getPose().getTranslation().getX()
-                        + (DriverStation.getAlliance() == Alliance.Blue
+                        + (DriverStation.getAlliance().get() == Alliance.Blue
                             ? deltaXMeters
                             : -deltaXMeters),
                     drive.getPose().getTranslation().getY()
-                        + (DriverStation.getAlliance() == Alliance.Blue
+                        + (DriverStation.getAlliance().get() == Alliance.Blue
                             ? deltaYMeters
                             : -deltaYMeters)),
                 new Rotation2d(
                     drive.getPose().getRotation().getRadians()
-                        + (DriverStation.getAlliance() == Alliance.Blue
+                        + (DriverStation.getAlliance().get() == Alliance.Blue
                             ? deltaThetaRad
                             : -deltaThetaRad))));
   }

@@ -80,7 +80,7 @@ public class RobotContainer {
   private Vision vision;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
-  private DriverStation.Alliance lastAlliance = DriverStation.Alliance.Invalid;
+  private DriverStation.Alliance lastAlliance = DriverStation.Alliance.Blue;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
