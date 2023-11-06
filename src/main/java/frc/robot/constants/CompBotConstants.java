@@ -70,7 +70,7 @@ public class CompBotConstants implements Constants {
   @Override
   public SimpleFeedforwardConstant moduleDriveFF() {
     return new SimpleFeedforwardConstant(0.49385, 2.60818, 0.05633);
-  } // TODO: tune
+  }
 
   @Override
   public SimpleFeedforwardConstant moduleTurnFF() {
@@ -79,7 +79,6 @@ public class CompBotConstants implements Constants {
 
   @Override
   public FeedbackConstant moduleTurnFB() {
-    // return new FeedbackConstant(3.2526, 0.05);
     return new FeedbackConstant(3.2526, 0.05);
   }
 
