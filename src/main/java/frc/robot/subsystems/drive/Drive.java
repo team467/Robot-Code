@@ -35,6 +35,21 @@ public class Drive extends SubsystemBase {
         new SwerveModuleState()
       };
 
+  private final SwerveModuleState[] swerveModuleStates =
+      new SwerveModuleState[] {
+        new SwerveModuleState(),
+        new SwerveModuleState(),
+        new SwerveModuleState(),
+        new SwerveModuleState()
+      };
+  private final SwerveModuleState[] prevSwerveModuleStates =
+      new SwerveModuleState[] {
+        new SwerveModuleState(),
+        new SwerveModuleState(),
+        new SwerveModuleState(),
+        new SwerveModuleState()
+      };
+
   private final SwerveModulePosition[] modulePositions;
   private SwerveDrivePoseEstimator odometry;
   private double simGyro = 0.0;
@@ -98,10 +113,10 @@ public class Drive extends SubsystemBase {
       Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
     } else {
       switch (driveMode) {
-        case CHARACTERIZATION -> {
+        case DRIVE_CHARACTERIZATION -> {
           // Run in characterization mode
           for (var module : modules) {
-            module.runCharacterization(characterizationVolts);
+            module.runDriveCharacterization(characterizationVolts);
           }
 
           // Clear setpoint logs
@@ -159,6 +174,8 @@ public class Drive extends SubsystemBase {
     SwerveModuleState[] measuredStates = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
       measuredStates[i] = modules[i].getState();
+      prevSwerveModuleStates[i] = swerveModuleStates[i];
+      swerveModuleStates[i] = modules[i].getState();
     }
     Logger.getInstance().recordOutput("SwerveStates/Measured", measuredStates);
 
@@ -254,21 +271,32 @@ public class Drive extends SubsystemBase {
     return Units.degreesToRadians(gyroInputs.pitchRate);
   }
 
-  public void runCharacterizationVolts(double volts) {
-    driveMode = DriveMode.CHARACTERIZATION;
+  public void runDriveCharacterizationVolts(double volts) {
+    driveMode = DriveMode.DRIVE_CHARACTERIZATION;
     characterizationVolts = volts;
   }
 
-  public double getCharacterizationVelocity() {
-    double driveVelocityAverage = 0.0;
-    for (var module : modules) {
-      driveVelocityAverage += module.getCharacterizationVelocity();
-    }
-    return driveVelocityAverage / 4.0;
+  public double getDriveCharacterizationVelocity() {
+    ChassisSpeeds speeds = kinematics.toChassisSpeeds(swerveModuleStates);
+    return Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));
+  }
+
+  /**
+   * Returns the average drive velocity in meters/sec.
+   *
+   * @return the average drive velocity in meters/sec
+   */
+  public double getDriveCharacterizationAcceleration() {
+    ChassisSpeeds prevSpeeds = kinematics.toChassisSpeeds(prevSwerveModuleStates);
+    ChassisSpeeds speeds = kinematics.toChassisSpeeds(swerveModuleStates);
+    return Math.sqrt(
+            Math.pow((speeds.vxMetersPerSecond - prevSpeeds.vxMetersPerSecond), 2)
+                + Math.pow((speeds.vyMetersPerSecond - prevSpeeds.vyMetersPerSecond), 2))
+        / 0.02;
   }
 
   private enum DriveMode {
     NORMAL,
-    CHARACTERIZATION
+    DRIVE_CHARACTERIZATION
   }
 }

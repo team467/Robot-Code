@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
@@ -37,7 +38,7 @@ public class ModuleIOSparkMAX implements ModuleIO {
             * RobotConstants.get().moduleDriveGearRatio().getRotationsPerInput();
     double rotsToRads =
         Units.rotationsToRadians(1)
-            * RobotConstants.get().moduleDriveGearRatio().getRotationsPerInput();
+            * RobotConstants.get().moduleTurnGearRatio().getRotationsPerInput();
 
     driveEncoder.setPositionConversionFactor(rotsToMeters);
     turnEncoder.setPositionConversionFactor(rotsToRads);
@@ -56,8 +57,8 @@ public class ModuleIOSparkMAX implements ModuleIO {
     driveMotor.enableVoltageCompensation(12);
     turnMotor.enableVoltageCompensation(12);
 
-    driveMotor.setSmartCurrentLimit(80);
-    turnMotor.setSmartCurrentLimit(80);
+    driveMotor.setSmartCurrentLimit(40);
+    turnMotor.setSmartCurrentLimit(30);
 
     turnEncoderAbsolute.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
@@ -77,9 +78,10 @@ public class ModuleIOSparkMAX implements ModuleIO {
       if (++resetCount >= 500) {
         resetCount = 0;
         turnEncoder.setPosition(
-            Rotation2d.fromDegrees(turnEncoderAbsolute.getAbsolutePosition())
-                .minus(RobotConstants.get().absoluteAngleOffset()[index])
-                .getRadians());
+            MathUtil.angleModulus(
+                Rotation2d.fromDegrees(turnEncoderAbsolute.getAbsolutePosition())
+                    .minus(RobotConstants.get().absoluteAngleOffset()[index])
+                    .getRadians()));
       }
     } else {
       resetCount = 0;

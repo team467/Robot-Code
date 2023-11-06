@@ -229,8 +229,9 @@ public class RobotContainer {
                     drive,
                     true,
                     new FeedForwardCharacterizationData("drive"),
-                    drive::runCharacterizationVolts,
-                    drive::getCharacterizationVelocity))
+                    drive::runDriveCharacterizationVolts,
+                    drive::getDriveCharacterizationVelocity,
+                    drive::getDriveCharacterizationAcceleration))
             .andThen(() -> configureButtonBindings()));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 

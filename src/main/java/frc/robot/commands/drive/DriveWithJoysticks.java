@@ -22,7 +22,7 @@ public class DriveWithJoysticks extends CommandBase {
   private final Supplier<Boolean> robotRelativeOverride;
 
   private static final double DEADBAND = 0.1;
-  private static final double TIME_TO_FULL_SPEED = 0.1;
+  private static final double TIME_TO_FULL_SPEED = 0.15;
   private final SlewRateLimiter leftXFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
   private final SlewRateLimiter leftYFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
   private final SlewRateLimiter rightXFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
