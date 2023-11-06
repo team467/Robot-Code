@@ -35,7 +35,9 @@ public class ModuleIOSparkMAX implements ModuleIO {
         Units.rotationsToRadians(1)
             * (RobotConstants.get().moduleWheelDiameter() / 2)
             * RobotConstants.get().moduleDriveGearRatio().getRotationsPerInput();
-    double rotsToRads = Units.rotationsToRadians(1);
+    double rotsToRads =
+        Units.rotationsToRadians(1)
+            * RobotConstants.get().moduleDriveGearRatio().getRotationsPerInput();
 
     driveEncoder.setPositionConversionFactor(rotsToMeters);
     turnEncoder.setPositionConversionFactor(rotsToRads);
