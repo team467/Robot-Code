@@ -13,8 +13,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.vision.VisionIO.VisionIOInputs;
 import frc.lib.utils.RobotOdometry;
@@ -41,7 +39,6 @@ public class Vision extends SubsystemBase {
   private final AprilTagFieldLayout layout;
 
   private boolean isEnabled = true;
-  private boolean isVisionUpdating = false;
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private final TunableNumber poseDifferenceThreshold =
@@ -79,14 +76,6 @@ public class Vision extends SubsystemBase {
     // retrieve a reference to the pose estimator singleton
     this.poseEstimator = RobotOdometry.getInstance().getPoseEstimator();
 
-    // add an indicator to the main Shuffleboard tab to indicate whether vision is updating in order
-    // to alert the drive team if it is not.
-    ShuffleboardTab tabMain = Shuffleboard.getTab("MAIN");
-    tabMain
-        .addBoolean("isVisionUpdating", () -> isVisionUpdating)
-        .withPosition(7, 2)
-        .withSize(1, 2);
-
     // load and log all the AprilTags in the field layout file
     layout = FieldConstants.aprilTags;
 
@@ -102,7 +91,7 @@ public class Vision extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    isVisionUpdating = false;
+    Logger.getInstance().recordOutput("Vision/IsUpdating", true);
     for (int i = 0; i < visionIOs.size(); i++) {
       visionIOs.get(i).updateInputs(inputs[i]);
       Logger.getInstance().processInputs("Vision" + i, inputs[i]);
@@ -134,7 +123,7 @@ public class Vision extends SubsystemBase {
                 robotPose.toPose2d(),
                 inputs[i].lastTimestamp,
                 getStandardDeviations(poseAndDistance.distanceToAprilTag));
-            isVisionUpdating = true;
+            Logger.getInstance().recordOutput("Vision/IsUpdating", true);
           }
 
           Logger.getInstance().recordOutput("Vision/RobotPose" + i, robotPose.toPose2d());
