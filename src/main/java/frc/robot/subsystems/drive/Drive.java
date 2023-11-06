@@ -176,8 +176,7 @@ public class Drive extends SubsystemBase {
       odometry.update(new Rotation2d(simGyro), measuredPositions);
     }
 
-    Logger.getInstance()
-        .recordOutput("Odometry", getPose());
+    Logger.getInstance().recordOutput("Odometry", getPose());
   }
 
   // Checks if the robot is upright within a certain threshold (checks if it will be considered
