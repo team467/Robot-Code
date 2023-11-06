@@ -3,6 +3,7 @@ package frc.robot.subsystems.drive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import frc.robot.RobotConstants;
 
 public class ModuleIOSim implements ModuleIO {
   private final FlywheelSim driveSim = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
@@ -11,6 +12,7 @@ public class ModuleIOSim implements ModuleIO {
   private double turnAbsolutePosition = Math.random() * 2.0 * Math.PI;
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
+  private final double radsToMeters = RobotConstants.get().moduleWheelDiameter() / 2;
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
@@ -28,8 +30,8 @@ public class ModuleIOSim implements ModuleIO {
       turnAbsolutePosition -= 2.0 * Math.PI;
     }
 
-    inputs.drivePositionRad += driveSim.getAngularVelocityRadPerSec() * 0.02;
-    inputs.driveVelocityRadPerSec = driveSim.getAngularVelocityRadPerSec();
+    inputs.drivePositionMeters += driveSim.getAngularVelocityRadPerSec() * radsToMeters * 0.02;
+    inputs.driveVelocityMetersPerSec = driveSim.getAngularVelocityRadPerSec() * radsToMeters;
     inputs.driveAppliedVolts = driveAppliedVolts;
     inputs.driveCurrentAmps = new double[] {Math.abs(driveSim.getCurrentDrawAmps())};
 

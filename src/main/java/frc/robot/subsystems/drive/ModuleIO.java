@@ -5,8 +5,8 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ModuleIO {
   @AutoLog
   class ModuleIOInputs {
-    public double drivePositionRad = 0.0;
-    public double driveVelocityRadPerSec = 0.0;
+    public double drivePositionMeters = 0.0;
+    public double driveVelocityMetersPerSec = 0.0;
     public double driveAppliedVolts = 0.0;
     public double[] driveCurrentAmps = new double[] {};
 
