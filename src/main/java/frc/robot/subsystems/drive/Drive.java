@@ -177,7 +177,7 @@ public class Drive extends SubsystemBase {
     }
 
     Logger.getInstance()
-        .recordOutput("Odometry", getPose()); // TODO: with new system, is this duplicate?
+        .recordOutput("Odometry", getPose());
   }
 
   // Checks if the robot is upright within a certain threshold (checks if it will be considered
