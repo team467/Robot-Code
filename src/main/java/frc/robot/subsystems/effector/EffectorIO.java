@@ -1,11 +1,11 @@
-package frc.robot.subsystems.intakerelease;
+package frc.robot.subsystems.effector;
 
-import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
+import frc.robot.subsystems.effector.Effector.Wants;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface IntakeReleaseIO {
+public interface EffectorIO {
   @AutoLog
-  class IntakeReleaseIOInputs {
+  class EffectorIOInputs {
     public double motorPosition = 0.0;
     public double motorVelocity = 0.0;
     public double motorAppliedVolts = 0.0;
@@ -16,7 +16,7 @@ public interface IntakeReleaseIO {
     public boolean wantsCube = false;
   }
 
-  default void updateInputs(IntakeReleaseIOInputs inputs, Wants wants) {}
+  default void updateInputs(EffectorIOInputs inputs, Wants wants) {}
 
   default void setVoltage(double volts) {}
 

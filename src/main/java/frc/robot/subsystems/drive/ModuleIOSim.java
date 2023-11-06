@@ -12,7 +12,7 @@ public class ModuleIOSim implements ModuleIO {
   private double turnAbsolutePosition = Math.random() * 2.0 * Math.PI;
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
-  private final double radsToMeters = 1 * (RobotConstants.get().moduleWheelDiameter() / 2);
+  private final double radsToMeters = RobotConstants.get().moduleWheelDiameter() / 2;
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
