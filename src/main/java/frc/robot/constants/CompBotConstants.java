@@ -59,12 +59,12 @@ public class CompBotConstants implements Constants {
 
   @Override
   public GearRatio moduleDriveGearRatio() {
-    return new GearRatio((50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0), 1); // SDS L2
+    return new GearRatio(6.75, 1); // SDS L2
   }
 
   @Override
   public GearRatio moduleTurnGearRatio() {
-    return new GearRatio(150.0 / 7.0, 1);
+    return new GearRatio(12.8, 1);
   }
 
   @Override
