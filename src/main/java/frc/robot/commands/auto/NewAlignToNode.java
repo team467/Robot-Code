@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Grids;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.intakerelease.IntakeRelease;
-import frc.robot.subsystems.intakerelease.IntakeRelease.Wants;
+import frc.robot.subsystems.effector.Effector;
+import frc.robot.subsystems.effector.Effector.Wants;
 import java.util.function.Supplier;
 
 public class NewAlignToNode extends CommandBase {
@@ -17,9 +17,9 @@ public class NewAlignToNode extends CommandBase {
   private Pose2d alignPose;
   private StraightDriveToPose alignCommand;
 
-  public NewAlignToNode(Drive drive, IntakeRelease intakeRelease) {
+  public NewAlignToNode(Drive drive, Effector effector) {
     this.drive = drive;
-    this.wants = intakeRelease::getWants;
+    this.wants = effector::getWants;
     addRequirements(drive);
   }
 

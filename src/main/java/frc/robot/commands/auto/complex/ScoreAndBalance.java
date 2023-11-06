@@ -11,7 +11,7 @@ import frc.robot.commands.auto.Score;
 import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.intakerelease.IntakeRelease;
+import frc.robot.subsystems.effector.Effector;
 
 public class ScoreAndBalance extends SequentialCommandGroup {
 
@@ -21,13 +21,13 @@ public class ScoreAndBalance extends SequentialCommandGroup {
       String location,
       Drive drive,
       Arm arm,
-      IntakeRelease intakeRelease) {
+      Effector effector) {
     int aprilTag = 7;
     addCommands(
         new Initialize(aprilTag, relativePosition, drive, arm),
-        new Score(gamePieceType, location, arm, intakeRelease),
+        new Score(gamePieceType, location, arm, effector),
         Commands.sequence(
-            new ArmHomeCMD(arm, intakeRelease::wantsCone).withTimeout(3.5),
+            new ArmHomeCMD(arm, effector::wantsCone).withTimeout(3.5),
             Commands.sequence(
                 new StraightDriveToPose(
                         0.0,
