@@ -1,12 +1,12 @@
-package frc.robot.subsystems.intakerelease;
+package frc.robot.subsystems.effector;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-public class IntakeRelease extends SubsystemBase {
+public class Effector extends SubsystemBase {
   private final Logger logger = Logger.getInstance();
-  private final IntakeReleaseIO intakeReleaseIO;
-  private final IntakeReleaseIOInputsAutoLogged inputs;
+  private final EffectorIO effectorIO;
+  private final EffectorIOInputsAutoLogged inputs;
 
   private enum State {
     DISABLED,
@@ -22,11 +22,11 @@ public class IntakeRelease extends SubsystemBase {
   private boolean hasCone = false;
   private boolean hasCube = false;
 
-  public IntakeRelease(IntakeReleaseIO intakeReleaseIO) {
+  public Effector(EffectorIO effectorIO) {
     super();
-    this.intakeReleaseIO = intakeReleaseIO;
-    inputs = new IntakeReleaseIOInputsAutoLogged();
-    this.intakeReleaseIO.updateInputs(inputs, Wants.CONE);
+    this.effectorIO = effectorIO;
+    inputs = new EffectorIOInputsAutoLogged();
+    this.effectorIO.updateInputs(inputs, Wants.CONE);
     state = State.STOP;
   }
 
@@ -58,18 +58,18 @@ public class IntakeRelease extends SubsystemBase {
 
   @Override
   public void periodic() {
-    intakeReleaseIO.updateInputs(inputs, wants);
-    logger.processInputs("IntakeRelease", inputs);
-    logger.recordOutput("IntakeRelease/State", state.toString());
+    effectorIO.updateInputs(inputs, wants);
+    logger.processInputs("Effector", inputs);
+    logger.recordOutput("Effector/State", state.toString());
 
     switch (state) {
-      case DISABLED -> intakeReleaseIO.setPercent(0);
-      case INTAKE -> intakeReleaseIO.setPercent(-1.0);
-      case RELEASE -> intakeReleaseIO.setPercent(0.6);
-      case HOLD_CUBE -> intakeReleaseIO.setPercent(inputs.cubeLimitSwitch ? -0.1 : -0.35);
-      case HOLD_CONE -> intakeReleaseIO.setPercent(-0.8);
-      case STOP -> intakeReleaseIO.setPercent(0);
-      default -> intakeReleaseIO.setPercent(0);
+      case DISABLED -> effectorIO.setPercent(0);
+      case INTAKE -> effectorIO.setPercent(-1.0);
+      case RELEASE -> effectorIO.setPercent(0.6);
+      case HOLD_CUBE -> effectorIO.setPercent(inputs.cubeLimitSwitch ? -0.1 : -0.35);
+      case HOLD_CONE -> effectorIO.setPercent(-0.8);
+      case STOP -> effectorIO.setPercent(0);
+      default -> effectorIO.setPercent(0);
     }
   }
 
