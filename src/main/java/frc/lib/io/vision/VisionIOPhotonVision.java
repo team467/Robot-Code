@@ -55,13 +55,5 @@ public class VisionIOPhotonVision implements VisionIO {
   public synchronized void updateInputs(VisionIOInputs inputs) {
     inputs.lastTimestamp = this.lastTimestamp;
     inputs.lastResult = this.lastResult;
-    inputs.cameraMatrix =
-        camera.getCameraMatrix().isPresent()
-            ? camera.getCameraMatrix().get().getData()
-            : new double[] {};
-    inputs.distCoeffs =
-        camera.getDistCoeffs().isPresent()
-            ? camera.getDistCoeffs().get().getData()
-            : new double[] {};
   }
 }
