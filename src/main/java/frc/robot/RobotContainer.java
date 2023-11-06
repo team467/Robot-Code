@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -21,8 +22,8 @@ import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUPigeon2;
-import frc.lib.io.newvision.VisionIO;
-import frc.lib.io.newvision.VisionIOAprilTag;
+import frc.lib.io.vision.Vision;
+import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.arm.ArmCalibrateCMD;
@@ -76,7 +77,10 @@ public class RobotContainer {
   private final Effector effector;
   private Led2023 led2023;
   private final Arm arm;
+  private Vision vision;
   private boolean isRobotOriented = true; // Workaround, change if needed
+
+  private DriverStation.Alliance lastAlliance = DriverStation.Alliance.Invalid;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -101,16 +105,17 @@ public class RobotContainer {
                 new Transform3d(
                     new Translation3d(2 * 0.01, -12 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
                     new Rotation3d(0, 0, -0.5 * Math.PI));
+            vision =
+                new Vision(
+                    List.of(new VisionIOPhotonVision("front"), new VisionIOPhotonVision("right")),
+                    List.of(front, right));
             drive =
                 new Drive(
                     new IMUPigeon2(17),
                     new ModuleIOSparkMAX(3, 4, 13, 0),
                     new ModuleIOSparkMAX(5, 6, 14, 1),
                     new ModuleIOSparkMAX(1, 2, 15, 2),
-                    new ModuleIOSparkMAX(7, 8, 16, 3),
-                    List.of(
-                        new VisionIOAprilTag("front", front, FieldConstants.aprilTags),
-                        new VisionIOAprilTag("right", right, FieldConstants.aprilTags)));
+                    new ModuleIOSparkMAX(7, 8, 16, 3));
             arm =
                 new Arm(
                     new ArmIOPhysical(
@@ -130,8 +135,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
-                    new ModuleIO() {},
-                    List.of(new VisionIO() {}));
+                    new ModuleIO() {});
             arm = new Arm(new ArmIO() {});
             effector = new Effector(new EffectorIO() {});
           }
@@ -142,8 +146,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
-                    new ModuleIO() {},
-                    List.of(new VisionIO() {}));
+                    new ModuleIO() {});
             arm = new Arm(new ArmIO() {});
             effector = new Effector(new EffectorIO() {});
           }
@@ -159,8 +162,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
-                new ModuleIOSim(),
-                List.of(new VisionIO() {}));
+                new ModuleIOSim());
         arm = new Arm(new ArmIO() {});
         effector = new Effector(new EffectorIO() {});
       }
@@ -174,8 +176,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {},
-                List.of(new VisionIO() {}));
+                new ModuleIO() {});
         arm = new Arm(new ArmIO() {});
         effector = new Effector(new EffectorIO() {});
       }
