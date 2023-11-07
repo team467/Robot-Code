@@ -95,7 +95,7 @@ public class Drive extends SubsystemBase {
   public void periodic() {
     // Update inputs for IOs
     gyroIO.updateInputs(gyroInputs);
-    Logger.getInstance().processInputs("Drive/Gyro", gyroInputs);
+    Logger.processInputs("Drive/Gyro", gyroInputs);
 
     for (var module : modules) {
       module.periodic();
@@ -109,8 +109,8 @@ public class Drive extends SubsystemBase {
       }
 
       // Clear setpoint logs
-      Logger.getInstance().recordOutput("SwerveStates/Setpoints", new double[] {});
-      Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
+      Logger.recordOutput("SwerveStates/Setpoints", new double[] {});
+      Logger.recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
     } else {
       switch (driveMode) {
         case DRIVE_CHARACTERIZATION -> {
@@ -120,8 +120,8 @@ public class Drive extends SubsystemBase {
           }
 
           // Clear setpoint logs
-          Logger.getInstance().recordOutput("SwerveStates/Setpoints", new double[] {});
-          Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
+          Logger.recordOutput("SwerveStates/Setpoints", new double[] {});
+          Logger.recordOutput("SwerveStates/SetpointsOptimized", new double[] {});
         }
         case NORMAL -> {
           Twist2d setpointTwist =
@@ -164,8 +164,8 @@ public class Drive extends SubsystemBase {
           }
 
           // Log setpoint states
-          Logger.getInstance().recordOutput("SwerveStates/Setpoints", setpointStates);
-          Logger.getInstance().recordOutput("SwerveStates/SetpointsOptimized", optimizedStates);
+          Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+          Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedStates);
         }
       }
     }
@@ -177,7 +177,7 @@ public class Drive extends SubsystemBase {
       prevSwerveModuleStates[i] = swerveModuleStates[i];
       swerveModuleStates[i] = modules[i].getState();
     }
-    Logger.getInstance().recordOutput("SwerveStates/Measured", measuredStates);
+    Logger.recordOutput("SwerveStates/Measured", measuredStates);
 
     // Update odometry
     SwerveModulePosition[] measuredPositions = new SwerveModulePosition[4];
@@ -193,7 +193,7 @@ public class Drive extends SubsystemBase {
       odometry.update(new Rotation2d(simGyro), measuredPositions);
     }
 
-    Logger.getInstance().recordOutput("Odometry", getPose());
+    Logger.recordOutput("Odometry", getPose());
   }
 
   // Checks if the robot is upright within a certain threshold (checks if it will be considered

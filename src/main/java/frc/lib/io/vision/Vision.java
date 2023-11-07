@@ -80,7 +80,7 @@ public class Vision extends SubsystemBase {
     layout = FieldConstants.aprilTags;
 
     for (AprilTag tag : layout.getTags()) {
-      Logger.getInstance().recordOutput("Vision/AprilTags/" + tag.ID, tag.pose);
+      Logger.recordOutput("Vision/AprilTags/" + tag.ID, tag.pose);
     }
   }
 
@@ -91,10 +91,10 @@ public class Vision extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    Logger.getInstance().recordOutput("Vision/IsUpdating", true);
+    Logger.recordOutput("Vision/IsUpdating", true);
     for (int i = 0; i < visionIOs.size(); i++) {
       visionIOs.get(i).updateInputs(inputs[i]);
-      Logger.getInstance().processInputs("Vision" + i, inputs[i]);
+      Logger.processInputs("Vision" + i, inputs[i]);
 
       // only process the vision data if the timestamp is newer than the last one
       if (lastTimestamps[i] < inputs[i].lastTimestamp) {
@@ -102,7 +102,7 @@ public class Vision extends SubsystemBase {
         RobotPoseFromAprilTag poseAndDistance = getRobotPoseOptimized(i);
         Pose3d robotPose = poseAndDistance.robotPose;
 
-        Logger.getInstance().recordOutput("Vision/ValidTarget", robotPose != null);
+        Logger.recordOutput("Vision/ValidTarget", robotPose != null);
         if (robotPose == null) return;
 
         // only update the pose estimator if the pose from the vision data is close to the estimated
@@ -123,11 +123,11 @@ public class Vision extends SubsystemBase {
                 robotPose.toPose2d(),
                 inputs[i].lastTimestamp,
                 getStandardDeviations(poseAndDistance.distanceToAprilTag));
-            Logger.getInstance().recordOutput("Vision/IsUpdating", true);
+            Logger.recordOutput("Vision/IsUpdating", true);
           }
 
-          Logger.getInstance().recordOutput("Vision/RobotPose" + i, robotPose.toPose2d());
-          Logger.getInstance().recordOutput("Vision/IsEnabled", isEnabled);
+          Logger.recordOutput("Vision/RobotPose" + i, robotPose.toPose2d());
+          Logger.recordOutput("Vision/IsEnabled", isEnabled);
         }
       }
     }
@@ -189,11 +189,11 @@ public class Vision extends SubsystemBase {
                   .getTranslation()
                   .getNorm()
               < poseDifferenceThreshold.get()) {
-        Logger.getInstance().recordOutput("Vision/posesInLine", true);
+        Logger.recordOutput("Vision/posesInLine", true);
         return true;
       }
     }
-    Logger.getInstance().recordOutput("Vision/posesInLine", false);
+    Logger.recordOutput("Vision/posesInLine", false);
     return false;
   }
 
@@ -231,8 +231,8 @@ public class Vision extends SubsystemBase {
     // terms of logging, we are assuming that a given VisionIO object won't see more than 2 tags at
     // once
     for (int i = 0; i < 2; i++) {
-      Logger.getInstance().recordOutput("Vision/TagPose" + index + "_" + i, new Pose2d());
-      Logger.getInstance().recordOutput("Vision/NVRobotPose" + index + "_" + i, new Pose2d());
+      Logger.recordOutput("Vision/TagPose" + index + "_" + i, new Pose2d());
+      Logger.recordOutput("Vision/NVRobotPose" + index + "_" + i, new Pose2d());
     }
 
     for (PhotonTrackedTarget target : inputs[index].lastResult.getTargets()) {
@@ -244,10 +244,9 @@ public class Vision extends SubsystemBase {
           Pose3d cameraPose = tagPose.transformBy(cameraToTarget.inverse());
           Pose3d robotPose = cameraPose.transformBy(camerasToRobots.get(index).inverse());
 
-          Logger.getInstance()
-              .recordOutput("Vision/TagPose" + index + "_" + targetCount, tagPose.toPose2d());
-          Logger.getInstance()
-              .recordOutput("Vision/NVRobotPose" + index + "_" + targetCount, robotPose.toPose2d());
+          Logger.recordOutput("Vision/TagPose" + index + "_" + targetCount, tagPose.toPose2d());
+          Logger.recordOutput(
+              "Vision/NVRobotPose" + index + "_" + targetCount, robotPose.toPose2d());
 
           double targetDistance =
               target.getBestCameraToTarget().getTranslation().toTranslation2d().getNorm();
@@ -284,8 +283,8 @@ public class Vision extends SubsystemBase {
     // terms of logging, we are assuming that a given VisionIO object won't see more than 2 tags at
     // once
     for (int i = 0; i < 2; i++) {
-      Logger.getInstance().recordOutput("Vision/TagPose" + index + "_" + i, new Pose2d());
-      Logger.getInstance().recordOutput("Vision/NVRobotPose" + index + "_" + i, new Pose2d());
+      Logger.recordOutput("Vision/TagPose" + index + "_" + i, new Pose2d());
+      Logger.recordOutput("Vision/NVRobotPose" + index + "_" + i, new Pose2d());
     }
 
     for (PhotonTrackedTarget target : inputs[index].lastResult.getTargets()) {
@@ -297,10 +296,9 @@ public class Vision extends SubsystemBase {
           Pose3d cameraPose = tagPose.transformBy(cameraToTarget.inverse());
           Pose3d robotPose = cameraPose.transformBy(camerasToRobots.get(index).inverse());
 
-          Logger.getInstance()
-              .recordOutput("Vision/TagPose" + index + "_" + targetCount, tagPose.toPose2d());
-          Logger.getInstance()
-              .recordOutput("Vision/NVRobotPose" + index + "_" + targetCount, robotPose.toPose2d());
+          Logger.recordOutput("Vision/TagPose" + index + "_" + targetCount, tagPose.toPose2d());
+          Logger.recordOutput(
+              "Vision/NVRobotPose" + index + "_" + targetCount, robotPose.toPose2d());
 
           double targetAmbiguity = target.getPoseAmbiguity();
 

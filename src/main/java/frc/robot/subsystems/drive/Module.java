@@ -38,7 +38,7 @@ public class Module {
   public void periodic() {
     this.lastTurnVelocity = inputs.turnVelocityRadPerSec;
     io.updateInputs(inputs);
-    Logger.getInstance().processInputs("Drive/Module" + index, inputs);
+    Logger.processInputs("Drive/Module" + index, inputs);
   }
 
   public SwerveModuleState runSetpoint(SwerveModuleState state, boolean isStationary) {

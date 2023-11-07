@@ -9,9 +9,6 @@ import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
-
-  private final Logger logger = Logger.getInstance();
-
   private final ArmIO armIO;
   private final ArmIOInputsAutoLogged armIOInputs = new ArmIOInputsAutoLogged();
 
@@ -166,16 +163,16 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     armIO.updateInputs(armIOInputs);
-    logger.processInputs("Arm", armIOInputs);
+    Logger.processInputs("Arm", armIOInputs);
 
     if (DriverStation.isDisabled()) {
       // Disable output while disabled
       stop();
       return;
     }
-    logger.recordOutput("Arm/Mode", mode.toString());
-    logger.recordOutput("Arm/CalibrateMode", calibrateMode.toString());
-    logger.recordOutput("Arm/IsCalibrated", isCalibrated);
+    Logger.recordOutput("Arm/Mode", mode.toString());
+    Logger.recordOutput("Arm/CalibrateMode", calibrateMode.toString());
+    Logger.recordOutput("Arm/IsCalibrated", isCalibrated);
 
     switch (mode) {
       case MANUAL -> {
@@ -187,8 +184,8 @@ public class Arm extends SubsystemBase {
           setExtendVoltage(manualExtendVolts);
         }
         setRotateVoltage(manualRotateVolts);
-        logger.recordOutput("Arm/ManualExtendVolts", manualRotateVolts);
-        logger.recordOutput("Arm/ManualRotateVolts", manualRotateVolts);
+        Logger.recordOutput("Arm/ManualExtendVolts", manualRotateVolts);
+        Logger.recordOutput("Arm/ManualRotateVolts", manualRotateVolts);
       }
       case AUTO -> autoPeriodic();
       case EXTEND_CHARACTERIZATION -> setExtendVoltage(characterizationVoltage);
@@ -206,7 +203,7 @@ public class Arm extends SubsystemBase {
       hold();
       return;
     }
-    logger.recordOutput("Arm/AutoMode", autoMode.toString());
+    Logger.recordOutput("Arm/AutoMode", autoMode.toString());
     switch (autoMode) {
       case RETRACT -> {
         if (autoRetractTimer.hasElapsed(1)
@@ -240,8 +237,8 @@ public class Arm extends SubsystemBase {
       }
     }
 
-    logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
-    logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
+    Logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
+    Logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
   }
 
   private void calibratePeriodic() {
@@ -391,7 +388,7 @@ public class Arm extends SubsystemBase {
 
   private double calculateExtendPidUnsafe(double targetPosition) {
     double pidValue = extendPidController.calculate(armIOInputs.extendPosition, targetPosition);
-    logger.recordOutput("Arm/ExtendFbOutput", pidValue);
+    Logger.recordOutput("Arm/ExtendFbOutput", pidValue);
     return pidValue;
   }
 
@@ -400,7 +397,7 @@ public class Arm extends SubsystemBase {
       return 0;
     }
     double pidValue = rotatePidController.calculate(armIOInputs.rotatePosition, targetPosition);
-    logger.recordOutput("Arm/RotateFbOutput", pidValue);
+    Logger.recordOutput("Arm/RotateFbOutput", pidValue);
     return pidValue;
   }
 
@@ -417,7 +414,7 @@ public class Arm extends SubsystemBase {
                 || (rotatePosition > SAFE_ROTATE_AT_PARTIAL_EXTENSION - ROTATE_TOLERANCE_METERS
                     && armIOInputs.extendPosition
                         < SAFE_EXTEND_AT_PARTIAL_EXTENSION - EXTEND_TOLERANCE_METERS));
-    logger.recordOutput("Arm/IsRotateSafe", isSafe);
+    Logger.recordOutput("Arm/IsRotateSafe", isSafe);
     return isSafe;
   }
 
@@ -428,7 +425,7 @@ public class Arm extends SubsystemBase {
                 || armIOInputs.rotatePosition > SAFE_ROTATE_AT_FULL_EXTENSION
                 || (armIOInputs.rotatePosition > SAFE_ROTATE_AT_PARTIAL_EXTENSION
                     && targetPosition < SAFE_EXTEND_AT_PARTIAL_EXTENSION));
-    logger.recordOutput("Arm/IsExtendSafe", isSafe);
+    Logger.recordOutput("Arm/IsExtendSafe", isSafe);
     return isSafe;
   }
 

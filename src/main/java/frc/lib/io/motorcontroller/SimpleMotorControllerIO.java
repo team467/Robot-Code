@@ -25,10 +25,10 @@ public interface SimpleMotorControllerIO {
     }
 
     public void fromLog(LogTable table) {
-      position = table.getDouble("Position", position);
-      velocity = table.getDouble("Velocity", velocity);
-      appliedVolts = table.getDouble("AppliedVolts", appliedVolts);
-      current = table.getDoubleArray("Current", current);
+      position = table.get("Position", position);
+      velocity = table.get("Velocity", velocity);
+      appliedVolts = table.get("AppliedVolts", appliedVolts);
+      current = table.get("Current", current);
     }
   }
 

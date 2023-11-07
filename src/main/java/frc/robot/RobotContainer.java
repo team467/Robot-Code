@@ -299,14 +299,10 @@ public class RobotContainer {
     operatorController.a().onTrue(new ArmScoreLowNodeCMD(arm));
     operatorController.b().onTrue(new ArmScoreMidNodeCMD(arm, effector::wantsCone));
     operatorController.y().onTrue(new ArmScoreHighNodeCMD(arm, effector::wantsCone));
-    Logger.getInstance()
-        .recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
-    Logger.getInstance()
-        .recordOutput("CustomController/MiddleButton", operatorController.b().getAsBoolean());
-    Logger.getInstance()
-        .recordOutput("CustomController/HighButton", operatorController.y().getAsBoolean());
-    Logger.getInstance()
-        .recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
+    Logger.recordOutput("CustomController/LowButton", operatorController.a().getAsBoolean());
+    Logger.recordOutput("CustomController/MiddleButton", operatorController.b().getAsBoolean());
+    Logger.recordOutput("CustomController/HighButton", operatorController.y().getAsBoolean());
+    Logger.recordOutput("CustomController/HomeButton", operatorController.x().getAsBoolean());
 
     // Home will be for movement
     operatorController.x().onTrue(new ArmHomeCMD(arm, effector::wantsCone));
@@ -323,12 +319,10 @@ public class RobotContainer {
     operatorController.rightStick().onTrue(new ArmStopCMD(arm));
     operatorController.leftBumper().onTrue(new ArmShelfCMD(arm, effector));
     operatorController.rightBumper().onTrue(new ArmFloorCMD(arm, effector));
-    Logger.getInstance()
-        .recordOutput(
-            "CustomController/FloorButton", operatorController.rightBumper().getAsBoolean());
-    Logger.getInstance()
-        .recordOutput(
-            "CustomController/ShelfButton", operatorController.leftBumper().getAsBoolean());
+    Logger.recordOutput(
+        "CustomController/FloorButton", operatorController.rightBumper().getAsBoolean());
+    Logger.recordOutput(
+        "CustomController/ShelfButton", operatorController.leftBumper().getAsBoolean());
 
     // Auto grid align
     driverController.rightTrigger().whileTrue(new NewAlignToNode(drive, effector));
@@ -350,7 +344,6 @@ public class RobotContainer {
     } else {
       new WantConeCMD(effector).schedule();
     }
-    Logger.getInstance()
-        .recordOutput("CustomController/WantSwitch", operatorController.back().getAsBoolean());
+    Logger.recordOutput("CustomController/WantSwitch", operatorController.back().getAsBoolean());
   }
 }

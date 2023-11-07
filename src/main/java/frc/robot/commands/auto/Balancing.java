@@ -27,7 +27,7 @@ public class Balancing extends Command {
   public void execute() {
     double[] gravVec = drive.getGravVec();
     //    if (Math.abs(nextZ) < 0.98) {
-    Logger.getInstance().recordOutput("BalancingMag", Math.hypot(gravVec[0], gravVec[1]));
+    Logger.recordOutput("BalancingMag", Math.hypot(gravVec[0], gravVec[1]));
     if (Math.abs(Math.hypot(gravVec[0], gravVec[1])) > 0.1) {
       timer.reset();
       drive.runVelocity(new ChassisSpeeds(1.5 * gravVec[0], 1.5 * gravVec[1], 0.0));
