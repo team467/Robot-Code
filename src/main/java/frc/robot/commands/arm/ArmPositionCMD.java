@@ -1,11 +1,11 @@
 package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmPositionConstants.ArmPosition;
 import java.util.function.Supplier;
 
-public class ArmPositionCMD extends CommandBase {
+public class ArmPositionCMD extends Command {
   protected final Arm arm;
   protected final Supplier<ArmPosition> armPositionSupplier;
 

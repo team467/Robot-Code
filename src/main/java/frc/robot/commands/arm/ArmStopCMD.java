@@ -1,9 +1,9 @@
 package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.arm.Arm;
 
-public class ArmStopCMD extends CommandBase {
+public class ArmStopCMD extends Command {
   private final Arm arm;
 
   public ArmStopCMD(Arm arm) {
