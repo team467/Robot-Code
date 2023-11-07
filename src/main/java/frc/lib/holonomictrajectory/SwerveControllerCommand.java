@@ -99,13 +99,12 @@ public class SwerveControllerCommand extends Command {
         controller.calculate(pose.get(), driveState, holonomicRotationState);
     output.accept(nextDriveState);
 
-    Logger.getInstance()
-        .recordOutput(
-            "Odometry/ProfileSetpoint",
-            new Pose2d(
-                driveState.poseMeters.getX(),
-                driveState.poseMeters.getY(),
-                holonomicRotationState.position));
+    Logger.recordOutput(
+        "Odometry/ProfileSetpoint",
+        new Pose2d(
+            driveState.poseMeters.getX(),
+            driveState.poseMeters.getY(),
+            holonomicRotationState.position));
   }
 
   // Called once the command ends or is interrupted.

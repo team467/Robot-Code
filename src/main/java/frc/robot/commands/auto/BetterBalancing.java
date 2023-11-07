@@ -51,10 +51,9 @@ public class BetterBalancing extends Command {
     }
 
     // Log data
-    Logger.getInstance().recordOutput("AutoBalance/AngleDegrees", angleDegrees);
-    Logger.getInstance()
-        .recordOutput("AutoBalance/AngleVelocityDegreesPerSec", angleVelocityDegreesPerSec);
-    Logger.getInstance().recordOutput("AutoBalance/Stopped", shouldStop);
+    Logger.recordOutput("AutoBalance/AngleDegrees", angleDegrees);
+    Logger.recordOutput("AutoBalance/AngleVelocityDegreesPerSec", angleVelocityDegreesPerSec);
+    Logger.recordOutput("AutoBalance/Stopped", shouldStop);
   }
 
   @Override

@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class Effector extends SubsystemBase {
-  private final Logger logger = Logger.getInstance();
   private final EffectorIO effectorIO;
   private final EffectorIOInputsAutoLogged inputs;
 
@@ -59,8 +58,8 @@ public class Effector extends SubsystemBase {
   @Override
   public void periodic() {
     effectorIO.updateInputs(inputs, wants);
-    logger.processInputs("Effector", inputs);
-    logger.recordOutput("Effector/State", state.toString());
+    Logger.processInputs("Effector", inputs);
+    Logger.recordOutput("Effector/State", state.toString());
 
     switch (state) {
       case DISABLED -> effectorIO.setPercent(0);
