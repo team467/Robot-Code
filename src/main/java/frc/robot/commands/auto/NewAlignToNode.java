@@ -3,7 +3,7 @@ package frc.robot.commands.auto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Grids;
 import frc.robot.subsystems.drive.Drive;
@@ -11,7 +11,7 @@ import frc.robot.subsystems.effector.Effector;
 import frc.robot.subsystems.effector.Effector.Wants;
 import java.util.function.Supplier;
 
-public class NewAlignToNode extends CommandBase {
+public class NewAlignToNode extends Command {
   private final Drive drive;
   private final Supplier<Wants> wants;
   private Pose2d alignPose;

@@ -1,9 +1,9 @@
 package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.arm.Arm;
 
-public class ArmRetractCMD extends CommandBase {
+public class ArmRetractCMD extends Command {
   private Arm arm;
 
   public ArmRetractCMD(Arm arm) {

@@ -6,7 +6,7 @@ import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGeneratio
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.holonomictrajectory.CustomTrajectoryGenerator;
 import frc.lib.holonomictrajectory.SwerveControllerCommand;
 import frc.lib.holonomictrajectory.Waypoint;
@@ -14,7 +14,7 @@ import frc.robot.RobotConstants;
 import frc.robot.subsystems.drive.Drive;
 import java.util.List;
 
-public class GoToTrajectory extends CommandBase {
+public class GoToTrajectory extends Command {
 
   private final SwerveControllerCommand command;
 

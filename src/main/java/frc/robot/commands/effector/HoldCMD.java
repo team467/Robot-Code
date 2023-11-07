@@ -1,10 +1,10 @@
 package frc.robot.commands.effector;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.effector.Effector;
 
-public class HoldCMD extends CommandBase {
+public class HoldCMD extends Command {
   private final Effector effector;
   private Timer timer = new Timer();
 

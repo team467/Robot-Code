@@ -9,12 +9,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.utils.GeomUtils;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
-public class StraightDriveToPose extends CommandBase {
+public class StraightDriveToPose extends Command {
   private final Drive drive;
   private final Supplier<Pose2d> poseSupplier;
   //  private final ProfiledPIDController driveController =

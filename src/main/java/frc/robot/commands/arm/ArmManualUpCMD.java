@@ -1,9 +1,9 @@
 package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.arm.Arm;
 
-public class ArmManualUpCMD extends CommandBase {
+public class ArmManualUpCMD extends Command {
   private final Arm arm;
 
   public ArmManualUpCMD(Arm arm) {

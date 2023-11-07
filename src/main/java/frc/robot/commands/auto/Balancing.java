@@ -2,11 +2,11 @@ package frc.robot.commands.auto;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import org.littletonrobotics.junction.Logger;
 
-public class Balancing extends CommandBase {
+public class Balancing extends Command {
   private Drive drive;
   private Timer timer = new Timer();
 

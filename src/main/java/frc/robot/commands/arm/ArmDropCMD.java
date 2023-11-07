@@ -1,7 +1,7 @@
 package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.arm.Arm;
@@ -16,7 +16,7 @@ public class ArmDropCMD extends SequentialCommandGroup {
         new WaitCommand(0.5).unless(() -> !hasDropped));
   }
 
-  private class InternalArmDropCMD extends CommandBase {
+  private class InternalArmDropCMD extends Command {
     private static final double ROTATE_DROP_METERS = 0.025;
     private Arm arm;
     private Supplier<Boolean> haveCone;
