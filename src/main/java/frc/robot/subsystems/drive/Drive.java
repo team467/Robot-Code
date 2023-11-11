@@ -1,5 +1,11 @@
 package frc.robot.subsystems.drive;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.PathPlannerLogging;
+import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -13,6 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUIOInputsAutoLogged;
+import frc.lib.utils.LocalADStarAK;
 import frc.lib.utils.RobotOdometry;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
@@ -89,6 +96,28 @@ public class Drive extends SubsystemBase {
           modulePositions,
           new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
     }
+
+    Pathfinding.setPathfinder(new LocalADStarAK());
+    AutoBuilder.configureHolonomic(
+        this::getPose,
+        this::setPose,
+        () -> kinematics.toChassisSpeeds(getModuleStates()),
+        this::runVelocity,
+        new HolonomicPathFollowerConfig(
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+            RobotConstants.get().maxLinearSpeed(),
+            RobotConstants.get().moduleTranslations()[0].getNorm(),
+            new ReplanningConfig()),
+        this);
+    PathPlannerLogging.setLogActivePathCallback(
+        (activePath) ->
+            Logger.recordOutput(
+                "PP/Trajectory", activePath.toArray(new Pose2d[activePath.size()])));
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (targetPose) -> {
+          Logger.recordOutput("PP/TrajectorySetpoint", targetPose);
+        });
   }
 
   @Override
@@ -293,6 +322,14 @@ public class Drive extends SubsystemBase {
             Math.pow((speeds.vxMetersPerSecond - prevSpeeds.vxMetersPerSecond), 2)
                 + Math.pow((speeds.vyMetersPerSecond - prevSpeeds.vyMetersPerSecond), 2))
         / 0.02;
+  }
+
+  private SwerveModuleState[] getModuleStates() {
+    SwerveModuleState[] states = new SwerveModuleState[4];
+    for (int i = 0; i < 4; i++) {
+      states[i] = modules[i].getState();
+    }
+    return states;
   }
 
   private enum DriveMode {
