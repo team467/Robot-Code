@@ -71,6 +71,10 @@ public class Module {
     io.setDriveVoltage(0);
   }
 
+  public double getDriveVelocity() {
+    return inputs.driveVelocityMetersPerSec;
+  }
+
   public double getTurnVelocity() {
     return inputs.turnVelocityRadPerSec;
   }
