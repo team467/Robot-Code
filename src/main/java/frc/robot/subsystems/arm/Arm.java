@@ -39,20 +39,26 @@ public class Arm extends SubsystemBase {
 
   @AutoLogOutput(key = "Arm/Mode")
   private ArmMode mode = ArmMode.MANUAL;
+
   @AutoLogOutput(key = "Arm/AutoMode")
   private AutoMode autoMode = AutoMode.RETRACT;
+
   @AutoLogOutput(key = "Arm/CalibrateMode")
   private CalibrateMode calibrateMode = CalibrateMode.RETRACT_ARM;
 
   private Kickback kickback;
 
   private double characterizationVoltage = 0.0;
+
   @AutoLogOutput(key = "Arm/ExtendSetpoint")
   private double extendSetpoint = 0.0;
+
   @AutoLogOutput(key = "Arm/RotateSetpoint")
   private double rotateSetpoint = 0.0;
+
   @AutoLogOutput(key = "Arm/IsCalibrated")
   private boolean isCalibrated = false;
+
   private double calibrateRotateOrigin = 0;
 
   private Timer autoRetractTimer = new Timer();
@@ -71,10 +77,13 @@ public class Arm extends SubsystemBase {
   private static final double ROTATE_RAISE_METERS = 0.025;
 
   private double holdPosition;
+
   @AutoLogOutput(key = "Arm/ManualExtendVolts")
   private double manualExtendVolts = 0.0;
+
   @AutoLogOutput(key = "Arm/ManualRotateVolts")
   private double manualRotateVolts = 0.0;
+
   private PIDController extendPidController = new PIDController(60, 0, 0);
   private PIDController rotatePidController = new PIDController(800, 0, 0);
 
