@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
@@ -36,15 +37,21 @@ public class Arm extends SubsystemBase {
     EXTEND
   }
 
+  @AutoLogOutput(key = "Arm/Mode")
   private ArmMode mode = ArmMode.MANUAL;
+  @AutoLogOutput(key = "Arm/AutoMode")
   private AutoMode autoMode = AutoMode.RETRACT;
+  @AutoLogOutput(key = "Arm/CalibrateMode")
   private CalibrateMode calibrateMode = CalibrateMode.RETRACT_ARM;
 
   private Kickback kickback;
 
   private double characterizationVoltage = 0.0;
+  @AutoLogOutput(key = "Arm/ExtendSetpoint")
   private double extendSetpoint = 0.0;
+  @AutoLogOutput(key = "Arm/RotateSetpoint")
   private double rotateSetpoint = 0.0;
+  @AutoLogOutput(key = "Arm/IsCalibrated")
   private boolean isCalibrated = false;
   private double calibrateRotateOrigin = 0;
 
@@ -64,7 +71,9 @@ public class Arm extends SubsystemBase {
   private static final double ROTATE_RAISE_METERS = 0.025;
 
   private double holdPosition;
+  @AutoLogOutput(key = "Arm/ManualExtendVolts")
   private double manualExtendVolts = 0.0;
+  @AutoLogOutput(key = "Arm/ManualRotateVolts")
   private double manualRotateVolts = 0.0;
   private PIDController extendPidController = new PIDController(60, 0, 0);
   private PIDController rotatePidController = new PIDController(800, 0, 0);
@@ -170,9 +179,6 @@ public class Arm extends SubsystemBase {
       stop();
       return;
     }
-    Logger.recordOutput("Arm/Mode", mode.toString());
-    Logger.recordOutput("Arm/CalibrateMode", calibrateMode.toString());
-    Logger.recordOutput("Arm/IsCalibrated", isCalibrated);
 
     switch (mode) {
       case MANUAL -> {
@@ -184,8 +190,6 @@ public class Arm extends SubsystemBase {
           setExtendVoltage(manualExtendVolts);
         }
         setRotateVoltage(manualRotateVolts);
-        Logger.recordOutput("Arm/ManualExtendVolts", manualRotateVolts);
-        Logger.recordOutput("Arm/ManualRotateVolts", manualRotateVolts);
       }
       case AUTO -> autoPeriodic();
       case EXTEND_CHARACTERIZATION -> setExtendVoltage(characterizationVoltage);
@@ -203,7 +207,6 @@ public class Arm extends SubsystemBase {
       hold();
       return;
     }
-    Logger.recordOutput("Arm/AutoMode", autoMode.toString());
     switch (autoMode) {
       case RETRACT -> {
         if (autoRetractTimer.hasElapsed(1)
@@ -236,9 +239,6 @@ public class Arm extends SubsystemBase {
         setExtendVoltage(extendFbOutput);
       }
     }
-
-    Logger.recordOutput("Arm/ExtendSetpoint", extendSetpoint);
-    Logger.recordOutput("Arm/RotateSetpoint", rotateSetpoint);
   }
 
   private void calibratePeriodic() {
