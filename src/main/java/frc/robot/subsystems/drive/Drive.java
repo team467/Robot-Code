@@ -15,6 +15,7 @@ import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUIOInputsAutoLogged;
 import frc.lib.utils.RobotOdometry;
 import frc.robot.RobotConstants;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
@@ -192,8 +193,6 @@ public class Drive extends SubsystemBase {
       simGyro += kinematics.toChassisSpeeds(measuredStates).omegaRadiansPerSecond * 0.02;
       odometry.update(new Rotation2d(simGyro), measuredPositions);
     }
-
-    Logger.recordOutput("Odometry", getPose());
   }
 
   // Checks if the robot is upright within a certain threshold (checks if it will be considered
@@ -235,6 +234,7 @@ public class Drive extends SubsystemBase {
     return gyroInputs.gravVector;
   }
 
+  @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return odometry.getEstimatedPosition();
   }
