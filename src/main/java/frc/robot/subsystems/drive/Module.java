@@ -1,12 +1,11 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -19,10 +18,7 @@ public class Module {
       RobotConstants.get().moduleDriveFF().getFeedforward();
   private final SimpleMotorFeedforward turnFF =
       RobotConstants.get().moduleTurnFF().getFeedforward();
-  private final ProfiledPIDController turnFB =
-      RobotConstants.get()
-          .moduleTurnFB()
-          .getProfiledPIDController(new TrapezoidProfile.Constraints(550.6, 7585));
+  private final PIDController turnFB = RobotConstants.get().moduleTurnFB().getPIDController();
 
   private double lastTurnVelocity = 0.0;
 
@@ -31,8 +27,6 @@ public class Module {
     this.index = index;
 
     turnFB.enableContinuousInput(-Math.PI, Math.PI);
-    this.io.updateInputs(this.inputs);
-    turnFB.reset(this.inputs.turnPositionAbsoluteRad);
   }
 
   public void periodic() {
@@ -48,8 +42,7 @@ public class Module {
     io.setTurnVoltage(
         isStationary
             ? 0.0
-            : turnFB.calculate(getAngle().getRadians(), optimizedState.angle.getRadians())
-                + turnFF.calculate(turnFB.getSetpoint().velocity));
+            : turnFB.calculate(getAngle().getRadians(), optimizedState.angle.getRadians()));
 
     // Update velocity based on turn error
     optimizedState.speedMetersPerSecond *= Math.cos(turnFB.getPositionError());
@@ -60,9 +53,7 @@ public class Module {
   }
 
   public void runDriveCharacterization(double volts) {
-    io.setTurnVoltage(
-        turnFB.calculate(getAngle().getRadians(), 0.0)
-            + turnFB.calculate(turnFB.getSetpoint().velocity));
+    io.setTurnVoltage(turnFB.calculate(getAngle().getRadians(), 0.0));
     io.setDriveVoltage(volts);
   }
 
