@@ -9,7 +9,6 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.RobotConstants;
 
 public class ModuleIOSparkMAX implements ModuleIO {
@@ -31,7 +30,6 @@ public class ModuleIOSparkMAX implements ModuleIO {
     turnEncoder = turnMotor.getEncoder();
     turnEncoderAbsolute = new WPI_CANCoder(turnAbsEncoderId);
 
-    // Convert rotations to meters
     double rotsToMeters =
         Units.rotationsToRadians(1)
             * (RobotConstants.get().moduleWheelDiameter() / 2)
@@ -69,7 +67,7 @@ public class ModuleIOSparkMAX implements ModuleIO {
   public void updateInputs(ModuleIOInputs inputs) {
     inputs.driveVelocityMetersPerSec = driveEncoder.getVelocity();
     inputs.drivePositionMeters = driveEncoder.getPosition();
-    inputs.driveAppliedVolts = driveMotor.getAppliedOutput() * RobotController.getBatteryVoltage();
+    inputs.driveAppliedVolts = driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
     inputs.driveCurrentAmps = new double[] {driveMotor.getOutputCurrent()};
     inputs.turnVelocityRadPerSec = turnEncoder.getVelocity();
 
@@ -86,13 +84,12 @@ public class ModuleIOSparkMAX implements ModuleIO {
     } else {
       resetCount = 0;
     }
-    inputs.turnPositionRad = turnEncoder.getPosition();
+    inputs.turnPosition = new Rotation2d(turnEncoder.getPosition());
 
-    inputs.turnPositionAbsoluteRad =
+    inputs.turnAbsolutePosition =
         Rotation2d.fromDegrees(turnEncoderAbsolute.getAbsolutePosition())
-            .minus(RobotConstants.get().absoluteAngleOffset()[index])
-            .getRadians();
-    inputs.turnAppliedVolts = turnMotor.getAppliedOutput() * RobotController.getBatteryVoltage();
+            .minus(RobotConstants.get().absoluteAngleOffset()[index]);
+    inputs.turnAppliedVolts = turnMotor.getAppliedOutput() * turnMotor.getBusVoltage();
     inputs.turnCurrentAmps = new double[] {turnMotor.getOutputCurrent()};
   }
 

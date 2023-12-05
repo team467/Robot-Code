@@ -1,43 +1,37 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.RobotConstants;
 
 public class ModuleIOSim implements ModuleIO {
-  private final FlywheelSim driveSim = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
-  private final FlywheelSim turnSim = new FlywheelSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004096955);
-  private double turnRelativePosition = 0.0;
-  private double turnAbsolutePosition = Math.random() * 2.0 * Math.PI;
+  private static final double LOOP_PERIOD_SECS = 0.02;
+  private final double RADS_TO_METERS = RobotConstants.get().moduleWheelDiameter() / 2;
+
+  private DCMotorSim driveSim = new DCMotorSim(DCMotor.getNEO(1), 6.75, 0.025);
+  private DCMotorSim turnSim = new DCMotorSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004);
+
+  private final Rotation2d turnAbsoluteInitPosition = new Rotation2d(Math.random() * 2.0 * Math.PI);
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
-  private final double radsToMeters = RobotConstants.get().moduleWheelDiameter() / 2;
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-    driveSim.update(0.02);
-    turnSim.update(0.02);
+    driveSim.update(LOOP_PERIOD_SECS);
+    turnSim.update(LOOP_PERIOD_SECS);
 
-    double angleDiff = turnSim.getAngularVelocityRadPerSec() * 0.02;
-
-    turnRelativePosition += angleDiff;
-    turnAbsolutePosition += angleDiff;
-    while (turnAbsolutePosition < 0) {
-      turnAbsolutePosition += 2.0 * Math.PI;
-    }
-    while (turnAbsolutePosition > 2.0 * Math.PI) {
-      turnAbsolutePosition -= 2.0 * Math.PI;
-    }
-
-    inputs.drivePositionMeters += driveSim.getAngularVelocityRadPerSec() * radsToMeters * 0.02;
-    inputs.driveVelocityMetersPerSec = driveSim.getAngularVelocityRadPerSec() * radsToMeters;
+    inputs.drivePositionMeters = driveSim.getAngularPositionRad() * RADS_TO_METERS;
+    inputs.driveVelocityMetersPerSec = driveSim.getAngularVelocityRadPerSec() * RADS_TO_METERS;
     inputs.driveAppliedVolts = driveAppliedVolts;
     inputs.driveCurrentAmps = new double[] {Math.abs(driveSim.getCurrentDrawAmps())};
 
-    inputs.turnPositionAbsoluteRad = turnAbsolutePosition;
-    inputs.turnPositionRad = turnRelativePosition;
+    inputs.turnAbsolutePosition =
+        new Rotation2d(turnSim.getAngularPositionRad()).plus(turnAbsoluteInitPosition);
+    inputs.turnPosition = new Rotation2d(turnSim.getAngularPositionRad());
     inputs.turnVelocityRadPerSec = turnSim.getAngularVelocityRadPerSec();
+    inputs.turnAppliedVolts = turnAppliedVolts;
     inputs.turnCurrentAmps = new double[] {Math.abs(turnSim.getCurrentDrawAmps())};
   }
 
@@ -52,10 +46,4 @@ public class ModuleIOSim implements ModuleIO {
     turnAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
     turnSim.setInputVoltage(turnAppliedVolts);
   }
-
-  @Override
-  public void setDriveBrakeMode(boolean brake) {}
-
-  @Override
-  public void setTurnBrakeMode(boolean brake) {}
 }
