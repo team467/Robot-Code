@@ -9,8 +9,6 @@ import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
-  private static final double WHEEL_RADIUS = RobotConstants.get().moduleWheelDiameter() / 2;
-
   private final ModuleIO io;
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
