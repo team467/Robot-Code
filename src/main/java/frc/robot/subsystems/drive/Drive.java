@@ -277,8 +277,11 @@ public class Drive extends SubsystemBase {
   }
 
   public double getDriveCharacterizationVelocity() {
-    ChassisSpeeds speeds = kinematics.toChassisSpeeds(swerveModuleStates);
-    return Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));
+    double driveVelocityAverage = 0.0;
+    for (var module : modules) {
+      driveVelocityAverage += module.getDriveVelocity();
+    }
+    return driveVelocityAverage / 4.0;
   }
 
   /**

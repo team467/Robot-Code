@@ -68,7 +68,7 @@ public class SimBotConstants implements Constants {
 
   @Override
   public SimpleFeedforwardConstant moduleDriveFF() {
-    return new SimpleFeedforwardConstant(0.116970, 0.133240);
+    return new SimpleFeedforwardConstant(0.15343, 5.27611);
   }
 
   @Override

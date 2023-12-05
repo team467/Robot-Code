@@ -3,6 +3,7 @@ package frc.lib.characterization;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.lib.utils.PolynomialRegression;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -28,6 +29,8 @@ public class FeedForwardCharacterization extends Command {
   private final Supplier<Double> accelerationSupplierPrimary;
   private final Supplier<Double> accelerationSupplierSecondary;
 
+  private final boolean hasAcceleration;
+
   private final Timer timer = new Timer();
 
   /** Creates a new FeedForwardCharacterization for a drive. */
@@ -52,6 +55,30 @@ public class FeedForwardCharacterization extends Command {
     this.velocitySupplierSecondary = rightVelocitySupplier;
     this.accelerationSupplierPrimary = leftAccelerationSupplier;
     this.accelerationSupplierSecondary = rightAccelerationSupplier;
+    hasAcceleration = true;
+  }
+
+  /** Creates a new FeedForwardCharacterization for a drive. */
+  public FeedForwardCharacterization(
+      Subsystem drive,
+      boolean forwards,
+      FeedForwardCharacterizationData leftData,
+      FeedForwardCharacterizationData rightData,
+      BiConsumer<Double, Double> voltageConsumer,
+      Supplier<Double> leftVelocitySupplier,
+      Supplier<Double> rightVelocitySupplier) {
+    addRequirements(drive);
+    this.forwards = forwards;
+    this.isDrive = true;
+    this.dataPrimary = leftData;
+    this.dataSecondary = rightData;
+    this.voltageConsumerSimple = null;
+    this.voltageConsumerDrive = voltageConsumer;
+    this.velocitySupplierPrimary = leftVelocitySupplier;
+    this.velocitySupplierSecondary = rightVelocitySupplier;
+    this.accelerationSupplierPrimary = null;
+    this.accelerationSupplierSecondary = null;
+    hasAcceleration = false;
   }
 
   /** Creates a new FeedForwardCharacterization for a simple subsystem. */
@@ -73,6 +100,28 @@ public class FeedForwardCharacterization extends Command {
     this.velocitySupplierSecondary = null;
     this.accelerationSupplierPrimary = accelerationSupplier;
     this.accelerationSupplierSecondary = null;
+    hasAcceleration = true;
+  }
+
+  /** Creates a new FeedForwardCharacterization for a simple subsystem. */
+  public FeedForwardCharacterization(
+      Subsystem subsystem,
+      boolean forwards,
+      FeedForwardCharacterizationData data,
+      Consumer<Double> voltageConsumer,
+      Supplier<Double> velocitySupplier) {
+    addRequirements(subsystem);
+    this.forwards = forwards;
+    this.isDrive = false;
+    this.dataPrimary = data;
+    this.dataSecondary = null;
+    this.voltageConsumerSimple = voltageConsumer;
+    this.voltageConsumerDrive = null;
+    this.velocitySupplierPrimary = velocitySupplier;
+    this.velocitySupplierSecondary = null;
+    this.accelerationSupplierPrimary = null;
+    this.accelerationSupplierSecondary = null;
+    hasAcceleration = false;
   }
 
   // Called when the command is initially scheduled.
@@ -99,10 +148,15 @@ public class FeedForwardCharacterization extends Command {
       } else {
         voltageConsumerSimple.accept(voltage);
       }
-      dataPrimary.add(accelerationSupplierPrimary.get(), velocitySupplierPrimary.get(), voltage);
+      dataPrimary.add(
+          hasAcceleration ? accelerationSupplierPrimary.get() : 0,
+          velocitySupplierPrimary.get(),
+          voltage);
       if (isDrive) {
         dataSecondary.add(
-            accelerationSupplierSecondary.get(), velocitySupplierSecondary.get(), voltage);
+            hasAcceleration ? accelerationSupplierSecondary.get() : 0,
+            velocitySupplierSecondary.get(),
+            voltage);
       }
     }
   }
@@ -116,9 +170,17 @@ public class FeedForwardCharacterization extends Command {
       voltageConsumerSimple.accept(0.0);
     }
     timer.stop();
-    dataPrimary.print();
+    if (hasAcceleration) {
+      dataPrimary.printMSE();
+    } else {
+      dataPrimary.printR2();
+    }
     if (isDrive) {
-      dataSecondary.print();
+      if (hasAcceleration) {
+        dataPrimary.printMSE();
+      } else {
+        dataPrimary.printR2();
+      }
     }
   }
 
@@ -148,7 +210,25 @@ public class FeedForwardCharacterization extends Command {
       }
     }
 
-    public void print() {
+    public void printR2() {
+      if (velocityData.isEmpty() || voltageData.isEmpty()) {
+        return;
+      }
+
+      PolynomialRegression regression =
+          new PolynomialRegression(
+              velocityData.stream().mapToDouble(Double::doubleValue).toArray(),
+              voltageData.stream().mapToDouble(Double::doubleValue).toArray(),
+              1);
+
+      System.out.println("FF Characterization Results (" + name + "):");
+      System.out.println("\tCount=" + Integer.toString(velocityData.size()) + "");
+      System.out.println(String.format("\tR2=%.5f", regression.R2()));
+      System.out.println(String.format("\tkS=%.5f", regression.beta(0)));
+      System.out.println(String.format("\tkV=%.5f", regression.beta(1)));
+    }
+
+    public void printMSE() {
 
       /*
        * We would prefer to use wpilib Matrix class, due to its dimensional safety, but it doesn't
@@ -212,10 +292,10 @@ public class FeedForwardCharacterization extends Command {
 
       System.out.println("FF Characterization Results (" + name + "):");
       System.out.println("\tCount=" + velocityData.size() + "");
-      System.out.println(String.format("\tMSE (V^2)=%.5f", meanSquaredError));
-      System.out.println(String.format("\tkS (V)=%.5f", xMatrix.get(2, 0)));
-      System.out.println(String.format("\tkV (V/(m/s) or V/(rad/s))=%.5f", xMatrix.get(1, 0)));
-      System.out.println(String.format("\tkA (V/(m/s^2) or V/(rad/s^2))=%.5f", xMatrix.get(0, 0)));
+      System.out.println(String.format("\tMSE=%.5f", meanSquaredError));
+      System.out.println(String.format("\tkS=%.5f", xMatrix.get(2, 0)));
+      System.out.println(String.format("\tkV=%.5f", xMatrix.get(1, 0)));
+      System.out.println(String.format("\tkA=%.5f", xMatrix.get(0, 0)));
     }
   }
 }
