@@ -27,9 +27,15 @@ public class BetterBalancing extends Command {
   @Override
   public void execute() {
     // Calculate charge station angle and velocity
+    double pitch = Units.radiansToDegrees(drive.getRotation3d().getY());
+    double roll = Units.radiansToDegrees(drive.getRotation3d().getX());
+
+    Logger.recordOutput("AutoBalance/GyroPitchDeg", pitch);
+    Logger.recordOutput("AutoBalance/GyroRollDeg", roll);
+
     angleDegrees =
-        drive.getPose().getRotation().getCos() * drive.getPitch().getDegrees()
-            + drive.getPose().getRotation().getSin() * drive.getRoll().getDegrees();
+        drive.getPose().getRotation().getCos() * pitch
+            + drive.getPose().getRotation().getSin() * roll;
     double angleVelocityDegreesPerSec =
         drive.getPose().getRotation().getCos() * Units.radiansToDegrees(drive.getPitchVelocity())
             + drive.getPose().getRotation().getSin()

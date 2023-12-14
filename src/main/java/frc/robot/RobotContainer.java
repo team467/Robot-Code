@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
-import frc.lib.io.gyro3d.IMUIO;
-import frc.lib.io.gyro3d.IMUPigeon2;
+import frc.lib.io.gyro3d.GyroIO;
+import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
 import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.leds.LEDManager;
@@ -111,7 +111,7 @@ public class RobotContainer {
                     List.of(front, right));
             drive =
                 new Drive(
-                    new IMUPigeon2(17),
+                    new GyroPigeon2(17),
                     new ModuleIOSparkMAX(3, 4, 13, 0),
                     new ModuleIOSparkMAX(5, 6, 14, 1),
                     new ModuleIOSparkMAX(1, 2, 15, 2),
@@ -131,7 +131,7 @@ public class RobotContainer {
           case ROBOT_BRIEFCASE -> {
             drive =
                 new Drive(
-                    new IMUIO() {},
+                    new GyroIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
@@ -142,7 +142,7 @@ public class RobotContainer {
           default -> {
             drive =
                 new Drive(
-                    new IMUIO() {},
+                    new GyroIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
@@ -158,7 +158,7 @@ public class RobotContainer {
         // subsystem = new Subsystem(new SubsystemIOSim());
         drive =
             new Drive(
-                new IMUIO() {},
+                new GyroIO() {},
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
@@ -172,7 +172,7 @@ public class RobotContainer {
         // subsystem = new Subsystem(new SubsystemIO() {});
         drive =
             new Drive(
-                new IMUIO() {},
+                new GyroIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
@@ -229,9 +229,9 @@ public class RobotContainer {
                     drive,
                     true,
                     new FeedForwardCharacterizationData("drive"),
-                    drive::runDriveCharacterizationVolts,
-                    drive::getDriveCharacterizationVelocity))
-            .andThen(() -> configureButtonBindings()));
+                    drive::runCharacterizationVolts,
+                    drive::getCharacterizationVelocity))
+            .andThen(this::configureButtonBindings));
     // autoChooser.addOption("AutoCommand", new AutoCommand(subsystem));
 
     // Trigger haptics when you pick up something
