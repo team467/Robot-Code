@@ -22,9 +22,9 @@ public class IMUPigeon2 implements IMUIO {
     yaw = pigeon.getYaw();
     pitch = pigeon.getPitch();
     roll = pigeon.getRoll();
-    yawVelocity = pigeon.getAngularVelocityZ();
-    pitchVelocity = pigeon.getAngularVelocityY();
-    rollVelocity = pigeon.getAngularVelocityX();
+    yawVelocity = pigeon.getAngularVelocityZDevice();
+    pitchVelocity = pigeon.getAngularVelocityYDevice();
+    rollVelocity = pigeon.getAngularVelocityXDevice();
     gravVectorX = pigeon.getGravityVectorX();
     gravVectorY = pigeon.getGravityVectorY();
     gravVectorZ = pigeon.getGravityVectorZ();
