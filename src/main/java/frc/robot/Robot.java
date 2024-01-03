@@ -4,13 +4,14 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.utils.VirtualSubsystem;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.RobotType;
+import frc.robot.subsystems.led.Leds;
 import java.io.IOException;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -26,8 +27,13 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * project.
  */
 public class Robot extends LoggedRobot {
+  private static final double lowBatteryVoltage = 9.0;
+  private static final double lowBatteryDisabledTime = 1.5;
+
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+
+  private final Timer disabledTimer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -91,6 +97,10 @@ public class Robot extends LoggedRobot {
     // Start AdvantageKit logger
     Logger.start();
 
+    // Start timers
+    disabledTimer.reset();
+    disabledTimer.start();
+
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
@@ -99,12 +109,21 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled commands, running already-scheduled commands, removing
-    // finished or interrupted commands, and running subsystem periodic() methods.
-    // This must be called from the robot's periodic block in order for anything in
-    // the Command-based framework to work.
+    Threads.setCurrentThreadPriority(true, 99);
+
+    VirtualSubsystem.periodicAll();
     CommandScheduler.getInstance().run();
+
+    // Update low battery alert
+    if (DriverStation.isEnabled()) {
+      disabledTimer.reset();
+    }
+    if (RobotController.getBatteryVoltage() < lowBatteryVoltage
+        && disabledTimer.hasElapsed(lowBatteryDisabledTime)) {
+      Leds.getInstance().lowBatteryAlert = true;
+    }
+
+    Threads.setCurrentThreadPriority(true, 10);
   }
 
   /** This function is called once when the robot is disabled. */
