@@ -1,52 +1,23 @@
 package frc.lib.io.vision;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
-import java.util.ArrayList;
-import java.util.List;
-import org.littletonrobotics.junction.LogTable;
-import org.littletonrobotics.junction.inputs.LoggableInputs;
-import org.photonvision.common.dataflow.structures.Packet;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
+import edu.wpi.first.math.geometry.Pose3d;
+import org.littletonrobotics.junction.AutoLog;
 
 /**
- * The hardware abstraction interface for a PhotonVision-based coprocessor that provides
+ * The hardware abstraction interface for a PhotonVision-based co-processor that provides
  * PhotonPipelineResult objects. There is a one-to-one relationship between each VisionIO object and
- * each coprocessor (e.g., Raspberry Pi) running PhotonVision.
+ * each co-processor (e.g., Raspberry Pi) running PhotonVision.
  *
  * <p>In the future, this interface may be further abstracted to not be coupled to PhotonVision.
- * Currently, abstraction is used to simulate vision.
+ * Currently, the abstraction is used to simulate vision.
  */
 public interface VisionIO {
-  class VisionIOInputs implements LoggableInputs {
-    PhotonPipelineResult lastResult = new PhotonPipelineResult(0, new ArrayList<>());
-    double lastTimestamp = 0.0;
-
-    public void toLog(LogTable table) {
-      // since AdvantageKit doesn't support the PhotonPipelineResult type, log it as a byte array
-      byte[] photonPacketBytes = new byte[lastResult.getPacketSize()];
-      lastResult.populatePacket(new Packet(photonPacketBytes));
-      table.put("photonPacketBytes", photonPacketBytes);
-
-      table.put("lastTimestamp", lastTimestamp);
-
-      // log targets in a human-readable way
-      List<PhotonTrackedTarget> targets = lastResult.getTargets();
-      String[] stringifiedTargets = new String[targets.size()];
-
-      for (int i = 0; i < targets.size(); i++) {
-        stringifiedTargets[i] = targets.get(i).toString();
-      }
-      table.put("stringifiedTargets", stringifiedTargets);
-    }
-
-    public void fromLog(LogTable table) {
-      byte[] photonPacketBytes = table.get("photonPacketBytes", new byte[0]);
-      lastResult = new PhotonPipelineResult();
-      lastResult.createFromPacket(new Packet(photonPacketBytes));
-
-      lastTimestamp = table.get("lastTimestamp", 0.0);
-    }
+  @AutoLog
+  class VisionIOInputs {
+    Pose3d estimatedRobotPose = new Pose3d();
+    double estimatedRobotPoseTimestamp = 0.0;
+    int[] estimatedRobotPoseTags = new int[] {};
+    double lastCameraTimestamp = 0.0;
   }
 
   /**
@@ -55,11 +26,4 @@ public interface VisionIO {
    * @param inputs the inputs to update
    */
   default void updateInputs(VisionIOInputs inputs) {}
-
-  /**
-   * Sets the origin of the AprilTag field layout. This is invoked once the alliance color is known.
-   *
-   * @param origin the origin of the AprilTag field layout
-   */
-  default void setLayoutOrigin(OriginPosition origin) {}
 }

@@ -69,8 +69,10 @@ public class RobotContainer {
                     new Rotation3d(0, 0, -0.5 * Math.PI));
             vision =
                 new Vision(
-                    List.of(new VisionIOPhotonVision("front"), new VisionIOPhotonVision("right")),
-                    List.of(front, right));
+                    List.of(
+                            new VisionIOPhotonVision("front", front),
+                            new VisionIOPhotonVision("right", right))
+                        .toArray(new frc.lib.io.vision.VisionIO[0]));
             drive =
                 new Drive(
                     new GyroPigeon2(17),
