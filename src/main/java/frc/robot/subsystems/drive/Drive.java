@@ -165,11 +165,11 @@ public class Drive extends SubsystemBase {
   }
 
   public double getPitchVelocity() {
-    return gyroInputs.pitchRatePerSec;
+    return gyroInputs.pitchRate;
   }
 
   public double getRollVelocity() {
-    return gyroInputs.rollRatePerSec;
+    return gyroInputs.rollRate;
   }
 
   public Rotation3d getRotation3d() {
