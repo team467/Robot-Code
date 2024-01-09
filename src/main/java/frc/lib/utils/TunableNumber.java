@@ -1,19 +1,22 @@
 package frc.lib.utils;
 
-import static frc.robot.RobotConstants.TUNING_MODE;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotConstants;
+import java.util.HashMap;
+import java.util.Map;
+import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 /**
  * Class for a tunable number. Gets value from dashboard in tuning mode, returns default if not or
  * value not in dashboard.
  */
 public class TunableNumber {
-  private static final String TABLE_KEY = "TunableNumbers";
+  private static final String tableKey = "TunableNumbers";
 
-  private String key;
+  private final String key;
+  private boolean hasDefault = false;
   private double defaultValue;
-  private double lastHasChangedValue = defaultValue;
+  private LoggedDashboardNumber dashboardNumber;
+  private Map<Integer, Double> lastHasChangedValues = new HashMap<>();
 
   /**
    * Create a new TunableNumber
@@ -21,7 +24,7 @@ public class TunableNumber {
    * @param dashboardKey Key on dashboard
    */
   public TunableNumber(String dashboardKey) {
-    this.key = TABLE_KEY + "/" + dashboardKey;
+    this.key = tableKey + "/" + dashboardKey;
   }
 
   /**
@@ -32,50 +35,50 @@ public class TunableNumber {
    */
   public TunableNumber(String dashboardKey, double defaultValue) {
     this(dashboardKey);
-    setDefault(defaultValue);
+    initDefault(defaultValue);
   }
 
   /**
-   * Get the default value for the number that has been set
-   *
-   * @return The default value
-   */
-  public double getDefault() {
-    return defaultValue;
-  }
-
-  /**
-   * Set the default value of the number
+   * Set the default value of the number. The default value can only be set once.
    *
    * @param defaultValue The default value
    */
-  public void setDefault(double defaultValue) {
-    this.defaultValue = defaultValue;
-    if (TUNING_MODE) {
-      // This makes sure the data is on NetworkTables but will not change it
-      SmartDashboard.putNumber(key, SmartDashboard.getNumber(key, defaultValue));
+  public void initDefault(double defaultValue) {
+    if (!hasDefault) {
+      hasDefault = true;
+      this.defaultValue = defaultValue;
+      if (RobotConstants.TUNING_MODE) {
+        dashboardNumber = new LoggedDashboardNumber(key, defaultValue);
+      }
     }
   }
 
   /**
-   * Get the current value, from dashboard if available and in tuning mode
+   * Get the current value, from dashboard if available and in tuning mode.
    *
    * @return The current value
    */
   public double get() {
-    return TUNING_MODE ? SmartDashboard.getNumber(key, defaultValue) : defaultValue;
+    if (!hasDefault) {
+      return 0.0;
+    } else {
+      return RobotConstants.TUNING_MODE ? dashboardNumber.get() : defaultValue;
+    }
   }
 
   /**
    * Checks whether the number has changed since our last check
    *
+   * @param id Unique identifier for the caller to avoid conflicts when shared between multiple
+   *     objects. Recommended approach is to pass the result of "hashCode()"
    * @return True if the number has changed since the last time this method was called, false
-   *     otherwise
+   *     otherwise.
    */
-  public boolean hasChanged() {
+  public boolean hasChanged(int id) {
     double currentValue = get();
-    if (currentValue != lastHasChangedValue) {
-      lastHasChangedValue = currentValue;
+    Double lastValue = lastHasChangedValues.get(id);
+    if (lastValue == null || currentValue != lastValue) {
+      lastHasChangedValues.put(id, currentValue);
       return true;
     }
 
