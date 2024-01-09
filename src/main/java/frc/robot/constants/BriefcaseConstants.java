@@ -25,7 +25,7 @@ public class BriefcaseConstants implements Constants {
   @Override
   public double driveMaxCoastVelocity() {
     return 0.5;
-  } // TODO: tune
+  }
 
   @Override
   public Translation2d[] moduleTranslations() {
@@ -66,7 +66,7 @@ public class BriefcaseConstants implements Constants {
   @Override
   public SimpleFeedforwardConstant moduleDriveFF() {
     return new SimpleFeedforwardConstant(0.15026, 0.13682);
-  } // TODO: tune
+  }
 
   @Override
   public SimpleFeedforwardConstant moduleTurnFF() {
@@ -93,32 +93,32 @@ public class BriefcaseConstants implements Constants {
   @Override
   public double chassisDriveMaxVelocity() {
     return 1.2;
-  } // TODO: tune
+  }
 
   @Override
   public double chassisDriveMaxAcceleration() {
     return 1.2;
-  } // TODO: tune
+  }
 
   @Override
   public double chassisTurnMaxVelocity() {
     return 0.2;
-  } // TODO: tune
+  }
 
   @Override
   public double chassisTurnMaxAcceleration() {
     return 0.2;
-  } // TODO: tune
+  }
 
   @Override
   public FeedbackConstant chassisDriveFB() {
     return new FeedbackConstant(0.1);
-  } // TODO: tune
+  }
 
   @Override
   public FeedbackConstant chassisTurnFB() {
     return new FeedbackConstant(0.1);
-  } // TODO: tune
+  }
 
   @Override
   public int ledChannel() {
@@ -128,77 +128,5 @@ public class BriefcaseConstants implements Constants {
   @Override
   public int led2023LedCount() {
     return 10;
-  }
-
-  @Override
-  public int intakeMotorID() {
-    // TODO Update me
-    return 11;
-  }
-
-  @Override
-  public int intakeCubeLimitSwitchID() {
-    // TODO: Update me
-    return 1;
-  }
-
-  @Override
-  public int armExtendMotorId() {
-    return 0;
-  }
-
-  @Override
-  public int armRotateMotorId() {
-    return 0;
-  }
-
-  @Override
-  public double armExtendConversionFactor() {
-    return 0;
-  }
-
-  @Override
-  public int armRotateHighLimitSwitchId() {
-    return 0;
-  }
-
-  @Override
-  public int armRotateLowLimitSwitchId() {
-    return 0;
-  }
-
-  @Override
-  public int ratchetSolenoidId() {
-    return 0;
-  }
-
-  @Override
-  public double armExtendMaxMeters() {
-    return 0;
-  }
-
-  @Override
-  public double armExtendMinMeters() {
-    return 0;
-  }
-
-  @Override
-  public double armRotateMaxMeters() {
-    return 0;
-  }
-
-  @Override
-  public double armRotateMinMeters() {
-    return 0;
-  }
-
-  @Override
-  public double armRotateConversionFactor() {
-    return 0;
-  }
-
-  @Override
-  public double armExtendMinDown() {
-    return 0;
   }
 }

@@ -145,7 +145,7 @@ public class Drive extends SubsystemBase {
         case DRIVE_CHARACTERIZATION -> {
           // Run in characterization mode
           for (var module : modules) {
-            module.runDriveCharacterization(characterizationVolts);
+            module.runCharacterization(characterizationVolts);
           }
 
           // Clear setpoint logs
@@ -171,6 +171,8 @@ public class Drive extends SubsystemBase {
               setpointStates, RobotConstants.get().maxLinearSpeed());
 
           // Set to last angles if zero
+          // TODO: this seems to already be implemented in SwerveDriveKinematics.java lines
+          // 130-138... This will be removed in the rewrite
           if (adjustedSpeeds.vxMetersPerSecond == 0.0
               && adjustedSpeeds.vyMetersPerSecond == 0.0
               && adjustedSpeeds.omegaRadiansPerSecond == 0) {
@@ -181,15 +183,9 @@ public class Drive extends SubsystemBase {
           lastSetpointStates = setpointStates;
 
           // Set setpoints to modules
-          // boolean isStationary =
-          //    Math.abs(setpoint.vxMetersPerSecond) < 1e-3
-          //        && Math.abs(setpoint.vyMetersPerSecond) < 1e-3
-          //        && Math.abs(setpoint.omegaRadiansPerSecond) < 1e-3;
-          boolean isStationary = false; // TODO: can this be removed?
-
           SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
           for (int i = 0; i < 4; i++) {
-            optimizedStates[i] = modules[i].runSetpoint(setpointStates[i], isStationary);
+            optimizedStates[i] = modules[i].runSetpoint(setpointStates[i]);
           }
 
           // Log setpoint states
@@ -306,8 +302,11 @@ public class Drive extends SubsystemBase {
   }
 
   public double getDriveCharacterizationVelocity() {
-    ChassisSpeeds speeds = kinematics.toChassisSpeeds(swerveModuleStates);
-    return Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));
+    double driveVelocityAverage = 0.0;
+    for (var module : modules) {
+      driveVelocityAverage += module.getCharacterizationVelocity();
+    }
+    return driveVelocityAverage / 4.0;
   }
 
   /**

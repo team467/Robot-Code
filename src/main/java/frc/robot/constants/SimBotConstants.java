@@ -68,7 +68,7 @@ public class SimBotConstants implements Constants {
 
   @Override
   public SimpleFeedforwardConstant moduleDriveFF() {
-    return new SimpleFeedforwardConstant(0.116970, 0.133240);
+    return new SimpleFeedforwardConstant(0.15343, 5.27611);
   }
 
   @Override
@@ -128,77 +128,6 @@ public class SimBotConstants implements Constants {
 
   @Override
   public int led2023LedCount() {
-    return 0;
-  }
-
-  @Override
-  public int intakeMotorID() {
-    return 0;
-  }
-
-  @Override
-  public int intakeCubeLimitSwitchID() {
-    return 0;
-  }
-
-  @Override
-  public int armExtendMotorId() {
-    return 0;
-  }
-
-  @Override
-  public int armRotateMotorId() {
-    return 0;
-  }
-
-  @Override
-  public double armExtendConversionFactor() {
-    return 1;
-  }
-
-  @Override
-  public int armRotateHighLimitSwitchId() {
-    return 4; // DIO #4
-  }
-
-  @Override
-  public int armRotateLowLimitSwitchId() {
-    return 5; // DIO #5
-  }
-
-  @Override
-  public int ratchetSolenoidId() {
-    return 1;
-  }
-
-  @Override
-  public double armExtendMaxMeters() {
-    return 0.34;
-  }
-
-  @Override
-  public double armExtendMinMeters() {
-    return 0.02;
-  }
-
-  @Override
-  public double armRotateMaxMeters() {
-    return 180;
-  }
-
-  @Override
-  public double armRotateMinMeters() {
-    return 0;
-  }
-
-  @Override
-  public double armRotateConversionFactor() {
-    return 1;
-  }
-
-  @Override
-  public double armExtendMinDown() {
-    // TODO Auto-generated method stub
     return 0;
   }
 }
