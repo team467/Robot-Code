@@ -1,2 +1,2 @@
-# Robot2023-Competition
-For development of the 2023 competition robot code
+# Robot-Code
+Team 467 2024 competition robot
