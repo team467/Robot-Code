@@ -26,7 +26,7 @@ public class CompBotConstants implements Constants {
   @Override
   public double driveMaxCoastVelocity() {
     return 0.5;
-  } // TODO: tune
+  }
 
   @Override
   public Translation2d[] moduleTranslations() {
@@ -41,7 +41,7 @@ public class CompBotConstants implements Constants {
   @Override
   public double maxLinearSpeed() {
     return Units.feetToMeters(14.5);
-  } // TODO: tune
+  }
 
   @Override
   public double maxAngularSpeed() {
@@ -100,41 +100,31 @@ public class CompBotConstants implements Constants {
   @Override
   public double chassisDriveMaxVelocity() {
     return 2.0;
-  } // TODO: tune
+  }
 
   @Override
   public double chassisDriveMaxAcceleration() {
     return 2.0;
-  } // TODO: tune
+  }
 
   @Override
   public double chassisTurnMaxVelocity() {
     return 0.4;
-  } // TODO: tune
+  }
 
   @Override
   public double chassisTurnMaxAcceleration() {
     return 0.4;
-  } // TODO: tune
+  }
 
   @Override
   public FeedbackConstant chassisDriveFB() {
     return new FeedbackConstant(0.1);
-  } // TODO: tune
+  }
 
   @Override
   public FeedbackConstant chassisTurnFB() {
     return new FeedbackConstant(0.5);
-  } // TODO: tune
-
-  @Override
-  public int intakeMotorID() {
-    return 11;
-  }
-
-  @Override
-  public int intakeCubeLimitSwitchID() {
-    return 1; // DIO 1
   }
 
   @Override
@@ -145,65 +135,5 @@ public class CompBotConstants implements Constants {
   @Override
   public int led2023LedCount() {
     return 10;
-  }
-
-  @Override
-  public int armExtendMotorId() {
-    return 10; // CAN #10
-  }
-
-  @Override
-  public int armRotateMotorId() {
-    return 9; // CAN #9
-  }
-
-  @Override
-  public double armExtendConversionFactor() {
-    return 0.02;
-  }
-
-  @Override
-  public int armRotateHighLimitSwitchId() {
-    return 4; // DIO #4
-  }
-
-  @Override
-  public int armRotateLowLimitSwitchId() {
-    return 5; // DIO #5
-  }
-
-  @Override
-  public int ratchetSolenoidId() {
-    return 1; // DIO #1
-  }
-
-  @Override
-  public double armExtendMaxMeters() {
-    return 0.65;
-  }
-
-  @Override
-  public double armExtendMinMeters() {
-    return 0;
-  }
-
-  @Override
-  public double armRotateMaxMeters() {
-    return 0.18;
-  }
-
-  @Override
-  public double armRotateMinMeters() {
-    return 0;
-  }
-
-  @Override
-  public double armRotateConversionFactor() {
-    return 0.00236706; // Rotations to Meters
-  }
-
-  @Override
-  public double armExtendMinDown() {
-    return 0.2;
   }
 }
