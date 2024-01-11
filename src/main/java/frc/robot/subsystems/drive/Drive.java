@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
+import frc.lib.utils.LocalADStarAK;
 import frc.lib.utils.RobotOdometry;
 import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -61,6 +62,9 @@ public class Drive extends SubsystemBase {
             RobotConstants.get().maxLinearSpeed(),
             RobotConstants.get().moduleTranslations()[0].getNorm(),
             new ReplanningConfig()),
+        () -> {
+          return DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
+        },
         this);
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) ->
