@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
-import frc.lib.io.gyro3d.IMUIO;
-import frc.lib.io.gyro3d.IMUPigeon2;
+import frc.lib.io.gyro3d.GyroIO;
+import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
 import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.leds.LEDManager;
@@ -69,11 +69,13 @@ public class RobotContainer {
                     new Rotation3d(0, 0, -0.5 * Math.PI));
             vision =
                 new Vision(
-                    List.of(new VisionIOPhotonVision("front"), new VisionIOPhotonVision("right")),
-                    List.of(front, right));
+                    List.of(
+                            new VisionIOPhotonVision("front", front),
+                            new VisionIOPhotonVision("right", right))
+                        .toArray(new frc.lib.io.vision.VisionIO[0]));
             drive =
                 new Drive(
-                    new IMUPigeon2(17),
+                    new GyroPigeon2(17),
                     new ModuleIOSparkMAX(3, 4, 13, 0),
                     new ModuleIOSparkMAX(5, 6, 14, 1),
                     new ModuleIOSparkMAX(1, 2, 15, 2),
@@ -82,7 +84,7 @@ public class RobotContainer {
           case ROBOT_BRIEFCASE -> {
             drive =
                 new Drive(
-                    new IMUIO() {},
+                    new GyroIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
@@ -91,7 +93,7 @@ public class RobotContainer {
           default -> {
             drive =
                 new Drive(
-                    new IMUIO() {},
+                    new GyroIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {},
@@ -105,7 +107,7 @@ public class RobotContainer {
         // subsystem = new Subsystem(new SubsystemIOSim());
         drive =
             new Drive(
-                new IMUIO() {},
+                new GyroIO() {},
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
@@ -117,7 +119,7 @@ public class RobotContainer {
         // subsystem = new Subsystem(new SubsystemIO() {});
         drive =
             new Drive(
-                new IMUIO() {},
+                new GyroIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
@@ -139,9 +141,9 @@ public class RobotContainer {
                     drive,
                     true,
                     new FeedForwardCharacterizationData("drive"),
-                    drive::runDriveCharacterizationVolts,
-                    drive::getDriveCharacterizationVelocity))
-            .andThen(() -> configureButtonBindings()));
+                    drive::runCharacterizationVolts,
+                    drive::getCharacterizationVelocity))
+            .andThen(this::configureButtonBindings));
 
     // Configure the button bindings
     configureButtonBindings();
