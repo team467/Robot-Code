@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -50,7 +51,7 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser =
-      new LoggedDashboardChooser<>("Auto Choices");
+      new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
