@@ -62,9 +62,9 @@ public class Drive extends SubsystemBase {
             RobotConstants.get().maxLinearSpeed(),
             RobotConstants.get().moduleTranslations()[0].getNorm(),
             new ReplanningConfig()),
-        () -> {
-          return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
-        },
+        () ->
+            DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
         this);
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) ->
