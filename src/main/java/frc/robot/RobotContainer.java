@@ -28,6 +28,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.led.Led2023;
+import frc.robot.subsystems.led.LedConstants;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -56,9 +57,9 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Instantiate active subsystems
-    if (RobotConstants.get().mode() != Constants.Mode.REPLAY) {
-      switch (RobotConstants.get().robot()) {
-        case ROBOT_COMP -> {
+    if (Constants.getMode() != Constants.Mode.REPLAY) {
+      switch (Constants.getRobot()) {
+        case ROBOT_2023 -> {
           Transform3d front =
               new Transform3d(
                   new Translation3d(6 * 0.01, -10 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
@@ -105,7 +106,7 @@ public class RobotContainer {
     }
 
     led2023 = new Led2023();
-    LEDManager.getInstance().init(RobotConstants.get().ledChannel());
+    LEDManager.getInstance().init(LedConstants.LED_CHANNEL);
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
