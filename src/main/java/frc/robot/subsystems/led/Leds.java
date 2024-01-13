@@ -100,7 +100,7 @@ public class Leds extends VirtualSubsystem {
     loadingNotifier.stop();
 
     // Select LED mode
-    //solid(Section.FULL, Color.kBlack); // Default to off
+    // solid(Section.FULL, Color.kBlack); // Default to off
 
     if (estopped) {
       solid(Section.FULL, Color.kRed);

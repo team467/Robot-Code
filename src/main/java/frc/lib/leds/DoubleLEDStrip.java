@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
 /** Controls an dual LED Strip's colors. */
+@Deprecated
 public class DoubleLEDStrip extends LEDStrip {
 
   private final boolean secondInverted;
