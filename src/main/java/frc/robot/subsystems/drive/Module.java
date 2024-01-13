@@ -5,7 +5,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.RobotConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
@@ -13,9 +12,10 @@ public class Module {
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
 
-  private final SimpleMotorFeedforward driveFeedforward =
-      RobotConstants.get().moduleDriveFF().getFeedforward();
-  private final PIDController turnFeedback = RobotConstants.get().moduleTurnFB().getPIDController();
+  private SimpleMotorFeedforward driveFeedforward =
+      new SimpleMotorFeedforward(DriveConstants.DRIVE_KS.get(), DriveConstants.DRIVE_KV.get());
+  private PIDController turnFeedback =
+      new PIDController(DriveConstants.TURN_KP.get(), 0.0, DriveConstants.TURN_KD.get());
   private Rotation2d angleSetpoint = null; // Setpoint for closed loop control, null for open loop
   private Double speedSetpoint = null; // Setpoint for closed loop control, null for open loop
   private double lastPositionMeters = 0.0; // Used for delta calculation
@@ -30,6 +30,17 @@ public class Module {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Drive/Module" + index, inputs);
+
+    // Update controllers if tunable numbers have changed
+    if (DriveConstants.TURN_KP.hasChanged(hashCode())
+        || DriveConstants.TURN_KD.hasChanged(hashCode())) {
+      turnFeedback.setPID(DriveConstants.TURN_KP.get(), 0.0, DriveConstants.TURN_KD.get());
+    }
+    if (DriveConstants.DRIVE_KS.hasChanged(hashCode())
+        || DriveConstants.DRIVE_KV.hasChanged(hashCode())) {
+      driveFeedforward =
+          new SimpleMotorFeedforward(DriveConstants.DRIVE_KS.get(), DriveConstants.DRIVE_KV.get());
+    }
 
     // Run closed loop turn control
     if (angleSetpoint != null) {

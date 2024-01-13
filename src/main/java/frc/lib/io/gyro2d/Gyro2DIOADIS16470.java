@@ -9,7 +9,6 @@ public class Gyro2DIOADIS16470 implements Gyro2DIO {
 
   public Gyro2DIOADIS16470() {
     this.gyro = new ADIS16470_IMU();
-    gyro.setYawAxis(ADIS16470_IMU.IMUAxis.kY);
     gyro.calibrate();
     gyro.reset();
   }
@@ -17,7 +16,7 @@ public class Gyro2DIOADIS16470 implements Gyro2DIO {
   @Override
   public void updateInputs(Gyro2DIOInputs inputs) {
     inputs.connected = true;
-    inputs.angle = gyro.getAngle();
-    inputs.rate = gyro.getRate();
+    inputs.angle = gyro.getAngle(ADIS16470_IMU.IMUAxis.kY);
+    inputs.rate = gyro.getRate(ADIS16470_IMU.IMUAxis.kY);
   }
 }

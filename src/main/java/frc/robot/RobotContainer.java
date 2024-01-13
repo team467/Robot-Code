@@ -28,6 +28,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.led.Led2023;
+import frc.robot.subsystems.led.LedConstants;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -54,11 +55,11 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    switch (RobotConstants.get().mode()) {
+    switch (Constants.getMode()) {
         // Real robot, instantiate hardware IO implementations
       case REAL -> {
-        switch (RobotConstants.get().robot()) {
-          case ROBOT_COMP -> {
+        switch (Constants.getRobot()) {
+          case ROBOT_2023 -> {
             Transform3d front =
                 new Transform3d(
                     new Translation3d(6 * 0.01, -10 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
@@ -128,7 +129,7 @@ public class RobotContainer {
     }
 
     led2023 = new Led2023();
-    LEDManager.getInstance().init(RobotConstants.get().ledChannel());
+    LEDManager.getInstance().init(LedConstants.LED_CHANNEL);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up auto routines
