@@ -6,13 +6,19 @@ public interface IntakeNoteIO
 {
   @AutoLog
   class IntakeNoteIOInputs {
-    // IO for grabber
-    public boolean hasNote = false;
+    // I/p for intake
     public boolean seesNote = false; // Need to communicate with Vision
+    public boolean shooterInPosition = false;
+
+    // O/p for intake
+    public boolean hasNote = false;
+    
+    // Motor IO
     public double appliedVolts = 0.0;
     public double motorVelocity = 0.0;
-    // Need to add more IO's
   }
   
-  default void updateIO(IntakeNoteIOInputs inputs) {}
+  default void updateInputs(IntakeNoteIOInputs inputs) {}
+  
+  default void setPercent(double percent) {}
 }

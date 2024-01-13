@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Affector;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeNote extends SubsystemBase {
@@ -13,42 +15,39 @@ public class IntakeNote extends SubsystemBase {
   // Intializes States
   private enum State {
     DISABLED,
-    INTAKE,
-    RELEASE,
-    STOP
   }
-
   private State state;
   
-    // Initializes Wants
-    private enum Wants {
-      NOTE,
-      NOTHING
-    }
-  
-    private Wants wants = Wants.NOTHING;
-    private boolean hasNote = false;
+  private boolean hasNote = false;
 
   // Intializes IntakeNote
   public IntakeNote(IntakeNoteIO intakeNoteIO) {
     super();
     this.intakeNoteIO = intakeNoteIO;
-    state = State.STOP;
   }
 
-  public void setWants(Wants wants)
-  {
-    this.wants = wants;
-  }
-
+  /* TODO: Get rid of State stuff in here, just have methods like startIntake that are used by the actual commands.*/
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    intakeNoteIO.updateIO(null); // Need to provide "inputs" and need an AutoLogged class for IntakeNote
+    intakeNoteIO.updateInputs(null); // Need to provide "inputs" and need an AutoLogged class for IntakeNote
+
+    switch (state){
+      case DISABLED -> intakeNoteIO.setPercent(0.0);
+    }
   }
 
-  public void intake() {
-    
+  public void startIntake() {
+    hasNote = false;
+    intakeNoteIO.setPercent(-1.0);
   }
 
+  public void release() {
+    hasNote = true;
+    intakeNoteIO.setPercent((1.0));
+  }
+  
+  public void stop() {
+    intakeNoteIO.setPercent(0.0);
+  }
 }
