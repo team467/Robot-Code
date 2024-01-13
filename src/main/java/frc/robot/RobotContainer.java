@@ -17,16 +17,15 @@ import frc.lib.io.gyro3d.IMUIO;
 import frc.lib.io.gyro3d.IMUPigeon2;
 import frc.lib.io.vision.Vision;
 import frc.lib.io.vision.VisionIOPhotonVision;
-import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
-import frc.robot.commands.leds.LedRainbowCMD;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.led.Led2023;
+import frc.robot.subsystems.led.Leds;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -125,8 +124,9 @@ public class RobotContainer {
       }
     }
 
-    led2023 = new Led2023();
-    LEDManager.getInstance().init(RobotConstants.get().ledChannel());
+    Leds.getInstance();
+    // led2023 = new Led2023();
+    // LEDManager.getInstance().init(RobotConstants.get().ledChannel());
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
@@ -179,7 +179,7 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
+    // led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
   }
 
   /**

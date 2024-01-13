@@ -1,10 +1,7 @@
 package frc.robot.subsystems.led;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.lib.utils.VirtualSubsystem;
 import java.util.List;
@@ -33,10 +30,11 @@ public class Leds extends VirtualSubsystem {
   // LED IO
   private final AddressableLED leds;
   private final AddressableLEDBuffer buffer;
+  private final Notifier loadingNotifier;
 
   // Constants
   private static final int minLoopCycleCount = 10;
-  private static final int length = 43;
+  private static final int length = 10;
   private static final double strobeFastDuration = 0.1;
   private static final double strobeSlowDuration = 0.2;
   private static final double breathDuration = 1.0;
@@ -58,15 +56,25 @@ public class Leds extends VirtualSubsystem {
     leds.setLength(length);
     leds.setData(buffer);
     leds.start();
+    loadingNotifier =
+        new Notifier(
+            () -> {
+              breath(
+                  Section.FULL,
+                  Color.kWhite,
+                  Color.kBlack,
+                  0.25,
+                  (double) System.currentTimeMillis() / 1000);
+              leds.setData(buffer);
+            });
+    loadingNotifier.startPeriodic(0.02);
   }
 
   @Override
   public void periodic() {
     // Update alliance color
-    if (DriverStation.isFMSAttached()) {
-      if (DriverStation.getAlliance().isPresent()) {
-        alliance = DriverStation.getAlliance().get();
-      }
+    if (DriverStation.getAlliance().isPresent()) {
+      alliance = DriverStation.getAlliance().get();
     }
 
     // Update auto state
@@ -88,11 +96,14 @@ public class Leds extends VirtualSubsystem {
       return;
     }
 
+    // Stop loading notifier if running
+    loadingNotifier.stop();
+
     // Select LED mode
-    solid(Section.FULL, Color.kBlack); // Default to off
+    //solid(Section.FULL, Color.kBlack); // Default to off
+
     if (estopped) {
       solid(Section.FULL, Color.kRed);
-      return;
     } else if (DriverStation.isDisabled()) {
       if (lastEnabledAuto && Timer.getFPGATimestamp() - lastEnabledTime < autoFadeMaxTime) {
         // Auto fade
@@ -131,6 +142,8 @@ public class Leds extends VirtualSubsystem {
         solid((Timer.getFPGATimestamp() - autoFinishedTime) / fullTime, Color.kGreen);
       }
     }
+
+    leds.setData(buffer);
   }
 
   private void solid(Section section, Color color) {
@@ -152,10 +165,29 @@ public class Leds extends VirtualSubsystem {
     solid(section, on ? color : Color.kBlack);
   }
 
+  /**
+   * Changes the color of a section to create a breathing effect.
+   * The color gradually transitions from c1 to c2 and back to c1 in a sine wave pattern.
+   *
+   * @param section   The section to apply the breathing effect to.
+   * @param c1        The initial color of the section.
+   * @param c2        The target color of the section.
+   * @param duration  The total duration of the breathing effect, in seconds.
+   */
   private void breath(Section section, Color c1, Color c2, double duration) {
     breath(section, c1, c2, duration, Timer.getFPGATimestamp());
   }
 
+  /**
+   * Changes the color of a section to create a breathing effect.
+   * The color gradually transitions from c1 to c2 and back to c1 in a sine wave pattern.
+   *
+   * @param section   The section to apply the breathing effect to.
+   * @param c1        The initial color of the section.
+   * @param c2        The target color of the section.
+   * @param duration  The total duration of the breathing effect, in seconds.
+   * @param timestamp The current timestamp in seconds.
+   */
   private void breath(Section section, Color c1, Color c2, double duration, double timestamp) {
     double x = ((timestamp % breathDuration) / breathDuration) * 2.0 * Math.PI;
     double ratio = (Math.sin(x) + 1.0) / 2.0;
@@ -165,6 +197,13 @@ public class Leds extends VirtualSubsystem {
     solid(section, new Color(red, green, blue));
   }
 
+  /**
+   * Applies a rainbow effect to a given section of an LED strip.
+   *
+   * @param section      the section of the LED strip to apply the rainbow effect to
+   * @param cycleLength  the length of a complete rainbow cycle in degrees
+   * @param duration     the duration of the rainbow effect in seconds
+   */
   private void rainbow(Section section, double cycleLength, double duration) {
     double x = (1 - ((Timer.getFPGATimestamp() / duration) % 1.0)) * 180.0;
     double xDiffPerLed = 180.0 / cycleLength;
@@ -177,6 +216,17 @@ public class Leds extends VirtualSubsystem {
     }
   }
 
+  /**
+   * Wave method applies wave effect to a given section of an LED strip.
+   * The wave effect creates a smooth transition of colors between two given colors
+   * over a specified cycle length and duration.
+   *
+   * @param section the section of the LED strip to apply the wave effect to
+   * @param c1 the starting color of the wave effect
+   * @param c2 the ending color of the wave effect
+   * @param cycleLength the length of a complete wave cycle in radians
+   * @param duration the duration of the wave effect in seconds
+   */
   private void wave(Section section, Color c1, Color c2, double cycleLength, double duration) {
     double x = (1 - ((Timer.getFPGATimestamp() % duration) / duration)) * 2.0 * Math.PI;
     double xDiffPerLed = (2.0 * Math.PI) / cycleLength;
@@ -198,6 +248,15 @@ public class Leds extends VirtualSubsystem {
     }
   }
 
+  /**
+   * Applies a stripe effect to a given section of an LED strip.
+   * The stripe effect creates a pattern of stripes with different colors.
+   *
+   * @param section   the section of the LED strip to apply the stripe effect to
+   * @param colors    the list of colors for the stripes
+   * @param length    the length of each stripe in LED units
+   * @param duration  the duration of the stripe effect in seconds
+   */
   private void stripes(Section section, List<Color> colors, int length, double duration) {
     int offset = (int) (Timer.getFPGATimestamp() % duration / duration * length * colors.size());
     for (int i = section.start(); i < section.end(); i++) {
