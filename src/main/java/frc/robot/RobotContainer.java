@@ -55,77 +55,53 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    switch (Constants.getMode()) {
-        // Real robot, instantiate hardware IO implementations
-      case REAL -> {
-        switch (Constants.getRobot()) {
-          case ROBOT_2023 -> {
-            Transform3d front =
-                new Transform3d(
-                    new Translation3d(6 * 0.01, -10 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
-                    new Rotation3d());
-            Transform3d right =
-                new Transform3d(
-                    new Translation3d(2 * 0.01, -12 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
-                    new Rotation3d(0, 0, -0.5 * Math.PI));
-            vision =
-                new Vision(
-                    List.of(
-                            new VisionIOPhotonVision("front", front),
-                            new VisionIOPhotonVision("right", right))
-                        .toArray(new frc.lib.io.vision.VisionIO[0]));
-            drive =
-                new Drive(
-                    new GyroPigeon2(17),
-                    new ModuleIOSparkMAX(3, 4, 13, 0),
-                    new ModuleIOSparkMAX(5, 6, 14, 1),
-                    new ModuleIOSparkMAX(1, 2, 15, 2),
-                    new ModuleIOSparkMAX(7, 8, 16, 3));
-          }
-          case ROBOT_BRIEFCASE -> {
-            drive =
-                new Drive(
-                    new GyroIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {});
-          }
-          default -> {
-            drive =
-                new Drive(
-                    new GyroIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {});
-          }
+    // Instantiate active subsystems
+    if (Constants.getMode() != Constants.Mode.REPLAY) {
+      switch (Constants.getRobot()) {
+        case ROBOT_2023 -> {
+          Transform3d front =
+              new Transform3d(
+                  new Translation3d(6 * 0.01, -10 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
+                  new Rotation3d());
+          Transform3d right =
+              new Transform3d(
+                  new Translation3d(2 * 0.01, -12 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
+                  new Rotation3d(0, 0, -0.5 * Math.PI));
+          vision =
+              new Vision(
+                  List.of(
+                          new VisionIOPhotonVision("front", front),
+                          new VisionIOPhotonVision("right", right))
+                      .toArray(new frc.lib.io.vision.VisionIO[0]));
+          drive =
+              new Drive(
+                  new GyroPigeon2(17),
+                  new ModuleIOSparkMAX(3, 4, 13, 0),
+                  new ModuleIOSparkMAX(5, 6, 14, 1),
+                  new ModuleIOSparkMAX(1, 2, 15, 2),
+                  new ModuleIOSparkMAX(7, 8, 16, 3));
+        }
+        case ROBOT_SIMBOT -> {
+          drive =
+              new Drive(
+                  new GyroIO() {},
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim());
         }
       }
-        // Sim robot, instantiate physics sim IO implementations
-      case SIM -> {
-        // Init subsystems
-        // subsystem = new Subsystem(new SubsystemIOSim());
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim());
-      }
+    }
 
-        // Replayed robot, disable IO implementations
-      default -> {
-        // subsystem = new Subsystem(new SubsystemIO() {});
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
-      }
+    // Instantiate missing subsystems
+    if (drive == null) {
+      drive =
+          new Drive(
+              new GyroIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {});
     }
 
     led2023 = new Led2023();
