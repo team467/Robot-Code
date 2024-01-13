@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
