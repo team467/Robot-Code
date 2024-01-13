@@ -4,6 +4,7 @@ import frc.robot.Constants;
 
 public class ShooterConstants {
   public static double indexerFowardVoltage;
+
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2023 -> {
@@ -16,5 +17,5 @@ public class ShooterConstants {
         indexerFowardVoltage = 0.0;
       }
     }
-   }
+  }
 }

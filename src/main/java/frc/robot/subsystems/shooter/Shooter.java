@@ -10,6 +10,7 @@ public class Shooter extends SubsystemBase {
   private final ShooterConstants constants;
   /** Creates a new shooter. */
   private final ShooterIO io;
+
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
   public Shooter(ShooterIO io, ShooterConstants constants) {
@@ -20,6 +21,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
   }
+
   public void setIndexerForward() {
     io.setIndexerVoltage(constants.indexerFowardVoltage);
   }
