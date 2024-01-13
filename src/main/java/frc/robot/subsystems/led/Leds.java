@@ -146,6 +146,13 @@ public class Leds extends VirtualSubsystem {
     leds.setData(buffer);
   }
 
+  /**
+   * Applies a solid color to a given section of an LED strip. The section is filled with the
+   * specified color.
+   *
+   * @param section The section of the LED strip to apply the solid color to.
+   * @param color The color to be applied.
+   */
   private void solid(Section section, Color color) {
     if (color != null) {
       for (int i = section.start(); i < section.end(); i++) {
@@ -154,38 +161,54 @@ public class Leds extends VirtualSubsystem {
     }
   }
 
+  /**
+   * Applies a solid color to a given section of an LED strip. The section is filled with the
+   * specified color.
+   *
+   * @param percent The percentage of the section to apply the solid color to. Value should be
+   *     between 0.0 and 1.0.
+   * @param color The color to be applied.
+   */
   private void solid(double percent, Color color) {
     for (int i = 0; i < MathUtil.clamp(length * percent, 0, length); i++) {
       buffer.setLED(i, color);
     }
   }
 
+  /**
+   * Changes the color of a section to create a strobe effect. The section alternates between the
+   * given color and black based on the specified duration.
+   *
+   * @param section The section to apply the strobe effect to.
+   * @param color The color to be displayed during the "on" state.
+   * @param duration The duration of each on-off cycle, in seconds.
+   */
   private void strobe(Section section, Color color, double duration) {
     boolean on = ((Timer.getFPGATimestamp() % duration) / duration) > 0.5;
     solid(section, on ? color : Color.kBlack);
   }
 
   /**
-   * Changes the color of a section to create a breathing effect.
-   * The color gradually transitions from c1 to c2 and back to c1 in a sine wave pattern.
+   * Changes the color of a section to create a breathing effect. The color gradually transitions
+   * from c1 to c2 and back to c1 in a sine wave pattern.
    *
-   * @param section   The section to apply the breathing effect to.
-   * @param c1        The initial color of the section.
-   * @param c2        The target color of the section.
-   * @param duration  The total duration of the breathing effect, in seconds.
+   * @param section The section to apply the breathing effect to.
+   * @param c1 The initial color of the section.
+   * @param c2 The target color of the section.
+   * @param duration The total duration of the breathing effect, in seconds.
    */
   private void breath(Section section, Color c1, Color c2, double duration) {
     breath(section, c1, c2, duration, Timer.getFPGATimestamp());
   }
 
   /**
-   * Changes the color of a section to create a breathing effect.
-   * The color gradually transitions from c1 to c2 and back to c1 in a sine wave pattern.
+   * Changes the color of a section to create a breathing effect. The color gradually transitions
+   * from c1 to c2 and back to c1 in a sine wave pattern.
    *
-   * @param section   The section to apply the breathing effect to.
-   * @param c1        The initial color of the section.
-   * @param c2        The target color of the section.
-   * @param duration  The total duration of the breathing effect, in seconds.
+   * @param section The section to apply the breathing effect to.
+   * @param c1 The initial color of the section.
+   * @param c2 The target color of the section.
+   * @param duration The total duration of the breathing effect, in seconds.
    * @param timestamp The current timestamp in seconds.
    */
   private void breath(Section section, Color c1, Color c2, double duration, double timestamp) {
@@ -200,9 +223,9 @@ public class Leds extends VirtualSubsystem {
   /**
    * Applies a rainbow effect to a given section of an LED strip.
    *
-   * @param section      the section of the LED strip to apply the rainbow effect to
-   * @param cycleLength  the length of a complete rainbow cycle in degrees
-   * @param duration     the duration of the rainbow effect in seconds
+   * @param section the section of the LED strip to apply the rainbow effect to
+   * @param cycleLength the length of a complete rainbow cycle in degrees
+   * @param duration the duration of the rainbow effect in seconds
    */
   private void rainbow(Section section, double cycleLength, double duration) {
     double x = (1 - ((Timer.getFPGATimestamp() / duration) % 1.0)) * 180.0;
@@ -217,9 +240,9 @@ public class Leds extends VirtualSubsystem {
   }
 
   /**
-   * Wave method applies wave effect to a given section of an LED strip.
-   * The wave effect creates a smooth transition of colors between two given colors
-   * over a specified cycle length and duration.
+   * Wave method applies wave effect to a given section of an LED strip. The wave effect creates a
+   * smooth transition of colors between two given colors over a specified cycle length and
+   * duration.
    *
    * @param section the section of the LED strip to apply the wave effect to
    * @param c1 the starting color of the wave effect
@@ -249,13 +272,13 @@ public class Leds extends VirtualSubsystem {
   }
 
   /**
-   * Applies a stripe effect to a given section of an LED strip.
-   * The stripe effect creates a pattern of stripes with different colors.
+   * Applies a stripe effect to a given section of an LED strip. The stripe effect creates a pattern
+   * of stripes with different colors.
    *
-   * @param section   the section of the LED strip to apply the stripe effect to
-   * @param colors    the list of colors for the stripes
-   * @param length    the length of each stripe in LED units
-   * @param duration  the duration of the stripe effect in seconds
+   * @param section the section of the LED strip to apply the stripe effect to
+   * @param colors the list of colors for the stripes
+   * @param length the number of sequential LEDs to be the same color
+   * @param duration the duration of the stripe effect in seconds
    */
   private void stripes(Section section, List<Color> colors, int length, double duration) {
     int offset = (int) (Timer.getFPGATimestamp() % duration / duration * length * colors.size());
