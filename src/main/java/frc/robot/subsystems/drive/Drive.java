@@ -55,7 +55,7 @@ public class Drive extends SubsystemBase {
             new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
             new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
             DriveConstants.MAX_LINEAR_SPEED,
-            getModuleTranslations()[0].getNorm(), 
+            getModuleTranslations()[0].getNorm(),
             new ReplanningConfig()),
         () ->
             DriverStation.getAlliance().isPresent()
