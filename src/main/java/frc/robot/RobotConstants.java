@@ -10,7 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class RobotConstants {
-  private static Constants constants = new BriefcaseConstants();
+  private static Constants constants = new CompBotConstants();
   public static final boolean TUNING_MODE = false;
 
   private RobotConstants() {

@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
 /** Controls an LED Strip's color. */
-@Deprecated
 public class LEDStrip extends AddressableLEDBuffer {
 
   private static final int[] gammaTable = {

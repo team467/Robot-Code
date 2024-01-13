@@ -70,7 +70,7 @@ public class Robot extends LoggedRobot {
         Logger.addDataReceiver(new NT4Publisher());
         String folder = RobotConstants.get().logFolder();
         if (folder != null) {
-          // Logger.addDataReceiver(new WPILOGWriter(folder));
+          Logger.addDataReceiver(new WPILOGWriter(folder));
         }
         if (RobotConstants.get().robot() == RobotType.ROBOT_COMP) {
           new PowerDistribution(20, ModuleType.kRev);

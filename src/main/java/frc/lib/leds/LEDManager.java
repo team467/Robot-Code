@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import java.util.ArrayList;
 
-@Deprecated
 public class LEDManager {
 
   private static LEDManager INSTANCE = null;

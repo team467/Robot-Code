@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
  *
  * <p>This inverts the LED Strip, so start is end and vice versa.
  */
-@Deprecated
 public class InvertedLEDStrip extends LEDStrip {
 
   protected InvertedLEDStrip(int length, int id) {
