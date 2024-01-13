@@ -10,7 +10,6 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.RobotConstants;
 
 public class ModuleIOSparkMAX implements ModuleIO {
   private final CANSparkMax driveMotor;
@@ -35,11 +34,10 @@ public class ModuleIOSparkMAX implements ModuleIO {
 
     double rotsToMeters =
         Units.rotationsToRadians(1)
-            * (RobotConstants.get().moduleWheelDiameter() / 2)
-            * RobotConstants.get().moduleDriveGearRatio().getRotationsPerInput();
+            * (DriveConstants.WHEEL_DIAMETER / 2)
+            * DriveConstants.DRIVE_GEAR_RATIO.getRotationsPerInput();
     double rotsToRads =
-        Units.rotationsToRadians(1)
-            * RobotConstants.get().moduleTurnGearRatio().getRotationsPerInput();
+        Units.rotationsToRadians(1) * DriveConstants.TURN_GEAR_RATIO.getRotationsPerInput();
 
     driveEncoder.setPositionConversionFactor(rotsToMeters);
     turnEncoder.setPositionConversionFactor(rotsToRads);
@@ -80,7 +78,7 @@ public class ModuleIOSparkMAX implements ModuleIO {
         turnEncoder.setPosition(
             MathUtil.angleModulus(
                 Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble())
-                    .minus(RobotConstants.get().absoluteAngleOffset()[index])
+                    .minus(DriveConstants.ABSOLUTE_ANGLE_OFFSET[index])
                     .getRadians()));
       }
     } else {
@@ -90,7 +88,7 @@ public class ModuleIOSparkMAX implements ModuleIO {
 
     inputs.turnAbsolutePosition =
         Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble())
-            .minus(RobotConstants.get().absoluteAngleOffset()[index]);
+            .minus(DriveConstants.ABSOLUTE_ANGLE_OFFSET[index]);
     inputs.turnAppliedVolts = turnMotor.getAppliedOutput() * turnMotor.getBusVoltage();
     inputs.turnCurrentAmps = new double[] {turnMotor.getOutputCurrent()};
   }
