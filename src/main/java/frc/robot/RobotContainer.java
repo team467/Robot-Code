@@ -30,8 +30,6 @@ import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.LedConstants;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
-import frc.robot.subsystems.shooter.ShooterIO;
-
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -140,11 +138,16 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    driverController.leftBumper().onTrue(Commands.run(() -> {
-      if (shooter.getHoldingNote() && shooter.getFlywheelSpeedIsReady()) {
-        shooter.setIndexerVoltage(ShooterConstants.indexerFowardVoltage);
-      }
-    }, shooter));
+    driverController
+        .leftBumper()
+        .onTrue(
+            Commands.run(
+                () -> {
+                  if (shooter.getHoldingNote() && shooter.getFlywheelSpeedIsReady()) {
+                    shooter.setIndexerVoltage(ShooterConstants.indexerFowardVoltage);
+                  }
+                },
+                shooter));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
 
@@ -169,9 +172,12 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    shooter.setDefaultCommand(Commands.run(() ->{
-    shooter.setIndexerVoltage(ShooterConstants.indexerHoldVoltage);
-    }, shooter));
+    shooter.setDefaultCommand(
+        Commands.run(
+            () -> {
+              shooter.setIndexerVoltage(ShooterConstants.indexerHoldVoltage);
+            },
+            shooter));
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
   }
 

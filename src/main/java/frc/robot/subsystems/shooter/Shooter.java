@@ -25,16 +25,15 @@ public class Shooter extends SubsystemBase {
     io.setIndexerVoltage(volts);
   }
 
+  public void setShooterVoltage(double volts) {
+    io.setShooterVoltage(volts);
+  }
 
-public void setShooterVoltage(double volts) {
-  io.setShooterVoltage(volts);
-}
+  public boolean getFlywheelSpeedIsReady() {
+    return inputs.shooterVelocityRadPerSec >= ShooterConstants.shooterReadyVelocityRadPerSec;
+  }
 
-public boolean getFlywheelSpeedIsReady() {
-  return inputs.shooterVelocityRadPerSec >= ShooterConstants.shooterReadyVelocityRadPerSec;
-}
-
-public boolean getHoldingNote() {
-  return true;
-}
+  public boolean getHoldingNote() {
+    return true;
+  }
 }

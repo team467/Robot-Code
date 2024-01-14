@@ -21,7 +21,6 @@ public class ShooterConstants {
         indexerHoldVoltage = 0.0;
         indexerBackwardVolatage = 0.0;
         shooterReadyVelocityRadPerSec = 0.0;
-        
       }
       default -> {
         indexerFowardVoltage = 0.0;
