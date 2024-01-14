@@ -28,6 +28,10 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.LedConstants;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
+import frc.robot.subsystems.shooter.ShooterIO;
+
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -40,6 +44,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
+  private Shooter shooter;
   private Drive drive;
   private Led2023 led2023;
   private Vision vision;
@@ -80,6 +85,7 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(5, 6, 14, 1),
                   new ModuleIOSparkMAX(1, 2, 15, 2),
                   new ModuleIOSparkMAX(7, 8, 16, 3));
+          shooter = new Shooter(null);
         }
         case ROBOT_SIMBOT -> {
           drive =
@@ -134,6 +140,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    driverController.leftBumper().onTrue(Commands.run(() -> {
+      if (shooter.getHoldingNote() && shooter.getFlywheelSpeedIsReady()) {
+        shooter.setIndexerVoltage(ShooterConstants.indexerFowardVoltage);
+      }
+    }, shooter));
+
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
 
     drive.setDefaultCommand(
@@ -157,7 +169,9 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
+    shooter.setDefaultCommand(Commands.run(() ->{
+    shooter.setIndexerVoltage(ShooterConstants.indexerHoldVoltage);
+    }, shooter));
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
   }
 
