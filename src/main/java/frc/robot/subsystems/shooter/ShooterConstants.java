@@ -6,7 +6,7 @@ public class ShooterConstants {
   public static double indexerFowardVoltage;
   public static double indexerHoldVoltage;
   public static double indexerBackwardVolatage;
-  public static double shooterReadyVelocity;
+  public static double shooterReadyVelocityRadPerSec;
 
   static {
     switch (Constants.getRobot()) {
@@ -14,20 +14,20 @@ public class ShooterConstants {
         indexerFowardVoltage = 5.0;
         indexerHoldVoltage = 0.0;
         indexerBackwardVolatage = -3.0;
-        shooterReadyVelocity = 0.6;
+        shooterReadyVelocityRadPerSec = 0.6;
       }
       case ROBOT_SIMBOT -> {
         indexerFowardVoltage = 0.0;
         indexerHoldVoltage = 0.0;
         indexerBackwardVolatage = 0.0;
-        shooterReadyVelocity = 0.0;
+        shooterReadyVelocityRadPerSec = 0.0;
         
       }
       default -> {
         indexerFowardVoltage = 0.0;
         indexerHoldVoltage = 0.0;
         indexerBackwardVolatage = 0.0;
-        shooterReadyVelocity = 0.0;
+        shooterReadyVelocityRadPerSec = 0.0;
       }
     }
   }

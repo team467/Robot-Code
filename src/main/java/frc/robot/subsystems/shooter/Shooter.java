@@ -30,8 +30,8 @@ public void setShooterVoltage(double volts) {
   io.setShooterVoltage(volts);
 }
 
-public boolean getShooterIsReady() {
-  return inputs.shooterVelocityRadPerSec >= ShooterConstants.shooterReadyVelocity;
+public boolean getFlywheelSpeedIsReady() {
+  return inputs.shooterVelocityRadPerSec >= ShooterConstants.shooterReadyVelocityRadPerSec;
 }
 
 public boolean getHoldingNote() {
