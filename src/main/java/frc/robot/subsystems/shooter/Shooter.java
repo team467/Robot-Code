@@ -10,6 +10,7 @@ public class Shooter extends SubsystemBase {
 
   /** Creates a new shooter. */
   private final ShooterIO io;
+  private static double shooterReadyVelocityRadPerSec = ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC;
 
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
@@ -30,7 +31,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean getFlywheelSpeedIsReady() {
-    return inputs.shooterVelocityRadPerSec >= ShooterConstants.shooterReadyVelocityRadPerSec;
+    return inputs.shooterVelocityRadPerSec >= shooterReadyVelocityRadPerSec;
   }
 
   public boolean getHoldingNote() {

@@ -144,7 +144,7 @@ public class RobotContainer {
             Commands.run(
                 () -> {
                   if (shooter.getHoldingNote() && shooter.getFlywheelSpeedIsReady()) {
-                    shooter.setIndexerVoltage(ShooterConstants.indexerFowardVoltage);
+                    shooter.setIndexerVoltage(ShooterConstants.INDEXER_FOWARD_VOLTAGE);
                   }
                 },
                 shooter));
@@ -175,7 +175,7 @@ public class RobotContainer {
     shooter.setDefaultCommand(
         Commands.run(
             () -> {
-              shooter.setIndexerVoltage(ShooterConstants.indexerHoldVoltage);
+              shooter.setIndexerVoltage(ShooterConstants.INDEXER_HOLD_VOLTAGE);
             },
             shooter));
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));

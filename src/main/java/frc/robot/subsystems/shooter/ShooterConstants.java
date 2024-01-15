@@ -3,30 +3,30 @@ package frc.robot.subsystems.shooter;
 import frc.robot.Constants;
 
 public class ShooterConstants {
-  public static double indexerFowardVoltage;
-  public static double indexerHoldVoltage;
-  public static double indexerBackwardVolatage;
-  public static double shooterReadyVelocityRadPerSec;
+  public static final double INDEXER_FOWARD_VOLTAGE;
+  public static final double INDEXER_HOLD_VOLTAGE;
+  public static final double INDEXER_BACKWARD_VOLTAGE;
+  public static final double SHOOTER_READY_VELOCITY_RAD_PER_SEC;
 
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2023 -> {
-        indexerFowardVoltage = 5.0;
-        indexerHoldVoltage = 0.0;
-        indexerBackwardVolatage = -3.0;
-        shooterReadyVelocityRadPerSec = 0.6;
+        INDEXER_FOWARD_VOLTAGE = 5.0;
+        INDEXER_HOLD_VOLTAGE = 0.0;
+        INDEXER_BACKWARD_VOLTAGE = -3.0;
+        SHOOTER_READY_VELOCITY_RAD_PER_SEC = 0.6;
       }
       case ROBOT_SIMBOT -> {
-        indexerFowardVoltage = 0.0;
-        indexerHoldVoltage = 0.0;
-        indexerBackwardVolatage = 0.0;
-        shooterReadyVelocityRadPerSec = 0.0;
+        INDEXER_FOWARD_VOLTAGE = 5.0;
+        INDEXER_HOLD_VOLTAGE = 0.0;
+        INDEXER_BACKWARD_VOLTAGE = 0.0;
+        SHOOTER_READY_VELOCITY_RAD_PER_SEC = 0.0;
       }
       default -> {
-        indexerFowardVoltage = 0.0;
-        indexerHoldVoltage = 0.0;
-        indexerBackwardVolatage = 0.0;
-        shooterReadyVelocityRadPerSec = 0.0;
+        INDEXER_FOWARD_VOLTAGE = 5.0;
+        INDEXER_HOLD_VOLTAGE = 0.0;
+        INDEXER_BACKWARD_VOLTAGE = 0.0;
+        SHOOTER_READY_VELOCITY_RAD_PER_SEC = 0.0;
       }
     }
   }
