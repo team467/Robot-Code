@@ -12,8 +12,6 @@ import edu.wpi.first.math.util.Units;
 public class GyroPigeon2 implements GyroIO {
   private final Pigeon2 pigeon;
   private final StatusSignal<Double> yaw;
-  private final StatusSignal<Double> pitch;
-  private final StatusSignal<Double> roll;
   private final StatusSignal<Double> yawVelocity;
   private final StatusSignal<Double> pitchVelocity;
   private final StatusSignal<Double> rollVelocity;
@@ -25,8 +23,6 @@ public class GyroPigeon2 implements GyroIO {
   public GyroPigeon2(int deviceID) {
     pigeon = new Pigeon2(deviceID);
     yaw = pigeon.getYaw();
-    pitch = pigeon.getPitch();
-    roll = pigeon.getRoll();
     yawVelocity = pigeon.getAngularVelocityZWorld();
     pitchVelocity = pigeon.getAngularVelocityYWorld();
     rollVelocity = pigeon.getAngularVelocityXWorld();
@@ -41,8 +37,6 @@ public class GyroPigeon2 implements GyroIO {
     inputs.connected =
         BaseStatusSignal.refreshAll(
                 yaw,
-                pitch,
-                roll,
                 yawVelocity,
                 pitchVelocity,
                 rollVelocity,
