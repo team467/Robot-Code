@@ -36,19 +36,19 @@ public class ModuleIOSparkMAX implements ModuleIO {
         turnAbsEncoderId = Schematic.FRONT_LEFT_CANCODER_ID;
       }
       case 1 -> {
-            driveMotorId = Schematic.FRONT_RIGHT_DRIVE_ID;
-            turnMotorId = Schematic.FRONT_RIGHT_STEERING_ID;
-            turnAbsEncoderId = Schematic.FRONT_RIGHT_CANCODER_ID;
+        driveMotorId = Schematic.FRONT_RIGHT_DRIVE_ID;
+        turnMotorId = Schematic.FRONT_RIGHT_STEERING_ID;
+        turnAbsEncoderId = Schematic.FRONT_RIGHT_CANCODER_ID;
       }
       case 2 -> {
-            driveMotorId = Schematic.REAR_LEFT_DRIVE_ID;
-            turnMotorId = Schematic.REAR_LEFT_STEERING_ID;
-            turnAbsEncoderId = Schematic.REAR_LEFT_CANCODER_ID;
-        }
+        driveMotorId = Schematic.REAR_LEFT_DRIVE_ID;
+        turnMotorId = Schematic.REAR_LEFT_STEERING_ID;
+        turnAbsEncoderId = Schematic.REAR_LEFT_CANCODER_ID;
+      }
       case 3 -> {
-          driveMotorId = Schematic.REAR_RIGHT_DRIVE_ID;
-          turnMotorId = Schematic.REAR_RIGHT_STEERING_ID;
-          turnAbsEncoderId = Schematic.REAR_RIGHT_CANCODER_ID;
+        driveMotorId = Schematic.REAR_RIGHT_DRIVE_ID;
+        turnMotorId = Schematic.REAR_RIGHT_STEERING_ID;
+        turnAbsEncoderId = Schematic.REAR_RIGHT_CANCODER_ID;
       }
       default -> throw new IllegalArgumentException("Drive: Illegal index attempted " + index);
     }
