@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.IOException;
@@ -64,11 +63,7 @@ public class Robot extends LoggedRobot {
         if (folder != null) {
           Logger.addDataReceiver(new WPILOGWriter(folder));
         }
-        if (Constants.getRobot() == Constants.RobotType.ROBOT_2023) {
-          new PowerDistribution(20, ModuleType.kRev);
-        } else {
-          new PowerDistribution(20, ModuleType.kCTRE);
-        }
+        new PowerDistribution(Schematic.POWER_DIST_ID, Schematic.POWER_DIST_TYPE);
       }
 
         // Running a physics simulator, log to local folder
