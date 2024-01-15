@@ -29,7 +29,7 @@ public class Constants {
 
   public static Mode getMode() {
     switch (getRobot()) {
-      case ROBOT_2023, ROBOT_BRIEFCASE -> {
+      case ROBOT_2023, ROBOT_2024A, ROBOT_BRIEFCASE -> {
         return RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
       }
       case ROBOT_SIMBOT -> {
@@ -46,6 +46,7 @@ public class Constants {
 
   public enum RobotType {
     ROBOT_2023,
+    ROBOT_2024A,
     ROBOT_BRIEFCASE,
     ROBOT_SIMBOT
   }
