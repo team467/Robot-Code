@@ -10,6 +10,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Schematic;
 
 public class ModuleIOSparkMAX implements ModuleIO {
   private final CANSparkMax driveMotor;
@@ -24,7 +25,33 @@ public class ModuleIOSparkMAX implements ModuleIO {
   private int resetCount = 0;
   private final int index;
 
-  public ModuleIOSparkMAX(int driveMotorId, int turnMotorId, int turnAbsEncoderId, int index) {
+  public ModuleIOSparkMAX(int index) {
+    int driveMotorId;
+    int turnMotorId;
+    int turnAbsEncoderId;
+    switch (index) {
+      case 0 -> {
+        driveMotorId = Schematic.FRONT_LEFT_DRIVE_ID;
+        turnMotorId = Schematic.FRONT_LEFT_STEERING_ID;
+        turnAbsEncoderId = Schematic.FRONT_LEFT_CANCODER_ID;
+      }
+      case 1 -> {
+            driveMotorId = Schematic.FRONT_RIGHT_DRIVE_ID;
+            turnMotorId = Schematic.FRONT_RIGHT_STEERING_ID;
+            turnAbsEncoderId = Schematic.FRONT_RIGHT_CANCODER_ID;
+      }
+      case 2 -> {
+            driveMotorId = Schematic.REAR_LEFT_DRIVE_ID;
+            turnMotorId = Schematic.REAR_LEFT_STEERING_ID;
+            turnAbsEncoderId = Schematic.REAR_LEFT_CANCODER_ID;
+        }
+      case 3 -> {
+          driveMotorId = Schematic.REAR_RIGHT_DRIVE_ID;
+          turnMotorId = Schematic.REAR_RIGHT_STEERING_ID;
+          turnAbsEncoderId = Schematic.REAR_RIGHT_CANCODER_ID;
+      }
+      default -> throw new IllegalArgumentException("Drive: Illegal index attempted " + index);
+    }
     driveMotor = new CANSparkMax(driveMotorId, MotorType.kBrushless);
     turnMotor = new CANSparkMax(turnMotorId, MotorType.kBrushless);
     driveEncoder = driveMotor.getEncoder();

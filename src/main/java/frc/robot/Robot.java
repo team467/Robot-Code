@@ -64,11 +64,7 @@ public class Robot extends LoggedRobot {
         if (folder != null) {
           Logger.addDataReceiver(new WPILOGWriter(folder));
         }
-        if (Constants.getRobot() == Constants.RobotType.ROBOT_2023) {
-          new PowerDistribution(20, ModuleType.kRev);
-        } else {
-          new PowerDistribution(20, ModuleType.kCTRE);
-        }
+        new PowerDistribution(Schematic.POWER_DIST_ID, Schematic.POWER_DIST_TYPE);
       }
 
         // Running a physics simulator, log to local folder
