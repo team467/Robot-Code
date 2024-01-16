@@ -4,13 +4,20 @@
 
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
 
   /** Creates a new shooter. */
   private final ShooterIO io;
-  private static double shooterReadyVelocityRadPerSec = ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC;
+
+  private SimpleMotorFeedforward shooterFeedforward =
+      new SimpleMotorFeedforward(
+          ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
+
+  private static double shooterReadyVelocityRadPerSec =
+      ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC;
 
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
@@ -24,6 +31,10 @@ public class Shooter extends SubsystemBase {
 
   public void setIndexerVoltage(double volts) {
     io.setIndexerVoltage(volts);
+  }
+
+  public void setShooterVelocity(double RadPerSec) {
+    io.setShooterVoltage(shooterFeedforward.calculate(RadPerSec));
   }
 
   public void setShooterVoltage(double volts) {

@@ -142,12 +142,18 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(
             Commands.run(
-                () -> {
-                  if (shooter.getHoldingNote() && shooter.getFlywheelSpeedIsReady()) {
-                    shooter.setIndexerVoltage(ShooterConstants.INDEXER_FOWARD_VOLTAGE);
-                  }
-                },
-                shooter));
+                    () ->
+                        shooter.setShooterVelocity(
+                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
+                .onlyWhile(() -> !shooter.getFlywheelSpeedIsReady())
+                .andThen(
+                    Commands.run(
+                        () -> {
+                          if (shooter.getHoldingNote() && shooter.getFlywheelSpeedIsReady()) {
+                            shooter.setIndexerVoltage(ShooterConstants.INDEXER_FOWARD_VOLTAGE);
+                          }
+                        },
+                        shooter)));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
 
