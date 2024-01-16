@@ -146,7 +146,7 @@ public class RobotContainer {
                     () ->
                         shooter.setShooterVelocity(
                             ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
-                .onlyWhile(() -> !shooter.getFlywheelSpeedIsReady())
+                .onlyWhile(() -> !shooter.getFlywheelSpeedIsReady(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
                 .andThen(
                     Commands.run(
                         () -> {
@@ -155,9 +155,9 @@ public class RobotContainer {
                           }
                         },
                         shooter))
-                .onlyWhile(() -> shooter.getFlywheelSpeedIsReady())
+                .onlyWhile(() -> shooter.getFlywheelSpeedIsReady(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
                 .withTimeout(5));
-
+ 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
 
     drive.setDefaultCommand(
