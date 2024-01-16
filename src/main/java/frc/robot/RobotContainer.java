@@ -138,6 +138,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    driverController.a().whileTrue(Commands.runOnce(() -> new Rotation2d(2, 2), drive));
     driverController
         .leftBumper()
         .whileTrue(
@@ -146,7 +147,6 @@ public class RobotContainer {
                         shooter.setShooterVelocity(
                             ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
                 .onlyWhile(() -> !shooter.getFlywheelSpeedIsReady())
-                .andThen(Commands.runOnce(() -> new Rotation2d(2, 2), drive))
                 .andThen(
                     Commands.run(
                         () -> {
