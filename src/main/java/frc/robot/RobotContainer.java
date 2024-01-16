@@ -140,24 +140,29 @@ public class RobotContainer {
 
     driverController.a().whileTrue(Commands.runOnce(() -> new Rotation2d(2, 2), drive));
     driverController
-        .leftBumper()
+        .rightBumper()
         .whileTrue(
             Commands.run(
                     () ->
                         shooter.setShooterVelocity(
                             ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
-                .onlyWhile(() -> !shooter.getFlywheelSpeedIsReady(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
-                .andThen(
-                    Commands.run(
-                        () -> {
-                          if (shooter.getHoldingNote()) {
-                            shooter.setIndexerVoltage(ShooterConstants.INDEXER_FOWARD_VOLTAGE);
-                          }
-                        },
-                        shooter))
-                .onlyWhile(() -> shooter.getFlywheelSpeedIsReady(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
+                .onlyWhile(
+                    () ->
+                        !shooter.getFlywheelSpeedIsReady(
+                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)));
+    driverController
+        .leftBumper()
+        .whileTrue(
+            Commands.run(
+                    () -> shooter.setIndexerVoltage(ShooterConstants.INDEXER_FOWARD_VOLTAGE),
+                    shooter)
+                .onlyWhile(
+                    () ->
+                        shooter.getFlywheelSpeedIsReady(
+                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
+                .onlyWhile(() -> shooter.getHoldingNote())
                 .withTimeout(5));
- 
+
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
 
     drive.setDefaultCommand(
