@@ -11,7 +11,7 @@ public interface ShooterIO {
 
   default void updateInputs(ShooterIOInputs inputs) {}
 
-  default void setFlywheelVoltage(double volts) {}
+  default void setShooterVoltage(double volts) {}
 
   default void setIndexerVoltage(double volts) {}
 }

@@ -139,7 +139,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     driverController.a().whileTrue(Commands.runOnce(() -> new Rotation2d(2, 2), drive));
-    // Intake command temporarrily to b
+    // Intake command temporarrily mapped to b
     driverController
         .b()
         .whileTrue(
@@ -149,12 +149,12 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                     () ->
-                        shooter.setFlywheelVelocity(
-                            ShooterConstants.FLYWHEEL_READY_VELOCITY_RAD_PER_SEC))
+                        shooter.setShooterVelocity(
+                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
                 .onlyWhile(
                     () ->
-                        !shooter.getFlywheelSpeedIsReady(
-                            ShooterConstants.FLYWHEEL_READY_VELOCITY_RAD_PER_SEC)));
+                        !shooter.getShooterSpeedIsReady(
+                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)));
     driverController
         .leftBumper()
         .whileTrue(
@@ -163,8 +163,8 @@ public class RobotContainer {
                     shooter)
                 .onlyWhile(
                     () ->
-                        shooter.getFlywheelSpeedIsReady(
-                            ShooterConstants.FLYWHEEL_READY_VELOCITY_RAD_PER_SEC))
+                        shooter.getShooterSpeedIsReady(
+                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
                 .onlyWhile(() -> shooter.getHoldingNote())
                 .withTimeout(5));
 
