@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import frc.lib.io.gyro3d.GyroADIS16470;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
@@ -76,6 +77,15 @@ public class RobotContainer {
           drive =
               new Drive(
                   new GyroPigeon2(Schematic.GYRO_ID),
+                  new ModuleIOSparkMAX(0),
+                  new ModuleIOSparkMAX(1),
+                  new ModuleIOSparkMAX(2),
+                  new ModuleIOSparkMAX(3));
+        }
+        case ROBOT_2024A -> {
+          drive =
+              new Drive(
+                  new GyroADIS16470(),
                   new ModuleIOSparkMAX(0),
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
