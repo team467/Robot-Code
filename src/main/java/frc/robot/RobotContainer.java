@@ -146,12 +146,12 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                     () ->
-                        shooter.setShooterVelocity(
-                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
+                        shooter.setFlywheelVelocity(
+                            ShooterConstants.FLYWHEEL_READY_VELOCITY_RAD_PER_SEC))
                 .onlyWhile(
                     () ->
                         !shooter.getFlywheelSpeedIsReady(
-                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)));
+                            ShooterConstants.FLYWHEEL_READY_VELOCITY_RAD_PER_SEC)));
     driverController
         .leftBumper()
         .whileTrue(
@@ -161,7 +161,7 @@ public class RobotContainer {
                 .onlyWhile(
                     () ->
                         shooter.getFlywheelSpeedIsReady(
-                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
+                            ShooterConstants.FLYWHEEL_READY_VELOCITY_RAD_PER_SEC))
                 .onlyWhile(() -> shooter.getHoldingNote())
                 .withTimeout(5));
 

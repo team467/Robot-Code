@@ -30,11 +30,11 @@ public class Shooter extends SubsystemBase {
     io.setIndexerVoltage(volts);
   }
 
-  public void setShooterVelocity(double RadPerSec) {
+  public void setFlywheelVelocity(double RadPerSec) {
     io.setShooterVoltage(shooterFeedforward.calculate(RadPerSec));
   }
 
-  public void setShooterVoltage(double volts) {
+  public void setFlywheelVoltage(double volts) {
     io.setShooterVoltage(volts);
   }
 
