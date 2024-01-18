@@ -81,6 +81,15 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
         }
+        case ROBOT_2024A -> {
+          drive =
+              new Drive(
+                  new GyroPigeon2(Schematic.GYRO_ID), // TODO: replace with ADIS16470
+                  new ModuleIOSparkMAX(0),
+                  new ModuleIOSparkMAX(1),
+                  new ModuleIOSparkMAX(2),
+                  new ModuleIOSparkMAX(3));
+        }
         case ROBOT_SIMBOT -> {
           drive =
               new Drive(
