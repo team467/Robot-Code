@@ -14,7 +14,7 @@ public class Shooter extends SubsystemBase {
 
   private SimpleMotorFeedforward shooterFeedforward =
       new SimpleMotorFeedforward(
-          ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
+          ShooterConstants.FLYWHEEL_KS.get(), ShooterConstants.FLYWHEEL_KV.get());
 
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
@@ -31,11 +31,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setFlywheelVelocity(double RadPerSec) {
-    io.setShooterVoltage(shooterFeedforward.calculate(RadPerSec));
+    io.setFlywheelVoltage(shooterFeedforward.calculate(RadPerSec));
   }
 
   public void setFlywheelVoltage(double volts) {
-    io.setShooterVoltage(volts);
+    io.setFlywheelVoltage(volts);
   }
 
   public boolean getFlywheelSpeedIsReady(double shooterReadyVelocityRadPerSec) {
