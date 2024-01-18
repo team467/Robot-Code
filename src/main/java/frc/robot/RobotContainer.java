@@ -139,8 +139,11 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     driverController.a().whileTrue(Commands.runOnce(() -> new Rotation2d(2, 2), drive));
-    //Intake command temporarrily to b
-    driverController.b().whileTrue(Commands.run(() ->   shooter.setIndexerVoltage(ShooterConstants.INDEXER_FOWARD_VOLTAGE)));
+    // Intake command temporarrily to b
+    driverController
+        .b()
+        .whileTrue(
+            Commands.run(() -> shooter.setIndexerVoltage(ShooterConstants.INDEXER_FOWARD_VOLTAGE)));
     driverController
         .rightBumper()
         .whileTrue(
