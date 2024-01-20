@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Intake;
+package frc.robot.subsystems.IntakeNote;
 
 // TODO: Implement setPercent() method with actual motor stuff when we know what motor we will use.
 

@@ -22,8 +22,10 @@ import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.intake.Intake;
+import frc.robot.commands.intake.Release;
+import frc.robot.commands.intake.StopIntake;
 import frc.robot.commands.leds.LedRainbowCMD;
-import frc.robot.subsystems.Intake.IntakeNote;
+import frc.robot.subsystems.IntakeNote.IntakeNote;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -179,6 +181,8 @@ public class RobotContainer {
                                 AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
     driverController.a().onTrue(new Intake(intake));
+    driverController.b().onTrue(new Release(intake));
+    driverController.x().onTrue(new StopIntake(intake));
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));

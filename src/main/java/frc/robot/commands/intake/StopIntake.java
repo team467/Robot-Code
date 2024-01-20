@@ -5,7 +5,7 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake.IntakeNote;
+import frc.robot.subsystems.IntakeNote.IntakeNote;
 
 public class StopIntake extends Command {
   /** Creates a new Stop. */
