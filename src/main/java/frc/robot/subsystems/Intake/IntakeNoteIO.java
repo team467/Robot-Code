@@ -1,9 +1,8 @@
-package frc.robot.subsystems.Affector;
+package frc.robot.subsystems.Intake;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface IntakeNoteIO 
-{
+public interface IntakeNoteIO {
   @AutoLog
   class IntakeNoteIOInputs {
     // I/p for intake
@@ -12,13 +11,13 @@ public interface IntakeNoteIO
 
     // O/p for intake
     public boolean hasNote = false;
-    
+
     // Motor IO
     public double appliedVolts = 0.0;
     public double motorVelocity = 0.0;
   }
-  
+
   default void updateInputs(IntakeNoteIOInputs inputs) {}
-  
+
   default void setPercent(double percent) {}
 }

@@ -21,7 +21,9 @@ import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
+import frc.robot.commands.intake.Intake;
 import frc.robot.commands.leds.LedRainbowCMD;
+import frc.robot.subsystems.Intake.IntakeNote;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -43,6 +45,7 @@ public class RobotContainer {
   private Led2023 led2023;
   private Vision vision;
   private boolean isRobotOriented = true; // Workaround, change if needed
+  private IntakeNote intake;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -175,6 +178,7 @@ public class RobotContainer {
                                 drive.getPose().getTranslation(),
                                 AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
+    driverController.a().onTrue(new Intake(intake));
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));

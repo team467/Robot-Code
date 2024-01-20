@@ -2,9 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.Affector;
-
-import org.littletonrobotics.junction.Logger;
+package frc.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -16,8 +14,9 @@ public class IntakeNote extends SubsystemBase {
   private enum State {
     DISABLED,
   }
+
   private State state;
-  
+
   private boolean hasNote = false;
 
   // Intializes IntakeNote
@@ -30,9 +29,10 @@ public class IntakeNote extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    intakeNoteIO.updateInputs(null); // Need to provide "inputs" and need an AutoLogged class for IntakeNote
+    intakeNoteIO.updateInputs(
+        null); // Need to provide "inputs" and need an AutoLogged class for IntakeNote
 
-    switch (state){
+    switch (state) {
       case DISABLED -> intakeNoteIO.setPercent(0.0);
     }
   }
@@ -46,7 +46,7 @@ public class IntakeNote extends SubsystemBase {
     hasNote = true;
     intakeNoteIO.setPercent((1.0));
   }
-  
+
   public void stop() {
     intakeNoteIO.setPercent(0.0);
   }
