@@ -13,7 +13,6 @@ import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
 import frc.lib.utils.RobotOdometry;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-
 public class Drive extends SubsystemBase {
 
   private final GyroIO gyroIO;
