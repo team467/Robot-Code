@@ -19,5 +19,5 @@ public interface IntakeNoteIO {
 
   default void updateInputs(IntakeNoteIOInputs inputs) {}
 
-  default void setPercent(double percent) {}
+  default void setVoltage(int volts) {} // Volts are [-12,12]
 }

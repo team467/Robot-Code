@@ -33,21 +33,21 @@ public class IntakeNote extends SubsystemBase {
         null); // Need to provide "inputs" and need an AutoLogged class for IntakeNote
 
     switch (state) {
-      case DISABLED -> intakeNoteIO.setPercent(0.0);
+      case DISABLED -> intakeNoteIO.setVoltage(0);
     }
   }
 
   public void startIntake() {
     hasNote = false;
-    intakeNoteIO.setPercent(-1.0);
+    intakeNoteIO.setVoltage(0);;
   }
 
   public void release() {
     hasNote = true;
-    intakeNoteIO.setPercent((1.0));
+    intakeNoteIO.setVoltage(0);;
   }
 
   public void stop() {
-    intakeNoteIO.setPercent(0.0);
+    intakeNoteIO.setVoltage(0);
   }
 }
