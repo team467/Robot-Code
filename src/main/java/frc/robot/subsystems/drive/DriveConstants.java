@@ -54,8 +54,8 @@ public class DriveConstants {
             };
         DRIVE_GEAR_RATIO = new GearRatio(6.12, 1);
         TURN_GEAR_RATIO = new GearRatio(12.8, 1);
-        DRIVE_KS = new TunableNumber("Drive/Module/DriveKS", 0.49385);
-        DRIVE_KV = new TunableNumber("Drive/Module/DriveKV", 2.60818);
+        DRIVE_KS = new TunableNumber("Drive/Module/DriveKS", 0.373);
+        DRIVE_KV = new TunableNumber("Drive/Module/DriveKV", 2.44528);
         TURN_KP = new TunableNumber("Drive/Module/TurnKP", 4.5);
         TURN_KD = new TunableNumber("Drive/Module/TurnKD", 0.1);
       }
