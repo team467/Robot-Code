@@ -19,5 +19,5 @@ public interface IntakeNoteIO {
 
   default void updateInputs(IntakeNoteIOInputs inputs) {}
 
-  default void setVoltage(int volts) {} // Volts are [-12,12]
+  default void setSpeed(double speed) {} // [-1,1], -1 for release, 1 for intake
 }
