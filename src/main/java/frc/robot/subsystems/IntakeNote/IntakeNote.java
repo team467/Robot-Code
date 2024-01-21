@@ -10,13 +10,6 @@ public class IntakeNote extends SubsystemBase {
   /** Creates a new Intake. */
   private final IntakeNoteIO intakeNoteIO;
 
-  // Intializes States
-  private enum State {
-    DISABLED,
-  }
-
-  private State state;
-
   private boolean hasNote = false;
 
   // Intializes IntakeNote
@@ -25,29 +18,30 @@ public class IntakeNote extends SubsystemBase {
     this.intakeNoteIO = intakeNoteIO;
   }
 
-  /* TODO: Get rid of State stuff in here, just have methods like startIntake that are used by the actual commands.*/
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    intakeNoteIO.updateInputs(
-        null); // Need to provide "inputs" and need an AutoLogged class for IntakeNote
-
-    switch (state) {
-      case DISABLED -> intakeNoteIO.setVoltage(0);
-    }
+    intakeNoteIO.updateInputs(null); // Need to provide "inputs" and need an AutoLogged class for IntakeNote
   }
 
   public void startIntake() {
     hasNote = false;
-    intakeNoteIO.setVoltage(0);;
+    intakeNoteIO.setSpeed(0);
   }
+
+  // Command for intaking a note.
+  /* public Command IntakeCommand()
+  {
+    return intakeNoteIO.setSpeed(0);
+  } */
 
   public void release() {
     hasNote = true;
-    intakeNoteIO.setVoltage(0);;
+    intakeNoteIO.setSpeed(0);
+    ;
   }
 
   public void stop() {
-    intakeNoteIO.setVoltage(0);
+    intakeNoteIO.setSpeed(0);
   }
 }
