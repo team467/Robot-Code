@@ -1,8 +1,8 @@
 package frc.robot.subsystems.IntakeNote;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 /* Implements: To access the interface methods, the interface must be "implemented"
 (kinda like inherited) by another class with the implements keyword (instead of extends). */
