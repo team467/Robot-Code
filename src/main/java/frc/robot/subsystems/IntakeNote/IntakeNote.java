@@ -9,19 +9,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IntakeNote extends SubsystemBase {
   /** Creates a new Intake. */
   private final IntakeNoteIO intakeNoteIO;
-
+  private final IntakeNoteIOInputsAutoLogged inputs;
   private boolean hasNote = false;
 
   // Intializes IntakeNote
   public IntakeNote(IntakeNoteIO intakeNoteIO) {
     super();
     this.intakeNoteIO = intakeNoteIO;
+    inputs = new IntakeNoteIOInputsAutoLogged();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    intakeNoteIO.updateInputs(null); // Need to provide "inputs" and need an AutoLogged class for IntakeNote
+    intakeNoteIO.updateInputs(inputs);
   }
 
   public void startIntake() {

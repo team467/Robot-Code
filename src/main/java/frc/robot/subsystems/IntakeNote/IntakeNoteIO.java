@@ -7,7 +7,7 @@ public interface IntakeNoteIO {
   class IntakeNoteIOInputs {
     // I/p for intake
     public boolean seesNote = false; // Need to communicate with Vision
-    public boolean shooterInPosition = false;
+    public boolean armSwitchClosed = false;
 
     // O/p for intake
     public boolean hasNote = false;
