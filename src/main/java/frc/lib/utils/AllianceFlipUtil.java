@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.lib.holonomictrajectory.RotationSequence;
 import frc.robot.FieldConstants;
 
 /**
@@ -74,17 +73,6 @@ public class AllianceFlipUtil {
                   -state.poseMeters.getRotation().getCos(),
                   state.poseMeters.getRotation().getSin())),
           -state.curvatureRadPerMeter);
-    } else {
-      return state;
-    }
-  }
-
-  /** Flips a rotation sequence state based on the current alliance color. */
-  public static RotationSequence.State apply(RotationSequence.State state) {
-    if (shouldFlip()) {
-      return new RotationSequence.State(
-          new Rotation2d(-state.position.getCos(), state.position.getSin()),
-          -state.velocityRadiansPerSec);
     } else {
       return state;
     }

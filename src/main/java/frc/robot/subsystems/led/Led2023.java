@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.leds.DoubleLEDStrip;
 import frc.lib.leds.LEDManager;
-import frc.robot.RobotConstants;
 
 public class Led2023 extends SubsystemBase {
   public DoubleLEDStrip ledStrip;
@@ -68,8 +67,7 @@ public class Led2023 extends SubsystemBase {
   public Led2023() {
     super();
 
-    ledStrip =
-        LEDManager.getInstance().createDoubleStrip(RobotConstants.get().led2023LedCount(), false);
+    ledStrip = LEDManager.getInstance().createDoubleStrip(LedConstants.LED_COUNT, false);
     for (int i = 0; i < ledStrip.getSize(); i++) {
       ledStrip.setRGB(i, 0, 0, 0);
     }
@@ -140,15 +138,13 @@ public class Led2023 extends SubsystemBase {
   }
 
   public void setTop(Color color) {
-    for (int i = 0; i < RobotConstants.get().led2023LedCount() / 2; i++) {
+    for (int i = 0; i < LedConstants.LED_COUNT / 2; i++) {
       ledStrip.setLED(i, color);
     }
   }
 
   public void setBottom(Color color) {
-    for (int i = RobotConstants.get().led2023LedCount() / 2;
-        i < RobotConstants.get().led2023LedCount();
-        i++) {
+    for (int i = LedConstants.LED_COUNT / 2; i < LedConstants.LED_COUNT; i++) {
       ledStrip.setLED(i, color);
     }
   }
@@ -159,15 +155,13 @@ public class Led2023 extends SubsystemBase {
   }
 
   public void setTop(COLORS_467 color) {
-    for (int i = RobotConstants.get().led2023LedCount() / 2;
-        i < RobotConstants.get().led2023LedCount();
-        i++) {
+    for (int i = LedConstants.LED_COUNT / 2; i < LedConstants.LED_COUNT; i++) {
       ledStrip.setRGB(i, color.red, color.green, color.blue);
     }
   }
 
   public void setBottom(COLORS_467 color) {
-    for (int i = 0; i < RobotConstants.get().led2023LedCount() / 2; i++) {
+    for (int i = 0; i < LedConstants.LED_COUNT / 2; i++) {
       ledStrip.setRGB(i, color.red, color.green, color.blue);
     }
   }
@@ -177,12 +171,11 @@ public class Led2023 extends SubsystemBase {
     private final double SHOOTING_TIMER_SPEED = 0.1;
 
     public void setColorMovingDown(Color fgColor, Color bgColor) {
-      if (purpleTimer.hasElapsed(
-          SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
+      if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * (LedConstants.LED_COUNT + 2))) {
         purpleTimer.reset();
       }
 
-      for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
+      for (int i = 0; i < LedConstants.LED_COUNT; i++) {
         if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * i)) {
           double timeUntilOff = Math.max(0, (SHOOTING_TIMER_SPEED * (i + 2)) - purpleTimer.get());
           double brightness = (255 * timeUntilOff);
@@ -204,13 +197,12 @@ public class Led2023 extends SubsystemBase {
     }
 
     public void setColorMovingUp(Color fgColor, Color bgColor) {
-      if (purpleTimer.hasElapsed(
-          SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
+      if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * (LedConstants.LED_COUNT + 2))) {
         purpleTimer.reset();
       }
 
-      for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
-        int j = RobotConstants.get().led2023LedCount() - i - 1;
+      for (int i = 0; i < LedConstants.LED_COUNT; i++) {
+        int j = LedConstants.LED_COUNT - i - 1;
         if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * i)) {
           double timeUntilOff = Math.max(0, (SHOOTING_TIMER_SPEED * (i + 2)) - purpleTimer.get());
           double brightness = (255 * timeUntilOff);
@@ -232,18 +224,16 @@ public class Led2023 extends SubsystemBase {
     }
 
     public void setColorMovingUpTwoClr(Color topColor, Color bottomColor) {
-      if (purpleTimer.hasElapsed(
-          SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
+      if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * (LedConstants.LED_COUNT + 2))) {
         purpleTimer.reset();
       }
 
-      for (int i = RobotConstants.get().led2023LedCount() - 1; i >= 0; i--) {
-        int j = RobotConstants.get().led2023LedCount() - 1 - i;
+      for (int i = LedConstants.LED_COUNT - 1; i >= 0; i--) {
+        int j = LedConstants.LED_COUNT - 1 - i;
         if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * i)) {
           double timeUntilOff = Math.max(0, (SHOOTING_TIMER_SPEED * (i + 2)) - purpleTimer.get());
           double brightness = (255 * timeUntilOff);
-          Color currentColor =
-              j >= RobotConstants.get().led2023LedCount() / 2 ? topColor : bottomColor;
+          Color currentColor = j >= LedConstants.LED_COUNT / 2 ? topColor : bottomColor;
 
           if (brightness == 0) {
             ledStrip.setLED(j, currentColor);
@@ -256,8 +246,7 @@ public class Led2023 extends SubsystemBase {
                 (int) (currentColor.blue * brightness));
           }
         } else {
-          Color currentColor =
-              j >= RobotConstants.get().led2023LedCount() / 2 ? topColor : bottomColor;
+          Color currentColor = j >= LedConstants.LED_COUNT / 2 ? topColor : bottomColor;
           ledStrip.setLED(j, currentColor);
         }
       }
@@ -277,7 +266,7 @@ public class Led2023 extends SubsystemBase {
     }
 
     public void setAlternateColorsDown(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
-      for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
+      for (int i = 0; i < LedConstants.LED_COUNT; i++) {
         if (i % 2 == 0) {
           ledStrip.setLED(i, colorOne.getColor());
         } else {
@@ -285,17 +274,16 @@ public class Led2023 extends SubsystemBase {
         }
       }
 
-      if (purpleTimer.hasElapsed(
-          SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
+      if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * (LedConstants.LED_COUNT + 2))) {
         purpleTimer.reset();
-        for (int j = 0; j < RobotConstants.get().led2023LedCount(); j++) {
+        for (int j = 0; j < LedConstants.LED_COUNT; j++) {
           ledStrip.setLED(j, bgColor);
         }
       }
     }
 
     public void setAlternateColorsUp(COLORS_467 colorOne, COLORS_467 colorTwo, Color bgColor) {
-      for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
+      for (int i = 0; i < LedConstants.LED_COUNT; i++) {
         if (i % 2 == 0) {
           ledStrip.setLED(i, colorOne.getColor());
         } else {
@@ -303,32 +291,31 @@ public class Led2023 extends SubsystemBase {
         }
       }
 
-      for (int j = 0; j < RobotConstants.get().led2023LedCount(); j++) {
-        int l = RobotConstants.get().led2023LedCount() - 1 - j;
+      for (int j = 0; j < LedConstants.LED_COUNT; j++) {
+        int l = LedConstants.LED_COUNT - 1 - j;
         ledStrip.setLED(l, bgColor);
       }
     }
 
     public void setColorMovingDownTwoClr(Color topColor, Color bottomColor) {
-      if (purpleTimer.hasElapsed(
-          SHOOTING_TIMER_SPEED * (RobotConstants.get().led2023LedCount() + 2))) {
+      if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * (LedConstants.LED_COUNT + 2))) {
         purpleTimer.reset();
       }
 
-      for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
+      for (int i = 0; i < LedConstants.LED_COUNT; i++) {
         if (purpleTimer.hasElapsed(SHOOTING_TIMER_SPEED * i)) {
           double timeUntilOff = Math.max(0, (SHOOTING_TIMER_SPEED * (i + 2)) - purpleTimer.get());
           double brightness = (255 * timeUntilOff);
 
           if (brightness == 0) {
-            if (i < RobotConstants.get().led2023LedCount() / 2) {
+            if (i < LedConstants.LED_COUNT / 2) {
               ledStrip.setLED(i, topColor);
             } else {
               ledStrip.setLED(i, bottomColor);
             }
 
           } else {
-            if (i < RobotConstants.get().led2023LedCount() / 2) {
+            if (i < LedConstants.LED_COUNT / 2) {
               ledStrip.setRGB(
                   i,
                   (int) (topColor.red * brightness),
@@ -343,7 +330,7 @@ public class Led2023 extends SubsystemBase {
             }
           }
         } else {
-          if (i < RobotConstants.get().led2023LedCount() / 2) {
+          if (i < LedConstants.LED_COUNT / 2) {
             ledStrip.setLED(i, topColor);
           } else {
             ledStrip.setLED(i, bottomColor);
@@ -368,12 +355,9 @@ public class Led2023 extends SubsystemBase {
         rainbowTimer.reset();
       }
 
-      for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
+      for (int i = 0; i < LedConstants.LED_COUNT; i++) {
         ledStrip.setHSB(
-            i,
-            ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
-            255,
-            127);
+            i, ((int) rainbowColor + (i * 360 / LedConstants.LED_COUNT)) % 360, 255, 127);
       }
     }
 
@@ -385,12 +369,9 @@ public class Led2023 extends SubsystemBase {
         rainbowTimer.reset();
       }
 
-      for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
+      for (int i = 0; i < LedConstants.LED_COUNT; i++) {
         ledStrip.setHSB(
-            i,
-            ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
-            255,
-            127);
+            i, ((int) rainbowColor + (i * 360 / LedConstants.LED_COUNT)) % 360, 255, 127);
       }
     }
 
@@ -402,39 +383,29 @@ public class Led2023 extends SubsystemBase {
         rainbowTimer.reset();
       }
 
-      for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
+      for (int i = 0; i < LedConstants.LED_COUNT; i++) {
         ledStrip.setLeftHSB(
-            i,
-            ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
-            255,
-            127);
+            i, ((int) rainbowColor + (i * 360 / LedConstants.LED_COUNT)) % 360, 255, 127);
         ledStrip.setRightHSB(
-            i,
-            ((int) rainbowColor - (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
-            255,
-            127);
+            i, ((int) rainbowColor - (i * 360 / LedConstants.LED_COUNT)) % 360, 255, 127);
       }
     }
 
     public void setRainbow() {
       rainbowTimer.reset();
-      for (int i = 0; i < RobotConstants.get().led2023LedCount(); i++) {
+      for (int i = 0; i < LedConstants.LED_COUNT; i++) {
         ledStrip.setHSB(
-            i,
-            ((int) rainbowColor + (i * 360 / RobotConstants.get().led2023LedCount())) % 360,
-            255,
-            127);
+            i, ((int) rainbowColor + (i * 360 / LedConstants.LED_COUNT)) % 360, 255, 127);
       }
     }
   }
 
   public class SetThirdLeds {
     private static final int topStart = 0;
-    private static final int topEndandMidStart = (int) (RobotConstants.get().led2023LedCount() / 3);
+    private static final int topEndandMidStart = (int) (LedConstants.LED_COUNT / 3);
     private static final int midEndandBottomStart =
-        (int)
-            (RobotConstants.get().led2023LedCount() - (RobotConstants.get().led2023LedCount() / 3));
-    private static final int bottomEnd = (RobotConstants.get().led2023LedCount());
+        (int) (LedConstants.LED_COUNT - (LedConstants.LED_COUNT / 3));
+    private static final int bottomEnd = (LedConstants.LED_COUNT);
 
     public void set(COLORS_467 color, int preSet) {
       // preSet = 1, 2, or 3. sets top 1/3, mid 1/3, or lower 1/3
@@ -501,7 +472,7 @@ public class Led2023 extends SubsystemBase {
       if (brightness > FADE_DURATION) {
         fadeToWhite = (brightness - FADE_DURATION) * 5;
       }
-      for (int i = 0; i < RobotConstants.get().led2023LedCount() / 2; i++) {
+      for (int i = 0; i < LedConstants.LED_COUNT / 2; i++) {
 
         ledStrip.setRGB(
             i,
@@ -509,9 +480,7 @@ public class Led2023 extends SubsystemBase {
             Math.min((int) (topClr.green * brightness / FADE_DURATION) + fadeToWhite, 255),
             Math.min((int) (topClr.blue * brightness / FADE_DURATION) + fadeToWhite, 255));
       }
-      for (int i = (int) RobotConstants.get().led2023LedCount() / 2;
-          i < RobotConstants.get().led2023LedCount();
-          i++) {
+      for (int i = (int) LedConstants.LED_COUNT / 2; i < LedConstants.LED_COUNT; i++) {
 
         ledStrip.setRGB(
             i,

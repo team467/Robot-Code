@@ -6,11 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.RobotType;
 import java.io.IOException;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -35,7 +32,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-    if (RobotConstants.get().mode() == Constants.Mode.REAL) {
+    if (Constants.getMode() == Constants.Mode.REAL) {
       ProcessBuilder builder = new ProcessBuilder();
       builder.command("sudo", "mount", "/dev/sda1", "/media/sda1");
       try {
@@ -58,19 +55,15 @@ public class Robot extends LoggedRobot {
     }
 
     // Set up data receivers & replay source
-    switch (RobotConstants.get().mode()) {
+    switch (Constants.getMode()) {
         // Running on a real robot, log to a USB stick if possible
       case REAL -> {
         Logger.addDataReceiver(new NT4Publisher());
-        String folder = RobotConstants.get().logFolder();
+        String folder = Constants.logFolders.get(Constants.getRobot());
         if (folder != null) {
           Logger.addDataReceiver(new WPILOGWriter(folder));
         }
-        if (RobotConstants.get().robot() == RobotType.ROBOT_COMP) {
-          new PowerDistribution(20, ModuleType.kRev);
-        } else {
-          new PowerDistribution(20, ModuleType.kCTRE);
-        }
+        new PowerDistribution(Schematic.POWER_DIST_ID, Schematic.POWER_DIST_TYPE);
       }
 
         // Running a physics simulator, log to local folder
@@ -90,6 +83,8 @@ public class Robot extends LoggedRobot {
 
     // Start AdvantageKit logger
     Logger.start();
+
+    DriverStation.silenceJoystickConnectionWarning(true);
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.

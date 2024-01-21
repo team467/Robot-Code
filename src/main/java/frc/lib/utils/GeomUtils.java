@@ -85,6 +85,17 @@ public class GeomUtils {
   }
 
   /**
+   * Multiplies a twist by a scaling factor
+   *
+   * @param twist The twist to multiply
+   * @param factor The scaling factor for the twist components
+   * @return The new twist
+   */
+  public static Twist2d multiplyTwist(Twist2d twist, double factor) {
+    return new Twist2d(twist.dx * factor, twist.dy * factor, twist.dtheta * factor);
+  }
+
+  /**
    * Interpolates between two poses based on the scale factor t. For example, t=0 would result in
    * the first pose, t=1 would result in the last pose, and t=0.5 would result in a pose which is
    * exactly halfway between the two poses. Values of t less than zero return the first pose, and

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -13,8 +14,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
-import frc.lib.io.gyro3d.IMUIO;
-import frc.lib.io.gyro3d.IMUPigeon2;
+import frc.lib.io.gyro3d.GyroADIS16470;
+import frc.lib.io.gyro3d.GyroIO;
+import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
 import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.leds.LEDManager;
@@ -31,6 +33,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.led.Led2023;
+import frc.robot.subsystems.led.LedConstants;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -54,85 +57,72 @@ public class RobotContainer {
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser =
-      new LoggedDashboardChooser<>("Auto Choices");
+  private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    switch (RobotConstants.get().mode()) {
-        // Real robot, instantiate hardware IO implementations
-      case REAL -> {
-        switch (RobotConstants.get().robot()) {
-          case ROBOT_COMP -> {
-            Transform3d front =
-                new Transform3d(
-                    new Translation3d(6 * 0.01, -10 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
-                    new Rotation3d());
-            Transform3d right =
-                new Transform3d(
-                    new Translation3d(2 * 0.01, -12 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
-                    new Rotation3d(0, 0, -0.5 * Math.PI));
-            vision =
-                new Vision(
-                    List.of(new VisionIOPhotonVision("front"), new VisionIOPhotonVision("right")),
-                    List.of(front, right));
-            drive =
-                new Drive(
-                    new IMUPigeon2(17),
-                    new ModuleIOSparkMAX(3, 4, 13, 0),
-                    new ModuleIOSparkMAX(5, 6, 14, 1),
-                    new ModuleIOSparkMAX(1, 2, 15, 2),
-                    new ModuleIOSparkMAX(7, 8, 16, 3));
-          }
-          case ROBOT_BRIEFCASE -> {
-            drive =
-                new Drive(
-                    new IMUIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {});
-          }
-          default -> {
-            drive =
-                new Drive(
-                    new IMUIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {});
-          }
+    // Instantiate active subsystems
+    if (Constants.getMode() != Constants.Mode.REPLAY) {
+      switch (Constants.getRobot()) {
+        case ROBOT_2023 -> {
+          Transform3d front =
+              new Transform3d(
+                  new Translation3d(6 * 0.01, -10 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
+                  new Rotation3d());
+          Transform3d right =
+              new Transform3d(
+                  new Translation3d(2 * 0.01, -12 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
+                  new Rotation3d(0, 0, -0.5 * Math.PI));
+          vision =
+              new Vision(
+                  List.of(
+                          new VisionIOPhotonVision("front", front),
+                          new VisionIOPhotonVision("right", right))
+                      .toArray(new frc.lib.io.vision.VisionIO[0]));
+          drive =
+              new Drive(
+                  new GyroPigeon2(Schematic.GYRO_ID),
+                  new ModuleIOSparkMAX(0),
+                  new ModuleIOSparkMAX(1),
+                  new ModuleIOSparkMAX(2),
+                  new ModuleIOSparkMAX(3));
         }
-      }
-        // Sim robot, instantiate physics sim IO implementations
-      case SIM -> {
-        // Init subsystems
-        // subsystem = new Subsystem(new SubsystemIOSim());
-        drive =
-            new Drive(
-                new IMUIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim());
-      }
-
-        // Replayed robot, disable IO implementations
-      default -> {
-        // subsystem = new Subsystem(new SubsystemIO() {});
-        drive =
-            new Drive(
-                new IMUIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
+        case ROBOT_2024A -> {
+          drive =
+              new Drive(
+                  new GyroADIS16470(),
+                  new ModuleIOSparkMAX(0),
+                  new ModuleIOSparkMAX(1),
+                  new ModuleIOSparkMAX(2),
+                  new ModuleIOSparkMAX(3));
+        }
+        case ROBOT_SIMBOT -> {
+          drive =
+              new Drive(
+                  new GyroIO() {},
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim());
+        }
       }
     }
 
-    led2023 = new Led2023();
-    LEDManager.getInstance().init(RobotConstants.get().ledChannel());
+    // Instantiate missing subsystems
+    if (drive == null) {
+      drive =
+          new Drive(
+              new GyroIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {});
+    }
 
+    led2023 = new Led2023();
+    LEDManager.getInstance().init(LedConstants.LED_CHANNEL);
+
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
@@ -144,9 +134,9 @@ public class RobotContainer {
                     drive,
                     true,
                     new FeedForwardCharacterizationData("drive"),
-                    drive::runDriveCharacterizationVolts,
-                    drive::getDriveCharacterizationVelocity))
-            .andThen(() -> configureButtonBindings()));
+                    drive::runCharacterizationVolts,
+                    drive::getCharacterizationVelocity))
+            .andThen(this::configureButtonBindings));
 
     // Configure the button bindings
     configureButtonBindings();

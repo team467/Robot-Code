@@ -10,8 +10,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.utils.GeomUtils;
-import frc.robot.RobotConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveConstants;
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class DriveWithJoysticks extends Command {
@@ -27,6 +28,8 @@ public class DriveWithJoysticks extends Command {
   private final SlewRateLimiter leftYFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
   private final SlewRateLimiter rightXFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
 
+  private final double MAX_ANGULAR_SPEED;
+
   public DriveWithJoysticks(
       Drive drive,
       Supplier<Double> leftXSupplier,
@@ -38,6 +41,13 @@ public class DriveWithJoysticks extends Command {
     this.leftYSupplier = leftYSupplier;
     this.rightXSupplier = rightXSupplier;
     this.robotRelativeOverride = robotRelativeOverride;
+
+    MAX_ANGULAR_SPEED =
+        DriveConstants.MAX_LINEAR_SPEED
+            / Arrays.stream(drive.getModuleTranslations())
+                .map(Translation2d::getNorm)
+                .max(Double::compare)
+                .get();
 
     addRequirements(drive);
   }
@@ -77,9 +87,9 @@ public class DriveWithJoysticks extends Command {
     // Convert to meters per second
     ChassisSpeeds speeds =
         new ChassisSpeeds(
-            linearVelocity.getX() * RobotConstants.get().maxLinearSpeed(),
-            linearVelocity.getY() * RobotConstants.get().maxLinearSpeed(),
-            rightX * RobotConstants.get().maxAngularSpeed());
+            linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED,
+            linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
+            rightX * MAX_ANGULAR_SPEED);
 
     // Convert from field relative
     if (robotRelativeOverride.get()) {
