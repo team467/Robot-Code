@@ -12,8 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.lib.characterization.FeedForwardCharacterization;
-import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.io.gyro3d.GyroADIS16470;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroPigeon2;
@@ -121,17 +120,17 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
+    // Drive SysId
     autoChooser.addOption(
-        "Drive Characterization",
-        Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
-            .andThen(
-                new FeedForwardCharacterization(
-                    drive,
-                    true,
-                    new FeedForwardCharacterizationData("drive"),
-                    drive::runCharacterizationVolts,
-                    drive::getCharacterizationVelocity))
-            .andThen(this::configureButtonBindings));
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
