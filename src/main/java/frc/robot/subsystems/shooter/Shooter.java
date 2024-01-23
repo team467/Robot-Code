@@ -39,7 +39,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean getShooterSpeedIsReady(double shooterReadyVelocityRadPerSec) {
-    return inputs.shooterVelocityRadPerSec >= shooterReadyVelocityRadPerSec;
+    return inputs.shooterLeaderVelocityRadPerSec >= shooterReadyVelocityRadPerSec
+        && inputs.shooterFollowerVelocityRadPerSec <= -shooterReadyVelocityRadPerSec;
   }
 
   public boolean getHoldingNote() {
