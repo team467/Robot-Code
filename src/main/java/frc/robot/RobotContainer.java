@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import frc.lib.io.gyro3d.GyroADIS16470;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
@@ -53,8 +55,7 @@ public class RobotContainer {
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser =
-      new LoggedDashboardChooser<>("Auto Choices");
+  private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -78,12 +79,20 @@ public class RobotContainer {
                       .toArray(new frc.lib.io.vision.VisionIO[0]));
           drive =
               new Drive(
-                  new GyroPigeon2(17),
-                  new ModuleIOSparkMAX(3, 4, 13, 0),
-                  new ModuleIOSparkMAX(5, 6, 14, 1),
-                  new ModuleIOSparkMAX(1, 2, 15, 2),
-                  new ModuleIOSparkMAX(7, 8, 16, 3));
-          shooter = new Shooter(null);
+                  new GyroPigeon2(Schematic.GYRO_ID),
+                  new ModuleIOSparkMAX(0),
+                  new ModuleIOSparkMAX(1),
+                  new ModuleIOSparkMAX(2),
+                  new ModuleIOSparkMAX(3));
+        }
+        case ROBOT_2024A -> {
+          drive =
+              new Drive(
+                  new GyroADIS16470(),
+                  new ModuleIOSparkMAX(0),
+                  new ModuleIOSparkMAX(1),
+                  new ModuleIOSparkMAX(2),
+                  new ModuleIOSparkMAX(3));
         }
         case ROBOT_SIMBOT -> {
           drive =
@@ -111,6 +120,7 @@ public class RobotContainer {
     led2023 = new Led2023();
     LEDManager.getInstance().init(LedConstants.LED_CHANNEL);
 
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 

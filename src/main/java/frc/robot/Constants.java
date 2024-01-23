@@ -6,14 +6,27 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Map;
 
 public class Constants {
-  private static final RobotType robot = RobotType.ROBOT_2023;
+  // Change this temporarily to override the RobotType, e.g. RobotType.ROBOT_SIMBOT
+  private static final RobotType ROBOT_TYPE_OVERRIDE = null;
+
   public static final Measure<Time> loopPeriod = Milliseconds.of(20);
   public static final boolean tuningMode = false;
 
+  private static final String ROBOT_FILENAME = "/home/lvuser/robot";
+  private static RobotType cachedRobotTypeFromRoborio = null;
+
   public static RobotType getRobot() {
+    if (cachedRobotTypeFromRoborio == null) {
+      cachedRobotTypeFromRoborio = readRobotTypeFromRoborio();
+    }
+    RobotType robot = cachedRobotTypeFromRoborio;
+
     if (RobotBase.isReal()) {
       if (robot == RobotType.ROBOT_SIMBOT) { // Invalid robot
         DriverStation.reportWarning(
@@ -27,9 +40,36 @@ public class Constants {
     }
   }
 
+  private static RobotType readRobotTypeFromRoborio() {
+    if (ROBOT_TYPE_OVERRIDE != null) {
+      return ROBOT_TYPE_OVERRIDE;
+    }
+    RobotType robot = null;
+
+    try (FileReader reader = new FileReader(ROBOT_FILENAME)) {
+      BufferedReader br = new BufferedReader(reader);
+      String robotTypeString = br.readLine();
+      robot = RobotType.valueOf(robotTypeString);
+      reader.close();
+      if (robot == null) {
+        throw new RuntimeException(
+            "Read invalid RobotType value '"
+                + robotTypeString
+                + "' from file '"
+                + ROBOT_FILENAME
+                + "'.");
+      }
+    } catch (IOException e) {
+      throw new RuntimeException("Could not load robot type from file '" + ROBOT_FILENAME + "'.");
+    }
+    System.out.println("Using RobotType '" + robot + "'");
+    cachedRobotTypeFromRoborio = robot;
+    return robot;
+  }
+
   public static Mode getMode() {
     switch (getRobot()) {
-      case ROBOT_2023, ROBOT_BRIEFCASE -> {
+      case ROBOT_2023, ROBOT_2024A, ROBOT_BRIEFCASE -> {
         return RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
       }
       case ROBOT_SIMBOT -> {
@@ -46,6 +86,7 @@ public class Constants {
 
   public enum RobotType {
     ROBOT_2023,
+    ROBOT_2024A,
     ROBOT_BRIEFCASE,
     ROBOT_SIMBOT
   }
@@ -58,8 +99,8 @@ public class Constants {
 
   /** Checks whether the robot the correct robot is selected when deploying. */
   public static void main(String... args) {
-    if (robot == RobotType.ROBOT_SIMBOT) {
-      System.err.println("Cannot deploy, invalid robot selected: " + robot.toString());
+    if (ROBOT_TYPE_OVERRIDE == RobotType.ROBOT_SIMBOT) {
+      System.err.println("Cannot deploy, invalid robot selected: " + ROBOT_TYPE_OVERRIDE);
       System.exit(1);
     }
   }

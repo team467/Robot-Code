@@ -1,5 +1,11 @@
 package frc.robot.subsystems.drive;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.PathPlannerLogging;
+import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -10,6 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
+import frc.lib.utils.LocalADStarAK;
 import frc.lib.utils.RobotOdometry;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -37,6 +44,30 @@ public class Drive extends SubsystemBase {
     modules[3] = new Module(brModuleIO, 3);
 
     odometry = RobotOdometry.getInstance();
+    Pathfinding.setPathfinder(new LocalADStarAK());
+    AutoBuilder.configureHolonomic(
+        this::getPose,
+        this::setPose,
+        () -> kinematics.toChassisSpeeds(getModuleStates()),
+        this::runVelocity,
+        new HolonomicPathFollowerConfig(
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+            DriveConstants.MAX_LINEAR_SPEED,
+            getModuleTranslations()[0].getNorm(),
+            new ReplanningConfig()),
+        () ->
+            DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
+        this);
+    PathPlannerLogging.setLogActivePathCallback(
+        (activePath) ->
+            Logger.recordOutput(
+                "PP/Trajectory", activePath.toArray(new Pose2d[activePath.size()])));
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (targetPose) -> {
+          Logger.recordOutput("PP/TrajectorySetpoint", targetPose);
+        });
   }
 
   public void periodic() {
