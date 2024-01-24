@@ -7,11 +7,21 @@ package frc.robot.subsystems.indexer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Indexer extends SubsystemBase {
+  private final IndexerIO io;
+
+  private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
+
   /** Creates a new Indexer. */
-  public Indexer() {}
+  public Indexer(IndexerIO io) {
+    this.io = io;
+  }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    io.updateInputs(inputs);
+  }
+
+  public void setIndexerVoltage(double volts) {
+    io.setIndexerVoltage(volts);
   }
 }

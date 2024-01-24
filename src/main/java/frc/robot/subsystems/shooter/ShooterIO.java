@@ -7,13 +7,10 @@ public interface ShooterIO {
   class ShooterIOInputs {
     public double shooterLeaderVelocityRadPerSec;
     public double shooterFollowerVelocityRadPerSec;
-    public double indexerVelocityRadPerSec;
     public boolean limitSwitchPressed;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {}
 
   default void setShooterVoltage(double volts) {}
-
-  default void setIndexerVoltage(double volts) {}
 }
