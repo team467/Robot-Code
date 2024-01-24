@@ -13,8 +13,8 @@ public class Shooter extends SubsystemBase {
   private final ShooterIO io;
 
   private SimpleMotorFeedforward shooterFeedforward =
-          new SimpleMotorFeedforward(
-                  ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
+      new SimpleMotorFeedforward(
+          ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
 
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
@@ -36,7 +36,7 @@ public class Shooter extends SubsystemBase {
 
   public boolean getShooterSpeedIsReady(double shooterReadyVelocityRadPerSec) {
     return inputs.shooterLeaderVelocityRadPerSec >= shooterReadyVelocityRadPerSec
-            && inputs.shooterFollowerVelocityRadPerSec <= -shooterReadyVelocityRadPerSec;
+        && inputs.shooterFollowerVelocityRadPerSec <= -shooterReadyVelocityRadPerSec;
   }
 
   public boolean getHoldingNote() {
