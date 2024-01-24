@@ -24,6 +24,8 @@ import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.leds.LedRainbowCMD;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -43,6 +45,7 @@ public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
   private Drive drive;
+  private Arm arm;
   private Led2023 led2023;
   private Vision vision;
   private boolean isRobotOriented = true; // Workaround, change if needed
@@ -112,6 +115,9 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {},
               new ModuleIO() {});
+    }
+    if (arm == null) {
+      arm = new Arm(new ArmIO() {});
     }
 
     led2023 = new Led2023();
