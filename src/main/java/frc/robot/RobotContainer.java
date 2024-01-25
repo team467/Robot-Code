@@ -23,11 +23,9 @@ import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
-import frc.robot.commands.intake.Intake;
-import frc.robot.commands.intake.Release;
-import frc.robot.commands.intake.StopIntake;
 import frc.robot.commands.leds.LedRainbowCMD;
 import frc.robot.subsystems.IntakeNote.IntakeNote;
+import frc.robot.subsystems.IntakeNote.IntakeNoteIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -51,6 +49,7 @@ public class RobotContainer {
   private Vision vision;
   private boolean isRobotOriented = true; // Workaround, change if needed
   private IntakeNote intake;
+  private IntakeNoteIO intakeNoteIO;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -170,9 +169,10 @@ public class RobotContainer {
                                 drive.getPose().getTranslation(),
                                 AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
-    driverController.a().onTrue(new Intake(intake));
-    driverController.b().onTrue(new Release(intake));
-    driverController.x().onTrue(new StopIntake(intake));
+    // Mapped buttons on controller to intake, release, or stop.
+    driverController.a().onTrue(new IntakeNote(intakeNoteIO).startIntake());
+    driverController.b().onTrue(new IntakeNote(intakeNoteIO).release());
+    driverController.x().onTrue(new IntakeNote(intakeNoteIO).stop());
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
