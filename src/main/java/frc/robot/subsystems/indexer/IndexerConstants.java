@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.indexer;
 
-import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
 
 /** Add your docs here. */
@@ -13,6 +12,7 @@ public class IndexerConstants {
   public static final double INDEXER_HOLD_VOLTAGE;
   public static final double INDEXER_BACKWARD_VOLTAGE;
   public static final int INDEXER_ID;
+
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2023 -> {
