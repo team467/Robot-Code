@@ -48,7 +48,6 @@ public class RobotContainer {
   private Led2023 led2023;
   private Vision vision;
   private boolean isRobotOriented = true; // Workaround, change if needed
-  private IntakeNote intake;
   private IntakeNoteIO intakeNoteIO;
 
   // Controller
