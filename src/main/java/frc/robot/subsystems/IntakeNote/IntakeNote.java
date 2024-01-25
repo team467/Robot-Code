@@ -4,13 +4,19 @@
 
 package frc.robot.subsystems.IntakeNote;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeNote extends SubsystemBase {
   /** Creates a new Intake. */
   private final IntakeNoteIO intakeNoteIO;
+
   private final IntakeNoteIOInputsAutoLogged inputs;
   private boolean hasNote = false;
+  private final double intakeSpeed = 0.3;
+  private final double releaseSpeed = -0.3;
+  private final double stop = 0.0;
 
   // Intializes IntakeNote
   public IntakeNote(IntakeNoteIO intakeNoteIO) {
@@ -25,24 +31,42 @@ public class IntakeNote extends SubsystemBase {
     intakeNoteIO.updateInputs(inputs);
   }
 
-  public void startIntake() {
+  /*public void startIntake() {
     hasNote = false;
-    intakeNoteIO.setSpeed(0);
-  }
+    intakeNoteIO.setSpeed(intakeSpeed);
+  }*/
 
   // Command for intaking a note.
-  /* public Command IntakeCommand()
-  {
-    return intakeNoteIO.setSpeed(0);
-  } */
-
-  public void release() {
-    hasNote = true;
-    intakeNoteIO.setSpeed(0);
-    ;
+  public Command startIntake() {
+    return Commands.run(
+        () -> {
+          intakeNoteIO.setSpeed(intakeSpeed);
+        },
+        this);
   }
 
-  public void stop() {
-    intakeNoteIO.setSpeed(0);
+  /*public void release() {
+    hasNote = true;
+    intakeNoteIO.setSpeed(releaseSpeed);
+  }*/
+
+  public Command release() {
+    return Commands.run(
+        () -> {
+          intakeNoteIO.setSpeed(releaseSpeed);
+        },
+        this);
+  }
+
+  /*public void stop() {
+    intakeNoteIO.setSpeed(stop);
+  }*/
+
+  public Command stop() {
+    return Commands.run(
+        () -> {
+          intakeNoteIO.setSpeed(stop);
+        },
+        this);
   }
 }
