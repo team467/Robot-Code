@@ -36,7 +36,6 @@ public class ShooterIOPhysical implements ShooterIO {
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeaderVelocityRadPerSec = shooterLeaderEncoder.getVelocity();
     inputs.shooterFollowerVelocityRadPerSec = shooterFollowerEncoder.getVelocity();
-    inputs.indexerVelocityRadPerSec = indexerEncoder.getVelocity();
     inputs.limitSwitchPressed = indexerLimitSwitch.isPressed();
   }
 

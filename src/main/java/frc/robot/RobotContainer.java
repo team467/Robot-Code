@@ -160,17 +160,6 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(() -> indexer.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE)));
     driverController
-        .rightBumper()
-        .whileTrue(
-            Commands.run(
-                    () ->
-                        shooter.setShooterVelocity(
-                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
-                .onlyWhile(
-                    () ->
-                        !shooter.getShooterSpeedIsReady(
-                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)));
-    driverController
         .leftBumper()
         .whileTrue(
             Commands.run(
@@ -180,7 +169,7 @@ public class RobotContainer {
                     () ->
                         shooter.getShooterSpeedIsReady(
                             ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
-                .onlyWhile(() -> shooter.getHoldingNote())
+                .onlyWhile(() -> indexer.getLimitSwitchPressed())
                 .withTimeout(5));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));

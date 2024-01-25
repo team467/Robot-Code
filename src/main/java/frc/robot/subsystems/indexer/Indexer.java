@@ -24,4 +24,8 @@ public class Indexer extends SubsystemBase {
   public void setIndexerVoltage(double volts) {
     io.setIndexerVoltage(volts);
   }
+
+  public boolean getLimitSwitchPressed() {
+    return inputs.indexerLimitSwitchPressed;
+  }
 }
