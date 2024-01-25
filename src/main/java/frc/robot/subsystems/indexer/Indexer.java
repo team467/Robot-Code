@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.indexer;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Indexer extends SubsystemBase {
@@ -21,8 +23,8 @@ public class Indexer extends SubsystemBase {
     io.updateInputs(inputs);
   }
 
-  public void setIndexerVoltage(double volts) {
-    io.setIndexerVoltage(volts);
+  public Command setIndexerVoltage(double volts) {
+    return Commands.run(() -> io.setIndexerVoltage(volts), this);
   }
 
   public boolean getLimitSwitchPressed() {

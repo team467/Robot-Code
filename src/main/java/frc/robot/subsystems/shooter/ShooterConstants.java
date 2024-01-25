@@ -11,6 +11,7 @@ public class ShooterConstants {
   public static final int SHOOTER_FOLLOWER_ID;
   public static final double SHOOTER_KP;
   public static final double SHOOTER_KD;
+
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2023 -> {
