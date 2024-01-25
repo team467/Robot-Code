@@ -19,7 +19,7 @@ public class ShooterIOPhysical implements ShooterIO {
   public ShooterIOPhysical() {
     shooterLeader = new CANSparkMax(ShooterConstants.SHOOTER_LEADER_ID, MotorType.kBrushless);
     shooterFollower = new CANSparkMax(ShooterConstants.SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
-    indexer = new CANSparkMax(ShooterConstants.INDEXER_ID, MotorType.kBrushless);
+    indexer = new CANSparkMax(0, MotorType.kBrushless);
     indexerLimitSwitch = indexer.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
 
     shooterLeaderEncoder = shooterLeader.getEncoder();

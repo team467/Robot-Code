@@ -28,6 +28,8 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.LedConstants;
 import frc.robot.subsystems.shooter.Shooter;
@@ -155,7 +157,7 @@ public class RobotContainer {
     driverController
         .b()
         .whileTrue(
-            Commands.run(() -> shooter.setIndexerVoltage(ShooterConstants.INDEXER_FOWARD_VOLTAGE)));
+            Commands.run(() -> shooter.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE)));
     driverController
         .rightBumper()
         .whileTrue(
@@ -171,7 +173,7 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             Commands.run(
-                    () -> shooter.setIndexerVoltage(ShooterConstants.INDEXER_FOWARD_VOLTAGE),
+                    () -> shooter.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE),
                     shooter)
                 .onlyWhile(
                     () ->
@@ -206,7 +208,7 @@ public class RobotContainer {
     shooter.setDefaultCommand(
         Commands.run(
             () -> {
-              shooter.setIndexerVoltage(ShooterConstants.INDEXER_HOLD_VOLTAGE);
+              shooter.setIndexerVoltage(IndexerConstants.INDEXER_HOLD_VOLTAGE);
             },
             shooter));
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
