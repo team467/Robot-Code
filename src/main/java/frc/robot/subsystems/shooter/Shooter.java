@@ -19,7 +19,7 @@ public class Shooter extends SubsystemBase {
   //     new SimpleMotorFeedforward(
   //         ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
   private PIDController shooterFeedack =
-      new PIDController(ShooterConstants.SHOOTER_KP, 0, ShooterConstants.SHOOTER_KD);
+      new PIDController(ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
 
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
