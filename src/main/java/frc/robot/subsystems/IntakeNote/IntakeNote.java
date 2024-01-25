@@ -46,6 +46,7 @@ public class IntakeNote extends SubsystemBase {
     intakeNoteIO.setSpeed(releaseSpeed);
   }*/
 
+  // Command for releasing a note.
   public Command release() {
     return Commands.run(() -> {intakeNoteIO.setSpeed(releaseSpeed);}, this);
   }
@@ -54,6 +55,7 @@ public class IntakeNote extends SubsystemBase {
     intakeNoteIO.setSpeed(stop);
   }*/
 
+  // Command for stopping intake.
   public Command stop() {
     return Commands.run(() -> {intakeNoteIO.setSpeed(stop);}, this);
   }
