@@ -3,7 +3,6 @@ package frc.robot.subsystems.shooter;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkLimitSwitch;
 import edu.wpi.first.math.util.Units;
 
 public class ShooterIOPhysical implements ShooterIO {
