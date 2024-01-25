@@ -23,6 +23,11 @@ public class Indexer extends SubsystemBase {
     io.updateInputs(inputs);
   }
 
+  public Command setIndexerPercentVoltage(double percent) {
+    return Commands.run(
+        () -> io.setIndexerVoltage(IndexerConstants.INDEXER_MAX_VOLTAGE * percent), this);
+  }
+
   public Command setIndexerVoltage(double volts) {
     return Commands.run(() -> io.setIndexerVoltage(volts), this);
   }
