@@ -77,8 +77,8 @@ public class ModuleIOSparkMAX implements ModuleIO {
     driveMotor.setInverted(false);
     turnMotor.setInverted(false);
 
-    driveMotor.setIdleMode(IdleMode.kCoast);
-    turnMotor.setIdleMode(IdleMode.kCoast);
+    driveMotor.setIdleMode(IdleMode.kBrake);
+    turnMotor.setIdleMode(IdleMode.kBrake);
 
     driveMotor.enableVoltageCompensation(12);
     turnMotor.enableVoltageCompensation(12);
