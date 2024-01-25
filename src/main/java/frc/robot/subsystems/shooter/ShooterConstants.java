@@ -13,10 +13,11 @@ public class ShooterConstants {
   public static final int SHOOTER_LEADER_ID;
   public static final int SHOOTER_FOLLOWER_ID;
   public static final int INDEXER_ID;
-
+  public static final double SHOOTER_KP;
+  public static final double SHOOTER_KD;
   static {
     switch (Constants.getRobot()) {
-      case ROBOT_2023 -> {
+      case ROBOT_2024A -> {
         INDEXER_FOWARD_VOLTAGE = 5.0;
         INDEXER_HOLD_VOLTAGE = 0.0;
         INDEXER_BACKWARD_VOLTAGE = -3.0;
@@ -26,6 +27,8 @@ public class ShooterConstants {
         SHOOTER_LEADER_ID = 1;
         SHOOTER_FOLLOWER_ID = 2;
         INDEXER_ID = 3;
+        SHOOTER_KP = 0.0;
+        SHOOTER_KD = 0.0;
       }
       case ROBOT_SIMBOT -> {
         INDEXER_FOWARD_VOLTAGE = 5.0;
@@ -37,6 +40,8 @@ public class ShooterConstants {
         SHOOTER_LEADER_ID = 0;
         SHOOTER_FOLLOWER_ID = 0;
         INDEXER_ID = 0;
+        SHOOTER_KP = 0.0;
+        SHOOTER_KD = 0.0;
       }
       default -> {
         INDEXER_FOWARD_VOLTAGE = 5.0;
@@ -48,6 +53,8 @@ public class ShooterConstants {
         SHOOTER_LEADER_ID = 0;
         SHOOTER_FOLLOWER_ID = 0;
         INDEXER_ID = 0;
+        SHOOTER_KP = 0.0;
+        SHOOTER_KD = 0.0;
       }
     }
   }
