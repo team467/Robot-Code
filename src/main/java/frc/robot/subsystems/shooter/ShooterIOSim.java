@@ -13,11 +13,12 @@ public class ShooterIOSim implements ShooterIO {
     inputs.shooterLeaderVelocityRadPerSec = shooterLeaderSim.getAngularVelocityRadPerSec();
     inputs.shooterFollowerVelocityRadPerSec = shooterFollowerSim.getAngularVelocityRadPerSec();
     inputs.indexerVelocityRadPerSec = indexerSim.getAngularVelocityRadPerSec();
+    inputs.limitSwitchPressed = true;
   }
 
   public void setShooterVeltage(double volts) {
     shooterLeaderSim.setInputVoltage(volts);
-    shooterFollowerSim.setInputVoltage(-volts);
+    shooterFollowerSim.setInputVoltage(volts);
   }
 
   public void setIndexerVoltage(double volts) {

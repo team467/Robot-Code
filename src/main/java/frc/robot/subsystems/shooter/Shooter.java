@@ -44,6 +44,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean getHoldingNote() {
-    return true;
+    return inputs.limitSwitchPressed;
   }
 }

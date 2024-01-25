@@ -3,20 +3,29 @@ package frc.robot.subsystems.shooter;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkLimitSwitch;
 import edu.wpi.first.math.util.Units;
 
 public class ShooterIOPhysical implements ShooterIO {
-  private CANSparkMax shooterLeader =
-      new CANSparkMax(ShooterConstants.SHOOTER_LEADER_ID, MotorType.kBrushless);
-  private CANSparkMax shooterFollower =
-      new CANSparkMax(ShooterConstants.SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
-  private CANSparkMax indexer = new CANSparkMax(ShooterConstants.INDEXER_ID, MotorType.kBrushless);
+  private final CANSparkMax shooterLeader;
+  private final CANSparkMax shooterFollower;
+  private final CANSparkMax indexer;
+  private final SparkLimitSwitch indexerLimitSwitch;
 
-  private RelativeEncoder shooterLeaderEncoder = shooterLeader.getEncoder();
-  private RelativeEncoder shooterFollowerEncoder = shooterFollower.getEncoder();
-  private RelativeEncoder indexerEncoder = indexer.getEncoder();
+  private final RelativeEncoder shooterLeaderEncoder;
+  private final RelativeEncoder shooterFollowerEncoder;
+  private final RelativeEncoder indexerEncoder;
 
-  private ShooterIOPhysical() {
+  public ShooterIOPhysical() {
+    shooterLeader = new CANSparkMax(ShooterConstants.SHOOTER_LEADER_ID, MotorType.kBrushless);
+    shooterFollower = new CANSparkMax(ShooterConstants.SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
+    indexer = new CANSparkMax(ShooterConstants.INDEXER_ID, MotorType.kBrushless);
+    indexerLimitSwitch = indexer.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+
+    shooterLeaderEncoder = shooterLeader.getEncoder();
+    shooterFollowerEncoder = shooterFollower.getEncoder();
+    indexerEncoder = indexer.getEncoder();
+
     shooterLeaderEncoder.setVelocityConversionFactor(rotsToRads);
     shooterFollowerEncoder.setVelocityConversionFactor(rotsToRads);
     indexerEncoder.setVelocityConversionFactor(rotsToRads);
@@ -28,5 +37,15 @@ public class ShooterIOPhysical implements ShooterIO {
     inputs.shooterLeaderVelocityRadPerSec = shooterLeaderEncoder.getVelocity();
     inputs.shooterFollowerVelocityRadPerSec = shooterFollowerEncoder.getVelocity();
     inputs.indexerVelocityRadPerSec = indexerEncoder.getVelocity();
+    inputs.limitSwitchPressed = indexerLimitSwitch.isPressed();
+  }
+
+  public void setShooterVoltage(double volts) {
+    shooterLeader.setVoltage(volts);
+    shooterFollower.follow(shooterLeader);
+  }
+
+  public void setIndexerVoltage(double volts) {
+    indexer.setVoltage(volts);
   }
 }

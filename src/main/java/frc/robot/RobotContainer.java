@@ -32,6 +32,7 @@ import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.LedConstants;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
+import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -93,6 +94,7 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
+          shooter = new Shooter(new ShooterIOPhysical());
         }
         case ROBOT_SIMBOT -> {
           drive =
