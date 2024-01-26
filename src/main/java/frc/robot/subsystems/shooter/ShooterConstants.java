@@ -41,7 +41,7 @@ public class ShooterConstants {
         SHOOTER_KV = new TunableNumber("Shooter/Module/ShooterKV", 2.60818);
         SHOOTER_LEADER_ID = 0;
         SHOOTER_FOLLOWER_ID = 0;
-                SHOOTER_2_ID = 3;
+        SHOOTER_2_ID = 3;
         SHOOTER_KP = 0.0;
         SHOOTER_KD = 0.0;
       }
