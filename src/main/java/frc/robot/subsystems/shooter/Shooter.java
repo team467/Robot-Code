@@ -35,7 +35,8 @@ public class Shooter extends SubsystemBase {
   public Command shoot(double velocitySetpoint) {
     return Commands.run(
         () -> {
-          io.setShooterVoltage(shooterFeedack.calculate(velocitySetpoint));
+          shooterFeedack.setSetpoint(velocitySetpoint);
+          io.setShooterVoltage(shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec));
         },
         this);
   }
