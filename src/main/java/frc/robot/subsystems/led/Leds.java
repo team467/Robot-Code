@@ -115,12 +115,13 @@ public class Leds extends VirtualSubsystem {
         // Default pattern
         switch (alliance) {
           case Red:
-            wave(
-                Section.FULL,
-                Color.kRed,
-                Color.kBlack,
-                waveAllianceCycleLength,
-                waveAllianceDuration);
+            solid(0.25, Color.kPurple, Color.kBlack);
+            // wave(
+            //     Section.FULL,
+            //     Color.kRed,
+            //     Color.kBlack,
+            //     waveAllianceCycleLength,
+            //     waveAllianceDuration);
             break;
           case Blue:
             wave(
@@ -170,8 +171,26 @@ public class Leds extends VirtualSubsystem {
    * @param color The color to be applied.
    */
   private void solid(double percent, Color color) {
-    for (int i = 0; i < MathUtil.clamp(length * percent, 0, length); i++) {
-      buffer.setLED(i, color);
+    solid(percent, color, Color.kBlack);
+  }
+
+  /**
+   * Applies a solid color to a given section of an LED strip. The section is filled with the
+   * specified color.
+   *
+   * @param percent The percentage of the section to apply the solid color to. Value should be
+   *     between 0.0 and 1.0.
+   * @param color The color to be applied.
+   */
+  ;
+
+  private void solid(double percent, Color color1, Color color2) {
+    int color1Pixels = (int) Math.round(MathUtil.clamp(length * percent, 0, length));
+    for (int i = 0; i < color1Pixels; i++) {
+      buffer.setLED(i, color1);
+    }
+    for (int i = color1Pixels; i < length; i++) {
+      buffer.setLED(i, color2);
     }
   }
 
@@ -320,5 +339,21 @@ public class Leds extends VirtualSubsystem {
           return length;
       }
     }
+  }
+
+  private void shooting() {
+    wave(Section.FULL, Color.kMagenta, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
+  }
+
+  private void intaking() {
+    wave(Section.FULL, Color.kPurple, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
+  }
+
+  private void hanging() {
+    solid(Section.FULL, Color.kDarkGreen);
+  }
+
+  private void containing() {
+    solid(Section.FULL, Color.kAquamarine);
   }
 }
