@@ -167,8 +167,7 @@ public class RobotContainer {
                     shooter)
                 .onlyWhile(
                     () ->
-                        shooter.getShooterSpeedIsReady(
-                            ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
+                        shooter.getShooterSpeedIsReady())
                 .onlyWhile(() -> indexer.getLimitSwitchPressed())
                 .withTimeout(5));
 
