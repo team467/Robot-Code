@@ -41,7 +41,7 @@ public class Shooter extends SubsystemBase {
         this);
   }
 
-  public boolean getShooterSpeedIsReady(double shooterReadyVelocityRadPerSec) {
-    return inputs.shooterLeaderVelocityRadPerSec >= shooterReadyVelocityRadPerSec;
+  public boolean getShooterSpeedIsReady() {
+    return shooterFeedack.atSetpoint();
   }
 }
