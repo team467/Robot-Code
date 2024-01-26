@@ -32,6 +32,11 @@ public class Shooter extends SubsystemBase {
     Logger.processInputs("Shooter", inputs);
   }
 
+  public Command stop() {
+    return Commands.run(() -> {
+      io.setShooterVoltage(0.0);
+    });
+  }
   public Command shoot(double velocitySetpoint) {
     return Commands.run(
         () -> {
@@ -42,6 +47,10 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean getShooterSpeedIsReady() {
-    return shooterFeedack.atSetpoint();
+    if (shooterFeedack.getSetpoint() == 0) {
+      return false;
+    } else {
+      return shooterFeedack.atSetpoint();
+    }
   }
 }

@@ -33,7 +33,6 @@ import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.LedConstants;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -165,9 +164,7 @@ public class RobotContainer {
             Commands.run(
                     () -> indexer.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE),
                     shooter)
-                .onlyWhile(
-                    () ->
-                        shooter.getShooterSpeedIsReady())
+                .onlyWhile(() -> shooter.getShooterSpeedIsReady())
                 .onlyWhile(() -> indexer.getLimitSwitchPressed())
                 .withTimeout(5));
 
