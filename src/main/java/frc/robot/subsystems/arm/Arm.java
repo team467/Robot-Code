@@ -21,6 +21,7 @@ public class Arm extends SubsystemBase {
           ArmConstants.KD.get(),
           new TrapezoidProfile.Constraints(
               ArmConstants.MAX_VELOCITY.get(), ArmConstants.MAX_ACCELERATION.get()));
+  private boolean enableFB = true;
 
   public Arm(ArmIO io) {
     this.io = io;
@@ -49,17 +50,21 @@ public class Arm extends SubsystemBase {
               ArmConstants.MAX_VELOCITY.get(), ArmConstants.MAX_ACCELERATION.get()));
     }
 
-    // Run arm to desired goal
-    // note that for profiled pids, goal is the last result (i.e. set arm to 30 deg), and setpoint
-    // is what result to reach in this next loop (i.e. set the arm to 5 degrees) due to constraints.
-    // Read more at
-    // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/profiled-pidcontroller.html#goal-vs-setpoint
-    Logger.recordOutput("Arm/DesiredPosition", feedback.getGoal().position);
-    io.setVoltage(
-        feedback.calculate(inputs.positionRads.getRadians())
-            + feedforward.calculate(
-                feedback.getSetpoint().position + ArmConstants.horizontalOffset.getRadians(),
-                feedback.getSetpoint().velocity));
+    if (enableFB) {
+      // Run arm to desired goal
+      // note that for profiled pids, goal is the last result (i.e. set arm to 30 deg), and setpoint
+      // is what result to reach in this next loop (i.e. set the arm to 5 degrees) due to constraints.
+      // Read more at
+      // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/profiled-pidcontroller.html#goal-vs-setpoint
+      Logger.recordOutput("Arm/DesiredPosition", feedback.getGoal().position);
+      io.setVoltage(
+              feedback.calculate(inputs.positionRads.getRadians())
+                      + feedforward.calculate(
+                      feedback.getSetpoint().position + ArmConstants.horizontalOffset.getRadians(),
+                      feedback.getSetpoint().velocity));
+      Logger.recordOutput("Arm/NextPosition", feedback.getSetpoint().position);
+      Logger.recordOutput("Arm/NextVelocity", feedback.getSetpoint().velocity);
+    }
   }
 
   /**
@@ -69,7 +74,21 @@ public class Arm extends SubsystemBase {
    * @return The command to set the arm to the specified setpoint angle.
    */
   public Command toSetpoint(Rotation2d setpointAngle) {
-    return Commands.run(() -> feedback.setGoal(setpointAngle.getRadians()), this);
+    return Commands.run(
+        () -> {
+          feedback.setGoal(setpointAngle.getRadians());
+          enableFB = true;
+        },
+        this);
+  }
+
+  public Command runPercent(double percent) {
+    return Commands.run(
+        () -> {
+          io.setVoltage(percent * 12);
+          enableFB = false;
+        },
+        this);
   }
 
   /**

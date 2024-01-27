@@ -25,7 +25,7 @@ public class ArmConstants {
         KP = new TunableNumber("Arm/KP", 1.0);
         KD = new TunableNumber("Arm/KD", 0.0);
         MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", Math.PI);
-        MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Math.PI*Math.PI);
+        MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Math.PI * Math.PI);
         horizontalOffset = new Rotation2d();
       }
       default -> {

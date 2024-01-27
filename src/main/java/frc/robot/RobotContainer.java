@@ -26,6 +26,7 @@ import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.leds.LedRainbowCMD;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.arm.ArmIOSparkMAX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -93,6 +94,7 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
+          arm = new Arm(new ArmIOSparkMAX());
         }
         case ROBOT_SIMBOT -> {
           drive =
@@ -176,6 +178,8 @@ public class RobotContainer {
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
+
+    driverController.rightBumper().onTrue(arm.runPercent(0.2)).onFalse(arm.runPercent(0.0));
   }
 
   /**
