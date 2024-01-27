@@ -1,20 +1,32 @@
 package frc.robot.subsystems.pixy2;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj2.command.Commands;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface Pixy2IO {
-  void updateInputs(Pixy2IOInputs inputs);
 
   @AutoLog
   class Pixy2IOInputs {
-    public double age = 0.0;
-    public double x = 0.0;
-    public double y = 0.0;
-    public double angle = 0.0;
-    public double signature = 0.0;
-    public double width = 0.0;
-    public double height = 0.0;
+    public double age;
+    public double x;
+    public double y;
+    public double angle;
+    public double signature;
+    public double width;
+    public double height;
   }
 
-  default void updateInputs(Pixy2IO inputs) {}
+  final NetworkTableInstance networkTables = NetworkTableInstance.getDefault();
+  final NetworkTable pixyTable = networkTables.getTable("Pixy2");
+
+  public default void initialize() {
+    Commands.runOnce(
+        () -> {
+          networkTables.startClient3("Pixy2Reader");
+        });
+  }
+
+  default void updateInputs(Pixy2IOInputs inputs) {}
 }

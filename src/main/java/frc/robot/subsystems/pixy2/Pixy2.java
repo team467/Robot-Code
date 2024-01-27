@@ -1,6 +1,7 @@
 package frc.robot.subsystems.pixy2;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Pixy2 extends SubsystemBase {
   private final Pixy2IO io;
@@ -8,11 +9,13 @@ public class Pixy2 extends SubsystemBase {
 
   public Pixy2(Pixy2IO io) {
     this.io = io;
+    io.initialize();
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    Logger.processInputs("Pixy2", inputs);
   }
 
   public double getAge() {
