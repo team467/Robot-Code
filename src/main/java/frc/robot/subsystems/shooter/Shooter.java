@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -19,7 +20,7 @@ public class Shooter extends SubsystemBase {
   //     new SimpleMotorFeedforward(
   //         ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
   private PIDController shooterFeedack =
-      new PIDController(ShooterConstants.SHOOTER_KP, 0, ShooterConstants.SHOOTER_KD);
+      new PIDController(ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
 
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
@@ -30,22 +31,37 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
+    Logger.recordOutput("Shooter/setPointVelocity", shooterFeedack.getSetpoint());
+
+    if (Constants.tuningMode) {
+      if (ShooterConstants.SHOOTER_KP.hasChanged(hashCode())
+          || ShooterConstants.SHOOTER_KD.hasChanged(hashCode())) {
+        Logger.recordOutput("Shooter/newP", ShooterConstants.SHOOTER_KP.get());
+        shooterFeedack.setPID(
+            ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
+      }
+    }
   }
 
   public Command stop() {
     return Commands.run(
         () -> {
           io.setShooterVoltage(0.0);
-        });
+        },
+        this);
   }
 
   public Command shoot(double velocitySetpoint) {
     return Commands.run(
         () -> {
-          shooterFeedack.setSetpoint(velocitySetpoint);
-          io.setShooterVoltage(shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec));
+          io.setShooterVoltage(
+              shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec, velocitySetpoint));
         },
         this);
+  }
+
+  public Command manualShoot(double volts) {
+    return Commands.run(() -> io.setShooterVoltage(volts), this);
   }
 
   public boolean getShooterSpeedIsReady() {

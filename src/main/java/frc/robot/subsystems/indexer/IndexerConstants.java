@@ -18,7 +18,7 @@ public class IndexerConstants {
   static {
     switch (Constants.getRobot()) {
       case ROBOT_BRIEFCASE -> {
-        INDEXER_FOWARD_VOLTAGE = INDEXER_MAX_VOLTAGE = 5.0;
+        INDEXER_FOWARD_VOLTAGE = INDEXER_MAX_VOLTAGE = 1.5;
         INDEXER_HOLD_VOLTAGE = 0.0;
         INDEXER_BACKWARD_VOLTAGE = -3.0;
         INDEXER_ID = 2;

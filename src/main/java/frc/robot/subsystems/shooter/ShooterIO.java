@@ -7,7 +7,6 @@ public interface ShooterIO {
   class ShooterIOInputs {
     public double shooterLeaderVelocityRadPerSec;
     public double shooterFollowerVelocityRadPerSec;
-    public boolean limitSwitchPressed;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {}

@@ -160,7 +160,14 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     driverController.a().whileTrue(Commands.runOnce(() -> new Rotation2d(2, 2), drive));
+    driverController
+        .b()
+        .whileTrue(indexer.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE));
+    driverController.x().whileTrue(shooter.manualShoot(5));
     // Intake command temporarrily mapped to b
+    driverController
+        .rightBumper()
+        .whileTrue(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC));
     driverController
         .leftBumper()
         .whileTrue(
@@ -196,12 +203,13 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    shooter.setDefaultCommand(
+    indexer.setDefaultCommand(
         Commands.run(
             () -> {
               indexer.setIndexerVoltage(IndexerConstants.INDEXER_HOLD_VOLTAGE);
             },
-            shooter));
+            indexer));
+    shooter.setDefaultCommand(shooter.stop());
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
   }
 
