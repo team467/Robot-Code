@@ -18,6 +18,16 @@ public class ArmConstants {
 
   static {
     switch (Constants.getRobot()) {
+      case ROBOT_2024A -> {
+        KG = new TunableNumber("Arm/KG", 0.0);
+        KS = new TunableNumber("Arm/KS", 0.0);
+        KV = new TunableNumber("Arm/KV", 0.0);
+        KP = new TunableNumber("Arm/KP", 1.0);
+        KD = new TunableNumber("Arm/KD", 0.0);
+        MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", Math.PI);
+        MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Math.PI*Math.PI);
+        horizontalOffset = new Rotation2d();
+      }
       default -> {
         KG = new TunableNumber("Arm/KG", 0.0);
         KS = new TunableNumber("Arm/KS", 0.0);
