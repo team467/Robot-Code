@@ -1,17 +1,28 @@
 package frc.robot.subsystems.led;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.lib.utils.VirtualSubsystem;
+import frc.robot.subsystems.robotstate.RobotState;
+import frc.robot.subsystems.robotstate.RobotStateIO;
+import frc.robot.subsystems.robotstate.RobotStateIOInputsAutoLogged;
+
 import java.util.List;
 
 public class Leds extends VirtualSubsystem {
   private static Leds instance;
+  
+  private RobotStateIOInputsAutoLogged state;
+
 
   public static Leds getInstance() {
     if (instance == null) {
-      instance = new Leds();
+      instance = new Leds(RobotState.getInstance());
     }
     return instance;
   }
@@ -20,12 +31,10 @@ public class Leds extends VirtualSubsystem {
   public int loopCycleCount = 0;
   public boolean autoFinished = false;
   public double autoFinishedTime = 0.0;
-  public boolean lowBatteryAlert = false;
+  
 
-  private DriverStation.Alliance alliance = DriverStation.Alliance.Blue;
   private boolean lastEnabledAuto = false;
   private double lastEnabledTime = 0.0;
-  private boolean estopped = false;
 
   // LED IO
   private final AddressableLED leds;
@@ -50,7 +59,8 @@ public class Leds extends VirtualSubsystem {
   private static final double autoFadeTime = 2.5; // 3s nominal
   private static final double autoFadeMaxTime = 5.0; // Return to normal
 
-  private Leds() {
+  private Leds(RobotState robotState) {
+    state = robotState.state();
     leds = new AddressableLED(0);
     buffer = new AddressableLEDBuffer(length);
     leds.setLength(length);
@@ -72,10 +82,8 @@ public class Leds extends VirtualSubsystem {
 
   @Override
   public void periodic() {
-    // Update alliance color
-    if (DriverStation.getAlliance().isPresent()) {
-      alliance = DriverStation.getAlliance().get();
-    }
+
+    
 
     // Update auto state
     if (DriverStation.isDisabled()) {
@@ -85,10 +93,7 @@ public class Leds extends VirtualSubsystem {
       lastEnabledTime = Timer.getFPGATimestamp();
     }
 
-    // Update estop state
-    if (DriverStation.isEStopped()) {
-      estopped = true;
-    }
+
 
     // Exit during initial cycles
     loopCycleCount += 1;
@@ -102,18 +107,18 @@ public class Leds extends VirtualSubsystem {
     // Select LED mode
     // solid(Section.FULL, Color.kBlack); // Default to off
 
-    if (estopped) {
+    if (state.estopped) {
       solid(Section.FULL, Color.kRed);
     } else if (DriverStation.isDisabled()) {
       if (lastEnabledAuto && Timer.getFPGATimestamp() - lastEnabledTime < autoFadeMaxTime) {
         // Auto fade
         solid(1.0 - ((Timer.getFPGATimestamp() - lastEnabledTime) / autoFadeTime), Color.kGreen);
-      } else if (lowBatteryAlert) {
+      } else if (state.lowBatteryAlert) {
         // Low battery
         solid(Section.FULL, Color.kOrangeRed);
       } else {
         // Default pattern
-        switch (alliance) {
+        switch (state.alliance) {
           case Red:
             wave(
                 Section.FULL,
@@ -123,13 +128,13 @@ public class Leds extends VirtualSubsystem {
                 waveAllianceDuration);
             break;
           case Blue:
-            //solid(0.5, Color.kLightGreen, Color.kBlack);
+            // solid(0.5, Color.kLightGreen, Color.kBlack);
             wave(
-            Section.FULL,
-            Color.kBlue,
-            Color.kBlack,
-            waveAllianceCycleLength,
-            waveAllianceDuration);
+                Section.FULL,
+                Color.kBlue,
+                Color.kBlack,
+                waveAllianceCycleLength,
+                waveAllianceDuration);
             break;
           default:
             wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
