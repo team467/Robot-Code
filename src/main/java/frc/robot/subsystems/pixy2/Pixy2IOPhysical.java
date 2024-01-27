@@ -4,7 +4,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Pixy2IOPhysical implements Pixy2IO {
-  private final Pixy2IOInputs inputs = new Pixy2IOInputs();
   private final NetworkTableInstance networkTables = NetworkTableInstance.getDefault();
 
   private final NetworkTable pixyTable = networkTables.getTable("pixy2");
