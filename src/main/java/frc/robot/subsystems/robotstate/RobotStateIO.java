@@ -1,8 +1,7 @@
 package frc.robot.subsystems.robotstate;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import edu.wpi.first.wpilibj.DriverStation;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface RobotStateIO {
 
@@ -13,10 +12,7 @@ public interface RobotStateIO {
     public boolean lowBatteryAlert = false;
   }
 
-  default void initialize(RobotStateIOInputs inputs) {
-  }
+  default void initialize(RobotStateIOInputs inputs) {}
 
-  default void updateInputs(RobotStateIOInputs inputs) {
-  }
-  
+  default void updateInputs(RobotStateIOInputs inputs) {}
 }

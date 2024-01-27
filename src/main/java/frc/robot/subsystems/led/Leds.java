@@ -9,16 +9,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.lib.utils.VirtualSubsystem;
 import frc.robot.subsystems.robotstate.RobotState;
-import frc.robot.subsystems.robotstate.RobotStateIO;
 import frc.robot.subsystems.robotstate.RobotStateIOInputsAutoLogged;
-
 import java.util.List;
 
 public class Leds extends VirtualSubsystem {
   private static Leds instance;
-  
-  private RobotStateIOInputsAutoLogged state;
 
+  private RobotStateIOInputsAutoLogged state;
 
   public static Leds getInstance() {
     if (instance == null) {
@@ -31,7 +28,6 @@ public class Leds extends VirtualSubsystem {
   public int loopCycleCount = 0;
   public boolean autoFinished = false;
   public double autoFinishedTime = 0.0;
-  
 
   private boolean lastEnabledAuto = false;
   private double lastEnabledTime = 0.0;
@@ -83,8 +79,6 @@ public class Leds extends VirtualSubsystem {
   @Override
   public void periodic() {
 
-    
-
     // Update auto state
     if (state.disabled) {
       autoFinished = false;
@@ -92,8 +86,6 @@ public class Leds extends VirtualSubsystem {
       lastEnabledAuto = DriverStation.isAutonomous();
       lastEnabledTime = Timer.getFPGATimestamp();
     }
-
-
 
     // Exit during initial cycles
     loopCycleCount += 1;
