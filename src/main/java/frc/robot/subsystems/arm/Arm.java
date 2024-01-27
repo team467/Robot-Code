@@ -4,9 +4,11 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.utils.TunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
@@ -22,6 +24,7 @@ public class Arm extends SubsystemBase {
           new TrapezoidProfile.Constraints(
               ArmConstants.MAX_VELOCITY.get(), ArmConstants.MAX_ACCELERATION.get()));
   private boolean enableFB = true;
+  private TunableNumber setpoint = new TunableNumber("Arm/Setpoint", -10);
 
   public Arm(ArmIO io) {
     this.io = io;
@@ -50,6 +53,7 @@ public class Arm extends SubsystemBase {
               ArmConstants.MAX_VELOCITY.get(), ArmConstants.MAX_ACCELERATION.get()));
     }
 
+    Logger.recordOutput("Arm/PIDEnabled", enableFB);
     if (enableFB) {
       // Run arm to desired goal
       // note that for profiled pids, goal is the last result (i.e. set arm to 30 deg), and setpoint
@@ -59,12 +63,16 @@ public class Arm extends SubsystemBase {
       // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/profiled-pidcontroller.html#goal-vs-setpoint
       Logger.recordOutput("Arm/DesiredPosition", feedback.getGoal().position);
       io.setVoltage(
-          feedback.calculate(inputs.positionRads.getRadians())
+          feedback.calculate(inputs.positionRads)
               + feedforward.calculate(
                   feedback.getSetpoint().position + ArmConstants.horizontalOffset.getRadians(),
                   feedback.getSetpoint().velocity));
       Logger.recordOutput("Arm/NextPosition", feedback.getSetpoint().position);
       Logger.recordOutput("Arm/NextVelocity", feedback.getSetpoint().velocity);
+    }
+
+    if (inputs.limitSwitchPressed) {
+      io.resetPosition();
     }
   }
 
@@ -86,6 +94,7 @@ public class Arm extends SubsystemBase {
   public Command runPercent(double percent) {
     return Commands.run(
         () -> {
+          Logger.recordOutput("Arm/DesiredVolts", percent * 12);
           io.setVoltage(percent * 12);
           enableFB = false;
         },
@@ -98,6 +107,10 @@ public class Arm extends SubsystemBase {
    * @return The command to set the arm to the pick-up position
    */
   public Command pickup() {
-    return toSetpoint(new Rotation2d(0.0));
+    return Commands.run(
+        () -> {
+          feedback.setGoal(Units.degreesToRadians(setpoint.get()));
+          enableFB = true;
+        });
   }
 }

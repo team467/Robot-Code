@@ -179,7 +179,10 @@ public class RobotContainer {
 
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
 
-    driverController.rightBumper().onTrue(arm.runPercent(0.2)).onFalse(arm.runPercent(0.0));
+    driverController.leftBumper().whileTrue(arm.runPercent(-0.1));
+    driverController.rightBumper().whileTrue(arm.runPercent(0.1));
+    driverController.a().whileTrue(arm.pickup());
+    driverController.b().whileTrue(arm.runPercent(0));
   }
 
   /**

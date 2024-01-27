@@ -22,10 +22,10 @@ public class ArmConstants {
         KG = new TunableNumber("Arm/KG", 0.0);
         KS = new TunableNumber("Arm/KS", 0.0);
         KV = new TunableNumber("Arm/KV", 0.0);
-        KP = new TunableNumber("Arm/KP", 1.0);
+        KP = new TunableNumber("Arm/KP", 25);
         KD = new TunableNumber("Arm/KD", 0.0);
-        MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", Math.PI);
-        MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Math.PI * Math.PI);
+        MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", 7);
+        MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", 12);
         horizontalOffset = new Rotation2d();
       }
       default -> {
