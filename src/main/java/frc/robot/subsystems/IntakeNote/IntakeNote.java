@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.IntakeNote;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,6 +31,7 @@ public class IntakeNote extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     intakeNoteIO.updateInputs(inputs);
+    Logger.processInputs("IntakeNote", inputs);
   }
 
   /*public void startIntake() {
@@ -38,7 +41,9 @@ public class IntakeNote extends SubsystemBase {
 
   // Command for intaking a note.
   public Command startIntake() {
-    return Commands.run(() -> {intakeNoteIO.setSpeed(intakeSpeed);}, this);
+    return Commands.run(() -> {
+      intakeNoteIO.setSpeed(intakeSpeed);
+    }, this);
   }
 
   /*public void release() {
@@ -48,7 +53,9 @@ public class IntakeNote extends SubsystemBase {
 
   // Command for releasing a note.
   public Command release() {
-    return Commands.run(() -> {intakeNoteIO.setSpeed(releaseSpeed);}, this);
+    return Commands.run(() -> {
+      intakeNoteIO.setSpeed(releaseSpeed);
+    }, this);
   }
 
   /*public void stop() {
@@ -56,7 +63,9 @@ public class IntakeNote extends SubsystemBase {
   }*/
 
   // Command for stopping intake.
-  public Command stop() {
-    return Commands.run(() -> {intakeNoteIO.setSpeed(stop);}, this);
+  public Command stopIntake() {
+    return Commands.run(() -> {
+      intakeNoteIO.setSpeed(stop);
+    }, this);
   }
 }
