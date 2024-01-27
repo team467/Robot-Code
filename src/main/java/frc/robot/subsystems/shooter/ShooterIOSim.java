@@ -12,7 +12,6 @@ public class ShooterIOSim implements ShooterIO {
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeaderVelocityRadPerSec = shooterLeaderSim.getAngularVelocityRadPerSec();
     inputs.shooterFollowerVelocityRadPerSec = shooterFollowerSim.getAngularVelocityRadPerSec();
-    inputs.limitSwitchPressed = true;
   }
 
   public void setShooterVeltage(double volts) {
