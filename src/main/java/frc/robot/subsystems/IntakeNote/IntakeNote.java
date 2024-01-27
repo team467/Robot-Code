@@ -15,8 +15,8 @@ public class IntakeNote extends SubsystemBase {
 
   private final IntakeNoteIOInputsAutoLogged inputs;
   private boolean hasNote = false;
-  private final double intakeSpeed = 0.3;
-  private final double releaseSpeed = -0.3;
+  private final double intakeSpeed = 0.2;
+  private final double releaseSpeed = -0.2;
   private final double stop = 0.0;
 
   // Intializes IntakeNote
