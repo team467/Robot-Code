@@ -26,14 +26,20 @@ public class Leds extends SubsystemBase {
     LOW_BATTERY_ALERT,
     AUTONOMOUS,
     AUTO_FINISHED,
+    SHOOTING,
+    INTAKING,
+    HANGING,
+    CONTAINING,
+    LEFT_NOTE_DETECTION,
+    RIGHT_NOTE_DETECTION,
+    STRAIGHT_NOTE_DETECTION
   }
 
-  @AutoLogOutput(key = "Leds/Mode")
+  @AutoLogOutput(key = "LEDs/Mode")
   LedMode mode = LedMode.OFF;
 
   // Robot state tracking
   public int loopCycleCount = 0;
-  public boolean autoFinished = false;
   public double autoFinishedTime = 0.0;
 
   private boolean lastEnabledAuto = false;
@@ -84,12 +90,8 @@ public class Leds extends SubsystemBase {
   private void updateState() {
 
     // Update auto state
-    if (DriverStation.isDisabled()) {
-      autoFinished = false;
-    } else {
-      lastEnabledAuto = DriverStation.isAutonomous();
-      lastEnabledTime = Timer.getFPGATimestamp();
-    }
+    lastEnabledAuto = DriverStation.isAutonomous();
+    lastEnabledTime = Timer.getFPGATimestamp();
 
     if (DriverStation.isEStopped()) {
       mode = LedMode.ESTOPPED;
@@ -163,6 +165,37 @@ public class Leds extends SubsystemBase {
       case AUTO_FINISHED:
         double fullTime = (double) length / waveFastCycleLength * waveFastDuration;
         solid((Timer.getFPGATimestamp() - autoFinishedTime) / fullTime, Color.kGreen);
+        break;
+
+      case SHOOTING:
+        // leds glow in the direction it's shooting
+        wave(Section.FULL, Color.kMagenta, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
+        break;
+
+      case INTAKING:
+        // leds glow in the direction it's intaking
+        wave(Section.FULL, Color.kPurple, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
+        break;
+
+      case HANGING:
+        solid(Section.FULL, Color.kDarkGreen);
+        break;
+
+      case CONTAINING:
+        solid(Section.FULL, Color.kAquamarine);
+        break;
+
+      case LEFT_NOTE_DETECTION:
+        // leds glow on left side
+        solid(0.5, Color.kYellow, Color.kBlack);
+        break;
+      
+      case RIGHT_NOTE_DETECTION:
+        // leds glows on right side
+        solid(0.5, Color.kLightGreen, Color.kBlack);
+        break;
+
+      case STRAIGHT_NOTE_DETECTION:
         break;
 
       default:
@@ -383,31 +416,5 @@ public class Leds extends SubsystemBase {
     }
   }
 
-  private void shooting() {
-    wave(Section.FULL, Color.kMagenta, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
-    // leds glow in the direction it's shooting
-  }
 
-  private void intaking() {
-    wave(Section.FULL, Color.kPurple, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
-    // leds glow in the direction it's intaking
-  }
-
-  private void hanging() {
-    solid(Section.FULL, Color.kDarkGreen);
-  }
-
-  private void containing() {
-    solid(Section.FULL, Color.kAquamarine);
-  }
-
-  private void leftnotedetection() {
-    solid(0.5, Color.kYellow, Color.kBlack);
-    // leds glow on left side
-  }
-
-  private void rightnotedetection() {
-    solid(0.5, Color.kLightGreen, Color.kBlack);
-    // leds glows on right side
-  }
 }
