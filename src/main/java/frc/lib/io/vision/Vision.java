@@ -1,82 +1,68 @@
 package frc.lib.io.vision;
 
-import static frc.lib.io.vision.VisionConstants.MAX_POSE_DIFFERENCE_METERS;
-import static frc.lib.io.vision.VisionConstants.POSE_DIFFERENCE_THRESHOLD_METERS;
+import static frc.lib.io.vision.VisionConstants.*;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.io.vision.VisionIO.VisionIOInputs;
 import frc.lib.utils.RobotOdometry;
 import frc.lib.utils.TunableNumber;
 import frc.robot.FieldConstants;
 import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 /**
  * The Vision subsystem is responsible for updating the robot's estimated pose based on a collection
- * of cameras capturing AprilTags. The Vision subsystem comprises multiple VisionIO objects, each of
- * which is responsible for producing a single PhotonPipelineResult. There is a one-to-one
- * relationship between each VisionIO object and each coprocessor (e.g., Raspberry Pi) running
+ * of cameras capturing AprilTags. The Vision subsystem is comprised of multiple VisionIO objects,
+ * each of which is responsible for producing a single PhotonPipelineResult. There is a one-to-one
+ * relationship between each VisionIO object and each co-processor (e.g., Raspberry Pi) running
  * PhotonVision.
  */
 public class Vision extends SubsystemBase {
-  private final List<VisionIO> visionIOs;
-  private final List<Transform3d> camerasToRobots;
-  private final VisionIOInputs[] inputs;
-  private final double[] lastTimestamps;
+  private VisionIO[] visionIOs;
+  private final VisionIOInputsAutoLogged[] ios;
+  private double[] lastTimestamps;
 
-  private final AprilTagFieldLayout layout;
+  private AprilTagFieldLayout layout;
 
   private boolean isEnabled = true;
+  private boolean isVisionUpdating = false;
 
-  private final SwerveDrivePoseEstimator poseEstimator;
+  private RobotOdometry odometry;
   private final TunableNumber poseDifferenceThreshold =
       new TunableNumber("Vision/VisionPoseThreshold", POSE_DIFFERENCE_THRESHOLD_METERS);
   private final TunableNumber stdDevSlope = new TunableNumber("Vision/stdDevSlope", 0.10);
   private final TunableNumber stdDevPower = new TunableNumber("Vision/stdDevPower", 2.0);
-
-  private static class RobotPoseFromAprilTag {
-    public final Pose3d robotPose;
-    public final double distanceToAprilTag;
-
-    public RobotPoseFromAprilTag(Pose3d robotPose, double distance) {
-      this.robotPose = robotPose;
-      this.distanceToAprilTag = distance;
-    }
-  }
+  private final TunableNumber stdDevMultiTagFactor =
+      new TunableNumber("Vision/stdDevMultiTagFactor", 0.2);
 
   /**
    * Create a new Vision subsystem. The number of VisionIO objects passed to the constructor must
    * match the number of robot-to-camera transforms returned by the RobotConfig singleton.
    *
    * @param visionIOs One or more VisionIO objects, each of which is responsible for producing a
-   *     single PhotonPipelineResult. There is a one-to-one relationship between each VisionIO
-   *     object and each coprocessor (e.g., Raspberry Pi) running PhotonVision.
+   *     single single PhotonPipelineResult. There is a one-to-one relationship between each
+   *     VisionIO object and each co-processor (e.g., Raspberry Pi) running PhotonVision.
    */
-  public Vision(List<VisionIO> visionIOs, List<Transform3d> camerasToRobots) {
+  public Vision(VisionIO[] visionIOs) {
     this.visionIOs = visionIOs;
-    this.camerasToRobots = camerasToRobots;
-    this.lastTimestamps = new double[visionIOs.size()];
-    this.inputs = new VisionIOInputs[visionIOs.size()];
-    for (int i = 0; i < visionIOs.size(); i++) {
-      this.inputs[i] = new VisionIOInputs();
+    this.lastTimestamps = new double[visionIOs.length];
+    this.ios = new VisionIOInputsAutoLogged[visionIOs.length];
+    for (int i = 0; i < visionIOs.length; i++) {
+      this.ios[i] = new VisionIOInputsAutoLogged();
     }
 
     // retrieve a reference to the pose estimator singleton
-    this.poseEstimator = RobotOdometry.getInstance().getPoseEstimator();
+    this.odometry = RobotOdometry.getInstance();
 
-    // load and log all the AprilTags in the field layout file
+    // load and log all of the AprilTags in the field layout file
     layout = FieldConstants.aprilTags;
 
     for (AprilTag tag : layout.getTags()) {
@@ -91,46 +77,51 @@ public class Vision extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    Logger.recordOutput("Vision/IsUpdating", true);
-    for (int i = 0; i < visionIOs.size(); i++) {
-      visionIOs.get(i).updateInputs(inputs[i]);
-      Logger.processInputs("Vision" + i, inputs[i]);
+    isVisionUpdating = false;
+    for (int i = 0; i < visionIOs.length; i++) {
 
-      // only process the vision data if the timestamp is newer than the last one
-      if (lastTimestamps[i] < inputs[i].lastTimestamp) {
-        lastTimestamps[i] = inputs[i].lastTimestamp;
-        RobotPoseFromAprilTag poseAndDistance = getRobotPoseOptimized(i);
-        Pose3d robotPose = poseAndDistance.robotPose;
+      visionIOs[i].updateInputs(ios[i]);
+      Logger.processInputs("Vision/" + i, ios[i]);
 
-        Logger.recordOutput("Vision/ValidTarget", robotPose != null);
-        if (robotPose == null) return;
-
-        // only update the pose estimator if the pose from the vision data is close to the estimated
-        // robot pose
-        if (poseEstimator
-                .getEstimatedPosition()
-                .minus(robotPose.toPose2d())
-                .getTranslation()
-                .getNorm()
-            < MAX_POSE_DIFFERENCE_METERS) {
-
-          // only update the pose estimator if the vision subsystem is enabled
-          if (isEnabled) {
-            // when updating the pose estimator, specify standard deviations based on the distance
-            // from the robot to the AprilTag (the greater the distance, the less confident we are
-            // in the measurement)
-            poseEstimator.addVisionMeasurement(
-                robotPose.toPose2d(),
-                inputs[i].lastTimestamp,
-                getStandardDeviations(poseAndDistance.distanceToAprilTag));
-            Logger.recordOutput("Vision/IsUpdating", true);
-          }
-
-          Logger.recordOutput("Vision/RobotPose" + i, robotPose.toPose2d());
-          Logger.recordOutput("Vision/IsEnabled", isEnabled);
+      // "zero" the robot poses and which tags are seen such that old data is not used if no new
+      // data has been available in the past 0.1 seconds
+      if (ios[i].lastCameraTimestamp + 0.1 < lastTimestamps[i]) {
+        Logger.recordOutput("Vision/" + i + "/RobotPose", new Pose2d());
+        for (AprilTag tag : this.layout.getTags()) {
+          Logger.recordOutput("Vision/" + i + "/TagID" + "_" + tag.ID, false);
         }
       }
+
+      // only process the vision data if the timestamp is newer than the last one
+      if (lastTimestamps[i] < ios[i].lastCameraTimestamp) {
+        lastTimestamps[i] = ios[i].lastCameraTimestamp;
+        Pose2d estimatedRobotPose2d = ios[i].estimatedRobotPose.toPose2d();
+
+        // only update the pose estimator if the vision subsystem is enabled
+        if (isEnabled) {
+          // when updating the pose estimator, specify standard deviations based on the distance
+          // from the robot to the AprilTag (the greater the distance, the less confident we are
+          // in the measurement)
+          odometry.addVisionData(
+              List.of(
+                  new RobotOdometry.TimestampedVisionUpdate(
+                      ios[i].estimatedRobotPoseTimestamp,
+                      estimatedRobotPose2d,
+                      getStandardDeviations(i, estimatedRobotPose2d))));
+          isVisionUpdating = true;
+        }
+
+        for (AprilTag tag : this.layout.getTags()) {
+          Logger.recordOutput("Vision/" + i + "/TagID" + "_" + tag.ID, false);
+        }
+        for (int tagID : ios[i].estimatedRobotPoseTags) {
+          Logger.recordOutput("Vision/" + i + "/TagID" + "_" + tagID, true);
+        }
+
+        Logger.recordOutput("Vision/" + i + "/RobotPose", estimatedRobotPose2d);
+      }
     }
+    Logger.recordOutput("Vision/IsEnabled", isEnabled);
   }
 
   /**
@@ -143,23 +134,21 @@ public class Vision extends SubsystemBase {
   }
 
   /**
-   * Retrieves the best estimated pose of the robot based on data from the vision subsystem.
+   * Returns the estimated robot pose based on the most recent vision data. This method is used to
+   * reset the robot's odometry based solely on the vision data.
    *
-   * @return the best robot pose if available, or null if no pose is found
+   * @return the estimated robot pose based on the most recent vision data
    */
   public Pose3d getBestRobotPose() {
-    Pose3d robotPoseFromClosestTarget = null;
-    double closestTargetDistance = Double.MAX_VALUE;
-    for (int i = 0; i < visionIOs.size(); i++) {
-      RobotPoseFromAprilTag poseAndDistance = getRobotPoseOptimized(i);
-      Pose3d robotPose = poseAndDistance.robotPose;
-      double distanceToAprilTag = poseAndDistance.distanceToAprilTag;
-      if (robotPose != null && distanceToAprilTag < closestTargetDistance) {
-        robotPoseFromClosestTarget = robotPose;
-        closestTargetDistance = distanceToAprilTag;
+    Pose3d robotPoseFromMostRecentData = null;
+    double mostRecentTimestamp = 0.0;
+    for (int i = 0; i < visionIOs.length; i++) {
+      if (ios[i].estimatedRobotPoseTimestamp > mostRecentTimestamp) {
+        robotPoseFromMostRecentData = ios[i].estimatedRobotPose;
+        mostRecentTimestamp = ios[i].estimatedRobotPoseTimestamp;
       }
     }
-    return robotPoseFromClosestTarget;
+    return robotPoseFromMostRecentData;
   }
 
   /**
@@ -180,15 +169,10 @@ public class Vision extends SubsystemBase {
    *     robot's pose based on the pose estimator
    */
   public boolean posesHaveConverged() {
-    for (int i = 0; i < visionIOs.size(); i++) {
-      Pose3d robotPose = getRobotPoseOptimized(i).robotPose;
-      if (robotPose != null
-          && poseEstimator
-                  .getEstimatedPosition()
-                  .minus(robotPose.toPose2d())
-                  .getTranslation()
-                  .getNorm()
-              < poseDifferenceThreshold.get()) {
+    for (int i = 0; i < visionIOs.length; i++) {
+      Pose3d robotPose = ios[i].estimatedRobotPose;
+      if (odometry.getLatestPose().minus(robotPose.toPose2d()).getTranslation().getNorm()
+          < poseDifferenceThreshold.get()) {
         Logger.recordOutput("Vision/posesInLine", true);
         return true;
       }
@@ -198,137 +182,38 @@ public class Vision extends SubsystemBase {
   }
 
   /**
-   * Returns a matrix representing the standard deviations of the vision measurement. The standard
-   * deviations are calculated based on the distance from the robot to the target and can be
-   * adjusted using tuning parameters.
+   * The standard deviations of the estimated pose, for use with a pose estimator. This should only
+   * be used when there are targets visible.
    *
-   * @param targetDistance the distance from the robot to the target
-   * @return a matrix representing the standard deviations of the vision measurement
+   * @param estimatedPose The estimated pose to guess standard deviations for.
    */
-  private Matrix<N3, N1> getStandardDeviations(double targetDistance) {
-    // the standard deviation of the vision measurement is a function of the distance from the robot
-    // to the AprilTag and can be tuned
-    double stdDevTrust = stdDevSlope.get() * (Math.pow(targetDistance, stdDevPower.get()));
-    return VecBuilder.fill(stdDevTrust, stdDevTrust, stdDevTrust);
-  }
-
-  /**
-   * Returns the robot pose based on vision data and distance to the AprilTag that is closest to the
-   * robot. The current algorithm simply uses the AprilTag that is closest to the robot from which
-   * to determine the robot's pose. In the future, this method could be updated to use multiple
-   * tags.
-   *
-   * @param index the index of the VisionIO object to use
-   * @return the robot pose based on vision data and distance to the AprilTag that is closest to the
-   *     robot
-   */
-  private RobotPoseFromAprilTag getRobotPose(int index) {
-    int targetCount = 0;
-    Pose3d robotPoseFromClosestTarget = null;
-    double closestTargetDistance = Double.MAX_VALUE;
-
-    // "zero" the tag and robot poses such that old data is not used if no new data is available; in
-    // terms of logging, we are assuming that a given VisionIO object won't see more than 2 tags at
-    // once
-    for (int i = 0; i < 2; i++) {
-      Logger.recordOutput("Vision/TagPose" + index + "_" + i, new Pose2d());
-      Logger.recordOutput("Vision/NVRobotPose" + index + "_" + i, new Pose2d());
-    }
-
-    for (PhotonTrackedTarget target : inputs[index].lastResult.getTargets()) {
-      if (isValidTarget(target)) {
-        Transform3d cameraToTarget = target.getBestCameraToTarget();
-        Optional<Pose3d> tagPoseOptional = layout.getTagPose(target.getFiducialId());
-        if (tagPoseOptional.isPresent()) {
-          Pose3d tagPose = tagPoseOptional.get();
-          Pose3d cameraPose = tagPose.transformBy(cameraToTarget.inverse());
-          Pose3d robotPose = cameraPose.transformBy(camerasToRobots.get(index).inverse());
-
-          Logger.recordOutput("Vision/TagPose" + index + "_" + targetCount, tagPose.toPose2d());
-          Logger.recordOutput(
-              "Vision/NVRobotPose" + index + "_" + targetCount, robotPose.toPose2d());
-
-          double targetDistance =
-              target.getBestCameraToTarget().getTranslation().toTranslation2d().getNorm();
-
-          // only consider tags that are within a certain distance of the robot
-          if (targetDistance < VisionConstants.MAX_DISTANCE_TO_TARGET_METERS
-              && targetDistance < closestTargetDistance) {
-            closestTargetDistance = targetDistance;
-            robotPoseFromClosestTarget = robotPose;
-          }
-        }
+  private Matrix<N3, N1> getStandardDeviations(int index, Pose2d estimatedPose) {
+    Matrix<N3, N1> estStdDevs = VecBuilder.fill(1, 1, 2);
+    int[] tags = ios[index].estimatedRobotPoseTags;
+    int numTags = 0;
+    double avgDist = 0;
+    for (int tag : tags) {
+      Optional<Pose3d> tagPose = layout.getTagPose(tag);
+      if (tagPose.isEmpty()) {
+        continue;
       }
-      targetCount++;
+      numTags++;
+      avgDist +=
+          tagPose.get().toPose2d().getTranslation().getDistance(estimatedPose.getTranslation());
+    }
+    if (numTags == 0) {
+      return estStdDevs;
+    }
+    avgDist /= numTags;
+    // Decrease std devs if multiple targets are visible
+    if (numTags > 1) estStdDevs = estStdDevs.times(stdDevMultiTagFactor.get());
+    // Increase std devs based on (average) distance
+    if (numTags == 1 && avgDist > MAX_DISTANCE_TO_TARGET_METERS) {
+      estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+    } else {
+      estStdDevs = estStdDevs.times(stdDevSlope.get() * (Math.pow(avgDist, stdDevPower.get())));
     }
 
-    return new RobotPoseFromAprilTag(robotPoseFromClosestTarget, closestTargetDistance);
-  }
-
-  /**
-   * Returns the robot pose based on vision data and distance to the AprilTag that has the lowest
-   * ambiguity.
-   *
-   * @param index the index of the VisionIO object to use
-   * @return the robot pose based on vision data and distance to the AprilTag that has the lowest
-   *     ambiguity
-   */
-  private RobotPoseFromAprilTag getRobotPoseOptimized(int index) {
-    int targetCount = 0;
-    Pose3d robotPoseFromClosestTarget = null;
-    double lowestTargetAmbiguity = Double.MAX_VALUE;
-    double targetDistance = Double.MAX_VALUE;
-
-    // "zero" the tag and robot poses such that old data is not used if no new data is available; in
-    // terms of logging, we are assuming that a given VisionIO object won't see more than 2 tags at
-    // once
-    for (int i = 0; i < 2; i++) {
-      Logger.recordOutput("Vision/TagPose" + index + "_" + i, new Pose2d());
-      Logger.recordOutput("Vision/NVRobotPose" + index + "_" + i, new Pose2d());
-    }
-
-    for (PhotonTrackedTarget target : inputs[index].lastResult.getTargets()) {
-      if (isValidTarget(target)) {
-        Transform3d cameraToTarget = target.getBestCameraToTarget();
-        Optional<Pose3d> tagPoseOptional = layout.getTagPose(target.getFiducialId());
-        if (tagPoseOptional.isPresent()) {
-          Pose3d tagPose = tagPoseOptional.get();
-          Pose3d cameraPose = tagPose.transformBy(cameraToTarget.inverse());
-          Pose3d robotPose = cameraPose.transformBy(camerasToRobots.get(index).inverse());
-
-          Logger.recordOutput("Vision/TagPose" + index + "_" + targetCount, tagPose.toPose2d());
-          Logger.recordOutput(
-              "Vision/NVRobotPose" + index + "_" + targetCount, robotPose.toPose2d());
-
-          double targetAmbiguity = target.getPoseAmbiguity();
-
-          // only consider tags that are within a certain distance of the robot
-          if (targetAmbiguity < VisionConstants.MAXIMUM_AMBIGUITY
-              && targetAmbiguity != -1
-              && targetAmbiguity < lowestTargetAmbiguity) {
-            lowestTargetAmbiguity = targetAmbiguity;
-            robotPoseFromClosestTarget = robotPose;
-            targetDistance =
-                target.getBestCameraToTarget().getTranslation().toTranslation2d().getNorm();
-          }
-        }
-      }
-      targetCount++;
-    }
-
-    return new RobotPoseFromAprilTag(robotPoseFromClosestTarget, targetDistance);
-  }
-
-  /**
-   * Checks if the given PhotonTrackedTarget is a valid target for robot pose calculation.
-   *
-   * @param target the PhotonTrackedTarget to check
-   * @return true if the target is valid, false otherwise
-   */
-  private boolean isValidTarget(PhotonTrackedTarget target) {
-    return target.getFiducialId() != -1
-        && target.getPoseAmbiguity() != -1
-        && target.getPoseAmbiguity() < VisionConstants.MAXIMUM_AMBIGUITY
-        && layout.getTagPose(target.getFiducialId()).isPresent();
+    return estStdDevs;
   }
 }

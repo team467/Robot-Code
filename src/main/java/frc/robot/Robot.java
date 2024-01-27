@@ -4,13 +4,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.DriverStation;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.utils.VirtualSubsystem;
-import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.RobotType;
 import frc.robot.subsystems.led.Leds;
 import java.io.IOException;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -33,15 +31,13 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
-  private final Timer disabledTimer = new Timer();
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
-    if (RobotConstants.get().mode() == Constants.Mode.REAL) {
+    if (Constants.getMode() == Constants.Mode.REAL) {
       ProcessBuilder builder = new ProcessBuilder();
       builder.command("sudo", "mount", "/dev/sda1", "/media/sda1");
       try {
@@ -64,19 +60,15 @@ public class Robot extends LoggedRobot {
     }
 
     // Set up data receivers & replay source
-    switch (RobotConstants.get().mode()) {
+    switch (Constants.getMode()) {
         // Running on a real robot, log to a USB stick if possible
       case REAL -> {
         Logger.addDataReceiver(new NT4Publisher());
-        String folder = RobotConstants.get().logFolder();
+        String folder = Constants.logFolders.get(Constants.getRobot());
         if (folder != null) {
           Logger.addDataReceiver(new WPILOGWriter(folder));
         }
-        if (RobotConstants.get().robot() == RobotType.ROBOT_COMP) {
-          new PowerDistribution(20, ModuleType.kRev);
-        } else {
-          new PowerDistribution(20, ModuleType.kCTRE);
-        }
+        new PowerDistribution(Schematic.POWER_DIST_ID, Schematic.POWER_DIST_TYPE);
       }
 
         // Running a physics simulator, log to local folder
@@ -97,9 +89,7 @@ public class Robot extends LoggedRobot {
     // Start AdvantageKit logger
     Logger.start();
 
-    // Start timers
-    disabledTimer.reset();
-    disabledTimer.start();
+    DriverStation.silenceJoystickConnectionWarning(true);
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
@@ -109,21 +99,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
-    Threads.setCurrentThreadPriority(true, 99);
-
-    VirtualSubsystem.periodicAll();
     CommandScheduler.getInstance().run();
-
-    // Update low battery alert
-    if (DriverStation.isEnabled()) {
-      disabledTimer.reset();
-    }
-    if (RobotController.getBatteryVoltage() < lowBatteryVoltage
-        && disabledTimer.hasElapsed(lowBatteryDisabledTime)) {
-      Leds.getInstance().lowBatteryAlert = true;
-    }
-
-    Threads.setCurrentThreadPriority(true, 10);
   }
 
   /** This function is called once when the robot is disabled. */

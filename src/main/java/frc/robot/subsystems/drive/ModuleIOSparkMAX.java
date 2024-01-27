@@ -3,14 +3,14 @@ package frc.robot.subsystems.drive;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.RobotConstants;
+import frc.robot.Schematic;
 
 public class ModuleIOSparkMAX implements ModuleIO {
   private final CANSparkMax driveMotor;
@@ -25,7 +25,33 @@ public class ModuleIOSparkMAX implements ModuleIO {
   private int resetCount = 0;
   private final int index;
 
-  public ModuleIOSparkMAX(int driveMotorId, int turnMotorId, int turnAbsEncoderId, int index) {
+  public ModuleIOSparkMAX(int index) {
+    int driveMotorId;
+    int turnMotorId;
+    int turnAbsEncoderId;
+    switch (index) {
+      case 0 -> {
+        driveMotorId = Schematic.FRONT_LEFT_DRIVE_ID;
+        turnMotorId = Schematic.FRONT_LEFT_STEERING_ID;
+        turnAbsEncoderId = Schematic.FRONT_LEFT_CANCODER_ID;
+      }
+      case 1 -> {
+        driveMotorId = Schematic.FRONT_RIGHT_DRIVE_ID;
+        turnMotorId = Schematic.FRONT_RIGHT_STEERING_ID;
+        turnAbsEncoderId = Schematic.FRONT_RIGHT_CANCODER_ID;
+      }
+      case 2 -> {
+        driveMotorId = Schematic.REAR_LEFT_DRIVE_ID;
+        turnMotorId = Schematic.REAR_LEFT_STEERING_ID;
+        turnAbsEncoderId = Schematic.REAR_LEFT_CANCODER_ID;
+      }
+      case 3 -> {
+        driveMotorId = Schematic.REAR_RIGHT_DRIVE_ID;
+        turnMotorId = Schematic.REAR_RIGHT_STEERING_ID;
+        turnAbsEncoderId = Schematic.REAR_RIGHT_CANCODER_ID;
+      }
+      default -> throw new IllegalArgumentException("Drive: Illegal index attempted " + index);
+    }
     driveMotor = new CANSparkMax(driveMotorId, MotorType.kBrushless);
     turnMotor = new CANSparkMax(turnMotorId, MotorType.kBrushless);
     driveEncoder = driveMotor.getEncoder();
@@ -35,11 +61,10 @@ public class ModuleIOSparkMAX implements ModuleIO {
 
     double rotsToMeters =
         Units.rotationsToRadians(1)
-            * (RobotConstants.get().moduleWheelDiameter() / 2)
-            * RobotConstants.get().moduleDriveGearRatio().getRotationsPerInput();
+            * (DriveConstants.WHEEL_DIAMETER / 2)
+            * DriveConstants.DRIVE_GEAR_RATIO.getRotationsPerInput();
     double rotsToRads =
-        Units.rotationsToRadians(1)
-            * RobotConstants.get().moduleTurnGearRatio().getRotationsPerInput();
+        Units.rotationsToRadians(1) * DriveConstants.TURN_GEAR_RATIO.getRotationsPerInput();
 
     driveEncoder.setPositionConversionFactor(rotsToMeters);
     turnEncoder.setPositionConversionFactor(rotsToRads);
@@ -52,8 +77,8 @@ public class ModuleIOSparkMAX implements ModuleIO {
     driveMotor.setInverted(false);
     turnMotor.setInverted(false);
 
-    driveMotor.setIdleMode(IdleMode.kCoast);
-    turnMotor.setIdleMode(IdleMode.kCoast);
+    driveMotor.setIdleMode(IdleMode.kBrake);
+    turnMotor.setIdleMode(IdleMode.kBrake);
 
     driveMotor.enableVoltageCompensation(12);
     turnMotor.enableVoltageCompensation(12);
@@ -80,7 +105,7 @@ public class ModuleIOSparkMAX implements ModuleIO {
         turnEncoder.setPosition(
             MathUtil.angleModulus(
                 Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble())
-                    .minus(RobotConstants.get().absoluteAngleOffset()[index])
+                    .minus(DriveConstants.ABSOLUTE_ANGLE_OFFSET[index])
                     .getRadians()));
       }
     } else {
@@ -90,7 +115,7 @@ public class ModuleIOSparkMAX implements ModuleIO {
 
     inputs.turnAbsolutePosition =
         Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble())
-            .minus(RobotConstants.get().absoluteAngleOffset()[index]);
+            .minus(DriveConstants.ABSOLUTE_ANGLE_OFFSET[index]);
     inputs.turnAppliedVolts = turnMotor.getAppliedOutput() * turnMotor.getBusVoltage();
     inputs.turnCurrentAmps = new double[] {turnMotor.getOutputCurrent()};
   }
