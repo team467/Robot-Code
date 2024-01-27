@@ -35,6 +35,7 @@ public class IntakeNote extends SubsystemBase {
 
   // Command for intaking a note.
   public Command startIntake() {
+    hasNote = true;
     return Commands.run(
         () -> {
           intakeNoteIO.setSpeed(intakeSpeed);
@@ -44,6 +45,7 @@ public class IntakeNote extends SubsystemBase {
 
   // Command for releasing a note.
   public Command release() {
+    hasNote = false;
     return Commands.run(
         () -> {
           intakeNoteIO.setSpeed(releaseSpeed);

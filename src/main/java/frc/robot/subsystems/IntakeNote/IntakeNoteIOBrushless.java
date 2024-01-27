@@ -17,4 +17,12 @@ public class IntakeNoteIOBrushless implements IntakeNoteIO {
   public void setSpeed(double speed) {
     motor.set(speed);
   }
+
+  public double getSpeed() {
+    return motor.get();
+  }
+
+  public double getAppliedVolts() {
+    return motor.getBusVoltage();
+  }
 }
