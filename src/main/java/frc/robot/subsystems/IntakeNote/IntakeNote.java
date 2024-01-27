@@ -34,11 +34,6 @@ public class IntakeNote extends SubsystemBase {
     Logger.processInputs("IntakeNote", inputs);
   }
 
-  /*public void startIntake() {
-    hasNote = false;
-    intakeNoteIO.setSpeed(intakeSpeed);
-  }*/
-
   // Command for intaking a note.
   public Command startIntake() {
     return Commands.run(() -> {
@@ -46,21 +41,12 @@ public class IntakeNote extends SubsystemBase {
     }, this);
   }
 
-  /*public void release() {
-    hasNote = true;
-    intakeNoteIO.setSpeed(releaseSpeed);
-  }*/
-
   // Command for releasing a note.
   public Command release() {
     return Commands.run(() -> {
       intakeNoteIO.setSpeed(releaseSpeed);
     }, this);
   }
-
-  /*public void stop() {
-    intakeNoteIO.setSpeed(stop);
-  }*/
 
   // Command for stopping intake.
   public Command stopIntake() {
