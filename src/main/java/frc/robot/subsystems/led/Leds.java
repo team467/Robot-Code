@@ -7,22 +7,29 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.lib.utils.VirtualSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.robotstate.RobotState;
-import frc.robot.subsystems.robotstate.RobotStateIOInputsAutoLogged;
 import java.util.List;
 
-public class Leds extends VirtualSubsystem {
-  private static Leds instance;
+import org.littletonrobotics.junction.AutoLogOutput;
 
-  private RobotStateIOInputsAutoLogged state;
+public class Leds extends SubsystemBase {
 
-  public static Leds getInstance() {
-    if (instance == null) {
-      instance = new Leds(RobotState.getInstance());
-    }
-    return instance;
+  private RobotState state = RobotState.getInstance();
+
+  public enum LedMode {
+    OFF,
+    ESTOPPED,
+    DISABLED,
+    BLUE_ALLIANCE,
+    RED_ALLIANCE,
+    LOW_BATTERY_ALERT,
+    AUTONOMOUS,
+    AUTO_FINISHED,
   }
+
+  @AutoLogOutput(key = "Leds/Mode")
+  LedMode mode = LedMode.OFF;
 
   // Robot state tracking
   public int loopCycleCount = 0;
@@ -55,93 +62,131 @@ public class Leds extends VirtualSubsystem {
   private static final double autoFadeTime = 2.5; // 3s nominal
   private static final double autoFadeMaxTime = 5.0; // Return to normal
 
-  private Leds(RobotState robotState) {
-    state = robotState.state();
+  private Leds() {
     leds = new AddressableLED(0);
     buffer = new AddressableLEDBuffer(length);
     leds.setLength(length);
     leds.setData(buffer);
     leds.start();
-    loadingNotifier =
-        new Notifier(
-            () -> {
-              breath(
-                  Section.FULL,
-                  Color.kWhite,
-                  Color.kBlack,
-                  0.25,
-                  (double) System.currentTimeMillis() / 1000);
-              leds.setData(buffer);
-            });
+    loadingNotifier = new Notifier(
+        () -> {
+          breath(
+              Section.FULL,
+              Color.kWhite,
+              Color.kBlack,
+              0.25,
+              (double) System.currentTimeMillis() / 1000);
+          leds.setData(buffer);
+        });
     loadingNotifier.startPeriodic(0.02);
   }
 
-  @Override
-  public void periodic() {
+  private void updateState() {
 
     // Update auto state
-    if (state.disabled) {
+    if (DriverStation.isDisabled()) {
       autoFinished = false;
     } else {
       lastEnabledAuto = DriverStation.isAutonomous();
       lastEnabledTime = Timer.getFPGATimestamp();
     }
 
+    if (DriverStation.isEStopped()) {
+      mode = LedMode.ESTOPPED;
+    
+    } else if (DriverStation.isDisabled()) {
+      if (DriverStation.getAlliance().isPresent()) {
+        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+          mode = LedMode.BLUE_ALLIANCE;
+        } else {
+          mode = LedMode.RED_ALLIANCE;
+        }
+      } else {
+        mode = LedMode.DISABLED;
+      }
+    
+    } else if (state.lowBatteryAlert) {
+      mode = LedMode.LOW_BATTERY_ALERT;
+    
+    } else {
+      mode = LedMode.OFF;
+    }
+
+  }
+  
+  private void updateLeds() {
+    switch (mode) {
+
+      case OFF:
+        solid(Section.FULL, Color.kBlack);
+        break;
+
+      case ESTOPPED:
+        solid(Section.FULL, Color.kRed);
+        // strobe(Section.FULL, Color.kRed, strobeFastDuration);
+        break;
+
+      case DISABLED:
+        if (lastEnabledAuto && Timer.getFPGATimestamp() - lastEnabledTime < autoFadeMaxTime) {
+          // Auto fade
+          solid(1.0 - ((Timer.getFPGATimestamp() - lastEnabledTime) / autoFadeTime), Color.kGreen);
+        } else {
+          wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
+        }
+        break;
+
+      case BLUE_ALLIANCE:
+        wave(
+            Section.FULL,
+            Color.kBlue,
+            Color.kBlack,
+            waveAllianceCycleLength,
+            waveAllianceDuration);
+        break;
+
+      case RED_ALLIANCE:
+        wave(
+            Section.FULL,
+            Color.kRed,
+            Color.kBlack,
+            waveAllianceCycleLength,
+            waveAllianceDuration);
+        break;
+
+      case AUTONOMOUS:
+        wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveFastCycleLength, waveFastDuration);
+        break;
+
+      case LOW_BATTERY_ALERT:
+        break;
+
+      case AUTO_FINISHED:
+        double fullTime = (double) length / waveFastCycleLength * waveFastDuration;
+        solid((Timer.getFPGATimestamp() - autoFinishedTime) / fullTime, Color.kGreen);
+        break;
+
+      default:
+        wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
+        break;
+
+    }
+
+    leds.setData(buffer);
+  }
+
+  @Override
+  public void periodic() {
+
     // Exit during initial cycles
     loopCycleCount += 1;
     if (loopCycleCount < minLoopCycleCount) {
       return;
     }
-
     // Stop loading notifier if running
     loadingNotifier.stop();
 
-    // Select LED mode
-    // solid(Section.FULL, Color.kBlack); // Default to off
-
-    if (state.estopped) {
-      solid(Section.FULL, Color.kRed);
-    } else if (DriverStation.isDisabled()) {
-      if (lastEnabledAuto && Timer.getFPGATimestamp() - lastEnabledTime < autoFadeMaxTime) {
-        // Auto fade
-        solid(1.0 - ((Timer.getFPGATimestamp() - lastEnabledTime) / autoFadeTime), Color.kGreen);
-      } else if (state.lowBatteryAlert) {
-        // Low battery
-        solid(Section.FULL, Color.kOrangeRed);
-      } else {
-        // Default pattern
-        switch (state.alliance) {
-          case Red:
-            wave(
-                Section.FULL,
-                Color.kRed,
-                Color.kBlack,
-                waveAllianceCycleLength,
-                waveAllianceDuration);
-            break;
-          case Blue:
-            // solid(0.5, Color.kLightGreen, Color.kBlack);
-            wave(
-                Section.FULL,
-                Color.kBlue,
-                Color.kBlack,
-                waveAllianceCycleLength,
-                waveAllianceDuration);
-            break;
-          default:
-            wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
-            break;
-        }
-      }
-    } else if (DriverStation.isAutonomous()) {
-      wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveFastCycleLength, waveFastDuration);
-      if (autoFinished) {
-        double fullTime = (double) length / waveFastCycleLength * waveFastDuration;
-        solid((Timer.getFPGATimestamp() - autoFinishedTime) / fullTime, Color.kGreen);
-      }
-    }
-
-    leds.setData(buffer);
+    updateState();
+    updateLeds();
   }
 
   /**
