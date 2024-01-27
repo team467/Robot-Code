@@ -103,6 +103,7 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim());
         }
+        default -> throw new IllegalArgumentException("Unexpected value: " + Constants.getRobot());
       }
     }
 
