@@ -15,6 +15,14 @@ public class RobotStateIOPhysical implements RobotStateIO {
         // Update estop state
     if (DriverStation.isEStopped()) {
       inputs.estopped = true;
+    } else {
+      inputs.estopped = false;
+    }
+
+    if (DriverStation.isDisabled()) {
+      inputs.disabled = true;
+    } else {
+      inputs.disabled = false;
     }
   }
 

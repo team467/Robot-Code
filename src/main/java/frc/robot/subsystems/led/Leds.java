@@ -86,7 +86,7 @@ public class Leds extends VirtualSubsystem {
     
 
     // Update auto state
-    if (DriverStation.isDisabled()) {
+    if (state.disabled) {
       autoFinished = false;
     } else {
       lastEnabledAuto = DriverStation.isAutonomous();
