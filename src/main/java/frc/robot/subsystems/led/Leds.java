@@ -115,21 +115,21 @@ public class Leds extends VirtualSubsystem {
         // Default pattern
         switch (alliance) {
           case Red:
-            solid(0.25, Color.kPurple, Color.kBlack);
-            // wave(
-            //     Section.FULL,
-            //     Color.kRed,
-            //     Color.kBlack,
-            //     waveAllianceCycleLength,
-            //     waveAllianceDuration);
-            break;
-          case Blue:
             wave(
                 Section.FULL,
-                Color.kBlue,
+                Color.kRed,
                 Color.kBlack,
                 waveAllianceCycleLength,
                 waveAllianceDuration);
+            break;
+          case Blue:
+            //solid(0.5, Color.kLightGreen, Color.kBlack);
+            wave(
+            Section.FULL,
+            Color.kBlue,
+            Color.kBlack,
+            waveAllianceCycleLength,
+            waveAllianceDuration);
             break;
           default:
             wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
@@ -343,10 +343,12 @@ public class Leds extends VirtualSubsystem {
 
   private void shooting() {
     wave(Section.FULL, Color.kMagenta, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
+    // leds glow in the direction it's shooting
   }
 
   private void intaking() {
     wave(Section.FULL, Color.kPurple, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
+    // leds glow in the direction it's intaking
   }
 
   private void hanging() {
@@ -355,5 +357,15 @@ public class Leds extends VirtualSubsystem {
 
   private void containing() {
     solid(Section.FULL, Color.kAquamarine);
+  }
+
+  private void leftnotedetection() {
+    solid(0.5, Color.kYellow, Color.kBlack);
+    // leds glow on left side
+  }
+
+  private void rightnotedetection() {
+    solid(0.5, Color.kLightGreen, Color.kBlack);
+    // leds glows on right side
   }
 }
