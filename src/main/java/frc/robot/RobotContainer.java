@@ -171,7 +171,7 @@ public class RobotContainer {
     // Mapped buttons on controller to intake, release, or stop.
     driverController.a().onTrue(new IntakeNote(intakeNoteIO).startIntake());
     driverController.b().onTrue(new IntakeNote(intakeNoteIO).release());
-    driverController.x().onTrue(new IntakeNote(intakeNoteIO).stopIntake());
+    driverController.x().onTrue(new IntakeNote(intakeNoteIO).stop());
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));

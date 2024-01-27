@@ -54,7 +54,7 @@ public class IntakeNote extends SubsystemBase {
   }
 
   // Command for stopping intake.
-  public Command stopIntake() {
+  public Command stop() {
     return Commands.run(
         () -> {
           intakeNoteIO.setSpeed(stop);
