@@ -103,7 +103,7 @@ public class RobotContainer {
         }
         case ROBOT_BRIEFCASE -> {
           shooter = new Shooter(new ShooterIOPhysical2());
-          new Indexer(new IndexerIOPhysical());
+          indexer = new Indexer(new IndexerIOPhysical());
         }
         case ROBOT_SIMBOT -> {
           drive =
