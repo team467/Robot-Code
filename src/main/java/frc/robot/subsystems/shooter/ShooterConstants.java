@@ -15,14 +15,14 @@ public class ShooterConstants {
 
   static {
     switch (Constants.getRobot()) {
-      case ROBOT_2023 -> {
+      case ROBOT_BRIEFCASE -> {
         SHOOTER_READY_VELOCITY_RAD_PER_SEC = 0.6;
         SHOOTER_KS = new TunableNumber("Shooter/Module/ShooterKS", 0.49385);
         SHOOTER_KV = new TunableNumber("Shooter/Module/ShooterKV", 2.60818);
-        SHOOTER_LEADER_ID = 1;
-        SHOOTER_FOLLOWER_ID = 2;
-        SHOOTER_2_ID = 3;
-        SHOOTER_KP = 0.0;
+        SHOOTER_LEADER_ID = 0;
+        SHOOTER_FOLLOWER_ID = 0;
+        SHOOTER_2_ID = 1;
+        SHOOTER_KP = 60;
         SHOOTER_KD = 0.0;
       }
       case ROBOT_SIMBOT -> {

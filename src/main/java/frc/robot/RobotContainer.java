@@ -30,10 +30,13 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerConstants;
+import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.LedConstants;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
+import frc.robot.subsystems.shooter.ShooterIOPhysical2;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -98,6 +101,10 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(3));
           shooter = new Shooter(new ShooterIOPhysical());
         }
+        case ROBOT_BRIEFCASE -> {
+          shooter = new Shooter(new ShooterIOPhysical2());
+          new Indexer(new IndexerIOPhysical());
+        }
         case ROBOT_SIMBOT -> {
           drive =
               new Drive(
@@ -155,17 +162,14 @@ public class RobotContainer {
     driverController.a().whileTrue(Commands.runOnce(() -> new Rotation2d(2, 2), drive));
     // Intake command temporarrily mapped to b
     driverController
-        .b()
-        .whileTrue(
-            Commands.run(() -> indexer.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE)));
-    driverController
         .leftBumper()
         .whileTrue(
-            Commands.run(
-                    () -> indexer.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE),
-                    shooter)
-                .onlyWhile(() -> shooter.getShooterSpeedIsReady())
-                .onlyWhile(() -> indexer.getLimitSwitchPressed())
+            shooter
+                .shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)
+                .until(() -> shooter.getShooterSpeedIsReady())
+                .andThen(indexer.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE))
+                .onlyWhile(
+                    () -> shooter.getShooterSpeedIsReady() && indexer.getLimitSwitchPressed())
                 .withTimeout(5));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
@@ -186,7 +190,8 @@ public class RobotContainer {
                         drive.setPose(
                             new Pose2d(
                                 drive.getPose().getTranslation(),
-                                AllianceFlipUtil.apply(new Rotation2d()))))
+                                AllianceFlipUtil.apply(new Rotation2d()))),
+                    drive)
                 .ignoringDisable(true));
     driverController
         .pov(-1)

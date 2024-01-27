@@ -33,10 +33,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command stop() {
-    return Commands.run(() -> {
-      io.setShooterVoltage(0.0);
-    });
+    return Commands.run(
+        () -> {
+          io.setShooterVoltage(0.0);
+        });
   }
+
   public Command shoot(double velocitySetpoint) {
     return Commands.run(
         () -> {
