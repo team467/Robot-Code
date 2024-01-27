@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.subsystems.shooter.ShooterConstants;
 
 public class IndexerIOPhysical implements IndexerIO {
   private final CANSparkMax indexer;
