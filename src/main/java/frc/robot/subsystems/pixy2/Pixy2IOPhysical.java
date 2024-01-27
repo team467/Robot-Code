@@ -1,9 +1,7 @@
 package frc.robot.subsystems.pixy2;
 
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTableListener;
 
 public class Pixy2IOPhysical implements Pixy2IO {
   private final Pixy2IOInputs inputs = new Pixy2IOInputs();
