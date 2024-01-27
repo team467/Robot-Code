@@ -53,15 +53,16 @@ public class Arm extends SubsystemBase {
     if (enableFB) {
       // Run arm to desired goal
       // note that for profiled pids, goal is the last result (i.e. set arm to 30 deg), and setpoint
-      // is what result to reach in this next loop (i.e. set the arm to 5 degrees) due to constraints.
+      // is what result to reach in this next loop (i.e. set the arm to 5 degrees) due to
+      // constraints.
       // Read more at
       // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/profiled-pidcontroller.html#goal-vs-setpoint
       Logger.recordOutput("Arm/DesiredPosition", feedback.getGoal().position);
       io.setVoltage(
-              feedback.calculate(inputs.positionRads.getRadians())
-                      + feedforward.calculate(
-                      feedback.getSetpoint().position + ArmConstants.horizontalOffset.getRadians(),
-                      feedback.getSetpoint().velocity));
+          feedback.calculate(inputs.positionRads.getRadians())
+              + feedforward.calculate(
+                  feedback.getSetpoint().position + ArmConstants.horizontalOffset.getRadians(),
+                  feedback.getSetpoint().velocity));
       Logger.recordOutput("Arm/NextPosition", feedback.getSetpoint().position);
       Logger.recordOutput("Arm/NextVelocity", feedback.getSetpoint().velocity);
     }
