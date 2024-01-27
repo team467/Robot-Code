@@ -24,5 +24,7 @@ public class IntakeNoteIOBrushless implements IntakeNoteIO {
   public void updateInputs(IntakeNoteIOInputs intakeInputs) {
     intakeInputs.appliedVolts = intakeMotor.getBusVoltage() * intakeMotor.getAppliedOutput();
     intakeInputs.motorVelocity = intakEncoder.getVelocity();
+    intakeInputs.motorCurrent = intakeMotor.getOutputCurrent();
+    intakeInputs.motorPosition = intakEncoder.getPosition();
   }
 }

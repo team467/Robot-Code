@@ -15,6 +15,8 @@ public interface IntakeNoteIO {
     // Motor IO
     public double appliedVolts = 0.0;
     public double motorVelocity = 0.0;
+    public double motorCurrent = 0.0;
+    public double motorPosition = 0.0;
   }
 
   default void updateInputs(IntakeNoteIOInputs intakeInputs) {}
