@@ -17,7 +17,7 @@ public interface IntakeNoteIO {
     public double motorVelocity = 0.0;
   }
 
-  default void updateInputs(IntakeNoteIOInputs inputs) {}
+  default void updateInputs(IntakeNoteIOInputs intakeInputs) {}
 
   default void setSpeed(double speed) {} // [-1,1], -1 for release, 1 for intake
 }

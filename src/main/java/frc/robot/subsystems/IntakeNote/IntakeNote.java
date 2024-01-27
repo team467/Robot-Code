@@ -13,7 +13,7 @@ public class IntakeNote extends SubsystemBase {
   /** Creates a new Intake. */
   private final IntakeNoteIO intakeNoteIO;
 
-  private final IntakeNoteIOInputsAutoLogged inputs;
+  private final IntakeNoteIOInputsAutoLogged intakeInputs;
   private boolean hasNote = false;
   private final double intakeSpeed = 0.2;
   private final double releaseSpeed = -0.2;
@@ -23,14 +23,14 @@ public class IntakeNote extends SubsystemBase {
   public IntakeNote(IntakeNoteIO intakeNoteIO) {
     super();
     this.intakeNoteIO = intakeNoteIO;
-    inputs = new IntakeNoteIOInputsAutoLogged();
+    intakeInputs = new IntakeNoteIOInputsAutoLogged();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    intakeNoteIO.updateInputs(inputs);
-    Logger.processInputs("IntakeNote", inputs);
+    intakeNoteIO.updateInputs(intakeInputs);
+    Logger.processInputs("IntakeNote", intakeInputs);
   }
 
   // Command for intaking a note.

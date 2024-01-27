@@ -9,8 +9,6 @@ public class IntakeNoteIOBrushless implements IntakeNoteIO {
   private final CANSparkMax intakeMotor;
   private final RelativeEncoder intakEncoder;
 
-  //private final RelativeEncoder intakeEncoder;
-
   public IntakeNoteIOBrushless(int motorID) {
     intakeMotor = new CANSparkMax(motorID, MotorType.kBrushless);
     intakeMotor.setIdleMode(IdleMode.kBrake);
@@ -23,8 +21,8 @@ public class IntakeNoteIOBrushless implements IntakeNoteIO {
     intakeMotor.set(speed);
   }
 
-  public void updateInputs(IntakeNoteIOInputs inputs) {
-    inputs.appliedVolts = intakeMotor.getBusVoltage() * intakeMotor.getAppliedOutput();
-    inputs.motorVelocity = intakEncoder.getVelocity();
+  public void updateInputs(IntakeNoteIOInputs intakeInputs) {
+    intakeInputs.appliedVolts = intakeMotor.getBusVoltage() * intakeMotor.getAppliedOutput();
+    intakeInputs.motorVelocity = intakEncoder.getVelocity();
   }
 }
