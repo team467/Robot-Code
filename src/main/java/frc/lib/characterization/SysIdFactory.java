@@ -68,7 +68,7 @@ public class SysIdFactory {
    * Returns a command to run a quasistatic test in the specified direction.
    *
    * <p>In this test, the mechanism is gradually sped up such that the voltage corresponding to
-   * acceleration is negligible (hence, “as if static”).
+   * acceleration is negligible (hence, "as if static").
    *
    * <p>The command will call the `driveVoltage` callbacks supplied at routine construction once per
    * iteration. Upon command end or interruption, the `driveVoltage` callback is called with a value
