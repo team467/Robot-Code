@@ -5,6 +5,7 @@
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,9 +17,9 @@ public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
   private final ShooterIO io;
 
-  // private SimpleMotorFeedforward shooterFeedforward =
-  //     new SimpleMotorFeedforward(
-  //         ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
+  private SimpleMotorFeedforward shooterFeedforward =
+      new SimpleMotorFeedforward(
+          ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
   private PIDController shooterFeedack =
       new PIDController(ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
 
@@ -51,11 +52,17 @@ public class Shooter extends SubsystemBase {
         this);
   }
 
+  public Command shootFeedFoward(double velocitySetpoint) {
+    return Commands.run(() -> io.setShooterVoltage(shooterFeedforward.calculate(velocitySetpoint)));
+  }
+
   public Command shoot(double velocitySetpoint) {
     return Commands.run(
         () -> {
           io.setShooterVoltage(
-              shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec, velocitySetpoint));
+              shooterFeedforward.calculate(velocitySetpoint)
+                  + shooterFeedack.calculate(
+                      inputs.shooterLeaderVelocityRadPerSec, velocitySetpoint));
         },
         this);
   }

@@ -30,11 +30,19 @@ public class Indexer extends SubsystemBase {
         () -> io.setIndexerVoltage(IndexerConstants.INDEXER_MAX_VOLTAGE * percent), this);
   }
 
+  public Command stop() {
+    return Commands.run(() -> io.setIndexerVoltage(0), this);
+  }
+
   public Command setIndexerVoltage(double volts) {
     return Commands.run(() -> io.setIndexerVoltage(volts), this);
   }
 
   public boolean getLimitSwitchPressed() {
     return inputs.indexerLimitSwitchPressed;
+  }
+
+  public String getIO() {
+    return io.toString();
   }
 }

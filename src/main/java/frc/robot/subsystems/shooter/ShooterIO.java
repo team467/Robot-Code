@@ -6,6 +6,7 @@ public interface ShooterIO {
   @AutoLog
   class ShooterIOInputs {
     public double shooterLeaderVelocityRadPerSec;
+    public double shooterLeaderAppliedVolts;
     public double shooterFollowerVelocityRadPerSec;
   }
 

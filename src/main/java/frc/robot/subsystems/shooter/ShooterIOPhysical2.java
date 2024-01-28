@@ -23,6 +23,7 @@ public class ShooterIOPhysical2 implements ShooterIO {
 
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeaderVelocityRadPerSec = shooterEncoder.getVelocity();
+    inputs.shooterLeaderAppliedVolts = shooter.getAppliedOutput();
   }
 
   public void setShooterVoltage(double volts) {
