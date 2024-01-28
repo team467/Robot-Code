@@ -2,7 +2,6 @@ package frc.robot.subsystems.pixy2;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.Commands;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface Pixy2IO {
@@ -18,14 +17,16 @@ public interface Pixy2IO {
     public double height;
   }
 
-  final NetworkTableInstance networkTables = NetworkTableInstance.getDefault();
-  final NetworkTable pixyTable = networkTables.getTable("Pixy2");
+  NetworkTableInstance networkTables = NetworkTableInstance.getDefault();
+  NetworkTable pixyTable = networkTables.getTable("Pixy2");
 
-  public default void initialize() {
-    Commands.runOnce(
-        () -> {
-          networkTables.startClient3("Pixy2Reader");
-        });
+  default void initialize() {
+    networkTables.startClient4("RoboRio");
+    networkTables.setServer("localhost");
+    if (!networkTables.isConnected()) {
+      System.out.println("Pixy2 NetworkTables not connected");
+      return;
+    }
   }
 
   default void updateInputs(Pixy2IOInputs inputs) {}

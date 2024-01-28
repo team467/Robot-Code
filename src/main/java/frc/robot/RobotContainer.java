@@ -21,6 +21,7 @@ import frc.lib.io.vision.Vision;
 import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.leds.LedRainbowCMD;
@@ -172,6 +173,17 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+
+    driverController
+        .b()
+        .onTrue(
+            new StraightDriveToPose(
+                    new Pose2d(
+                        new Translation2d(pixy2.getX(), pixy2.getY()),
+                        new Rotation2d(Units.degreesToRadians(pixy2.getAngle()))),
+                    drive)
+                .withTimeout(5.0)
+                .onlyWhile(() -> pixy2.getAge() < 255));
 
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
   }
