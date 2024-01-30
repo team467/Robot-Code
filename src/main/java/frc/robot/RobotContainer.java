@@ -176,14 +176,13 @@ public class RobotContainer {
 
     driverController
         .b()
-        .onTrue(
+        .and(() -> pixy2.getAge() < 255)
+        .whileTrue(
             new StraightDriveToPose(
-                    new Pose2d(
-                        new Translation2d(pixy2.getX(), pixy2.getY()),
-                        new Rotation2d(Units.degreesToRadians(pixy2.getAngle()))),
-                    drive)
-                .withTimeout(5.0)
-                .onlyWhile(() -> pixy2.getAge() < 255));
+                new Pose2d(
+                    drive.getPose().getTranslation(),
+                    drive.getRotation().plus(Rotation2d.fromDegrees(pixy2.getAngle()))),
+                drive));
 
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
   }

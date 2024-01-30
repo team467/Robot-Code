@@ -26,6 +26,8 @@ public interface Pixy2IO {
     if (!networkTables.isConnected()) {
       System.out.println("Pixy2 NetworkTables not connected");
       return;
+    } else {
+      System.out.println("Pixy2 NetworkTables Connected");
     }
   }
 
