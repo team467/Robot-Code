@@ -30,7 +30,7 @@ public class ShooterConstants {
       }
       case ROBOT_BRIEFCASE -> {
         WHEEL_DIAMETER = Units.inchesToMeters(4);
-        SHOOTER_READY_VELOCITY_RAD_PER_SEC = 500;
+        SHOOTER_READY_VELOCITY_RAD_PER_SEC = 1600;
         SHOOTER_KS = new TunableNumber("Shooter/ShooterKS", 0.8);
         SHOOTER_KV = new TunableNumber("Shooter/ShooterKV", 0.0046);
 
@@ -40,8 +40,8 @@ public class ShooterConstants {
         SHOOTER_LEADER_ID = 1;
         SHOOTER_FOLLOWER_ID = 2;
         SHOOTER_2_ID = 1;
-        SHOOTER_KP = new TunableNumber("Shooter/ShooterKP", 5);
-        SHOOTER_KD = new TunableNumber("Shooter/ShooterKD", 0.025);
+        SHOOTER_KP = new TunableNumber("Shooter/ShooterKP", 0.001);
+        SHOOTER_KD = new TunableNumber("Shooter/ShooterKD", 0.0);
       }
       case ROBOT_SIMBOT -> {
         WHEEL_DIAMETER = 0.0;

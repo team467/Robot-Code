@@ -33,7 +33,7 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
     Logger.recordOutput("Shooter/setPointVelocity", shooterFeedack.getSetpoint());
-
+    Logger.recordOutput("Shooter/error", shooterFeedack.getVelocityError());
     if (Constants.tuningMode) {
       if (ShooterConstants.SHOOTER_KP.hasChanged(hashCode())
           || ShooterConstants.SHOOTER_KD.hasChanged(hashCode())) {
@@ -60,9 +60,7 @@ public class Shooter extends SubsystemBase {
     return Commands.run(
         () -> {
           io.setShooterVoltage(
-              shooterFeedforward.calculate(velocitySetpoint)
-                  + shooterFeedack.calculate(
-                      inputs.shooterLeaderVelocityRadPerSec, velocitySetpoint));
+              shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec, velocitySetpoint));
         },
         this);
   }

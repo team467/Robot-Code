@@ -23,7 +23,7 @@ public class ShooterIOPhysical implements ShooterIO {
     shooterFollower.setIdleMode(IdleMode.kBrake);
     shooterLeaderEncoder.setVelocityConversionFactor(rotsToRads);
     shooterFollowerEncoder.setVelocityConversionFactor(rotsToRads);
-  }                              
+  }
 
   double rotsToRads = Units.rotationsToRadians(1);
 

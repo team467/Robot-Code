@@ -31,11 +31,12 @@ import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.indexer.IndexerIONoOp;
+import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.LedConstants;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
-import frc.robot.subsystems.shooter.ShooterIOPhysical;
+import frc.robot.subsystems.shooter.ShooterIOPhysical2;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -101,8 +102,8 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(3));
         }
         case ROBOT_BRIEFCASE -> {
-          shooter = new Shooter(new ShooterIOPhysical());
-          // indexer = new Indexer(new IndexerIOPhysical());
+          shooter = new Shooter(new ShooterIOPhysical2());
+          indexer = new Indexer(new IndexerIOPhysical());
         }
         case ROBOT_SIMBOT -> {
           drive =
@@ -160,15 +161,15 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
-    driverController.a().whileTrue(Commands.runOnce(() -> new Rotation2d(2, 2), drive));
+    // driverController.a().whileTrue(Commands.runOnce(() -> new Rotation2d(2, 2), drive));
+    driverController.a().whileTrue(shooter.manualShoot(-6).alongWith(indexer.setIndexerVoltage(6)));
     driverController
         .b()
         .whileTrue(indexer.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE));
     driverController.x().whileTrue(shooter.manualShoot(7));
     driverController
         .rightBumper()
-        .whileTrue(shooter.shootFeedFoward(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC));
+        .whileTrue(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC));
     driverController
         .leftBumper()
         .whileTrue(

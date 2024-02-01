@@ -10,7 +10,7 @@ public class ShooterIOPhysical2 implements ShooterIO {
   private final CANSparkMax shooter;
 
   private final RelativeEncoder shooterEncoder;
-  double rotsToRads = Units.rotationsToRadians(1) * (ShooterConstants.WHEEL_DIAMETER / 2);
+  double rotsToRads = Units.rotationsToRadians(1);
 
   public ShooterIOPhysical2() {
     shooter = new CANSparkMax(ShooterConstants.SHOOTER_2_ID, MotorType.kBrushless);
@@ -24,6 +24,7 @@ public class ShooterIOPhysical2 implements ShooterIO {
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeaderVelocityRadPerSec = shooterEncoder.getVelocity();
     inputs.shooterLeaderAppliedVolts = shooter.getAppliedOutput();
+    inputs.shooterCurrentAmps = shooter.getOutputCurrent();
   }
 
   public void setShooterVoltage(double volts) {
