@@ -82,6 +82,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public double calculateShootingAngle(double distanceFromSpeaker) {
-    return Units.radiansToDegrees(Math.abs(Math.atan(211.0 / distanceFromSpeaker)));
+    return Math.abs(Math.atan(211.0 / distanceFromSpeaker));
   }
 }
