@@ -5,11 +5,11 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
-public class IntakeNoteIOBrushless implements IntakeNoteIO {
+public class IntakeNoteIOPhysical implements IntakeNoteIO {
   private final CANSparkMax intakeMotor;
   private final RelativeEncoder intakEncoder;
 
-  public IntakeNoteIOBrushless(int motorID) {
+  public IntakeNoteIOPhysical(int motorID) {
     intakeMotor = new CANSparkMax(motorID, MotorType.kBrushless);
     intakeMotor.setIdleMode(IdleMode.kBrake);
     intakeMotor.setInverted(false);
