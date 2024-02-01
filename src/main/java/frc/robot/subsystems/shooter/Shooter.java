@@ -76,4 +76,20 @@ public class Shooter extends SubsystemBase {
       return shooterFeedack.atSetpoint();
     }
   }
+
+  public double calculateShootingDistance(double distanceFromSpeaker) {
+    double ShootingDistance;
+    ShootingDistance =
+        Math.sqrt(
+            distanceFromSpeaker * distanceFromSpeaker
+                + 211 * 211
+                - 2 * distanceFromSpeaker * 211 * Math.cos(90.0));
+    return ShootingDistance;
+  }
+
+  public double calculateShootingAngle(double distanceFromSpeaker) {
+    double ShootingAngleforSpeaker;
+    ShootingAngleforSpeaker = Math.atan(211.0 / distanceFromSpeaker);
+    return ShootingAngleforSpeaker;
+  }
 }

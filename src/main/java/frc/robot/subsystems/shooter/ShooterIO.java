@@ -9,6 +9,8 @@ public interface ShooterIO {
     public double shooterLeaderAppliedVolts;
     public double shooterFollowerVelocityRadPerSec;
     public double shooterCurrentAmps;
+    public double distanceFromSpeaker;
+    public double ShootingAngle;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {}
