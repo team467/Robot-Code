@@ -20,16 +20,7 @@ public interface Pixy2IO {
   NetworkTableInstance networkTables = NetworkTableInstance.getDefault();
   NetworkTable pixyTable = networkTables.getTable("Pixy2");
 
-  default void initialize() {
-    networkTables.startClient4("RoboRio");
-    networkTables.setServer("localhost");
-    if (!networkTables.isConnected()) {
-      System.out.println("Pixy2 NetworkTables not connected");
-      return;
-    } else {
-      System.out.println("Pixy2 NetworkTables Connected");
-    }
-  }
-
   default void updateInputs(Pixy2IOInputs inputs) {}
+
+  default void initialize() {}
 }
