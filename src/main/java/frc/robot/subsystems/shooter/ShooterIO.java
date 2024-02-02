@@ -9,7 +9,7 @@ public interface ShooterIO {
     public double shooterLeaderAppliedVolts;
     public double shooterLeaderCurrentAmps;
     public double shooterFollowerVelocityRadPerSec;
-        public double shooterFollowerAppliedVolts;
+    public double shooterFollowerAppliedVolts;
     public double shooterFollowerCurrentAmps;
     public double distanceFromSpeaker;
     public double ShootingAngle;
