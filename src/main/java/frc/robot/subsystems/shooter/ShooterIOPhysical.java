@@ -12,25 +12,26 @@ public class ShooterIOPhysical implements ShooterIO {
 
   private final RelativeEncoder shooterLeaderEncoder;
   private final RelativeEncoder shooterFollowerEncoder;
+  double rotsToRads = Units.rotationsToRadians(1);
 
   public ShooterIOPhysical() {
     shooterLeader = new CANSparkMax(ShooterConstants.SHOOTER_LEADER_ID, MotorType.kBrushless);
     shooterFollower = new CANSparkMax(ShooterConstants.SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
     shooterLeaderEncoder = shooterLeader.getEncoder();
     shooterFollowerEncoder = shooterFollower.getEncoder();
-    shooterLeader.setInverted(true);
+    shooterLeader.setInverted(false);
+    shooterFollower.setInverted(true);
     shooterLeader.setIdleMode(IdleMode.kBrake);
     shooterFollower.setIdleMode(IdleMode.kBrake);
-    shooterLeaderEncoder.setVelocityConversionFactor(rotsToRads);
-    shooterFollowerEncoder.setVelocityConversionFactor(rotsToRads);
+    shooterLeaderEncoder.setVelocityConversionFactor(rotsToRads / 60);
+    shooterFollowerEncoder.setVelocityConversionFactor(rotsToRads / 60);
   }
-
-  double rotsToRads = Units.rotationsToRadians(1);
 
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeaderVelocityRadPerSec = shooterLeaderEncoder.getVelocity();
     inputs.shooterFollowerVelocityRadPerSec = shooterFollowerEncoder.getVelocity();
     inputs.shooterLeaderAppliedVolts = shooterLeader.getAppliedOutput();
+    inputs.shooterLeaderCurrentAmps = shooterLeader.getOutputCurrent();
   }
 
   public void setShooterVoltage(double volts) {

@@ -36,4 +36,8 @@ public class IndexerIOPhysical implements IndexerIO {
   public void setIndexerVoltage(double volts) {
     indexer.setVoltage(volts);
   }
+
+  public void setIndexerPercentVelocity(double percent) {
+    indexer.set(percent);
+  }
 }

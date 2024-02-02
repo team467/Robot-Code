@@ -26,8 +26,7 @@ public class Indexer extends SubsystemBase {
   }
 
   public Command setIndexerPercentVoltage(double percent) {
-    return Commands.run(
-        () -> io.setIndexerVoltage(IndexerConstants.INDEXER_MAX_VOLTAGE * percent), this);
+    return Commands.run(() -> io.setIndexerPercentVelocity(percent), this);
   }
 
   public Command stop() {
@@ -40,9 +39,5 @@ public class Indexer extends SubsystemBase {
 
   public boolean getLimitSwitchPressed() {
     return inputs.indexerLimitSwitchPressed;
-  }
-
-  public String getIO() {
-    return io.toString();
   }
 }

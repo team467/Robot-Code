@@ -38,7 +38,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterIOPhysical2;
 import java.util.List;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -130,7 +129,6 @@ public class RobotContainer {
     if (indexer == null) {
       indexer = new Indexer(new IndexerIONoOp());
     }
-    Logger.recordOutput("Indexer/IndexerIO", indexer.getIO());
     led2023 = new Led2023();
     LEDManager.getInstance().init(LedConstants.LED_CHANNEL);
 
@@ -166,20 +164,13 @@ public class RobotContainer {
     driverController
         .b()
         .whileTrue(indexer.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE));
-    driverController.x().whileTrue(shooter.manualShoot(7));
+    driverController.x().whileTrue(shooter.manualShoot(12));
     driverController
         .rightBumper()
         .whileTrue(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC));
     driverController
         .leftBumper()
-        .whileTrue(
-            shooter
-                .shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)
-                .until(() -> shooter.getShooterSpeedIsReady())
-                .andThen(indexer.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE))
-                .onlyWhile(
-                    () -> shooter.getShooterSpeedIsReady() && indexer.getLimitSwitchPressed())
-                .withTimeout(5));
+        .whileTrue(shooter.shootFeedFoward(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
 

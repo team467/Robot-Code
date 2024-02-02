@@ -18,13 +18,13 @@ public class ShooterIOPhysical2 implements ShooterIO {
     shooter.setIdleMode(IdleMode.kBrake);
     shooterEncoder = shooter.getEncoder();
 
-    shooterEncoder.setVelocityConversionFactor(rotsToRads);
+    shooterEncoder.setVelocityConversionFactor(rotsToRads / 60);
   }
 
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeaderVelocityRadPerSec = shooterEncoder.getVelocity();
     inputs.shooterLeaderAppliedVolts = shooter.getAppliedOutput();
-    inputs.shooterCurrentAmps = shooter.getOutputCurrent();
+    inputs.shooterLeaderCurrentAmps = shooter.getOutputCurrent();
   }
 
   public void setShooterVoltage(double volts) {

@@ -17,6 +17,9 @@ public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
   private final ShooterIO io;
 
+  private boolean PIDMode = false;
+  private double currentVelocitySetpoint;
+
   private SimpleMotorFeedforward shooterFeedforward =
       new SimpleMotorFeedforward(
           ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
@@ -41,6 +44,11 @@ public class Shooter extends SubsystemBase {
         shooterFeedack.setPID(
             ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
       }
+      if (PIDMode) {
+        io.setShooterVoltage(
+            shooterFeedack.calculate(
+                inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
+      }
     }
   }
 
@@ -53,14 +61,15 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command shootFeedFoward(double velocitySetpoint) {
-    return Commands.run(() -> io.setShooterVoltage(shooterFeedforward.calculate(velocitySetpoint)));
+    return Commands.run(
+        () -> io.setShooterVoltage(shooterFeedforward.calculate(currentVelocitySetpoint)));
   }
 
   public Command shoot(double velocitySetpoint) {
     return Commands.run(
         () -> {
-          io.setShooterVoltage(
-              shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec, velocitySetpoint));
+          PIDMode = true;
+          currentVelocitySetpoint = velocitySetpoint;
         },
         this);
   }

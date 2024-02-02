@@ -23,5 +23,7 @@ public interface IndexerIO {
 
   default void setIndexerVoltage(double volts) {}
 
+  default void setIndexerPercentVelocity(double percent) {}
+
   default void updateInputs(IndexerIOInputs inputs) {}
 }
