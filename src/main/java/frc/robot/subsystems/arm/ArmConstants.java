@@ -3,6 +3,7 @@ package frc.robot.subsystems.arm;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
+import frc.robot.constants.controls.GearRatio;
 
 public class ArmConstants {
   public static final TunableNumber KG;
@@ -15,6 +16,7 @@ public class ArmConstants {
   public static final Rotation2d
       horizontalOffset; // position between our 0 (neutral pick up position) and real 0 (parallel to
   // floor)
+  public static final GearRatio GEAR_RATIO;
 
   static {
     switch (Constants.getRobot()) {
@@ -27,6 +29,7 @@ public class ArmConstants {
         MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", 7);
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", 12);
         horizontalOffset = new Rotation2d();
+        GEAR_RATIO = new GearRatio(199.73, 1);
       }
       default -> {
         KG = new TunableNumber("Arm/KG", 0.0);
@@ -37,6 +40,7 @@ public class ArmConstants {
         MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", 0.0);
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", 0.0);
         horizontalOffset = new Rotation2d();
+        GEAR_RATIO = new GearRatio();
       }
     }
   }

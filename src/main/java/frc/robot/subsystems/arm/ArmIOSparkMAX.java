@@ -14,10 +14,15 @@ public class ArmIOSparkMAX implements ArmIO {
     leader = new CANSparkMax(10, MotorType.kBrushless);
     follower = new CANSparkMax(11, MotorType.kBrushless);
     leaderLimitSwitch = leader.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
-    leader.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) / 199.73);
     leader
         .getEncoder()
-        .setVelocityConversionFactor(Units.rotationsPerMinuteToRadiansPerSecond(1) / 199.73);
+        .setPositionConversionFactor(
+            Units.rotationsToRadians(1) * ArmConstants.GEAR_RATIO.getRotationsPerInput());
+    leader
+        .getEncoder()
+        .setVelocityConversionFactor(
+            Units.rotationsPerMinuteToRadiansPerSecond(1)
+                * ArmConstants.GEAR_RATIO.getRotationsPerInput());
     leader.enableVoltageCompensation(12);
     follower.enableVoltageCompensation(12);
     follower.follow(leader);
