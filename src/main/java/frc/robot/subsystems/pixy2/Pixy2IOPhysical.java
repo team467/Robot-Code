@@ -11,6 +11,7 @@ public class Pixy2IOPhysical implements Pixy2IO {
     inputs.width = pixyTable.getEntry("Width").getDouble(0.0);
     inputs.height = pixyTable.getEntry("Height").getDouble(0.0);
   }
+
   @Override
   public void initialize() {
     networkTables.startClient4("RoboRio");
