@@ -1,7 +1,6 @@
 package frc.robot.subsystems.robotstate;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class RobotState extends SubsystemBase {
@@ -18,7 +17,5 @@ public class RobotState extends SubsystemBase {
     return instance;
   }
 
-  public void periodic() {
-  }
-  
+  public void periodic() {}
 }
