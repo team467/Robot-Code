@@ -26,6 +26,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
+import frc.robot.subsystems.led.Leds;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -108,6 +109,8 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
+
+    Leds leds = new Leds();
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up auto routines
