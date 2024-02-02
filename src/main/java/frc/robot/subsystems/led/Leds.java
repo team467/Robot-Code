@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.robotstate.RobotState;
 import java.util.List;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Leds extends SubsystemBase {
@@ -18,21 +17,21 @@ public class Leds extends SubsystemBase {
   private RobotState state = RobotState.getInstance();
 
   public enum LedMode {
-    OFF,
     ESTOPPED,
-    DISABLED,
+    AUTO_FINISHED,
+    AUTONOMOUS,
+    HANGING,
+    SHOOTING,
+    CONTAINING,
+    INTAKING,
+    LEFT_NOTE_DETECTION,
+    RIGHT_NOTE_DETECTION,
+    STRAIGHT_NOTE_DETECTION,
     BLUE_ALLIANCE,
     RED_ALLIANCE,
     LOW_BATTERY_ALERT,
-    AUTONOMOUS,
-    AUTO_FINISHED,
-    SHOOTING,
-    INTAKING,
-    HANGING,
-    CONTAINING,
-    LEFT_NOTE_DETECTION,
-    RIGHT_NOTE_DETECTION,
-    STRAIGHT_NOTE_DETECTION
+    DISABLED,
+    OFF,
   }
 
   @AutoLogOutput(key = "LEDs/Mode")
@@ -68,22 +67,23 @@ public class Leds extends SubsystemBase {
   private static final double autoFadeTime = 2.5; // 3s nominal
   private static final double autoFadeMaxTime = 5.0; // Return to normal
 
-  private Leds() {
+  public Leds() {
     leds = new AddressableLED(0);
     buffer = new AddressableLEDBuffer(length);
     leds.setLength(length);
     leds.setData(buffer);
     leds.start();
-    loadingNotifier = new Notifier(
-        () -> {
-          breath(
-              Section.FULL,
-              Color.kWhite,
-              Color.kBlack,
-              0.25,
-              (double) System.currentTimeMillis() / 1000);
-          leds.setData(buffer);
-        });
+    loadingNotifier =
+        new Notifier(
+            () -> {
+              breath(
+                  Section.FULL,
+                  Color.kWhite,
+                  Color.kBlack,
+                  0.25,
+                  (double) System.currentTimeMillis() / 1000);
+              leds.setData(buffer);
+            });
     loadingNotifier.startPeriodic(0.02);
   }
 
@@ -95,7 +95,37 @@ public class Leds extends SubsystemBase {
 
     if (DriverStation.isEStopped()) {
       mode = LedMode.ESTOPPED;
-    
+
+    } else if (false) { // TODO: need state variable for auto finished
+      mode = LedMode.AUTO_FINISHED;
+
+    } else if (false) { // TODO: need state variable for autonomous
+      mode = LedMode.AUTONOMOUS;
+
+    } else if (false) { // TODO: need state variable for hanging
+      mode = LedMode.HANGING;
+
+    } else if (false) { // TODO: need state variable for shooting
+      mode = LedMode.SHOOTING;
+
+    } else if (false) { // TODO: need state variable for containing
+      mode = LedMode.CONTAINING;
+
+    } else if (false) { // TODO: need state variable for intaking
+      mode = LedMode.INTAKING;
+
+    } else if (false) { // TODO: need state variable for left note detection
+      mode = LedMode.LEFT_NOTE_DETECTION;
+
+    } else if (false) { // TODO: need state variable for right note detection
+      mode = LedMode.RIGHT_NOTE_DETECTION;
+
+    } else if (false) { // TODO: need state variable for straight note detection
+      mode = LedMode.STRAIGHT_NOTE_DETECTION;
+
+    } else if (state.lowBatteryAlert) {
+      mode = LedMode.LOW_BATTERY_ALERT;
+
     } else if (DriverStation.isDisabled()) {
       if (DriverStation.getAlliance().isPresent()) {
         if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
@@ -106,26 +136,82 @@ public class Leds extends SubsystemBase {
       } else {
         mode = LedMode.DISABLED;
       }
-    
-    } else if (state.lowBatteryAlert) {
-      mode = LedMode.LOW_BATTERY_ALERT;
-    
+
     } else {
       mode = LedMode.OFF;
     }
-
   }
-  
+
   private void updateLeds() {
     switch (mode) {
-
-      case OFF:
-        solid(Section.FULL, Color.kBlack);
-        break;
-
       case ESTOPPED:
         solid(Section.FULL, Color.kRed);
         // strobe(Section.FULL, Color.kRed, strobeFastDuration);
+        break;
+
+      case AUTO_FINISHED:
+        double fullTime = (double) length / waveFastCycleLength * waveFastDuration;
+        solid((Timer.getFPGATimestamp() - autoFinishedTime) / fullTime, Color.kGreen);
+        break;
+
+      case AUTONOMOUS:
+        wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveFastCycleLength, waveFastDuration);
+        break;
+
+      case HANGING:
+        solid(Section.FULL, Color.kDarkGreen);
+        break;
+
+      case SHOOTING:
+        // leds glow in the direction it's shooting
+        wave(
+            Section.FULL,
+            Color.kMagenta,
+            Color.kBlack,
+            waveAllianceCycleLength,
+            waveAllianceDuration);
+        break;
+
+      case CONTAINING:
+        solid(Section.FULL, Color.kAquamarine);
+        break;
+
+      case INTAKING:
+        // leds glow in the direction it's intaking
+        wave(
+            Section.FULL,
+            Color.kPurple,
+            Color.kBlack,
+            waveAllianceCycleLength,
+            waveAllianceDuration);
+        break;
+
+      case LEFT_NOTE_DETECTION:
+        // leds glow on left side
+        solid(0.5, Color.kYellow, Color.kBlack);
+        break;
+
+      case RIGHT_NOTE_DETECTION:
+        // leds glows on right side
+        solid(0.5, Color.kBlack, Color.kYellow);
+        break;
+
+      case STRAIGHT_NOTE_DETECTION:
+        // leds glow in the middle
+        solidMiddle(0.5, Color.kBeige);
+        break;
+
+      case BLUE_ALLIANCE:
+        wave(
+            Section.FULL, Color.kBlue, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
+        break;
+
+      case RED_ALLIANCE:
+        wave(Section.FULL, Color.kRed, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
+        break;
+
+      case LOW_BATTERY_ALERT:
+        solid(Section.FULL, Color.kOrange);
         break;
 
       case DISABLED:
@@ -137,71 +223,13 @@ public class Leds extends SubsystemBase {
         }
         break;
 
-      case BLUE_ALLIANCE:
-        wave(
-            Section.FULL,
-            Color.kBlue,
-            Color.kBlack,
-            waveAllianceCycleLength,
-            waveAllianceDuration);
-        break;
-
-      case RED_ALLIANCE:
-        wave(
-            Section.FULL,
-            Color.kRed,
-            Color.kBlack,
-            waveAllianceCycleLength,
-            waveAllianceDuration);
-        break;
-
-      case AUTONOMOUS:
-        wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveFastCycleLength, waveFastDuration);
-        break;
-
-      case LOW_BATTERY_ALERT:
-        break;
-
-      case AUTO_FINISHED:
-        double fullTime = (double) length / waveFastCycleLength * waveFastDuration;
-        solid((Timer.getFPGATimestamp() - autoFinishedTime) / fullTime, Color.kGreen);
-        break;
-
-      case SHOOTING:
-        // leds glow in the direction it's shooting
-        wave(Section.FULL, Color.kMagenta, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
-        break;
-
-      case INTAKING:
-        // leds glow in the direction it's intaking
-        wave(Section.FULL, Color.kPurple, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
-        break;
-
-      case HANGING:
-        solid(Section.FULL, Color.kDarkGreen);
-        break;
-
-      case CONTAINING:
-        solid(Section.FULL, Color.kAquamarine);
-        break;
-
-      case LEFT_NOTE_DETECTION:
-        // leds glow on left side
-        solid(0.5, Color.kYellow, Color.kBlack);
-        break;
-      
-      case RIGHT_NOTE_DETECTION:
-        // leds glows on right side
-        solid(0.5, Color.kLightGreen, Color.kBlack);
-        break;
-
-      case STRAIGHT_NOTE_DETECTION:
+      case OFF:
+        solid(Section.FULL, Color.kBlack);
         break;
 
       default:
         wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
         break;
-
     }
 
     leds.setData(buffer);
@@ -218,7 +246,8 @@ public class Leds extends SubsystemBase {
     // Stop loading notifier if running
     loadingNotifier.stop();
 
-    updateState();
+    // updateState();
+    //mode = LedMode.HANGING;
     updateLeds();
   }
 
@@ -257,8 +286,6 @@ public class Leds extends SubsystemBase {
    *     between 0.0 and 1.0.
    * @param color The color to be applied.
    */
-  ;
-
   private void solid(double percent, Color color1, Color color2) {
     int color1Pixels = (int) Math.round(MathUtil.clamp(length * percent, 0, length));
     for (int i = 0; i < color1Pixels; i++) {
@@ -266,6 +293,21 @@ public class Leds extends SubsystemBase {
     }
     for (int i = color1Pixels; i < length; i++) {
       buffer.setLED(i, color2);
+    }
+  }
+
+  private void solidMiddle(double percent, Color color2) {
+    double middlePercent = 1 - percent;
+    int color1Pixels = (int) Math.round(MathUtil.clamp(length * middlePercent, 0, length));
+    for (int i = 0; i < color1Pixels; i++) {
+      buffer.setLED(i, Color.kBlack);
+    }
+    // middle is only part lighted up
+    for (int i = color1Pixels; i < (length - color1Pixels); i++) {
+      buffer.setLED(i, color2);
+    }
+    for (int i = (length - color1Pixels); i < length; i++) {
+       buffer.setLED(i, Color.kBlack);
     }
   }
 
@@ -415,6 +457,4 @@ public class Leds extends SubsystemBase {
       }
     }
   }
-
-
 }
