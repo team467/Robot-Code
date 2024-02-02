@@ -178,11 +178,6 @@ public class RobotContainer {
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
-
-    driverController.leftBumper().whileTrue(arm.runPercent(-0.1));
-    driverController.rightBumper().whileTrue(arm.runPercent(0.1));
-    driverController.a().whileTrue(arm.pickup());
-    driverController.b().whileTrue(arm.runPercent(0));
   }
 
   /**

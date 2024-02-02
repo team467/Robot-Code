@@ -4,11 +4,9 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.utils.TunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
@@ -23,8 +21,7 @@ public class Arm extends SubsystemBase {
           ArmConstants.KD.get(),
           new TrapezoidProfile.Constraints(
               ArmConstants.MAX_VELOCITY.get(), ArmConstants.MAX_ACCELERATION.get()));
-  private boolean enableFB = true;
-  private TunableNumber setpoint = new TunableNumber("Arm/Setpoint", -10);
+  private boolean feedbackMode = true;
 
   public Arm(ArmIO io) {
     this.io = io;
@@ -53,8 +50,8 @@ public class Arm extends SubsystemBase {
               ArmConstants.MAX_VELOCITY.get(), ArmConstants.MAX_ACCELERATION.get()));
     }
 
-    Logger.recordOutput("Arm/PIDEnabled", enableFB);
-    if (enableFB) {
+    Logger.recordOutput("Arm/PIDEnabled", feedbackMode);
+    if (feedbackMode) {
       // Run arm to desired goal
       // note that for profiled pids, goal is the last result (i.e. set arm to 30 deg), and setpoint
       // is what result to reach in this next loop (i.e. set the arm to 5 degrees) due to
@@ -86,7 +83,7 @@ public class Arm extends SubsystemBase {
     return Commands.run(
         () -> {
           feedback.setGoal(setpointAngle.getRadians());
-          enableFB = true;
+          feedbackMode = true;
         },
         this);
   }
@@ -96,21 +93,8 @@ public class Arm extends SubsystemBase {
         () -> {
           Logger.recordOutput("Arm/DesiredVolts", percent * 12);
           io.setVoltage(percent * 12);
-          enableFB = false;
+          feedbackMode = false;
         },
         this);
-  }
-
-  /**
-   * Sets the arm to the desired position to pick up a note
-   *
-   * @return The command to set the arm to the pick-up position
-   */
-  public Command pickup() {
-    return Commands.run(
-        () -> {
-          feedback.setGoal(Units.degreesToRadians(setpoint.get()));
-          enableFB = true;
-        });
   }
 }
