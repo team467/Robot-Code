@@ -21,7 +21,6 @@ import frc.lib.io.vision.Vision;
 import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
-import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.commands.leds.LedRainbowCMD;
@@ -95,6 +94,7 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
+          pixy2 = new Pixy2(new Pixy2IOPhysical());
         }
         case ROBOT_SIMBOT -> {
           drive =
@@ -176,13 +176,8 @@ public class RobotContainer {
 
     driverController
         .b()
-        .and(() -> pixy2.getAge() < 255)
-        .whileTrue(
-            new StraightDriveToPose(
-                new Pose2d(
-                    drive.getPose().getTranslation(),
-                    drive.getRotation().plus(Rotation2d.fromDegrees(pixy2.getAngle()))),
-                drive));
+        .and(() -> pixy2.seesNote())
+        .whileTrue(drive.driveToNote(() -> pixy2.getAngle()));
 
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
   }
