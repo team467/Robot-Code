@@ -27,9 +27,9 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.led.Leds;
-import java.util.List;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IOPhysical;
+import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -170,9 +170,9 @@ public class RobotContainer {
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     driverController
-            .b()
-            .and(() -> pixy2.seesNote())
-            .whileTrue(drive.driveToNote(() -> pixy2.getAngle()));
+        .b()
+        .and(() -> pixy2.seesNote())
+        .whileTrue(drive.driveToNote(() -> pixy2.getAngle()));
   }
 
   /**
