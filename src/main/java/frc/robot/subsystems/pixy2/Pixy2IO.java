@@ -21,6 +21,4 @@ public interface Pixy2IO {
   NetworkTable pixyTable = networkTables.getTable("Pixy2");
 
   default void updateInputs(Pixy2IOInputs inputs) {}
-
-  default void initialize() {}
 }
