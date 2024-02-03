@@ -5,8 +5,9 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Schematic;
 
-public class ShooterIOPhysical implements ShooterIO {
+public class ShooterIOClark implements ShooterIO {
   private final CANSparkMax shooterLeader;
   private final CANSparkMax shooterFollower;
 
@@ -14,9 +15,9 @@ public class ShooterIOPhysical implements ShooterIO {
   private final RelativeEncoder shooterFollowerEncoder;
   double rotsToRads = Units.rotationsToRadians(1);
 
-  public ShooterIOPhysical() {
-    shooterLeader = new CANSparkMax(ShooterConstants.SHOOTER_LEADER_ID, MotorType.kBrushless);
-    shooterFollower = new CANSparkMax(ShooterConstants.SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
+  public ShooterIOClark() {
+    shooterLeader = new CANSparkMax(Schematic.SHOOTER_LEADER_ID, MotorType.kBrushless);
+    shooterFollower = new CANSparkMax(Schematic.SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
     shooterLeaderEncoder = shooterLeader.getEncoder();
     shooterFollowerEncoder = shooterFollower.getEncoder();
     shooterLeader.setInverted(false);

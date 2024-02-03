@@ -5,15 +5,16 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Schematic;
 
-public class ShooterIOPhysical2 implements ShooterIO {
+public class ShooterIODillion implements ShooterIO {
   private final CANSparkMax shooter;
 
   private final RelativeEncoder shooterEncoder;
   double rotsToRads = Units.rotationsToRadians(1);
 
-  public ShooterIOPhysical2() {
-    shooter = new CANSparkMax(ShooterConstants.SHOOTER_2_ID, MotorType.kBrushless);
+  public ShooterIODillion() {
+    shooter = new CANSparkMax(Schematic.SHOOTER_DILLION_ID, MotorType.kBrushless);
     shooter.setInverted(true);
     shooter.setIdleMode(IdleMode.kBrake);
     shooterEncoder = shooter.getEncoder();

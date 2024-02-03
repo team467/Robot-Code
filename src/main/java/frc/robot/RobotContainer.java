@@ -29,11 +29,11 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.indexer.IndexerIONoOp;
+import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.LedConstants;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterIOSim;
+import frc.robot.subsystems.shooter.ShooterIO;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -121,10 +121,10 @@ public class RobotContainer {
               new ModuleIO() {});
     }
     if (indexer == null) {
-      indexer = new Indexer(new IndexerIONoOp());
+      indexer = new Indexer(new IndexerIO() {});
     }
     if (shooter == null) {
-      shooter = new Shooter(new ShooterIOSim());
+      shooter = new Shooter(new ShooterIO() {});
     }
     led2023 = new Led2023();
     LEDManager.getInstance().init(LedConstants.LED_CHANNEL);
@@ -156,8 +156,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // driverController.a().whileTrue(Commands.runOnce(() -> new Rotation2d(2, 2), drive));
-
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
 
     drive.setDefaultCommand(
@@ -176,8 +174,7 @@ public class RobotContainer {
                         drive.setPose(
                             new Pose2d(
                                 drive.getPose().getTranslation(),
-                                AllianceFlipUtil.apply(new Rotation2d()))),
-                    drive)
+                                AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
     driverController
         .pov(-1)
