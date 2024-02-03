@@ -19,17 +19,14 @@ import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
 import frc.lib.io.vision.VisionIOPhotonVision;
-import frc.lib.leds.LEDManager;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
-import frc.robot.commands.leds.LedRainbowCMD;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
-import frc.robot.subsystems.led.Led2023;
-import frc.robot.subsystems.led.LedConstants;
+import frc.robot.subsystems.led.Leds;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -43,7 +40,6 @@ public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
   private Drive drive;
-  private Led2023 led2023;
   private Vision vision;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -114,8 +110,7 @@ public class RobotContainer {
               new ModuleIO() {});
     }
 
-    led2023 = new Led2023();
-    LEDManager.getInstance().init(LedConstants.LED_CHANNEL);
+    Leds leds = new Leds();
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up auto routines
@@ -168,8 +163,6 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
-    led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
   }
 
   /**
