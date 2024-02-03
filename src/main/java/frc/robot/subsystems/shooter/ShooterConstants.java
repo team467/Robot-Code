@@ -21,8 +21,8 @@ public class ShooterConstants {
         // TODO: SHOOTER FEEDFOWARD NEEDS TO BE TUNED DUE TO A UNIT CONVERSION
         // TODO: SHOOTER PID NEEDS TO BE TUNED
         WHEEL_DIAMETER = Units.inchesToMeters(4);
-        SHOOTER_READY_VELOCITY_RAD_PER_SEC = 1000;
-        SHOOTER_KS = new TunableNumber("Shooter/ShooterKS", 0.8);
+        SHOOTER_READY_VELOCITY_RAD_PER_SEC = 530;
+        SHOOTER_KS = new TunableNumber("Shooter/ShooterKS", 8.92);
         SHOOTER_KV = new TunableNumber("Shooter/ShooterKV", 0.0046);
         SHOOTER_LEADER_ID = 1;
         SHOOTER_FOLLOWER_ID = 2;

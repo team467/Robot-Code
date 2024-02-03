@@ -38,6 +38,12 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Shooter/setPointVelocity", shooterFeedack.getSetpoint());
     Logger.recordOutput("Shooter/error", shooterFeedack.getVelocityError());
     if (Constants.tuningMode) {
+      if (ShooterConstants.SHOOTER_KS.hasChanged(hashCode())
+          || ShooterConstants.SHOOTER_KD.hasChanged(hashCode())) {
+        shooterFeedforward =
+            new SimpleMotorFeedforward(
+                ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
+      }
       if (ShooterConstants.SHOOTER_KP.hasChanged(hashCode())
           || ShooterConstants.SHOOTER_KD.hasChanged(hashCode())) {
         Logger.recordOutput("Shooter/newP", ShooterConstants.SHOOTER_KP.get());
@@ -45,11 +51,10 @@ public class Shooter extends SubsystemBase {
             ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
       }
     }
-      if (PIDMode) {
-        io.setShooterVoltage(
-            shooterFeedack.calculate(
-                inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
-      }
+    if (PIDMode) {
+      io.setShooterVoltage(
+          shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
+    }
   }
 
   public Command stop() {
