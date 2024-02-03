@@ -36,7 +36,7 @@ public class IntakeNote extends SubsystemBase {
     Logger.processInputs("IntakeNote", intakeInputs);
   }
 
-  // Command for intaking a note.
+  // Command for intaking a note, stops when limit switch is true.
   public Command startIntake() {
     return Commands.run(
         () -> {
