@@ -23,8 +23,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * project.
  */
 public class Robot extends LoggedRobot {
-  private static final double lowBatteryVoltage = 9.0;
-  private static final double lowBatteryDisabledTime = 1.5;
 
   private Command autonomousCommand;
   private RobotContainer robotContainer;

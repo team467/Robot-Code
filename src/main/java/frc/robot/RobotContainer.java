@@ -163,8 +163,6 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
-    // led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
   }
 
   /**

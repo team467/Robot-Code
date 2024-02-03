@@ -3,6 +3,10 @@ package frc.robot.subsystems.robotstate;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
 
+/**
+ * Robot state will hold all the global information that is shared across the subsystems, such as
+ * leds or for the shooter to know if the system has a game piece in the robot.
+ */
 public class RobotState extends SubsystemBase {
 
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
@@ -10,6 +14,11 @@ public class RobotState extends SubsystemBase {
 
   private static RobotState instance = null;
 
+  /**
+   * Ensures there is only a single instance of the Robot State class.
+   *
+   * @return the RobotState instance
+   */
   public static RobotState getInstance() {
     if (instance == null) {
       instance = new RobotState();
