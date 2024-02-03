@@ -88,6 +88,12 @@ public class Arm extends SubsystemBase {
         this);
   }
 
+  /**
+   * Runs the command with a specified percentage of voltage.
+   *
+   * @param percent The percentage of 12 volts to run [0,1].
+   * @return The command to run with the specified voltage percentage.
+   */
   public Command runPercent(double percent) {
     return Commands.run(
         () -> {
