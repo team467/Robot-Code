@@ -72,11 +72,14 @@ public class Leds extends SubsystemBase {
 
   private NetworkTable ledTable;
   private NetworkTableEntry ledModeEntry;
+  private NetworkTableEntry ledTestingEntry;
 
   public Leds() {
     ledTable = NetworkTableInstance.getDefault().getTable("Leds");
     ledModeEntry = ledTable.getEntry("Mode");
     ledModeEntry.setString("OFF");
+    ledTestingEntry = ledTable.getEntry("Testing");
+    ledTestingEntry.setBoolean(false);
 
     leds = new AddressableLED(0);
     buffer = new AddressableLEDBuffer(length);
@@ -256,8 +259,11 @@ public class Leds extends SubsystemBase {
     // Stop loading notifier if running
     loadingNotifier.stop();
 
-    // updateState();
-    mode = LedMode.valueOf(ledModeEntry.getString("OFF"));
+    if (ledTestingEntry.getBoolean(false)) {
+      mode = LedMode.valueOf(ledModeEntry.getString("OFF"));
+    } else {
+      updateState();
+    }
     updateLeds();
   }
 
