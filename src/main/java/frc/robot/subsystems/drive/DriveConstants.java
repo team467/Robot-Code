@@ -43,7 +43,7 @@ public class DriveConstants {
       case ROBOT_2024A -> {
         TRACK_WIDTH_X = Units.inchesToMeters(11.5 * 2);
         TRACK_WIDTH_Y = Units.inchesToMeters(11.5 * 2);
-        MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
+        MAX_LINEAR_SPEED = Units.feetToMeters(16.0);
         WHEEL_DIAMETER = Units.inchesToMeters(4);
         ABSOLUTE_ANGLE_OFFSET =
             new Rotation2d[] {
