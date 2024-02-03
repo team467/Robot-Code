@@ -38,7 +38,8 @@ public class Vision extends SubsystemBase {
   private RobotOdometry odometry;
   private final TunableNumber poseDifferenceThreshold =
       new TunableNumber("Vision/VisionPoseThreshold", POSE_DIFFERENCE_THRESHOLD_METERS);
-  private final TunableNumber stdDevSlope = new TunableNumber("Vision/stdDevSlope", 0.10);
+  private final TunableNumber stdDevSlope =
+      new TunableNumber("Vision/stdDevSlope", 0.002); // 0.10, 0.05
   private final TunableNumber stdDevPower = new TunableNumber("Vision/stdDevPower", 2.0);
   private final TunableNumber stdDevMultiTagFactor =
       new TunableNumber("Vision/stdDevMultiTagFactor", 0.2);
@@ -188,7 +189,7 @@ public class Vision extends SubsystemBase {
    * @param estimatedPose The estimated pose to guess standard deviations for.
    */
   private Matrix<N3, N1> getStandardDeviations(int index, Pose2d estimatedPose) {
-    Matrix<N3, N1> estStdDevs = VecBuilder.fill(1, 1, 2);
+    Matrix<N3, N1> estStdDevs = VecBuilder.fill(1, 1, 0.1);
     int[] tags = ios[index].estimatedRobotPoseTags;
     int numTags = 0;
     double avgDist = 0;

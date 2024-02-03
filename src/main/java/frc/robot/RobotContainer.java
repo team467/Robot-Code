@@ -56,19 +56,13 @@ public class RobotContainer {
     if (Constants.getMode() != Constants.Mode.REPLAY) {
       switch (Constants.getRobot()) {
         case ROBOT_2023 -> {
-          Transform3d front =
+          Transform3d arducam =
               new Transform3d(
-                  new Translation3d(6 * 0.01, -10 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
-                  new Rotation3d());
-          Transform3d right =
-              new Transform3d(
-                  new Translation3d(2 * 0.01, -12 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
-                  new Rotation3d(0, 0, -0.5 * Math.PI));
+                  new Translation3d(0, 0, Units.inchesToMeters(4 + 13.5)),
+                  new Rotation3d(0, Units.degreesToRadians(-45), 0));
           vision =
               new Vision(
-                  List.of(
-                          new VisionIOPhotonVision("front", front),
-                          new VisionIOPhotonVision("right", right))
+                  List.of(new VisionIOPhotonVision("arducam", arducam))
                       .toArray(new frc.lib.io.vision.VisionIO[0]));
           drive =
               new Drive(

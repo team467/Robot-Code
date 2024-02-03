@@ -38,7 +38,7 @@ public class RobotOdometry {
 
   public static RobotOdometry getInstance() {
     if (instance == null) {
-      instance = new RobotOdometry(VecBuilder.fill(0.003, 0.003, 0.0002));
+      instance = new RobotOdometry(VecBuilder.fill(0.003, 0.003, 0.0004));
     }
     return instance;
   }
