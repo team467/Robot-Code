@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -39,8 +35,9 @@ public class Shooter extends SubsystemBase {
     if (Constants.tuningMode) {
       if (ShooterConstants.SHOOTER_KS.hasChanged(hashCode())
           || ShooterConstants.SHOOTER_KD.hasChanged(hashCode())) {
-        shooterFeedforward = new SimpleMotorFeedforward(
-            ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
+        shooterFeedforward =
+            new SimpleMotorFeedforward(
+                ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
       }
       if (ShooterConstants.SHOOTER_KP.hasChanged(hashCode())
           || ShooterConstants.SHOOTER_KD.hasChanged(hashCode())) {
@@ -51,7 +48,9 @@ public class Shooter extends SubsystemBase {
     }
     if (PIDMode) {
       io.setShooterVoltage(
-          shooterFeedforward.calculate(currentVelocitySetpoint) + shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
+          shooterFeedforward.calculate(currentVelocitySetpoint)
+              + shooterFeedack.calculate(
+                  inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
     }
     Logger.recordOutput("Shooter/setPointVelocity", shooterFeedack.getSetpoint());
     Logger.recordOutput("Shooter/error", shooterFeedack.getVelocityError());

@@ -1,4 +1,3 @@
-
 package frc.robot.subsystems.indexer;
 
 import frc.robot.Constants;
