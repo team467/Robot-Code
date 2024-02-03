@@ -31,7 +31,7 @@ public class Pixy2 extends SubsystemBase {
   }
 
   public boolean seesNote() {
-    return inputs.width > 80 && inputs.height > 10; //TODO: Adjust values
+    return inputs.width > 80 && inputs.height > 10; // TODO: Adjust values
   }
 
   public double getX() {
