@@ -18,6 +18,8 @@ public class ShooterConstants {
   static {
     switch (Constants.getRobot()) {
       case ROBOT_BRIEFCASE -> {
+        // TODO: SHOOTER FEEDFOWARD NEEDS TO BE TUNED DUE TO A UNIT CONVERSION
+        // TODO: SHOOTER PID NEEDS TO BE TUNED
         WHEEL_DIAMETER = Units.inchesToMeters(4);
         SHOOTER_READY_VELOCITY_RAD_PER_SEC = 1000;
         SHOOTER_KS = new TunableNumber("Shooter/ShooterKS", 0.8);
