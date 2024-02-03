@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.Schematic;
 
 public class IndexerIOPhysical implements IndexerIO {
   private final CANSparkMax indexer;
@@ -13,7 +14,7 @@ public class IndexerIOPhysical implements IndexerIO {
   private final DigitalInput indexerLimitSwitch;
 
   public IndexerIOPhysical() {
-    indexer = new CANSparkMax(IndexerConstants.INDEXER_ID, MotorType.kBrushless);
+    indexer = new CANSparkMax(Schematic.INDEXER_ID, MotorType.kBrushless);
     indexer.setIdleMode(IdleMode.kBrake);
     indexer.setInverted(true);
     indexerEncoder = indexer.getEncoder();
