@@ -56,7 +56,9 @@ public class Shooter extends SubsystemBase {
           shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
     }
   }
-
+  /**
+   * @return sets the shooter voltage to zero
+   */
   public Command stop() {
     return Commands.run(
         () -> {
@@ -64,12 +66,20 @@ public class Shooter extends SubsystemBase {
         },
         this);
   }
-
+  /**
+   * @param velocitySetpoint
+   * @return A command that sets the shooter to the velocity of the inputed velocity setpoint using
+   *     a feedfoward controller
+   */
   public Command shootFeedFoward(double velocitySetpoint) {
     return Commands.run(
         () -> io.setShooterVoltage(shooterFeedforward.calculate(currentVelocitySetpoint)));
   }
-
+  /**
+   * @param velocitySetpoint
+   * @return A command that sets the PIDMode to true, and then sets to PID setpoint to that of the
+   *     inputed velocitySetpoint
+   */
   public Command shoot(double velocitySetpoint) {
     return Commands.run(
         () -> {
@@ -78,11 +88,17 @@ public class Shooter extends SubsystemBase {
         },
         this);
   }
-
+  /**
+   * @param volts
+   * @return A command that sets the shooter voltage to that of the inputed volts
+   */
   public Command manualShoot(double volts) {
     return Commands.run(() -> io.setShooterVoltage(volts), this);
   }
-
+  /**
+   * @return if the shooter is at the speed required to shoot by checking if the shooters speed is
+   *     that of the setpoint of the PID.
+   */
   public boolean getShooterSpeedIsReady() {
     if (shooterFeedack.getSetpoint() == 0) {
       return false;
@@ -90,7 +106,10 @@ public class Shooter extends SubsystemBase {
       return shooterFeedack.atSetpoint();
     }
   }
-
+  /**
+   * @param distanceFromSpeaker
+   * @return calculates the hypotenuse of the hight of the speaker and the inputed distance
+   */
   public double calculateShootingDistance(double distanceFromSpeaker) {
     return Math.hypot(211.0, distanceFromSpeaker);
   }

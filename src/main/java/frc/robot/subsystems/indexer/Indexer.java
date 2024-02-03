@@ -24,19 +24,29 @@ public class Indexer extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Indexer", inputs);
   }
-
+  /**
+   * @param percent
+   * @return A command that sets the indexer to a percent velocity from -1 to 1
+   */
   public Command setIndexerPercentVoltage(double percent) {
     return Commands.run(() -> io.setIndexerPercentVelocity(percent), this);
   }
-
+  /**
+   * @return A command that sets the indexer voltage to zero
+   */
   public Command stop() {
     return Commands.run(() -> io.setIndexerVoltage(0), this);
   }
-
+  /**
+   * @param volts
+   * @return A command that sets the indexer voltage to the inputed volts
+   */
   public Command setIndexerVoltage(double volts) {
     return Commands.run(() -> io.setIndexerVoltage(volts), this);
   }
-
+  /**
+   * @return if the indexers limit switch is pressed
+   */
   public boolean getLimitSwitchPressed() {
     return inputs.indexerLimitSwitchPressed;
   }
