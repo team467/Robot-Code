@@ -16,7 +16,7 @@ public class Constants {
   private static final RobotType ROBOT_TYPE_OVERRIDE = null;
 
   public static final Measure<Time> loopPeriod = Milliseconds.of(20);
-  public static final boolean tuningMode = true;
+  public static final boolean tuningMode = false;
 
   private static final String ROBOT_FILENAME = "/home/lvuser/robot";
   private static RobotType cachedRobotTypeFromRoborio = null;
