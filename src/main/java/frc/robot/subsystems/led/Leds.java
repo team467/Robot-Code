@@ -1,7 +1,6 @@
 package frc.robot.subsystems.led;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -67,9 +66,6 @@ public class Leds extends SubsystemBase {
   private static final double waveAllianceDuration = 2.0;
   private static final double autoFadeTime = 2.5; // 3s nominal
   private static final double autoFadeMaxTime = 5.0; // Return to normal
-
-  // private NetworkTable ledTable;
-  // private NetworkTableEntry ledModeEntry;
 
   public Leds() {
     leds = new AddressableLED(0);
