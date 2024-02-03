@@ -11,13 +11,18 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
 import frc.lib.utils.LocalADStarAK;
 import frc.lib.utils.RobotOdometry;
+import frc.robot.commands.auto.StraightDriveToPose;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -211,5 +216,14 @@ public class Drive extends SubsystemBase {
       new Translation2d(-DriveConstants.TRACK_WIDTH_X / 2.0, DriveConstants.TRACK_WIDTH_Y / 2.0),
       new Translation2d(-DriveConstants.TRACK_WIDTH_X / 2.0, -DriveConstants.TRACK_WIDTH_Y / 2.0)
     };
+  }
+
+  public Command driveToNote(Supplier<Double> angle) {
+    return Commands.run(
+            () ->
+                new StraightDriveToPose(0, 0, Units.degreesToRadians(angle.get()), this)
+                    .setAllowFlipForAlliance(false),
+            this)
+        .andThen(() -> new ChassisSpeeds(1, 0, 0));
   }
 }
