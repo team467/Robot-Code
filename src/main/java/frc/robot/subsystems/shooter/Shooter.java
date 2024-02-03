@@ -19,7 +19,7 @@ public class Shooter extends SubsystemBase {
 
   private boolean PIDMode = false;
   private double currentVelocitySetpoint;
-
+  private static double speakerHight = 211.0;
   private SimpleMotorFeedforward shooterFeedforward =
       new SimpleMotorFeedforward(
           ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
@@ -30,19 +30,17 @@ public class Shooter extends SubsystemBase {
 
   public Shooter(ShooterIO io) {
     this.io = io;
+    shooterFeedack.setTolerance(ShooterConstants.SHOOTER_TOLERANCE.get());
   }
 
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
-    Logger.recordOutput("Shooter/setPointVelocity", shooterFeedack.getSetpoint());
-    Logger.recordOutput("Shooter/error", shooterFeedack.getVelocityError());
     if (Constants.tuningMode) {
       if (ShooterConstants.SHOOTER_KS.hasChanged(hashCode())
           || ShooterConstants.SHOOTER_KD.hasChanged(hashCode())) {
-        shooterFeedforward =
-            new SimpleMotorFeedforward(
-                ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
+        shooterFeedforward = new SimpleMotorFeedforward(
+            ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
       }
       if (ShooterConstants.SHOOTER_KP.hasChanged(hashCode())
           || ShooterConstants.SHOOTER_KD.hasChanged(hashCode())) {
@@ -53,27 +51,10 @@ public class Shooter extends SubsystemBase {
     }
     if (PIDMode) {
       io.setShooterVoltage(
-          shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
+          shooterFeedforward.calculate(currentVelocitySetpoint) + shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
     }
-  }
-  /**
-   * @return sets the shooter voltage to zero
-   */
-  public Command stop() {
-    return Commands.run(
-        () -> {
-          io.setShooterVoltage(0.0);
-        },
-        this);
-  }
-  /**
-   * @param velocitySetpoint
-   * @return A command that sets the shooter to the velocity of the inputed velocity setpoint using
-   *     a feedfoward controller
-   */
-  public Command shootFeedFoward(double velocitySetpoint) {
-    return Commands.run(
-        () -> io.setShooterVoltage(shooterFeedforward.calculate(currentVelocitySetpoint)));
+    Logger.recordOutput("Shooter/setPointVelocity", shooterFeedack.getSetpoint());
+    Logger.recordOutput("Shooter/error", shooterFeedack.getVelocityError());
   }
   /**
    * @param velocitySetpoint
@@ -99,7 +80,7 @@ public class Shooter extends SubsystemBase {
    * @return if the shooter is at the speed required to shoot by checking if the shooters speed is
    *     that of the setpoint of the PID.
    */
-  public boolean getShooterSpeedIsReady() {
+  public boolean ShooterSpeedIsReady() {
     if (shooterFeedack.getSetpoint() == 0) {
       return false;
     } else {
@@ -111,10 +92,10 @@ public class Shooter extends SubsystemBase {
    * @return calculates the hypotenuse of the hight of the speaker and the inputed distance
    */
   public double calculateShootingDistance(double distanceFromSpeaker) {
-    return Math.hypot(211.0, distanceFromSpeaker);
+    return Math.hypot(speakerHight, distanceFromSpeaker);
   }
 
   public double calculateShootingAngle(double distanceFromSpeaker) {
-    return Math.abs(Math.atan(211.0 / distanceFromSpeaker));
+    return Math.abs(Math.atan(speakerHight / distanceFromSpeaker));
   }
 }

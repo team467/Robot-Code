@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.indexer;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,12 +26,6 @@ public class Indexer extends SubsystemBase {
    */
   public Command setIndexerPercentVoltage(double percent) {
     return Commands.run(() -> io.setIndexerPercentVelocity(percent), this);
-  }
-  /**
-   * @return A command that sets the indexer voltage to zero
-   */
-  public Command stop() {
-    return Commands.run(() -> io.setIndexerVoltage(0), this);
   }
   /**
    * @param volts
