@@ -24,11 +24,11 @@ public class IndexerConstants {
         WHEEL_DIAMETER = 4;
       }
       default -> {
-        INDEXER_FOWARD_VOLTAGE = 5.0;
+        INDEXER_FOWARD_VOLTAGE = 0.0;
         INDEXER_HOLD_VOLTAGE = 0.0;
         INDEXER_BACKWARD_VOLTAGE = 0.0;
         INDEXER_LIMIT_SWITCH_ID = 0;
-        WHEEL_DIAMETER = 4;
+        WHEEL_DIAMETER = 0.0;
       }
     }
   }
