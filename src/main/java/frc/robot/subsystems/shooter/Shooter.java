@@ -45,11 +45,10 @@ public class Shooter extends SubsystemBase {
             ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
       }
     }
-      if (PIDMode) {
-        io.setShooterVoltage(
-            shooterFeedack.calculate(
-                inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
-      }
+    if (PIDMode) {
+      io.setShooterVoltage(
+          shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
+    }
   }
 
   public Command stop() {

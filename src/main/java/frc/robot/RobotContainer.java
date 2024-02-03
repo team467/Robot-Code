@@ -29,14 +29,11 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.indexer.IndexerIONoOp;
-import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.led.Led2023;
 import frc.robot.subsystems.led.LedConstants;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterConstants;
-import frc.robot.subsystems.shooter.ShooterIOPhysical2;
+import frc.robot.subsystems.shooter.ShooterIOSim;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -100,10 +97,7 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
         }
-        case ROBOT_BRIEFCASE -> {
-          shooter = new Shooter(new ShooterIOPhysical2());
-          indexer = new Indexer(new IndexerIOPhysical());
-        }
+
         case ROBOT_SIMBOT -> {
           drive =
               new Drive(
@@ -128,6 +122,9 @@ public class RobotContainer {
     }
     if (indexer == null) {
       indexer = new Indexer(new IndexerIONoOp());
+    }
+    if (shooter == null) {
+      shooter = new Shooter(new ShooterIOSim());
     }
     led2023 = new Led2023();
     LEDManager.getInstance().init(LedConstants.LED_CHANNEL);
@@ -160,17 +157,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // driverController.a().whileTrue(Commands.runOnce(() -> new Rotation2d(2, 2), drive));
-    driverController.a().whileTrue(shooter.manualShoot(-6).alongWith(indexer.setIndexerVoltage(6)));
-    driverController
-        .b()
-        .whileTrue(indexer.setIndexerVoltage(IndexerConstants.INDEXER_FOWARD_VOLTAGE));
-    driverController.x().whileTrue(shooter.manualShoot(12));
-    driverController
-        .rightBumper()
-        .whileTrue(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC));
-    driverController
-        .leftBumper()
-        .whileTrue(shooter.shootFeedFoward(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
 
@@ -196,8 +182,7 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    indexer.setDefaultCommand(indexer.stop());
-    shooter.setDefaultCommand(shooter.stop());
+
     led2023.setDefaultCommand(new LedRainbowCMD(led2023).ignoringDisable(true));
   }
 
