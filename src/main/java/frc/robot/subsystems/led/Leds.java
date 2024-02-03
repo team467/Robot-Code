@@ -169,7 +169,7 @@ public class Leds extends SubsystemBase {
         break;
 
       case HANGING:
-        solid(Section.FULL, Color.kDarkGreen);
+        solid(Section.FULL, new Color("#003200")); // Dark Green is 0x006400
         break;
 
       case SHOOTING:
@@ -221,7 +221,7 @@ public class Leds extends SubsystemBase {
         break;
 
       case LOW_BATTERY_ALERT:
-        solid(Section.FULL, Color.kOrange);
+        solid(Section.FULL, Color.kOrangeRed);
         break;
 
       case DISABLED:
