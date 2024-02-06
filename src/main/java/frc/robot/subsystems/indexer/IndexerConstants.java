@@ -2,7 +2,6 @@ package frc.robot.subsystems.indexer;
 
 import frc.robot.Constants;
 
-/** Add your docs here. */
 public class IndexerConstants {
   public static final double INDEXER_FOWARD_VOLTAGE;
   public static final double INDEXER_HOLD_VOLTAGE;

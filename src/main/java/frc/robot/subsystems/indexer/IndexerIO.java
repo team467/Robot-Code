@@ -2,7 +2,6 @@ package frc.robot.subsystems.indexer;
 
 import org.littletonrobotics.junction.AutoLog;
 
-/** Add your docs here. */
 public interface IndexerIO {
   @AutoLog
   class IndexerIOInputs {
