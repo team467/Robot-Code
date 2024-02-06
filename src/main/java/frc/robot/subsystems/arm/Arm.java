@@ -7,6 +7,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
@@ -33,21 +34,23 @@ public class Arm extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Arm", inputs);
 
-    // Update controllers if tunable numbers have changed
-    if (ArmConstants.KS.hasChanged(hashCode())
-        || ArmConstants.KG.hasChanged(hashCode())
-        || ArmConstants.KV.hasChanged(hashCode())) {
-      feedforward =
-          new ArmFeedforward(ArmConstants.KS.get(), ArmConstants.KG.get(), ArmConstants.KV.get());
-    }
-    if (ArmConstants.KP.hasChanged(hashCode())
-        || ArmConstants.KD.hasChanged(hashCode())
-        || ArmConstants.MAX_VELOCITY.hasChanged(hashCode())
-        || ArmConstants.MAX_ACCELERATION.hasChanged(hashCode())) {
-      feedback.setPID(ArmConstants.KP.get(), 0, ArmConstants.KD.get());
-      feedback.setConstraints(
-          new TrapezoidProfile.Constraints(
-              ArmConstants.MAX_VELOCITY.get(), ArmConstants.MAX_ACCELERATION.get()));
+    if (Constants.tuningMode) {
+      // Update controllers if tunable numbers have changed
+      if (ArmConstants.KS.hasChanged(hashCode())
+          || ArmConstants.KG.hasChanged(hashCode())
+          || ArmConstants.KV.hasChanged(hashCode())) {
+        feedforward =
+            new ArmFeedforward(ArmConstants.KS.get(), ArmConstants.KG.get(), ArmConstants.KV.get());
+      }
+      if (ArmConstants.KP.hasChanged(hashCode())
+          || ArmConstants.KD.hasChanged(hashCode())
+          || ArmConstants.MAX_VELOCITY.hasChanged(hashCode())
+          || ArmConstants.MAX_ACCELERATION.hasChanged(hashCode())) {
+        feedback.setPID(ArmConstants.KP.get(), 0, ArmConstants.KD.get());
+        feedback.setConstraints(
+            new TrapezoidProfile.Constraints(
+                ArmConstants.MAX_VELOCITY.get(), ArmConstants.MAX_ACCELERATION.get()));
+      }
     }
 
     Logger.recordOutput("Arm/PIDEnabled", feedbackMode);
