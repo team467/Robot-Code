@@ -14,7 +14,8 @@ public class ArmConstants {
   public static final TunableNumber MAX_VELOCITY;
   public static final TunableNumber MAX_ACCELERATION;
   public static final Rotation2d
-          HORIZONTAL_OFFSET; // position between our 0 (neutral pick up position) and real 0 (parallel to
+      HORIZONTAL_OFFSET; // position between our 0 (neutral pick up position) and real 0 (parallel
+  // to
   // floor)
   public static final GearRatio GEAR_RATIO;
 
