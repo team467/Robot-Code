@@ -15,6 +15,8 @@ public interface Pixy2IO {
     public double signature;
     public double width;
     public double height;
+
+    public boolean seesNote;
   }
 
   NetworkTableInstance networkTables = NetworkTableInstance.getDefault();
