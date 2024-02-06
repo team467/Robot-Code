@@ -93,7 +93,10 @@ public class Shooter extends SubsystemBase {
   public double calculateShootingDistance(double distanceFromSpeaker) {
     return Math.hypot(speakerHight, distanceFromSpeaker);
   }
-
+/**
+ * @param distanceFromSpeaker
+ * @return the angle at which the shooter must be to shoot into the speaker
+ */
   public double calculateShootingAngle(double distanceFromSpeaker) {
     return Math.abs(Math.atan(speakerHight / distanceFromSpeaker));
   }
