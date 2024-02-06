@@ -22,6 +22,7 @@ import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
 import frc.lib.utils.LocalADStarAK;
 import frc.lib.utils.RobotOdometry;
 import frc.robot.commands.auto.StraightDriveToPose;
+import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -219,8 +220,9 @@ public class Drive extends SubsystemBase {
   }
 
   public Command driveToNote(Supplier<Double> angle) {
-    return Commands.run(
-            () -> new StraightDriveToPose(0, 0, Units.degreesToRadians(angle.get()), this), this)
-        .andThen(() -> new ChassisSpeeds(1, 0, 0), this);
+    return Commands.defer(
+            () -> new StraightDriveToPose(0, 0, Units.degreesToRadians(angle.get()), this),
+            Set.of(this))
+        .andThen(() -> new ChassisSpeeds(0, 1, 0), this);
   }
 }
