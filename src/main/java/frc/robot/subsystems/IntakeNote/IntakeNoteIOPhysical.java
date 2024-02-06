@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Schematic;
 import frc.robot.constants.controls.GearRatio;
 
 public class IntakeNoteIOPhysical implements IntakeNoteIO {
@@ -14,7 +15,7 @@ public class IntakeNoteIOPhysical implements IntakeNoteIO {
 
   // Initializes motor encoders and limit switch for intake.
   public IntakeNoteIOPhysical() {
-    intakeMotor = new CANSparkMax(12, MotorType.kBrushless);
+    intakeMotor = new CANSparkMax(Schematic.INTAKE_ID, MotorType.kBrushless);
     intakeMotor.setIdleMode(IdleMode.kBrake);
     intakeMotor.setInverted(false);
     intakeMotor.enableVoltageCompensation(12);
