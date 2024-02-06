@@ -1,5 +1,7 @@
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
@@ -16,17 +18,39 @@ public class Climber extends SubsystemBase {
     climberIO.updateInput(climberIOInputs);
   }
 
-  public void raise() {}
-
-  public void lower() {}
-
-  public void stop() {
-    climberIO.setLeftMotorOutputPercent(0);
-    climberIO.setRightMotorOutputPercent(0);
+  public Command raise(double percentOutput) {
+    return Commands.run(
+        () -> {
+          // climberIO.setLeftMotorOutputPercent(percentOutput);
+          // climberIO.setRightMotorOutputPercent(percentOutput);
+        },
+        this);
+  }
+  
+  public Command lower(double percentOutput) {
+    return Commands.run(
+        () -> {
+          // climberIO.setLeftMotorOutputPercent(percentOutput);
+          // climberIO.setRightMotorOutputPercent(percentOutput);
+        },
+        this);
   }
 
-  public void disable() {
-    climberIO.setLeftMotorOutputPercent(0);
-    climberIO.setRightMotorOutputPercent(0);
+  public Command stop() {
+    return Commands.run(
+        () -> {
+          climberIO.setLeftMotorOutputPercent(0);
+          climberIO.setRightMotorOutputPercent(0);
+        },
+        this);
+  }
+  
+  public Command disable() {
+    return Commands.run(
+        () -> {
+          climberIO.setLeftMotorOutputPercent(0);
+          climberIO.setRightMotorOutputPercent(0);
+        },
+        this);
   }
 }
