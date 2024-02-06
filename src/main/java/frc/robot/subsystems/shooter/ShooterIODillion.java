@@ -20,6 +20,7 @@ public class ShooterIODillion implements ShooterIO {
     shooterEncoder = shooter.getEncoder();
 
     shooterEncoder.setVelocityConversionFactor(rotsToRads / 60);
+    shooterEncoder.setPositionConversionFactor(rotsToRads);
   }
 
   public void updateInputs(ShooterIOInputs inputs) {

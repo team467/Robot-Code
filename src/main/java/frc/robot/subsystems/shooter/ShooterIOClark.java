@@ -26,6 +26,8 @@ public class ShooterIOClark implements ShooterIO {
     shooterFollower.setIdleMode(IdleMode.kBrake);
     shooterLeaderEncoder.setVelocityConversionFactor(rotsToRads / 60);
     shooterFollowerEncoder.setVelocityConversionFactor(rotsToRads / 60);
+    shooterLeaderEncoder.setPositionConversionFactor(rotsToRads);
+    shooterFollowerEncoder.setPositionConversionFactor(rotsToRads);
   }
 
   public void updateInputs(ShooterIOInputs inputs) {

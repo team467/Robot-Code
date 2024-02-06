@@ -19,11 +19,10 @@ public class IndexerIOPhysical implements IndexerIO {
     indexer.setInverted(true);
     indexerEncoder = indexer.getEncoder();
     indexerLimitSwitch = new DigitalInput(IndexerConstants.INDEXER_LIMIT_SWITCH_ID);
-    double rotsToMeters = Units.rotationsToRadians(1) * (IndexerConstants.WHEEL_DIAMETER / 2);
     double rotsToRads = Units.rotationsToRadians(1);
 
     indexerEncoder.setVelocityConversionFactor(rotsToRads / 60);
-    indexerEncoder.setPositionConversionFactor(rotsToMeters);
+    indexerEncoder.setPositionConversionFactor(rotsToRads);
   }
 
   public void updateInputs(IndexerIOInputs inputs) {
