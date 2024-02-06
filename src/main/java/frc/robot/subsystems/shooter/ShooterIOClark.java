@@ -31,7 +31,7 @@ public class ShooterIOClark implements ShooterIO {
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeaderVelocityRadPerSec = shooterLeaderEncoder.getVelocity();
     inputs.shooterFollowerVelocityRadPerSec = shooterFollowerEncoder.getVelocity();
-    inputs.shooterLeaderAppliedVolts = shooterLeader.getAppliedOutput();
+    inputs.shooterLeaderAppliedVolts = shooterLeader.getBusVoltage() * shooterLeader.getAppliedOutput();
     inputs.shooterLeaderCurrentAmps = shooterLeader.getOutputCurrent();
   }
 

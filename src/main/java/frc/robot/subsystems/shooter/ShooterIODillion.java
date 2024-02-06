@@ -24,7 +24,7 @@ public class ShooterIODillion implements ShooterIO {
 
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeaderVelocityRadPerSec = shooterEncoder.getVelocity();
-    inputs.shooterLeaderAppliedVolts = shooter.getAppliedOutput();
+    inputs.shooterLeaderAppliedVolts = shooter.getBusVoltage() * shooter.getAppliedOutput();
     inputs.shooterLeaderCurrentAmps = shooter.getOutputCurrent();
   }
 
