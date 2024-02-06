@@ -14,7 +14,7 @@ public class ArmConstants {
   public static final TunableNumber MAX_VELOCITY;
   public static final TunableNumber MAX_ACCELERATION;
   public static final Rotation2d
-      horizontalOffset; // position between our 0 (neutral pick up position) and real 0 (parallel to
+          HORIZONTAL_OFFSET; // position between our 0 (neutral pick up position) and real 0 (parallel to
   // floor)
   public static final GearRatio GEAR_RATIO;
 
@@ -28,7 +28,7 @@ public class ArmConstants {
         KD = new TunableNumber("Arm/KD", 0.0);
         MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", 7);
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", 12);
-        horizontalOffset = new Rotation2d();
+        HORIZONTAL_OFFSET = new Rotation2d();
         GEAR_RATIO = new GearRatio(199.73, 1);
       }
       default -> {
@@ -39,7 +39,7 @@ public class ArmConstants {
         KD = new TunableNumber("Arm/KD", 0.0);
         MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", 0.0);
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", 0.0);
-        horizontalOffset = new Rotation2d();
+        HORIZONTAL_OFFSET = new Rotation2d();
         GEAR_RATIO = new GearRatio();
       }
     }

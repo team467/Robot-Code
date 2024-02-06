@@ -65,7 +65,7 @@ public class Arm extends SubsystemBase {
       io.setVoltage(
           feedback.calculate(inputs.positionRads)
               + feedforward.calculate(
-                  feedback.getSetpoint().position + ArmConstants.horizontalOffset.getRadians(),
+                  feedback.getSetpoint().position + ArmConstants.HORIZONTAL_OFFSET.getRadians(),
                   feedback.getSetpoint().velocity));
       Logger.recordOutput("Arm/NextPosition", feedback.getSetpoint().position);
       Logger.recordOutput("Arm/NextVelocity", feedback.getSetpoint().velocity);
