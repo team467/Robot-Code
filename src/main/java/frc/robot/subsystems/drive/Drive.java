@@ -221,7 +221,7 @@ public class Drive extends SubsystemBase {
 
   public Command driveToNote(Supplier<Double> angle) {
     return Commands.defer(
-            () -> new StraightDriveToPose(0, 0, Units.degreesToRadians(angle.get()), this),
-            Set.of(this));
+        () -> new StraightDriveToPose(0, 0, Units.degreesToRadians(angle.get()), this),
+        Set.of(this));
   }
 }
