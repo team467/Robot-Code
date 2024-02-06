@@ -115,6 +115,10 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
+    if (pixy2 == null) {
+      pixy2 = new Pixy2(new Pixy2IO() {});
+    }
+
 
     Leds leds = new Leds();
 
