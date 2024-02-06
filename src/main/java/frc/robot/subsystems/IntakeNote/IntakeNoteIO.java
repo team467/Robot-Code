@@ -1,7 +1,5 @@
 package frc.robot.subsystems.IntakeNote;
 
-import java.util.function.BooleanSupplier;
-
 import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeNoteIO {
@@ -12,13 +10,12 @@ public interface IntakeNoteIO {
     public boolean armSwitchClosed = false;
 
     // O/p for intake
-    public BooleanSupplier hasNote = () -> false;
 
     // Motor IO
+    public double positionRads = 0.0;
+    public double velocityRadsPerSec = 0.0;
     public double appliedVolts = 0.0;
-    public double motorVelocity = 0.0;
-    public double motorCurrent = 0.0;
-    public double motorPosition = 0.0;
+    public double motorCurrentAmps = 0.0;
   }
 
   default void updateInputs(IntakeNoteIOInputs intakeInputs) {}

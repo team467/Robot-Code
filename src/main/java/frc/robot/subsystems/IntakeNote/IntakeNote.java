@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import java.util.function.BooleanSupplier;
-
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeNote extends SubsystemBase {
@@ -17,10 +15,10 @@ public class IntakeNote extends SubsystemBase {
   private final IntakeNoteIO intakeNoteIO;
 
   private final IntakeNoteIOInputsAutoLogged intakeInputs;
+  //TODO: Change these speeds as needed once we test.
   private final double intakeSpeed = 0.2;
   private final double releaseSpeed = -0.2;
   private final double stop = 0.0;
-  private final BooleanSupplier hasNote = () -> false;
 
   // Intializes IntakeNote
   public IntakeNote(IntakeNoteIO intakeNoteIO) {
@@ -40,9 +38,10 @@ public class IntakeNote extends SubsystemBase {
   public Command startIntake() {
     return Commands.run(
         () -> {
+          Logger.recordOutput("IntakeNote/DesiredSpeed", intakeSpeed);
           intakeNoteIO.setSpeed(intakeSpeed);
         },
-        this).until(() -> hasNote.getAsBoolean());
+        this);
   }
 
   // Command for releasing a note.
