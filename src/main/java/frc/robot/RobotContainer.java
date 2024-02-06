@@ -81,7 +81,7 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
-          pixy2 = new Pixy2(new Pixy2IOPhysical());
+
         }
         case ROBOT_2024A -> {
           drive =
@@ -91,7 +91,8 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
-          pixy2 = new Pixy2(new Pixy2IO() {});
+
+
         }
         case ROBOT_SIMBOT -> {
           drive =
