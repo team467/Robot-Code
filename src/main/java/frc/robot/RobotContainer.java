@@ -94,7 +94,6 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
-          arm = new Arm(new ArmIOSparkMAX());
         }
         case ROBOT_SIMBOT -> {
           drive =
