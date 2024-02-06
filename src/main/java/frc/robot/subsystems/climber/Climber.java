@@ -26,7 +26,7 @@ public class Climber extends SubsystemBase {
         },
         this);
   }
-  
+
   public Command lower(double percentOutput) {
     return Commands.run(
         () -> {
@@ -44,7 +44,7 @@ public class Climber extends SubsystemBase {
         },
         this);
   }
-  
+
   public Command disable() {
     return Commands.run(
         () -> {
