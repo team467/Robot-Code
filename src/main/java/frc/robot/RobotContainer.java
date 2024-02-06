@@ -22,8 +22,6 @@ import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
-import frc.robot.subsystems.IntakeNote.IntakeNote;
-import frc.robot.subsystems.IntakeNote.IntakeNoteIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -44,7 +42,6 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private boolean isRobotOriented = true; // Workaround, change if needed
-  private IntakeNoteIO intakeNoteIO;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -164,8 +161,6 @@ public class RobotContainer {
                                 AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
     // Mapped buttons on controller to intake, release, or stop.
-    driverController.a().onTrue(new IntakeNote(intakeNoteIO).startIntake());
-    driverController.b().onTrue(new IntakeNote(intakeNoteIO).release());
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
