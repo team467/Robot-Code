@@ -1,6 +1,11 @@
 package frc.robot.subsystems.pixy2;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 public class Pixy2IOPhysical implements Pixy2IO {
+  NetworkTableInstance networkTables = NetworkTableInstance.getDefault();
+  NetworkTable pixyTable = networkTables.getTable("Pixy2");
 
   public Pixy2IOPhysical() {
     networkTables.startClient4("RoboRio");
