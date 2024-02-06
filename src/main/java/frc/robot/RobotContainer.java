@@ -119,7 +119,6 @@ public class RobotContainer {
       pixy2 = new Pixy2(new Pixy2IO() {});
     }
 
-
     Leds leds = new Leds();
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
