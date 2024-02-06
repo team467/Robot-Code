@@ -73,10 +73,12 @@ public class Shooter extends SubsystemBase {
    * @return A command that sets the shooter voltage to that of the inputed volts
    */
   public Command manualShoot(double volts) {
-    return Commands.run(() -> {
-      io.setShooterVoltage(volts);
-      PIDMode = false;
-    }, this);
+    return Commands.run(
+        () -> {
+          io.setShooterVoltage(volts);
+          PIDMode = false;
+        },
+        this);
   }
   /**
    * @return if the shooter is at the speed required to shoot by checking if the shooters speed is
