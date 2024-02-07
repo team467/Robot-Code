@@ -160,7 +160,6 @@ public class RobotContainer {
                                 drive.getPose().getTranslation(),
                                 AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
-    // Mapped buttons on controller to intake, release, or stop.
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
