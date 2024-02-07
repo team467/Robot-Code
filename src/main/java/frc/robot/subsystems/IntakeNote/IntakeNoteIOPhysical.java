@@ -21,7 +21,8 @@ public class IntakeNoteIOPhysical implements IntakeNoteIO {
     intakeEncoder.setPositionConversionFactor(
         Units.rotationsToRadians(1) * IntakeConstants.GEAR_RATIO.getRotationsPerInput());
     intakeEncoder.setVelocityConversionFactor(
-        Units.rotationsPerMinuteToRadiansPerSecond(1) * IntakeConstants.GEAR_RATIO.getRotationsPerInput());
+        Units.rotationsPerMinuteToRadiansPerSecond(1)
+            * IntakeConstants.GEAR_RATIO.getRotationsPerInput());
   }
 
   // Sets speed to motor, speed range is [-1,1].

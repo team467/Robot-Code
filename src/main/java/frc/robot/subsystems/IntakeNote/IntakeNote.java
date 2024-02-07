@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeNote extends SubsystemBase {
-  
+
   private final IntakeNoteIO intakeNoteIO;
   private final IntakeNoteIOInputsAutoLogged intakeInputs;
 
