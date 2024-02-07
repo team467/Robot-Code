@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeNote extends SubsystemBase {
-  /** Creates a new Intake. */
   private final IntakeNoteIO intakeNoteIO;
 
   private final IntakeNoteIOInputsAutoLogged intakeInputs;
@@ -33,7 +32,6 @@ public class IntakeNote extends SubsystemBase {
     Logger.processInputs("IntakeNote", intakeInputs);
   }
 
-  // Command for intaking a note, stops when limit switch is true.
   public Command startIntake() {
     return Commands.run(
         () -> {
@@ -43,7 +41,6 @@ public class IntakeNote extends SubsystemBase {
         this);
   }
 
-  // Command for releasing a note.
   public Command release() {
     return Commands.run(
         () -> {
@@ -52,7 +49,6 @@ public class IntakeNote extends SubsystemBase {
         this);
   }
 
-  // Command for stopping intake.
   public Command stop() {
     return Commands.run(
         () -> {

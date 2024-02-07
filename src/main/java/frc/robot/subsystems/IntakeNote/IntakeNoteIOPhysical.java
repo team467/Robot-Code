@@ -13,7 +13,6 @@ public class IntakeNoteIOPhysical implements IntakeNoteIO {
   private final RelativeEncoder intakeEncoder;
   private final GearRatio GEAR_RATIO = new GearRatio(18, 28);
 
-  // Initializes motor encoders and limit switch for intake.
   public IntakeNoteIOPhysical() {
     intakeMotor = new CANSparkMax(Schematic.INTAKE_ID, MotorType.kBrushless);
     intakeMotor.setIdleMode(IdleMode.kBrake);
@@ -32,7 +31,6 @@ public class IntakeNoteIOPhysical implements IntakeNoteIO {
     intakeMotor.set(speed);
   }
 
-  // Implements updateInputs and updates all our essential IO values.
   public void updateInputs(IntakeNoteIOInputs intakeInputs) {
     intakeInputs.positionRads = intakeEncoder.getPosition();
     intakeInputs.velocityRadsPerSec = intakeEncoder.getVelocity();
