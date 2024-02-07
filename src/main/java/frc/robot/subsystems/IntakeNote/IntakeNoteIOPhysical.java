@@ -6,12 +6,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Schematic;
-import frc.robot.constants.controls.GearRatio;
 
 public class IntakeNoteIOPhysical implements IntakeNoteIO {
   private final CANSparkMax intakeMotor;
   private final RelativeEncoder intakeEncoder;
-  private final GearRatio GEAR_RATIO = new GearRatio(18, 28);
 
   public IntakeNoteIOPhysical() {
     intakeMotor = new CANSparkMax(Schematic.INTAKE_ID, MotorType.kBrushless);
@@ -21,9 +19,9 @@ public class IntakeNoteIOPhysical implements IntakeNoteIO {
 
     intakeEncoder = intakeMotor.getEncoder();
     intakeEncoder.setPositionConversionFactor(
-        Units.rotationsToRadians(1) * GEAR_RATIO.getRotationsPerInput());
+        Units.rotationsToRadians(1) * IntakeConstants.GEAR_RATIO.getRotationsPerInput());
     intakeEncoder.setVelocityConversionFactor(
-        Units.rotationsPerMinuteToRadiansPerSecond(1) * GEAR_RATIO.getRotationsPerInput());
+        Units.rotationsPerMinuteToRadiansPerSecond(1) * IntakeConstants.GEAR_RATIO.getRotationsPerInput());
   }
 
   // Sets speed to motor, speed range is [-1,1].

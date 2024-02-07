@@ -10,15 +10,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeNote extends SubsystemBase {
+  
   private final IntakeNoteIO intakeNoteIO;
-
   private final IntakeNoteIOInputsAutoLogged intakeInputs;
-  // TODO: Change these speeds as needed once we test.
-  private final double intakeSpeed = 0.2;
-  private final double releaseSpeed = -0.2;
-  private final double stop = 0.0;
 
-  // Intializes IntakeNote
   public IntakeNote(IntakeNoteIO intakeNoteIO) {
     super();
     this.intakeNoteIO = intakeNoteIO;
@@ -32,11 +27,11 @@ public class IntakeNote extends SubsystemBase {
     Logger.processInputs("IntakeNote", intakeInputs);
   }
 
-  public Command startIntake() {
+  public Command intake() {
     return Commands.run(
         () -> {
-          Logger.recordOutput("IntakeNote/DesiredSpeed", intakeSpeed);
-          intakeNoteIO.setSpeed(intakeSpeed);
+          Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.INTAKE_SPEED);
+          intakeNoteIO.setSpeed(IntakeConstants.INTAKE_SPEED);
         },
         this);
   }
@@ -44,7 +39,8 @@ public class IntakeNote extends SubsystemBase {
   public Command release() {
     return Commands.run(
         () -> {
-          intakeNoteIO.setSpeed(releaseSpeed);
+          Logger.recordOutput("IntakeNote/DesiredReleaseSpeed", IntakeConstants.RELEASE_SPEED);
+          intakeNoteIO.setSpeed(IntakeConstants.RELEASE_SPEED);
         },
         this);
   }
@@ -52,7 +48,7 @@ public class IntakeNote extends SubsystemBase {
   public Command stop() {
     return Commands.run(
         () -> {
-          intakeNoteIO.setSpeed(stop);
+          intakeNoteIO.setSpeed(IntakeConstants.STOP_SPEED);
         },
         this);
   }
