@@ -63,7 +63,7 @@ public class Schematic {
         FRONT_RIGHT_CANCODER_ID = 16;
         GYRO_ID = 0;
 
-        INTAKE_ID = 12;
+        INTAKE_ID = 0;
       }
       default -> {
         POWER_DIST_ID = 20;
