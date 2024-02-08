@@ -112,6 +112,10 @@ public class Leds extends SubsystemBase {
     if (DriverStation.isEStopped()) {
       mode = LedMode.ESTOPPED;
 
+    } else if (state.lowBatteryAlert) {
+      mode = LedMode.LOW_BATTERY_ALERT;
+      // low battery mode at top for testing purposes
+
     } else if (false) { // TODO: need state variable for auto finished
       mode = LedMode.AUTO_FINISHED;
 
@@ -140,9 +144,6 @@ public class Leds extends SubsystemBase {
       } else {
         mode = LedMode.STRAIGHT_NOTE_DETECTION;
       }
-
-    } else if (state.lowBatteryAlert) {
-      mode = LedMode.LOW_BATTERY_ALERT;
 
     } else if (DriverStation.isDisabled()) {
       if (DriverStation.getAlliance().isPresent()) {
