@@ -30,7 +30,6 @@ public class Pixy2 extends SubsystemBase {
     return inputs.age;
   }
 
-
   public boolean seesNote() {
     return inputs.seesNote;
   }
@@ -44,7 +43,7 @@ public class Pixy2 extends SubsystemBase {
   }
 
   public double getAngle() {
-      return inputs.angle;
+    return inputs.angle;
   }
 
   public double getSignature() {
