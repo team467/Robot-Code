@@ -27,6 +27,8 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.led.Leds;
+import frc.robot.subsystems.pixy2.Pixy2;
+import frc.robot.subsystems.pixy2.Pixy2IO;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -41,6 +43,7 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
+  private Pixy2 pixy2;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -108,6 +111,9 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {},
               new ModuleIO() {});
+    }
+    if (pixy2 == null) {
+      pixy2 = new Pixy2(new Pixy2IO() {});
     }
 
     Leds leds = new Leds();
