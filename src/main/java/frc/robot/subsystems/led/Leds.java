@@ -73,6 +73,7 @@ public class Leds extends SubsystemBase {
   private NetworkTable ledTable;
   private NetworkTableEntry ledModeEntry;
   private NetworkTableEntry ledTestingEntry;
+  private NetworkTableEntry ledColor;
 
   public Leds() {
     ledTable = NetworkTableInstance.getDefault().getTable("Leds");
@@ -80,6 +81,8 @@ public class Leds extends SubsystemBase {
     ledModeEntry.setString("OFF");
     ledTestingEntry = ledTable.getEntry("Testing");
     ledTestingEntry.setBoolean(false);
+    ledColor = ledTable.getEntry("Color");
+    ledColor.setString(Color.kBlack.toHexString());
 
     leds = new AddressableLED(0);
     buffer = new AddressableLEDBuffer(length);
@@ -115,26 +118,28 @@ public class Leds extends SubsystemBase {
     } else if (false) { // TODO: need state variable for autonomous
       mode = LedMode.AUTONOMOUS;
 
-    } else if (false) { // TODO: need state variable for hanging
+    } else if (state.hanging) { // TODO: need state variable for hanging
       mode = LedMode.HANGING;
 
-    } else if (false) { // TODO: need state variable for shooting
+    } else if (state.shooting) { // TODO: need state variable for shooting
       mode = LedMode.SHOOTING;
 
-    } else if (false) { // TODO: need state variable for containing
+    } else if (state.hasNote) { // TODO: need state variable for containing
       mode = LedMode.CONTAINING;
 
-    } else if (false) { // TODO: need state variable for intaking
+    } else if (state.intaking) { // TODO: need state variable for intaking
       mode = LedMode.INTAKING;
 
-    } else if (false) { // TODO: need state variable for left note detection
-      mode = LedMode.LEFT_NOTE_DETECTION;
+    } else if (state.seeNote) {
+      if (state.noteAngle <= -15.0) { // TODO: need to change to constant once angle known
+        mode = LedMode.LEFT_NOTE_DETECTION;
 
-    } else if (false) { // TODO: need state variable for right note detection
-      mode = LedMode.RIGHT_NOTE_DETECTION;
+      } else if (state.noteAngle >= 15.0) {
+        mode = LedMode.RIGHT_NOTE_DETECTION;
 
-    } else if (false) { // TODO: need state variable for straight note detection
-      mode = LedMode.STRAIGHT_NOTE_DETECTION;
+      } else {
+        mode = LedMode.STRAIGHT_NOTE_DETECTION;
+      }
 
     } else if (state.lowBatteryAlert) {
       mode = LedMode.LOW_BATTERY_ALERT;
@@ -172,14 +177,15 @@ public class Leds extends SubsystemBase {
         break;
 
       case HANGING:
-        solid(Section.FULL, new Color("#003200")); // Dark Green is 0x006400
+        solid(Section.FULL, new Color("#006400")); // Dark Green is 0x006400
+        ledColor.setString("3003200");
         break;
 
       case SHOOTING:
         // leds glow in the direction it's shooting
         wave(
             Section.FULL,
-            Color.kMagenta,
+            Color.kBlueViolet,
             Color.kBlack,
             waveAllianceCycleLength,
             waveAllianceDuration);
@@ -187,6 +193,7 @@ public class Leds extends SubsystemBase {
 
       case CONTAINING:
         solid(Section.FULL, Color.kAquamarine);
+        ledColor.setString(Color.kAquamarine.toHexString());
         break;
 
       case INTAKING:
@@ -211,7 +218,7 @@ public class Leds extends SubsystemBase {
 
       case STRAIGHT_NOTE_DETECTION:
         // leds glow in the middle
-        solidMiddle(0.5, Color.kBeige);
+        solidMiddle(0.5, Color.kYellowGreen);
         break;
 
       case BLUE_ALLIANCE:
@@ -314,7 +321,7 @@ public class Leds extends SubsystemBase {
 
   private void solidMiddle(double percent, Color color2) {
     double middlePercent = 1 - percent;
-    int color1Pixels = (int) Math.round(MathUtil.clamp(length * middlePercent, 0, length));
+    int color1Pixels = (int) Math.round(MathUtil.clamp(length * (middlePercent / 2), 0, length));
     for (int i = 0; i < color1Pixels; i++) {
       buffer.setLED(i, Color.kBlack);
     }
