@@ -20,13 +20,13 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     intakeIO.updateInputs(intakeInputs);
-    Logger.processInputs("IntakeNote", intakeInputs);
+    Logger.processInputs("Intake", intakeInputs);
   }
 
   public Command intake() {
     return Commands.run(
         () -> {
-          Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.INTAKE_SPEED);
+          Logger.recordOutput("Intake/DesiredSpeed", IntakeConstants.INTAKE_SPEED);
           intakeIO.setSpeed(IntakeConstants.INTAKE_SPEED);
         },
         this);
@@ -35,7 +35,7 @@ public class Intake extends SubsystemBase {
   public Command release() {
     return Commands.run(
         () -> {
-          Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.RELEASE_SPEED);
+          Logger.recordOutput("Intake/DesiredSpeed", IntakeConstants.RELEASE_SPEED);
           intakeIO.setSpeed(IntakeConstants.RELEASE_SPEED);
         },
         this);
@@ -44,7 +44,7 @@ public class Intake extends SubsystemBase {
   public Command stop() {
     return Commands.run(
         () -> {
-          Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.STOP_SPEED);
+          Logger.recordOutput("Intake/DesiredSpeed", IntakeConstants.STOP_SPEED);
           intakeIO.setSpeed(IntakeConstants.STOP_SPEED);
         },
         this);
