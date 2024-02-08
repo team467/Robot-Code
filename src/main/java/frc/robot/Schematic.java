@@ -26,6 +26,8 @@ public class Schematic {
   public static final int INDEXER_ID;
   // Intake
   public static final int INTAKE_ID;
+  public static final int ARM_ID_LEADER;
+  public static final int ARM_ID_FOLLOWER;
 
   static {
     switch (Constants.getRobot()) {
@@ -52,6 +54,8 @@ public class Schematic {
         INDEXER_ID = 0;
 
         INTAKE_ID = 0;
+        ARM_ID_LEADER = 0;
+        ARM_ID_FOLLOWER = 0;
       }
       case ROBOT_2024A -> {
         POWER_DIST_ID = 20;
@@ -76,6 +80,8 @@ public class Schematic {
         INDEXER_ID = 0;
 
         INTAKE_ID = 0;
+        ARM_ID_LEADER = 0;
+        ARM_ID_FOLLOWER = 0;
       }
       default -> {
         POWER_DIST_ID = 20;
@@ -100,6 +106,8 @@ public class Schematic {
         INDEXER_ID = 0;
 
         INTAKE_ID = 0;
+        ARM_ID_LEADER = 0;
+        ARM_ID_FOLLOWER = 0;
       }
     }
   }
