@@ -1,8 +1,10 @@
-package frc.robot.subsystems.IntakeNote;
+package frc.robot.subsystems.intakeNote;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.IntakeNote.IntakeNoteIOInputsAutoLogged;
+
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeNote extends SubsystemBase {
