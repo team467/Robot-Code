@@ -31,6 +31,8 @@ import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.pixy2.Pixy2;
+import frc.robot.subsystems.pixy2.Pixy2IO;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -47,6 +49,7 @@ public class RobotContainer {
   private Indexer indexer;
   private Drive drive;
   private Vision vision;
+  private Pixy2 pixy2;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -120,7 +123,11 @@ public class RobotContainer {
       indexer = new Indexer(new IndexerIO() {});
     }
     if (shooter == null) {
-      shooter = new Shooter(new ShooterIO() {});
+      shooter = new Shooter(new ShooterIO() {
+      });
+    }
+    if (pixy2 == null) {
+      pixy2 = new Pixy2(new Pixy2IO() {});
     }
 
     Leds leds = new Leds();
