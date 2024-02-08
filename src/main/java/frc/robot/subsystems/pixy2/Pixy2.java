@@ -3,7 +3,6 @@ package frc.robot.subsystems.pixy2;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.Logger;
 
 public class Pixy2 extends SubsystemBase {
   private final Pixy2IO io;
