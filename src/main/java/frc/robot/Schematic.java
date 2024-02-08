@@ -24,6 +24,8 @@ public class Schematic {
   public static final int SHOOTER_FOLLOWER_ID;
   public static final int SHOOTER_DILLION_ID;
   public static final int INDEXER_ID;
+  // Intake
+  public static final int INTAKE_ID;
 
   static {
     switch (Constants.getRobot()) {
@@ -48,6 +50,8 @@ public class Schematic {
         SHOOTER_FOLLOWER_ID = 0;
         SHOOTER_DILLION_ID = 0;
         INDEXER_ID = 0;
+
+        INTAKE_ID = 0;
       }
       case ROBOT_2024A -> {
         POWER_DIST_ID = 20;
@@ -70,6 +74,8 @@ public class Schematic {
         SHOOTER_FOLLOWER_ID = 0;
         SHOOTER_DILLION_ID = 0;
         INDEXER_ID = 0;
+
+        INTAKE_ID = 0;
       }
       default -> {
         POWER_DIST_ID = 20;
@@ -92,6 +98,8 @@ public class Schematic {
         SHOOTER_FOLLOWER_ID = 0;
         SHOOTER_DILLION_ID = 0;
         INDEXER_ID = 0;
+
+        INTAKE_ID = 0;
       }
     }
   }
