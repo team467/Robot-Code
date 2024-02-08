@@ -106,4 +106,13 @@ public class Arm extends SubsystemBase {
         },
         this);
   }
+
+  /**
+   * Determines whether the arm is at the setpoint angle.
+   *
+   * @return true if the arm is at the setpoint angle, false otherwise.
+   */
+  public boolean atSetpoint() {
+    return feedback.atGoal();
+  }
 }
