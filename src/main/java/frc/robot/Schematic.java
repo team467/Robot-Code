@@ -27,7 +27,7 @@ public class Schematic {
   // Intake
   public static final int INTAKE_ID;
   public static final int ARM_ID_LEADER;
-public static final int ARM_ID_FOLLOWER;
+  public static final int ARM_ID_FOLLOWER;
 
   static {
     switch (Constants.getRobot()) {
