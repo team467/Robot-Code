@@ -26,9 +26,13 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -41,6 +45,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   // private final Subsystem subsystem;
+  private Shooter shooter;
+  private Indexer indexer;
   private Drive drive;
   private Vision vision;
   private Pixy2 pixy2;
@@ -90,6 +96,7 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
         }
+
         case ROBOT_SIMBOT -> {
           drive =
               new Drive(
@@ -111,6 +118,12 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {},
               new ModuleIO() {});
+    }
+    if (indexer == null) {
+      indexer = new Indexer(new IndexerIO() {});
+    }
+    if (shooter == null) {
+      shooter = new Shooter(new ShooterIO() {});
     }
     if (pixy2 == null) {
       pixy2 = new Pixy2(new Pixy2IO() {});
@@ -145,7 +158,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
 
     drive.setDefaultCommand(
