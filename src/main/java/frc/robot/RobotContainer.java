@@ -22,6 +22,8 @@ import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -51,6 +53,7 @@ public class RobotContainer {
   private Indexer indexer;
   private Intake intake;
   private Drive drive;
+  private Arm arm;
   private Vision vision;
   private Pixy2 pixy2;
   private boolean isRobotOriented = true; // Workaround, change if needed
@@ -121,6 +124,9 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {},
               new ModuleIO() {});
+    }
+    if (arm == null) {
+      arm = new Arm(new ArmIO() {});
     }
     if (indexer == null) {
       indexer = new Indexer(new IndexerIO() {});
