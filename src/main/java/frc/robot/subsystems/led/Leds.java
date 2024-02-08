@@ -24,6 +24,8 @@ public class Leds extends SubsystemBase {
     AUTO_FINISHED,
     AUTONOMOUS,
     HANGING,
+    IN_RANGE,
+    CAN_SHOOT,
     SHOOTING,
     CONTAINING,
     INTAKING,
@@ -69,8 +71,9 @@ public class Leds extends SubsystemBase {
   private static final double waveAllianceDuration = 2.0;
   private static final double autoFadeTime = 2.5; // 3s nominal
   private static final double autoFadeMaxTime = 5.0; // Return to normal
+  private static final double noteAngle = 5.0;
 
-  private NetworkTable ledTable;
+  private NetworkTable ledTable; 
   private NetworkTableEntry ledModeEntry;
   private NetworkTableEntry ledTestingEntry;
   private NetworkTableEntry ledColor;
@@ -122,23 +125,29 @@ public class Leds extends SubsystemBase {
     } else if (false) { // TODO: need state variable for autonomous
       mode = LedMode.AUTONOMOUS;
 
-    } else if (state.hanging) { // TODO: need state variable for hanging
+    } else if (state.hanging) {
       mode = LedMode.HANGING;
 
-    } else if (state.shooting) { // TODO: need state variable for shooting
+    } else if (state.shooting) {
       mode = LedMode.SHOOTING;
 
-    } else if (state.hasNote) { // TODO: need state variable for containing
+    } else if (state.canShoot && state.hasNote) {
+      mode = LedMode.CAN_SHOOT;
+   
+    }else if(state.inRange && state.hasNote){
+      mode = LedMode.IN_RANGE;
+
+    } else if (state.hasNote) { 
       mode = LedMode.CONTAINING;
 
-    } else if (state.intaking) { // TODO: need state variable for intaking
+    } else if (state.intaking) { 
       mode = LedMode.INTAKING;
 
     } else if (state.seeNote) {
-      if (state.noteAngle <= -15.0) { // TODO: need to change to constant once angle known
+      if (state.noteAngle <= -noteAngle) { // TODO: need to change to constant once angle known
         mode = LedMode.LEFT_NOTE_DETECTION;
 
-      } else if (state.noteAngle >= 15.0) {
+      } else if (state.noteAngle >= noteAngle) {
         mode = LedMode.RIGHT_NOTE_DETECTION;
 
       } else {
@@ -180,6 +189,20 @@ public class Leds extends SubsystemBase {
       case HANGING:
         solid(Section.FULL, new Color("#006400")); // Dark Green is 0x006400
         ledColor.setString("3003200");
+        break;
+
+      case IN_RANGE:
+        wave(
+            Section.FULL,
+            Color.kBeige,
+            Color.kBlack,
+            waveAllianceCycleLength,
+            waveAllianceDuration);
+        break;
+
+      case CAN_SHOOT:
+        solid(Section.FULL, Color.kBlueViolet);
+        // has the same color as shooting except it's solid
         break;
 
       case SHOOTING:
