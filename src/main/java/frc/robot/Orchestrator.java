@@ -49,7 +49,7 @@ public class Orchestrator {
             intakeNote.intake());
   }
 
-  public Command expel() {
+  public Command expelFull() {
     return Commands.parallel(
             // arm.toSetpoint(new Rotation2d()), //TODO Make setPoint for pickup position.
             // Commands.waitUntil(arm::atSetpoint).withTimeout(2),
