@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.IntakeNote;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,7 +35,7 @@ public class IntakeNote extends SubsystemBase {
   public Command release() {
     return Commands.run(
         () -> {
-          Logger.recordOutput("IntakeNote/DesiredReleaseSpeed", IntakeConstants.RELEASE_SPEED);
+          Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.RELEASE_SPEED);
           intakeNoteIO.setSpeed(IntakeConstants.RELEASE_SPEED);
         },
         this);
@@ -48,6 +44,7 @@ public class IntakeNote extends SubsystemBase {
   public Command stop() {
     return Commands.run(
         () -> {
+          Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.STOP_SPEED);
           intakeNoteIO.setSpeed(IntakeConstants.STOP_SPEED);
         },
         this);
