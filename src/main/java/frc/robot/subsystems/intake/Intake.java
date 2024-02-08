@@ -3,25 +3,23 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.IntakeNote.IntakeNoteIOInputsAutoLogged;
-
 import org.littletonrobotics.junction.Logger;
 
-public class IntakeNote extends SubsystemBase {
+public class Intake extends SubsystemBase {
 
-  private final IntakeNoteIO intakeNoteIO;
-  private final IntakeNoteIOInputsAutoLogged intakeInputs;
+  private final IntakeIO intakeIO;
+  private final IntakeIOInputsAutoLogged intakeInputs;
 
-  public IntakeNote(IntakeNoteIO intakeNoteIO) {
+  public Intake(IntakeIO intakeIO) {
     super();
-    this.intakeNoteIO = intakeNoteIO;
-    intakeInputs = new IntakeNoteIOInputsAutoLogged();
+    this.intakeIO = intakeIO;
+    intakeInputs = new IntakeIOInputsAutoLogged();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    intakeNoteIO.updateInputs(intakeInputs);
+    intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("IntakeNote", intakeInputs);
   }
 
@@ -29,7 +27,7 @@ public class IntakeNote extends SubsystemBase {
     return Commands.run(
         () -> {
           Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.INTAKE_SPEED);
-          intakeNoteIO.setSpeed(IntakeConstants.INTAKE_SPEED);
+          intakeIO.setSpeed(IntakeConstants.INTAKE_SPEED);
         },
         this);
   }
@@ -38,7 +36,7 @@ public class IntakeNote extends SubsystemBase {
     return Commands.run(
         () -> {
           Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.RELEASE_SPEED);
-          intakeNoteIO.setSpeed(IntakeConstants.RELEASE_SPEED);
+          intakeIO.setSpeed(IntakeConstants.RELEASE_SPEED);
         },
         this);
   }
@@ -47,7 +45,7 @@ public class IntakeNote extends SubsystemBase {
     return Commands.run(
         () -> {
           Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.STOP_SPEED);
-          intakeNoteIO.setSpeed(IntakeConstants.STOP_SPEED);
+          intakeIO.setSpeed(IntakeConstants.STOP_SPEED);
         },
         this);
   }

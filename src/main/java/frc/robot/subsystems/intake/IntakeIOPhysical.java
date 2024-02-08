@@ -7,11 +7,11 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Schematic;
 
-public class IntakeNoteIOPhysical implements IntakeNoteIO {
+public class IntakeIOPhysical implements IntakeIO {
   private final CANSparkMax intakeMotor;
   private final RelativeEncoder intakeEncoder;
 
-  public IntakeNoteIOPhysical() {
+  public IntakeIOPhysical() {
     intakeMotor = new CANSparkMax(Schematic.INTAKE_ID, MotorType.kBrushless);
     intakeMotor.setIdleMode(IdleMode.kBrake);
     intakeMotor.setInverted(false);
@@ -30,7 +30,7 @@ public class IntakeNoteIOPhysical implements IntakeNoteIO {
     intakeMotor.set(speed);
   }
 
-  public void updateInputs(IntakeNoteIOInputs intakeInputs) {
+  public void updateInputs(IntakeIOInputs intakeInputs) {
     intakeInputs.positionRads = intakeEncoder.getPosition();
     intakeInputs.velocityRadsPerSec = intakeEncoder.getVelocity();
 
