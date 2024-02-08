@@ -15,7 +15,7 @@ public class Shooter extends SubsystemBase {
 
   private boolean PIDMode = false;
   private double currentVelocitySetpoint;
-  private static double speakerHight = 211.0;
+  private static final double SPEAKER_HEIGHT = 211.0;
   private SimpleMotorFeedforward shooterFeedforward =
       new SimpleMotorFeedforward(
           ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
@@ -96,13 +96,13 @@ public class Shooter extends SubsystemBase {
    * @return calculates the hypotenuse of the hight of the speaker and the inputed distance
    */
   public double calculateShootingDistance(double distanceFromSpeaker) {
-    return Math.hypot(speakerHight, distanceFromSpeaker);
+    return Math.hypot(SPEAKER_HEIGHT, distanceFromSpeaker);
   }
   /**
    * @param distanceFromSpeaker
    * @return the angle at which the shooter must be to shoot into the speaker
    */
   public double calculateShootingAngle(double distanceFromSpeaker) {
-    return Math.abs(Math.atan(speakerHight / distanceFromSpeaker));
+    return Math.abs(Math.atan(SPEAKER_HEIGHT / distanceFromSpeaker));
   }
 }
