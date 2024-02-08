@@ -7,11 +7,6 @@ import org.littletonrobotics.junction.Logger;
 public class Pixy2 extends SubsystemBase {
   private final Pixy2IO io;
   private final Pixy2IOInputsAutoLogged inputs = new Pixy2IOInputsAutoLogged();
-
-  private final MedianFilter angleFilter = new MedianFilter(10);
-
-  private double filteredAngle;
-
   public Pixy2(Pixy2IO io) {
     this.io = io;
   }
@@ -20,10 +15,6 @@ public class Pixy2 extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Pixy2", inputs);
-    if (seesNote()) {
-      filteredAngle = angleFilter.calculate(inputs.angle);
-    }
-    Logger.recordOutput("Pixy2/FilteredAngle", filteredAngle);
   }
 
   public double getAge() {
