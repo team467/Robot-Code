@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkLimitSwitch;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Schematic;
 
 public class ArmIOSparkMAX implements ArmIO {
   private final CANSparkMax leader;
@@ -11,8 +12,8 @@ public class ArmIOSparkMAX implements ArmIO {
   private final SparkLimitSwitch leaderLimitSwitch;
 
   public ArmIOSparkMAX() {
-    leader = new CANSparkMax(10, MotorType.kBrushless);
-    follower = new CANSparkMax(11, MotorType.kBrushless);
+    leader = new CANSparkMax(Schematic.ARM_ID_LEADER, MotorType.kBrushless);
+    follower = new CANSparkMax(Schematic.ARM_ID_FOLLOWER, MotorType.kBrushless);
     leaderLimitSwitch = leader.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     leader
         .getEncoder()
