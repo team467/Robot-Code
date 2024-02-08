@@ -20,6 +20,8 @@ public class Schematic {
   public static final int FRONT_LEFT_CANCODER_ID;
   public static final int FRONT_RIGHT_CANCODER_ID;
   public static final int GYRO_ID;
+  public static final int ARM_ID_LEADER;
+public static final int ARM_ID_FOLLOWER;
 
   static {
     switch (Constants.getRobot()) {
@@ -40,6 +42,8 @@ public class Schematic {
         REAR_RIGHT_STEERING_ID = 8;
         REAR_RIGHT_CANCODER_ID = 16;
         GYRO_ID = 17;
+        ARM_ID_LEADER = 0;
+        ARM_ID_FOLLOWER = 0;
       }
       case ROBOT_2024A -> {
         POWER_DIST_ID = 20;
@@ -58,6 +62,8 @@ public class Schematic {
         FRONT_RIGHT_STEERING_ID = 8;
         FRONT_RIGHT_CANCODER_ID = 16;
         GYRO_ID = 0;
+        ARM_ID_LEADER = 0;
+        ARM_ID_FOLLOWER = 0;
       }
       default -> {
         POWER_DIST_ID = 20;
@@ -76,6 +82,8 @@ public class Schematic {
         FRONT_RIGHT_STEERING_ID = 0;
         FRONT_RIGHT_CANCODER_ID = 0;
         GYRO_ID = 0;
+        ARM_ID_LEADER = 0;
+        ARM_ID_FOLLOWER = 0;
       }
     }
   }
