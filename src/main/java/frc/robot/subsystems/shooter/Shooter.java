@@ -19,14 +19,14 @@ public class Shooter extends SubsystemBase {
   private SimpleMotorFeedforward shooterFeedforward =
       new SimpleMotorFeedforward(
           ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
-  private PIDController shooterFeedack =
+  private PIDController shooterFeedback =
       new PIDController(ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
 
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
   public Shooter(ShooterIO io) {
     this.io = io;
-    shooterFeedack.setTolerance(ShooterConstants.SHOOTER_TOLERANCE.get());
+    shooterFeedback.setTolerance(ShooterConstants.SHOOTER_TOLERANCE.get());
   }
 
   public void periodic() {
@@ -42,18 +42,18 @@ public class Shooter extends SubsystemBase {
       if (ShooterConstants.SHOOTER_KP.hasChanged(hashCode())
           || ShooterConstants.SHOOTER_KD.hasChanged(hashCode())) {
         Logger.recordOutput("Shooter/newP", ShooterConstants.SHOOTER_KP.get());
-        shooterFeedack.setPID(
+        shooterFeedback.setPID(
             ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
       }
     }
     if (PIDMode) {
       io.setShooterVoltage(
           shooterFeedforward.calculate(currentVelocitySetpoint)
-              + shooterFeedack.calculate(
+              + shooterFeedback.calculate(
                   inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
     }
-    Logger.recordOutput("Shooter/setPointVelocity", shooterFeedack.getSetpoint());
-    Logger.recordOutput("Shooter/error", shooterFeedack.getVelocityError());
+    Logger.recordOutput("Shooter/setPointVelocity", shooterFeedback.getSetpoint());
+    Logger.recordOutput("Shooter/error", shooterFeedback.getVelocityError());
   }
   /**
    * @param velocitySetpoint
@@ -85,10 +85,10 @@ public class Shooter extends SubsystemBase {
    *     that of the setpoint of the PID.
    */
   public boolean ShooterSpeedIsReady() {
-    if (shooterFeedack.getSetpoint() == 0) {
+    if (shooterFeedback.getSetpoint() == 0) {
       return false;
     } else {
-      return shooterFeedack.atSetpoint();
+      return shooterFeedback.atSetpoint();
     }
   }
   /**

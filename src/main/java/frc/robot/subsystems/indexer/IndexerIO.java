@@ -7,8 +7,6 @@ public interface IndexerIO {
   class IndexerIOInputs {
     public double indexerVelocityRadPerSec;
 
-    public double indexerVelocityMetersPerSec;
-
     public double indexerAppliedVolts;
 
     public double indexerCurrentAmps;
