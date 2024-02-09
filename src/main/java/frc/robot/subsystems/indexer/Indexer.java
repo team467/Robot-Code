@@ -28,7 +28,7 @@ public class Indexer extends SubsystemBase {
    * @param percent
    * @return A command that sets the indexer to a percent velocity from -1 to 1
    */
-  public Command setIndexerPercentVoltage(double percent) {
+  public Command setIndexerPercentVelocity(double percent) {
     return Commands.run(() -> io.setIndexerPercentVelocity(percent), this);
   }
   /**
