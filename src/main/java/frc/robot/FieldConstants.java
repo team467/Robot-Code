@@ -4,11 +4,9 @@ import static edu.wpi.first.apriltag.AprilTagFields.k2024Crescendo;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import java.io.IOException;
 
 /**
  * Contains various field dimensions and useful reference points. Dimensions are in meters, and sets
@@ -65,37 +63,32 @@ public final class FieldConstants {
   /** Each corner of the speaker * */
   public static final class Speaker {
 
+    // corners (blue alliance origin)
+    public static Translation3d topRightSpeaker =
+        new Translation3d(
+            Units.inchesToMeters(18.055),
+            Units.inchesToMeters(238.815),
+            Units.inchesToMeters(13.091));
+
+    public static Translation3d topLeftSpeaker =
+        new Translation3d(
+            Units.inchesToMeters(18.055),
+            Units.inchesToMeters(197.765),
+            Units.inchesToMeters(83.091));
+
+    public static Translation3d bottomRightSpeaker =
+        new Translation3d(0.0, Units.inchesToMeters(238.815), Units.inchesToMeters(78.324));
+    public static Translation3d bottomLeftSpeaker =
+        new Translation3d(0.0, Units.inchesToMeters(197.765), Units.inchesToMeters(78.324));
+
     /** Center of the speaker opening (blue alliance) */
-    public static Pose2d centerSpeakerOpening =
-        new Pose2d(0.0, fieldWidth - Units.inchesToMeters(104.0), new Rotation2d());
+    //    public static Translation2d centerSpeakerOpening =
+    //        new Translation2d(topLeftSpeaker.getX() / 2.0, Units.inchesToMeters(241.56));
+
+    public static Translation2d centerSpeakerOpening =
+        new Translation2d(topLeftSpeaker.getX() / 2, fieldWidth - Units.inchesToMeters(104.0));
   }
-
-  // corners (blue alliance origin)
-  public static Translation3d topRightSpeaker =
-      new Translation3d(
-          Units.inchesToMeters(18.055),
-          Units.inchesToMeters(238.815),
-          Units.inchesToMeters(13.091));
-
-  public static Translation3d topLeftSpeaker =
-      new Translation3d(
-          Units.inchesToMeters(18.055),
-          Units.inchesToMeters(197.765),
-          Units.inchesToMeters(83.091));
-
-  public static Translation3d bottomRightSpeaker =
-      new Translation3d(0.0, Units.inchesToMeters(238.815), Units.inchesToMeters(78.324));
-  public static Translation3d bottomLeftSpeaker =
-      new Translation3d(0.0, Units.inchesToMeters(197.765), Units.inchesToMeters(78.324));
 
   public static double aprilTagWidth = Units.inchesToMeters(6.50);
-  public static AprilTagFieldLayout aprilTags;
-
-  static {
-    try {
-      aprilTags = AprilTagFieldLayout.loadFromResource(k2024Crescendo.m_resourceFile);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
+  public static AprilTagFieldLayout aprilTags = k2024Crescendo.loadAprilTagLayoutField();
 }
