@@ -7,7 +7,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Schematic;
 
-public class ShooterIOClark implements ShooterIO {
+public class ShooterIOPhysical implements ShooterIO {
   private final CANSparkMax shooterLeader;
   private final CANSparkMax shooterFollower;
 
@@ -15,7 +15,7 @@ public class ShooterIOClark implements ShooterIO {
   private final RelativeEncoder shooterFollowerEncoder;
   double rotsToRads = Units.rotationsToRadians(1);
 
-  public ShooterIOClark() {
+  public ShooterIOPhysical() {
     shooterLeader = new CANSparkMax(Schematic.SHOOTER_LEADER_ID, MotorType.kBrushless);
     shooterFollower = new CANSparkMax(Schematic.SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
     shooterLeaderEncoder = shooterLeader.getEncoder();
