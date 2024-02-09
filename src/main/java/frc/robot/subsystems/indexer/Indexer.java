@@ -3,22 +3,27 @@ package frc.robot.subsystems.indexer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.robotstate.RobotState;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
   private final IndexerIO io;
+  private final RobotState robotState;
 
   private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 
   /** Creates a new Indexer. */
-  public Indexer(IndexerIO io) {
+  public Indexer(IndexerIO io, RobotState robotState) {
     this.io = io;
+    this.robotState = robotState;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Indexer", inputs);
+    robotState.hasNote = getLimitSwitchPressed();
   }
   /**
    * @param percent
