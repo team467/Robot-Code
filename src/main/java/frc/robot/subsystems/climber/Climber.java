@@ -9,8 +9,8 @@ public class Climber extends SubsystemBase {
 
   private final ClimberIO climberIO;
   private final ClimberIOInputsAutoLogged climberIOInputs = new ClimberIOInputsAutoLogged();
-  private final Relay climberLock = new Relay(0); //TODO: Add constant for channel
-  //TODO: Add Soloenoid
+  private final Relay climberLock = new Relay(0); // TODO: Add constant for channel
+  // TODO: Add Soloenoid
 
   public Climber(ClimberIO climberIO) {
     super();

@@ -12,7 +12,4 @@ public interface ClimberIO {
   default void updateInput(ClimberIOInputs inputs) {}
 
   default void setMotorOutputPercent(double percentOutput) {}
-
-
- 
 }
