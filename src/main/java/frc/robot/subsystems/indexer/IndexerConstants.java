@@ -17,7 +17,7 @@ public class IndexerConstants {
         INDEXER_HOLD_VOLTAGE = 0.0;
         INDEXER_BACKWARD_VOLTAGE = 0.0;
         INDEXER_LIMIT_SWITCH_LEFT_ID = 0;
-                INDEXER_LIMIT_SWITCH_RIGHT_ID = 0;
+        INDEXER_LIMIT_SWITCH_RIGHT_ID = 0;
         WHEEL_DIAMETER = 4;
       }
       default -> {
@@ -26,7 +26,7 @@ public class IndexerConstants {
         INDEXER_BACKWARD_VOLTAGE = 0.0;
         INDEXER_LIMIT_SWITCH_LEFT_ID = 0;
         WHEEL_DIAMETER = 0.0;
-                        INDEXER_LIMIT_SWITCH_RIGHT_ID = 0;
+        INDEXER_LIMIT_SWITCH_RIGHT_ID = 0;
       }
     }
   }

@@ -29,7 +29,8 @@ public class IndexerIOPhysical implements IndexerIO {
 
   public void updateInputs(IndexerIOInputs inputs) {
     inputs.indexerVelocityRadPerSec = indexerEncoder.getVelocity();
-    inputs.indexerLimitSwitchPressed = indexerLimitSwitchLeft.get() || indexerLimitSwitchRight.get();
+    inputs.indexerLimitSwitchPressed =
+        indexerLimitSwitchLeft.get() || indexerLimitSwitchRight.get();
     inputs.indexerAppliedVolts = indexer.getAppliedOutput();
     inputs.indexerCurrentAmps = indexer.getOutputCurrent();
   }
