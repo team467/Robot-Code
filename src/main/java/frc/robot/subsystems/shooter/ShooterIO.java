@@ -5,12 +5,12 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ShooterIO {
   @AutoLog
   class ShooterIOInputs {
-    public double shooterLeaderVelocityRadPerSec;
-    public double shooterLeaderAppliedVolts;
-    public double shooterLeaderCurrentAmps;
-    public double shooterFollowerVelocityRadPerSec;
-    public double shooterFollowerAppliedVolts;
-    public double shooterFollowerCurrentAmps;
+    public double shooterTopVelocityRadPerSec;
+    public double shooterTopAppliedVolts;
+    public double shooterTopCurrentAmps;
+    public double shooterBottomVelocityRadPerSec;
+    public double shooterBottomAppliedVolts;
+    public double shooterBottomCurrentAmps;
     public double distanceFromSpeaker;
     public double ShootingAngle;
   }
