@@ -38,6 +38,6 @@ public class Indexer extends SubsystemBase {
    * @return if the indexers limit switch is pressed
    */
   public boolean getLimitSwitchPressed() {
-    return inputs.indexerLimitSwitchPressed;
+    return inputs.indexerLimitSwitchLeftPressed || inputs.indexerLimitSwitchRightPressed;
   }
 }
