@@ -13,7 +13,6 @@ public interface IndexerIO {
 
     public boolean indexerLimitSwitchLeftPressed;
     public boolean indexerLimitSwitchRightPressed;
-
   }
 
   default void setIndexerVoltage(double volts) {}
