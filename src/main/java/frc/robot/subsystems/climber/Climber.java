@@ -12,6 +12,9 @@ public class Climber extends SubsystemBase {
   private final Relay climberLock = new Relay(0); // TODO: Add constant for channel
   // TODO: Add Soloenoid
 
+  /** ClimberIO object, gets inputs for ClimberIO object 
+   * @param climberIO
+   */
   public Climber(ClimberIO climberIO) {
     super();
 
@@ -20,6 +23,12 @@ public class Climber extends SubsystemBase {
     climberIO.updateInput(climberIOInputs);
   }
 
+  /** Command to raise or lower the climber arms
+   * If percentOutput is negative, the climber will lower 
+   * If percentOutput is positive, the climber will raise 
+   * @param percentOutput takes a number from -1 to 1. 
+   * @return no return 
+   */
   public Command raiseOrLower(double percentOutput) {
     return Commands.run(
         () -> {
@@ -28,14 +37,9 @@ public class Climber extends SubsystemBase {
         this);
   }
 
-  // public Command lower(double percentOutput) {
-  //   return Commands.run(
-  //       () -> {
-  //         climberIO.setMotorOutputPercent(percentOutput);
-  //       },
-  //       this);
-  // }
-
+  /**Command to disable the climber 
+   * @return no return 
+   */
   public Command stop() {
     return Commands.run(
         () -> {
