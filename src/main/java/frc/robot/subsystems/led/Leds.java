@@ -73,7 +73,7 @@ public class Leds extends SubsystemBase {
   private static final double autoFadeMaxTime = 5.0; // Return to normal
   private static final double noteAngle = 5.0;
 
-  private NetworkTable ledTable; 
+  private NetworkTable ledTable;
   private NetworkTableEntry ledModeEntry;
   private NetworkTableEntry ledTestingEntry;
   private NetworkTableEntry ledColor;
@@ -133,14 +133,14 @@ public class Leds extends SubsystemBase {
 
     } else if (state.canShoot && state.hasNote) {
       mode = LedMode.CAN_SHOOT;
-   
-    }else if(state.inRange && state.hasNote){
+
+    } else if (state.inRange && state.hasNote) {
       mode = LedMode.IN_RANGE;
 
-    } else if (state.hasNote) { 
+    } else if (state.hasNote) {
       mode = LedMode.CONTAINING;
 
-    } else if (state.intaking) { 
+    } else if (state.intaking) {
       mode = LedMode.INTAKING;
 
     } else if (state.seeNote) {
