@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
 import frc.lib.utils.LocalADStarAK;
-import frc.lib.utils.RobotOdometry;
+import frc.robot.RobotOdometry;
 import frc.robot.commands.auto.StraightDriveToPose;
 import java.util.Set;
 import java.util.function.Supplier;

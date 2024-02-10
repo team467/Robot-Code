@@ -1,13 +1,18 @@
-package frc.lib.utils;
+package frc.robot;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
+import frc.lib.utils.AllianceFlipUtil;
+import frc.lib.utils.GeomUtils;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -23,6 +28,9 @@ public class RobotOdometry {
   private final Matrix<N3, N1> q = new Matrix<>(Nat.N3(), Nat.N1());
 
   private static RobotOdometry instance = null;
+
+  //advantage
+  private Twist2d robotVelocity = new Twist2d();
 
   /**
    * Initializes the RobotOdometry instance with the provided state standard deviations.
@@ -58,6 +66,7 @@ public class RobotOdometry {
   /** Records a new drive movement. */
   public void addDriveData(double timestamp, Twist2d twist) {
     updates.put(timestamp, new PoseUpdate(twist, new ArrayList<>()));
+    this.robotVelocity = twist;
     update();
   }
 
@@ -179,4 +188,35 @@ public class RobotOdometry {
 
   /** Represents a single vision pose with a timestamp and associated standard deviations. */
   public record TimestampedVisionUpdate(double timestamp, Pose2d pose, Matrix<N3, N1> stdDevs) {}
+
+  //advantage
+
+  public Twist2d fieldVelocity() {
+    Translation2d linearFieldVelocity = new Translation2d(robotVelocity.dx, robotVelocity.dy).rotateBy(latestPose.getRotation());
+    return new Twist2d(linearFieldVelocity.getX(), linearFieldVelocity.getY(), robotVelocity.dtheta);
+  }
+
+  public record AimingParameters(
+          Rotation2d driveHeading, double effectiveDistance, double radialFF) {}
+
+  public AimingParameters getAimingParameters() {
+    Pose2d robot = getLatestPose();
+    Twist2d fieldVelocity = fieldVelocity();
+
+    Translation2d originToGoal = AllianceFlipUtil.apply(new Translation2d()); // TODO: center speaker opening
+    Translation2d originToRobot = robot.getTranslation();
+
+    // Get robot to goal angle but limit to reasonable range
+    Rotation2d robotToGoalAngle = originToRobot.minus(originToGoal).getAngle();
+    // Subtract goal to robot angle from field velocity
+    Translation2d tangentialVelocity = new Translation2d(fieldVelocity.dx, fieldVelocity.dy).rotateBy(robotToGoalAngle.unaryMinus());
+    Translation2d originToVirtualGoal = originToGoal.plus(tangentialVelocity.unaryMinus());
+
+    // Angle to virtual goal
+    Rotation2d driveHeading = originToVirtualGoal.minus(originToRobot).getAngle();
+    // Distance to virtual goal
+    double effectiveDistance = originToRobot.getDistance(originToVirtualGoal);
+    double radialFF = -tangentialVelocity.getX();
+    return new AimingParameters(driveHeading, effectiveDistance, radialFF);
+  }
 }
