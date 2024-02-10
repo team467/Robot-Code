@@ -43,18 +43,37 @@ public class Orchestrator {
 
   public Command intakeBasic() {
     return Commands.sequence(
-            indexer.setIndexerPercentVoltage(4),
-            arm.toSetpoint(new Rotation2d()), //TODO Make setPoint for pickup position.
-            Commands.waitUntil(arm::atSetpoint).withTimeout(2),
-            intakeNote.intake());
+        indexer.setIndexerPercentVoltage(4),
+        arm.toSetpoint(new Rotation2d()), // TODO: Make setPoint for pickup position.
+        Commands.waitUntil(arm::atSetpoint).withTimeout(2),
+        intakeNote.intake());
   }
 
-  public Command expelFull() {
+  // Intakes after seeing note with Pixy2.
+  public Command visionIntake() {
+    return Commands.sequence(
+        indexer.setIndexerPercentVoltage(4),
+        arm.toSetpoint(new Rotation2d()), // TODO: Make setpoint for pickup position.
+        Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
+        intakeNote.intake());
+  }
+
+  public Command expelFullRobot() {
     return Commands.parallel(
-            // arm.toSetpoint(new Rotation2d()), //TODO Make setPoint for pickup position.
-            // Commands.waitUntil(arm::atSetpoint).withTimeout(2),
+        // arm.toSetpoint(new Rotation2d()), //TODO Make setPoint for pickup position.
+        // Commands.waitUntil(arm::atSetpoint).withTimeout(2),
             shooter.manualShoot(-5),
             indexer.setIndexerVoltage(-5.0),
             intakeNote.release());
+  }
+
+  public Command expelShooter() {
+    return Commands.parallel(
+            shooter.manualShoot(-5.0),
+            indexer.setIndexerVoltage(-5.0));
+  }
+
+  public Command expelIntake() {
+    return intakeNote.release();
   }
 }
