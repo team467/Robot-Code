@@ -20,7 +20,7 @@ public class Climber extends SubsystemBase {
     climberIO.updateInput(climberIOInputs);
   }
 
-  public Command raise(double percentOutput) {
+  public Command raiseOrLower(double percentOutput) {
     return Commands.run(
         () -> {
           climberIO.setMotorOutputPercent(percentOutput);
@@ -28,13 +28,13 @@ public class Climber extends SubsystemBase {
         this);
   }
 
-  public Command lower(double percentOutput) {
-    return Commands.run(
-        () -> {
-          climberIO.setMotorOutputPercent(percentOutput);
-        },
-        this);
-  }
+  // public Command lower(double percentOutput) {
+  //   return Commands.run(
+  //       () -> {
+  //         climberIO.setMotorOutputPercent(percentOutput);
+  //       },
+  //       this);
+  // }
 
   public Command stop() {
     return Commands.run(

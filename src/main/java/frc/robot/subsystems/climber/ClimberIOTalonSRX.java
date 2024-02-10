@@ -15,6 +15,8 @@ public class ClimberIOTalonSRX implements ClimberIO {
   @Override
   public void updateInput(ClimberIOInputs inputs) {
     inputs.motorPercentOutput = motor.getMotorOutputPercent();
+    inputs.motorVoltage = motor.getMotorOutputVoltage(); 
+    
 
     // inputs.leftMotorVoltage = motorLeft.getMotorOutputVoltage();
   }
