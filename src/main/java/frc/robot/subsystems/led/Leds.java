@@ -73,10 +73,12 @@ public class Leds extends SubsystemBase {
   private static final double autoFadeMaxTime = 5.0; // Return to normal
   private static final double noteAngle = 5.0;
 
+  /**Creates a Network table for testing led modes and colors */
   private NetworkTable ledTable;
+  /**Sets the mode for led in network table and allows to test led modes */
   private NetworkTableEntry ledModeEntry;
+  /**Allows testing in leds by enabling testing mode */
   private NetworkTableEntry ledTestingEntry;
-  private NetworkTableEntry ledColor;
 
   public Leds() {
     ledTable = NetworkTableInstance.getDefault().getTable("Leds");
@@ -84,8 +86,6 @@ public class Leds extends SubsystemBase {
     ledModeEntry.setString("OFF");
     ledTestingEntry = ledTable.getEntry("Testing");
     ledTestingEntry.setBoolean(false);
-    ledColor = ledTable.getEntry("Color");
-    ledColor.setString(Color.kBlack.toHexString());
 
     leds = new AddressableLED(0);
     buffer = new AddressableLEDBuffer(length);
@@ -115,7 +115,10 @@ public class Leds extends SubsystemBase {
     if (DriverStation.isEStopped()) {
       mode = LedMode.ESTOPPED;
 
-    } else if (state.lowBatteryAlert) {
+     } else {
+        mode = LedMode.DISABLED;
+      
+     }  if (state.lowBatteryAlert) {
       mode = LedMode.LOW_BATTERY_ALERT;
       // low battery mode at top for testing purposes
 
@@ -161,12 +164,10 @@ public class Leds extends SubsystemBase {
         } else {
           mode = LedMode.RED_ALLIANCE;
         }
-      } else {
-        mode = LedMode.DISABLED;
-      }
 
-    } else {
-      mode = LedMode.OFF;
+      } else {
+        mode = LedMode.OFF;
+      }
     }
   }
 
@@ -188,7 +189,6 @@ public class Leds extends SubsystemBase {
 
       case HANGING:
         solid(Section.FULL, new Color("#006400")); // Dark Green is 0x006400
-        ledColor.setString("3003200");
         break;
 
       case IN_RANGE:
@@ -217,7 +217,6 @@ public class Leds extends SubsystemBase {
 
       case CONTAINING:
         solid(Section.FULL, Color.kAquamarine);
-        ledColor.setString(Color.kAquamarine.toHexString());
         break;
 
       case INTAKING:
@@ -294,6 +293,7 @@ public class Leds extends SubsystemBase {
       mode = LedMode.valueOf(ledModeEntry.getString("OFF"));
     } else {
       updateState();
+      ledModeEntry.setString(mode.toString());
     }
     updateLeds();
   }
