@@ -73,11 +73,11 @@ public class Leds extends SubsystemBase {
   private static final double autoFadeMaxTime = 5.0; // Return to normal
   private static final double noteAngle = 5.0;
 
-  /**Creates a Network table for testing led modes and colors */
+  /** Creates a Network table for testing led modes and colors */
   private NetworkTable ledTable;
-  /**Sets the mode for led in network table and allows to test led modes */
+  /** Sets the mode for led in network table and allows to test led modes */
   private NetworkTableEntry ledModeEntry;
-  /**Allows testing in leds by enabling testing mode */
+  /** Allows testing in leds by enabling testing mode */
   private NetworkTableEntry ledTestingEntry;
 
   public Leds() {
@@ -114,14 +114,20 @@ public class Leds extends SubsystemBase {
 
     if (DriverStation.isEStopped()) {
       mode = LedMode.ESTOPPED;
-
-     } else {
-        mode = LedMode.DISABLED;
-      
-     }  if (state.lowBatteryAlert) {
+    } else if (state.lowBatteryAlert) {
       mode = LedMode.LOW_BATTERY_ALERT;
       // low battery mode at top for testing purposes
+    } else if (DriverStation.isDisabled()) {
+      if (DriverStation.getAlliance().isPresent()) {
+        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+          mode = LedMode.BLUE_ALLIANCE;
+        } else {
+          mode = LedMode.RED_ALLIANCE;
+        }
 
+      } else {
+        mode = LedMode.DISABLED;
+      }
     } else if (false) { // TODO: need state variable for auto finished
       mode = LedMode.AUTO_FINISHED;
 
@@ -155,18 +161,6 @@ public class Leds extends SubsystemBase {
 
       } else {
         mode = LedMode.STRAIGHT_NOTE_DETECTION;
-      }
-
-    } else if (DriverStation.isDisabled()) {
-      if (DriverStation.getAlliance().isPresent()) {
-        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-          mode = LedMode.BLUE_ALLIANCE;
-        } else {
-          mode = LedMode.RED_ALLIANCE;
-        }
-
-      } else {
-        mode = LedMode.OFF;
       }
     }
   }
