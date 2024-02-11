@@ -59,62 +59,64 @@ public class Autos {
   }
 
   public Command twoNoteAuto(StartingPosition position) {
-    Pose2d notePose;
+    int STARTING_POSE;
     switch (position) {
-      case LEFT -> notePose = new Pose2d(); // TODO: Add the correct pose for the two note auto
-      case CENTER -> notePose = new Pose2d();
-      case RIGHT -> notePose = new Pose2d();
-      default -> notePose = new Pose2d();
+      case LEFT -> STARTING_POSE = 0;
+      case CENTER -> STARTING_POSE = 1;
+      case RIGHT -> STARTING_POSE = 2;
+      default -> STARTING_POSE = 0;
     }
+    Translation2d noteTranslation =
+        new Translation2d(
+            FieldConstants.StagingLocations.spikeTranslations[STARTING_POSE].getX() - 0.3,
+            FieldConstants.StagingLocations.spikeTranslations[STARTING_POSE].getY());
     return Commands.defer(
             () -> new StraightDriveToPose(getSpeakerTargetPose().get(), drive), Set.of(drive))
+                .andThen(
+                    shooter
+                        .shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)
         .andThen(
-            shooter
-                .shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)
-                .andThen(
-                    Commands.parallel(
-                        new StraightDriveToPose(notePose, drive),
-                        arm.toSetpoint(
-                            new Rotation2d(
-                                -9000) // TODO: Add the correct setpoint for the two note auto
-                            )))
-                .andThen(
-                    Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
-                .andThen(new StraightDriveToPose(getSpeakerTargetPose().get(), drive))
-                .andThen(
-                    arm.toSetpoint(
-                        new Rotation2d(
-                            shooter.calculateShootingAngle(
-                                    drive
-                                        .getPose()
-                                        .getTranslation()
-                                        .getDistance(
-                                            AllianceFlipUtil.apply(
-                                                FieldConstants.Speaker.centerSpeakerOpening
-                                                    .toTranslation2d())))
-                                - ArmConstants.HORIZONTAL_OFFSET.getRadians())))
-                .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)));
+            Commands.parallel(
+                new StraightDriveToPose(new Pose2d(noteTranslation, drive.getRotation()), drive),
+                arm.toSetpoint(
+                    new Rotation2d(-9000) // TODO: Add the correct setpoint for the two note auto
+                    )))
+        .andThen(Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
+        .andThen(new StraightDriveToPose(getSpeakerTargetPose().get(), drive))
+        .andThen(
+            arm.toSetpoint(
+                new Rotation2d(
+                    shooter.calculateShootingAngle(
+                            drive
+                                .getPose()
+                                .getTranslation()
+                                .getDistance(
+                                    AllianceFlipUtil.apply(
+                                        FieldConstants.Speaker.centerSpeakerOpening
+                                            .toTranslation2d())))
+                        - ArmConstants.HORIZONTAL_OFFSET.getRadians())))
+        .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)));
   }
 
   public Command threeNoteAuto(StartingPosition position) {
-    Pose2d notePose;
-    Pose2d secondNotePose;
+    Translation2d noteTranslation;
+    Translation2d secondNoteTranslation;
     switch (position) {
       case LEFT -> {
-        notePose = new Pose2d();
-        secondNotePose = notePose; // TODO: Add the correct pose for the two note auto
+        noteTranslation = drive.getPose().getTranslation();
+        secondNoteTranslation = noteTranslation; // TODO: Add the correct pose for the two note auto
       }
       case CENTER -> {
-        notePose = new Pose2d();
-        secondNotePose = notePose;
+        noteTranslation = drive.getPose().getTranslation();
+        secondNoteTranslation = noteTranslation;
       }
       case RIGHT -> {
-        notePose = new Pose2d();
-        secondNotePose = notePose;
+        noteTranslation = drive.getPose().getTranslation();
+        secondNoteTranslation = noteTranslation;
       }
       default -> {
-        notePose = new Pose2d();
-        secondNotePose = notePose;
+        noteTranslation = drive.getPose().getTranslation();
+        secondNoteTranslation = noteTranslation;
       }
     }
     return Commands.defer(
@@ -124,7 +126,8 @@ public class Autos {
                 .shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)
                 .andThen(
                     Commands.parallel(
-                        new StraightDriveToPose(notePose, drive),
+                        new StraightDriveToPose(
+                            new Pose2d(noteTranslation, drive.getRotation()), drive),
                         arm.toSetpoint(
                             new Rotation2d(
                                 -9000) // TODO: Add the correct setpoint for the two note auto
@@ -147,7 +150,8 @@ public class Autos {
                 .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))
         .andThen(
             Commands.parallel(
-                    new StraightDriveToPose(secondNotePose, drive),
+                    new StraightDriveToPose(
+                        new Pose2d(secondNoteTranslation, drive.getRotation()), drive),
                     arm.toSetpoint(
                         new Rotation2d(
                             -9000) // TODO: Add the correct setpoint for the two note auto
