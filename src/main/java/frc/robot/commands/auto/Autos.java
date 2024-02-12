@@ -77,6 +77,10 @@ public class Autos {
             AllianceFlipUtil.apply(new Translation2d(
             FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getX() - 0.3,
             FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getY()));
+
+    Logger.recordOutput("Autos/setNotePositions/noteTranslation", noteTranslation);
+    Logger.recordOutput("Autos/setNotePositions/secondNoteTranslation", secondNoteTranslation);
+    Logger.recordOutput("Autos/setNotePositions/thirdNoteTranslation", thirdNoteTranslation);
   }
 
 
