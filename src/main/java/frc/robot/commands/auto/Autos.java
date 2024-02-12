@@ -27,9 +27,11 @@ public class Autos {
 
   private int FIRST_NOTE_POSITION = 0;
   private int SECOND_NOTE_POSITION = 0;
+  private int THIRD_NOTE_POSITION = 0;
 
   Translation2d noteTranslation;
   Translation2d secondNoteTranslation;
+  Translation2d thirdNoteTranslation;
 
   public Autos(Drive drive, Shooter shooter, Indexer indexer, Arm arm, Intake intake) {
     this.drive = drive;
@@ -45,20 +47,21 @@ public class Autos {
     RIGHT
   }
   private void setNotePositions(StartingPosition position) {
-    int FIRST_NOTE_POSITION = 0;
-    int SECOND_NOTE_POSITION = 0;
     switch (position) {
       case LEFT -> {
         FIRST_NOTE_POSITION = 0;
         SECOND_NOTE_POSITION = 0;
+        THIRD_NOTE_POSITION = 0;
       }
       case CENTER -> {
         FIRST_NOTE_POSITION = 1;
         SECOND_NOTE_POSITION = 2;
+        THIRD_NOTE_POSITION = 0;
       }
       case RIGHT -> {
         FIRST_NOTE_POSITION = 2;
         SECOND_NOTE_POSITION = 4;
+        THIRD_NOTE_POSITION = 0;
       }
     }
     Translation2d noteTranslation =
@@ -69,8 +72,13 @@ public class Autos {
             new Translation2d(
                     FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getX() - 0.3,
                     FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getY());
+    Translation2d thirdNoteTranslation =
+            new Translation2d(
+                    FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getX() - 0.3,
+                    FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getY());
     this.noteTranslation = noteTranslation;
     this.secondNoteTranslation = secondNoteTranslation;
+    this.thirdNoteTranslation = thirdNoteTranslation;
   }
 
 
@@ -150,5 +158,55 @@ public class Autos {
                         .andThen(new StraightDriveToPose(getSpeakerTargetPose().get(), drive))
                         .andThen(
                             shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))));
+  }
+
+  public Command fourNoteAuto(StartingPosition position) {
+    setNotePositions(position);
+    return Commands.defer(
+            () -> new StraightDriveToPose(getSpeakerTargetPose().get(), drive), Set.of(drive))
+        .andThen(
+            shooter
+                .shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)
+                .andThen(
+                    Commands.parallel(
+                        new StraightDriveToPose(
+                            new Pose2d(noteTranslation, drive.getRotation()), drive),
+                        arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
+                .andThen(
+                    Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
+                .andThen(new StraightDriveToPose(getSpeakerTargetPose().get(), drive))
+                .andThen(
+                    arm.toSetpoint(
+                        new Rotation2d(
+                            shooter.calculateShootingAngle(
+                                    drive
+                                        .getPose()
+                                        .getTranslation()
+                                        .getDistance(
+                                            AllianceFlipUtil.apply(
+                                                FieldConstants.Speaker.centerSpeakerOpening
+                                                    .toTranslation2d()))) //Align arm angle with speaker
+                                - ArmConstants.HORIZONTAL_OFFSET.getRadians())))
+                .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))
+        .andThen(
+            Commands.parallel(
+                    new StraightDriveToPose(
+                        new Pose2d(secondNoteTranslation, drive.getRotation()), drive),
+                    arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET)))
+                .andThen(
+                    Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25))
+                        .andThen(new StraightDriveToPose(getSpeakerTargetPose().get(), drive))
+                        .andThen(
+                            shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))
+                .andThen(
+                    Commands.parallel(
+                        new StraightDriveToPose(
+                            new Pose2d(thirdNoteTranslation, drive.getRotation()), drive),
+                        arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET)))
+                        .andThen(
+                            Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25))
+                                .andThen(new StraightDriveToPose(getSpeakerTargetPose().get(), drive))
+                                .andThen(
+                                    shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))));
   }
 }
