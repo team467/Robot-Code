@@ -64,21 +64,18 @@ public class Autos {
         THIRD_NOTE_POSITION = 0;
       }
     }
-    Translation2d noteTranslation =
+
+    this.noteTranslation =
             new Translation2d(
                     FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getX() - 0.3,
                     FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getY());
-    Translation2d secondNoteTranslation =
+    this.secondNoteTranslation =
             new Translation2d(
                     FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getX() - 0.3,
                     FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getY());
-    Translation2d thirdNoteTranslation =
-            new Translation2d(
-                    FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getX() - 0.3,
-                    FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getY());
-    this.noteTranslation = noteTranslation;
-    this.secondNoteTranslation = secondNoteTranslation;
-    this.thirdNoteTranslation = thirdNoteTranslation;
+    this.thirdNoteTranslation = new Translation2d(
+            FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getX() - 0.3,
+            FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getY());;
   }
 
 
