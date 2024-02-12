@@ -25,6 +25,12 @@ public class Autos {
   private final Arm arm;
   private final Intake intake;
 
+  private int FIRST_NOTE_POSITION = 0;
+  private int SECOND_NOTE_POSITION = 0;
+
+  Translation2d noteTranslation;
+  Translation2d secondNoteTranslation;
+
   public Autos(Drive drive, Shooter shooter, Indexer indexer, Arm arm, Intake intake) {
     this.drive = drive;
     this.shooter = shooter;
@@ -38,6 +44,35 @@ public class Autos {
     CENTER,
     RIGHT
   }
+  private void setNotePositions(StartingPosition position) {
+    int FIRST_NOTE_POSITION = 0;
+    int SECOND_NOTE_POSITION = 0;
+    switch (position) {
+      case LEFT -> {
+        FIRST_NOTE_POSITION = 0;
+        SECOND_NOTE_POSITION = 0;
+      }
+      case CENTER -> {
+        FIRST_NOTE_POSITION = 1;
+        SECOND_NOTE_POSITION = 2;
+      }
+      case RIGHT -> {
+        FIRST_NOTE_POSITION = 2;
+        SECOND_NOTE_POSITION = 4;
+      }
+    }
+    Translation2d noteTranslation =
+            new Translation2d(
+                    FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getX() - 0.3,
+                    FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getY());
+    Translation2d secondNoteTranslation =
+            new Translation2d(
+                    FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getX() - 0.3,
+                    FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getY());
+    this.noteTranslation = noteTranslation;
+    this.secondNoteTranslation = secondNoteTranslation;
+  }
+
 
   private Supplier<Pose2d> getSpeakerTargetPose() {
     Translation2d speaker =
@@ -59,16 +94,7 @@ public class Autos {
   }
 
   public Command twoNoteAuto(StartingPosition position) {
-    int NOTE_POSITION = 0;
-    switch (position) {
-      case LEFT -> NOTE_POSITION = 0;
-      case CENTER -> NOTE_POSITION = 1;
-      case RIGHT -> NOTE_POSITION = 2;
-    }
-    Translation2d noteTranslation =
-        new Translation2d(
-            FieldConstants.StagingLocations.spikeTranslations[NOTE_POSITION].getX() - 0.3,
-            FieldConstants.StagingLocations.spikeTranslations[NOTE_POSITION].getY());
+    setNotePositions(position);
     return Commands.defer(
             () -> new StraightDriveToPose(getSpeakerTargetPose().get(), drive), Set.of(drive))
         .andThen(
@@ -82,35 +108,12 @@ public class Autos {
                 .andThen(
                     Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
                 .andThen(new StraightDriveToPose(getSpeakerTargetPose().get(), drive))
-                .andThen(arm.toSetpoint(new Rotation2d()))
+                .andThen(arm.toSetpoint(new Rotation2d())) //Align arm angle with speaker
                 .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)));
   }
 
   public Command threeNoteAuto(StartingPosition position) {
-    int FIRST_NOTE_POSITION = 0;
-    int SECOND_NOTE_POSITION = 0;
-    switch (position) {
-      case LEFT -> {
-        FIRST_NOTE_POSITION = 0;
-        SECOND_NOTE_POSITION = 0;
-      }
-      case CENTER -> {
-        FIRST_NOTE_POSITION = 1;
-        SECOND_NOTE_POSITION = 2;
-      }
-      case RIGHT -> {
-        FIRST_NOTE_POSITION = 2;
-        SECOND_NOTE_POSITION = 4;
-      }
-    }
-    Translation2d noteTranslation =
-        new Translation2d(
-            FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getX() - 0.3,
-            FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getY());
-    Translation2d secondNoteTranslation =
-        new Translation2d(
-            FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getX() - 0.3,
-            FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getY());
+    setNotePositions(position);
     return Commands.defer(
             () -> new StraightDriveToPose(getSpeakerTargetPose().get(), drive), Set.of(drive))
         .andThen(
@@ -134,7 +137,7 @@ public class Autos {
                                         .getDistance(
                                             AllianceFlipUtil.apply(
                                                 FieldConstants.Speaker.centerSpeakerOpening
-                                                    .toTranslation2d())))
+                                                    .toTranslation2d()))) //Align arm angle with speaker
                                 - ArmConstants.HORIZONTAL_OFFSET.getRadians())))
                 .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))
         .andThen(
