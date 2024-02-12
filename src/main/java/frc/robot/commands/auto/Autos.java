@@ -46,6 +46,7 @@ public class Autos {
     CENTER,
     RIGHT
   }
+
   private void setNotePositions(StartingPosition position) {
     switch (position) {
       case LEFT -> {
@@ -66,23 +67,26 @@ public class Autos {
     }
 
     this.noteTranslation =
-           AllianceFlipUtil.apply(new Translation2d(
-                    FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getX() - 0.3,
-                    FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getY()));
+        AllianceFlipUtil.apply(
+            new Translation2d(
+                FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getX() - 0.3,
+                FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getY()));
     this.secondNoteTranslation =
-            AllianceFlipUtil.apply(new Translation2d(
-                    FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getX() - 0.3,
-                    FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getY()));
+        AllianceFlipUtil.apply(
+            new Translation2d(
+                FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getX()
+                    - 0.3,
+                FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getY()));
     this.thirdNoteTranslation =
-            AllianceFlipUtil.apply(new Translation2d(
-            FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getX() - 0.3,
-            FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getY()));
+        AllianceFlipUtil.apply(
+            new Translation2d(
+                FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getX() - 0.3,
+                FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getY()));
 
     Logger.recordOutput("Autos/setNotePositions/noteTranslation", noteTranslation);
     Logger.recordOutput("Autos/setNotePositions/secondNoteTranslation", secondNoteTranslation);
     Logger.recordOutput("Autos/setNotePositions/thirdNoteTranslation", thirdNoteTranslation);
   }
-
 
   private Supplier<Pose2d> getSpeakerTargetPose() {
     Translation2d speaker =
@@ -118,7 +122,7 @@ public class Autos {
                 .andThen(
                     Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
                 .andThen(new StraightDriveToPose(getSpeakerTargetPose().get(), drive))
-                .andThen(arm.toSetpoint(new Rotation2d())) //Align arm angle with speaker
+                .andThen(arm.toSetpoint(new Rotation2d())) // Align arm angle with speaker
                 .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)));
   }
 
@@ -147,7 +151,8 @@ public class Autos {
                                         .getDistance(
                                             AllianceFlipUtil.apply(
                                                 FieldConstants.Speaker.centerSpeakerOpening
-                                                    .toTranslation2d()))) //Align arm angle with speaker
+                                                    .toTranslation2d()))) // Align arm angle with
+                                // speaker
                                 - ArmConstants.HORIZONTAL_OFFSET.getRadians())))
                 .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))
         .andThen(
@@ -187,7 +192,8 @@ public class Autos {
                                         .getDistance(
                                             AllianceFlipUtil.apply(
                                                 FieldConstants.Speaker.centerSpeakerOpening
-                                                    .toTranslation2d()))) //Align arm angle with speaker
+                                                    .toTranslation2d()))) // Align arm angle with
+                                // speaker
                                 - ArmConstants.HORIZONTAL_OFFSET.getRadians())))
                 .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))
         .andThen(
@@ -202,13 +208,16 @@ public class Autos {
                             shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))
                 .andThen(
                     Commands.parallel(
-                        new StraightDriveToPose(
-                            new Pose2d(thirdNoteTranslation, drive.getRotation()), drive),
-                        arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET)))
+                            new StraightDriveToPose(
+                                new Pose2d(thirdNoteTranslation, drive.getRotation()), drive),
+                            arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET)))
                         .andThen(
-                            Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25))
-                                .andThen(new StraightDriveToPose(getSpeakerTargetPose().get(), drive))
+                            Commands.parallel(
+                                    intake.intake(), indexer.setIndexerPercentVelocity(0.25))
                                 .andThen(
-                                    shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))));
+                                    new StraightDriveToPose(getSpeakerTargetPose().get(), drive))
+                                .andThen(
+                                    shooter.shoot(
+                                        ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))));
   }
 }
