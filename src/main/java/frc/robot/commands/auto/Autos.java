@@ -66,16 +66,17 @@ public class Autos {
     }
 
     this.noteTranslation =
-            new Translation2d(
+           AllianceFlipUtil.apply(new Translation2d(
                     FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getX() - 0.3,
-                    FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getY());
+                    FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION].getY()));
     this.secondNoteTranslation =
-            new Translation2d(
+            AllianceFlipUtil.apply(new Translation2d(
                     FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getX() - 0.3,
-                    FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getY());
-    this.thirdNoteTranslation = new Translation2d(
+                    FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION].getY()));
+    this.thirdNoteTranslation =
+            AllianceFlipUtil.apply(new Translation2d(
             FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getX() - 0.3,
-            FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getY());;
+            FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION].getY()));
   }
 
 
