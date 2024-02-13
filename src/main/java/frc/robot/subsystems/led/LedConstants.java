@@ -12,6 +12,10 @@ public class LedConstants {
         LED_CHANNEL = 0;
         LED_COUNT = 10;
       }
+      case ROBOT_BRIEFCASE -> {
+        LED_CHANNEL = 0;
+        LED_COUNT = 10;
+      }
       default -> {
         LED_CHANNEL = 0;
         LED_COUNT = 0;

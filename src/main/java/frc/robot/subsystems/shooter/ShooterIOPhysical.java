@@ -5,37 +5,40 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Schematic;
 
 public class ShooterIOPhysical implements ShooterIO {
-  private final CANSparkMax shooterLeader;
-  private final CANSparkMax shooterFollower;
+  private final CANSparkMax shooterTop;
+  private final CANSparkMax shooterBottom;
 
-  private final RelativeEncoder shooterLeaderEncoder;
-  private final RelativeEncoder shooterFollowerEncoder;
+  private final RelativeEncoder shooterTopEncoder;
+  private final RelativeEncoder shooterBottomEncoder;
   double rotsToRads = Units.rotationsToRadians(1);
 
   public ShooterIOPhysical() {
-    shooterLeader = new CANSparkMax(ShooterConstants.SHOOTER_LEADER_ID, MotorType.kBrushless);
-    shooterFollower = new CANSparkMax(ShooterConstants.SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
-    shooterLeaderEncoder = shooterLeader.getEncoder();
-    shooterFollowerEncoder = shooterFollower.getEncoder();
-    shooterLeader.setInverted(false);
-    shooterFollower.setInverted(true);
-    shooterLeader.setIdleMode(IdleMode.kBrake);
-    shooterFollower.setIdleMode(IdleMode.kBrake);
-    shooterLeaderEncoder.setVelocityConversionFactor(rotsToRads / 60);
-    shooterFollowerEncoder.setVelocityConversionFactor(rotsToRads / 60);
+    shooterTop = new CANSparkMax(Schematic.SHOOTER_TOP_ID, MotorType.kBrushless);
+    shooterBottom = new CANSparkMax(Schematic.SHOOTER_BOTTOM_ID, MotorType.kBrushless);
+    shooterTopEncoder = shooterTop.getEncoder();
+    shooterBottomEncoder = shooterBottom.getEncoder();
+    shooterTop.setInverted(false);
+    shooterBottom.setInverted(true);
+    shooterTop.setIdleMode(IdleMode.kBrake);
+    shooterBottom.setIdleMode(IdleMode.kBrake);
+    shooterTopEncoder.setVelocityConversionFactor(rotsToRads / 60);
+    shooterBottomEncoder.setVelocityConversionFactor(rotsToRads / 60);
+    shooterTopEncoder.setPositionConversionFactor(rotsToRads);
+    shooterBottomEncoder.setPositionConversionFactor(rotsToRads);
   }
 
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.shooterLeaderVelocityRadPerSec = shooterLeaderEncoder.getVelocity();
-    inputs.shooterFollowerVelocityRadPerSec = shooterFollowerEncoder.getVelocity();
-    inputs.shooterLeaderAppliedVolts = shooterLeader.getAppliedOutput();
-    inputs.shooterLeaderCurrentAmps = shooterLeader.getOutputCurrent();
+    inputs.shooterTopVelocityRadPerSec = shooterTopEncoder.getVelocity();
+    inputs.shooterBottomVelocityRadPerSec = shooterBottomEncoder.getVelocity();
+    inputs.shooterTopAppliedVolts = shooterTop.getBusVoltage() * shooterTop.getAppliedOutput();
+    inputs.shooterTopCurrentAmps = shooterTop.getOutputCurrent();
   }
 
   public void setShooterVoltage(double volts) {
-    shooterLeader.setVoltage(volts);
-    shooterFollower.setVoltage(volts);
+    shooterTop.setVoltage(volts);
+    shooterBottom.setVoltage(volts);
   }
 }

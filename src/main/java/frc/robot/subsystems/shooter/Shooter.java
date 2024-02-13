@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -19,24 +15,23 @@ public class Shooter extends SubsystemBase {
 
   private boolean PIDMode = false;
   private double currentVelocitySetpoint;
-
+  private static final double SPEAKER_HEIGHT = 211.0;
   private SimpleMotorFeedforward shooterFeedforward =
       new SimpleMotorFeedforward(
           ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
-  private PIDController shooterFeedack =
+  private PIDController shooterFeedback =
       new PIDController(ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
 
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
   public Shooter(ShooterIO io) {
     this.io = io;
+    shooterFeedback.setTolerance(ShooterConstants.SHOOTER_TOLERANCE.get());
   }
 
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
-    Logger.recordOutput("Shooter/setPointVelocity", shooterFeedack.getSetpoint());
-    Logger.recordOutput("Shooter/error", shooterFeedack.getVelocityError());
     if (Constants.tuningMode) {
       if (ShooterConstants.SHOOTER_KS.hasChanged(hashCode())
           || ShooterConstants.SHOOTER_KD.hasChanged(hashCode())) {
@@ -47,29 +42,24 @@ public class Shooter extends SubsystemBase {
       if (ShooterConstants.SHOOTER_KP.hasChanged(hashCode())
           || ShooterConstants.SHOOTER_KD.hasChanged(hashCode())) {
         Logger.recordOutput("Shooter/newP", ShooterConstants.SHOOTER_KP.get());
-        shooterFeedack.setPID(
+        shooterFeedback.setPID(
             ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
       }
     }
     if (PIDMode) {
       io.setShooterVoltage(
-          shooterFeedack.calculate(inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
+          shooterFeedforward.calculate(currentVelocitySetpoint)
+              + shooterFeedback.calculate(
+                  inputs.shooterTopVelocityRadPerSec, currentVelocitySetpoint));
     }
+    Logger.recordOutput("Shooter/setPointVelocity", shooterFeedback.getSetpoint());
+    Logger.recordOutput("Shooter/error", shooterFeedback.getVelocityError());
   }
-
-  public Command stop() {
-    return Commands.run(
-        () -> {
-          io.setShooterVoltage(0.0);
-        },
-        this);
-  }
-
-  public Command shootFeedFoward(double velocitySetpoint) {
-    return Commands.run(
-        () -> io.setShooterVoltage(shooterFeedforward.calculate(currentVelocitySetpoint)));
-  }
-
+  /**
+   * @param velocitySetpoint
+   * @return A command that sets the PIDMode to true, and then sets to PID setpoint to that of the
+   *     inputed velocitySetpoint
+   */
   public Command shoot(double velocitySetpoint) {
     return Commands.run(
         () -> {
@@ -78,24 +68,41 @@ public class Shooter extends SubsystemBase {
         },
         this);
   }
-
+  /**
+   * @param volts
+   * @return A command that sets the shooter voltage to that of the inputed volts
+   */
   public Command manualShoot(double volts) {
-    return Commands.run(() -> io.setShooterVoltage(volts), this);
+    return Commands.run(
+        () -> {
+          io.setShooterVoltage(volts);
+          PIDMode = false;
+        },
+        this);
   }
-
-  public boolean getShooterSpeedIsReady() {
-    if (shooterFeedack.getSetpoint() == 0) {
+  /**
+   * @return if the shooter is at the speed required to shoot by checking if the shooters speed is
+   *     that of the setpoint of the PID.
+   */
+  public boolean ShooterSpeedIsReady() {
+    if (shooterFeedback.getSetpoint() == 0) {
       return false;
     } else {
-      return shooterFeedack.atSetpoint();
+      return shooterFeedback.atSetpoint();
     }
   }
-
+  /**
+   * @param distanceFromSpeaker
+   * @return calculates the hypotenuse of the hight of the speaker and the inputed distance
+   */
   public double calculateShootingDistance(double distanceFromSpeaker) {
-    return Math.hypot(211.0, distanceFromSpeaker);
+    return Math.hypot(SPEAKER_HEIGHT, distanceFromSpeaker);
   }
-
+  /**
+   * @param distanceFromSpeaker
+   * @return the angle at which the shooter must be to shoot into the speaker
+   */
   public double calculateShootingAngle(double distanceFromSpeaker) {
-    return Math.abs(Math.atan(211.0 / distanceFromSpeaker));
+    return Math.abs(Math.atan(SPEAKER_HEIGHT / distanceFromSpeaker));
   }
 }
