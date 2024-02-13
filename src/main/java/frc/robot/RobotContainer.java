@@ -40,7 +40,6 @@ import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
-
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -178,7 +177,10 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-
+    driverController.leftBumper().whileTrue(shooter.manualShoot(1));
+    driverController.x().whileTrue(shooter.manualShoot(6));
+    driverController.a().whileTrue(shooter.manualShoot(10));
+    driverController.b().whileTrue(shooter.manualShoot(12));
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,
@@ -200,6 +202,7 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    shooter.setDefaultCommand(shooter.manualShoot(0));
   }
 
   /**
