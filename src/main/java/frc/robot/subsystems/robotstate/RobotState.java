@@ -8,6 +8,14 @@ import org.littletonrobotics.junction.AutoLogOutput;
  */
 public class RobotState {
 
+  /** Set true if robot is in range of the speaker */
+  @AutoLogOutput(key = "RobotState/InRange")
+  public boolean inRange = false;
+
+  /** Set true if robot can shoot into speaker */
+  @AutoLogOutput(key = "RobotState/CanShoot")
+  public boolean canShoot = false;
+
   /** Set by the robot if the batter is less than 9V */
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
   public boolean lowBatteryAlert = false;

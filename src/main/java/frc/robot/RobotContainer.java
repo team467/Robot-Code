@@ -30,9 +30,12 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
+import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import java.util.List;
@@ -49,6 +52,7 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Shooter shooter;
   private Indexer indexer;
+  private Intake intake;
   private Drive drive;
   private Arm arm;
   private Vision vision;
@@ -126,13 +130,16 @@ public class RobotContainer {
       arm = new Arm(new ArmIO() {});
     }
     if (indexer == null) {
-      indexer = new Indexer(new IndexerIO() {});
+      indexer = new Indexer(new IndexerIO() {}, new RobotState());
     }
     if (shooter == null) {
       shooter = new Shooter(new ShooterIO() {});
     }
     if (pixy2 == null) {
       pixy2 = new Pixy2(new Pixy2IO() {});
+    }
+    if (intake == null) {
+      intake = new Intake(new IntakeIO() {});
     }
 
     Leds leds = new Leds();

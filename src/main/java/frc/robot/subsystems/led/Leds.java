@@ -1,6 +1,9 @@
 package frc.robot.subsystems.led;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -21,6 +24,8 @@ public class Leds extends SubsystemBase {
     AUTO_FINISHED,
     AUTONOMOUS,
     HANGING,
+    IN_RANGE,
+    CAN_SHOOT,
     SHOOTING,
     CONTAINING,
     INTAKING,
@@ -66,8 +71,22 @@ public class Leds extends SubsystemBase {
   private static final double waveAllianceDuration = 2.0;
   private static final double autoFadeTime = 2.5; // 3s nominal
   private static final double autoFadeMaxTime = 5.0; // Return to normal
+  private static final double noteAngle = 5.0;
+
+  /** Creates a Network table for testing led modes and colors */
+  private NetworkTable ledTable;
+  /** Sets the mode for led in network table and allows to test led modes */
+  private NetworkTableEntry ledModeEntry;
+  /** Allows testing in leds by enabling testing mode */
+  private NetworkTableEntry ledTestingEntry;
 
   public Leds() {
+    ledTable = NetworkTableInstance.getDefault().getTable("Leds");
+    ledModeEntry = ledTable.getEntry("Mode");
+    ledModeEntry.setString("OFF");
+    ledTestingEntry = ledTable.getEntry("Testing");
+    ledTestingEntry.setBoolean(false);
+
     leds = new AddressableLED(0);
     buffer = new AddressableLEDBuffer(length);
     leds.setLength(length);
@@ -95,37 +114,9 @@ public class Leds extends SubsystemBase {
 
     if (DriverStation.isEStopped()) {
       mode = LedMode.ESTOPPED;
-
-    } else if (false) { // TODO: need state variable for auto finished
-      mode = LedMode.AUTO_FINISHED;
-
-    } else if (false) { // TODO: need state variable for autonomous
-      mode = LedMode.AUTONOMOUS;
-
-    } else if (false) { // TODO: need state variable for hanging
-      mode = LedMode.HANGING;
-
-    } else if (false) { // TODO: need state variable for shooting
-      mode = LedMode.SHOOTING;
-
-    } else if (false) { // TODO: need state variable for containing
-      mode = LedMode.CONTAINING;
-
-    } else if (false) { // TODO: need state variable for intaking
-      mode = LedMode.INTAKING;
-
-    } else if (false) { // TODO: need state variable for left note detection
-      mode = LedMode.LEFT_NOTE_DETECTION;
-
-    } else if (false) { // TODO: need state variable for right note detection
-      mode = LedMode.RIGHT_NOTE_DETECTION;
-
-    } else if (false) { // TODO: need state variable for straight note detection
-      mode = LedMode.STRAIGHT_NOTE_DETECTION;
-
     } else if (state.lowBatteryAlert) {
       mode = LedMode.LOW_BATTERY_ALERT;
-
+      // low battery mode at top for testing purposes
     } else if (DriverStation.isDisabled()) {
       if (DriverStation.getAlliance().isPresent()) {
         if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
@@ -133,12 +124,44 @@ public class Leds extends SubsystemBase {
         } else {
           mode = LedMode.RED_ALLIANCE;
         }
+
       } else {
         mode = LedMode.DISABLED;
       }
+    } else if (false) { // TODO: need state variable for auto finished
+      mode = LedMode.AUTO_FINISHED;
 
-    } else {
-      mode = LedMode.OFF;
+    } else if (false) { // TODO: need state variable for autonomous
+      mode = LedMode.AUTONOMOUS;
+
+    } else if (state.hanging) {
+      mode = LedMode.HANGING;
+
+    } else if (state.shooting) {
+      mode = LedMode.SHOOTING;
+
+    } else if (state.canShoot && state.hasNote) {
+      mode = LedMode.CAN_SHOOT;
+
+    } else if (state.inRange && state.hasNote) {
+      mode = LedMode.IN_RANGE;
+
+    } else if (state.hasNote) {
+      mode = LedMode.CONTAINING;
+
+    } else if (state.intaking) {
+      mode = LedMode.INTAKING;
+
+    } else if (state.seeNote) {
+      if (state.noteAngle <= -noteAngle) { // TODO: need to change to constant once angle known
+        mode = LedMode.LEFT_NOTE_DETECTION;
+
+      } else if (state.noteAngle >= noteAngle) {
+        mode = LedMode.RIGHT_NOTE_DETECTION;
+
+      } else {
+        mode = LedMode.STRAIGHT_NOTE_DETECTION;
+      }
     }
   }
 
@@ -159,14 +182,28 @@ public class Leds extends SubsystemBase {
         break;
 
       case HANGING:
-        solid(Section.FULL, Color.kDarkGreen);
+        solid(Section.FULL, new Color("#006400")); // Dark Green is 0x006400
+        break;
+
+      case IN_RANGE:
+        wave(
+            Section.FULL,
+            Color.kBeige,
+            Color.kBlack,
+            waveAllianceCycleLength,
+            waveAllianceDuration);
+        break;
+
+      case CAN_SHOOT:
+        solid(Section.FULL, Color.kBlueViolet);
+        // has the same color as shooting except it's solid
         break;
 
       case SHOOTING:
         // leds glow in the direction it's shooting
         wave(
             Section.FULL,
-            Color.kMagenta,
+            Color.kBlueViolet,
             Color.kBlack,
             waveAllianceCycleLength,
             waveAllianceDuration);
@@ -198,7 +235,7 @@ public class Leds extends SubsystemBase {
 
       case STRAIGHT_NOTE_DETECTION:
         // leds glow in the middle
-        solidMiddle(0.5, Color.kBeige);
+        solidMiddle(0.5, Color.kYellowGreen);
         break;
 
       case BLUE_ALLIANCE:
@@ -211,7 +248,7 @@ public class Leds extends SubsystemBase {
         break;
 
       case LOW_BATTERY_ALERT:
-        solid(Section.FULL, Color.kOrange);
+        solid(Section.FULL, Color.kOrangeRed);
         break;
 
       case DISABLED:
@@ -246,8 +283,12 @@ public class Leds extends SubsystemBase {
     // Stop loading notifier if running
     loadingNotifier.stop();
 
-    // updateState();
-    // mode = LedMode.HANGING;
+    if (ledTestingEntry.getBoolean(false)) {
+      mode = LedMode.valueOf(ledModeEntry.getString("OFF"));
+    } else {
+      updateState();
+      ledModeEntry.setString(mode.toString());
+    }
     updateLeds();
   }
 
@@ -298,7 +339,7 @@ public class Leds extends SubsystemBase {
 
   private void solidMiddle(double percent, Color color2) {
     double middlePercent = 1 - percent;
-    int color1Pixels = (int) Math.round(MathUtil.clamp(length * middlePercent, 0, length));
+    int color1Pixels = (int) Math.round(MathUtil.clamp(length * (middlePercent / 2), 0, length));
     for (int i = 0; i < color1Pixels; i++) {
       buffer.setLED(i, Color.kBlack);
     }
