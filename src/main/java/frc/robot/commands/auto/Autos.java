@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
@@ -31,6 +32,7 @@ public class Autos {
   Translation2d noteTranslation;
   Translation2d secondNoteTranslation;
   Translation2d thirdNoteTranslation;
+  Translation2d speaker;
 
   public Autos(Drive drive, Shooter shooter, Indexer indexer, Arm arm, Intake intake) {
     this.drive = drive;
@@ -38,6 +40,8 @@ public class Autos {
     this.indexer = indexer;
     this.arm = arm;
     this.intake = intake;
+    this.speaker =
+        AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
   }
 
   public enum StartingPosition {
@@ -65,11 +69,15 @@ public class Autos {
       }
     }
 
-    this.noteTranslation = FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION];
+    this.noteTranslation =
+        AllianceFlipUtil.apply(
+            FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION]);
     this.secondNoteTranslation =
-        FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION];
+        AllianceFlipUtil.apply(
+            FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION]);
     this.thirdNoteTranslation =
-        FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION];
+        AllianceFlipUtil.apply(
+            FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION]);
 
     Logger.recordOutput("Autos/setNotePositions/noteTranslation", noteTranslation);
     Logger.recordOutput("Autos/setNotePositions/secondNoteTranslation", secondNoteTranslation);
@@ -77,7 +85,6 @@ public class Autos {
   }
 
   private Command turnToSpeaker() {
-    Translation2d speaker = FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d();
     Supplier<Pose2d> targetPose =
         () ->
             new Pose2d(
@@ -103,11 +110,7 @@ public class Autos {
             arm.toSetpoint(
                 new Rotation2d(
                     shooter.calculateShootingAngle(
-                            drive
-                                .getPose()
-                                .getTranslation()
-                                .getDistance(
-                                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()))
+                            drive.getPose().getTranslation().getDistance(speaker))
                         - ArmConstants.HORIZONTAL_OFFSET.getRadians())),
         Set.of(arm));
   }
