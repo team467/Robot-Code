@@ -76,7 +76,32 @@ public class Schematic {
         SHOOTER_BOTTOM_ID = 0;
         INDEXER_ID = 0;
 
-        INTAKE_ID = 0;
+        INTAKE_ID = 2;
+        ARM_ID_LEADER = 0;
+        ARM_ID_FOLLOWER = 0;
+      }
+      case ROBOT_BRIEFCASE -> {
+        POWER_DIST_ID = 20;
+        POWER_DIST_TYPE = PowerDistribution.ModuleType.kAutomatic;
+
+        REAR_RIGHT_DRIVE_ID = 0;
+        REAR_RIGHT_STEERING_ID = 0;
+        REAR_RIGHT_CANCODER_ID = 0;
+        REAR_LEFT_DRIVE_ID = 0;
+        REAR_LEFT_STEERING_ID = 0;
+        REAR_LEFT_CANCODER_ID = 0;
+        FRONT_LEFT_DRIVE_ID = 0;
+        FRONT_LEFT_STEERING_ID = 0;
+        FRONT_LEFT_CANCODER_ID = 0;
+        FRONT_RIGHT_DRIVE_ID = 0;
+        FRONT_RIGHT_STEERING_ID = 0;
+        FRONT_RIGHT_CANCODER_ID = 0;
+        GYRO_ID = 0;
+        SHOOTER_TOP_ID = 0;
+        SHOOTER_BOTTOM_ID = 0;
+        INDEXER_ID = 0;
+
+        INTAKE_ID = 2;
         ARM_ID_LEADER = 0;
         ARM_ID_FOLLOWER = 0;
       }

@@ -31,7 +31,9 @@ import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOPhysical;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
@@ -113,6 +115,9 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim());
         }
+        case ROBOT_BRIEFCASE -> {
+          intake = new Intake(new IntakeIOPhysical());
+        }
       }
     }
 
@@ -172,7 +177,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-
+    driverController.x().whileTrue(intake.intake(IntakeConstants.INTAKE_SPEED));
+    driverController.b().whileTrue(intake.release(IntakeConstants.RELEASE_SPEED));
+    driverController.leftTrigger().whileTrue(intake.intake(driverController.getLeftTriggerAxis()));
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,
@@ -194,6 +201,7 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    intake.setDefaultCommand(intake.stop());
   }
 
   /**
