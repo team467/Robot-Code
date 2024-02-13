@@ -194,6 +194,11 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    driverController.b().whileTrue(new StraightDriveToPose(
+                new Pose2d(
+                    drive.getPose().getTranslation(),
+                    drive.getRotation().plus(Rotation2d.fromDegrees(pixy2.getAngle()))),
+                drive));
   }
 
   /**
