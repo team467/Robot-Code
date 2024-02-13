@@ -51,8 +51,8 @@ public class Autos {
     switch (position) {
       case LEFT -> {
         FIRST_NOTE_POSITION = 0;
-        SECOND_NOTE_POSITION = 0;
-        THIRD_NOTE_POSITION = 0;
+        SECOND_NOTE_POSITION = 1;
+        THIRD_NOTE_POSITION = 2;
       }
       case CENTER -> {
         FIRST_NOTE_POSITION = 1;
@@ -61,7 +61,7 @@ public class Autos {
       }
       case RIGHT -> {
         FIRST_NOTE_POSITION = 2;
-        SECOND_NOTE_POSITION = 4;
+        SECOND_NOTE_POSITION = 1;
         THIRD_NOTE_POSITION = 0;
       }
     }
@@ -117,7 +117,7 @@ public class Autos {
                 .andThen(
                     Commands.parallel(
                         new StraightDriveToPose(
-                            new Pose2d(noteTranslation, drive.getRotation()), drive),
+                            new Pose2d(noteTranslation, AllianceFlipUtil.apply(new Rotation2d(0.0))), drive),
                         arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
                 .andThen(
                     Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
@@ -136,7 +136,7 @@ public class Autos {
                 .andThen(
                     Commands.parallel(
                         new StraightDriveToPose(
-                            new Pose2d(noteTranslation, drive.getRotation()), drive),
+                            new Pose2d(noteTranslation, AllianceFlipUtil.apply(new Rotation2d(0.0))), drive),
                         arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
                 .andThen(
                     Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
@@ -158,7 +158,7 @@ public class Autos {
         .andThen(
             Commands.parallel(
                     new StraightDriveToPose(
-                        new Pose2d(secondNoteTranslation, drive.getRotation()), drive),
+                        new Pose2d(secondNoteTranslation, AllianceFlipUtil.apply(new Rotation2d(0.0))), drive),
                     arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET)))
                 .andThen(
                     Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25))
@@ -177,7 +177,7 @@ public class Autos {
                 .andThen(
                     Commands.parallel(
                         new StraightDriveToPose(
-                            new Pose2d(noteTranslation, drive.getRotation()), drive),
+                            new Pose2d(noteTranslation, AllianceFlipUtil.apply(new Rotation2d(0.0))), drive),
                         arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
                 .andThen(
                     Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
@@ -199,7 +199,7 @@ public class Autos {
         .andThen(
             Commands.parallel(
                     new StraightDriveToPose(
-                        new Pose2d(secondNoteTranslation, drive.getRotation()), drive),
+                        new Pose2d(secondNoteTranslation, AllianceFlipUtil.apply(new Rotation2d(0.0))), drive),
                     arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET)))
                 .andThen(
                     Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25))
@@ -209,7 +209,7 @@ public class Autos {
                 .andThen(
                     Commands.parallel(
                             new StraightDriveToPose(
-                                new Pose2d(thirdNoteTranslation, drive.getRotation()), drive),
+                                new Pose2d(thirdNoteTranslation, AllianceFlipUtil.apply(new Rotation2d(0.0))), drive),
                             arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET)))
                         .andThen(
                             Commands.parallel(
