@@ -6,8 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.robotstate.RobotState;
 import java.io.IOException;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -26,6 +28,9 @@ public class Robot extends LoggedRobot {
 
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+  private RobotState state = RobotState.getInstance();
+
+  private static final int lowVoltage = 9;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -96,6 +101,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+
+    // If robot has low battery, lowbatteryalert will be set to true
+    state.lowBatteryAlert = RobotController.getBatteryVoltage() < lowVoltage;
   }
 
   /** This function is called once when the robot is disabled. */
