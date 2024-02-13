@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class RobotOdometry {
   private static final double historyLengthSecs = 0.3;
@@ -51,6 +52,7 @@ public class RobotOdometry {
   }
 
   /** Returns the latest robot pose based on drive and vision data. */
+  @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getLatestPose() {
     return latestPose;
   }
@@ -189,7 +191,6 @@ public class RobotOdometry {
   public record TimestampedVisionUpdate(double timestamp, Pose2d pose, Matrix<N3, N1> stdDevs) {}
 
   // advantage
-
   public Twist2d fieldVelocity() {
     Translation2d linearFieldVelocity =
         new Translation2d(robotVelocity.dx, robotVelocity.dy).rotateBy(latestPose.getRotation());

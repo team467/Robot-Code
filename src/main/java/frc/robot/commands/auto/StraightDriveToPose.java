@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.utils.GeomUtils;
+import frc.robot.RobotOdometry;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
@@ -51,18 +52,18 @@ public class StraightDriveToPose extends Command {
         () ->
             new Pose2d(
                 new Translation2d(
-                    drive.getPose().getTranslation().getX()
+                    RobotOdometry.getInstance().getLatestPose().getTranslation().getX()
                         + (DriverStation.getAlliance().isEmpty()
                                 || DriverStation.getAlliance().get() == Alliance.Blue
                             ? deltaXMeters
                             : -deltaXMeters),
-                    drive.getPose().getTranslation().getY()
+                    RobotOdometry.getInstance().getLatestPose().getTranslation().getY()
                         + (DriverStation.getAlliance().isEmpty()
                                 || DriverStation.getAlliance().get() == Alliance.Blue
                             ? deltaYMeters
                             : -deltaYMeters)),
                 new Rotation2d(
-                    drive.getPose().getRotation().getRadians()
+                    RobotOdometry.getInstance().getLatestPose().getRotation().getRadians()
                         + (DriverStation.getAlliance().isEmpty()
                                 || DriverStation.getAlliance().get() == Alliance.Blue
                             ? deltaThetaRad
@@ -82,7 +83,7 @@ public class StraightDriveToPose extends Command {
 
   @Override
   public void initialize() {
-    Pose2d currentPose = drive.getPose();
+    Pose2d currentPose = RobotOdometry.getInstance().getLatestPose();
     targetPose = poseSupplier.get();
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     driveController.setTolerance(DRIVE_TOLERANCE);
@@ -93,7 +94,7 @@ public class StraightDriveToPose extends Command {
 
   @Override
   public void execute() {
-    Pose2d currentPose = drive.getPose();
+    Pose2d currentPose = RobotOdometry.getInstance().getLatestPose();
 
     // Calculate drive speed
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());

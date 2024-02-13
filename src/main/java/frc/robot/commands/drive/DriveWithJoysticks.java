@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.utils.GeomUtils;
+import frc.robot.RobotOdometry;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import java.util.Arrays;
@@ -93,7 +94,7 @@ public class DriveWithJoysticks extends Command {
 
     // Convert from field relative
     if (robotRelativeOverride.get()) {
-      Rotation2d driveRotation = drive.getPose().getRotation();
+      Rotation2d driveRotation = RobotOdometry.getInstance().getLatestPose().getRotation();
       if (DriverStation.getAlliance().isEmpty()
           || DriverStation.getAlliance().get() == Alliance.Red) {
         driveRotation = driveRotation.plus(new Rotation2d(Math.PI));

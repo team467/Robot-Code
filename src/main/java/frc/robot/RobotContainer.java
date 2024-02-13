@@ -150,7 +150,7 @@ public class RobotContainer {
 
     autoChooser.addOption(
         "Drive Characterization",
-        Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
+        Commands.runOnce(() -> RobotOdometry.getInstance().resetPose(new Pose2d()), drive)
             .andThen(
                 new FeedForwardCharacterization(
                     drive,
@@ -186,10 +186,11 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                     () ->
-                        drive.setPose(
-                            new Pose2d(
-                                drive.getPose().getTranslation(),
-                                AllianceFlipUtil.apply(new Rotation2d()))))
+                        RobotOdometry.getInstance()
+                            .resetPose(
+                                new Pose2d(
+                                    RobotOdometry.getInstance().getLatestPose().getTranslation(),
+                                    AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
     driverController
         .pov(-1)
