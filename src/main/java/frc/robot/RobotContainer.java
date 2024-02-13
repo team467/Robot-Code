@@ -20,6 +20,7 @@ import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
 import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.subsystems.arm.Arm;
@@ -194,7 +195,10 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    driverController.b().whileTrue(new StraightDriveToPose(
+    driverController
+        .b()
+        .whileTrue(
+            new StraightDriveToPose(
                 new Pose2d(
                     drive.getPose().getTranslation(),
                     drive.getRotation().plus(Rotation2d.fromDegrees(pixy2.getAngle()))),
