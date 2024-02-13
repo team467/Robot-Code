@@ -22,8 +22,8 @@ public class ShooterIOPhysical implements ShooterIO {
     shooterBottomEncoder = shooterBottom.getEncoder();
     shooterTop.setInverted(false);
     shooterBottom.setInverted(true);
-    shooterTop.setIdleMode(IdleMode.kBrake);
-    shooterBottom.setIdleMode(IdleMode.kBrake);
+    shooterTop.setIdleMode(IdleMode.kCoast);
+    shooterBottom.setIdleMode(IdleMode.kCoast);
     shooterTopEncoder.setVelocityConversionFactor(rotsToRads / 60);
     shooterBottomEncoder.setVelocityConversionFactor(rotsToRads / 60);
     shooterTopEncoder.setPositionConversionFactor(rotsToRads);

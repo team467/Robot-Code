@@ -1,7 +1,8 @@
 package frc.robot.subsystems.shooter;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,9 +20,12 @@ public class Shooter extends SubsystemBase {
   private SimpleMotorFeedforward shooterFeedforward =
       new SimpleMotorFeedforward(
           ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
-  private PIDController shooterFeedback =
-      new PIDController(ShooterConstants.SHOOTER_KP.get(), 0, ShooterConstants.SHOOTER_KD.get());
-
+  private ProfiledPIDController shooterFeedback =
+      new ProfiledPIDController(
+          ShooterConstants.SHOOTER_KP.get(),
+          0,
+          ShooterConstants.SHOOTER_KD.get(),
+          new Constraints(Double.POSITIVE_INFINITY, 19));
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
   public Shooter(ShooterIO io) {
@@ -52,7 +56,7 @@ public class Shooter extends SubsystemBase {
               + shooterFeedback.calculate(
                   inputs.shooterTopVelocityRadPerSec, currentVelocitySetpoint));
     }
-    Logger.recordOutput("Shooter/setPointVelocity", shooterFeedback.getSetpoint());
+    Logger.recordOutput("Shooter/setPointVelocity", shooterFeedback.getSetpoint().velocity);
     Logger.recordOutput("Shooter/error", shooterFeedback.getVelocityError());
   }
   /**
@@ -85,7 +89,7 @@ public class Shooter extends SubsystemBase {
    *     that of the setpoint of the PID.
    */
   public boolean ShooterSpeedIsReady() {
-    if (shooterFeedback.getSetpoint() == 0) {
+    if (shooterFeedback.getSetpoint().velocity == 0) {
       return false;
     } else {
       return shooterFeedback.atSetpoint();
