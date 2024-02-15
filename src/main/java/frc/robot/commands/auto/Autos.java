@@ -32,7 +32,7 @@ public class Autos {
   Translation2d noteTranslation;
   Translation2d secondNoteTranslation;
   Translation2d thirdNoteTranslation;
-  Translation2d speaker;
+  private final Translation2d speaker = AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());;
 
   public Autos(Drive drive, Shooter shooter, Indexer indexer, Arm arm, Intake intake) {
     this.drive = drive;
@@ -40,8 +40,6 @@ public class Autos {
     this.indexer = indexer;
     this.arm = arm;
     this.intake = intake;
-    this.speaker =
-        AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
   }
 
   public enum StartingPosition {
