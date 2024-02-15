@@ -36,7 +36,7 @@ public class Drive extends SubsystemBase {
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
 
   private RobotState state = RobotState.getInstance();
-  private static final double inRangeDistancetoSpeaker = 5;
+  private static final double inRangeDistancetoSpeaker = 3;
 
   private final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(getModuleTranslations());
