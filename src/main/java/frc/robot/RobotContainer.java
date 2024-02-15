@@ -40,6 +40,8 @@ import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import java.util.List;
+import java.util.Set;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -198,11 +200,12 @@ public class RobotContainer {
     driverController
         .b()
         .whileTrue(
+                Commands.defer(()->
             new StraightDriveToPose(
                 new Pose2d(
                     drive.getPose().getTranslation(),
                     drive.getRotation().plus(Rotation2d.fromDegrees(pixy2.getAngle()))),
-                drive));
+                drive), Set.of(drive, pixy2)));
   }
 
   /**
