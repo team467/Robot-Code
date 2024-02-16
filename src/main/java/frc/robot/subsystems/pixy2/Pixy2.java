@@ -17,7 +17,7 @@ public class Pixy2 extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Pixy2", inputs);
-    robotState.seeNote = this.seesNote();
+    robotState.seeNote = seesNote();
   }
 
   public double getAge() {
