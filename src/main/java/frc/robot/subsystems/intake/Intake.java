@@ -10,13 +10,12 @@ public class Intake extends SubsystemBase {
 
   private final IntakeIO intakeIO;
   private final IntakeIOInputsAutoLogged intakeInputs;
-  private final RobotState robotState;
+  private final RobotState robotState = RobotState.getInstance();
 
-  public Intake(IntakeIO intakeIO, RobotState robotState) {
+  public Intake(IntakeIO intakeIO) {
     super();
     this.intakeIO = intakeIO;
     intakeInputs = new IntakeIOInputsAutoLogged();
-    this.robotState = robotState;
   }
 
   @Override
