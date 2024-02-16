@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class Constants {
   // Change this temporarily to override the RobotType, e.g. RobotType.ROBOT_SIMBOT
-  private static final RobotType ROBOT_TYPE_OVERRIDE = RobotType.ROBOT_BRIEFCASE;
+  private static final RobotType ROBOT_TYPE_OVERRIDE = null;
 
   public static final Measure<Time> loopPeriod = Milliseconds.of(20);
   public static final boolean tuningMode = false;
