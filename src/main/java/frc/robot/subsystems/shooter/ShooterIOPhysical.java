@@ -35,7 +35,8 @@ public class ShooterIOPhysical implements ShooterIO {
     inputs.shooterRightVelocityRadPerSec = shooterRightEncoder.getVelocity();
     inputs.shooterLeftAppliedVolts = shooterLeft.getBusVoltage() * shooterLeft.getAppliedOutput();
     inputs.shooterLeftCurrentAmps = shooterLeft.getOutputCurrent();
-    inputs.shooterRightAppliedVolts = shooterRight.getAppliedOutput() * shooterRight.getBusVoltage();
+    inputs.shooterRightAppliedVolts =
+        shooterRight.getAppliedOutput() * shooterRight.getBusVoltage();
     inputs.shooterRightCurrentAmps = shooterRight.getOutputCurrent();
   }
 
