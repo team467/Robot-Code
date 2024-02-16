@@ -29,10 +29,12 @@ public class Autos {
   private int SECOND_NOTE_POSITION = 0;
   private int THIRD_NOTE_POSITION = 0;
 
-  Translation2d noteTranslation;
-  Translation2d secondNoteTranslation;
-  Translation2d thirdNoteTranslation;
-  private final Translation2d speaker = AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());;
+  private Translation2d noteTranslation;
+  private Translation2d secondNoteTranslation;
+  private Translation2d thirdNoteTranslation;
+
+  private final Translation2d speaker =
+          AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
   public Autos(Drive drive, Shooter shooter, Indexer indexer, Arm arm, Intake intake) {
     this.drive = drive;
@@ -77,9 +79,9 @@ public class Autos {
         AllianceFlipUtil.apply(
             FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION]);
 
-    Logger.recordOutput("Autos/setNotePositions/noteTranslation", noteTranslation);
-    Logger.recordOutput("Autos/setNotePositions/secondNoteTranslation", secondNoteTranslation);
-    Logger.recordOutput("Autos/setNotePositions/thirdNoteTranslation", thirdNoteTranslation);
+    Logger.recordOutput("Autos/NotePositions/noteTranslation", noteTranslation);
+    Logger.recordOutput("Autos/NotePositions/secondNoteTranslation", secondNoteTranslation);
+    Logger.recordOutput("Autos/NotePositions/thirdNoteTranslation", thirdNoteTranslation);
   }
 
   private Command turnToSpeaker() {
@@ -88,8 +90,7 @@ public class Autos {
             new Pose2d(
                 drive.getPose().getTranslation(),
                 speaker.minus(drive.getPose().getTranslation()).getAngle());
-    Logger.recordOutput("Autos/getSpeakerTargetPose/targetPose", targetPose.get());
-    Logger.recordOutput("Autos/getSpeakerTargetPose/speaker", speaker);
+    Logger.recordOutput("Autos/Speaker", speaker);
     return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
   }
 
@@ -102,7 +103,6 @@ public class Autos {
   }
 
   private Command alignArm() {
-
     return Commands.defer(
         () ->
             arm.toSetpoint(
