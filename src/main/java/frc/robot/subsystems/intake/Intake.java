@@ -3,17 +3,20 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.robotstate.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
 
   private final IntakeIO intakeIO;
   private final IntakeIOInputsAutoLogged intakeInputs;
+  private final RobotState robotState;
 
-  public Intake(IntakeIO intakeIO) {
+  public Intake(IntakeIO intakeIO, RobotState robotState) {
     super();
     this.intakeIO = intakeIO;
     intakeInputs = new IntakeIOInputsAutoLogged();
+    this.robotState = robotState;
   }
 
   @Override
@@ -21,6 +24,7 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("Intake", intakeInputs);
+    robotState.intaking = this.getCurrentCommand() == intake();
   }
 
   public Command intake() {
