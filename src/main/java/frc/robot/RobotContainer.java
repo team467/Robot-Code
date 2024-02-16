@@ -94,7 +94,7 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
         }
-        case ROBOT_2024A -> {
+        case ROBOT_2024C -> {
           drive =
               new Drive(
                   new GyroADIS16470(),
