@@ -62,15 +62,11 @@ public class Orchestrator {
     return Commands.parallel(
         // arm.toSetpoint(new Rotation2d()), //TODO Make setPoint for pickup position.
         // Commands.waitUntil(arm::atSetpoint).withTimeout(2),
-            shooter.manualShoot(-5),
-            indexer.setIndexerVoltage(-5.0),
-            intakeNote.release());
+        shooter.manualShoot(-5), indexer.setIndexerVoltage(-5.0), intakeNote.release());
   }
 
   public Command expelShooter() {
-    return Commands.parallel(
-            shooter.manualShoot(-5.0),
-            indexer.setIndexerVoltage(-5.0));
+    return Commands.parallel(shooter.manualShoot(-5.0), indexer.setIndexerVoltage(-5.0));
   }
 
   public Command expelIntake() {
