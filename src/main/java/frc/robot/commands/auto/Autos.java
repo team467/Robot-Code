@@ -24,17 +24,12 @@ public class Autos {
   private final Indexer indexer;
   private final Arm arm;
   private final Intake intake;
-
-  private int FIRST_NOTE_POSITION = 0;
-  private int SECOND_NOTE_POSITION = 0;
-  private int THIRD_NOTE_POSITION = 0;
-
   private Translation2d noteTranslation;
   private Translation2d secondNoteTranslation;
   private Translation2d thirdNoteTranslation;
 
   private final Translation2d speaker =
-          AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
+      AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
   public Autos(Drive drive, Shooter shooter, Indexer indexer, Arm arm, Intake intake) {
     this.drive = drive;
@@ -53,31 +48,39 @@ public class Autos {
   private void setNotePositions(StartingPosition position) {
     switch (position) {
       case LEFT -> {
-        FIRST_NOTE_POSITION = 0;
-        SECOND_NOTE_POSITION = 1;
-        THIRD_NOTE_POSITION = 2;
+        this.noteTranslation =
+                AllianceFlipUtil.apply(
+                        FieldConstants.StagingLocations.spikeTranslations[0]);
+        this.secondNoteTranslation =
+                AllianceFlipUtil.apply(
+                        FieldConstants.StagingLocations.spikeTranslations[1]);
+        this.thirdNoteTranslation =
+                AllianceFlipUtil.apply(
+                        FieldConstants.StagingLocations.spikeTranslations[2]);
       }
       case CENTER -> {
-        FIRST_NOTE_POSITION = 1;
-        SECOND_NOTE_POSITION = 2;
-        THIRD_NOTE_POSITION = 0;
+        this.noteTranslation =
+                AllianceFlipUtil.apply(
+                        FieldConstants.StagingLocations.spikeTranslations[1]);
+        this.secondNoteTranslation =
+                AllianceFlipUtil.apply(
+                        FieldConstants.StagingLocations.spikeTranslations[2]);
+        this.thirdNoteTranslation =
+                AllianceFlipUtil.apply(
+                        FieldConstants.StagingLocations.spikeTranslations[0]);
       }
       case RIGHT -> {
-        FIRST_NOTE_POSITION = 2;
-        SECOND_NOTE_POSITION = 1;
-        THIRD_NOTE_POSITION = 0;
+        this.noteTranslation =
+                AllianceFlipUtil.apply(
+                        FieldConstants.StagingLocations.spikeTranslations[2]);
+        this.secondNoteTranslation =
+                AllianceFlipUtil.apply(
+                        FieldConstants.StagingLocations.spikeTranslations[1]);
+        this.thirdNoteTranslation =
+                AllianceFlipUtil.apply(
+                        FieldConstants.StagingLocations.spikeTranslations[0]);
       }
     }
-
-    this.noteTranslation =
-        AllianceFlipUtil.apply(
-            FieldConstants.StagingLocations.spikeTranslations[FIRST_NOTE_POSITION]);
-    this.secondNoteTranslation =
-        AllianceFlipUtil.apply(
-            FieldConstants.StagingLocations.spikeTranslations[SECOND_NOTE_POSITION]);
-    this.thirdNoteTranslation =
-        AllianceFlipUtil.apply(
-            FieldConstants.StagingLocations.spikeTranslations[THIRD_NOTE_POSITION]);
 
     Logger.recordOutput("Autos/NotePositions/noteTranslation", noteTranslation);
     Logger.recordOutput("Autos/NotePositions/secondNoteTranslation", secondNoteTranslation);
