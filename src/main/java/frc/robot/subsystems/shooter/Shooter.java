@@ -58,7 +58,7 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Shooter/error", shooterFeedback.getVelocityError());
   }
   /**
-   * @param velocitySetpoint
+   * @param velocitySetpoint the velocity that the shooter should be set to
    * @return A command that sets the PIDMode to true, and then sets to PID setpoint to that of the
    *     inputed velocitySetpoint
    */
@@ -71,7 +71,7 @@ public class Shooter extends SubsystemBase {
         this);
   }
   /**
-   * @param volts
+   * @param volts the volts that the shooter should be set to
    * @return A command that sets the shooter voltage to that of the inputed volts
    */
   public Command manualShoot(double volts) {
@@ -94,14 +94,14 @@ public class Shooter extends SubsystemBase {
     }
   }
   /**
-   * @param distanceFromSpeaker
+   * @param distanceFromSpeaker the robots distance from the speaker
    * @return calculates the hypotenuse of the hight of the speaker and the inputed distance
    */
   public double calculateShootingDistance(double distanceFromSpeaker) {
     return Math.hypot(SPEAKER_HEIGHT, distanceFromSpeaker);
   }
   /**
-   * @param distanceFromSpeaker
+   * @param distanceFromSpeaker the robots distance from the speaker
    * @return the angle at which the shooter must be to shoot into the speaker
    */
   public double calculateShootingAngle(double distanceFromSpeaker) {
