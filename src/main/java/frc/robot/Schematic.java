@@ -80,7 +80,7 @@ public class Schematic {
         INDEXER_ID = 13;
         INTAKE_ID = 14;
         ARM_ID_LEADER = 9;
-        ARM_ID_FOLLOWER = 10; // TODO: Confirm
+        ARM_ID_FOLLOWER = 10;
         CLIMBER_RIGHT_ID = 15;
         CLIMBER_LEFT_ID = 16;
       }
