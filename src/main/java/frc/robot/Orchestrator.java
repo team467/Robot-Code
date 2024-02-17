@@ -1,15 +1,25 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.utils.AllianceFlipUtil;
+import frc.robot.commands.auto.StraightDriveToPose;
+import frc.robot.FieldConstants;
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
+import org.littletonrobotics.junction.Logger;
+
+import java.util.Set;
+import java.util.function.Supplier;
 
 public class Orchestrator {
   private final Drive drive;
@@ -19,6 +29,8 @@ public class Orchestrator {
   private final Pixy2 pixy2;
   private final Arm arm;
   private final RobotState robotState;
+  private final Translation2d speaker =
+          AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
   public Orchestrator(
       Drive drive, Intake intake, Indexer indexer, Shooter shooter, Pixy2 pixy2, Arm arm, RobotState robotState) {
@@ -29,6 +41,35 @@ public class Orchestrator {
     this.pixy2 = pixy2;
     this.arm = arm;
     this.robotState = robotState;
+  }
+
+  private Command turnToSpeaker() {
+    Supplier<Pose2d> targetPose =
+            () ->
+                    new Pose2d(
+                            drive.getPose().getTranslation(),
+                            speaker.minus(drive.getPose().getTranslation()).getAngle());
+    Logger.recordOutput("Autos/Speaker", speaker);
+    return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
+  }
+
+  private Command driveToNote(Translation2d targetTranslation) {
+    Supplier<Rotation2d> targetRotation =
+            () -> targetTranslation.minus(drive.getPose().getTranslation()).getAngle();
+    return Commands.defer(
+            () -> new StraightDriveToPose(new Pose2d(targetTranslation, targetRotation.get()), drive),
+            Set.of(drive));
+  }
+
+  private Command alignArm() {
+    return Commands.defer(
+            () ->
+                    arm.toSetpoint(
+                            new Rotation2d(
+                                    shooter.calculateShootingAngle(
+                                            drive.getPose().getTranslation().getDistance(speaker))
+                                            - ArmConstants.HORIZONTAL_OFFSET.getRadians())),
+            Set.of(arm));
   }
 
   public Command shootBasic() {
