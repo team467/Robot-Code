@@ -194,12 +194,16 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
     driverController.a().onTrue(orchestrator.turnToSpeaker());
-    driverController.b().onTrue(orchestrator.driveToNote(AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[0])));
+    driverController
+        .b()
+        .onTrue(
+            orchestrator.driveToNote(
+                AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[0])));
     driverController.x().onTrue(orchestrator.alignArm());
     driverController.rightTrigger().onTrue(orchestrator.shootBasic());
     driverController.leftTrigger().onTrue(orchestrator.intakeBasic());
     driverController.y().onTrue(orchestrator.expelFullRobot());
-    driverController.leftBumper().onTrue(orchestrator.expelShooter());
+    driverController.leftBumper().onTrue(orchestrator.expelShindex());
     driverController.rightBumper().onTrue(orchestrator.expelIntake());
   }
 

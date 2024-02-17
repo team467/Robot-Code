@@ -117,7 +117,7 @@ public class Orchestrator {
         shooter.manualShoot(-5), indexer.setVolts(-5.0), intake.release());
   }
 
-  public Command expelShooter() {
+  public Command expelShindex() {
     return Commands.parallel(shooter.manualShoot(-5.0), indexer.setVolts(-5.0));
   }
 
