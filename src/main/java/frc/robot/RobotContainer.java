@@ -35,7 +35,6 @@ import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
-import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import java.util.List;
@@ -130,7 +129,7 @@ public class RobotContainer {
       arm = new Arm(new ArmIO() {});
     }
     if (indexer == null) {
-      indexer = new Indexer(new IndexerIO() {}, new RobotState());
+      indexer = new Indexer(new IndexerIO() {});
     }
     if (shooter == null) {
       shooter = new Shooter(new ShooterIO() {});
