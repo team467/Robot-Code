@@ -8,14 +8,13 @@ import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
   private final IndexerIO io;
-  private final RobotState robotState;
+  private final RobotState robotState = RobotState.getInstance();
 
   private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 
   /** Creates a new Indexer. */
-  public Indexer(IndexerIO io, RobotState robotState) {
+  public Indexer(IndexerIO io) {
     this.io = io;
-    this.robotState = robotState;
   }
 
   @Override
@@ -25,17 +24,17 @@ public class Indexer extends SubsystemBase {
     robotState.hasNote = getLimitSwitchPressed();
   }
   /**
-   * @param percent
+   * @param percent from -1 to 1
    * @return A command that sets the indexer to a percent velocity from -1 to 1
    */
-  public Command setIndexerPercentVelocity(double percent) {
+  public Command setPercent(double percent) {
     return Commands.run(() -> io.setIndexerPercentVelocity(percent), this);
   }
   /**
-   * @param volts
+   * @param volts the voltage to set the indexer to
    * @return A command that sets the indexer voltage to the inputed volts
    */
-  public Command setIndexerVoltage(double volts) {
+  public Command setVolts(double volts) {
     return Commands.run(() -> io.setIndexerVoltage(volts), this);
   }
   /**
