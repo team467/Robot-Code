@@ -7,19 +7,19 @@ import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
 
-  private final IntakeNoteIO intakeNoteIO;
+  private final IntakeIO intakeIO;
   private final IntakeNoteIOInputsAutoLogged intakeInputs;
 
-  public Intake(IntakeNoteIO intakeNoteIO) {
+  public Intake(IntakeIO intakeNoteIO) {
     super();
-    this.intakeNoteIO = intakeNoteIO;
+    this.intakeIO = intakeNoteIO;
     intakeInputs = new IntakeNoteIOInputsAutoLogged();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    intakeNoteIO.updateInputs(intakeInputs);
+    intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("IntakeNote", intakeInputs);
   }
 
@@ -27,7 +27,7 @@ public class Intake extends SubsystemBase {
     return Commands.run(
         () -> {
           Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.INTAKE_SPEED);
-          intakeNoteIO.setSpeed(IntakeConstants.INTAKE_SPEED);
+          intakeIO.setSpeed(IntakeConstants.INTAKE_SPEED);
         },
         this);
   }
@@ -36,7 +36,7 @@ public class Intake extends SubsystemBase {
     return Commands.run(
         () -> {
           Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.RELEASE_SPEED);
-          intakeNoteIO.setSpeed(IntakeConstants.RELEASE_SPEED);
+          intakeIO.setSpeed(IntakeConstants.RELEASE_SPEED);
         },
         this);
   }
@@ -45,7 +45,7 @@ public class Intake extends SubsystemBase {
     return Commands.run(
         () -> {
           Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.STOP_SPEED);
-          intakeNoteIO.setSpeed(IntakeConstants.STOP_SPEED);
+          intakeIO.setSpeed(IntakeConstants.STOP_SPEED);
         },
         this);
   }

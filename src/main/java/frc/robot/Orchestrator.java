@@ -19,7 +19,7 @@ public class Orchestrator {
   private final Arm arm;
 
   public Orchestrator(
-          Drive drive, Intake intake, Indexer indexer, Shooter shooter, Pixy2 pixy2, Arm arm) {
+      Drive drive, Intake intake, Indexer indexer, Shooter shooter, Pixy2 pixy2, Arm arm) {
     this.drive = drive;
     this.intake = intake;
     this.indexer = indexer;

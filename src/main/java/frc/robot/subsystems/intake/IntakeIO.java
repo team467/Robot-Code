@@ -2,7 +2,7 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface IntakeNoteIO {
+public interface IntakeIO {
   @AutoLog
   class IntakeNoteIOInputs {
     public double positionRads = 0.0;
