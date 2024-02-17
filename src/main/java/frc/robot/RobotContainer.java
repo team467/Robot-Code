@@ -57,6 +57,7 @@ public class RobotContainer {
   private Vision vision;
   private Pixy2 pixy2;
   private boolean isRobotOriented = true; // Workaround, change if needed
+  private Orchestrator orchestrator;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -192,6 +193,14 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    driverController.a().onTrue(orchestrator.turnToSpeaker());
+    driverController.b().onTrue(orchestrator.driveToNote(AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[0])));
+    driverController.x().onTrue(orchestrator.alignArm());
+    driverController.rightTrigger().onTrue(orchestrator.shootBasic());
+    driverController.leftTrigger().onTrue(orchestrator.intakeBasic());
+    driverController.y().onTrue(orchestrator.expelFullRobot());
+    driverController.leftBumper().onTrue(orchestrator.expelShooter());
+    driverController.rightBumper().onTrue(orchestrator.expelIntake());
   }
 
   /**
