@@ -30,6 +30,8 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
@@ -49,6 +51,7 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Shooter shooter;
   private Indexer indexer;
+  private Intake intake;
   private Drive drive;
   private Arm arm;
   private Vision vision;
@@ -134,6 +137,9 @@ public class RobotContainer {
     if (pixy2 == null) {
       pixy2 = new Pixy2(new Pixy2IO() {});
     }
+    if (intake == null) {
+      intake = new Intake(new IntakeIO() {});
+    }
 
     Leds leds = new Leds();
 
@@ -165,7 +171,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,

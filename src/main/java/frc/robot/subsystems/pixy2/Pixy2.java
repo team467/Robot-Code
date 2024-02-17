@@ -1,16 +1,15 @@
 package frc.robot.subsystems.pixy2;
 
-import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.robotstate.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class Pixy2 extends SubsystemBase {
   private final Pixy2IO io;
   private final Pixy2IOInputsAutoLogged inputs = new Pixy2IOInputsAutoLogged();
 
-  private final MedianFilter angleFilter = new MedianFilter(10);
-
-  private double filteredAngle;
+  /** Used to share robot state across subsystems */
+  private final RobotState robotState = RobotState.getInstance();
 
   public Pixy2(Pixy2IO io) {
     this.io = io;
@@ -20,10 +19,11 @@ public class Pixy2 extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Pixy2", inputs);
-    if (seesNote()) {
-      filteredAngle = angleFilter.calculate(inputs.angle);
-    }
-    Logger.recordOutput("Pixy2/FilteredAngle", filteredAngle);
+
+    // Currently we just share presence of a note and the angle to the note
+    // TODO: Distance to the note is TBD
+    robotState.seeNote = seesNote();
+    robotState.noteAngle = getAngle();
   }
 
   public double getAge() {
@@ -43,7 +43,7 @@ public class Pixy2 extends SubsystemBase {
   }
 
   public double getAngle() {
-    return filteredAngle;
+    return inputs.angle;
   }
 
   public double getSignature() {

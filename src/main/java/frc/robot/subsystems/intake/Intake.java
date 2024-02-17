@@ -3,16 +3,18 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.robotstate.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
 
   private final IntakeIO intakeIO;
   private final IntakeIOInputsAutoLogged intakeInputs;
+  private final RobotState robotState = RobotState.getInstance();
 
-  public Intake(IntakeIO intakeNoteIO) {
+  public Intake(IntakeIO intakeIO) {
     super();
-    this.intakeIO = intakeNoteIO;
+    this.intakeIO = intakeIO;
     intakeInputs = new IntakeIOInputsAutoLogged();
   }
 
@@ -20,13 +22,14 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     intakeIO.updateInputs(intakeInputs);
-    Logger.processInputs("IntakeNote", intakeInputs);
+    Logger.processInputs("Intake", intakeInputs);
+    robotState.intaking = this.getCurrentCommand() == intake();
   }
 
   public Command intake() {
     return Commands.run(
         () -> {
-          Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.INTAKE_SPEED);
+          Logger.recordOutput("Intake/DesiredSpeed", IntakeConstants.INTAKE_SPEED);
           intakeIO.setSpeed(IntakeConstants.INTAKE_SPEED);
         },
         this);
@@ -35,7 +38,7 @@ public class Intake extends SubsystemBase {
   public Command release() {
     return Commands.run(
         () -> {
-          Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.RELEASE_SPEED);
+          Logger.recordOutput("Intake/DesiredSpeed", IntakeConstants.RELEASE_SPEED);
           intakeIO.setSpeed(IntakeConstants.RELEASE_SPEED);
         },
         this);
@@ -44,7 +47,7 @@ public class Intake extends SubsystemBase {
   public Command stop() {
     return Commands.run(
         () -> {
-          Logger.recordOutput("IntakeNote/DesiredSpeed", IntakeConstants.STOP_SPEED);
+          Logger.recordOutput("Intake/DesiredSpeed", IntakeConstants.STOP_SPEED);
           intakeIO.setSpeed(IntakeConstants.STOP_SPEED);
         },
         this);
