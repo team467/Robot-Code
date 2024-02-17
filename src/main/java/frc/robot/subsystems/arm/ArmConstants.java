@@ -21,7 +21,7 @@ public class ArmConstants {
 
   static {
     switch (Constants.getRobot()) {
-      case ROBOT_2024A -> {
+      case ROBOT_2024C -> {
         KG = new TunableNumber("Arm/KG", 0.0);
         KS = new TunableNumber("Arm/KS", 0.0);
         KV = new TunableNumber("Arm/KV", 0.0);

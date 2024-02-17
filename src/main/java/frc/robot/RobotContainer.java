@@ -18,6 +18,7 @@ import frc.lib.io.gyro3d.GyroADIS16470;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
+import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
@@ -34,10 +35,9 @@ import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
-import frc.robot.subsystems.pixy2.Pixy2IOPhysical;
-import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
+import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -79,12 +79,12 @@ public class RobotContainer {
               new Transform3d(
                   new Translation3d(2 * 0.01, -12 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
                   new Rotation3d(0, 0, -0.5 * Math.PI));
-          //          vision =
-          //              new Vision(
-          //                  List.of(
-          //                          new VisionIOPhotonVision("front", front),
-          //                          new VisionIOPhotonVision("right", right))
-          //                      .toArray(new frc.lib.io.vision.VisionIO[0]));
+          vision =
+              new Vision(
+                  List.of(
+                          new VisionIOPhotonVision("front", front),
+                          new VisionIOPhotonVision("right", right))
+                      .toArray(new frc.lib.io.vision.VisionIO[0]));
           drive =
               new Drive(
                   new GyroPigeon2(Schematic.GYRO_ID),
@@ -92,9 +92,8 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
-          pixy2 = new Pixy2(new Pixy2IOPhysical());
         }
-        case ROBOT_2024A -> {
+        case ROBOT_2024C -> {
           drive =
               new Drive(
                   new GyroADIS16470(),
@@ -130,7 +129,7 @@ public class RobotContainer {
       arm = new Arm(new ArmIO() {});
     }
     if (indexer == null) {
-      indexer = new Indexer(new IndexerIO() {}, new RobotState());
+      indexer = new Indexer(new IndexerIO() {});
     }
     if (shooter == null) {
       shooter = new Shooter(new ShooterIO() {});
@@ -172,7 +171,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,
