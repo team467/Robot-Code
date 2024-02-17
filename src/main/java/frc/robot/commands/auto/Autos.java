@@ -53,36 +53,27 @@ public class Autos {
     switch (position) {
       case LEFT -> {
         this.noteTranslation =
-                AllianceFlipUtil.apply(
-                        FieldConstants.StagingLocations.spikeTranslations[0]);
+            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[0]);
         this.secondNoteTranslation =
-                AllianceFlipUtil.apply(
-                        FieldConstants.StagingLocations.spikeTranslations[1]);
+            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
         this.thirdNoteTranslation =
-                AllianceFlipUtil.apply(
-                        FieldConstants.StagingLocations.spikeTranslations[2]);
+            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[2]);
       }
       case CENTER -> {
         this.noteTranslation =
-                AllianceFlipUtil.apply(
-                        FieldConstants.StagingLocations.spikeTranslations[1]);
+            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
         this.secondNoteTranslation =
-                AllianceFlipUtil.apply(
-                        FieldConstants.StagingLocations.spikeTranslations[2]);
+            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[2]);
         this.thirdNoteTranslation =
-                AllianceFlipUtil.apply(
-                        FieldConstants.StagingLocations.spikeTranslations[0]);
+            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[0]);
       }
       case RIGHT -> {
         this.noteTranslation =
-                AllianceFlipUtil.apply(
-                        FieldConstants.StagingLocations.spikeTranslations[2]);
+            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[2]);
         this.secondNoteTranslation =
-                AllianceFlipUtil.apply(
-                        FieldConstants.StagingLocations.spikeTranslations[1]);
+            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
         this.thirdNoteTranslation =
-                AllianceFlipUtil.apply(
-                        FieldConstants.StagingLocations.spikeTranslations[0]);
+            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[0]);
       }
     }
 
@@ -110,19 +101,17 @@ public class Autos {
   }
 
   public Command faceNote() {
-    if(pixy2.seesNote()) {
+    if (pixy2.seesNote()) {
       return Commands.defer(
-              () ->
-                      new ProxyCommand(
-                              () ->
-                                      new StraightDriveToPose(
-                                              new Pose2d(
-                                                      drive.getPose().getTranslation(),
-                                                      drive
-                                                              .getRotation()
-                                                              .plus(Rotation2d.fromDegrees(pixy2.getAngle()))),
-                                              drive)),
-              Set.of(drive));
+          () ->
+              new ProxyCommand(
+                  () ->
+                      new StraightDriveToPose(
+                          new Pose2d(
+                              drive.getPose().getTranslation(),
+                              drive.getRotation().plus(Rotation2d.fromDegrees(pixy2.getAngle()))),
+                          drive)),
+          Set.of(drive));
     } else {
       return Commands.none();
     }
