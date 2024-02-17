@@ -171,7 +171,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,
