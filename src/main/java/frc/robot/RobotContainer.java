@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
-import frc.lib.io.gyro3d.GyroADIS16470;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
@@ -24,19 +23,23 @@ import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.arm.ArmIOSparkMAX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
+import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOPhysical;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -96,11 +99,15 @@ public class RobotContainer {
         case ROBOT_2024C -> {
           drive =
               new Drive(
-                  new GyroADIS16470(),
+                  new GyroPigeon2(Schematic.GYRO_ID),
                   new ModuleIOSparkMAX(0),
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
+          arm = new Arm(new ArmIOSparkMAX());
+          indexer = new Indexer(new IndexerIOPhysical());
+          intake = new Intake(new IntakeIOPhysical());
+          shooter = new Shooter(new ShooterIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -192,6 +199,25 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+
+    // stop when doing nothing
+    intake.setDefaultCommand(intake.stop());
+    indexer.setDefaultCommand(indexer.setPercent(0));
+    shooter.setDefaultCommand(shooter.manualShoot(0));
+    arm.setDefaultCommand(arm.runPercent(0));
+
+    // operator controller
+    operatorController.leftBumper().whileTrue(intake.intake());
+    operatorController.y().whileTrue(indexer.setPercent(1));
+    operatorController.x().whileTrue(intake.release());
+    operatorController.b().whileTrue(indexer.setPercent(-0.2));
+    operatorController.rightBumper().whileTrue(shooter.manualShoot(0.2 * 12));
+    operatorController.a().whileTrue(shooter.manualShoot(-0.2 * 12));
+
+    // operator d pad
+    operatorController.pov(0).whileTrue(arm.runPercent(0.2));
+    operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
+    driverController.pov(-1).whileTrue(arm.runPercent(0));
   }
 
   /**

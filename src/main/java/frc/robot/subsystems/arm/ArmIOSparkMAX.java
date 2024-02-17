@@ -1,5 +1,6 @@
 package frc.robot.subsystems.arm;
 
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkLimitSwitch;
@@ -14,7 +15,7 @@ public class ArmIOSparkMAX implements ArmIO {
   public ArmIOSparkMAX() {
     leader = new CANSparkMax(Schematic.ARM_ID_LEADER, MotorType.kBrushless);
     follower = new CANSparkMax(Schematic.ARM_ID_FOLLOWER, MotorType.kBrushless);
-    leaderLimitSwitch = leader.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+    leaderLimitSwitch = leader.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     leader
         .getEncoder()
         .setPositionConversionFactor(
@@ -26,7 +27,11 @@ public class ArmIOSparkMAX implements ArmIO {
                 * ArmConstants.GEAR_RATIO.getRotationsPerInput());
     leader.enableVoltageCompensation(12);
     follower.enableVoltageCompensation(12);
-    follower.follow(leader);
+
+    leader.setIdleMode(CANSparkBase.IdleMode.kBrake);
+    follower.setIdleMode(CANSparkBase.IdleMode.kBrake);
+
+    follower.follow(leader, true);
   }
 
   @Override

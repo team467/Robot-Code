@@ -12,7 +12,7 @@ public class IntakeConstants {
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2024C -> {
-        INTAKE_SPEED = 0.2;
+        INTAKE_SPEED = 1;
         RELEASE_SPEED = -0.2;
         STOP_SPEED = 0.0;
         GEAR_RATIO = new GearRatio(18, 28);
