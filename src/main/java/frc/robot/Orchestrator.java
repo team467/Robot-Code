@@ -58,6 +58,10 @@ public class Orchestrator {
         intakeNote.intake());
   }
 
+  public Command climb() {
+    return Commands.sequence();
+  }
+
   public Command expelFullRobot() {
     return Commands.parallel(
         // arm.toSetpoint(new Rotation2d()), //TODO Make setPoint for pickup position.
