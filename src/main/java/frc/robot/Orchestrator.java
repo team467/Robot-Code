@@ -3,25 +3,25 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.IntakeNote.IntakeNote;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.shooter.Shooter;
 
 public class Orchestrator {
   private final Drive drive;
-  private final IntakeNote intakeNote;
+  private final Intake intake;
   private final Indexer indexer;
   private final Shooter shooter;
   private final Pixy2 pixy2;
   private final Arm arm;
 
   public Orchestrator(
-      Drive drive, IntakeNote intakeNote, Indexer indexer, Shooter shooter, Pixy2 pixy2, Arm arm) {
+          Drive drive, Intake intake, Indexer indexer, Shooter shooter, Pixy2 pixy2, Arm arm) {
     this.drive = drive;
-    this.intakeNote = intakeNote;
+    this.intake = intake;
     this.indexer = indexer;
     this.shooter = shooter;
     this.pixy2 = pixy2;
@@ -46,7 +46,7 @@ public class Orchestrator {
         indexer.setIndexerPercentVoltage(4),
         arm.toSetpoint(new Rotation2d()), // TODO: Make setPoint for pickup position.
         Commands.waitUntil(arm::atSetpoint).withTimeout(2),
-        intakeNote.intake());
+        intake.intake());
   }
 
   // Intakes after seeing note with Pixy2.
@@ -55,7 +55,7 @@ public class Orchestrator {
         indexer.setIndexerPercentVoltage(4),
         arm.toSetpoint(new Rotation2d()), // TODO: Make setpoint for pickup position.
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
-        intakeNote.intake());
+        intake.intake());
   }
 
   public Command climb() {
@@ -66,7 +66,7 @@ public class Orchestrator {
     return Commands.parallel(
         // arm.toSetpoint(new Rotation2d()), //TODO Make setPoint for pickup position.
         // Commands.waitUntil(arm::atSetpoint).withTimeout(2),
-        shooter.manualShoot(-5), indexer.setIndexerVoltage(-5.0), intakeNote.release());
+        shooter.manualShoot(-5), indexer.setIndexerVoltage(-5.0), intake.release());
   }
 
   public Command expelShooter() {
@@ -74,6 +74,6 @@ public class Orchestrator {
   }
 
   public Command expelIntake() {
-    return intakeNote.release();
+    return intake.release();
   }
 }

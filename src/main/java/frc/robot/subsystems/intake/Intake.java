@@ -1,16 +1,16 @@
-package frc.robot.subsystems.IntakeNote;
+package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-public class IntakeNote extends SubsystemBase {
+public class Intake extends SubsystemBase {
 
   private final IntakeNoteIO intakeNoteIO;
   private final IntakeNoteIOInputsAutoLogged intakeInputs;
 
-  public IntakeNote(IntakeNoteIO intakeNoteIO) {
+  public Intake(IntakeNoteIO intakeNoteIO) {
     super();
     this.intakeNoteIO = intakeNoteIO;
     intakeInputs = new IntakeNoteIOInputsAutoLogged();
