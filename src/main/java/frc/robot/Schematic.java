@@ -27,6 +27,8 @@ public class Schematic {
   public static final int INTAKE_ID;
   public static final int ARM_ID_LEADER;
   public static final int ARM_ID_FOLLOWER;
+  public static final int CLIMBER_LEFT_ID;
+  public static final int CLIMBER_RIGHT_ID;
 
   static {
     switch (Constants.getRobot()) {
@@ -54,11 +56,12 @@ public class Schematic {
         INTAKE_ID = 0;
         ARM_ID_LEADER = 0;
         ARM_ID_FOLLOWER = 0;
+        CLIMBER_RIGHT_ID = 0;
+        CLIMBER_LEFT_ID = 0;
       }
       case ROBOT_2024C -> {
         POWER_DIST_ID = 20;
         POWER_DIST_TYPE = PowerDistribution.ModuleType.kCTRE;
-
         REAR_RIGHT_DRIVE_ID = 7;
         REAR_RIGHT_STEERING_ID = 8;
         REAR_RIGHT_CANCODER_ID = 14;
@@ -72,13 +75,14 @@ public class Schematic {
         FRONT_RIGHT_STEERING_ID = 4;
         FRONT_RIGHT_CANCODER_ID = 13;
         GYRO_ID = 0;
-        SHOOTER_RIGHT_ID = 0;
-        SHOOTER_LEFT_ID = 0;
-        INDEXER_ID = 0;
-
-        INTAKE_ID = 0;
-        ARM_ID_LEADER = 0;
-        ARM_ID_FOLLOWER = 0;
+        SHOOTER_RIGHT_ID = 11; //TODO: Confirm
+        SHOOTER_LEFT_ID = 12;
+        INDEXER_ID = 13;
+        INTAKE_ID = 14;
+        ARM_ID_LEADER = 9;
+        ARM_ID_FOLLOWER = 10; //TODO: Confirm
+        CLIMBER_RIGHT_ID = 15;
+        CLIMBER_LEFT_ID = 16;
       }
       default -> {
         POWER_DIST_ID = 20;
@@ -104,6 +108,8 @@ public class Schematic {
         INTAKE_ID = 0;
         ARM_ID_LEADER = 0;
         ARM_ID_FOLLOWER = 0;
+        CLIMBER_RIGHT_ID = 0;
+        CLIMBER_LEFT_ID = 0;
       }
     }
   }
