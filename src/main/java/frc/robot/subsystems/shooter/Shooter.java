@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.robotstate.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -13,6 +14,7 @@ public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
   private final ShooterIO io;
 
+  private final RobotState robotState = RobotState.getInstance();
   private boolean PIDMode = false;
   private double currentVelocitySetpoint;
   private static final double SPEAKER_HEIGHT = 211.0;

@@ -8,14 +8,13 @@ import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
   private final IndexerIO io;
-  private final RobotState robotState;
+  private final RobotState robotState = RobotState.getInstance();
 
   private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 
   /** Creates a new Indexer. */
-  public Indexer(IndexerIO io, RobotState robotState) {
+  public Indexer(IndexerIO io) {
     this.io = io;
-    this.robotState = robotState;
   }
 
   @Override
