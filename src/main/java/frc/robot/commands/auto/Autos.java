@@ -91,7 +91,7 @@ public class Autos {
     Logger.recordOutput("Autos/NotePositions/thirdNoteTranslation", thirdNoteTranslation);
   }
 
-  private Command turnToSpeaker() {
+  public Command turnToSpeaker() {
     Supplier<Pose2d> targetPose =
         () ->
             new Pose2d(
