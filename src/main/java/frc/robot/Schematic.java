@@ -75,12 +75,12 @@ public class Schematic {
         FRONT_RIGHT_STEERING_ID = 4;
         FRONT_RIGHT_CANCODER_ID = 13;
         GYRO_ID = 0;
-        SHOOTER_RIGHT_ID = 11; //TODO: Confirm
+        SHOOTER_RIGHT_ID = 11; // TODO: Confirm
         SHOOTER_LEFT_ID = 12;
         INDEXER_ID = 13;
         INTAKE_ID = 14;
         ARM_ID_LEADER = 9;
-        ARM_ID_FOLLOWER = 10; //TODO: Confirm
+        ARM_ID_FOLLOWER = 10; // TODO: Confirm
         CLIMBER_RIGHT_ID = 15;
         CLIMBER_LEFT_ID = 16;
       }
