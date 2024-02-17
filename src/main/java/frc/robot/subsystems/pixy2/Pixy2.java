@@ -21,9 +21,9 @@ public class Pixy2 extends SubsystemBase {
     Logger.processInputs("Pixy2", inputs);
 
     // Currently we just share presence of a note and the angle to the note
-    // Distance to the note is TBD
-    robotState.seeNote = inputs.seesNote;
-    robotState.noteAngle = inputs.angle;
+    // TODO: Distance to the note is TBD
+    robotState.seeNote = seesNote();
+    robotState.noteAngle = getAngle();
   }
 
   public double getAge() {
