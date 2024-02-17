@@ -30,7 +30,7 @@ public class IntakeIOPhysical implements IntakeIO {
     intakeMotor.set(speed);
   }
 
-  public void updateInputs(IntakeNoteIOInputs intakeInputs) {
+  public void updateInputs(IntakeIOInputs intakeInputs) {
     intakeInputs.positionRads = intakeEncoder.getPosition();
     intakeInputs.velocityRadsPerSec = intakeEncoder.getVelocity();
 
