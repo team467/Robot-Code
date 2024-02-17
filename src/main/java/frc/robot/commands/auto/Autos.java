@@ -142,7 +142,7 @@ public class Autos {
             Commands.parallel(
                 driveToNote(noteTranslation),
                 arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
-        .andThen(Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
+        .andThen(Commands.parallel(intake.intake(), indexer.setPercent(0.25)))
         .andThen(turnToSpeaker())
         .andThen(alignArm())
         .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC));
@@ -160,7 +160,7 @@ public class Autos {
                         driveToNote(noteTranslation),
                         arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
                 .andThen(
-                    Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
+                    Commands.parallel(intake.intake(), indexer.setPercent(0.25)))
                 .andThen(turnToSpeaker()))
         .andThen(alignArm())
         .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
@@ -169,7 +169,7 @@ public class Autos {
                     driveToNote(secondNoteTranslation),
                     arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET)))
                 .andThen(
-                    Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25))
+                    Commands.parallel(intake.intake(), indexer.setPercent(0.25))
                         .andThen(turnToSpeaker())
                         .andThen(alignArm())
                         .andThen(
@@ -185,7 +185,7 @@ public class Autos {
             Commands.parallel(
                 driveToNote(noteTranslation),
                 arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
-        .andThen(Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
+        .andThen(Commands.parallel(intake.intake(), indexer.setPercent(0.25)))
         .andThen(turnToSpeaker())
         .andThen(alignArm())
         .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
@@ -194,7 +194,7 @@ public class Autos {
                 driveToNote(secondNoteTranslation),
                 arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
         .andThen(
-            Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25))
+            Commands.parallel(intake.intake(), indexer.setPercent(0.25))
                 .andThen(turnToSpeaker())
                 .andThen(alignArm())
                 .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))
@@ -203,7 +203,7 @@ public class Autos {
                     driveToNote(thirdNoteTranslation),
                     arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET)))
                 .andThen(
-                    Commands.parallel(intake.intake(), indexer.setIndexerPercentVelocity(0.25)))
+                    Commands.parallel(intake.intake(), indexer.setPercent(0.25)))
                 .andThen(turnToSpeaker())
                 .andThen(alignArm())
                 .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)));
