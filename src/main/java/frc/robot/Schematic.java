@@ -74,7 +74,7 @@ public class Schematic {
         FRONT_RIGHT_DRIVE_ID = 3;
         FRONT_RIGHT_STEERING_ID = 4;
         FRONT_RIGHT_CANCODER_ID = 13;
-        GYRO_ID = 0;
+        GYRO_ID = 17;
         SHOOTER_RIGHT_ID = 11; // TODO: Confirm
         SHOOTER_LEFT_ID = 12;
         INDEXER_ID = 13;
