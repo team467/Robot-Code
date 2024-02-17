@@ -77,9 +77,9 @@ public class Autos {
       }
     }
 
-    Logger.recordOutput("Autos/NotePositions/noteTranslation", noteTranslation);
-    Logger.recordOutput("Autos/NotePositions/secondNoteTranslation", secondNoteTranslation);
-    Logger.recordOutput("Autos/NotePositions/thirdNoteTranslation", thirdNoteTranslation);
+    Logger.recordOutput("Autos/NotePositions/0", noteTranslation);
+    Logger.recordOutput("Autos/NotePositions/1", secondNoteTranslation);
+    Logger.recordOutput("Autos/NotePositions/2", thirdNoteTranslation);
   }
 
   public Command turnToSpeaker() {
