@@ -204,7 +204,7 @@ public class RobotContainer {
     intake.setDefaultCommand(intake.stop());
     indexer.setDefaultCommand(indexer.setPercent(0));
     shooter.setDefaultCommand(shooter.manualShoot(0));
-    arm.setDefaultCommand(arm.runPercent(0));
+    arm.setDefaultCommand(arm.hold());
 
     // operator controller
     operatorController.leftBumper().whileTrue(intake.intake());
@@ -217,7 +217,10 @@ public class RobotContainer {
     // operator d pad
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
     operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
-    driverController.pov(-1).whileTrue(arm.runPercent(0));
+    operatorController.pov(90).whileTrue(arm.runPercent(0));
+
+    driverController.rightBumper().whileTrue(arm.toSetpoint(new Rotation2d()));
+    driverController.leftBumper().whileTrue(arm.toSetpoint(Rotation2d.fromDegrees(15)));
   }
 
   /**
