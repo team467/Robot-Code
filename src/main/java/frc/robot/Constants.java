@@ -31,7 +31,7 @@ public class Constants {
       if (robot == RobotType.ROBOT_SIMBOT) { // Invalid robot
         DriverStation.reportWarning(
             "Invalid robot selected, using competition robot as default.", false);
-        return RobotType.ROBOT_2023;
+        return RobotType.ROBOT_2024C;
       } else {
         return robot;
       }

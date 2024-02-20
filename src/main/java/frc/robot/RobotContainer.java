@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
@@ -19,6 +20,7 @@ import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
 import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.lib.utils.TunableNumber;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.subsystems.arm.Arm;
@@ -207,12 +209,22 @@ public class RobotContainer {
     arm.setDefaultCommand(arm.hold());
 
     // operator controller
-    operatorController.leftBumper().whileTrue(intake.intake());
-    operatorController.y().whileTrue(indexer.setPercent(1));
-    operatorController.x().whileTrue(intake.release());
-    operatorController.b().whileTrue(indexer.setPercent(-0.2));
+    operatorController
+        .leftBumper()
+        .and(() -> !indexer.getLimitSwitchPressed())
+        .whileTrue(
+            (intake
+                    .intake()
+                    .alongWith(
+                        indexer.setPercent(new TunableNumber("indexSpeed", .72).get())))
+                .onlyWhile(() -> !indexer.getLimitSwitchPressed()));
+    operatorController.b().whileTrue(indexer.setPercent(-0.8).alongWith(intake.release()));
     operatorController.rightBumper().whileTrue(shooter.manualShoot(0.2 * 12));
-    operatorController.a().whileTrue(shooter.manualShoot(-0.2 * 12));
+    operatorController
+        .a()
+        .whileTrue(
+            Commands.race(shooter.manualShoot(-.8 * 12), new WaitCommand(2))
+                .andThen(indexer.setPercent(.6).alongWith(shooter.manualShoot(-.8 * 12))));
 
     // operator d pad
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
