@@ -96,7 +96,11 @@ public class Orchestrator {
         indexer.setVolts(4),
         arm.toSetpoint(ArmConstants.HORIZONTAL_OFFSET), // TODO: Make setPoint for pickup position.
         Commands.waitUntil(arm::atSetpoint).withTimeout(2),
-        Commands.parallel(intake.intake(), Commands.run(()->drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0,0.0)),drive)).until(() -> robotState.hasNote));
+            intake.intake().until(() -> robotState.hasNote));
+  }
+
+  public Command driveWhileIntaking() {
+    return Commands.parallel(intake.intake().until(() -> robotState.hasNote), Commands.run(()->drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0,0.0)),drive).withTimeout(2));
   }
 
   // Intakes after seeing note with Pixy2.
@@ -105,7 +109,8 @@ public class Orchestrator {
         indexer.setVolts(4),
         arm.toSetpoint(ArmConstants.HORIZONTAL_OFFSET), // TODO: Make setpoint for pickup position.
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
-        Commands.parallel(intake.intake(), Commands.run(()->drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0,0.0)),drive)).until(() -> robotState.hasNote));
+        intake.intake().until(() -> robotState.hasNote));
+
   }
 
   public Command expelFullRobot() {
