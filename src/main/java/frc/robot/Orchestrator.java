@@ -49,6 +49,11 @@ public class Orchestrator {
     this.robotState = robotState;
   }
 
+  /**
+   * Calculates the angle to turn to the speaker, and turns.
+   *
+   * @return The command for the robot to turn.
+   */
   public Command turnToSpeaker() {
     Supplier<Pose2d> targetPose =
         () ->
@@ -59,6 +64,12 @@ public class Orchestrator {
     return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
   }
 
+  /**
+   * Drives to one of the notes pre positioned on the field.
+   *
+   * @param targetTranslation The Translation2d for one of the notes on the field during auto.
+   * @return The command for driving to a note during auto.
+   */
   public Command driveToNote(Translation2d targetTranslation) {
     Supplier<Rotation2d> targetRotation =
         () -> targetTranslation.minus(drive.getPose().getTranslation()).getAngle();
@@ -67,6 +78,12 @@ public class Orchestrator {
         Set.of(drive));
   }
 
+  /**
+   * Calculates the angle to align the arm to the speaker from anywhere on the field.
+   * Does arcTan of ((height of center of the speaker - height of the shooter) / distance to speaker)
+   *
+   * @return The command to move the arm to the correct setPoint for shooting from its current location.
+   */
   public Command alignArm() {
     return Commands.defer(
         () ->
@@ -80,6 +97,13 @@ public class Orchestrator {
         Set.of(arm));
   }
 
+  /**
+   * Assumes that the arm is in an upright position and then shoots.
+   * Shoots with a velocity setpoint of 9999 rad per seconds, this needs to be tuned.
+   * Turns off the indexer and the shooter when the limit switch is not pressed.
+   *
+   * @return The command to shoot the note.
+   */
   public Command shootBasic() {
     return Commands.sequence(
             Commands.parallel(
@@ -93,6 +117,11 @@ public class Orchestrator {
         .onlyIf(indexer::getLimitSwitchPressed);
   }
 
+  /**
+   * Turns on the intake along with the indexer until the limit switch is pressed.
+   *
+   * @return The command to intake the note and stopping afterwards.
+   */
   public Command intakeBasic() {
     return Commands.sequence(
         indexer.setVolts(4),
@@ -101,6 +130,11 @@ public class Orchestrator {
         intake.intake().until(() -> robotState.hasNote));
   }
 
+  /**
+   * Turns on the intake while driving for 2 seconds, both happening in parallel.
+   *
+   * @return The command to move the robot and intake.
+   */
   public Command driveWhileIntaking() {
     return Commands.parallel(
         intake.intake().until(() -> robotState.hasNote),
@@ -110,6 +144,11 @@ public class Orchestrator {
             .withTimeout(2));
   }
 
+  /**
+   * Turn on the intake when we see a note.
+   *
+   * @return The command to intake after a note is seen.
+   */
   // Intakes after seeing note with Pixy2.
   public Command visionIntake() {
     return Commands.sequence(
@@ -119,14 +158,29 @@ public class Orchestrator {
         intake.intake().until(() -> robotState.hasNote));
   }
 
+  /**
+   * Expels the intake if we want to get rid of a note.
+   *
+   * @return The command to release a note in the intake.
+   */
   public Command expelIntake() {
     return intake.release();
   }
 
+  /**
+   * Expels the intake if we want to get rid of a note in shooter and indexer.
+   *
+   * @return The command to release a note in the shooter and indexer.
+   */
   public Command expelShindex() {
     return Commands.parallel(shooter.manualShoot(-5.0), indexer.setVolts(-5.0));
   }
 
+  /**
+   * Expels a note from the whole robot.
+   *
+   * @return The command to release a note from all subsystems.
+   */
   public Command expelFullRobot() {
     return Commands.parallel(expelIntake(), expelShindex());
   }
