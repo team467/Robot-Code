@@ -24,6 +24,9 @@ import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOTalonSRX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -52,6 +55,8 @@ public class RobotContainer {
   private Shooter shooter;
   private Indexer indexer;
   private Intake intake;
+  private Climber climberRight;
+  private Climber climberLeft;
   private Drive drive;
   private Arm arm;
   private Vision vision;
@@ -92,6 +97,7 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
+          
         }
         case ROBOT_2024C -> {
           drive =
@@ -101,6 +107,9 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
+            climberRight  = new Climber(new ClimberIOTalonSRX(15));
+            climberLeft   = new Climber(new ClimberIOTalonSRX(16));
+
         }
 
         case ROBOT_SIMBOT -> {
@@ -138,8 +147,18 @@ public class RobotContainer {
       pixy2 = new Pixy2(new Pixy2IO() {});
     }
     if (intake == null) {
-      intake = new Intake(new IntakeIO() {});
+      intake = new Intake(new IntakeIO() {
+      });
     }
+    if (climberRight == null) {
+      climberRight = new Climber(new ClimberIO() {
+      });
+    }
+    if (climberLeft == null) {
+      climberLeft = new Climber(new ClimberIO() {
+      });
+    }
+
 
     Leds leds = new Leds();
 
@@ -192,6 +211,15 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+
+    climberLeft.setDefaultCommand(climberLeft.stop());
+    climberRight.setDefaultCommand(climberRight.stop());
+    driverController.a().whileTrue(Commands.parallel(
+        climberLeft.raiseOrLower(0.8),
+        climberRight.raiseOrLower(0.8)));
+    driverController.b().whileTrue(Commands.parallel(
+        climberLeft.raiseOrLower(-0.8),
+        climberRight.raiseOrLower(-0.8)));
   }
 
   /**
