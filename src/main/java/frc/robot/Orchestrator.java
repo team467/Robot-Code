@@ -94,7 +94,6 @@ public class Orchestrator {
             new Pose2d(
                 drive.getPose().getTranslation(),
                 speaker.minus(drive.getPose().getTranslation()).getAngle());
-    Logger.recordOutput("Autos/Speaker", speaker);
     return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
   }
 
