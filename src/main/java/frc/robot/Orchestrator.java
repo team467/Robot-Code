@@ -50,21 +50,6 @@ public class Orchestrator {
   }
 
   /**
-   * Calculates the angle to turn to the speaker, and turns.
-   *
-   * @return The command for the robot to turn.
-   */
-  public Command turnToSpeaker() {
-    Supplier<Pose2d> targetPose =
-        () ->
-            new Pose2d(
-                drive.getPose().getTranslation(),
-                speaker.minus(drive.getPose().getTranslation()).getAngle());
-    Logger.recordOutput("Autos/Speaker", speaker);
-    return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
-  }
-
-  /**
    * Drives to one of the notes pre positioned on the field.
    *
    * @param targetTranslation The Translation2d for one of the notes on the field during auto.
@@ -79,10 +64,11 @@ public class Orchestrator {
   }
 
   /**
-   * Calculates the angle to align the arm to the speaker from anywhere on the field.
-   * Does arcTan of ((height of center of the speaker - height of the shooter) / distance to speaker)
+   * Calculates the angle to align the arm to the speaker from anywhere on the field. Does arcTan of
+   * ((height of center of the speaker - height of the shooter) / distance to speaker)
    *
-   * @return The command to move the arm to the correct setPoint for shooting from its current location.
+   * @return The command to move the arm to the correct setPoint for shooting from its current
+   *     location.
    */
   public Command alignArm() {
     return Commands.defer(
@@ -98,18 +84,29 @@ public class Orchestrator {
   }
 
   /**
-   * Assumes that the arm is in an upright position and then shoots.
-   * Shoots with a velocity setpoint of 9999 rad per seconds, this needs to be tuned.
-   * Turns off the indexer and the shooter when the limit switch is not pressed.
+   * Calculates the angle to turn to the speaker, and turns.
+   *
+   * @return The command for the robot to turn.
+   */
+  public Command turnToSpeaker() {
+    Supplier<Pose2d> targetPose =
+        () ->
+            new Pose2d(
+                drive.getPose().getTranslation(),
+                speaker.minus(drive.getPose().getTranslation()).getAngle());
+    Logger.recordOutput("Autos/Speaker", speaker);
+    return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
+  }
+
+  /**
+   * Shoots with a velocity setpoint of 9999 rad per seconds, this needs to be tuned. Turns off the
+   * indexer and the shooter when the limit switch is not pressed.
    *
    * @return The command to shoot the note.
    */
   public Command shootBasic() {
     return Commands.sequence(
-            Commands.parallel(
-                shooter.manualShoot(12),
-                    turnToSpeaker()
-                ),
+            Commands.parallel(shooter.manualShoot(12)),
             Commands.waitUntil(shooter::ShooterSpeedIsReady).withTimeout(2),
             indexer.setVolts(1),
             Commands.waitUntil(() -> !indexer.getLimitSwitchPressed()).withTimeout(2),
@@ -117,8 +114,23 @@ public class Orchestrator {
         .onlyIf(indexer::getLimitSwitchPressed);
   }
 
+  /**
+   * Aligns both the robot and then the arm to the speaker.
+   *
+   * @return The command to move the robot and the arm in preparation to shoot.
+   */
+  public Command fullAlign() {
+    return Commands.sequence(turnToSpeaker(), alignArm());
+  }
+
+  /**
+   * Aligns the robot with the speaker and then aligns the arm and shoots. Uses the fullAlign and
+   * shootBasic commands.
+   *
+   * @return The command to align both the robot and the arm, and then shoot.
+   */
   public Command fullAlignShoot() {
-    return Commands.sequence(alignArm(), shootBasic());
+    return Commands.sequence(fullAlign(), shootBasic());
   }
 
   /**
