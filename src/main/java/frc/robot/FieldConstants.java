@@ -2,12 +2,12 @@ package frc.robot;
 
 import static edu.wpi.first.apriltag.AprilTagFields.k2024Crescendo;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import java.io.IOException;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * Contains various field dimensions and useful reference points. Dimensions are in meters, and sets
@@ -26,7 +26,7 @@ public class FieldConstants {
   public static final double startingLineX = Units.inchesToMeters(74.111);
 
   public static final Translation2d ampCenter =
-      new Translation2d(Units.inchesToMeters(72.455), Units.inchesToMeters(322.996));
+      new Translation2d(Units.inchesToMeters(72.455), fieldWidth);
 
   /** Staging locations for each note */
   public static final class StagingLocations {
@@ -83,9 +83,29 @@ public class FieldConstants {
         bottomLeftSpeaker.interpolate(topRightSpeaker, 0.5);
   }
 
+
+  public static final class Stage {
+    public static final Pose2d podiumLeg =
+        new Pose2d(Units.inchesToMeters(126.75), Units.inchesToMeters(161.638), new Rotation2d());
+
+    public static final Pose2d ampLeg =
+        new Pose2d(
+            Units.inchesToMeters(220.873),
+            Units.inchesToMeters(212.425),
+            Rotation2d.fromDegrees(-30));
+
+    public static final Pose2d sourceLeg =
+        new Pose2d(
+            Units.inchesToMeters(220.873),
+            Units.inchesToMeters(110.837),
+            Rotation2d.fromDegrees(30));
+
+    public static final Pose2d center =
+        new Pose2d(Units.inchesToMeters(192.55), Units.inchesToMeters(161.638), new Rotation2d());
+  }
+
   public static final double aprilTagWidth = Units.inchesToMeters(6.50);
   public static final AprilTagFieldLayout aprilTags;
-
   static {
     try {
       aprilTags = AprilTagFieldLayout.loadFromResource(k2024Crescendo.m_resourceFile);
