@@ -78,7 +78,7 @@ public class Orchestrator {
                     Math.abs(
                         Math.atan(
                             (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                    - Math.sin(arm.getAngle() - 14.59) * Units.inchesToMeters(28))
+                                    - Math.sin(arm.getAngle() - Units.degreesToRadians(14.95)) * Units.inchesToMeters(28))
                                 / drive.getPose().getTranslation().getDistance(speaker))))),
         Set.of(arm));
   }
