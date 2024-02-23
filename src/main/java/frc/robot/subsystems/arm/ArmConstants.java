@@ -25,8 +25,8 @@ public class ArmConstants {
         KV = new TunableNumber("Arm/KV", 0.0);
         KP = new TunableNumber("Arm/KP", 30);
         KD = new TunableNumber("Arm/KD", 0);
-        MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", Units.degreesToRadians(10));
-        MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Units.degreesToRadians(3));
+        MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", Units.degreesToRadians(30));
+        MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Units.degreesToRadians(15));
         OFFSET = Rotation2d.fromDegrees(-13.95);
         GEAR_RATIO = new GearRatio(228.571429, 1);
       }

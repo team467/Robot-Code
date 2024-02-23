@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -124,16 +125,37 @@ public class Arm extends SubsystemBase {
   }
 
   public Command hold() {
-    return Commands.run(
-            () -> {
-              if (!holdLock) {
-                holdLock = true;
-                feedback.setGoal(inputs.positionRads);
-                feedbackMode = true;
-              }
-            },
-            this)
-        .finallyDo(() -> holdLock = false);
+    return Commands.sequence(
+        Commands.runOnce(() -> io.setVoltage(0.05 * 12), this)
+            .onlyIf(() -> inputs.velocityRadsPerSec < 0),
+        Commands.run(
+                () -> {
+                  if (!holdLock) {
+                    holdLock = true;
+                    if (inputs.velocityRadsPerSec < 0) {
+                      feedback.setGoal(inputs.positionRads + Units.degreesToRadians(1));
+                    } else {
+                      feedback.setGoal(inputs.positionRads);
+                    }
+                    feedbackMode = true;
+                  }
+                },
+                this)
+            .finallyDo(() -> holdLock = false));
+    //    return Commands.run(
+    //            () -> {
+    //              if (!holdLock) {
+    //                holdLock = true;
+    //                if (inputs.velocityRadsPerSec < 0) {
+    //                  feedback.setGoal(inputs.positionRads + Units.degreesToRadians(0.5));
+    //                } else {
+    //                  feedback.setGoal(inputs.positionRads);
+    //                }
+    //                feedbackMode = true;
+    //              }
+    //            },
+    //            this)
+    //        .finallyDo(() -> holdLock = false);
   }
 
   private void logTrapzezoidTimes() {
