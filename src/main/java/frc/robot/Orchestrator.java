@@ -174,7 +174,7 @@ public class Orchestrator {
   }
 
   /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
-      Then will use intakeBasic. */
+      Will use intakeBasic in parallel. */
   public Command fullVisionIntake() {
     return null;
   }
