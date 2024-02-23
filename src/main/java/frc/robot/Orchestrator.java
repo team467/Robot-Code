@@ -94,7 +94,7 @@ public class Orchestrator {
   public Command intakeBasic() {
     return Commands.sequence(
         indexer.setVolts(4),
-        arm.toSetpoint(new Rotation2d()), // TODO: Make setPoint for pickup position.
+        arm.toSetpoint(ArmConstants.HORIZONTAL_OFFSET), // TODO: Make setPoint for pickup position.
         Commands.waitUntil(arm::atSetpoint).withTimeout(2),
         Commands.parallel(intake.intake(), Commands.run(()->drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0,0.0)),drive)).until(() -> robotState.hasNote));
   }
@@ -103,19 +103,13 @@ public class Orchestrator {
   public Command visionIntake() {
     return Commands.sequence(
         indexer.setVolts(4),
-        arm.toSetpoint(new Rotation2d()), // TODO: Make setpoint for pickup position.
+        arm.toSetpoint(ArmConstants.HORIZONTAL_OFFSET), // TODO: Make setpoint for pickup position.
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
         Commands.parallel(intake.intake(), Commands.run(()->drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0,0.0)),drive)).until(() -> robotState.hasNote));
   }
 
-  public Command climb() {
-    return Commands.sequence();
-  }
-
   public Command expelFullRobot() {
     return Commands.parallel(
-        // arm.toSetpoint(new Rotation2d()), //TODO Make setPoint for pickup position.
-        // Commands.waitUntil(arm::atSetpoint).withTimeout(2),
         shooter.manualShoot(-5), indexer.setVolts(-5.0), intake.release());
   }
 
