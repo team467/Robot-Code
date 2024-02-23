@@ -19,7 +19,6 @@ import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
 import java.util.Set;
 import java.util.function.Supplier;
-import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
   private final Drive drive;
@@ -78,7 +77,8 @@ public class Orchestrator {
                     Math.abs(
                         Math.atan(
                             (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                    - Math.sin(arm.getAngle() - Units.degreesToRadians(14.95)) * Units.inchesToMeters(28))
+                                    - Math.sin(arm.getAngle() - Units.degreesToRadians(14.95))
+                                        * Units.inchesToMeters(28))
                                 / drive.getPose().getTranslation().getDistance(speaker))))),
         Set.of(arm));
   }
@@ -174,7 +174,7 @@ public class Orchestrator {
   }
 
   /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
-      Then will use intakeBasic. */
+  Then will use intakeBasic. */
   public Command fullVisionIntake() {
     return null;
   }
