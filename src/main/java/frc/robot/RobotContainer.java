@@ -31,6 +31,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
@@ -216,8 +217,10 @@ public class RobotContainer {
             (intake
                     .intake()
                     .alongWith(
-                        indexer.setPercent(new TunableNumber("indexSpeed", .72).get())))
+                        indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
                 .onlyWhile(() -> !indexer.getLimitSwitchPressed()));
+
+
     operatorController.b().whileTrue(indexer.setPercent(-0.8).alongWith(intake.release()));
     operatorController.rightBumper().whileTrue(shooter.manualShoot(0.2 * 12));
     operatorController

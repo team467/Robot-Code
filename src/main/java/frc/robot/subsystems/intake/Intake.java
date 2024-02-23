@@ -29,8 +29,8 @@ public class Intake extends SubsystemBase {
   public Command intake() {
     return Commands.run(
         () -> {
-          Logger.recordOutput("Intake/DesiredSpeed", IntakeConstants.INTAKE_SPEED);
-          intakeIO.setSpeed(IntakeConstants.INTAKE_SPEED);
+          Logger.recordOutput("Intake/DesiredSpeed", IntakeConstants.INTAKE_SPEED.get());
+          intakeIO.setSpeed(IntakeConstants.INTAKE_SPEED.get());
         },
         this);
   }
