@@ -117,7 +117,7 @@ public class Orchestrator {
         .onlyIf(indexer::getLimitSwitchPressed);
   }
 
-  public Command alignAndShoot() {
+  public Command alignArmAndShoot() {
     return Commands.sequence(alignArm(), shootBasic());
   }
 
