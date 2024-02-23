@@ -107,7 +107,7 @@ public class Orchestrator {
   public Command shootBasic() {
     return Commands.sequence(
             Commands.parallel(
-                shooter.shoot(9999)
+                shooter.manualShoot(12)
                 // Turn towards speaker.
                 ),
             Commands.waitUntil(shooter::ShooterSpeedIsReady).withTimeout(2),
@@ -115,6 +115,10 @@ public class Orchestrator {
             Commands.waitUntil(() -> !indexer.getLimitSwitchPressed()).withTimeout(2),
             Commands.parallel(indexer.setVolts(0), shooter.manualShoot(0)))
         .onlyIf(indexer::getLimitSwitchPressed);
+  }
+
+  public Command alignAndShoot() {
+    return Commands.sequence(alignArm(), shootBasic());
   }
 
   /**
