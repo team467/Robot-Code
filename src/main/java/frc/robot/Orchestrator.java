@@ -69,13 +69,18 @@ public class Orchestrator {
 
   public Command alignArm() {
     return Commands.defer(
-        () ->
-            arm.toSetpoint(
-                new Rotation2d(
-                    shooter.calculateShootingAngle(
-                            drive.getPose().getTranslation().getDistance(speaker))
-                        - ArmConstants.HORIZONTAL_OFFSET.getRadians())),
-        Set.of(arm));
+            () -> arm.toSetpoint(
+                    new Rotation2d(
+                            Math.abs(
+                                    Math.atan(
+                                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
+                                            - Math.sin(arm.getAngle() - 14.59) * Units.inchesToMeters(28))
+                                            / drive.getPose().getTranslation().getDistance(speaker)
+                                    )
+                            )
+                    )
+            )
+    , Set.of(arm));
   }
 
   public Command shootBasic() {
@@ -100,7 +105,10 @@ public class Orchestrator {
   }
 
   public Command driveWhileIntaking() {
-    return Commands.parallel(intake.intake().until(() -> robotState.hasNote), Commands.run(()->drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0,0.0)),drive).withTimeout(2));
+    return Commands.parallel(
+            intake.intake().until(() -> robotState.hasNote),
+            Commands.run(()->drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0,0.0)),
+                    drive).withTimeout(2));
   }
 
   // Intakes after seeing note with Pixy2.

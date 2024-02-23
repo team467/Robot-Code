@@ -107,6 +107,10 @@ public class Arm extends SubsystemBase {
         this);
   }
 
+  public double getAngle() {
+    return inputs.positionRads;
+  }
+
   /**
    * Determines whether the arm is at the setpoint angle.
    *

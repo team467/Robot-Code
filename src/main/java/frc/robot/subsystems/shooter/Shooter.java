@@ -106,6 +106,6 @@ public class Shooter extends SubsystemBase {
    */
   public double calculateShootingAngle(double distanceFromSpeaker) {
     return Math.abs(
-        Math.atan(FieldConstants.Speaker.centerSpeakerOpening.getZ() / distanceFromSpeaker));
+        Math.atan(FieldConstants.Speaker.centerSpeakerOpening.getZ()/ distanceFromSpeaker));
   }
 }
