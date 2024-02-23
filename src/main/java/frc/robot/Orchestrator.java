@@ -69,18 +69,15 @@ public class Orchestrator {
 
   public Command alignArm() {
     return Commands.defer(
-            () -> arm.toSetpoint(
-                    new Rotation2d(
-                            Math.abs(
-                                    Math.atan(
-                                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                            - Math.sin(arm.getAngle() - 14.59) * Units.inchesToMeters(28))
-                                            / drive.getPose().getTranslation().getDistance(speaker)
-                                    )
-                            )
-                    )
-            )
-    , Set.of(arm));
+        () ->
+            arm.toSetpoint(
+                new Rotation2d(
+                    Math.abs(
+                        Math.atan(
+                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
+                                    - Math.sin(arm.getAngle() - 14.59) * Units.inchesToMeters(28))
+                                / drive.getPose().getTranslation().getDistance(speaker))))),
+        Set.of(arm));
   }
 
   public Command shootBasic() {
@@ -101,14 +98,16 @@ public class Orchestrator {
         indexer.setVolts(4),
         arm.toSetpoint(ArmConstants.HORIZONTAL_OFFSET), // TODO: Make setPoint for pickup position.
         Commands.waitUntil(arm::atSetpoint).withTimeout(2),
-            intake.intake().until(() -> robotState.hasNote));
+        intake.intake().until(() -> robotState.hasNote));
   }
 
   public Command driveWhileIntaking() {
     return Commands.parallel(
-            intake.intake().until(() -> robotState.hasNote),
-            Commands.run(()->drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0,0.0)),
-                    drive).withTimeout(2));
+        intake.intake().until(() -> robotState.hasNote),
+        Commands.run(
+                () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)),
+                drive)
+            .withTimeout(2));
   }
 
   // Intakes after seeing note with Pixy2.
@@ -118,19 +117,17 @@ public class Orchestrator {
         arm.toSetpoint(ArmConstants.HORIZONTAL_OFFSET), // TODO: Make setpoint for pickup position.
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
         intake.intake().until(() -> robotState.hasNote));
-
   }
 
-  public Command expelFullRobot() {
-    return Commands.parallel(
-        shooter.manualShoot(-5), indexer.setVolts(-5.0), intake.release());
+  public Command expelIntake() {
+    return intake.release();
   }
 
   public Command expelShindex() {
     return Commands.parallel(shooter.manualShoot(-5.0), indexer.setVolts(-5.0));
   }
 
-  public Command expelIntake() {
-    return intake.release();
+  public Command expelFullRobot() {
+    return Commands.parallel(expelIntake(), expelShindex());
   }
 }
