@@ -3,6 +3,8 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
@@ -94,7 +96,7 @@ public class Orchestrator {
         indexer.setVolts(4),
         arm.toSetpoint(new Rotation2d()), // TODO: Make setPoint for pickup position.
         Commands.waitUntil(arm::atSetpoint).withTimeout(2),
-        intake.intake().until(() -> robotState.hasNote));
+        Commands.parallel(intake.intake(), Commands.run(()->drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0,0.0)),drive)).until(() -> robotState.hasNote));
   }
 
   // Intakes after seeing note with Pixy2.
@@ -103,7 +105,7 @@ public class Orchestrator {
         indexer.setVolts(4),
         arm.toSetpoint(new Rotation2d()), // TODO: Make setpoint for pickup position.
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
-        intake.intake().until(() -> robotState.hasNote));
+        Commands.parallel(intake.intake(), Commands.run(()->drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0,0.0)),drive)).until(() -> robotState.hasNote));
   }
 
   public Command climb() {
