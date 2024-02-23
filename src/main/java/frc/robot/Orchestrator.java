@@ -165,12 +165,18 @@ public class Orchestrator {
    * @return The command to intake after a note is seen.
    */
   // Intakes after seeing note with Pixy2.
-  public Command visionIntake() {
+  public Command basicVisionIntake() {
     return Commands.sequence(
         indexer.setVolts(4),
         arm.toSetpoint(ArmConstants.HORIZONTAL_OFFSET), // TODO: Make setpoint for pickup position.
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
         intake.intake().until(() -> robotState.hasNote));
+  }
+
+  /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
+      Then will use intakeBasic. */
+  public Command fullVisionIntake() {
+    return null;
   }
 
   /**
