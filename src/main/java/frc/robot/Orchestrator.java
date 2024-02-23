@@ -69,7 +69,7 @@ public class Orchestrator {
    * @return The command to move the arm to the correct setPoint for shooting from its current
    *     location.
    */
-  public Command alignArm() {
+  public Command alignArmSpeaker() {
     return Commands.defer(
         () ->
             arm.toSetpoint(
@@ -118,8 +118,8 @@ public class Orchestrator {
    *
    * @return The command to move the robot and the arm in preparation to shoot.
    */
-  public Command fullAlign() {
-    return Commands.sequence(turnToSpeaker(), alignArm());
+  public Command fullAlignSpeaker() {
+    return Commands.sequence(turnToSpeaker(), alignArmSpeaker());
   }
 
   /**
@@ -128,8 +128,8 @@ public class Orchestrator {
    *
    * @return The command to align both the robot and the arm, and then shoot.
    */
-  public Command fullAlignShoot() {
-    return Commands.sequence(fullAlign(), shootBasic());
+  public Command fullAlignShootSpeaker() {
+    return Commands.sequence(fullAlignSpeaker(), shootBasic());
   }
 
   /**
@@ -174,7 +174,7 @@ public class Orchestrator {
   }
 
   /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
-      Will use intakeBasic in parallel. */
+  Will use intakeBasic in parallel. */
   public Command fullVisionIntake() {
     return null;
   }
