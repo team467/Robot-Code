@@ -43,6 +43,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
+import java.util.Set;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -185,18 +186,21 @@ public class RobotContainer {
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX(),
+            () -> driverController.getRightX(),
             () -> isRobotOriented // TODO: add toggle
             ));
     driverController
         .start()
         .onTrue(
-            Commands.runOnce(
+            Commands.defer(
                     () ->
-                        drive.setPose(
-                            new Pose2d(
-                                drive.getPose().getTranslation(),
-                                AllianceFlipUtil.apply(new Rotation2d()))))
+                        Commands.runOnce(
+                            () ->
+                                drive.setPose(
+                                    new Pose2d(
+                                        drive.getPose().getTranslation(),
+                                        AllianceFlipUtil.apply(new Rotation2d())))),
+                    Set.of())
                 .ignoringDisable(true));
     driverController
         .pov(-1)
