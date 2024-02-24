@@ -19,7 +19,7 @@ public class ClimberIOTalonSRX implements ClimberIO {
   }
 
   @Override
-  public void setMotorOutputPercent(double percentOutput) {
+  public void setMotorsOutputPercent(double percentOutput) {
     motor.set(TalonSRXControlMode.PercentOutput, percentOutput);
   }
 }

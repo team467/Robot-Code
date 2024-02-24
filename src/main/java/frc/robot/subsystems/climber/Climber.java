@@ -1,6 +1,6 @@
 package frc.robot.subsystems.climber;
 
-import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -9,7 +9,13 @@ public class Climber extends SubsystemBase {
 
   private final ClimberIO climberIO;
   private final ClimberIOInputsAutoLogged climberIOInputs = new ClimberIOInputsAutoLogged();
-  private final Relay climberLock = new Relay(0); // TODO: Add constant for channel
+  private PIDController climberLeftFeedback =
+      new PIDController(ClimberConstants.CLIMBER_KP.get(), 0, ClimberConstants.CLIMBER_KD.get());
+  private PIDController climberRightFeedback =
+      new PIDController(ClimberConstants.CLIMBER_KP.get(), 0, ClimberConstants.CLIMBER_KD.get());
+  private boolean PIDMode = false;
+  private double setpointLeft;
+  private double setpointRight;
   // TODO: Add Soloenoid
 
   /**
@@ -21,8 +27,16 @@ public class Climber extends SubsystemBase {
     super();
 
     this.climberIO = climberIO;
+  }
 
+  public void periodic() {
     climberIO.updateInput(climberIOInputs);
+    if (PIDMode) {
+      climberIO.setLeftMotorVolts(
+          climberLeftFeedback.calculate(climberIOInputs.ClimberLeftPosition, setpointLeft));
+      climberIO.setRightMotorVolts(
+          climberRightFeedback.calculate(climberIOInputs.ClimberRightPosition, setpointRight));
+    }
   }
 
   /**
@@ -35,7 +49,18 @@ public class Climber extends SubsystemBase {
   public Command raiseOrLower(double percentOutput) {
     return Commands.run(
         () -> {
-          climberIO.setMotorOutputPercent(percentOutput);
+          PIDMode = false;
+          climberIO.setMotorsOutputPercent(percentOutput);
+        },
+        this);
+  }
+
+  public Command raiseToSetpoint(double setpointLeft, double setPointRight) {
+    return Commands.run(
+        () -> {
+          this.setpointLeft = setpointLeft;
+          this.setpointRight = setPointRight;
+          PIDMode = true;
         },
         this);
   }
@@ -48,7 +73,8 @@ public class Climber extends SubsystemBase {
   public Command stop() {
     return Commands.run(
         () -> {
-          climberIO.setMotorOutputPercent(0);
+          PIDMode = false;
+          climberIO.setMotorsOutputPercent(0);
         },
         this);
   }
