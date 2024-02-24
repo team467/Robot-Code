@@ -63,27 +63,6 @@ public class Orchestrator {
   }
 
   /**
-   * Calculates the angle to align the arm to the speaker from anywhere on the field. Does arcTan of
-   * ((height of center of the speaker - height of the shooter) / distance to speaker)
-   *
-   * @return The command to move the arm to the correct setPoint for shooting from its current
-   *     location.
-   */
-  public Command alignArmSpeaker() {
-    return Commands.defer(
-        () ->
-            arm.toSetpoint(
-                new Rotation2d(
-                    Math.abs(
-                        Math.atan(
-                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                    - Math.sin(arm.getAngle() - Units.degreesToRadians(13.95))
-                                        * Units.inchesToMeters(28))
-                                / drive.getPose().getTranslation().getDistance(speaker))))),
-        Set.of(arm));
-  }
-
-  /**
    * Calculates the angle to turn to the speaker, and turns.
    *
    * @return The command for the robot to turn.
@@ -95,6 +74,21 @@ public class Orchestrator {
                 drive.getPose().getTranslation(),
                 speaker.minus(drive.getPose().getTranslation()).getAngle().minus(Rotation2d.fromDegrees(180)));
     return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
+  }
+
+  /**
+   * Same as shootBasic, but for scoring in the amp instead, so we are using a slower speed.
+   *
+   * @return The cammand to shoot into the amp.
+   */
+  public Command shootAmp() {
+    return Commands.sequence(
+            shooter.manualShoot(3.5),
+            Commands.waitUntil(shooter::ShooterSpeedIsReady).withTimeout(2),
+            indexer.setVolts(1),
+            Commands.waitUntil(() -> !indexer.getLimitSwitchPressed()).withTimeout(2),
+            Commands.parallel(indexer.setVolts(0), shooter.manualShoot(0)))
+        .onlyIf(indexer::getLimitSwitchPressed);
   }
 
   /**
@@ -129,8 +123,14 @@ public class Orchestrator {
                 Set.of(drive)));
   }
 
+  /**
+   * Uses goToAmp(), alignArmAmp(), and shootBasic() to move the robot to the amp and then line up
+   * and shoot.
+   *
+   * @return The command for scoring in the amp from any spot on the field.
+   */
   public Command scoreAmp() {
-    return Commands.parallel(goToAmp(), alignArmAmp()).andThen(shootBasic());
+    return Commands.parallel(goToAmp(), alignArmAmp()).andThen(shootAmp());
   }
 
   /**
@@ -147,6 +147,27 @@ public class Orchestrator {
             Commands.waitUntil(() -> !indexer.getLimitSwitchPressed()).withTimeout(2),
             Commands.parallel(indexer.setVolts(0), shooter.manualShoot(0)))
         .onlyIf(indexer::getLimitSwitchPressed);
+  }
+
+  /**
+   * Calculates the angle to align the arm to the speaker from anywhere on the field. Does arcTan of
+   * ((height of center of the speaker - height of the shooter) / distance to speaker)
+   *
+   * @return The command to move the arm to the correct setPoint for shooting from its current
+   *     location.
+   */
+  public Command alignArmSpeaker() {
+    return Commands.defer(
+        () ->
+            arm.toSetpoint(
+                new Rotation2d(
+                    Math.abs(
+                        Math.atan(
+                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
+                                    - Math.sin(arm.getAngle() - Units.degreesToRadians(13.95))
+                                        * Units.inchesToMeters(28))
+                                / drive.getPose().getTranslation().getDistance(speaker))))),
+        Set.of(arm));
   }
 
   /**
@@ -240,5 +261,23 @@ public class Orchestrator {
    */
   public Command expelFullRobot() {
     return Commands.parallel(expelIntake(), expelShindex());
+  }
+
+  /**
+   * Uses intakeBasic and shootBasic in order to shoot a note while lined up with the speaker, doesn't move the arm.
+   *
+   * @return The command to intake a note and then shoot that note, more for testing purposes.
+   */
+  public Command intakeAndShootSpeaker() {
+    return Commands.sequence(intakeBasic(), shootBasic());
+  }
+
+  /**
+   * Sets the arm to the home position, completely down.
+   *
+   * @return The command to move the arm to the home position.
+   */
+  public Command armToHome() {
+    return arm.toSetpoint(ArmConstants.OFFSET);
   }
 }
