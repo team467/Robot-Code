@@ -7,7 +7,6 @@ public class ShooterConstants {
   public static final double SHOOTER_READY_VELOCITY_RAD_PER_SEC;
   public static final TunableNumber SHOOTER_KS;
   public static final TunableNumber SHOOTER_KV;
-  public static final double WHEEL_DIAMETER;
   public static final TunableNumber SHOOTER_KP;
   public static final TunableNumber SHOOTER_KD;
   public static final TunableNumber SHOOTER_TOLERANCE;
@@ -15,7 +14,6 @@ public class ShooterConstants {
   static {
     switch (Constants.getRobot()) {
       case ROBOT_SIMBOT -> {
-        WHEEL_DIAMETER = 0.0;
         SHOOTER_READY_VELOCITY_RAD_PER_SEC = 0.0;
         SHOOTER_KS = new TunableNumber("Shooter/ShooterKS", 0.0);
         SHOOTER_KV = new TunableNumber("Shooter/ShooterKV", 0.0);
@@ -23,8 +21,15 @@ public class ShooterConstants {
         SHOOTER_KD = new TunableNumber("Shooter/ShooterKD", 0.0);
         SHOOTER_TOLERANCE = new TunableNumber("Shooter/ShooterTolerance", 0.0);
       }
+      case ROBOT_2024C -> {
+        SHOOTER_READY_VELOCITY_RAD_PER_SEC = 0.0;
+        SHOOTER_KS = new TunableNumber("Shooter/ShooterKS", 0.05);
+        SHOOTER_KV = new TunableNumber("Shooter/ShooterKV", 0.05);
+        SHOOTER_KP = new TunableNumber("Shooter/ShooterKP", 1.0);
+        SHOOTER_KD = new TunableNumber("Shooter/ShooterKD", 0.01);
+        SHOOTER_TOLERANCE = new TunableNumber("Shooter/ShooterTolerance", 0.1);
+      }
       default -> {
-        WHEEL_DIAMETER = 0.0;
         SHOOTER_READY_VELOCITY_RAD_PER_SEC = 0.0;
         SHOOTER_KS = new TunableNumber("Shooter/ShooterKS", 0.0);
         SHOOTER_KV = new TunableNumber("Shooter/ShooterKV", 0.0);

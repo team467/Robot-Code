@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.FieldConstants;
 import frc.robot.subsystems.robotstate.RobotState;
 import org.littletonrobotics.junction.Logger;
 
@@ -60,7 +59,7 @@ public class Shooter extends SubsystemBase {
   /**
    * @param velocitySetpoint the velocity that the shooter should be set to
    * @return A command that sets the PIDMode to true, and then sets to PID setpoint to that of the
-   *     inputed velocitySetpoint
+   *     inputted velocitySetpoint
    */
   public Command shoot(double velocitySetpoint) {
     return Commands.run(
@@ -92,20 +91,5 @@ public class Shooter extends SubsystemBase {
     } else {
       return shooterFeedback.atSetpoint();
     }
-  }
-  /**
-   * @param distanceFromSpeaker the robots distance from the speaker
-   * @return calculates the hypotenuse of the hight of the speaker and the inputed distance
-   */
-  public double calculateShootingDistance(double distanceFromSpeaker) {
-    return Math.hypot(FieldConstants.Speaker.centerSpeakerOpening.getZ(), distanceFromSpeaker);
-  }
-  /**
-   * @param distanceFromSpeaker the robots distance from the speaker
-   * @return the angle at which the shooter must be to shoot into the speaker
-   */
-  public double calculateShootingAngle(double distanceFromSpeaker) {
-    return Math.abs(
-        Math.atan(FieldConstants.Speaker.centerSpeakerOpening.getZ() / distanceFromSpeaker));
   }
 }

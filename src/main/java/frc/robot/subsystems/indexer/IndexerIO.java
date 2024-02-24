@@ -11,7 +11,6 @@ public interface IndexerIO {
 
     public double indexerCurrentAmps;
 
-    public boolean indexerLimitSwitchLeftPressed;
     public boolean indexerLimitSwitchPressed;
   }
 
