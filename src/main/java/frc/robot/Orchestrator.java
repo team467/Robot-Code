@@ -13,9 +13,9 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pixy2.Pixy2;
-import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -27,25 +27,17 @@ public class Orchestrator {
   private final Shooter shooter;
   private final Pixy2 pixy2;
   private final Arm arm;
-  private final RobotState robotState;
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
   public Orchestrator(
-      Drive drive,
-      Intake intake,
-      Indexer indexer,
-      Shooter shooter,
-      Pixy2 pixy2,
-      Arm arm,
-      RobotState robotState) {
+      Drive drive, Intake intake, Indexer indexer, Shooter shooter, Pixy2 pixy2, Arm arm) {
     this.drive = drive;
     this.intake = intake;
     this.indexer = indexer;
     this.shooter = shooter;
     this.pixy2 = pixy2;
     this.arm = arm;
-    this.robotState = robotState;
   }
 
   /**
@@ -144,12 +136,12 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-            shooter.manualShoot(12),
-            Commands.waitUntil(shooter::ShooterSpeedIsReady).withTimeout(2),
-            indexer.setVolts(1),
-            Commands.waitUntil(() -> !indexer.getLimitSwitchPressed()).withTimeout(2),
-            Commands.parallel(indexer.setVolts(0), shooter.manualShoot(0)))
-        .onlyIf(indexer::getLimitSwitchPressed);
+        shooter.manualShoot(10).withTimeout(2),
+        Commands.parallel(shooter.manualShoot(10), indexer.setPercent(1))
+            .until(() -> !indexer.getLimitSwitchPressed())
+            .withTimeout(5),
+        Commands.parallel(indexer.setVolts(0), shooter.manualShoot(0)));
+    // .onlyIf(indexer::getLimitSwitchPressed);
   }
 
   /**
@@ -199,10 +191,12 @@ public class Orchestrator {
    */
   public Command intakeBasic() {
     return Commands.sequence(
-        indexer.setVolts(4),
-        arm.toSetpoint(ArmConstants.OFFSET),
-        Commands.waitUntil(arm::atSetpoint).withTimeout(2),
-        intake.intake().until(() -> robotState.hasNote));
+            arm.toSetpoint(ArmConstants.OFFSET).until(arm::atSetpoint).withTimeout(2),
+            Commands.parallel(
+                    indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(.2),
+                    intake.intake())
+                .until(indexer::getLimitSwitchPressed))
+        .finallyDo(() -> indexer.setPercent(-0.6).withTimeout(2));
   }
 
   /**
@@ -212,7 +206,7 @@ public class Orchestrator {
    */
   public Command driveWhileIntaking() {
     return Commands.parallel(
-        intake.intake().until(() -> robotState.hasNote),
+        intake.intake().until(indexer::getLimitSwitchPressed),
         Commands.run(
                 () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)),
                 drive)
@@ -230,7 +224,7 @@ public class Orchestrator {
         indexer.setVolts(4),
         arm.toSetpoint(ArmConstants.OFFSET),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
-        intake.intake().until(() -> robotState.hasNote));
+        intake.intake().until(indexer::getLimitSwitchPressed));
   }
 
   /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
@@ -254,7 +248,7 @@ public class Orchestrator {
    * @return The command to release a note in the shooter and indexer.
    */
   public Command expelShindex() {
-    return Commands.parallel(shooter.manualShoot(-5.0), indexer.setVolts(-12.0));
+    return Commands.parallel(shooter.manualShoot(-0.2 * 12), indexer.setPercent(-1.0));
   }
 
   /**
