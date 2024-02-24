@@ -16,6 +16,7 @@ public class ArmConstants {
   public static final TunableNumber MAX_ACCELERATION;
   public static final Rotation2d OFFSET; // Location of arm when limit switch pressed
   public static final GearRatio GEAR_RATIO;
+  public static final double AMP_POSITION;
 
   static {
     switch (Constants.getRobot()) {
@@ -29,6 +30,7 @@ public class ArmConstants {
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Units.degreesToRadians(15));
         OFFSET = Rotation2d.fromDegrees(-13.95);
         GEAR_RATIO = new GearRatio(228.571429, 1);
+        AMP_POSITION = Units.degreesToRadians(78.26);
       }
       default -> {
         KG = new TunableNumber("Arm/KG", 0.0);
@@ -40,6 +42,7 @@ public class ArmConstants {
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", 0.0);
         OFFSET = new Rotation2d();
         GEAR_RATIO = new GearRatio();
+        AMP_POSITION = 0;
       }
     }
   }
