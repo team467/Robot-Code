@@ -20,8 +20,8 @@ public class Schematic {
   public static final int FRONT_LEFT_CANCODER_ID;
   public static final int FRONT_RIGHT_CANCODER_ID;
   public static final int GYRO_ID;
-  public static final int SHOOTER_TOP_ID;
-  public static final int SHOOTER_BOTTOM_ID;
+  public static final int SHOOTER_RIGHT_ID;
+  public static final int SHOOTER_LEFT_ID;
   public static final int INDEXER_ID;
   // Intake
   public static final int INTAKE_ID;
@@ -47,8 +47,8 @@ public class Schematic {
         REAR_RIGHT_STEERING_ID = 8;
         REAR_RIGHT_CANCODER_ID = 16;
         GYRO_ID = 17;
-        SHOOTER_TOP_ID = 0;
-        SHOOTER_BOTTOM_ID = 0;
+        SHOOTER_RIGHT_ID = 0;
+        SHOOTER_LEFT_ID = 0;
         INDEXER_ID = 0;
 
         INTAKE_ID = 0;
@@ -72,8 +72,8 @@ public class Schematic {
         FRONT_RIGHT_STEERING_ID = 8;
         FRONT_RIGHT_CANCODER_ID = 16;
         GYRO_ID = 0;
-        SHOOTER_TOP_ID = 0;
-        SHOOTER_BOTTOM_ID = 0;
+        SHOOTER_RIGHT_ID = 0;
+        SHOOTER_LEFT_ID = 0;
         INDEXER_ID = 0;
 
         INTAKE_ID = 0;
@@ -97,8 +97,8 @@ public class Schematic {
         FRONT_RIGHT_STEERING_ID = 0;
         FRONT_RIGHT_CANCODER_ID = 0;
         GYRO_ID = 0;
-        SHOOTER_TOP_ID = 0;
-        SHOOTER_BOTTOM_ID = 0;
+        SHOOTER_RIGHT_ID = 0;
+        SHOOTER_LEFT_ID = 0;
         INDEXER_ID = 0;
 
         INTAKE_ID = 0;
