@@ -22,6 +22,7 @@ import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOSparkMAX;
 import frc.robot.subsystems.drive.Drive;
@@ -227,8 +228,8 @@ public class RobotContainer {
     operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
     operatorController.pov(90).whileTrue(arm.runPercent(0));
 
-    driverController.rightBumper().whileTrue(arm.toSetpoint(new Rotation2d()));
-    driverController.leftBumper().whileTrue(arm.toSetpoint(Rotation2d.fromDegrees(15)));
+    driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.OFFSET));
+    driverController.leftBumper().whileTrue(arm.toSetpoint(Rotation2d.fromDegrees(78.26)));
   }
 
   /**
