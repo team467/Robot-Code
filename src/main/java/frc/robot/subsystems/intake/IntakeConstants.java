@@ -11,7 +11,7 @@ public class IntakeConstants {
 
   static {
     switch (Constants.getRobot()) {
-      case ROBOT_2024A -> {
+      case ROBOT_2024C -> {
         INTAKE_SPEED = 0.2;
         RELEASE_SPEED = -0.2;
         STOP_SPEED = 0.0;
