@@ -36,6 +36,8 @@ public class Arm extends SubsystemBase {
     feedback.disableContinuousInput();
     feedback.reset(inputs.positionRads);
     feedback.setGoal(inputs.positionRads); // don't go crazy and kill someone
+
+    feedback.setTolerance(ArmConstants.TOLERENCE);
   }
 
   @Override
