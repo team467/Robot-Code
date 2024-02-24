@@ -20,8 +20,8 @@ public class ShooterIOPhysical implements ShooterIO {
     shooterRight = new CANSparkMax(Schematic.SHOOTER_RIGHT_ID, MotorType.kBrushless);
     shooterLeftEncoder = shooterLeft.getEncoder();
     shooterRightEncoder = shooterRight.getEncoder();
-    shooterLeft.setInverted(false);
-    shooterRight.setInverted(true);
+    shooterLeft.setInverted(true);
+    shooterRight.setInverted(false);
     shooterLeft.setIdleMode(IdleMode.kBrake);
     shooterRight.setIdleMode(IdleMode.kBrake);
     shooterLeftEncoder.setVelocityConversionFactor(rotsToRads / 60);
