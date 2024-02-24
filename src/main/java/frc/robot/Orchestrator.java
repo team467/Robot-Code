@@ -98,6 +98,28 @@ public class Orchestrator {
   }
 
   /**
+   * Sets the arm to amp scoring position
+   *
+   * @return The command to move the arm to setpoint
+   */
+    public Command alignArmAmp() {
+      return arm.toSetpoint(ArmConstants.AMP_POSITION);
+    }
+
+    public Command goToAmp() {
+      Supplier<Pose2d> targetPose =
+              () -> new Pose2d(
+                      AllianceFlipUtil.apply(FieldConstants.ampCenter),
+                      drive.getRotation().minus(AllianceFlipUtil.apply(FieldConstants.ampCenter.getAngle()))
+              );
+      return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
+    }
+
+    public Command scoreAmp() {
+        return Commands.parallel(goToAmp(), alignArmAmp()).andThen(shootBasic());
+    }
+
+  /**
    * Shoots with a velocity setpoint of 9999 rad per seconds, this needs to be tuned. Turns off the
    * indexer and the shooter when the limit switch is not pressed.
    *
@@ -105,7 +127,7 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-            Commands.parallel(shooter.manualShoot(12)),
+            shooter.manualShoot(12),
             Commands.waitUntil(shooter::ShooterSpeedIsReady).withTimeout(2),
             indexer.setVolts(1),
             Commands.waitUntil(() -> !indexer.getLimitSwitchPressed()).withTimeout(2),
@@ -194,7 +216,7 @@ public class Orchestrator {
    * @return The command to release a note in the shooter and indexer.
    */
   public Command expelShindex() {
-    return Commands.parallel(shooter.manualShoot(-5.0), indexer.setVolts(-5.0));
+    return Commands.parallel(shooter.manualShoot(-5.0), indexer.setVolts(-12.0));
   }
 
   /**
