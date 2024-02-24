@@ -162,7 +162,7 @@ public class Orchestrator {
   public Command intakeBasic() {
     return Commands.sequence(
         indexer.setVolts(4),
-        arm.toSetpoint(ArmConstants.HORIZONTAL_OFFSET), // TODO: Make setPoint for pickup position.
+        arm.toSetpoint(ArmConstants.OFFSET), // TODO: Make setPoint for pickup position.
         Commands.waitUntil(arm::atSetpoint).withTimeout(2),
         intake.intake().until(() -> robotState.hasNote));
   }
@@ -190,7 +190,7 @@ public class Orchestrator {
   public Command basicVisionIntake() {
     return Commands.sequence(
         indexer.setVolts(4),
-        arm.toSetpoint(ArmConstants.HORIZONTAL_OFFSET), // TODO: Make setpoint for pickup position.
+        arm.toSetpoint(ArmConstants.OFFSET), // TODO: Make setpoint for pickup position.
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
         intake.intake().until(() -> robotState.hasNote));
   }
