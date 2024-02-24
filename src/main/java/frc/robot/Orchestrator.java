@@ -150,7 +150,7 @@ public class Orchestrator {
    * Aligns the robot with the speaker and then aligns the arm and shoots. Uses the fullAlign and
    * shootBasic commands.
    *
-   * @return The command to align both the robot and the arm, and then shoot.
+   * @return The command to align both the robot and the arm, and then shoots at full power.
    */
   public Command fullAlignShootSpeaker() {
     return Commands.sequence(fullAlignSpeaker(), shootBasic());
