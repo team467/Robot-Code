@@ -22,6 +22,7 @@ import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOSparkMAX;
 import frc.robot.subsystems.drive.Drive;
@@ -42,6 +43,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
+import java.util.Set;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -185,18 +187,21 @@ public class RobotContainer {
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX(),
+            () -> driverController.getRightX(),
             () -> isRobotOriented // TODO: add toggle
             ));
     driverController
         .start()
         .onTrue(
-            Commands.runOnce(
+            Commands.defer(
                     () ->
-                        drive.setPose(
-                            new Pose2d(
-                                drive.getPose().getTranslation(),
-                                AllianceFlipUtil.apply(new Rotation2d()))))
+                        Commands.runOnce(
+                            () ->
+                                drive.setPose(
+                                    new Pose2d(
+                                        drive.getPose().getTranslation(),
+                                        AllianceFlipUtil.apply(new Rotation2d())))),
+                    Set.of())
                 .ignoringDisable(true));
     driverController
         .pov(-1)
@@ -228,8 +233,8 @@ public class RobotContainer {
     operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
     operatorController.pov(90).whileTrue(arm.runPercent(0));
 
-    driverController.rightBumper().whileTrue(arm.toSetpoint(new Rotation2d()));
-    driverController.leftBumper().whileTrue(arm.toSetpoint(Rotation2d.fromDegrees(15)));
+    driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.OFFSET));
+    driverController.leftBumper().whileTrue(arm.toSetpoint(Rotation2d.fromDegrees(78.26)));
   }
 
   /**
