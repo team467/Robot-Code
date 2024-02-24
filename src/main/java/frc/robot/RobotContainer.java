@@ -216,7 +216,7 @@ public class RobotContainer {
                 .onlyWhile(() -> !indexer.getLimitSwitchPressed())
                 .andThen(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(0.2)));
 
-    operatorController.y().whileTrue(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()));
+    operatorController.y().whileTrue(indexer.setPercent(1));
 
     operatorController.b().whileTrue(indexer.setPercent(-0.8).alongWith(intake.release()));
     operatorController.rightBumper().whileTrue(shooter.manualShoot(0.2 * 12));
