@@ -128,6 +128,11 @@ public class Orchestrator {
                 Set.of(drive)));
   }
 
+  /**
+   * Uses goToAmp(), alignArmAmp(), and shootBasic() to move the robot to the amp and then line up and shoot.
+   *
+   * @return The command for scoring in the amp from any spot on the field.
+   */
   public Command scoreAmp() {
     return Commands.parallel(goToAmp(), alignArmAmp()).andThen(shootBasic());
   }
