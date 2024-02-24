@@ -93,7 +93,7 @@ public class Orchestrator {
         () ->
             new Pose2d(
                 drive.getPose().getTranslation(),
-                speaker.minus(drive.getPose().getTranslation()).getAngle());
+                speaker.minus(drive.getPose().getTranslation()).getAngle().minus(Rotation2d.fromDegrees(180)));
     return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
   }
 
@@ -123,7 +123,8 @@ public class Orchestrator {
                             targetPose.get().getY() + 0.5,
                             AllianceFlipUtil.apply(FieldConstants.ampCenter)
                                 .minus(drive.getPose().getTranslation())
-                                .getAngle()),
+                                .getAngle()
+                                .minus(Rotation2d.fromRadians(Math.PI))),
                         drive),
                 Set.of(drive)));
   }
