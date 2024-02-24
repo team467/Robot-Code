@@ -102,22 +102,37 @@ public class Orchestrator {
    *
    * @return The command to move the arm to setpoint
    */
-    public Command alignArmAmp() {
-      return arm.toSetpoint(ArmConstants.AMP_POSITION);
-    }
+  public Command alignArmAmp() {
+    return arm.toSetpoint(ArmConstants.AMP_POSITION);
+  }
 
-    public Command goToAmp() {
-      Supplier<Pose2d> targetPose =
-              () -> new Pose2d(
-                      AllianceFlipUtil.apply(FieldConstants.ampCenter),
-                      drive.getRotation().minus(AllianceFlipUtil.apply(FieldConstants.ampCenter.getAngle()))
-              );
-      return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
-    }
+  public Command goToAmp() {
+    Supplier<Pose2d> targetPose =
+        () ->
+            new Pose2d(
+                FieldConstants.ampCenter.getX(),
+                FieldConstants.ampCenter.getY() - 1,
+                new Rotation2d());
+    return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive))
+        .andThen(
+            Commands.defer(
+                () ->
+                    new StraightDriveToPose(
+                        new Pose2d(
+                            targetPose.get().getX(),
+                            targetPose.get().getY() + 0.5,
+                            drive
+                                .getPose()
+                                .getTranslation()
+                                .plus(FieldConstants.ampCenter)
+                                .getAngle()),
+                        drive),
+                Set.of(drive)));
+  }
 
-    public Command scoreAmp() {
-        return Commands.parallel(goToAmp(), alignArmAmp()).andThen(shootBasic());
-    }
+  public Command scoreAmp() {
+    return Commands.parallel(goToAmp(), alignArmAmp()).andThen(shootBasic());
+  }
 
   /**
    * Shoots with a velocity setpoint of 9999 rad per seconds, this needs to be tuned. Turns off the
