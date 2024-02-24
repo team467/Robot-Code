@@ -108,26 +108,24 @@ public class Orchestrator {
 
   public Command goToAmp() {
     Supplier<Pose2d> targetPose =
-            () ->
-                    new Pose2d(
-                            FieldConstants.ampCenter.getX(),
-                            FieldConstants.ampCenter.getY() - 1,
-                            new Rotation2d());
+        () ->
+            new Pose2d(
+                AllianceFlipUtil.apply(FieldConstants.ampCenter.getX()),
+                FieldConstants.ampCenter.getY() - 1,
+                new Rotation2d());
     return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive))
-            .andThen(
-                    Commands.defer(
-                            () ->
-                                    new StraightDriveToPose(
-                                            new Pose2d(
-                                                    targetPose.get().getX(),
-                                                    targetPose.get().getY() + 0.5,
-                                                    drive
-                                                            .getPose()
-                                                            .getTranslation()
-                                                            .plus(FieldConstants.ampCenter)
-                                                            .getAngle()),
-                                            drive),
-                            Set.of(drive)));
+        .andThen(
+            Commands.defer(
+                () ->
+                    new StraightDriveToPose(
+                        new Pose2d(
+                            drive.getPose().getTranslation().getX(),
+                            targetPose.get().getY() + 0.5,
+                            AllianceFlipUtil.apply(FieldConstants.ampCenter)
+                                .minus(drive.getPose().getTranslation())
+                                .getAngle()),
+                        drive),
+                Set.of(drive)));
   }
 
   public Command scoreAmp() {
