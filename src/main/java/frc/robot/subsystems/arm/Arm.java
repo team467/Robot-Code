@@ -79,9 +79,6 @@ public class Arm extends SubsystemBase {
           feedback.calculate(inputs.positionRads)
               + feedforward.calculate(
                   feedback.getSetpoint().position, feedback.getSetpoint().velocity));
-      // Logger.recordOutput("Arm/DesiredPosition", feedback.getGoal().position);
-      // Logger.recordOutput("Arm/NextPosition", feedback.getSetpoint().position);
-      // Logger.recordOutput("Arm/NextVelocity", feedback.getSetpoint().velocity);
 
       Logger.recordOutput("Arm/Goal/Position", feedback.getGoal().position);
       Logger.recordOutput("Arm/Goal/Velocity", feedback.getGoal().velocity);
@@ -201,5 +198,18 @@ public class Arm extends SubsystemBase {
     //    m_endAccel = accelerationTime - cutoffBegin;
     //    m_endFullSpeed = m_endAccel + fullSpeedDist / m_constraints.maxVelocity;
     //    m_endDeccel = m_endFullSpeed + accelerationTime - cutoffEnd;
+  }
+
+  public double getAngle() {
+    return inputs.positionRads;
+  }
+
+  /**
+   * Determines whether the arm is at the setpoint angle.
+   *
+   * @return true if the arm is at the setpoint angle, false otherwise.
+   */
+  public boolean atSetpoint() {
+    return feedback.atGoal();
   }
 }

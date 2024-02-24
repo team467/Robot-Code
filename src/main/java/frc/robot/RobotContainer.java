@@ -63,6 +63,7 @@ public class RobotContainer {
   private Vision vision;
   private Pixy2 pixy2;
   private boolean isRobotOriented = true; // Workaround, change if needed
+  private Orchestrator orchestrator;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
