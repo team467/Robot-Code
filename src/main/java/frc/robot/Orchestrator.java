@@ -83,12 +83,12 @@ public class Orchestrator {
    */
   public Command shootAmp() {
     return Commands.sequence(
-                    shooter.manualShoot(3.5),
-                    Commands.waitUntil(shooter::ShooterSpeedIsReady).withTimeout(2),
-                    indexer.setVolts(1),
-                    Commands.waitUntil(() -> !indexer.getLimitSwitchPressed()).withTimeout(2),
-                    Commands.parallel(indexer.setVolts(0), shooter.manualShoot(0)))
-            .onlyIf(indexer::getLimitSwitchPressed);
+            shooter.manualShoot(3.5),
+            Commands.waitUntil(shooter::ShooterSpeedIsReady).withTimeout(2),
+            indexer.setVolts(1),
+            Commands.waitUntil(() -> !indexer.getLimitSwitchPressed()).withTimeout(2),
+            Commands.parallel(indexer.setVolts(0), shooter.manualShoot(0)))
+        .onlyIf(indexer::getLimitSwitchPressed);
   }
 
   /**
@@ -123,7 +123,8 @@ public class Orchestrator {
   }
 
   /**
-   * Uses goToAmp(), alignArmAmp(), and shootBasic() to move the robot to the amp and then line up and shoot.
+   * Uses goToAmp(), alignArmAmp(), and shootBasic() to move the robot to the amp and then line up
+   * and shoot.
    *
    * @return The command for scoring in the amp from any spot on the field.
    */
@@ -156,16 +157,16 @@ public class Orchestrator {
    */
   public Command alignArmSpeaker() {
     return Commands.defer(
-            () ->
-                    arm.toSetpoint(
-                            new Rotation2d(
-                                    Math.abs(
-                                            Math.atan(
-                                                    (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                                            - Math.sin(arm.getAngle() - Units.degreesToRadians(13.95))
-                                                            * Units.inchesToMeters(28))
-                                                            / drive.getPose().getTranslation().getDistance(speaker))))),
-            Set.of(arm));
+        () ->
+            arm.toSetpoint(
+                new Rotation2d(
+                    Math.abs(
+                        Math.atan(
+                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
+                                    - Math.sin(arm.getAngle() - Units.degreesToRadians(13.95))
+                                        * Units.inchesToMeters(28))
+                                / drive.getPose().getTranslation().getDistance(speaker))))),
+        Set.of(arm));
   }
 
   /**
