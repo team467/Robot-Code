@@ -21,8 +21,10 @@ public class Climber extends SubsystemBase {
     super();
 
     this.climberIO = climberIO;
+  }
 
-    climberIO.updateInput(climberIOInputs);
+  public void periodic() {
+    climberIO.updateInputs(climberIOInputs);
   }
 
   /**
@@ -35,6 +37,7 @@ public class Climber extends SubsystemBase {
   public Command raiseOrLower(double percentOutput) {
     return Commands.run(
         () -> {
+          climberIO.setRatchetLocked(false);
           climberIO.setMotorOutputPercent(percentOutput);
         },
         this);
@@ -49,6 +52,7 @@ public class Climber extends SubsystemBase {
     return Commands.run(
         () -> {
           climberIO.setMotorOutputPercent(0);
+          climberIO.setRatchetLocked(true);
         },
         this);
   }

@@ -7,9 +7,12 @@ public interface ClimberIO {
   class ClimberIOInputs {
     public double motorPercentOutput = 0.0;
     public double motorVoltage = 0.0;
+    public boolean ratchetLocked = false;
   }
 
-  default void updateInput(ClimberIOInputs inputs) {}
+  default void updateInputs(ClimberIOInputs inputs) {}
 
   default void setMotorOutputPercent(double percentOutput) {}
+
+  default void setRatchetLocked(boolean locked) {}
 }
