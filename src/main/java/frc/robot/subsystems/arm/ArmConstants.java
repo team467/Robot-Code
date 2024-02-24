@@ -14,26 +14,23 @@ public class ArmConstants {
   public static final TunableNumber KD;
   public static final TunableNumber MAX_VELOCITY;
   public static final TunableNumber MAX_ACCELERATION;
-  public static final Rotation2d
-      HORIZONTAL_OFFSET; // position between our 0 (neutral pick up position) and real 0 (parallel
-  // to
-  // floor)
+  public static final Rotation2d OFFSET; // Location of arm when limit switch pressed
   public static final GearRatio GEAR_RATIO;
-  public static final double ARM_LENGTH;
+  public static final Rotation2d AMP_POSITION;
 
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2024C -> {
-        KG = new TunableNumber("Arm/KG", 0.0);
+        KG = new TunableNumber("Arm/KG", 0);
         KS = new TunableNumber("Arm/KS", 0.0);
         KV = new TunableNumber("Arm/KV", 0.0);
-        KP = new TunableNumber("Arm/KP", 25);
-        KD = new TunableNumber("Arm/KD", 0.0);
-        MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", 7);
-        MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", 12);
-        HORIZONTAL_OFFSET = new Rotation2d();
-        GEAR_RATIO = new GearRatio(199.73, 1);
-        ARM_LENGTH = Units.inchesToMeters(28);
+        KP = new TunableNumber("Arm/KP", 30);
+        KD = new TunableNumber("Arm/KD", 0);
+        MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", Units.degreesToRadians(30));
+        MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Units.degreesToRadians(15));
+        OFFSET = Rotation2d.fromDegrees(-13.95);
+        GEAR_RATIO = new GearRatio(228.571429, 1);
+        AMP_POSITION = Rotation2d.fromRadians(Units.degreesToRadians(78.26));
       }
       default -> {
         KG = new TunableNumber("Arm/KG", 0.0);
@@ -43,9 +40,9 @@ public class ArmConstants {
         KD = new TunableNumber("Arm/KD", 0.0);
         MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", 0.0);
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", 0.0);
-        HORIZONTAL_OFFSET = new Rotation2d();
+        OFFSET = new Rotation2d();
         GEAR_RATIO = new GearRatio();
-        ARM_LENGTH = 0.0;
+        AMP_POSITION = Rotation2d.fromRadians(0);
       }
     }
   }

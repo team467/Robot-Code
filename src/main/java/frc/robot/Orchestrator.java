@@ -77,7 +77,7 @@ public class Orchestrator {
                     Math.abs(
                         Math.atan(
                             (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                    - Math.sin(arm.getAngle() - Units.degreesToRadians(14.95))
+                                    - Math.sin(arm.getAngle() - Units.degreesToRadians(13.95))
                                         * Units.inchesToMeters(28))
                                 / drive.getPose().getTranslation().getDistance(speaker))))),
         Set.of(arm));
@@ -110,24 +110,11 @@ public class Orchestrator {
     Supplier<Pose2d> targetPose =
         () ->
             new Pose2d(
-                FieldConstants.ampCenter.getX(),
-                FieldConstants.ampCenter.getY() - 1,
-                new Rotation2d());
-    return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive))
-        .andThen(
-            Commands.defer(
-                () ->
-                    new StraightDriveToPose(
-                        new Pose2d(
-                            targetPose.get().getX(),
-                            targetPose.get().getY() + 0.5,
-                            drive
-                                .getPose()
-                                .getTranslation()
-                                .plus(FieldConstants.ampCenter)
-                                .getAngle()),
-                        drive),
-                Set.of(drive)));
+                AllianceFlipUtil.apply(FieldConstants.ampCenter),
+                drive
+                    .getRotation()
+                    .minus(AllianceFlipUtil.apply(FieldConstants.ampCenter.getAngle())));
+    return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
   }
 
   public Command scoreAmp() {
@@ -177,7 +164,7 @@ public class Orchestrator {
   public Command intakeBasic() {
     return Commands.sequence(
         indexer.setVolts(4),
-        arm.toSetpoint(ArmConstants.HORIZONTAL_OFFSET), // TODO: Make setPoint for pickup position.
+        arm.toSetpoint(ArmConstants.OFFSET),
         Commands.waitUntil(arm::atSetpoint).withTimeout(2),
         intake.intake().until(() -> robotState.hasNote));
   }
@@ -205,7 +192,7 @@ public class Orchestrator {
   public Command basicVisionIntake() {
     return Commands.sequence(
         indexer.setVolts(4),
-        arm.toSetpoint(ArmConstants.HORIZONTAL_OFFSET), // TODO: Make setpoint for pickup position.
+        arm.toSetpoint(ArmConstants.OFFSET),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
         intake.intake().until(() -> robotState.hasNote));
   }
