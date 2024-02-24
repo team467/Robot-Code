@@ -2,6 +2,7 @@ package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.util.Units;
 import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
 import frc.robot.constants.controls.GearRatio;
@@ -14,6 +15,7 @@ public class ArmConstants {
   public static final TunableNumber KD;
   public static final TunableNumber MAX_VELOCITY;
   public static final TunableNumber MAX_ACCELERATION;
+  public static final Rotation2d OFFSET; // Location of arm when limit switch pressed
   public static final Rotation2d OFFSET; // Location of arm when limit switch pressed
   public static final GearRatio GEAR_RATIO;
   public static final double AMP_POSITION;
@@ -42,7 +44,7 @@ public class ArmConstants {
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", 0.0);
         OFFSET = new Rotation2d();
         GEAR_RATIO = new GearRatio();
-        AMP_POSITION = 0;
+        AMP_POSITION = Rotation2d.fromRadians(0);
       }
     }
   }
