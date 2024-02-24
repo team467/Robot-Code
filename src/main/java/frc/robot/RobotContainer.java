@@ -219,8 +219,8 @@ public class RobotContainer {
     operatorController.y().whileTrue(indexer.setPercent(1));
 
     operatorController.b().whileTrue(indexer.setPercent(-0.8).alongWith(intake.release()));
-    operatorController.rightBumper().whileTrue(shooter.manualShoot(0.2 * 12));
-    operatorController.a().whileTrue(shooter.manualShoot(-12));
+    operatorController.rightBumper().whileTrue(shooter.manualShoot(-0.2 * 12));
+    operatorController.a().whileTrue(shooter.manualShoot(10));
 
     // operator d pad
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
