@@ -16,12 +16,15 @@ public class IndexerIOPhysical implements IndexerIO {
   public IndexerIOPhysical() {
     indexer = new CANSparkMax(Schematic.INDEXER_ID, MotorType.kBrushless);
     indexer.setIdleMode(IdleMode.kBrake);
-    indexer.setInverted(true);
+    indexer.setInverted(false);
     indexerEncoder = indexer.getEncoder();
     indexerLimitSwitch = indexer.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
 
-    indexerEncoder.setVelocityConversionFactor(Units.rotationsPerMinuteToRadiansPerSecond(1)*IndexerConstants.INDEXER_GEAR_RATIO.getRotationsPerInput());
-    indexerEncoder.setPositionConversionFactor(Units.rotationsToRadians(1)*IndexerConstants.INDEXER_GEAR_RATIO.getRotationsPerInput());
+    indexerEncoder.setVelocityConversionFactor(
+        Units.rotationsPerMinuteToRadiansPerSecond(1)
+            * IndexerConstants.INDEXER_GEAR_RATIO.getRotationsPerInput());
+    indexerEncoder.setPositionConversionFactor(
+        Units.rotationsToRadians(1) * IndexerConstants.INDEXER_GEAR_RATIO.getRotationsPerInput());
   }
 
   public void updateInputs(IndexerIOInputs inputs) {
