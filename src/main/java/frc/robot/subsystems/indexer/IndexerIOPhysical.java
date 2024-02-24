@@ -19,10 +19,9 @@ public class IndexerIOPhysical implements IndexerIO {
     indexer.setInverted(true);
     indexerEncoder = indexer.getEncoder();
     indexerLimitSwitch = indexer.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
-    double rotsToRads = Units.rotationsToRadians(1);
 
-    indexerEncoder.setVelocityConversionFactor(rotsToRads / 60);
-    indexerEncoder.setPositionConversionFactor(rotsToRads);
+    indexerEncoder.setVelocityConversionFactor(Units.rotationsPerMinuteToRadiansPerSecond(1)*IndexerConstants.INDEXER_GEAR_RATIO.getRotationsPerInput());
+    indexerEncoder.setPositionConversionFactor(Units.rotationsToRadians(1)*IndexerConstants.INDEXER_GEAR_RATIO.getRotationsPerInput());
   }
 
   public void updateInputs(IndexerIOInputs inputs) {
