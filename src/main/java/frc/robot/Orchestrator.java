@@ -72,7 +72,10 @@ public class Orchestrator {
         () ->
             new Pose2d(
                 drive.getPose().getTranslation(),
-                speaker.minus(drive.getPose().getTranslation()).getAngle().minus(Rotation2d.fromDegrees(180)));
+                speaker
+                    .minus(drive.getPose().getTranslation())
+                    .getAngle()
+                    .minus(Rotation2d.fromDegrees(180)));
     return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
   }
 
@@ -264,7 +267,8 @@ public class Orchestrator {
   }
 
   /**
-   * Uses intakeBasic and shootBasic in order to shoot a note while lined up with the speaker, doesn't move the arm.
+   * Uses intakeBasic and shootBasic in order to shoot a note while lined up with the speaker,
+   * doesn't move the arm.
    *
    * @return The command to intake a note and then shoot that note, more for testing purposes.
    */
