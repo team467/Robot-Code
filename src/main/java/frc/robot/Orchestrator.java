@@ -261,4 +261,13 @@ public class Orchestrator {
   public Command expelFullRobot() {
     return Commands.parallel(expelIntake(), expelShindex());
   }
+
+  /**
+   * Uses intakeBasic and shootBasic in order to shoot a note while lined up with the speaker, doesn't move the arm.
+   *
+   * @return The command to intake a note and then shoot that note, more for testing purposes.
+   */
+  public Command intakeAndShootSpeaker() {
+    return Commands.sequence(intakeBasic(), shootBasic());
+  }
 }
