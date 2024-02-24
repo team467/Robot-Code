@@ -270,4 +270,13 @@ public class Orchestrator {
   public Command intakeAndShootSpeaker() {
     return Commands.sequence(intakeBasic(), shootBasic());
   }
+
+  /**
+   * Sets the arm to the home position, completely down.
+   *
+   * @return The command to move the arm to the home position.
+   */
+  public Command armToHome() {
+    return arm.toSetpoint(ArmConstants.OFFSET);
+  }
 }
