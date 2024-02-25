@@ -78,12 +78,9 @@ public class Orchestrator {
    */
   public Command shootAmp() {
     return Commands.sequence(
-            shooter.manualShoot(3.5),
-            Commands.waitUntil(shooter::ShooterSpeedIsReady).withTimeout(2),
-            indexer.setVolts(1),
-            Commands.waitUntil(() -> !indexer.getLimitSwitchPressed()).withTimeout(2),
-            Commands.parallel(indexer.setVolts(0), shooter.manualShoot(0)))
-        .onlyIf(indexer::getLimitSwitchPressed);
+            shooter.manualShoot(3.5).withTimeout(0.5),
+            Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5))
+                    .until(() -> !indexer.getLimitSwitchPressed()).withTimeout(2));
   }
 
   /**
@@ -139,9 +136,7 @@ public class Orchestrator {
         shooter.manualShoot(10).withTimeout(2),
         Commands.parallel(shooter.manualShoot(10), indexer.setPercent(1))
             .until(() -> !indexer.getLimitSwitchPressed())
-            .withTimeout(5),
-        Commands.parallel(indexer.setVolts(0), shooter.manualShoot(0)));
-    // .onlyIf(indexer::getLimitSwitchPressed);
+            .withTimeout(5));
   }
 
   /**
@@ -193,9 +188,9 @@ public class Orchestrator {
     return Commands.sequence(
             arm.toSetpoint(ArmConstants.OFFSET).until(arm::atSetpoint).withTimeout(2),
             Commands.parallel(
-                    indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(.2),
+                    indexer.setPercent(IndexerConstants.INDEX_SPEED.get()),
                     intake.intake())
-                .until(indexer::getLimitSwitchPressed))
+                .until(indexer::getLimitSwitchPressed).withTimeout(1))
         .finallyDo(() -> indexer.setPercent(-0.6).withTimeout(2));
   }
 
