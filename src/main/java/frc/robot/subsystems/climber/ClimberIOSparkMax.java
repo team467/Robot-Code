@@ -23,7 +23,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     climberRight.setInverted(false);
     climberRightEncoder = climberRight.getEncoder();
     climberRightEncoder.setPositionConversionFactor(ClimberConstants.ROTS_TO_METERS);
-    climberRatchet = new Relay(relayPort);
+    climberRatchet = new Relay(relayPort, Relay.Direction.kReverse);
   }
 
   @Override
