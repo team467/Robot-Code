@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.arm.Arm;
@@ -78,9 +79,10 @@ public class Orchestrator {
    */
   public Command shootAmp() {
     return Commands.sequence(
-            shooter.manualShoot(3.5).withTimeout(0.5),
-            Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5))
-                    .until(() -> !indexer.getLimitSwitchPressed()).withTimeout(2));
+        shooter.manualShoot(3.5).withTimeout(0.5),
+        Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5))
+            .until(() -> !indexer.getLimitSwitchPressed())
+            .withTimeout(2));
   }
 
   /**
@@ -133,10 +135,8 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter.manualShoot(10).withTimeout(2),
-        Commands.parallel(shooter.manualShoot(10), indexer.setPercent(1))
-            .until(() -> !indexer.getLimitSwitchPressed())
-            .withTimeout(5));
+        shooter.manualShoot(10).withTimeout(1),
+        Commands.parallel(shooter.manualShoot(10), indexer.setPercent(1)).withTimeout(5));
   }
 
   /**
@@ -188,9 +188,9 @@ public class Orchestrator {
     return Commands.sequence(
             arm.toSetpoint(ArmConstants.OFFSET).until(arm::atSetpoint).withTimeout(2),
             Commands.parallel(
-                    indexer.setPercent(IndexerConstants.INDEX_SPEED.get()),
-                    intake.intake())
-                .until(indexer::getLimitSwitchPressed).withTimeout(1))
+                    indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
+                .until(indexer::getLimitSwitchPressed)
+                .withTimeout(10))
         .finallyDo(() -> indexer.setPercent(-0.6).withTimeout(2));
   }
 
@@ -219,6 +219,16 @@ public class Orchestrator {
         indexer.setVolts(4),
         arm.toSetpoint(ArmConstants.OFFSET),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
+        new ProxyCommand(
+            () ->
+                new StraightDriveToPose(
+                    new Pose2d(
+                        drive.getPose().getTranslation(),
+                        drive
+                            .getRotation()
+                            .plus(
+                                AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle())))),
+                    drive)),
         intake.intake().until(indexer::getLimitSwitchPressed));
   }
 
