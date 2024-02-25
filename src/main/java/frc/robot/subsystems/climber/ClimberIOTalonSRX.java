@@ -13,7 +13,7 @@ public class ClimberIOTalonSRX implements ClimberIO {
   public ClimberIOTalonSRX(int canID, int relayChannel) {
     motor = new TalonSRX(canID);
     motor.setInverted(false);
-    climberRatchet = new Relay(relayChannel);
+    climberRatchet = new Relay(relayChannel, Relay.Direction.kReverse);
   }
 
   @Override
