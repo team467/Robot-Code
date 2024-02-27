@@ -192,7 +192,7 @@ public class Orchestrator {
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(()->RobotState.getInstance().hasNote)
                 .withTimeout(10))
-        .finallyDo(() -> indexer.setPercent(-0.6).withTimeout(0.06));
+        .finallyDo(() -> Commands.parallel(indexer.setPercent(IndexerConstants.BACKUP_SPEED), shooter.manualShoot(-0.2)).withTimeout(0.06));
   }
 
   /**
@@ -217,7 +217,7 @@ public class Orchestrator {
   // Intakes after seeing note with Pixy2.
   public Command basicVisionIntake() {
     return Commands.sequence(
-        indexer.setVolts(4),
+        indexer.setPercent(0.33),
         arm.toSetpoint(ArmConstants.STOW),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
         new ProxyCommand(
@@ -264,16 +264,6 @@ public class Orchestrator {
    */
   public Command expelFullRobot() {
     return Commands.parallel(expelIntake(), expelShindex());
-  }
-
-  /**
-   * Uses intakeBasic and shootBasic in order to shoot a note while lined up with the speaker,
-   * doesn't move the arm.
-   *
-   * @return The command to intake a note and then shoot that note, more for testing purposes.
-   */
-  public Command intakeAndShootSpeaker() {
-    return Commands.sequence(intakeBasic(), shootBasic());
   }
 
   /**

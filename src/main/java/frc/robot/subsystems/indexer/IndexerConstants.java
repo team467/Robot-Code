@@ -12,6 +12,8 @@ public class IndexerConstants {
   public static final double WHEEL_DIAMETER;
   public static final TunableNumber INDEX_SPEED;
   public static final GearRatio INDEXER_GEAR_RATIO;
+  public static final double BACKUP_SPEED;
+  public static final double BACKUP_TIME;
 
   static {
     switch (Constants.getRobot()) {
@@ -23,6 +25,8 @@ public class IndexerConstants {
         WHEEL_DIAMETER = 4;
         INDEX_SPEED = new TunableNumber("Indexer/IndexSpeed");
         INDEXER_GEAR_RATIO = new GearRatio();
+        BACKUP_SPEED = 0.0;
+        BACKUP_TIME = 0.0;
       }
       case ROBOT_2024_COMP -> {
         INDEXER_FOWARD_VOLTAGE = 5.0;
@@ -32,6 +36,8 @@ public class IndexerConstants {
         WHEEL_DIAMETER = 4;
         INDEX_SPEED = new TunableNumber("Indexer/IndexSpeed", 0.9); // 0.6
         INDEXER_GEAR_RATIO = new GearRatio(1.5, 1);
+        BACKUP_SPEED = -0.5;
+        BACKUP_TIME = 0.02;
       }
       default -> {
         INDEXER_FOWARD_VOLTAGE = 0.0;
@@ -41,6 +47,8 @@ public class IndexerConstants {
         INDEXER_LIMIT_SWITCH_ID = 0;
         INDEX_SPEED = new TunableNumber("Indexer/IndexSpeed");
         INDEXER_GEAR_RATIO = new GearRatio();
+        BACKUP_SPEED = 0.0;
+        BACKUP_TIME = 0.0;
       }
     }
   }
