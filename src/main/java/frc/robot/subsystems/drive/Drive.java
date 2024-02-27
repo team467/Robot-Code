@@ -23,6 +23,11 @@ import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
 import frc.lib.utils.LocalADStarAK;
 import frc.lib.utils.RobotOdometry;
+import frc.robot.FieldConstants;
+import frc.robot.commands.auto.StraightDriveToPose;
+import frc.robot.subsystems.robotstate.RobotState;
+import java.util.Set;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -31,6 +36,9 @@ public class Drive extends SubsystemBase {
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
+
+  private RobotState state = RobotState.getInstance();
+  private static final double inRangeDistancetoSpeaker = 3;
 
   private final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(getModuleTranslations());
@@ -123,6 +131,16 @@ public class Drive extends SubsystemBase {
       lastGyroRotation = gyroInputs.yaw;
     }
     odometry.addDriveData(Timer.getFPGATimestamp(), twist);
+
+    updateRobotState();
+  }
+
+  private void updateRobotState() {
+    double distance =
+        getPose()
+            .getTranslation()
+            .getDistance(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
+    state.inRange = distance < inRangeDistancetoSpeaker;
   }
 
   /**
