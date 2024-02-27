@@ -44,4 +44,8 @@ public class ShooterIOPhysical implements ShooterIO {
     shooterLeft.setVoltage(volts);
     shooterRight.setVoltage(volts);
   }
+  public void setShooterVelocity(double velocity) {
+    shooterLeft.set(velocity);
+    shooterRight.set(velocity);
+  }
 }

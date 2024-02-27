@@ -73,7 +73,16 @@ public class Shooter extends SubsystemBase {
    * @param volts the volts that the shooter should be set to
    * @return A command that sets the shooter voltage to that of the inputed volts
    */
-  public Command manualShoot(double volts) {
+  public Command manualShoot(double percent) {
+    return Commands.run(
+        () -> {
+          io.setShooterVelocity(percent);
+          PIDMode = false;
+        },
+        this);
+  }
+
+  public Command manualShootVolts(double volts) {
     return Commands.run(
         () -> {
           io.setShooterVoltage(volts);
