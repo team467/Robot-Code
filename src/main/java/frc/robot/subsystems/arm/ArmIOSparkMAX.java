@@ -51,7 +51,7 @@ public class ArmIOSparkMAX implements ArmIO {
 
   @Override
   public void resetPosition() {
-    leader.getEncoder().setPosition(ArmConstants.OFFSET.getRadians());
-    follower.getEncoder().setPosition(ArmConstants.OFFSET.getRadians());
+    leader.getEncoder().setPosition(ArmConstants.STOW.getRadians());
+    follower.getEncoder().setPosition(ArmConstants.STOW.getRadians());
   }
 }

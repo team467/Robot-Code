@@ -230,7 +230,7 @@ public class RobotContainer {
     operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
     operatorController.pov(90).whileTrue(arm.runPercent(0));
 
-    driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.OFFSET));
+    driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().whileTrue(arm.toSetpoint(Rotation2d.fromDegrees(78.26)));
   }
 

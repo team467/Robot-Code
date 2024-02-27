@@ -70,7 +70,7 @@ public class Arm extends SubsystemBase {
 
     if (inputs.limitSwitchPressed) {
       io.resetPosition();
-      feedback.reset(ArmConstants.OFFSET.getRadians());
+      feedback.reset(ArmConstants.STOW.getRadians());
     }
 
     Logger.recordOutput("Arm/PIDEnabled", feedbackMode);

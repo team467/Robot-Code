@@ -155,7 +155,7 @@ public class Orchestrator {
                     Math.abs(
                         Math.atan(
                             (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                    - Math.sin(arm.getAngle() + ArmConstants.OFFSET.getRadians())
+                                    - Math.sin(arm.getAngle() + ArmConstants.STOW.getRadians())
                                         * Units.inchesToMeters(28))
                                 / drive.getPose().getTranslation().getDistance(speaker))))),
         Set.of(arm));
@@ -187,7 +187,7 @@ public class Orchestrator {
    */
   public Command intakeBasic() {
     return Commands.sequence(
-            arm.toSetpoint(ArmConstants.OFFSET).until(arm::atSetpoint).withTimeout(2),
+            arm.toSetpoint(ArmConstants.STOW).until(arm::atSetpoint).withTimeout(2),
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(()->RobotState.getInstance().hasNote)
@@ -218,7 +218,7 @@ public class Orchestrator {
   public Command basicVisionIntake() {
     return Commands.sequence(
         indexer.setVolts(4),
-        arm.toSetpoint(ArmConstants.OFFSET),
+        arm.toSetpoint(ArmConstants.STOW),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
         new ProxyCommand(
             () ->
@@ -282,6 +282,6 @@ public class Orchestrator {
    * @return The command to move the arm to the home position.
    */
   public Command armToHome() {
-    return arm.toSetpoint(ArmConstants.OFFSET);
+    return arm.toSetpoint(ArmConstants.STOW);
   }
 }
