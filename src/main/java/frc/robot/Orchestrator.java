@@ -17,6 +17,7 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pixy2.Pixy2;
+import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -189,9 +190,9 @@ public class Orchestrator {
             arm.toSetpoint(ArmConstants.OFFSET).until(arm::atSetpoint).withTimeout(2),
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
-                .until(indexer::getLimitSwitchPressed)
+                .until(()->RobotState.getInstance().hasNote)
                 .withTimeout(10))
-        .finallyDo(() -> indexer.setPercent(-0.6).withTimeout(2));
+        .finallyDo(() -> indexer.setPercent(-0.6).withTimeout(0.06));
   }
 
   /**
@@ -201,7 +202,7 @@ public class Orchestrator {
    */
   public Command driveWhileIntaking() {
     return Commands.parallel(
-        intake.intake().until(indexer::getLimitSwitchPressed),
+        intake.intake().until(()->RobotState.getInstance().hasNote),
         Commands.run(
                 () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)),
                 drive)
@@ -229,7 +230,7 @@ public class Orchestrator {
                             .plus(
                                 AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle())))),
                     drive)),
-        intake.intake().until(indexer::getLimitSwitchPressed));
+        intake.intake().until(()->RobotState.getInstance().hasNote));
   }
 
   /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
