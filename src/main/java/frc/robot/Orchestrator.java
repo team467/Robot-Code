@@ -147,7 +147,7 @@ public class Orchestrator {
    * @return The command to move the arm to the correct setPoint for shooting from its current
    *     location.
    */
-  public Command alignArmSpeaker() {
+  public Command alignArmSpeaker() { //TODO: Test this
     return Commands.defer(
         () ->
             arm.toSetpoint(
@@ -155,7 +155,7 @@ public class Orchestrator {
                     Math.abs(
                         Math.atan(
                             (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                    - Math.sin(arm.getAngle() - Units.degreesToRadians(13.95))
+                                    - Math.sin(arm.getAngle() + ArmConstants.OFFSET.getRadians())
                                         * Units.inchesToMeters(28))
                                 / drive.getPose().getTranslation().getDistance(speaker))))),
         Set.of(arm));
