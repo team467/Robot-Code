@@ -8,6 +8,7 @@ public interface ClimberIO {
     public double motorPercentOutput = 0.0;
     public double motorVoltage = 0.0;
     public boolean ratchetLocked = false;
+    public boolean limitSwitchPressed = false;
   }
 
   default void updateInputs(ClimberIOInputs inputs) {}
