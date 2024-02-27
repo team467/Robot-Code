@@ -41,6 +41,9 @@ public class Orchestrator {
     this.pixy2 = pixy2;
     this.arm = arm;
   }
+  public Command deferredStraightDriveToPose(Pose2d pose) {
+    return Commands.defer(() -> new StraightDriveToPose(pose, drive), Set.of(drive));
+  }
 
   /**
    * Drives to one of the notes pre positioned on the field.
@@ -51,9 +54,7 @@ public class Orchestrator {
   public Command driveToNote(Translation2d targetTranslation) {
     Supplier<Rotation2d> targetRotation =
         () -> targetTranslation.minus(drive.getPose().getTranslation()).getAngle();
-    return Commands.defer(
-        () -> new StraightDriveToPose(new Pose2d(targetTranslation, targetRotation.get()), drive),
-        Set.of(drive));
+    return deferredStraightDriveToPose(new Pose2d(targetTranslation, targetRotation.get()));
   }
 
   /**
@@ -70,7 +71,7 @@ public class Orchestrator {
                     .minus(drive.getPose().getTranslation())
                     .getAngle()
                     .minus(Rotation2d.fromDegrees(180)));
-    return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
+    return deferredStraightDriveToPose(targetPose.get());
   }
 
   /**
@@ -102,20 +103,16 @@ public class Orchestrator {
                 AllianceFlipUtil.apply(FieldConstants.ampCenter.getX()),
                 FieldConstants.ampCenter.getY() - 1,
                 new Rotation2d());
-    return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive))
+    return deferredStraightDriveToPose(targetPose.get())
         .andThen(
-            Commands.defer(
-                () ->
-                    new StraightDriveToPose(
+                deferredStraightDriveToPose(
                         new Pose2d(
                             drive.getPose().getTranslation().getX(),
                             targetPose.get().getY() + 0.5,
                             AllianceFlipUtil.apply(FieldConstants.ampCenter)
                                 .minus(drive.getPose().getTranslation())
                                 .getAngle()
-                                .minus(Rotation2d.fromRadians(Math.PI))),
-                        drive),
-                Set.of(drive)));
+                                .minus(Rotation2d.fromRadians(Math.PI)))));
   }
 
   /**
