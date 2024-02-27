@@ -24,10 +24,7 @@ import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
 import frc.lib.utils.LocalADStarAK;
 import frc.lib.utils.RobotOdometry;
 import frc.robot.FieldConstants;
-import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.robotstate.RobotState;
-import java.util.Set;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
