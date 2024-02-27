@@ -340,9 +340,9 @@ public class Leds extends SubsystemBase {
   }
 
   /**
-   * Applies a solid color to a given section of an LED strip. The section is filled with the
-   * specified color.
+   * Applies a solid color to a side of the two LED strips. 
    *
+   * @param onRight should light up right side
    * @param color The color to be applied.
    */
   private void solidOnSide(boolean onRight, Color color) {
