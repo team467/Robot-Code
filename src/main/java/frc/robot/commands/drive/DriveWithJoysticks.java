@@ -91,7 +91,7 @@ public class DriveWithJoysticks extends Command {
           new ChassisSpeeds(
               linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED,
               linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
-              rightX * DriveConstants.MAX_LINEAR_SPEED);
+              rightX * MAX_ANGULAR_SPEED);
     } else {
       if (DriverStation.getAlliance().isPresent()
           && DriverStation.getAlliance().get() == Alliance.Red) {
@@ -108,30 +108,6 @@ public class DriveWithJoysticks extends Command {
               RobotOdometry.getInstance().getLatestPose().getRotation());
     }
     drive.runVelocity(speeds);
-
-    //    // Convert to meters per second
-    //    ChassisSpeeds speeds =
-    //        new ChassisSpeeds(
-    //            linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED,
-    //            linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
-    //            rightX * MAX_ANGULAR_SPEED);
-    //
-    //    // Convert from field relative
-    //    if (robotRelativeOverride.get()) {
-    //      Rotation2d driveRotation = drive.getPose().getRotation();
-    //      if (DriverStation.getAlliance().isEmpty()
-    //          || DriverStation.getAlliance().get() == Alliance.Red) {
-    //        driveRotation = driveRotation.plus(new Rotation2d(Math.PI));
-    //      }
-    //      speeds =
-    //          ChassisSpeeds.fromFieldRelativeSpeeds(
-    //              speeds.vxMetersPerSecond,
-    //              speeds.vyMetersPerSecond,
-    //              speeds.omegaRadiansPerSecond,
-    //              driveRotation);
-    //    }
-    //
-    //    drive.runVelocity(speeds);
   }
 
   @Override
