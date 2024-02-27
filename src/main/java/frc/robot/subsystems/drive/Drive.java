@@ -13,9 +13,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.characterization.SysIdFactory;
@@ -23,9 +23,6 @@ import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
 import frc.lib.utils.LocalADStarAK;
 import frc.lib.utils.RobotOdometry;
-import frc.robot.commands.auto.StraightDriveToPose;
-import java.util.Set;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -215,5 +212,27 @@ public class Drive extends SubsystemBase {
       new Translation2d(-DriveConstants.TRACK_WIDTH_X / 2.0, DriveConstants.TRACK_WIDTH_Y / 2.0),
       new Translation2d(-DriveConstants.TRACK_WIDTH_X / 2.0, -DriveConstants.TRACK_WIDTH_Y / 2.0)
     };
+  }
+
+  /**
+   * Returns a command to run a quasistatic sysid test in the specified direction.
+   *
+   * @param direction The direction in which to run the test.
+   * @return A command to run the test.
+   * @see SysIdRoutine#quasistatic(SysIdRoutine.Direction)
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return sysIdFactory.quasistatic(direction);
+  }
+
+  /**
+   * Returns a command to run a dynamic sysid test in the specified direction.
+   *
+   * @param direction The direction in which to run the test.
+   * @return A command to run the test.
+   * @see SysIdRoutine#dynamic(SysIdRoutine.Direction)
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return sysIdFactory.dynamic(direction);
   }
 }
