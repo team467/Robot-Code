@@ -248,7 +248,7 @@ public class Leds extends SubsystemBase {
         break;
 
       case LOW_BATTERY_ALERT:
-        solid(Section.FULL, Color.kOrangeRed);
+        strobe(Section.FULL, Color.kRed, 1);
         break;
 
       case DISABLED:
