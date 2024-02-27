@@ -50,8 +50,10 @@ public class Leds extends SubsystemBase {
   private double lastEnabledTime = 0.0;
 
   // LED IO
-  private final AddressableLED leds;
+  private final AddressableLED ledRight;
+  private final AddressableLED ledLeft;
   private final AddressableLEDBuffer buffer;
+  private final AddressableLEDBuffer extraBuffer;
   private final Notifier loadingNotifier;
 
   // Constants
@@ -87,11 +89,19 @@ public class Leds extends SubsystemBase {
     ledTestingEntry = ledTable.getEntry("Testing");
     ledTestingEntry.setBoolean(false);
 
-    leds = new AddressableLED(0);
     buffer = new AddressableLEDBuffer(length);
-    leds.setLength(length);
-    leds.setData(buffer);
-    leds.start();
+    extraBuffer = new AddressableLEDBuffer(length);
+
+    ledRight = new AddressableLED(0);
+    ledRight.setLength(length);
+    ledRight.setData(buffer);
+    ledRight.start();
+
+    ledLeft = new AddressableLED(1);
+    ledLeft.setLength(length);
+    ledLeft.setData(buffer);
+    ledLeft.start();
+
     loadingNotifier =
         new Notifier(
             () -> {
@@ -101,7 +111,8 @@ public class Leds extends SubsystemBase {
                   Color.kBlack,
                   0.25,
                   (double) System.currentTimeMillis() / 1000);
-              leds.setData(buffer);
+              ledRight.setData(buffer);
+              ledLeft.setData(buffer);
             });
     loadingNotifier.startPeriodic(0.02);
   }
@@ -225,12 +236,12 @@ public class Leds extends SubsystemBase {
 
       case LEFT_NOTE_DETECTION:
         // leds glow on left side
-        solid(0.5, Color.kYellow, Color.kBlack);
+        solidOnSide(false, Color.kYellow);
         break;
 
       case RIGHT_NOTE_DETECTION:
         // leds glows on right side
-        solid(0.5, Color.kBlack, Color.kYellow);
+        solidOnSide(true, Color.kYellow);
         break;
 
       case STRAIGHT_NOTE_DETECTION:
@@ -269,7 +280,16 @@ public class Leds extends SubsystemBase {
         break;
     }
 
-    leds.setData(buffer);
+    switch (mode) {
+      case LEFT_NOTE_DETECTION:
+      case RIGHT_NOTE_DETECTION:
+        ledRight.setData(buffer);
+        ledLeft.setData(extraBuffer);
+        break;
+      default:
+        ledRight.setData(buffer);
+        ledLeft.setData(buffer);
+    }
   }
 
   @Override
@@ -317,6 +337,30 @@ public class Leds extends SubsystemBase {
    */
   private void solid(double percent, Color color) {
     solid(percent, color, Color.kBlack);
+  }
+
+  /**
+   * Applies a solid color to a given section of an LED strip. The section is filled with the
+   * specified color.
+   *
+   * @param color The color to be applied.
+   */
+  private void solidOnSide(boolean onRight, Color color) {
+    if (onRight) {
+      for (int i = 0; i < length; i++) {
+        buffer.setLED(i, color);
+      }
+      for (int i = 0; i < length; i++) {
+        extraBuffer.setLED(i, Color.kBlack);
+      }
+    } else {
+      for (int i = 0; i < length; i++) {
+        extraBuffer.setLED(i, color);
+      }
+      for (int i = 0; i < length; i++) {
+        buffer.setLED(i, Color.kBlack);
+      }
+    }
   }
 
   /**
