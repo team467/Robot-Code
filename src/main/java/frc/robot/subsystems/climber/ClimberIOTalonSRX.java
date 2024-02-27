@@ -15,7 +15,7 @@ public class ClimberIOTalonSRX implements ClimberIO {
   public ClimberIOTalonSRX() {
     motorLeader = new TalonSRX(Schematic.CLIMBER_LEFT_ID);
     motorLeader.setInverted(false);
-    motorFollower = new TalonSRX(Schematic.CLIMBER_LEFT_ID);
+    motorFollower = new TalonSRX(Schematic.CLIMBER_RIGHT_ID);
     motorFollower.setInverted(false);
     motorFollower.follow(motorLeader);
     climberRatchet = new Relay(Schematic.CLIMBER_RATCHET_ID, Relay.Direction.kReverse);
