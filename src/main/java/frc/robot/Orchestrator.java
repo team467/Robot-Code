@@ -207,26 +207,22 @@ public class Orchestrator {
   }
 
   /**
-   * Turn on the intake when we see a note.
+   * Intakes after seeing note with Pixy2.
    *
    * @return The command to intake after a note is seen.
    */
-  // Intakes after seeing note with Pixy2.
   public Command basicVisionIntake() {
     return Commands.sequence(
         indexer.setPercent(0.33),
         arm.toSetpoint(ArmConstants.STOW),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
-        new ProxyCommand(
-            () ->
-                new StraightDriveToPose(
+        deferredStraightDriveToPose(
                     new Pose2d(
                         drive.getPose().getTranslation(),
                         drive
                             .getRotation()
                             .plus(
-                                AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle())))),
-                    drive)),
+                                AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle()))))),
         intake.intake().until(()->RobotState.getInstance().hasNote));
   }
 
