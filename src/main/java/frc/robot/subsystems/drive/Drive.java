@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
 import frc.lib.utils.LocalADStarAK;
-import frc.lib.utils.RobotOdometry;
+import frc.robot.RobotOdometry;
 import frc.robot.commands.auto.StraightDriveToPose;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -53,8 +53,8 @@ public class Drive extends SubsystemBase {
     odometry = RobotOdometry.getInstance();
     Pathfinding.setPathfinder(new LocalADStarAK());
     AutoBuilder.configureHolonomic(
-        this::getPose,
-        this::setPose,
+        () -> RobotOdometry.getInstance().getLatestPose(),
+        (Pose2d newPose) -> RobotOdometry.getInstance().resetPose(newPose),
         () -> kinematics.toChassisSpeeds(getModuleStates()),
         this::runVelocity,
         new HolonomicPathFollowerConfig(
@@ -181,17 +181,6 @@ public class Drive extends SubsystemBase {
     return states;
   }
 
-  /** Returns the current odometry pose. */
-  @AutoLogOutput(key = "Odometry/Robot")
-  public Pose2d getPose() {
-    return odometry.getLatestPose();
-  }
-
-  /** Returns the current odometry rotation. */
-  public Rotation2d getRotation() {
-    return odometry.getLatestPose().getRotation();
-  }
-
   public double getPitchVelocity() {
     return gyroInputs.pitchRate;
   }
@@ -202,11 +191,6 @@ public class Drive extends SubsystemBase {
 
   public Rotation3d getRotation3d() {
     return gyroInputs.rotation3d;
-  }
-
-  /** Resets the current odometry pose. */
-  public void setPose(Pose2d pose) {
-    odometry.resetPose(pose);
   }
 
   /** Returns an array of module translations. */
