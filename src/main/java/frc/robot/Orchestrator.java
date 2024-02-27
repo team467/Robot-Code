@@ -80,8 +80,8 @@ public class Orchestrator {
    */
   public Command shootAmp() {
     return Commands.sequence(
-        shooter.manualShoot(3.5).withTimeout(0.5),
-        Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5))
+        shooter.manualShoot(3.5/12).withTimeout(0.5),
+        Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5/12))
             .until(() -> !indexer.getLimitSwitchPressed())
             .withTimeout(2));
   }
@@ -136,8 +136,8 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter.manualShoot(10).withTimeout(1),
-        Commands.parallel(shooter.manualShoot(10), indexer.setPercent(1)).withTimeout(5));
+        shooter.manualShoot(0.85).withTimeout(1),
+        Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5));
   }
 
   /**
@@ -254,7 +254,7 @@ public class Orchestrator {
    * @return The command to release a note in the shooter and indexer.
    */
   public Command expelShindex() {
-    return Commands.parallel(shooter.manualShoot(-0.2 * 12), indexer.setPercent(-1.0));
+    return Commands.parallel(shooter.manualShoot(-0.2), indexer.setPercent(-1.0));
   }
 
   /**
