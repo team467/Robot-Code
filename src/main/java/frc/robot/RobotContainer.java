@@ -97,7 +97,7 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
         }
-        case ROBOT_2024C -> {
+        case ROBOT_2024_COMP -> {
           drive =
               new Drive(
                   new GyroPigeon2(Schematic.GYRO_ID),

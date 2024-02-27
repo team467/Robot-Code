@@ -24,7 +24,7 @@ public class IndexerConstants {
         INDEX_SPEED = new TunableNumber("Indexer/IndexSpeed");
         INDEXER_GEAR_RATIO = new GearRatio();
       }
-      case ROBOT_2024C -> {
+      case ROBOT_2024_COMP -> {
         INDEXER_FOWARD_VOLTAGE = 5.0;
         INDEXER_HOLD_VOLTAGE = 0.0;
         INDEXER_BACKWARD_VOLTAGE = 0.0;

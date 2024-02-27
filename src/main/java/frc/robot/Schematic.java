@@ -59,7 +59,7 @@ public class Schematic {
         CLIMBER_RIGHT_ID = 0;
         CLIMBER_LEFT_ID = 0;
       }
-      case ROBOT_2024C -> {
+      case ROBOT_2024_COMP -> {
         POWER_DIST_ID = 22;
         POWER_DIST_TYPE = PowerDistribution.ModuleType.kRev;
         REAR_RIGHT_DRIVE_ID = 7;
