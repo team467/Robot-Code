@@ -3,9 +3,7 @@ package frc.robot;
 import static edu.wpi.first.apriltag.AprilTagFields.k2024Crescendo;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import java.io.IOException;
 
@@ -26,7 +24,7 @@ public class FieldConstants {
   public static final double startingLineX = Units.inchesToMeters(74.111);
 
   public static final Translation2d ampCenter =
-      new Translation2d(Units.inchesToMeters(72.455), Units.inchesToMeters(322.996));
+      new Translation2d(Units.inchesToMeters(72.455), fieldWidth);
 
   /** Staging locations for each note */
   public static final class StagingLocations {
@@ -81,6 +79,46 @@ public class FieldConstants {
     /** Center of the speaker opening (blue alliance) */
     public static final Translation3d centerSpeakerOpening =
         bottomLeftSpeaker.interpolate(topRightSpeaker, 0.5);
+  }
+
+  public static final class Subwoofer {
+    public static final Pose2d ampFaceCorner =
+        new Pose2d(
+            Units.inchesToMeters(35.775),
+            Units.inchesToMeters(239.366),
+            Rotation2d.fromDegrees(-120));
+
+    public static final Pose2d sourceFaceCorner =
+        new Pose2d(
+            Units.inchesToMeters(35.775),
+            Units.inchesToMeters(197.466),
+            Rotation2d.fromDegrees(120));
+
+    public static final Pose2d centerFace =
+        new Pose2d(
+            Units.inchesToMeters(35.775),
+            Units.inchesToMeters(218.416),
+            Rotation2d.fromDegrees(180));
+  }
+
+  public static final class Stage {
+    public static final Pose2d podiumLeg =
+        new Pose2d(Units.inchesToMeters(126.75), Units.inchesToMeters(161.638), new Rotation2d());
+
+    public static final Pose2d ampLeg =
+        new Pose2d(
+            Units.inchesToMeters(220.873),
+            Units.inchesToMeters(212.425),
+            Rotation2d.fromDegrees(-30));
+
+    public static final Pose2d sourceLeg =
+        new Pose2d(
+            Units.inchesToMeters(220.873),
+            Units.inchesToMeters(110.837),
+            Rotation2d.fromDegrees(30));
+
+    public static final Pose2d center =
+        new Pose2d(Units.inchesToMeters(192.55), Units.inchesToMeters(161.638), new Rotation2d());
   }
 
   public static final double aprilTagWidth = Units.inchesToMeters(6.50);
