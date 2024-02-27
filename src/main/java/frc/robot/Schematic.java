@@ -29,6 +29,7 @@ public class Schematic {
   public static final int ARM_ID_FOLLOWER;
   public static final int CLIMBER_LEFT_ID;
   public static final int CLIMBER_RIGHT_ID;
+  public static final int CLIMBER_RATCHET_ID;
 
   static {
     switch (Constants.getRobot()) {
@@ -58,6 +59,7 @@ public class Schematic {
         ARM_ID_FOLLOWER = 0;
         CLIMBER_RIGHT_ID = 0;
         CLIMBER_LEFT_ID = 0;
+        CLIMBER_RATCHET_ID = 0;
       }
       case ROBOT_2024C -> {
         POWER_DIST_ID = 20;
@@ -83,6 +85,7 @@ public class Schematic {
         ARM_ID_FOLLOWER = 10;
         CLIMBER_RIGHT_ID = 15;
         CLIMBER_LEFT_ID = 16;
+        CLIMBER_RATCHET_ID = 0;
       }
       default -> {
         POWER_DIST_ID = 20;
@@ -110,6 +113,7 @@ public class Schematic {
         ARM_ID_FOLLOWER = 0;
         CLIMBER_RIGHT_ID = 0;
         CLIMBER_LEFT_ID = 0;
+        CLIMBER_RATCHET_ID = 0;
       }
     }
   }
