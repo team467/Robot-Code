@@ -57,7 +57,8 @@ public class SysIdFactory {
                 config.m_rampRate,
                 config.m_stepVoltage,
                 config.m_timeout,
-                state -> Logger.recordOutput(subsystem.getName() + "/SysIdState", state.toString())),
+                state ->
+                    Logger.recordOutput(subsystem.getName() + "/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 driveVoltage,
                 null, // No log consumer, since data is recorded by AdvantageKit
