@@ -7,7 +7,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.arm.Arm;
@@ -41,6 +40,7 @@ public class Orchestrator {
     this.pixy2 = pixy2;
     this.arm = arm;
   }
+
   public Command deferredStraightDriveToPose(Pose2d pose) {
     return Commands.defer(() -> new StraightDriveToPose(pose, drive), Set.of(drive));
   }
@@ -81,8 +81,8 @@ public class Orchestrator {
    */
   public Command shootAmp() {
     return Commands.sequence(
-        shooter.manualShoot(3.5/12).withTimeout(0.5),
-        Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5/12))
+        shooter.manualShoot(3.5 / 12).withTimeout(0.5),
+        Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5 / 12))
             .until(() -> !indexer.getLimitSwitchPressed())
             .withTimeout(2));
   }
@@ -105,14 +105,14 @@ public class Orchestrator {
                 new Rotation2d());
     return deferredStraightDriveToPose(targetPose.get())
         .andThen(
-                deferredStraightDriveToPose(
-                        new Pose2d(
-                            drive.getPose().getTranslation().getX(),
-                            targetPose.get().getY() + 0.5,
-                            AllianceFlipUtil.apply(FieldConstants.ampCenter)
-                                .minus(drive.getPose().getTranslation())
-                                .getAngle()
-                                .minus(Rotation2d.fromRadians(Math.PI)))));
+            deferredStraightDriveToPose(
+                new Pose2d(
+                    drive.getPose().getTranslation().getX(),
+                    targetPose.get().getY() + 0.5,
+                    AllianceFlipUtil.apply(FieldConstants.ampCenter)
+                        .minus(drive.getPose().getTranslation())
+                        .getAngle()
+                        .minus(Rotation2d.fromRadians(Math.PI)))));
   }
 
   /**
@@ -144,7 +144,7 @@ public class Orchestrator {
    * @return The command to move the arm to the correct setPoint for shooting from its current
    *     location.
    */
-  public Command alignArmSpeaker() { //TODO: Test this
+  public Command alignArmSpeaker() { // TODO: Test this
     return Commands.defer(
         () ->
             arm.toSetpoint(
@@ -187,9 +187,14 @@ public class Orchestrator {
             arm.toSetpoint(ArmConstants.STOW).until(arm::atSetpoint).withTimeout(2),
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
-                .until(()->RobotState.getInstance().hasNote)
+                .until(() -> RobotState.getInstance().hasNote)
                 .withTimeout(10))
-        .finallyDo(() -> Commands.parallel(indexer.setPercent(IndexerConstants.BACKUP_SPEED), shooter.manualShoot(-0.2)).withTimeout(0.06));
+        .finallyDo(
+            () ->
+                Commands.parallel(
+                        indexer.setPercent(IndexerConstants.BACKUP_SPEED),
+                        shooter.manualShoot(-0.2))
+                    .withTimeout(0.06));
   }
 
   /**
@@ -199,7 +204,7 @@ public class Orchestrator {
    */
   public Command driveWhileIntaking() {
     return Commands.parallel(
-        intake.intake().until(()->RobotState.getInstance().hasNote),
+        intake.intake().until(() -> RobotState.getInstance().hasNote),
         Commands.run(
                 () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)),
                 drive)
@@ -217,13 +222,12 @@ public class Orchestrator {
         arm.toSetpoint(ArmConstants.STOW),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
         deferredStraightDriveToPose(
-                    new Pose2d(
-                        drive.getPose().getTranslation(),
-                        drive
-                            .getRotation()
-                            .plus(
-                                AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle()))))),
-        intake.intake().until(()->RobotState.getInstance().hasNote));
+            new Pose2d(
+                drive.getPose().getTranslation(),
+                drive
+                    .getRotation()
+                    .plus(AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle()))))),
+        intake.intake().until(() -> RobotState.getInstance().hasNote));
   }
 
   /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
