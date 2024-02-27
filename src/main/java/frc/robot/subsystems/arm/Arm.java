@@ -75,7 +75,6 @@ public class Arm extends SubsystemBase {
 
     Logger.recordOutput("Arm/PIDEnabled", feedbackMode);
     if (feedbackMode) {
-      logTrapzezoidTimes();
       // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/profiled-pidcontroller.html#goal-vs-setpoint
       io.setVoltage(
           feedback.calculate(inputs.positionRads)
@@ -125,7 +124,8 @@ public class Arm extends SubsystemBase {
 
   public Command hold() {
     return Commands.sequence(
-        Commands.runOnce(() -> io.setVoltage(0.05 * 12), this)
+        Commands.sequence(
+                Commands.runOnce(() -> io.setVoltage(0.05 * 12), this), Commands.waitSeconds(0.5))
             .onlyIf(() -> inputs.velocityRadsPerSec < 0),
         Commands.run(
                 () -> {
@@ -141,65 +141,6 @@ public class Arm extends SubsystemBase {
                 },
                 this)
             .finallyDo(() -> holdLock = false));
-    //    return Commands.run(
-    //            () -> {
-    //              if (!holdLock) {
-    //                holdLock = true;
-    //                if (inputs.velocityRadsPerSec < 0) {
-    //                  feedback.setGoal(inputs.positionRads + Units.degreesToRadians(0.5));
-    //                } else {
-    //                  feedback.setGoal(inputs.positionRads);
-    //                }
-    //                feedbackMode = true;
-    //              }
-    //            },
-    //            this)
-    //        .finallyDo(() -> holdLock = false);
-  }
-
-  private void logTrapzezoidTimes() {
-    // Deal with a possibly truncated motion profile (with nonzero initial or
-    // final velocity) by calculating the parameters as if the profile began and
-    // ended at zero velocity
-
-    TrapezoidProfile.State m_current = feedback.getSetpoint();
-    TrapezoidProfile.State goal = feedback.getGoal();
-    TrapezoidProfile.Constraints m_constraints = feedback.getConstraints();
-
-    double cutoffBegin = m_current.velocity / m_constraints.maxAcceleration;
-    double cutoffDistBegin = cutoffBegin * cutoffBegin * m_constraints.maxAcceleration / 2.0;
-
-    double cutoffEnd = goal.velocity / m_constraints.maxAcceleration;
-    double cutoffDistEnd = cutoffEnd * cutoffEnd * m_constraints.maxAcceleration / 2.0;
-
-    // Now we can calculate the parameters as if it was a full trapezoid instead
-    // of a truncated one
-
-    double fullTrapezoidDist =
-        cutoffDistBegin + (goal.position - m_current.position) + cutoffDistEnd;
-    double accelerationTime = m_constraints.maxVelocity / m_constraints.maxAcceleration;
-
-    double fullSpeedDist =
-        fullTrapezoidDist - accelerationTime * accelerationTime * m_constraints.maxAcceleration;
-
-    // Handle the case where the profile never reaches full speed
-    if (fullSpeedDist < 0) {
-      accelerationTime = Math.sqrt(fullTrapezoidDist / m_constraints.maxAcceleration);
-      fullSpeedDist = 0;
-    }
-
-    Logger.recordOutput("Arm/m_endAccel", accelerationTime - cutoffBegin);
-    Logger.recordOutput(
-        "Arm/m_endFullSpeed",
-        (accelerationTime - cutoffBegin) + fullSpeedDist / m_constraints.maxVelocity);
-    Logger.recordOutput(
-        "Arm/m_endDeccel",
-        ((accelerationTime - cutoffBegin) + fullSpeedDist / m_constraints.maxVelocity)
-            + accelerationTime
-            - cutoffEnd);
-    //    m_endAccel = accelerationTime - cutoffBegin;
-    //    m_endFullSpeed = m_endAccel + fullSpeedDist / m_constraints.maxVelocity;
-    //    m_endDeccel = m_endFullSpeed + accelerationTime - cutoffEnd;
   }
 
   public double getAngle() {
