@@ -190,15 +190,12 @@ public class RobotContainer {
     driverController
         .start()
         .onTrue(
-            Commands.defer(
-                    () ->
                         Commands.runOnce(
                             () ->
                                 drive.setPose(
                                     new Pose2d(
                                         drive.getPose().getTranslation(),
-                                        AllianceFlipUtil.apply(new Rotation2d())))),
-                    Set.of())
+                                        AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
     driverController
         .pov(-1)
