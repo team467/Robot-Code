@@ -42,8 +42,8 @@ public class Orchestrator {
     this.arm = arm;
   }
 
-  public Command deferredStraightDriveToPose(Pose2d pose) {
-    return Commands.defer(() -> new StraightDriveToPose(pose, drive), Set.of(drive));
+  public Command deferredStraightDriveToPose(Supplier<Pose2d> pose) {
+    return Commands.defer(() -> new StraightDriveToPose(pose.get(), drive), Set.of(drive));
   }
 
   /**
@@ -55,7 +55,7 @@ public class Orchestrator {
   public Command driveToNote(Translation2d targetTranslation) {
     Supplier<Rotation2d> targetRotation =
         () -> targetTranslation.minus(drive.getPose().getTranslation()).getAngle();
-    return deferredStraightDriveToPose(new Pose2d(targetTranslation, targetRotation.get()));
+    return deferredStraightDriveToPose(()->new Pose2d(targetTranslation, targetRotation.get()));
   }
 
   /**
@@ -72,7 +72,7 @@ public class Orchestrator {
                     .minus(drive.getPose().getTranslation())
                     .getAngle()
                     .minus(Rotation2d.fromDegrees(180)));
-    return deferredStraightDriveToPose(targetPose.get());
+    return deferredStraightDriveToPose(targetPose);
   }
 
   /**
@@ -105,9 +105,9 @@ public class Orchestrator {
                 AllianceFlipUtil.apply(FieldConstants.ampCenter.getX()),
                 FieldConstants.ampCenter.getY() - AMP_DISTANCE_OFFSET.get(),
                 new Rotation2d());
-    return deferredStraightDriveToPose(targetPose.get())
+    return deferredStraightDriveToPose(targetPose)
         .andThen(
-            deferredStraightDriveToPose(
+            deferredStraightDriveToPose(()->
                 new Pose2d(
                     drive.getPose().getTranslation().getX(),
                     targetPose.get().getY() + AMP_DISTANCE_OFFSET.get()/2,
@@ -223,7 +223,7 @@ public class Orchestrator {
         indexer.setPercent(0.33),
         arm.toSetpoint(ArmConstants.STOW),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
-        deferredStraightDriveToPose(
+        deferredStraightDriveToPose(()->
             new Pose2d(
                 drive.getPose().getTranslation(),
                 drive
