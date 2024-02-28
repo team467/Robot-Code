@@ -8,6 +8,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.lib.utils.TunableNumber;
 import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
@@ -97,18 +98,19 @@ public class Orchestrator {
   }
 
   public Command goToAmp() {
+    TunableNumber AMP_DISTANCE_OFFSET = new TunableNumber("Orchestrator/AmpDistance", 1);
     Supplier<Pose2d> targetPose =
         () ->
             new Pose2d(
                 AllianceFlipUtil.apply(FieldConstants.ampCenter.getX()),
-                FieldConstants.ampCenter.getY() - 1,
+                FieldConstants.ampCenter.getY() - AMP_DISTANCE_OFFSET.get(),
                 new Rotation2d());
     return deferredStraightDriveToPose(targetPose.get())
         .andThen(
             deferredStraightDriveToPose(
                 new Pose2d(
                     drive.getPose().getTranslation().getX(),
-                    targetPose.get().getY() + 0.5,
+                    targetPose.get().getY() + AMP_DISTANCE_OFFSET.get()/2,
                     AllianceFlipUtil.apply(FieldConstants.ampCenter)
                         .minus(drive.getPose().getTranslation())
                         .getAngle()
