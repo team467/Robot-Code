@@ -55,7 +55,7 @@ public class Orchestrator {
   public Command driveToNote(Translation2d targetTranslation) {
     Supplier<Rotation2d> targetRotation =
         () -> targetTranslation.minus(drive.getPose().getTranslation()).getAngle();
-    return deferredStraightDriveToPose(()->new Pose2d(targetTranslation, targetRotation.get()));
+    return deferredStraightDriveToPose(() -> new Pose2d(targetTranslation, targetRotation.get()));
   }
 
   /**
@@ -107,14 +107,15 @@ public class Orchestrator {
                 new Rotation2d());
     return deferredStraightDriveToPose(targetPose)
         .andThen(
-            deferredStraightDriveToPose(()->
-                new Pose2d(
-                    drive.getPose().getTranslation().getX(),
-                    targetPose.get().getY() + AMP_DISTANCE_OFFSET.get()/2,
-                    AllianceFlipUtil.apply(FieldConstants.ampCenter)
-                        .minus(drive.getPose().getTranslation())
-                        .getAngle()
-                        .minus(Rotation2d.fromRadians(Math.PI)))));
+            deferredStraightDriveToPose(
+                () ->
+                    new Pose2d(
+                        drive.getPose().getTranslation().getX(),
+                        targetPose.get().getY() + AMP_DISTANCE_OFFSET.get() / 2,
+                        AllianceFlipUtil.apply(FieldConstants.ampCenter)
+                            .minus(drive.getPose().getTranslation())
+                            .getAngle()
+                            .minus(Rotation2d.fromRadians(Math.PI)))));
   }
 
   /**
@@ -191,12 +192,10 @@ public class Orchestrator {
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
                 .withTimeout(10))
-        .finallyDo(
-            () ->
-                Commands.parallel(
-                        indexer.setPercent(IndexerConstants.BACKUP_SPEED),
-                        shooter.manualShoot(-0.2))
-                    .withTimeout(0.06));
+        .andThen(
+            Commands.parallel(
+                    indexer.setPercent(IndexerConstants.BACKUP_SPEED), shooter.manualShoot(-0.2))
+                .withTimeout(0.06));
   }
 
   /**
@@ -223,12 +222,13 @@ public class Orchestrator {
         indexer.setPercent(0.33),
         arm.toSetpoint(ArmConstants.STOW),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
-        deferredStraightDriveToPose(()->
-            new Pose2d(
-                drive.getPose().getTranslation(),
-                drive
-                    .getRotation()
-                    .plus(AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle()))))),
+        deferredStraightDriveToPose(
+            () ->
+                new Pose2d(
+                    drive.getPose().getTranslation(),
+                    drive
+                        .getRotation()
+                        .plus(AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle()))))),
         intake.intake().until(() -> RobotState.getInstance().hasNote));
   }
 
