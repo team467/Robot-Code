@@ -4,10 +4,13 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
@@ -23,16 +26,28 @@ public class Arm extends SubsystemBase {
           new TrapezoidProfile.Constraints(
               ArmConstants.MAX_VELOCITY.get(), ArmConstants.MAX_ACCELERATION.get()));
   private boolean feedbackMode = true;
+  @AutoLogOutput private boolean holdLock = false;
 
   public Arm(ArmIO io) {
     this.io = io;
     this.inputs = new ArmIOInputsAutoLogged();
+    io.updateInputs(inputs);
+
+    feedback.disableContinuousInput();
+    feedback.reset(inputs.positionRads);
+    feedback.setGoal(inputs.positionRads); // don't go crazy and kill someone
+
+    feedback.setTolerance(ArmConstants.TOLERENCE);
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Arm", inputs);
+
+    if (DriverStation.isDisabled()) {
+      feedback.reset(inputs.positionRads, inputs.velocityRadsPerSec);
+    }
 
     if (Constants.tuningMode) {
       // Update controllers if tunable numbers have changed
@@ -53,26 +68,26 @@ public class Arm extends SubsystemBase {
       }
     }
 
+    if (inputs.limitSwitchPressed) {
+      io.resetPosition();
+      feedback.reset(ArmConstants.STOW.getRadians());
+    }
+
     Logger.recordOutput("Arm/PIDEnabled", feedbackMode);
     if (feedbackMode) {
-      // Run arm to desired goal
-      // note that for profiled pids, goal is the last result (i.e. set arm to 30 deg), and setpoint
-      // is what result to reach in this next loop (i.e. set the arm to 5 degrees) due to
-      // constraints.
-      // Read more at
       // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/profiled-pidcontroller.html#goal-vs-setpoint
-      Logger.recordOutput("Arm/DesiredPosition", feedback.getGoal().position);
       io.setVoltage(
           feedback.calculate(inputs.positionRads)
               + feedforward.calculate(
-                  feedback.getSetpoint().position + ArmConstants.HORIZONTAL_OFFSET.getRadians(),
-                  feedback.getSetpoint().velocity));
-      Logger.recordOutput("Arm/NextPosition", feedback.getSetpoint().position);
-      Logger.recordOutput("Arm/NextVelocity", feedback.getSetpoint().velocity);
-    }
+                  feedback.getSetpoint().position, feedback.getSetpoint().velocity));
 
-    if (inputs.limitSwitchPressed) {
-      io.resetPosition();
+      Logger.recordOutput("Arm/Goal/Position", feedback.getGoal().position);
+      Logger.recordOutput("Arm/Goal/Velocity", feedback.getGoal().velocity);
+      Logger.recordOutput("Arm/Setpoint/Position", feedback.getSetpoint().position);
+      Logger.recordOutput("Arm/Setpoint/Velocity", feedback.getSetpoint().velocity);
+      Logger.recordOutput("Arm/Measurement/Position", inputs.positionRads);
+    } else {
+      feedback.reset(new TrapezoidProfile.State(inputs.positionRads, inputs.velocityRadsPerSec));
     }
   }
 
@@ -105,5 +120,39 @@ public class Arm extends SubsystemBase {
           feedbackMode = false;
         },
         this);
+  }
+
+  public Command hold() {
+    return Commands.sequence(
+        Commands.sequence(
+                Commands.runOnce(() -> io.setVoltage(0.05 * 12), this), Commands.waitSeconds(0.5))
+            .onlyIf(() -> inputs.velocityRadsPerSec < 0),
+        Commands.run(
+                () -> {
+                  if (!holdLock) {
+                    holdLock = true;
+                    if (inputs.velocityRadsPerSec < 0) {
+                      feedback.setGoal(inputs.positionRads + Units.degreesToRadians(1));
+                    } else {
+                      feedback.setGoal(inputs.positionRads);
+                    }
+                    feedbackMode = true;
+                  }
+                },
+                this)
+            .finallyDo(() -> holdLock = false));
+  }
+
+  public double getAngle() {
+    return inputs.positionRads;
+  }
+
+  /**
+   * Determines whether the arm is at the setpoint angle.
+   *
+   * @return true if the arm is at the setpoint angle, false otherwise.
+   */
+  public boolean atSetpoint() {
+    return feedback.atGoal();
   }
 }
