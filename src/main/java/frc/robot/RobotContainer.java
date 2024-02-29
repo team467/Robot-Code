@@ -77,17 +77,6 @@ public class RobotContainer {
     if (Constants.getMode() != Constants.Mode.REPLAY) {
       switch (Constants.getRobot()) {
         case ROBOT_2023 -> {
-          Transform3d front =
-              new Transform3d(
-                  new Translation3d(
-                      Units.inchesToMeters(6.74),
-                      Units.inchesToMeters(-10.991),
-                      Units.inchesToMeters(15.875)),
-                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
-          vision =
-              new Vision(
-                  List.of(new VisionIOPhotonVision("front", front))
-                      .toArray(new frc.lib.io.vision.VisionIO[0]));
           drive =
               new Drive(
                   new GyroPigeon2(Schematic.GYRO_ID),
@@ -97,6 +86,28 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(3));
         }
         case ROBOT_2024_COMP -> {
+          Transform3d front =
+              new Transform3d(
+                  new Translation3d(
+                      Units.inchesToMeters(6.74),
+                      Units.inchesToMeters(-10.991),
+                      Units.inchesToMeters(15.875)),
+                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
+          Transform3d back =
+              new Transform3d(
+                  new Translation3d(
+                      Units.inchesToMeters(-14.4),
+                      Units.inchesToMeters(0),
+                      Units.inchesToMeters(15.5)),
+                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
+
+          vision =
+              new Vision(
+                  List.of(
+                          new VisionIOPhotonVision("front", front),
+                          new VisionIOPhotonVision("back", back))
+                      .toArray(new frc.lib.io.vision.VisionIO[0]));
+
           drive =
               new Drive(
                   new GyroPigeon2(Schematic.GYRO_ID),
@@ -147,6 +158,8 @@ public class RobotContainer {
     if (intake == null) {
       intake = new Intake(new IntakeIO() {});
     }
+
+    orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
     Leds leds = new Leds();
 
@@ -227,7 +240,8 @@ public class RobotContainer {
     operatorController.pov(90).whileTrue(arm.runPercent(0));
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
-    driverController.leftBumper().whileTrue(arm.toSetpoint(Rotation2d.fromDegrees(78.26)));
+    // driverController.leftBumper().whileTrue(arm.toSetpoint(Rotation2d.fromDegrees(78.26)));
+    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
   }
 
   /**
