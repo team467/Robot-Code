@@ -17,7 +17,6 @@ public class Shooter extends SubsystemBase {
   private final RobotState robotState = RobotState.getInstance();
   private boolean PIDMode = false;
   private double currentVelocitySetpoint;
-  private static final double SPEAKER_HEIGHT = 211.0;
   private SimpleMotorFeedforward shooterFeedforward =
       new SimpleMotorFeedforward(
           ShooterConstants.SHOOTER_KS.get(), ShooterConstants.SHOOTER_KV.get());
@@ -60,7 +59,7 @@ public class Shooter extends SubsystemBase {
   /**
    * @param velocitySetpoint the velocity that the shooter should be set to
    * @return A command that sets the PIDMode to true, and then sets to PID setpoint to that of the
-   *     inputed velocitySetpoint
+   *     inputted velocitySetpoint
    */
   public Command shoot(double velocitySetpoint) {
     return Commands.run(
@@ -74,7 +73,16 @@ public class Shooter extends SubsystemBase {
    * @param volts the volts that the shooter should be set to
    * @return A command that sets the shooter voltage to that of the inputed volts
    */
-  public Command manualShoot(double volts) {
+  public Command manualShoot(double percent) {
+    return Commands.run(
+        () -> {
+          io.setShooterVelocity(percent);
+          PIDMode = false;
+        },
+        this);
+  }
+
+  public Command manualShootVolts(double volts) {
     return Commands.run(
         () -> {
           io.setShooterVoltage(volts);
@@ -92,19 +100,5 @@ public class Shooter extends SubsystemBase {
     } else {
       return shooterFeedback.atSetpoint();
     }
-  }
-  /**
-   * @param distanceFromSpeaker the robots distance from the speaker
-   * @return calculates the hypotenuse of the hight of the speaker and the inputed distance
-   */
-  public double calculateShootingDistance(double distanceFromSpeaker) {
-    return Math.hypot(SPEAKER_HEIGHT, distanceFromSpeaker);
-  }
-  /**
-   * @param distanceFromSpeaker the robots distance from the speaker
-   * @return the angle at which the shooter must be to shoot into the speaker
-   */
-  public double calculateShootingAngle(double distanceFromSpeaker) {
-    return Math.abs(Math.atan(SPEAKER_HEIGHT / distanceFromSpeaker));
   }
 }
