@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants;
+import frc.robot.Orchestrator;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -22,25 +23,14 @@ import org.littletonrobotics.junction.Logger;
 
 public class Autos {
   private final Drive drive;
-  private final Shooter shooter;
-  private final Indexer indexer;
-  private final Arm arm;
-  private final Intake intake;
-  private final Pixy2 pixy2;
+  private final Orchestrator orchestrator;
   private Translation2d noteTranslation;
   private Translation2d secondNoteTranslation;
   private Translation2d thirdNoteTranslation;
 
-  private final Translation2d speaker =
-      AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
-
-  public Autos(Drive drive, Shooter shooter, Indexer indexer, Arm arm, Intake intake, Pixy2 pixy2) {
+  public Autos(Drive drive, Orchestrator orchestrator) {
     this.drive = drive;
-    this.shooter = shooter;
-    this.indexer = indexer;
-    this.arm = arm;
-    this.intake = intake;
-    this.pixy2 = pixy2;
+    this.orchestrator = orchestrator;
   }
 
   public enum StartingPosition {
@@ -82,130 +72,52 @@ public class Autos {
     Logger.recordOutput("Autos/NotePositions/2", thirdNoteTranslation);
   }
 
-  public Command turnToSpeaker() {
-    Supplier<Pose2d> targetPose =
-        () ->
-            new Pose2d(
-                drive.getPose().getTranslation(),
-                speaker.minus(drive.getPose().getTranslation()).getAngle());
-    Logger.recordOutput("Autos/Speaker", speaker);
-    return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
-  }
-
-  private Command driveToNote(Translation2d targetTranslation) {
-    Supplier<Rotation2d> targetRotation =
-        () -> targetTranslation.minus(drive.getPose().getTranslation()).getAngle();
-    return Commands.defer(
-        () -> new StraightDriveToPose(new Pose2d(targetTranslation, targetRotation.get()), drive),
-        Set.of(drive));
-  }
-
-  public Command faceNote() {
-    if (pixy2.seesNote()) {
-      return Commands.defer(
-          () ->
-              new ProxyCommand(
-                  () ->
-                      new StraightDriveToPose(
-                          new Pose2d(
-                              drive.getPose().getTranslation(),
-                              drive.getRotation().plus(Rotation2d.fromDegrees(pixy2.getAngle()))),
-                          drive)),
-          Set.of(drive));
-    } else {
-      return Commands.none();
-    }
-  }
-
-  private Command alignArm() {
-    return Commands.defer(
-        () ->
-            arm.toSetpoint(
-                new Rotation2d(
-                    shooter.calculateShootingAngle(
-                            drive.getPose().getTranslation().getDistance(speaker))
-                        - ArmConstants.HORIZONTAL_OFFSET.getRadians())),
-        Set.of(arm));
-  }
 
   public Command oneNoteAuto() {
-    return turnToSpeaker()
-        .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC));
+    return orchestrator.fullAlignShootSpeaker();
   }
 
   public Command twoNoteAuto(StartingPosition position) {
     setNotePositions(position);
-    return turnToSpeaker()
-        .andThen(alignArm())
-        .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
-        .andThen(
+    return orchestrator.fullAlignShootSpeaker()
+            .andThen(
             Commands.parallel(
-                driveToNote(noteTranslation),
-                arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
-        .andThen(Commands.parallel(intake.intake(), indexer.setPercent(0.25)))
-        .andThen(turnToSpeaker())
-        .andThen(alignArm())
-        .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC));
+                    orchestrator.driveToNote(noteTranslation),
+                    orchestrator.intakeBasic()))
+        .andThen(orchestrator.fullAlignShootSpeaker());
   }
 
   public Command threeNoteAuto(StartingPosition position) {
     setNotePositions(position);
-    return turnToSpeaker()
-        .andThen(alignArm())
-        .andThen(
-            shooter
-                .shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)
-                .andThen(
+    return orchestrator.fullAlignShootSpeaker()
+            .andThen(
                     Commands.parallel(
-                        driveToNote(noteTranslation),
-                        arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
-                .andThen(
-                    Commands.parallel(intake.intake(), indexer.setPercent(0.25)))
-                .andThen(turnToSpeaker()))
-        .andThen(alignArm())
-        .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
+                            orchestrator.driveToNote(noteTranslation),
+                            orchestrator.intakeBasic()))
+            .andThen(orchestrator.fullAlignShootSpeaker())
         .andThen(
             Commands.parallel(
-                    driveToNote(secondNoteTranslation),
-                    arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET)))
-                .andThen(
-                    Commands.parallel(intake.intake(), indexer.setPercent(0.25))
-                        .andThen(turnToSpeaker())
-                        .andThen(alignArm())
-                        .andThen(
-                            shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))));
+                            orchestrator.driveToNote(secondNoteTranslation),
+                    orchestrator.intakeBasic())
+                .andThen(orchestrator.fullAlignShootSpeaker()));
   }
 
   public Command fourNoteAuto(StartingPosition position) {
     setNotePositions(position);
-    return turnToSpeaker()
-        .andThen(alignArm())
-        .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
+    return orchestrator.fullAlignShootSpeaker()
+            .andThen(
+                    Commands.parallel(
+                            orchestrator.driveToNote(noteTranslation),
+                            orchestrator.intakeBasic()))
+            .andThen(orchestrator.fullAlignShootSpeaker())
+            .andThen(
+                    Commands.parallel(
+                                    orchestrator.driveToNote(secondNoteTranslation),
+                                    orchestrator.intakeBasic())
+                            .andThen(orchestrator.fullAlignShootSpeaker()))
         .andThen(
             Commands.parallel(
-                driveToNote(noteTranslation),
-                arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
-        .andThen(Commands.parallel(intake.intake(), indexer.setPercent(0.25)))
-        .andThen(turnToSpeaker())
-        .andThen(alignArm())
-        .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC))
-        .andThen(
-            Commands.parallel(
-                driveToNote(secondNoteTranslation),
-                arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET))))
-        .andThen(
-            Commands.parallel(intake.intake(), indexer.setPercent(0.25))
-                .andThen(turnToSpeaker())
-                .andThen(alignArm())
-                .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)))
-        .andThen(
-            Commands.parallel(
-                    driveToNote(thirdNoteTranslation),
-                    arm.toSetpoint(new Rotation2d().minus(ArmConstants.HORIZONTAL_OFFSET)))
-                .andThen(
-                    Commands.parallel(intake.intake(), indexer.setPercent(0.25)))
-                .andThen(turnToSpeaker())
-                .andThen(alignArm())
-                .andThen(shooter.shoot(ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC)));
+                            orchestrator.driveToNote(thirdNoteTranslation),orchestrator.intakeBasic()
+                    )).andThen(orchestrator.fullAlignShootSpeaker());
   }
 }
