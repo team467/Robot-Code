@@ -349,15 +349,11 @@ public class Leds extends SubsystemBase {
     if (onRight) {
       for (int i = 0; i < length; i++) {
         buffer.setLED(i, color);
-      }
-      for (int i = 0; i < length; i++) {
         extraBuffer.setLED(i, Color.kBlack);
       }
     } else {
       for (int i = 0; i < length; i++) {
         extraBuffer.setLED(i, color);
-      }
-      for (int i = 0; i < length; i++) {
         buffer.setLED(i, Color.kBlack);
       }
     }
