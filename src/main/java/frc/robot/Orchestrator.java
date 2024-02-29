@@ -7,8 +7,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.lib.utils.TunableNumber;
 import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
@@ -42,6 +42,10 @@ public class Orchestrator {
     this.arm = arm;
   }
 
+  public Command deferredStraightDriveToPose(Supplier<Pose2d> pose) {
+    return Commands.defer(() -> new StraightDriveToPose(pose.get(), drive), Set.of(drive));
+  }
+
   /**
    * Drives to one of the notes pre positioned on the field.
    *
@@ -51,9 +55,7 @@ public class Orchestrator {
   public Command driveToNote(Translation2d targetTranslation) {
     Supplier<Rotation2d> targetRotation =
         () -> targetTranslation.minus(drive.getPose().getTranslation()).getAngle();
-    return Commands.defer(
-        () -> new StraightDriveToPose(new Pose2d(targetTranslation, targetRotation.get()), drive),
-        Set.of(drive));
+    return deferredStraightDriveToPose(() -> new Pose2d(targetTranslation, targetRotation.get()));
   }
 
   /**
@@ -70,7 +72,7 @@ public class Orchestrator {
                     .minus(drive.getPose().getTranslation())
                     .getAngle()
                     .minus(Rotation2d.fromDegrees(180)));
-    return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive));
+    return deferredStraightDriveToPose(targetPose);
   }
 
   /**
@@ -80,8 +82,8 @@ public class Orchestrator {
    */
   public Command shootAmp() {
     return Commands.sequence(
-        shooter.manualShoot(3.5/12).withTimeout(0.5),
-        Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5/12))
+        shooter.manualShoot(3.5 / 12).withTimeout(0.5),
+        Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5 / 12))
             .until(() -> !indexer.getLimitSwitchPressed())
             .withTimeout(2));
   }
@@ -96,26 +98,24 @@ public class Orchestrator {
   }
 
   public Command goToAmp() {
+    TunableNumber AMP_DISTANCE_OFFSET = new TunableNumber("Orchestrator/AmpDistance", 1);
     Supplier<Pose2d> targetPose =
         () ->
             new Pose2d(
                 AllianceFlipUtil.apply(FieldConstants.ampCenter.getX()),
-                FieldConstants.ampCenter.getY() - 1,
+                FieldConstants.ampCenter.getY() - AMP_DISTANCE_OFFSET.get(),
                 new Rotation2d());
-    return Commands.defer(() -> new StraightDriveToPose(targetPose.get(), drive), Set.of(drive))
+    return deferredStraightDriveToPose(targetPose)
         .andThen(
-            Commands.defer(
+            deferredStraightDriveToPose(
                 () ->
-                    new StraightDriveToPose(
-                        new Pose2d(
-                            drive.getPose().getTranslation().getX(),
-                            targetPose.get().getY() + 0.5,
-                            AllianceFlipUtil.apply(FieldConstants.ampCenter)
-                                .minus(drive.getPose().getTranslation())
-                                .getAngle()
-                                .minus(Rotation2d.fromRadians(Math.PI))),
-                        drive),
-                Set.of(drive)));
+                    new Pose2d(
+                        drive.getPose().getTranslation().getX(),
+                        targetPose.get().getY() + AMP_DISTANCE_OFFSET.get() / 2,
+                        AllianceFlipUtil.apply(FieldConstants.ampCenter)
+                            .minus(drive.getPose().getTranslation())
+                            .getAngle()
+                            .minus(Rotation2d.fromRadians(Math.PI)))));
   }
 
   /**
@@ -147,7 +147,7 @@ public class Orchestrator {
    * @return The command to move the arm to the correct setPoint for shooting from its current
    *     location.
    */
-  public Command alignArmSpeaker() {
+  public Command alignArmSpeaker() { // TODO: Not working. Abishek, Fix this
     return Commands.defer(
         () ->
             arm.toSetpoint(
@@ -155,7 +155,7 @@ public class Orchestrator {
                     Math.abs(
                         Math.atan(
                             (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                    - Math.sin(arm.getAngle() - Units.degreesToRadians(13.95))
+                                    - Math.sin(arm.getAngle() + ArmConstants.STOW.getRadians())
                                         * Units.inchesToMeters(28))
                                 / drive.getPose().getTranslation().getDistance(speaker))))),
         Set.of(arm));
@@ -187,12 +187,15 @@ public class Orchestrator {
    */
   public Command intakeBasic() {
     return Commands.sequence(
-            arm.toSetpoint(ArmConstants.OFFSET).until(arm::atSetpoint).withTimeout(2),
+            arm.toSetpoint(ArmConstants.STOW).until(arm::atSetpoint).withTimeout(2),
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
-                .until(()->RobotState.getInstance().hasNote)
+                .until(() -> RobotState.getInstance().hasNote)
                 .withTimeout(10))
-        .finallyDo(() -> indexer.setPercent(-0.6).withTimeout(0.06));
+        .andThen(
+            Commands.parallel(
+                    indexer.setPercent(IndexerConstants.BACKUP_SPEED), shooter.manualShoot(-0.2))
+                .withTimeout(0.06));
   }
 
   /**
@@ -202,7 +205,7 @@ public class Orchestrator {
    */
   public Command driveWhileIntaking() {
     return Commands.parallel(
-        intake.intake().until(()->RobotState.getInstance().hasNote),
+        intake.intake().until(() -> RobotState.getInstance().hasNote),
         Commands.run(
                 () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)),
                 drive)
@@ -210,27 +213,23 @@ public class Orchestrator {
   }
 
   /**
-   * Turn on the intake when we see a note.
+   * Intakes after seeing note with Pixy2.
    *
    * @return The command to intake after a note is seen.
    */
-  // Intakes after seeing note with Pixy2.
   public Command basicVisionIntake() {
     return Commands.sequence(
-        indexer.setVolts(4),
-        arm.toSetpoint(ArmConstants.OFFSET),
+        indexer.setPercent(0.33),
+        arm.toSetpoint(ArmConstants.STOW),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
-        new ProxyCommand(
+        deferredStraightDriveToPose(
             () ->
-                new StraightDriveToPose(
-                    new Pose2d(
-                        drive.getPose().getTranslation(),
-                        drive
-                            .getRotation()
-                            .plus(
-                                AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle())))),
-                    drive)),
-        intake.intake().until(()->RobotState.getInstance().hasNote));
+                new Pose2d(
+                    drive.getPose().getTranslation(),
+                    drive
+                        .getRotation()
+                        .plus(AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle()))))),
+        intake.intake().until(() -> RobotState.getInstance().hasNote));
   }
 
   /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
@@ -267,21 +266,11 @@ public class Orchestrator {
   }
 
   /**
-   * Uses intakeBasic and shootBasic in order to shoot a note while lined up with the speaker,
-   * doesn't move the arm.
-   *
-   * @return The command to intake a note and then shoot that note, more for testing purposes.
-   */
-  public Command intakeAndShootSpeaker() {
-    return Commands.sequence(intakeBasic(), shootBasic());
-  }
-
-  /**
    * Sets the arm to the home position, completely down.
    *
    * @return The command to move the arm to the home position.
    */
   public Command armToHome() {
-    return arm.toSetpoint(ArmConstants.OFFSET);
+    return arm.toSetpoint(ArmConstants.STOW);
   }
 }

@@ -43,7 +43,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
-import java.util.Set;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -190,15 +189,12 @@ public class RobotContainer {
     driverController
         .start()
         .onTrue(
-            Commands.defer(
+            Commands.runOnce(
                     () ->
-                        Commands.runOnce(
-                            () ->
-                                drive.setPose(
-                                    new Pose2d(
-                                        drive.getPose().getTranslation(),
-                                        AllianceFlipUtil.apply(new Rotation2d())))),
-                    Set.of())
+                        drive.setPose(
+                            new Pose2d(
+                                drive.getPose().getTranslation(),
+                                AllianceFlipUtil.apply(new Rotation2d()))))
                 .ignoringDisable(true));
     driverController
         .pov(-1)
@@ -230,7 +226,7 @@ public class RobotContainer {
     operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
     operatorController.pov(90).whileTrue(arm.runPercent(0));
 
-    driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.OFFSET));
+    driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().whileTrue(arm.toSetpoint(Rotation2d.fromDegrees(78.26)));
   }
 

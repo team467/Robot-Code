@@ -6,9 +6,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.GeomUtils;
 import frc.lib.utils.RobotOdometry;
 import frc.robot.subsystems.drive.Drive;
@@ -93,8 +92,7 @@ public class DriveWithJoysticks extends Command {
               linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
               rightX * MAX_ANGULAR_SPEED);
     } else {
-      if (DriverStation.getAlliance().isPresent()
-          && DriverStation.getAlliance().get() == Alliance.Red) {
+      if (AllianceFlipUtil.shouldFlip()) {
         Logger.recordOutput("Drive/FlipAlliance", true);
         linearVelocity = linearVelocity.rotateBy(Rotation2d.fromRadians(Math.PI));
       } else {

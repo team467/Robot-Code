@@ -14,7 +14,7 @@ public class ArmConstants {
   public static final TunableNumber KD;
   public static final TunableNumber MAX_VELOCITY;
   public static final TunableNumber MAX_ACCELERATION;
-  public static final Rotation2d OFFSET; // Location of arm when limit switch pressed
+  public static final Rotation2d STOW; // Location of arm when limit switch pressed
   public static final GearRatio GEAR_RATIO;
   public static final Rotation2d AMP_POSITION;
   public static final double TOLERENCE;
@@ -29,7 +29,7 @@ public class ArmConstants {
         KD = new TunableNumber("Arm/KD", 0);
         MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", Double.POSITIVE_INFINITY);
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Units.degreesToRadians(900));
-        OFFSET = Rotation2d.fromDegrees(-13.95);
+        STOW = Rotation2d.fromDegrees(-13.95);
         GEAR_RATIO = new GearRatio(228.571429, 1);
         AMP_POSITION = Rotation2d.fromRadians(Units.degreesToRadians(78.26));
         TOLERENCE = Units.degreesToRadians(3);
@@ -42,7 +42,7 @@ public class ArmConstants {
         KD = new TunableNumber("Arm/KD", 0.0);
         MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", 0.0);
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", 0.0);
-        OFFSET = new Rotation2d();
+        STOW = new Rotation2d();
         GEAR_RATIO = new GearRatio();
         AMP_POSITION = Rotation2d.fromRadians(0);
         TOLERENCE = 0;
