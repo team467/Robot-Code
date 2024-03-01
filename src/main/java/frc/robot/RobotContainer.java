@@ -36,7 +36,6 @@ import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOPhysical;
-import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.shooter.Shooter;
@@ -161,7 +160,7 @@ public class RobotContainer {
 
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
-    Leds leds = new Leds();
+    //    Leds leds = new Leds();
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up auto routines
@@ -228,10 +227,10 @@ public class RobotContainer {
                 .onlyWhile(() -> !indexer.getLimitSwitchPressed())
                 .andThen(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(0.2)));
 
-    operatorController.y().whileTrue(indexer.setPercent(1));
+    operatorController.y().whileTrue(orchestrator.intakeBasic());
 
     operatorController.b().whileTrue(indexer.setPercent(-0.8).alongWith(intake.release()));
-    operatorController.rightBumper().whileTrue(shooter.manualShoot(-0.2 * 12));
+    operatorController.rightBumper().whileTrue(orchestrator.shootBasic());
     operatorController.a().whileTrue(shooter.manualShoot(10));
 
     // operator d pad
