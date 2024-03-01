@@ -37,7 +37,6 @@ import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOPhysical;
-import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.robotstate.RobotState;
@@ -163,7 +162,7 @@ public class RobotContainer {
 
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
-    Leds leds = new Leds();
+    //    Leds leds = new Leds();
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up auto routines
@@ -181,6 +180,13 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(this::configureButtonBindings));
 
+    new Trigger(() -> RobotState.getInstance().hasNote).onTrue(
+            Commands.runEnd(
+                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
+                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0))
+                .withTimeout(0.69)
+                .ignoringDisable(true));
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -192,12 +198,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new Trigger(() -> RobotState.getInstance().hasNote)
-        .onTrue(
-            Commands.runEnd(
-                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
-                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1))
-                .withTimeout(0.69));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     drive.setDefaultCommand(
