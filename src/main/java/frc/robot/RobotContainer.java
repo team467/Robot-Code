@@ -197,7 +197,7 @@ public class RobotContainer {
                     Commands.runEnd(
                                     () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
                                     () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1))
-                            .withTimeout(0.5));
+                            .withTimeout(0.69));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     drive.setDefaultCommand(
