@@ -221,11 +221,8 @@ public class RobotContainer {
     // operator controller
     operatorController
         .leftBumper()
-        .and(() -> !indexer.getLimitSwitchPressed())
         .whileTrue(
-            (intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
-                .onlyWhile(() -> !indexer.getLimitSwitchPressed())
-                .andThen(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(0.2)));
+            (intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()))));
 
     operatorController.y().whileTrue(orchestrator.intakeBasic());
 
