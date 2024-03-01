@@ -193,11 +193,11 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     new Trigger(() -> RobotState.getInstance().hasNote)
-            .onTrue(
-                    Commands.runEnd(
-                                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
-                                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1))
-                            .withTimeout(0.69));
+        .onTrue(
+            Commands.runEnd(
+                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
+                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1))
+                .withTimeout(0.69));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     drive.setDefaultCommand(
