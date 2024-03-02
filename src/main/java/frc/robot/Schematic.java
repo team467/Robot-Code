@@ -33,7 +33,7 @@ public class Schematic {
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2023 -> {
-        POWER_DIST_ID = 1;
+        POWER_DIST_ID = 20;
         POWER_DIST_TYPE = PowerDistribution.ModuleType.kRev;
 
         FRONT_LEFT_DRIVE_ID = 3;
@@ -85,7 +85,7 @@ public class Schematic {
         CLIMBER_LEFT_ID = 16;
       }
       default -> {
-        POWER_DIST_ID = 0;
+        POWER_DIST_ID = 20;
         POWER_DIST_TYPE = PowerDistribution.ModuleType.kCTRE;
         REAR_RIGHT_DRIVE_ID = 0;
         REAR_RIGHT_STEERING_ID = 0;
