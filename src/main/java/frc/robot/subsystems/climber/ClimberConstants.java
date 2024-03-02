@@ -14,7 +14,7 @@ public class ClimberConstants {
 
   static {
     switch (Constants.getRobot()) {
-      case ROBOT_2024C -> {
+      case ROBOT_2024_COMP -> {
         CLIMBER_CLIMB_VOLTAGE = 0.0;
         CLIMBER_HOLD_VOLTAGE = 0.0;
         CLIMBER_RELEASE_VOLTAGE = 0.0;
