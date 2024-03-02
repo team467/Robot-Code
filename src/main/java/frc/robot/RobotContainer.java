@@ -222,13 +222,14 @@ public class RobotContainer {
     operatorController
         .y()
         .whileTrue(
-            (intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()))));
+            intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
 
     operatorController.leftBumper().whileTrue(orchestrator.intakeBasic());
 
-    operatorController.b().whileTrue(indexer.setPercent(-0.8).alongWith(intake.release()));
-    operatorController.rightBumper().whileTrue(orchestrator.shootBasic());
-    operatorController.a().whileTrue(shooter.manualShoot(10));
+    operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
+    operatorController.rightBumper().whileTrue(orchestrator.expelShindex());
+    operatorController.a().whileTrue(orchestrator.shootBasic());
+    operatorController.x().whileTrue(orchestrator.scoreAmp());
 
     // operator d pad
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
