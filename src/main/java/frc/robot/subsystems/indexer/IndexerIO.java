@@ -11,8 +11,7 @@ public interface IndexerIO {
 
     public double indexerCurrentAmps;
 
-    public boolean indexerLimitSwitchLeftPressed;
-    public boolean indexerLimitSwitchRightPressed;
+    public boolean indexerLimitSwitchPressed;
   }
 
   default void setIndexerVoltage(double volts) {}

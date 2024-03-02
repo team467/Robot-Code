@@ -24,8 +24,6 @@ import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIOTalonSRX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -59,7 +57,6 @@ public class RobotContainer {
   private Vision vision;
   private Pixy2 pixy2;
   private boolean isRobotOriented = true; // Workaround, change if needed
-  private Climber climber;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -104,7 +101,6 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
-          climber = new Climber(new ClimberIOTalonSRX());
         }
 
         case ROBOT_SIMBOT -> {
@@ -143,9 +139,6 @@ public class RobotContainer {
     }
     if (intake == null) {
       intake = new Intake(new IntakeIO() {});
-    }
-    if (climber == null) {
-      climber = new Climber(new ClimberIOTalonSRX());
     }
 
     Leds leds = new Leds();
@@ -199,16 +192,6 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
-    climber.setDefaultCommand(climber.stop());
-
-    // driverController
-    // .a()
-    //     .whileTrue(
-    //         Commands.climber.raiseOrLower(0.8));
-    // driverController
-    // .b()
-    // .whileTrue(Commands.climber.raiseOrLower(-0.8))
   }
 
   /**
