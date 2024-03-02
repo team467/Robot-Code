@@ -87,12 +87,19 @@ public class Leds extends SubsystemBase {
     ledTestingEntry = ledTable.getEntry("Testing");
     ledTestingEntry.setBoolean(false);
 
-    buffer = new AddressableLEDBuffer(length);
-
     leds = new AddressableLED(0);
-    leds.setLength(length);
-    leds.setData(buffer);
-    leds.start();
+    buffer = new AddressableLEDBuffer(length);
+    extraBuffer = new AddressableLEDBuffer(length);
+
+    ledRight = new AddressableLED(0);
+    ledRight.setLength(length);
+    ledRight.setData(buffer);
+    ledRight.start();
+
+    ledLeft = new AddressableLED(1);
+    ledLeft.setLength(length);
+    ledLeft.setData(buffer);
+    ledLeft.start();
 
     loadingNotifier =
         new Notifier(
@@ -227,12 +234,12 @@ public class Leds extends SubsystemBase {
 
       case LEFT_NOTE_DETECTION:
         // leds glow on left side
-        solidOnSide(false, Color.kYellow);
+        solid(0.5, Color.kYellow, Color.kBlack);
         break;
 
       case RIGHT_NOTE_DETECTION:
         // leds glows on right side
-        solidOnSide(true, Color.kYellow);
+        solid(0.5, Color.kBlack, Color.kYellow);
         break;
 
       case STRAIGHT_NOTE_DETECTION:
@@ -329,17 +336,13 @@ public class Leds extends SubsystemBase {
    */
   private void solidOnSide(boolean onRight, Color color) {
     if (onRight) {
-      for (int i = 0; i < length / 2; i++) {
-        buffer.setLED(i, Color.kBlack);
-      }
-      for (int i = length / 2; i < length; i++) {
+      for (int i = 0; i < length; i++) {
         buffer.setLED(i, color);
+        extraBuffer.setLED(i, Color.kBlack);
       }
-    } else { // On the left
-      for (int i = 0; i < length / 2; i++) {
-        buffer.setLED(i, color);
-      }
-      for (int i = length / 2; i < length; i++) {
+    } else {
+      for (int i = 0; i < length; i++) {
+        extraBuffer.setLED(i, color);
         buffer.setLED(i, Color.kBlack);
       }
     }
