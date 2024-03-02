@@ -61,6 +61,7 @@ public class RobotContainer {
   private Arm arm;
   private Vision vision;
   private Pixy2 pixy2;
+  private Leds leds;
   private boolean isRobotOriented = true; // Workaround, change if needed
   private Orchestrator orchestrator;
 
@@ -119,6 +120,7 @@ public class RobotContainer {
           indexer = new Indexer(new IndexerIOPhysical());
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
+          leds = new Leds();
         }
 
         case ROBOT_SIMBOT -> {
@@ -158,10 +160,7 @@ public class RobotContainer {
     if (intake == null) {
       intake = new Intake(new IntakeIO() {});
     }
-
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
-
-    Leds leds = new Leds();
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up auto routines
