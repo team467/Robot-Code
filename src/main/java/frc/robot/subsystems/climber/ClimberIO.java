@@ -14,15 +14,16 @@ public interface ClimberIO {
     public double appliedVoltsRight = 0.0;
     public double ClimberRightPosition = 0.0;
     public boolean ratchetLocked = false;
+    public boolean limitSwitchPressed = false;
   }
 
-  default void updateInput(ClimberIOInputs inputs) {}
+  default void updateInputs(ClimberIOInputs inputs) {}
 
   default void setMotorsOutputPercent(double percentOutput) {}
+
+  default void setRatchetLocked(boolean locked) {}
 
   default void setLeftMotorVolts(double volts) {}
 
   default void setRightMotorVolts(double volts) {}
-
-  default void setRatchetLocked(double locked) {}
 }

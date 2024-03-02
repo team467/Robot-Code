@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
@@ -16,7 +17,6 @@ public class Climber extends SubsystemBase {
   private boolean PIDMode = false;
   private double setpointLeft;
   private double setpointRight;
-  // TODO: Add Soloenoid
 
   /**
    * ClimberIO object, gets inputs for ClimberIO object
@@ -30,7 +30,8 @@ public class Climber extends SubsystemBase {
   }
 
   public void periodic() {
-    climberIO.updateInput(climberIOInputs);
+    climberIO.updateInputs(climberIOInputs);
+    Logger.processInputs("Climber", climberIOInputs);
     if (PIDMode) {
       climberIO.setLeftMotorVolts(
           climberLeftFeedback.calculate(climberIOInputs.ClimberLeftPosition, setpointLeft));
@@ -49,6 +50,7 @@ public class Climber extends SubsystemBase {
   public Command raiseOrLower(double percentOutput) {
     return Commands.run(
         () -> {
+          climberIO.setRatchetLocked(false);
           PIDMode = false;
           climberIO.setMotorsOutputPercent(percentOutput);
         },
@@ -61,6 +63,7 @@ public class Climber extends SubsystemBase {
           this.setpointLeft = setpointLeft;
           this.setpointRight = setPointRight;
           PIDMode = true;
+          climberIO.setRatchetLocked(false);
         },
         this);
   }
@@ -75,6 +78,7 @@ public class Climber extends SubsystemBase {
         () -> {
           PIDMode = false;
           climberIO.setMotorsOutputPercent(0);
+          climberIO.setRatchetLocked(true);
         },
         this);
   }
