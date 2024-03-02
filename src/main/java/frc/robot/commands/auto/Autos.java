@@ -1,6 +1,7 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
@@ -58,6 +59,14 @@ public class Autos {
     Logger.recordOutput("Autos/NotePositions/0", noteTranslation);
     Logger.recordOutput("Autos/NotePositions/1", secondNoteTranslation);
     Logger.recordOutput("Autos/NotePositions/2", thirdNoteTranslation);
+  }
+
+  public Command mobilityAuto() {
+    return new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive);
+  }
+
+  public Command scoreOneNoteMobility() {
+    return Commands.sequence(oneNoteAuto().andThen(mobilityAuto()));
   }
 
   public Command oneNoteAuto() {
