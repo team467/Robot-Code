@@ -38,7 +38,6 @@ import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOPhysical;
-import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.shooter.Shooter;
@@ -63,7 +62,7 @@ public class RobotContainer {
   private Arm arm;
   private Vision vision;
   private Pixy2 pixy2;
-//  private Leds leds;
+  //  private Leds leds;
   private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
   private Orchestrator orchestrator;
@@ -82,59 +81,59 @@ public class RobotContainer {
       switch (Constants.getRobot()) {
         case ROBOT_2023 -> {
           drive =
-                  new Drive(
-                          new GyroPigeon2(Schematic.GYRO_ID),
-                          new ModuleIOSparkMAX(0),
-                          new ModuleIOSparkMAX(1),
-                          new ModuleIOSparkMAX(2),
-                          new ModuleIOSparkMAX(3));
+              new Drive(
+                  new GyroPigeon2(Schematic.GYRO_ID),
+                  new ModuleIOSparkMAX(0),
+                  new ModuleIOSparkMAX(1),
+                  new ModuleIOSparkMAX(2),
+                  new ModuleIOSparkMAX(3));
         }
         case ROBOT_2024_COMP -> {
           Transform3d front =
-                  new Transform3d(
-                          new Translation3d(
-                                  Units.inchesToMeters(6.74),
-                                  Units.inchesToMeters(-10.991),
-                                  Units.inchesToMeters(15.875)),
-                          new Rotation3d(0, Units.degreesToRadians(-30), 0));
+              new Transform3d(
+                  new Translation3d(
+                      Units.inchesToMeters(6.74),
+                      Units.inchesToMeters(-10.991),
+                      Units.inchesToMeters(15.875)),
+                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
           Transform3d back =
-                  new Transform3d(
-                          new Translation3d(
-                                  Units.inchesToMeters(-14.4),
-                                  Units.inchesToMeters(0),
-                                  Units.inchesToMeters(15.5)),
-                          new Rotation3d(0, Units.degreesToRadians(-30), 0));
+              new Transform3d(
+                  new Translation3d(
+                      Units.inchesToMeters(-14.4),
+                      Units.inchesToMeters(0),
+                      Units.inchesToMeters(15.5)),
+                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
 
           vision =
-                  new Vision(
-                          List.of(
-                                          new VisionIOPhotonVision("front", front),
-                                          new VisionIOPhotonVision("back", back))
-                                  .toArray(new frc.lib.io.vision.VisionIO[0]));
+              new Vision(
+                  List.of(
+                          new VisionIOPhotonVision("front", front),
+                          new VisionIOPhotonVision("back", back))
+                      .toArray(new frc.lib.io.vision.VisionIO[0]));
 
           drive =
-                  new Drive(
-                          new GyroPigeon2(Schematic.GYRO_ID),
-                          new ModuleIOSparkMAX(0),
-                          new ModuleIOSparkMAX(1),
-                          new ModuleIOSparkMAX(2),
-                          new ModuleIOSparkMAX(3));
+              new Drive(
+                  new GyroPigeon2(Schematic.GYRO_ID),
+                  new ModuleIOSparkMAX(0),
+                  new ModuleIOSparkMAX(1),
+                  new ModuleIOSparkMAX(2),
+                  new ModuleIOSparkMAX(3));
           arm = new Arm(new ArmIOSparkMAX());
           indexer = new Indexer(new IndexerIOPhysical());
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
-//          leds = new Leds();
+          //          leds = new Leds();
           climber = new Climber(new ClimberIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
           drive =
-                  new Drive(
-                          new GyroIO() {},
-                          new ModuleIOSim(),
-                          new ModuleIOSim(),
-                          new ModuleIOSim(),
-                          new ModuleIOSim());
+              new Drive(
+                  new GyroIO() {},
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim());
         }
       }
     }
@@ -142,12 +141,12 @@ public class RobotContainer {
     // Instantiate missing subsystems
     if (drive == null) {
       drive =
-              new Drive(
-                      new GyroIO() {},
-                      new ModuleIO() {},
-                      new ModuleIO() {},
-                      new ModuleIO() {},
-                      new ModuleIO() {});
+          new Drive(
+              new GyroIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {});
     }
     if (arm == null) {
       arm = new Arm(new ArmIO() {});
@@ -171,16 +170,16 @@ public class RobotContainer {
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
     autoChooser.addOption(
-            "Drive Characterization",
-            Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
-                    .andThen(
-                            new FeedForwardCharacterization(
-                                    drive,
-                                    true,
-                                    new FeedForwardCharacterizationData("drive"),
-                                    drive::runCharacterizationVolts,
-                                    drive::getCharacterizationVelocity))
-                    .andThen(this::configureButtonBindings));
+        "Drive Characterization",
+        Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
+            .andThen(
+                new FeedForwardCharacterization(
+                    drive,
+                    true,
+                    new FeedForwardCharacterizationData("drive"),
+                    drive::runCharacterizationVolts,
+                    drive::getCharacterizationVelocity))
+            .andThen(this::configureButtonBindings));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -195,26 +194,26 @@ public class RobotContainer {
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     drive.setDefaultCommand(
-            new DriveWithJoysticks(
-                    drive,
-                    () -> -driverController.getLeftY(),
-                    () -> -driverController.getLeftX(),
-                    () -> driverController.getRightX(),
-                    () -> isRobotOriented // TODO: add toggle
+        new DriveWithJoysticks(
+            drive,
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> driverController.getRightX(),
+            () -> isRobotOriented // TODO: add toggle
             ));
     driverController
-            .start()
-            .onTrue(
-                    Commands.runOnce(
-                                    () ->
-                                            drive.setPose(
-                                                    new Pose2d(
-                                                            drive.getPose().getTranslation(),
-                                                            AllianceFlipUtil.apply(new Rotation2d()))))
-                            .ignoringDisable(true));
+        .start()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(
+                                drive.getPose().getTranslation(),
+                                AllianceFlipUtil.apply(new Rotation2d()))))
+                .ignoringDisable(true));
     driverController
-            .pov(-1)
-            .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+        .pov(-1)
+        .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     // stop when doing nothing
     intake.setDefaultCommand(intake.stop());
@@ -224,12 +223,12 @@ public class RobotContainer {
 
     // operator controller
     operatorController
-            .leftBumper()
-            .and(() -> !indexer.getLimitSwitchPressed())
-            .whileTrue(
-                    (intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
-                            .onlyWhile(() -> !indexer.getLimitSwitchPressed())
-                            .andThen(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(0.2)));
+        .leftBumper()
+        .and(() -> !indexer.getLimitSwitchPressed())
+        .whileTrue(
+            (intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
+                .onlyWhile(() -> !indexer.getLimitSwitchPressed())
+                .andThen(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(0.2)));
 
     operatorController.y().whileTrue(indexer.setPercent(1));
 

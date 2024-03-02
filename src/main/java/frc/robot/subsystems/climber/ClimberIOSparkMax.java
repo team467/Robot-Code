@@ -47,29 +47,25 @@ public class ClimberIOSparkMax implements ClimberIO {
   }
 
   @Override
-  public void setMotorsOutputPercent(double percentOutput) {
-    if (climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()
-        || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()) {
-      climberLeft.set(0);
-      climberRight.set(0);
-    } else {
-      climberLeft.set(percentOutput);
-      climberRight.set(percentOutput);
-    }
+  public void setMotorsOutputPercent(double percentOutput, boolean forward) {
+    setLeftMotorVolts(percentOutput * 12, forward);
+    setRightMotorVolts(percentOutput * 12, forward);
   }
 
-  public void setLeftMotorVolts(double volts) {
+  public void setLeftMotorVolts(double volts, boolean forward) {
     if (climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()
-        || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()) {
+        || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()
+            && forward) {
       climberLeft.set(0);
     } else {
       climberLeft.set(volts);
     }
   }
 
-  public void setRightMotorVolts(double volts) {
-    if (climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()
-        || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()) {
+  public void setRightMotorVolts(double volts, boolean forward) {
+    if (climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()
+        || climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()
+            && forward) {
       climberRight.set(0);
     } else {
       climberRight.set(volts);

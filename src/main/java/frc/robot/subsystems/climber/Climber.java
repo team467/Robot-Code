@@ -52,7 +52,7 @@ public class Climber extends SubsystemBase {
         () -> {
           climberIO.setRatchetLocked(false);
           PIDMode = false;
-          climberIO.setMotorsOutputPercent(percentOutput);
+          climberIO.setMotorsOutputPercent(percentOutput, percentOutput > 0);
         },
         this);
   }
@@ -77,7 +77,7 @@ public class Climber extends SubsystemBase {
     return Commands.run(
         () -> {
           PIDMode = false;
-          climberIO.setMotorsOutputPercent(0);
+          climberIO.setMotorsOutputPercent(0, false);
           climberIO.setRatchetLocked(true);
         },
         this);

@@ -31,7 +31,7 @@ public class ClimberIOTalonSRX implements ClimberIO {
   }
 
   @Override
-  public void setMotorsOutputPercent(double percentOutput) {
+  public void setMotorsOutputPercent(double percentOutput, boolean forward) {
     if ((motorLeader.isFwdLimitSwitchClosed() == 1 || motorLeader.isRevLimitSwitchClosed() == 1)
         && percentOutput < 1) {
       motorLeader.set(TalonSRXControlMode.PercentOutput, 0);
