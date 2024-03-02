@@ -195,15 +195,17 @@ public class Orchestrator {
    */
   public Command intakeBasic() {
     return Commands.sequence(
-            // arm.toSetpoint(ArmConstants.STOW).until(arm::atSetpoint).withTimeout(2),
+            arm.toSetpoint(ArmConstants.STOW).until(arm::atSetpoint).withTimeout(2),
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
                 .withTimeout(10))
         .andThen(
             Commands.parallel(
-                    indexer.setPercent(IndexerConstants.BACKUP_SPEED), shooter.manualShoot(-0.2))
-                .withTimeout(0.06));
+                    indexer.setPercent(IndexerConstants.BACKUP_SPEED),
+                    shooter.manualShoot(-0.2),
+                    intake.stop())
+                .withTimeout(IndexerConstants.BACKUP_TIME));
   }
 
   /**
@@ -273,6 +275,10 @@ public class Orchestrator {
     return Commands.parallel(expelIntake(), expelShindex());
   }
 
+  public Command expelIntakeIndex() {
+    return Commands.parallel(
+        indexer.setPercent(-IndexerConstants.INDEX_SPEED.get()), expelIntake());
+  }
   /**
    * Sets the arm to the home position, completely down.
    *

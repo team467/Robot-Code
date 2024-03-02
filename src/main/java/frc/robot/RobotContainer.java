@@ -119,7 +119,6 @@ public class RobotContainer {
           indexer = new Indexer(new IndexerIOPhysical());
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
-          leds = new Leds();
         }
 
         case ROBOT_SIMBOT -> {
