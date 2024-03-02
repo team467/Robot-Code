@@ -34,7 +34,7 @@ public class IndexerConstants {
         INDEXER_BACKWARD_VOLTAGE = 0.0;
         INDEXER_LIMIT_SWITCH_ID = 13;
         WHEEL_DIAMETER = 4;
-        INDEX_SPEED = new TunableNumber("Indexer/IndexSpeed", 0.3); // 0.6
+        INDEX_SPEED = new TunableNumber("Indexer/IndexSpeed", 0.6);
         INDEXER_GEAR_RATIO = new GearRatio(1.5, 1);
         BACKUP_SPEED = -0.5;
         BACKUP_TIME = 0.02;
