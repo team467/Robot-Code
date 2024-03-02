@@ -47,25 +47,25 @@ public class ClimberIOSparkMax implements ClimberIO {
   }
 
   @Override
-  public void setMotorsOutputPercent(double percentOutput, boolean forward) {
-    setLeftMotorVolts(percentOutput * 12, forward);
-    setRightMotorVolts(percentOutput * 12, forward);
+  public void setMotorsOutputPercent(double percentOutput) {
+    setLeftMotorVolts(percentOutput * 12);
+    setRightMotorVolts(percentOutput * 12);
   }
 
-  public void setLeftMotorVolts(double volts, boolean forward) {
+  public void setLeftMotorVolts(double volts) {
     if (climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()
         || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()
-            && forward) {
+            && climberLeft.getOutputCurrent() > 0) {
       climberLeft.set(0);
     } else {
       climberLeft.set(volts);
     }
   }
 
-  public void setRightMotorVolts(double volts, boolean forward) {
+  public void setRightMotorVolts(double volts) {
     if (climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()
         || climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed()
-            && forward) {
+            && climberRight.getOutputCurrent() > 0)  {
       climberRight.set(0);
     } else {
       climberRight.set(volts);
