@@ -214,7 +214,7 @@ public class Orchestrator {
           .withTimeout(IndexerConstants.BACKUP_TIME)
           .andThen(
               Commands.parallel(
-                      arm.toSetpoint(Rotation2d.fromDegrees(-7.75)).until(arm::atSetpoint),
+                      arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
                       indexer.setPercent(0).until(() -> true),
                       shooter.manualShoot(0).until(() -> true),
                       intake.stop().until(() -> true))
