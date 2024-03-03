@@ -226,6 +226,7 @@ public class RobotContainer {
             intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
 
     operatorController.leftBumper().whileTrue(orchestrator.intakeBasic());
+    operatorController.leftBumper().onFalse(orchestrator.pullBack());
 
     operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
     operatorController.rightBumper().whileTrue(orchestrator.expelShindex());

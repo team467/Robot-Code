@@ -29,6 +29,8 @@ public class Orchestrator {
   private final Shooter shooter;
   private final Pixy2 pixy2;
   private final Arm arm;
+
+  private boolean pullBack = false;
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
@@ -193,23 +195,38 @@ public class Orchestrator {
    */
   public Command intakeBasic() {
     return Commands.sequence(
-            arm.toSetpoint(ArmConstants.STOW).until(arm::atSetpoint).withTimeout(2),
+            arm.toSetpoint(ArmConstants.STOW).until(arm::atSetpoint).withTimeout(2).andThen(() -> pullBack = false),
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
-                .withTimeout(10))
-        .andThen(
-            Commands.parallel(
+                .withTimeout(10)).andThen(Commands.parallel(
                     indexer.setPercent(IndexerConstants.BACKUP_SPEED),
                     shooter.manualShoot(-0.2),
                     intake.stop())
-                .withTimeout(IndexerConstants.BACKUP_TIME))
-        .andThen(
+            .withTimeout(IndexerConstants.BACKUP_TIME)).andThen(
             Commands.parallel(
-                arm.toSetpoint(Rotation2d.fromDegrees(-7.75)),
-                indexer.setPercent(0),
-                shooter.manualShoot(0),
-                intake.stop()));
+                    arm.toSetpoint(Rotation2d.fromDegrees(-7.75)),
+                    indexer.setPercent(0),
+                    shooter.manualShoot(0),
+                    intake.stop())).finallyDo(() -> pullBack = true);
+  }
+
+  public Command pullBack() {
+    if (!pullBack) {
+      return Commands.parallel(
+                      indexer.setPercent(IndexerConstants.BACKUP_SPEED),
+                      shooter.manualShoot(-0.2),
+                      intake.stop())
+              .withTimeout(IndexerConstants.BACKUP_TIME)
+              .andThen(
+                      Commands.parallel(
+                              arm.toSetpoint(Rotation2d.fromDegrees(-7.75)),
+                              indexer.setPercent(0),
+                              shooter.manualShoot(0),
+                              intake.stop())).finallyDo(() -> pullBack = true) ;
+    } else {
+      return Commands.none();
+    }
   }
 
   /**
