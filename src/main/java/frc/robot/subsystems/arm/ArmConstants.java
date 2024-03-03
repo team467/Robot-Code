@@ -31,7 +31,7 @@ public class ArmConstants {
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Units.degreesToRadians(900));
         STOW = Rotation2d.fromDegrees(-13.95);
         GEAR_RATIO = new GearRatio(228.571429, 1);
-        AMP_POSITION = Rotation2d.fromRadians(Units.degreesToRadians(78.26));
+        AMP_POSITION = Rotation2d.fromDegrees(78.26);
         TOLERENCE = Units.degreesToRadians(3);
       }
       default -> {
