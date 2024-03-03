@@ -168,8 +168,7 @@ public class RobotContainer {
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    startingPositionChooser =
-        new LoggedDashboardChooser<>("Starting Position");
+    startingPositionChooser = new LoggedDashboardChooser<>("Starting Position");
     startingPositionChooser.addOption("Left", Autos.StartingPosition.LEFT);
     startingPositionChooser.addOption("Center", Autos.StartingPosition.CENTER);
     startingPositionChooser.addOption("Right", Autos.StartingPosition.RIGHT);
