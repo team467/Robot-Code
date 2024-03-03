@@ -92,8 +92,8 @@ public class Orchestrator {
     return Commands.sequence(
         shooter.manualShoot(3.5 / 12).withTimeout(0.5),
         Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5 / 12))
-            .until(() -> !indexer.getLimitSwitchPressed())
-            .withTimeout(2));
+            .until(() -> !indexer.getLimitSwitchPressed() && shooter.atVelocity(3.5 / 12))
+            .withTimeout(5));
   }
 
   /**
@@ -144,7 +144,7 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter.manualShoot(0.85).withTimeout(1),
+        shooter.manualShoot(0.85).withTimeout(5).until(() -> shooter.atVelocity(0.8)),
         Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5));
   }
 

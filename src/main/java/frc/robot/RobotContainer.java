@@ -244,6 +244,10 @@ public class RobotContainer {
     shooter.setDefaultCommand(shooter.manualShoot(0));
     arm.setDefaultCommand(arm.hold());
 
+    driverController
+        .rightTrigger()
+        .whileTrue(
+            intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
     // operator controller
     operatorController
         .y()
@@ -255,8 +259,7 @@ public class RobotContainer {
 
     operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
     operatorController.rightBumper().whileTrue(orchestrator.expelShindex());
-    operatorController.a().whileTrue(orchestrator.shootBasic());
-    operatorController.x().whileTrue(orchestrator.scoreAmp());
+    operatorController.a().whileTrue(shooter.manualShoot(0.85));
 
     // operator d pad
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
@@ -264,7 +267,7 @@ public class RobotContainer {
     operatorController.pov(90).whileTrue(arm.runPercent(0));
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
-    driverController.leftBumper().whileTrue(orchestrator.scoreAmp());
+    driverController.leftBumper().whileTrue(orchestrator.alignArmAmp());
     //    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
   }
   /**
