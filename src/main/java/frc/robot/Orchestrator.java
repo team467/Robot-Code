@@ -102,7 +102,7 @@ public class Orchestrator {
    * @return The command to move the arm to setpoint
    */
   public Command alignArmAmp() {
-    return arm.toSetpoint(ArmConstants.AMP_POSITION);
+    return arm.toSetpoint(ArmConstants.AMP_POSITION).until(arm::atSetpoint).withTimeout(5);
   }
 
   public Command goToAmp() {
@@ -205,7 +205,13 @@ public class Orchestrator {
                     indexer.setPercent(IndexerConstants.BACKUP_SPEED),
                     shooter.manualShoot(-0.2),
                     intake.stop())
-                .withTimeout(IndexerConstants.BACKUP_TIME));
+                .withTimeout(IndexerConstants.BACKUP_TIME))
+        .andThen(
+            Commands.parallel(
+                arm.toSetpoint(Rotation2d.fromDegrees(-7.75)),
+                indexer.setPercent(0),
+                shooter.manualShoot(0),
+                intake.stop()));
   }
 
   /**
