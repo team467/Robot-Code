@@ -19,8 +19,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -34,11 +32,11 @@ public class Orchestrator {
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
-//  static {
-//    // TODO put this where it actually belongs
-//    Map<Double, Double> test = new HashMap<>();
-//    test.put(Units.inchesToMeters(44.1), Units.degreesToRadians(1.2));
-//  }
+  //  static {
+  //    // TODO put this where it actually belongs
+  //    Map<Double, Double> test = new HashMap<>();
+  //    test.put(Units.inchesToMeters(44.1), Units.degreesToRadians(1.2));
+  //  }
 
   public Orchestrator(
       Drive drive, Intake intake, Indexer indexer, Shooter shooter, Pixy2 pixy2, Arm arm) {
