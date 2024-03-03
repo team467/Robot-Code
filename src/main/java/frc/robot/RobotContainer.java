@@ -73,7 +73,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final LoggedDashboardChooser<Autos.StartingPosition> startingPositionChooser;
   private final Autos autos;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -168,11 +167,6 @@ public class RobotContainer {
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    startingPositionChooser = new LoggedDashboardChooser<>("Starting Position");
-    startingPositionChooser.addOption("Left", Autos.StartingPosition.LEFT);
-    startingPositionChooser.addOption("Center", Autos.StartingPosition.CENTER);
-    startingPositionChooser.addOption("Right", Autos.StartingPosition.RIGHT);
-    startingPositionChooser.addDefaultOption("Center", Autos.StartingPosition.CENTER);
 
     autos = new Autos(drive, orchestrator);
     // Set up auto routines

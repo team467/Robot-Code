@@ -2,6 +2,7 @@ package frc.robot.commands.auto;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
@@ -64,14 +65,14 @@ public class Autos {
   public Command mobilityAuto(StartingPosition position) {
     switch (position) {
       case LEFT:
-        return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(4, 2, 0)))
+        return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(2, 1, 0)))
             .withTimeout(1.5)
-            .andThen(() -> drive.runVelocity(new ChassisSpeeds(4, 0, 0)))
+            .andThen(() -> drive.runVelocity(new ChassisSpeeds(2, 0, 0)))
             .withTimeout(2);
       case CENTER:
-        return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(4, 0, 0))).withTimeout(4);
+        return new StraightDriveToPose(Units.feetToMeters(6.75), 0,0,drive).withTimeout(5);
       case RIGHT:
-        return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(4, 0, 0))).withTimeout(4);
+        return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(2, 0, 0))).withTimeout(4);
       default:
         return Commands.none();
     }

@@ -51,7 +51,8 @@ public class Orchestrator {
   }
 
   public Command deferredStraightDriveToPose(Supplier<Pose2d> pose) {
-    return Commands.defer(() -> new StraightDriveToPose(pose.get(), drive), Set.of(drive));
+    return Commands.defer(() -> new StraightDriveToPose(pose.get(), drive), Set.of(drive))
+        .until(() -> drive.getPose().equals(pose.get()));
   }
 
   /**
