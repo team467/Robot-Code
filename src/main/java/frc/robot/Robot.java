@@ -28,6 +28,7 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
   private RobotState state = RobotState.getInstance();
+  private PowerDistribution pdp;
 
   private static final int LOW_VOLTAGE = 9;
 
@@ -68,7 +69,7 @@ public class Robot extends LoggedRobot {
         if (folder != null) {
           Logger.addDataReceiver(new WPILOGWriter(folder));
         }
-        new PowerDistribution(Schematic.POWER_DIST_ID, Schematic.POWER_DIST_TYPE);
+        pdp = new PowerDistribution(Schematic.POWER_DIST_ID, Schematic.POWER_DIST_TYPE);
       }
 
         // Running a physics simulator, log to local folder
@@ -94,6 +95,8 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
+
+    Logger.recordOutput("PDP Voltage", pdp.getVoltage());
   }
 
   /** This function is called periodically during all modes. */
