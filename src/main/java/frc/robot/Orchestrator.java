@@ -201,8 +201,7 @@ public class Orchestrator {
                 .until(() -> RobotState.getInstance().hasNote)
                 .withTimeout(10)
                 .andThen(() -> pullBack = false))
-        .andThen(pullBack()
-                .finallyDo(() -> pullBack = true));
+        .andThen(pullBack().finallyDo(() -> pullBack = true));
   }
 
   public Command pullBack() {
