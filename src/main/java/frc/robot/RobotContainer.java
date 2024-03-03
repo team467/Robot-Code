@@ -192,26 +192,26 @@ public class RobotContainer {
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     drive.setDefaultCommand(
-            new DriveWithJoysticks(
-                    drive,
-                    () -> -driverController.getLeftY(),
-                    () -> -driverController.getLeftX(),
-                    () -> driverController.getRightX(),
-                    () -> isRobotOriented // TODO: add toggle
+        new DriveWithJoysticks(
+            drive,
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> driverController.getRightX(),
+            () -> isRobotOriented // TODO: add toggle
             ));
     driverController
-            .start()
-            .onTrue(
-                    Commands.runOnce(
-                                    () ->
-                                            drive.setPose(
-                                                    new Pose2d(
-                                                            drive.getPose().getTranslation(),
-                                                            AllianceFlipUtil.apply(new Rotation2d()))))
-                            .ignoringDisable(true));
+        .start()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(
+                                drive.getPose().getTranslation(),
+                                AllianceFlipUtil.apply(new Rotation2d()))))
+                .ignoringDisable(true));
     driverController
-            .pov(-1)
-            .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+        .pov(-1)
+        .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     // stop when doing nothing
     intake.setDefaultCommand(intake.stop());
@@ -221,9 +221,9 @@ public class RobotContainer {
 
     // operator controller
     operatorController
-            .y()
-            .whileTrue(
-                    intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
+        .y()
+        .whileTrue(
+            intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
 
     operatorController.leftBumper().whileTrue(orchestrator.intakeBasic());
 
