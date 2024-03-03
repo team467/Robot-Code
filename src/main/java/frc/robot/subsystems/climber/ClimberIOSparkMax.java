@@ -3,7 +3,6 @@ package frc.robot.subsystems.climber;
 import com.revrobotics.*;
 import edu.wpi.first.wpilibj.Relay;
 import frc.robot.Schematic;
-import org.littletonrobotics.junction.Logger;
 
 public class ClimberIOSparkMax implements ClimberIO {
 
@@ -55,23 +54,25 @@ public class ClimberIOSparkMax implements ClimberIO {
   }
 
   public void setLeftMotorPercentOutput(double percentOutput) {
-    if ((climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
-            || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed())
-        && percentOutput < 0) {
-      climberLeft.set(0);
-    } else {
-      climberLeft.set(percentOutput);
-    }
+    //    if ((climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
+    //            ||
+    // climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed())
+    //        && percentOutput < 0) {
+    //      climberLeft.set(0);
+    //    } else {
+    climberLeft.set(percentOutput);
+    //    }
   }
 
   public void setRightMotorPercentOutput(double percentOutput) {
-    if ((climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
-            || climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed())
-        && percentOutput < 0) {
-      climberRight.set(0);
-    } else {
-      climberRight.set(percentOutput);
-    }
+    //    if ((climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
+    //            ||
+    // climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed())
+    //        && percentOutput < 0) {
+    //      climberRight.set(0);
+    //    } else {
+    climberRight.set(percentOutput);
+    //    }
   }
 
   public void setRatchetLocked(boolean locked) {

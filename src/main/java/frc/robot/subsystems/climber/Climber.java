@@ -60,8 +60,8 @@ public class Climber extends SubsystemBase {
   public Command stop() {
     return Commands.run(
         () -> {
-          climberIO.setMotorsOutputPercent(0);
           climberIO.setRatchetLocked(true);
+          climberIO.setMotorsOutputPercent(0);
         },
         this);
   }
