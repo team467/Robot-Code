@@ -20,6 +20,7 @@ import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.shooter.Shooter;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Orchestrator {
   private final Drive drive;
@@ -29,7 +30,7 @@ public class Orchestrator {
   private final Pixy2 pixy2;
   private final Arm arm;
 
-  private boolean pullBack = false;
+  @AutoLogOutput private boolean pullBack = false;
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
@@ -199,7 +200,7 @@ public class Orchestrator {
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
                 .withTimeout(10)
-                .andThen(() -> pullBack = false))
+                .finallyDo(() -> pullBack = false))
         .andThen(pullBack().finallyDo(() -> pullBack = true));
   }
 
@@ -212,10 +213,11 @@ public class Orchestrator {
           .withTimeout(IndexerConstants.BACKUP_TIME)
           .andThen(
               Commands.parallel(
-                  arm.toSetpoint(Rotation2d.fromDegrees(-7.75)),
-                  indexer.setPercent(0),
-                  shooter.manualShoot(0),
-                  intake.stop()))
+                      arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
+                      indexer.setPercent(0).until(() -> true),
+                      shooter.manualShoot(0).until(() -> true),
+                      intake.stop().until(() -> true))
+                  .withTimeout(5))
           .finallyDo(() -> pullBack = true);
     } else {
       return Commands.none();
