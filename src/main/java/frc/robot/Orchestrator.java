@@ -144,7 +144,7 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter.manualShoot(0.85).withTimeout(1),
+        shooter.manualShoot(0.85).withTimeout(4).until(()->shooter.getShooterVelocity() > 0.8),
         Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5));
   }
 
@@ -156,17 +156,19 @@ public class Orchestrator {
    *     location.
    */
   public Command alignArmSpeaker() { // TODO: Not working. Abishek, Fix this
-    return Commands.defer(
-        () ->
-            arm.toSetpoint(
-                new Rotation2d(
-                    Math.abs(
-                        Math.atan(
-                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                    - Math.sin(arm.getAngle() + ArmConstants.STOW.getRadians())
-                                        * Units.inchesToMeters(28))
-                                / drive.getPose().getTranslation().getDistance(speaker))))),
-        Set.of(arm));
+    //    return Commands.defer(
+    //        () ->
+    //            arm.toSetpoint(
+    //                new Rotation2d(
+    //                    Math.abs(
+    //                        Math.atan(
+    //                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
+    //                                    - Math.sin(arm.getAngle() +
+    // ArmConstants.STOW.getRadians())
+    //                                        * Units.inchesToMeters(28))
+    //                                / drive.getPose().getTranslation().getDistance(speaker))))),
+    //        Set.of(arm));
+    return Commands.none();
   }
 
   /**

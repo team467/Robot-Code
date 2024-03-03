@@ -81,6 +81,9 @@ public class Shooter extends SubsystemBase {
         },
         this);
   }
+  public double getShooterVelocity() {
+    return inputs.shooterLeftVelocityRadPerSec;
+  }
 
   public Command manualShootVolts(double volts) {
     return Commands.run(
