@@ -28,8 +28,16 @@ public class Orchestrator {
   private final Shooter shooter;
   private final Pixy2 pixy2;
   private final Arm arm;
+
+  private boolean pullBack = false;
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
+
+  //  static {
+  //    // TODO put this where it actually belongs
+  //    Map<Double, Double> test = new HashMap<>();
+  //    test.put(Units.inchesToMeters(44.1), Units.degreesToRadians(1.2));
+  //  }
 
   public Orchestrator(
       Drive drive, Intake intake, Indexer indexer, Shooter shooter, Pixy2 pixy2, Arm arm) {
@@ -93,7 +101,7 @@ public class Orchestrator {
    * @return The command to move the arm to setpoint
    */
   public Command alignArmAmp() {
-    return arm.toSetpoint(ArmConstants.AMP_POSITION);
+    return arm.toSetpoint(ArmConstants.AMP_POSITION).until(arm::atSetpoint);
   }
 
   public Command goToAmp() {
@@ -124,7 +132,7 @@ public class Orchestrator {
    * @return The command for scoring in the amp from any spot on the field.
    */
   public Command scoreAmp() {
-    return Commands.parallel(goToAmp(), alignArmAmp()).andThen(shootAmp());
+    return Commands.parallel(alignArmAmp()).andThen(shootAmp());
   }
 
   /**
@@ -190,11 +198,28 @@ public class Orchestrator {
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
-                .withTimeout(10))
-        .andThen(
-            Commands.parallel(
-                    indexer.setPercent(IndexerConstants.BACKUP_SPEED), shooter.manualShoot(-0.2))
-                .withTimeout(0.06));
+                .withTimeout(10)
+                .andThen(() -> pullBack = false))
+        .andThen(pullBack().finallyDo(() -> pullBack = true));
+  }
+
+  public Command pullBack() {
+    if (!pullBack) {
+      return Commands.parallel(
+              indexer.setPercent(IndexerConstants.BACKUP_SPEED),
+              shooter.manualShoot(-0.2),
+              intake.stop())
+          .withTimeout(IndexerConstants.BACKUP_TIME)
+          .andThen(
+              Commands.parallel(
+                  arm.toSetpoint(Rotation2d.fromDegrees(-7.75)),
+                  indexer.setPercent(0),
+                  shooter.manualShoot(0),
+                  intake.stop()))
+          .finallyDo(() -> pullBack = true);
+    } else {
+      return Commands.none();
+    }
   }
 
   /**
@@ -264,6 +289,10 @@ public class Orchestrator {
     return Commands.parallel(expelIntake(), expelShindex());
   }
 
+  public Command expelIntakeIndex() {
+    return Commands.parallel(
+        indexer.setPercent(-IndexerConstants.INDEX_SPEED.get()), expelIntake());
+  }
   /**
    * Sets the arm to the home position, completely down.
    *

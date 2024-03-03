@@ -98,7 +98,7 @@ public class RobotContainer {
           Transform3d back =
               new Transform3d(
                   new Translation3d(
-                      Units.inchesToMeters(-14.4),
+                      Units.inchesToMeters(-11.89),
                       Units.inchesToMeters(0),
                       Units.inchesToMeters(15.5)),
                   new Rotation3d(0, Units.degreesToRadians(-30), 0));
@@ -161,6 +161,7 @@ public class RobotContainer {
     if (intake == null) {
       intake = new Intake(new IntakeIO() {});
     }
+
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -230,18 +231,17 @@ public class RobotContainer {
 
     // operator controller
     operatorController
-        .leftBumper()
-        .and(() -> !indexer.getLimitSwitchPressed())
+        .y()
         .whileTrue(
-            (intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
-                .onlyWhile(() -> !indexer.getLimitSwitchPressed())
-                .andThen(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(0.2)));
+            intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
 
-    operatorController.y().whileTrue(indexer.setPercent(1));
+    operatorController.leftBumper().whileTrue(orchestrator.intakeBasic());
+    operatorController.leftBumper().onFalse(orchestrator.pullBack());
 
-    operatorController.b().whileTrue(indexer.setPercent(-0.8).alongWith(intake.release()));
-    operatorController.rightBumper().whileTrue(shooter.manualShoot(-0.2 * 12));
-    operatorController.a().whileTrue(shooter.manualShoot(10));
+    operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
+    operatorController.rightBumper().whileTrue(orchestrator.expelShindex());
+    operatorController.a().whileTrue(orchestrator.shootBasic());
+    operatorController.x().whileTrue(orchestrator.scoreAmp());
 
     // operator d pad
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
@@ -249,10 +249,9 @@ public class RobotContainer {
     operatorController.pov(90).whileTrue(arm.runPercent(0));
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
-    // driverController.leftBumper().whileTrue(arm.toSetpoint(Rotation2d.fromDegrees(78.26)));
-    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
+    driverController.leftBumper().whileTrue(orchestrator.scoreAmp());
+    //    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
   }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
