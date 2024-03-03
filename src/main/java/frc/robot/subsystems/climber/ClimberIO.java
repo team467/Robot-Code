@@ -26,4 +26,12 @@ public interface ClimberIO {
   default void setLeftMotorPercentOutput(double volts) {}
 
   default void setRightMotorPercentOutput(double volts) {}
+
+  default boolean getLimitSwitchRight() {
+    return true;
+  }
+
+  default boolean getLimitSwitchLeft() {
+    return true;
+  }
 }

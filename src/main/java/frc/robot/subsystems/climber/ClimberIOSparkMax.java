@@ -45,9 +45,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     inputs.ratchetLocked = ratchetLocked;
     inputs.limitSwitchPressed =
         (climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
-            || climberLeft
-                .getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen)
-                .isPressed());
+            || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed());
   }
 
   @Override
@@ -58,8 +56,9 @@ public class ClimberIOSparkMax implements ClimberIO {
 
   public void setLeftMotorPercentOutput(double percentOutput) {
     if ((climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
-        || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()) && percentOutput < 0) {
-            climberLeft.set(0);
+            || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed())
+        && percentOutput < 0) {
+      climberLeft.set(0);
     } else {
       climberLeft.set(percentOutput);
     }
@@ -67,7 +66,8 @@ public class ClimberIOSparkMax implements ClimberIO {
 
   public void setRightMotorPercentOutput(double percentOutput) {
     if ((climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
-        || climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()) && percentOutput < 0) {
+            || climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed())
+        && percentOutput < 0) {
       climberRight.set(0);
     } else {
       climberRight.set(percentOutput);
@@ -77,5 +77,17 @@ public class ClimberIOSparkMax implements ClimberIO {
   public void setRatchetLocked(boolean locked) {
     climberRatchet.set(ratchetLocked ? Relay.Value.kOff : Relay.Value.kOn);
     ratchetLocked = locked;
+  }
+
+  @Override
+  public boolean getLimitSwitchLeft() {
+    return climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
+        || climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed();
+  }
+
+  @Override
+  public boolean getLimitSwitchRight() {
+    return climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
+        || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed();
   }
 }
