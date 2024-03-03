@@ -144,7 +144,7 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter.manualShoot(0.85).withTimeout(4).until(()->shooter.getShooterVelocity() > 0.8),
+        shooter.manualShoot(0.85).withTimeout(4).until(() -> shooter.getShooterVelocity() > 0.8),
         Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5));
   }
 

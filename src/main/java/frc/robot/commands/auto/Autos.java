@@ -1,7 +1,7 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
@@ -61,12 +61,24 @@ public class Autos {
     Logger.recordOutput("Autos/NotePositions/2", thirdNoteTranslation);
   }
 
-  public Command mobilityAuto() {
-    return new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive);
+  public Command mobilityAuto(StartingPosition position) {
+    switch (position) {
+      case LEFT:
+        return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(4, 2, 0)))
+            .withTimeout(1.5)
+            .andThen(() -> drive.runVelocity(new ChassisSpeeds(4, 0, 0)))
+            .withTimeout(2);
+      case CENTER:
+        return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(4, 0, 0))).withTimeout(4);
+      case RIGHT:
+        return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(4, 0, 0))).withTimeout(4);
+      default:
+        return Commands.none();
+    }
   }
 
-  public Command scoreOneNoteMobility() {
-    return Commands.sequence(oneNoteAuto().andThen(mobilityAuto()));
+  public Command scoreOneNoteMobility(StartingPosition position) {
+    return Commands.sequence(oneNoteAuto().andThen(mobilityAuto(position)));
   }
 
   public Command oneNoteAuto() {
