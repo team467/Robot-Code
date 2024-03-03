@@ -102,7 +102,7 @@ public class Orchestrator {
    * @return The command to move the arm to setpoint
    */
   public Command alignArmAmp() {
-    return arm.toSetpoint(ArmConstants.AMP_POSITION).until(arm::atSetpoint).withTimeout(5);
+    return arm.toSetpoint(ArmConstants.AMP_POSITION).until(arm::atSetpoint);
   }
 
   public Command goToAmp() {
