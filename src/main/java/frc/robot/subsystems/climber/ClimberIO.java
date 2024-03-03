@@ -23,7 +23,7 @@ public interface ClimberIO {
 
   default void setRatchetLocked(boolean locked) {}
 
-  default void setLeftMotorVolts(double volts) {}
+  default void setLeftMotorPercentOutput(double volts) {}
 
-  default void setRightMotorVolts(double volts) {}
+  default void setRightMotorPercentOutput(double volts) {}
 }

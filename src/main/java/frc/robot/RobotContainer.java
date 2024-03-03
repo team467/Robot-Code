@@ -242,6 +242,8 @@ public class RobotContainer {
     operatorController.x().whileTrue(arm.runPercent(0));
     operatorController.pov(90).whileTrue(climber.raiseOrLower(0.2));
     operatorController.pov(270).whileTrue(climber.raiseOrLower(-0.2));
+    driverController.b().whileTrue(climber.unlockRatchet());
+    driverController.x().whileTrue(climber.stop());
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().whileTrue(orchestrator.scoreAmp());

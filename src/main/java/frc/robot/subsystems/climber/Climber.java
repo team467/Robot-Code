@@ -10,13 +10,6 @@ public class Climber extends SubsystemBase {
 
   private final ClimberIO climberIO;
   private final ClimberIOInputsAutoLogged climberIOInputs = new ClimberIOInputsAutoLogged();
-  private PIDController climberLeftFeedback =
-      new PIDController(ClimberConstants.CLIMBER_KP.get(), 0, ClimberConstants.CLIMBER_KD.get());
-  private PIDController climberRightFeedback =
-      new PIDController(ClimberConstants.CLIMBER_KP.get(), 0, ClimberConstants.CLIMBER_KD.get());
-  private boolean PIDMode = false;
-  private double setpointLeft;
-  private double setpointRight;
 
   /**
    * ClimberIO object, gets inputs for ClimberIO object
@@ -32,12 +25,6 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     climberIO.updateInputs(climberIOInputs);
     Logger.processInputs("Climber", climberIOInputs);
-    if (PIDMode) {
-      climberIO.setLeftMotorVolts(
-          climberLeftFeedback.calculate(climberIOInputs.ClimberLeftPosition, setpointLeft));
-      climberIO.setRightMotorVolts(
-          climberRightFeedback.calculate(climberIOInputs.ClimberRightPosition, setpointRight));
-    }
   }
 
   /**
@@ -51,19 +38,7 @@ public class Climber extends SubsystemBase {
     return Commands.run(
         () -> {
           climberIO.setRatchetLocked(false);
-          PIDMode = false;
           climberIO.setMotorsOutputPercent(percentOutput);
-        },
-        this);
-  }
-
-  public Command raiseToSetpoint(double setpointLeft, double setPointRight) {
-    return Commands.run(
-        () -> {
-          this.setpointLeft = setpointLeft;
-          this.setpointRight = setPointRight;
-          PIDMode = true;
-          climberIO.setRatchetLocked(false);
         },
         this);
   }
@@ -73,10 +48,17 @@ public class Climber extends SubsystemBase {
    *
    * @return no return
    */
+  public Command unlockRatchet() {
+    return Commands.run(
+        () -> {
+          climberIO.setRatchetLocked(false);
+        },
+        this);
+  }
+
   public Command stop() {
     return Commands.run(
         () -> {
-          PIDMode = false;
           climberIO.setMotorsOutputPercent(0);
           climberIO.setRatchetLocked(true);
         },
