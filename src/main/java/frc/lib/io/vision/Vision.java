@@ -188,7 +188,7 @@ public class Vision extends SubsystemBase {
    * @param estimatedPose The estimated pose to guess standard deviations for.
    */
   private Matrix<N3, N1> getStandardDeviations(int index, Pose2d estimatedPose) {
-    Matrix<N3, N1> estStdDevs = VecBuilder.fill(1, 1, 2);
+    Matrix<N3, N1> estStdDevs = VecBuilder.fill(0.1, 0.1, 1);
     int[] tags = ios[index].estimatedRobotPoseTags;
     int numTags = 0;
     double avgDist = 0;
