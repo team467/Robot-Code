@@ -99,7 +99,7 @@ public class RobotContainer {
           Transform3d back =
               new Transform3d(
                   new Translation3d(
-                      Units.inchesToMeters(-14.4),
+                      Units.inchesToMeters(-11.89),
                       Units.inchesToMeters(0),
                       Units.inchesToMeters(15.5)),
                   new Rotation3d(0, Units.degreesToRadians(-30), 0));
@@ -244,7 +244,7 @@ public class RobotContainer {
     operatorController.pov(270).whileTrue(climber.raiseOrLower(-0.2));
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
-    // driverController.leftBumper().whileTrue(arm.toSetpoint(Rotation2d.fromDegrees(78.26)));
+    driverController.leftBumper().whileTrue(orchestrator.scoreAmp());
     driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
   }
 

@@ -26,6 +26,8 @@ public class Arm extends SubsystemBase {
           new TrapezoidProfile.Constraints(
               ArmConstants.MAX_VELOCITY.get(), ArmConstants.MAX_ACCELERATION.get()));
   private boolean feedbackMode = true;
+
+  @AutoLogOutput private boolean isCalibrated = false;
   @AutoLogOutput private boolean holdLock = false;
 
   public Arm(ArmIO io) {
@@ -68,9 +70,10 @@ public class Arm extends SubsystemBase {
       }
     }
 
-    if (inputs.limitSwitchPressed) {
+    if (inputs.limitSwitchPressed && !isCalibrated) {
       io.resetPosition();
       feedback.reset(ArmConstants.STOW.getRadians());
+      isCalibrated = true;
     }
 
     Logger.recordOutput("Arm/PIDEnabled", feedbackMode);
