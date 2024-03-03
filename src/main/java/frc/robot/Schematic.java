@@ -86,7 +86,7 @@ public class Schematic {
       }
       default -> {
         POWER_DIST_ID = 20;
-        POWER_DIST_TYPE = PowerDistribution.ModuleType.kCTRE;
+        POWER_DIST_TYPE = PowerDistribution.ModuleType.kAutomatic;
         REAR_RIGHT_DRIVE_ID = 0;
         REAR_RIGHT_STEERING_ID = 0;
         REAR_RIGHT_CANCODER_ID = 0;
