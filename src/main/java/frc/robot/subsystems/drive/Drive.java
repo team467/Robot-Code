@@ -125,8 +125,8 @@ public class Drive extends SubsystemBase {
     double distance =
         getPose()
             .getTranslation()
-            .getDistance(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
-    Logger.recordOutput("Drive/SpeakerDistance", distance - 30.2);
+            .getDistance(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()) - Units.inchesToMeters(30.2);
+    Logger.recordOutput("Drive/SpeakerDistance", distance);
     state.inRange = distance < inRangeDistancetoSpeaker;
   }
 
