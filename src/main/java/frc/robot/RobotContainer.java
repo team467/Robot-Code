@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.io.gyro3d.GyroIO;
@@ -37,9 +36,9 @@ import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOPhysical;
+import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
-import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
@@ -62,6 +61,7 @@ public class RobotContainer {
   private Arm arm;
   private Vision vision;
   private Pixy2 pixy2;
+  private Leds leds;
   private boolean isRobotOriented = true; // Workaround, change if needed
   private Orchestrator orchestrator;
 
@@ -120,6 +120,7 @@ public class RobotContainer {
           indexer = new Indexer(new IndexerIOPhysical());
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
+          leds = new Leds();
         }
 
         case ROBOT_SIMBOT -> {
@@ -159,10 +160,7 @@ public class RobotContainer {
     if (intake == null) {
       intake = new Intake(new IntakeIO() {});
     }
-
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
-
-    //    Leds leds = new Leds();
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up auto routines
@@ -180,14 +178,6 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(this::configureButtonBindings));
 
-    new Trigger(() -> RobotState.getInstance().hasNote)
-        .onTrue(
-            Commands.runEnd(
-                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
-                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0))
-                .withTimeout(0.69)
-                .ignoringDisable(true));
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -199,7 +189,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     drive.setDefaultCommand(
         new DriveWithJoysticks(
