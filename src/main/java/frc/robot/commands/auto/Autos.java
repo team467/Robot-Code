@@ -65,10 +65,7 @@ public class Autos {
   public Command mobilityAuto(StartingPosition position) {
     switch (position) {
       case LEFT:
-        return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(2, 1, 0)))
-            .withTimeout(1.5)
-            .andThen(() -> drive.runVelocity(new ChassisSpeeds(2, 0, 0)))
-            .withTimeout(2);
+        return new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive).withTimeout(5);
       case CENTER:
         return new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive).withTimeout(5);
       case RIGHT:
