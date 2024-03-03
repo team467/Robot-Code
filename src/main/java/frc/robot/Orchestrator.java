@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
@@ -31,6 +32,7 @@ public class Orchestrator {
   private final Arm arm;
 
   @AutoLogOutput private boolean pullBack = false;
+  @AutoLogOutput private Timer shootTimer = new Timer();
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
@@ -146,7 +148,7 @@ public class Orchestrator {
   public Command shootBasic() {
     return Commands.sequence(
         shooter.manualShoot(0.85).withTimeout(4).until(() -> shooter.getShooterVelocity() > 0.8),
-        Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5));
+        Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1), Commands.runOnce(()->shootTimer.start()).onlyIf(()->!indexer.getLimitSwitchPressed())).withTimeout(5).until(()->shootTimer.hasElapsed(1))).finallyDo(()->shootTimer.reset());
   }
 
   /**
