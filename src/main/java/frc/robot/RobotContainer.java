@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.io.gyro3d.GyroIO;
@@ -39,6 +40,7 @@ import frc.robot.subsystems.intake.IntakeIOPhysical;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
+import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
@@ -177,6 +179,15 @@ public class RobotContainer {
                     drive::runCharacterizationVolts,
                     drive::getCharacterizationVelocity))
             .andThen(this::configureButtonBindings));
+
+    // Rumble on intake
+    new Trigger(() -> RobotState.getInstance().hasNote)
+        .onTrue(
+            Commands.runEnd(
+                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
+                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0))
+                .withTimeout(0.69)
+                .ignoringDisable(true));
 
     // Configure the button bindings
     configureButtonBindings();
