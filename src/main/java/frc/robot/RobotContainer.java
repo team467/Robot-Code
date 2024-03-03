@@ -101,7 +101,7 @@ public class RobotContainer {
                       Units.inchesToMeters(-11.89),
                       Units.inchesToMeters(0),
                       Units.inchesToMeters(15.5)),
-                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
+                  new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
 
           vision =
               new Vision(
@@ -206,7 +206,7 @@ public class RobotContainer {
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> driverController.getRightX(),
+            () -> -driverController.getRightX(),
             () -> isRobotOriented // TODO: add toggle
             ));
     driverController
