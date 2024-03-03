@@ -1,5 +1,5 @@
 package frc.robot;
-// clark says hi
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
