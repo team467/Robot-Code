@@ -36,6 +36,7 @@ import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOPhysical;
+import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.shooter.Shooter;
@@ -60,6 +61,7 @@ public class RobotContainer {
   private Arm arm;
   private Vision vision;
   private Pixy2 pixy2;
+  private Leds leds;
   private boolean isRobotOriented = true; // Workaround, change if needed
   private Orchestrator orchestrator;
 
@@ -118,6 +120,7 @@ public class RobotContainer {
           indexer = new Indexer(new IndexerIOPhysical());
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
+          leds = new Leds();
         }
 
         case ROBOT_SIMBOT -> {
@@ -160,8 +163,6 @@ public class RobotContainer {
 
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
-    //    Leds leds = new Leds();
-
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
@@ -191,26 +192,26 @@ public class RobotContainer {
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     drive.setDefaultCommand(
-        new DriveWithJoysticks(
-            drive,
-            () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(),
-            () -> driverController.getRightX(),
-            () -> isRobotOriented // TODO: add toggle
+            new DriveWithJoysticks(
+                    drive,
+                    () -> -driverController.getLeftY(),
+                    () -> -driverController.getLeftX(),
+                    () -> driverController.getRightX(),
+                    () -> isRobotOriented // TODO: add toggle
             ));
     driverController
-        .start()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(
-                                drive.getPose().getTranslation(),
-                                AllianceFlipUtil.apply(new Rotation2d()))))
-                .ignoringDisable(true));
+            .start()
+            .onTrue(
+                    Commands.runOnce(
+                                    () ->
+                                            drive.setPose(
+                                                    new Pose2d(
+                                                            drive.getPose().getTranslation(),
+                                                            AllianceFlipUtil.apply(new Rotation2d()))))
+                            .ignoringDisable(true));
     driverController
-        .pov(-1)
-        .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+            .pov(-1)
+            .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     // stop when doing nothing
     intake.setDefaultCommand(intake.stop());
@@ -220,9 +221,9 @@ public class RobotContainer {
 
     // operator controller
     operatorController
-        .y()
-        .whileTrue(
-            intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
+            .y()
+            .whileTrue(
+                    intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
 
     operatorController.leftBumper().whileTrue(orchestrator.intakeBasic());
 
@@ -240,7 +241,6 @@ public class RobotContainer {
     driverController.leftBumper().whileTrue(orchestrator.scoreAmp());
     driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
   }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
