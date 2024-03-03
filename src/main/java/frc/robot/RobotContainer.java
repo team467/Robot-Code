@@ -178,6 +178,15 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(this::configureButtonBindings));
 
+    //Rumble on intake
+    new Trigger(() -> RobotState.getInstance().hasNote)
+            .onTrue(
+                    Commands.runEnd(
+                                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
+                                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0))
+                            .withTimeout(0.69)
+                            .ignoringDisable(true));
+
     // Configure the button bindings
     configureButtonBindings();
   }
