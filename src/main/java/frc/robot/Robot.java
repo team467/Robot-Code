@@ -106,7 +106,7 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
 
     // If robot has low battery, lowbatteryalert will be set to true
-    state.lowBatteryAlert = pdp.getVoltage() < LOW_VOLTAGE;
+    state.lowBatteryAlert = RobotController.getBatteryVoltage() < LOW_VOLTAGE;
   }
 
   /** This function is called once when the robot is disabled. */
