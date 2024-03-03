@@ -1,11 +1,9 @@
 package frc.robot.subsystems.climber;
 
-import com.revrobotics.CANSparkLowLevel;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkLimitSwitch;
+import com.revrobotics.*;
 import edu.wpi.first.wpilibj.Relay;
 import frc.robot.Schematic;
+import org.littletonrobotics.junction.Logger;
 
 public class ClimberIOSparkMax implements ClimberIO {
 
@@ -27,6 +25,12 @@ public class ClimberIOSparkMax implements ClimberIO {
     climberRightEncoder = climberRight.getEncoder();
     climberRightEncoder.setPositionConversionFactor(ClimberConstants.ROTS_TO_METERS);
     climberRatchet = new Relay(ClimberConstants.CLIMBER_RATCHET_ID, Relay.Direction.kReverse);
+    climberLeft.setIdleMode(CANSparkBase.IdleMode.kBrake);
+    climberRight.setIdleMode(CANSparkBase.IdleMode.kBrake);
+    climberRight.enableVoltageCompensation(12);
+    climberLeft.enableVoltageCompensation(12);
+    climberRight.setSmartCurrentLimit(80);
+    climberLeft.setSmartCurrentLimit(80);
   }
 
   @Override
