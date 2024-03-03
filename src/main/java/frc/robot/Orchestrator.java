@@ -199,16 +199,7 @@ public class Orchestrator {
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
-                .withTimeout(10)).andThen(Commands.parallel(
-                    indexer.setPercent(IndexerConstants.BACKUP_SPEED),
-                    shooter.manualShoot(-0.2),
-                    intake.stop())
-            .withTimeout(IndexerConstants.BACKUP_TIME)).andThen(
-            Commands.parallel(
-                    arm.toSetpoint(Rotation2d.fromDegrees(-7.75)),
-                    indexer.setPercent(0),
-                    shooter.manualShoot(0),
-                    intake.stop())).finallyDo(() -> pullBack = true);
+                .withTimeout(10)).andThen(pullBack()).finallyDo(() -> pullBack = true);
   }
 
   public Command pullBack() {
