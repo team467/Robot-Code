@@ -8,6 +8,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.lib.utils.PolynomialRegression;
 import frc.lib.utils.TunableNumber;
 import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.arm.Arm;
@@ -18,6 +19,8 @@ import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.shooter.Shooter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -30,15 +33,30 @@ public class Orchestrator {
   private final Pixy2 pixy2;
   private final Arm arm;
 
+  private PolynomialRegression regression;
+
   @AutoLogOutput private boolean pullBack = false;
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
-  //  static {
-  //    // TODO put this where it actually belongs
-  //    Map<Double, Double> test = new HashMap<>();
-  //    test.put(Units.inchesToMeters(44.1), Units.degreesToRadians(1.2));
-  //  }
+  private void initializeRegression() {
+    // TODO put this where it actually belongs
+    Map<Double, Double> test = new HashMap<>();
+    test.put(Units.inchesToMeters(44.1), Units.degreesToRadians(1.2));
+
+    // Convert map into 2 arrays
+    double[] x = new double[test.size()];
+    double[] y = new double[test.size()];
+    int i = 0;
+    for (Map.Entry<Double, Double> entry : test.entrySet()) {
+      x[i] = entry.getKey();
+      y[i] = entry.getValue();
+      i++;
+    }
+
+    // Send arrays into regression
+    regression = new PolynomialRegression(x, y, 3);
+  }
 
   public Orchestrator(
       Drive drive, Intake intake, Indexer indexer, Shooter shooter, Pixy2 pixy2, Arm arm) {
@@ -156,16 +174,29 @@ public class Orchestrator {
    *     location.
    */
   public Command alignArmSpeaker() { // TODO: Not working. Abishek, Fix this
+    //    return Commands.defer(
+    //        () ->
+    //            arm.toSetpoint(
+    //                new Rotation2d(
+    //                    Math.abs(
+    //                        Math.atan(
+    //                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
+    //                                    - Math.sin(arm.getAngle() +
+    // ArmConstants.STOW.getRadians())
+    //                                        * Units.inchesToMeters(28))
+    //                                / drive.getPose().getTranslation().getDistance(speaker))))),
+    //        Set.of(arm));
     return Commands.defer(
-        () ->
-            arm.toSetpoint(
-                new Rotation2d(
-                    Math.abs(
-                        Math.atan(
-                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                    - Math.sin(arm.getAngle() + ArmConstants.STOW.getRadians())
-                                        * Units.inchesToMeters(28))
-                                / drive.getPose().getTranslation().getDistance(speaker))))),
+        () -> {
+          double distanceToSpeakerInches =
+              Units.metersToInches(drive.getPose().getTranslation().getDistance(speaker));
+          return arm.toSetpoint(
+              Rotation2d.fromDegrees(
+                  3.199E-5 * Math.pow(distanceToSpeakerInches, 3)
+                      - 0.0118 * Math.pow(distanceToSpeakerInches, 2)
+                      + 1.5164 * distanceToSpeakerInches
+                      - 51.784));
+        },
         Set.of(arm));
   }
 
@@ -195,12 +226,14 @@ public class Orchestrator {
    */
   public Command intakeBasic() {
     return Commands.sequence(
-            arm.toSetpoint(ArmConstants.STOW).until(arm::atSetpoint).withTimeout(2),
+            arm.toSetpoint(ArmConstants.STOW)
+                .until(arm::atSetpoint)
+                .withTimeout(2)
+                .finallyDo(() -> pullBack = false),
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
-                .withTimeout(10)
-                .finallyDo(() -> pullBack = false))
+                .withTimeout(10))
         .andThen(pullBack().finallyDo(() -> pullBack = true));
   }
 
