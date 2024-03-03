@@ -70,10 +70,12 @@ public class Arm extends SubsystemBase {
       }
     }
 
-    if (inputs.limitSwitchPressed && !isCalibrated) {
+    if (inputs.limitSwitchPressed) {
       io.resetPosition();
-      feedback.reset(ArmConstants.STOW.getRadians());
-      isCalibrated = true;
+      if (!isCalibrated) {
+        feedback.reset(ArmConstants.STOW.getRadians());
+        isCalibrated = true;
+      }
     }
 
     Logger.recordOutput("Arm/PIDEnabled", feedbackMode);
