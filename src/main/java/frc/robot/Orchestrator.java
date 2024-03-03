@@ -133,7 +133,7 @@ public class Orchestrator {
    * @return The command for scoring in the amp from any spot on the field.
    */
   public Command scoreAmp() {
-    return Commands.parallel(goToAmp(), alignArmAmp()).andThen(shootAmp());
+    return Commands.parallel(alignArmAmp()).andThen(shootAmp());
   }
 
   /**
@@ -201,8 +201,8 @@ public class Orchestrator {
                 .until(() -> RobotState.getInstance().hasNote)
                 .withTimeout(10)
                 .andThen(() -> pullBack = false))
-        .andThen(pullBack())
-        .finallyDo(() -> pullBack = true);
+        .andThen(pullBack()
+                .finallyDo(() -> pullBack = true));
   }
 
   public Command pullBack() {
