@@ -80,7 +80,7 @@ public class Orchestrator {
                     .minus(drive.getPose().getTranslation())
                     .getAngle()
                     .minus(Rotation2d.fromDegrees(180)));
-    return deferredStraightDriveToPose(targetPose);
+    return deferredStraightDriveToPose(targetPose).withTimeout(3);
   }
 
   /**
@@ -230,12 +230,11 @@ public class Orchestrator {
    * @return The command to move the robot and intake.
    */
   public Command driveWhileIntaking() {
-    return Commands.parallel(
-        intake.intake().until(() -> RobotState.getInstance().hasNote),
+    return Commands.race(
+        intakeBasic(),
         Commands.run(
                 () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)),
-                drive)
-            .withTimeout(2));
+                drive));
   }
 
   /**
@@ -245,7 +244,6 @@ public class Orchestrator {
    */
   public Command basicVisionIntake() {
     return Commands.sequence(
-        indexer.setPercent(0.33),
         arm.toSetpoint(ArmConstants.STOW),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
         deferredStraightDriveToPose(
@@ -255,7 +253,7 @@ public class Orchestrator {
                     drive
                         .getRotation()
                         .plus(AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle()))))),
-        intake.intake().until(() -> RobotState.getInstance().hasNote));
+            driveWhileIntaking());
   }
 
   /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
