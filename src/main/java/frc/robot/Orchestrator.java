@@ -54,7 +54,20 @@ public class Orchestrator {
 
   public Command deferredStraightDriveToPose(Supplier<Pose2d> pose) {
     return Commands.defer(() -> new StraightDriveToPose(pose.get(), drive), Set.of(drive))
-        .until(() -> drive.getPose().equals(pose.get()));
+        .until(
+            () ->
+                Math.hypot(
+                            pose.get().getRotation().getCos() - drive.getRotation().getCos(),
+                            pose.get().getRotation().getSin() - drive.getRotation().getSin())
+                        < 1.0E-8
+                    && Math.abs(
+                            drive.getPose().getTranslation().getX()
+                                - pose.get().getTranslation().getX())
+                        < 1.0E-8
+                    && Math.abs(
+                            drive.getPose().getTranslation().getY()
+                                - pose.get().getTranslation().getY())
+                        < 1.0E-8);
   }
 
   /**
@@ -147,8 +160,18 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter.manualShoot(0.85).withTimeout(4).until(() -> shooter.getShooterVelocity() > 0.8),
-        Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1), Commands.runOnce(()->shootTimer.start()).onlyIf(()->!indexer.getLimitSwitchPressed())).withTimeout(5).until(()->shootTimer.hasElapsed(1))).finallyDo(()->shootTimer.reset());
+            shooter
+                .manualShoot(0.85)
+                .withTimeout(4)
+                .until(() -> shooter.getShooterVelocity() > 0.8),
+            Commands.parallel(
+                    shooter.manualShoot(0.85),
+                    indexer.setPercent(1),
+                    Commands.runOnce(() -> shootTimer.start())
+                        .onlyIf(() -> !indexer.getLimitSwitchPressed()))
+                .withTimeout(5)
+                .until(() -> shootTimer.hasElapsed(1)))
+        .finallyDo(() -> shootTimer.reset());
   }
 
   /**
