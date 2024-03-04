@@ -233,8 +233,7 @@ public class Orchestrator {
     return Commands.race(
         intakeBasic(),
         Commands.run(
-                () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)),
-                drive));
+            () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)), drive));
   }
 
   /**
@@ -253,7 +252,7 @@ public class Orchestrator {
                     drive
                         .getRotation()
                         .plus(AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle()))))),
-            driveWhileIntaking());
+        driveWhileIntaking());
   }
 
   /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
