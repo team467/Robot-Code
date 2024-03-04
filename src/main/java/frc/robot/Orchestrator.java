@@ -53,21 +53,7 @@ public class Orchestrator {
   }
 
   public Command deferredStraightDriveToPose(Supplier<Pose2d> pose) {
-    return Commands.defer(() -> new StraightDriveToPose(pose.get(), drive), Set.of(drive))
-        .until(
-            () ->
-                Math.hypot(
-                            pose.get().getRotation().getCos() - drive.getRotation().getCos(),
-                            pose.get().getRotation().getSin() - drive.getRotation().getSin())
-                        < 1.0E-8
-                    && Math.abs(
-                            drive.getPose().getTranslation().getX()
-                                - pose.get().getTranslation().getX())
-                        < 1.0E-8
-                    && Math.abs(
-                            drive.getPose().getTranslation().getY()
-                                - pose.get().getTranslation().getY())
-                        < 1.0E-8);
+    return Commands.defer(() -> new StraightDriveToPose(pose.get(), drive), Set.of(drive));
   }
 
   /**
@@ -96,7 +82,7 @@ public class Orchestrator {
                     .minus(drive.getPose().getTranslation())
                     .getAngle()
                     .minus(Rotation2d.fromDegrees(180)));
-    return deferredStraightDriveToPose(targetPose);
+    return deferredStraightDriveToPose(targetPose).withTimeout(3);
   }
 
   /**
