@@ -63,16 +63,13 @@ public class Autos {
   }
 
   public Command mobilityAuto(StartingPosition position) {
-    switch (position) {
-      case LEFT:
-        return new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive).withTimeout(5);
-      case CENTER:
-        return new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive).withTimeout(5);
-      case RIGHT:
-        return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(2, 0, 0))).withTimeout(4);
-      default:
-        return Commands.none();
-    }
+      return switch (position) {
+          case LEFT, CENTER -> new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive).withTimeout(5);
+          case RIGHT -> Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0, 8, 0))).withTimeout(0.125).andThen(
+                  new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive).withTimeout(5)
+          );
+          default -> Commands.none();
+      };
   }
 
   public Command scoreOneNoteMobility(StartingPosition position) {
