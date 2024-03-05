@@ -205,19 +205,20 @@ public class Orchestrator {
   }
 
   public Command pullBack() {
-      return (Commands.parallel(
-              indexer.setPercent(IndexerConstants.BACKUP_SPEED),
-              shooter.manualShoot(-0.2),
-              intake.stop())
-          .withTimeout(IndexerConstants.BACKUP_TIME)
-          .andThen(
-              Commands.parallel(
-                      arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
-                      indexer.setPercent(0).until(() -> true),
-                      shooter.manualShoot(0).until(() -> true),
-                      intake.stop().until(() -> true))
-                  .withTimeout(5))
-          .finallyDo(() -> pullBack = true)).onlyIf(() -> !pullBack);
+    return (Commands.parallel(
+                indexer.setPercent(IndexerConstants.BACKUP_SPEED),
+                shooter.manualShoot(-0.2),
+                intake.stop())
+            .withTimeout(IndexerConstants.BACKUP_TIME)
+            .andThen(
+                Commands.parallel(
+                        arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
+                        indexer.setPercent(0).until(() -> true),
+                        shooter.manualShoot(0).until(() -> true),
+                        intake.stop().until(() -> true))
+                    .withTimeout(5))
+            .finallyDo(() -> pullBack = true))
+        .onlyIf(() -> !pullBack);
   }
 
   /**
@@ -229,7 +230,9 @@ public class Orchestrator {
     return Commands.race(
         intakeBasic(),
         Commands.run(
-            () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)), drive).withTimeout(10));
+                () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)),
+                drive)
+            .withTimeout(10));
   }
 
   /**
