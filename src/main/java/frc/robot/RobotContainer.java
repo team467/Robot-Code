@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.io.gyro3d.GyroIO;
@@ -63,7 +62,7 @@ public class RobotContainer {
   private Arm arm;
   private Vision vision;
   private Pixy2 pixy2;
-    private Leds leds;
+  //  private Leds leds;
   private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
   private Orchestrator orchestrator;
@@ -103,7 +102,7 @@ public class RobotContainer {
                       Units.inchesToMeters(-11.89),
                       Units.inchesToMeters(0),
                       Units.inchesToMeters(15.5)),
-                  new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
+                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
 
           vision =
               new Vision(
@@ -123,7 +122,7 @@ public class RobotContainer {
           indexer = new Indexer(new IndexerIOPhysical());
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
-                    leds = new Leds();
+          //          leds = new Leds();
           climber = new Climber(new ClimberIOSparkMax());
         }
 
@@ -164,7 +163,6 @@ public class RobotContainer {
     if (intake == null) {
       intake = new Intake(new IntakeIO() {});
     }
-
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -183,15 +181,6 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(this::configureButtonBindings));
 
-    // Rumble on intake
-    new Trigger(() -> RobotState.getInstance().hasNote)
-        .onTrue(
-            Commands.runEnd(
-                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
-                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0))
-                .withTimeout(0.69)
-                .ignoringDisable(true));
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -209,7 +198,7 @@ public class RobotContainer {
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX(),
+            () -> driverController.getRightX(),
             () -> isRobotOriented // TODO: add toggle
             ));
     driverController
@@ -231,7 +220,6 @@ public class RobotContainer {
     indexer.setDefaultCommand(indexer.setPercent(0));
     shooter.setDefaultCommand(shooter.manualShoot(0));
     arm.setDefaultCommand(arm.hold());
-    climber.setDefaultCommand(climber.stop());
 
     // operator controller
     operatorController
@@ -242,8 +230,7 @@ public class RobotContainer {
                 .onlyWhile(() -> !indexer.getLimitSwitchPressed())
                 .andThen(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(0.2)));
 
-    operatorController.leftBumper().whileTrue(orchestrator.intakeBasic());
-    operatorController.leftBumper().onFalse(orchestrator.pullBack());
+    operatorController.y().whileTrue(indexer.setPercent(1));
 
     operatorController.b().whileTrue(indexer.setPercent(-0.8).alongWith(intake.release()));
     operatorController.rightBumper().whileTrue(shooter.manualShoot(-0.2 * 12));
@@ -253,15 +240,28 @@ public class RobotContainer {
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
     operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
     operatorController.x().whileTrue(arm.runPercent(0));
-    operatorController.pov(90).whileTrue(climber.raiseOrLower(0.2));
-    operatorController.pov(270).whileTrue(climber.raiseOrLower(-0.2));
+    operatorController
+        .pov(90)
+        .whileTrue(
+            climber
+                .raiseOrLower(0.2)
+                .onlyWhile(
+                    () -> System.currentTimeMillis() - Robot.teleopStartInMilliseconds >= 105000));
+    operatorController
+        .pov(270)
+        .whileTrue(
+            climber
+                .raiseOrLower(-0.2)
+                .onlyWhile(
+                    () -> System.currentTimeMillis() - Robot.teleopStartInMilliseconds >= 105000));
     driverController.b().whileTrue(climber.unlockRatchet());
     driverController.x().whileTrue(climber.stop());
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().whileTrue(orchestrator.scoreAmp());
-    //    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
+    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
