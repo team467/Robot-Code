@@ -205,8 +205,7 @@ public class Orchestrator {
   }
 
   public Command pullBack() {
-    if (!pullBack) {
-      return Commands.parallel(
+      return (Commands.parallel(
               indexer.setPercent(IndexerConstants.BACKUP_SPEED),
               shooter.manualShoot(-0.2),
               intake.stop())
@@ -218,10 +217,7 @@ public class Orchestrator {
                       shooter.manualShoot(0).until(() -> true),
                       intake.stop().until(() -> true))
                   .withTimeout(5))
-          .finallyDo(() -> pullBack = true);
-    } else {
-      return Commands.none();
-    }
+          .finallyDo(() -> pullBack = true)).onlyIf(() -> !pullBack);
   }
 
   /**
