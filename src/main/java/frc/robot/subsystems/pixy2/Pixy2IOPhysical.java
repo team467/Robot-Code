@@ -26,6 +26,6 @@ public class Pixy2IOPhysical implements Pixy2IO {
     inputs.signature = pixyTable.getEntry("Signature").getDouble(0.0);
     inputs.width = pixyTable.getEntry("Width").getDouble(0.0);
     inputs.height = pixyTable.getEntry("Height").getDouble(0.0);
-    inputs.seesNote = pixyTable.getEntry("Valid").getInteger(0) == 1;
+    inputs.seesNote = pixyTable.getEntry("SeesNote").getBoolean(false);
   }
 }
