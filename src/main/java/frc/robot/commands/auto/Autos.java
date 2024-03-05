@@ -1,11 +1,13 @@
 package frc.robot.commands.auto;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.Orchestrator;
 import frc.robot.subsystems.drive.Drive;
@@ -24,36 +26,66 @@ public class Autos {
   }
 
   public enum StartingPosition {
-    LEFT,
-    CENTER,
-    RIGHT
-  }
+    LEFT(
+        AllianceFlipUtil.shouldFlip()
+            ? AllianceFlipUtil.apply(FieldConstants.Subwoofer.sourceFaceCorner)
+            : AllianceFlipUtil.apply(FieldConstants.Subwoofer.ampFaceCorner)),
+    CENTER(AllianceFlipUtil.apply(FieldConstants.Subwoofer.centerFace)),
+    RIGHT(
+        AllianceFlipUtil.shouldFlip()
+            ? AllianceFlipUtil.apply(FieldConstants.Subwoofer.ampFaceCorner)
+            : AllianceFlipUtil.apply(FieldConstants.Subwoofer.sourceFaceCorner));
+    public final Pose2d startingPosition;
+
+    private StartingPosition(Pose2d startingPosition) {
+      this.startingPosition = startingPosition;
+    }
+
+    public Pose2d getStartingPosition() {
+      return startingPosition;
+    }
+  };
 
   private void setNotePositions(StartingPosition position) {
+    if (Constants.getRobot() == Constants.RobotType.ROBOT_SIMBOT || 1 == 1) {
+      drive.setPose(position.getStartingPosition());
+    }
     switch (position) {
       case LEFT -> {
         this.noteTranslation =
-            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[0]);
+            AllianceFlipUtil.apply(
+                FieldConstants.StagingLocations.spikeTranslations[
+                    AllianceFlipUtil.shouldFlip() ? 2 : 0]);
         this.secondNoteTranslation =
             AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
         this.thirdNoteTranslation =
-            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[2]);
+            AllianceFlipUtil.apply(
+                FieldConstants.StagingLocations.spikeTranslations[
+                    AllianceFlipUtil.shouldFlip() ? 0 : 2]);
       }
       case CENTER -> {
         this.noteTranslation =
             AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
         this.secondNoteTranslation =
-            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[2]);
+            AllianceFlipUtil.apply(
+                FieldConstants.StagingLocations.spikeTranslations[
+                    AllianceFlipUtil.shouldFlip() ? 0 : 2]);
         this.thirdNoteTranslation =
-            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[0]);
+            AllianceFlipUtil.apply(
+                FieldConstants.StagingLocations.spikeTranslations[
+                    AllianceFlipUtil.shouldFlip() ? 2 : 0]);
       }
       case RIGHT -> {
         this.noteTranslation =
-            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[2]);
+            AllianceFlipUtil.apply(
+                FieldConstants.StagingLocations.spikeTranslations[
+                    AllianceFlipUtil.shouldFlip() ? 0 : 2]);
         this.secondNoteTranslation =
             AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
         this.thirdNoteTranslation =
-            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[0]);
+            AllianceFlipUtil.apply(
+                FieldConstants.StagingLocations.spikeTranslations[
+                    AllianceFlipUtil.shouldFlip() ? 2 : 0]);
       }
     }
 
