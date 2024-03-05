@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.characterization.FeedForwardCharacterization;
 import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.lib.io.gyro3d.GyroIO;
@@ -38,6 +39,7 @@ import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOPhysical;
+import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.shooter.Shooter;
@@ -102,7 +104,7 @@ public class RobotContainer {
                       Units.inchesToMeters(-11.89),
                       Units.inchesToMeters(0),
                       Units.inchesToMeters(15.5)),
-                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
+                  new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
 
           vision =
               new Vision(
@@ -163,6 +165,7 @@ public class RobotContainer {
     if (intake == null) {
       intake = new Intake(new IntakeIO() {});
     }
+
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -181,6 +184,15 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(this::configureButtonBindings));
 
+    // Rumble on intake
+    new Trigger(() -> RobotState.getInstance().hasNote)
+        .onTrue(
+            Commands.runEnd(
+                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
+                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0))
+                .withTimeout(0.69)
+                .ignoringDisable(true));
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -198,7 +210,7 @@ public class RobotContainer {
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> driverController.getRightX(),
+            () -> -driverController.getRightX(),
             () -> isRobotOriented // TODO: add toggle
             ));
     driverController
@@ -231,7 +243,8 @@ public class RobotContainer {
                 .onlyWhile(() -> !indexer.getLimitSwitchPressed())
                 .andThen(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(0.2)));
 
-    operatorController.y().whileTrue(indexer.setPercent(1));
+    operatorController.leftBumper().whileTrue(orchestrator.intakeBasic());
+    operatorController.leftBumper().onFalse(orchestrator.pullBack());
 
     operatorController.b().whileTrue(indexer.setPercent(-0.8).alongWith(intake.release()));
     operatorController.rightBumper().whileTrue(shooter.manualShoot(-0.2 * 12));
@@ -248,9 +261,8 @@ public class RobotContainer {
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().whileTrue(orchestrator.scoreAmp());
-    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
+    //    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
   }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

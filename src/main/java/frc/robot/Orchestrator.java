@@ -1,5 +1,5 @@
 package frc.robot;
-// clark says hi
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,12 +17,10 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pixy2.Pixy2;
-import frc.robot.subsystems.robotstate.RobotState;
 import frc.robot.subsystems.shooter.Shooter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Orchestrator {
   private final Drive drive;
@@ -31,14 +29,16 @@ public class Orchestrator {
   private final Shooter shooter;
   private final Pixy2 pixy2;
   private final Arm arm;
+
+  @AutoLogOutput private boolean pullBack = false;
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
-  static {
-    // TODO put this where it actually belongs
-    Map<Double, Double> test = new HashMap<>();
-    test.put(Units.inchesToMeters(44.1), Units.degreesToRadians(1.2));
-  }
+  //  static {
+  //    // TODO put this where it actually belongs
+  //    Map<Double, Double> test = new HashMap<>();
+  //    test.put(Units.inchesToMeters(44.1), Units.degreesToRadians(1.2));
+  //  }
 
   public Orchestrator(
       Drive drive, Intake intake, Indexer indexer, Shooter shooter, Pixy2 pixy2, Arm arm) {
@@ -133,7 +133,7 @@ public class Orchestrator {
    * @return The command for scoring in the amp from any spot on the field.
    */
   public Command scoreAmp() {
-    return Commands.parallel(goToAmp(), alignArmAmp()).andThen(shootAmp());
+    return Commands.parallel(alignArmAmp()).andThen(shootAmp());
   }
 
   /**
@@ -199,19 +199,29 @@ public class Orchestrator {
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
-                .withTimeout(10))
-        .andThen(
-            Commands.parallel(
-                    indexer.setPercent(IndexerConstants.BACKUP_SPEED),
-                    shooter.manualShoot(-0.2),
-                    intake.stop())
-                .withTimeout(IndexerConstants.BACKUP_TIME))
-        .andThen(
-            Commands.parallel(
-                arm.toSetpoint(Rotation2d.fromDegrees(-7.75)),
-                indexer.setPercent(0),
-                shooter.manualShoot(0),
-                intake.stop()));
+                .withTimeout(10)
+                .finallyDo(() -> pullBack = false))
+        .andThen(pullBack().finallyDo(() -> pullBack = true));
+  }
+
+  public Command pullBack() {
+    if (!pullBack) {
+      return Commands.parallel(
+              indexer.setPercent(IndexerConstants.BACKUP_SPEED),
+              shooter.manualShoot(-0.2),
+              intake.stop())
+          .withTimeout(IndexerConstants.BACKUP_TIME)
+          .andThen(
+              Commands.parallel(
+                      arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
+                      indexer.setPercent(0).until(() -> true),
+                      shooter.manualShoot(0).until(() -> true),
+                      intake.stop().until(() -> true))
+                  .withTimeout(5))
+          .finallyDo(() -> pullBack = true);
+    } else {
+      return Commands.none();
+    }
   }
 
   /**
