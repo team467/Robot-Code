@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
@@ -20,6 +21,8 @@ import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.shooter.Shooter;
 import java.util.Set;
 import java.util.function.Supplier;
+
+import frc.robot.subsystems.shooter.ShooterConstants;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Orchestrator {
@@ -31,6 +34,7 @@ public class Orchestrator {
   private final Arm arm;
 
   @AutoLogOutput private boolean pullBack = false;
+  @AutoLogOutput private final Timer shooterTimer = new Timer();
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
@@ -90,8 +94,8 @@ public class Orchestrator {
    */
   public Command shootAmp() {
     return Commands.sequence(
-        shooter.manualShoot(3.5 / 12).withTimeout(0.5),
-        Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5 / 12))
+        shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED).withTimeout(0.5),
+        Commands.parallel(indexer.setPercent(1), shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED))
             .until(() -> !indexer.getLimitSwitchPressed())
             .withTimeout(2));
   }
@@ -144,7 +148,11 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter.manualShoot(0.85).withTimeout(1),
+        shooter.manualShoot(0.85).withTimeout(5).until(()->shooter.atVelocity(0.85)).andThen(
+                Commands.parallel(
+                Commands.runOnce(shooterTimer::start),
+                        shooter.manualShoot(0.85).until(()->shooterTimer.hasElapsed(3)))
+        ),
         Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5));
   }
 

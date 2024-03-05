@@ -70,7 +70,7 @@ public class Shooter extends SubsystemBase {
         this);
   }
   /**
-   * @param volts the volts that the shooter should be set to
+   * @param percent the volts that the shooter should be set to
    * @return A command that sets the shooter voltage to that of the inputed volts
    */
   public Command manualShoot(double percent) {
@@ -100,5 +100,10 @@ public class Shooter extends SubsystemBase {
     } else {
       return shooterFeedback.atSetpoint();
     }
+  }
+
+  public boolean atVelocity(double velocitySetpoint) {
+    return inputs.shooterLeftVelocityRadPerSec >= velocitySetpoint
+            && inputs.shooterRightVelocityRadPerSec >= velocitySetpoint;
   }
 }
