@@ -243,7 +243,7 @@ public class Orchestrator {
    *
    * @return The command to intake after a note is seen.
    */
-  public Command basicVisionIntake() {
+  public Command visionIntake() {
     return Commands.sequence(
         indexer.setPercent(0.33),
         arm.toSetpoint(ArmConstants.STOW),
