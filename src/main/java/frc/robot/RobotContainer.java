@@ -168,11 +168,6 @@ public class RobotContainer {
     autos = new Autos(drive, orchestrator);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    startingPositionChooser = new LoggedDashboardChooser<>("Starting Position");
-    startingPositionChooser.addOption("Left", Autos.StartingPosition.LEFT);
-    startingPositionChooser.addOption("Center", Autos.StartingPosition.CENTER);
-    startingPositionChooser.addOption("Right", Autos.StartingPosition.RIGHT);
-    startingPositionChooser.addDefaultOption("Center", Autos.StartingPosition.CENTER);
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
@@ -189,11 +184,6 @@ public class RobotContainer {
             .andThen(this::configureButtonBindings));
 
     autoChooser.addOption("Mobility", autos.mobilityAuto());
-    autoChooser.addOption("Score One Note + Mobility", autos.scoreOneNoteMobility());
-    autoChooser.addOption("Score One Note", autos.oneNoteAuto());
-    autoChooser.addOption("Score Two Notes", autos.twoNoteAuto(startingPositionChooser.get()));
-    autoChooser.addOption("Score Three Notes", autos.threeNoteAuto(startingPositionChooser.get()));
-    autoChooser.addOption("Score Four Notes", autos.fourNoteAuto(startingPositionChooser.get()));
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)
@@ -267,7 +257,7 @@ public class RobotContainer {
     operatorController.pov(90).whileTrue(arm.runPercent(0));
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
-    driverController.leftBumper().whileTrue(orchestrator.alignArmAmp());
+    driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     //    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
   }
   /**
