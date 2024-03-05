@@ -137,7 +137,7 @@ public class Orchestrator {
    * @return The command for scoring in the amp from any spot on the field.
    */
   public Command scoreAmp() {
-    return Commands.parallel(alignArmAmp()).andThen(shootAmp());
+    return alignArmAmp().andThen(shootAmp());
   }
 
   /**
