@@ -20,7 +20,6 @@ import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
 import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
-import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.subsystems.arm.Arm;
@@ -73,7 +72,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private Autos autos;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -165,7 +163,6 @@ public class RobotContainer {
     }
 
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
-    autos = new Autos(drive, orchestrator);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up auto routines
@@ -182,8 +179,6 @@ public class RobotContainer {
                     drive::runCharacterizationVolts,
                     drive::getCharacterizationVelocity))
             .andThen(this::configureButtonBindings));
-
-    autoChooser.addOption("Mobility", autos.mobilityAuto());
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)
@@ -234,10 +229,6 @@ public class RobotContainer {
     shooter.setDefaultCommand(shooter.manualShoot(0));
     arm.setDefaultCommand(arm.hold());
 
-    driverController
-        .rightTrigger()
-        .whileTrue(
-            intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
     // operator controller
     operatorController
         .y()
@@ -249,7 +240,8 @@ public class RobotContainer {
 
     operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
     operatorController.rightBumper().whileTrue(orchestrator.expelShindex());
-    operatorController.a().whileTrue(shooter.manualShoot(0.85));
+    operatorController.a().whileTrue(orchestrator.shootBasic());
+    operatorController.x().whileTrue(orchestrator.scoreAmp());
 
     // operator d pad
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
@@ -257,7 +249,7 @@ public class RobotContainer {
     operatorController.pov(90).whileTrue(arm.runPercent(0));
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
-    driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
+    driverController.leftBumper().onTrue(orchestrator.scoreAmp());
     //    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
   }
   /**
