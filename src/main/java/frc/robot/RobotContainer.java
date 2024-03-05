@@ -220,6 +220,7 @@ public class RobotContainer {
     indexer.setDefaultCommand(indexer.setPercent(0));
     shooter.setDefaultCommand(shooter.manualShoot(0));
     arm.setDefaultCommand(arm.hold());
+    climber.setDefaultCommand(climber.stop());
 
     // operator controller
     operatorController

@@ -3,6 +3,7 @@ package frc.robot.subsystems.climber;
 import com.revrobotics.*;
 import edu.wpi.first.wpilibj.Relay;
 import frc.robot.Schematic;
+import org.littletonrobotics.junction.Logger;
 
 public class ClimberIOSparkMax implements ClimberIO {
 
@@ -12,6 +13,10 @@ public class ClimberIOSparkMax implements ClimberIO {
   private final RelativeEncoder climberRightEncoder;
   private final Relay climberRatchet;
   private boolean ratchetLocked = false;
+  private SparkLimitSwitch reverseLimitSwitchLeft;
+  private SparkLimitSwitch fowardLimitSwitchLeft;
+  private SparkLimitSwitch reverseLimitSwitchRight;
+  private SparkLimitSwitch fowardLimitSwitchRight;
 
   public ClimberIOSparkMax() {
     climberLeft = new CANSparkMax(Schematic.CLIMBER_LEFT_ID, CANSparkLowLevel.MotorType.kBrushless);
@@ -30,6 +35,12 @@ public class ClimberIOSparkMax implements ClimberIO {
     climberLeft.enableVoltageCompensation(12);
     climberRight.setSmartCurrentLimit(80);
     climberLeft.setSmartCurrentLimit(80);
+    reverseLimitSwitchLeft = climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+    fowardLimitSwitchLeft = climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+    reverseLimitSwitchRight =
+        climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+    fowardLimitSwitchRight =
+        climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
   }
 
   @Override
@@ -42,9 +53,10 @@ public class ClimberIOSparkMax implements ClimberIO {
     inputs.currentAmpsRight = climberRight.getOutputCurrent();
     inputs.ClimberRightPosition = climberRightEncoder.getPosition();
     inputs.ratchetLocked = ratchetLocked;
-    inputs.limitSwitchPressed =
-        (climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
-            || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed());
+    inputs.reverseLimitSwitchLeftPressed = reverseLimitSwitchLeft.isPressed();
+    inputs.forwardLimitSwitchLeftPressed = fowardLimitSwitchLeft.isPressed();
+    inputs.reverseLimitSwitchRightPressed = reverseLimitSwitchRight.isPressed();
+    inputs.forwardLimitSwitchRightPressed = fowardLimitSwitchRight.isPressed();
   }
 
   @Override
@@ -61,6 +73,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     //      climberLeft.set(0);
     //    } else {
     climberLeft.set(percentOutput);
+    Logger.recordOutput("Climber/LeftPercentOutput", percentOutput);
     //    }
   }
 
@@ -72,6 +85,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     //      climberRight.set(0);
     //    } else {
     climberRight.set(percentOutput);
+    Logger.recordOutput("Climber/RightPercentOutput", percentOutput);
     //    }
   }
 
@@ -82,13 +96,11 @@ public class ClimberIOSparkMax implements ClimberIO {
 
   @Override
   public boolean getLimitSwitchLeft() {
-    return climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
-        || climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed();
+    return fowardLimitSwitchLeft.isPressed() || reverseLimitSwitchLeft.isPressed();
   }
 
   @Override
   public boolean getLimitSwitchRight() {
-    return climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
-        || climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed();
+    return fowardLimitSwitchRight.isPressed() || reverseLimitSwitchRight.isPressed();
   }
 }

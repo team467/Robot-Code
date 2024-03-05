@@ -14,7 +14,10 @@ public interface ClimberIO {
     public double appliedVoltsRight = 0.0;
     public double ClimberRightPosition = 0.0;
     public boolean ratchetLocked = false;
-    public boolean limitSwitchPressed = false;
+    public boolean reverseLimitSwitchLeftPressed = false;
+    public boolean reverseLimitSwitchRightPressed = false;
+    public boolean forwardLimitSwitchLeftPressed = false;
+    public boolean forwardLimitSwitchRightPressed = false;
   }
 
   default void updateInputs(ClimberIOInputs inputs) {}

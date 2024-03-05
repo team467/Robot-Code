@@ -24,8 +24,6 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     climberIO.updateInputs(climberIOInputs);
     Logger.processInputs("Climber", climberIOInputs);
-    Logger.recordOutput("Climber/LeftLimitSwitch", climberIO.getLimitSwitchLeft());
-    Logger.recordOutput("Climber/RightLimitSwitch", climberIO.getLimitSwitchRight());
   }
 
   /**
