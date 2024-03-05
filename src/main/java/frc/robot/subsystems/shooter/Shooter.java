@@ -103,7 +103,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean atVelocity(double velocitySetpoint) {
-    return inputs.shooterLeftVelocityRadPerSec >= velocitySetpoint-0.05
-        && inputs.shooterRightVelocityRadPerSec >= velocitySetpoint-0.05;
+    return inputs.shooterLeftVelocityRadPerSec >= velocitySetpoint - 0.05
+        && inputs.shooterRightVelocityRadPerSec >= velocitySetpoint - 0.05;
   }
 }

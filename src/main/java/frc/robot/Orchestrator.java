@@ -155,8 +155,12 @@ public class Orchestrator {
                 .andThen(
                     Commands.parallel(
                         Commands.runOnce(shooterTimer::start),
-                        shooter.manualShoot(ShooterConstants.SHOOT_SPEED).until(() -> shooterTimer.hasElapsed(3)))),
-            Commands.parallel(shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1)).withTimeout(5))
+                        shooter
+                            .manualShoot(ShooterConstants.SHOOT_SPEED)
+                            .until(() -> shooterTimer.hasElapsed(3)))),
+            Commands.parallel(
+                    shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
+                .withTimeout(5))
         .finallyDo(shooterTimer::reset);
   }
 
