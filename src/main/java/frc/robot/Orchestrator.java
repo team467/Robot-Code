@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
@@ -18,6 +19,7 @@ import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -31,6 +33,7 @@ public class Orchestrator {
   private final Arm arm;
 
   @AutoLogOutput private boolean pullBack = false;
+  private final Timer shooterTimer = new Timer();
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
@@ -80,7 +83,7 @@ public class Orchestrator {
                     .minus(drive.getPose().getTranslation())
                     .getAngle()
                     .minus(Rotation2d.fromDegrees(180)));
-    return deferredStraightDriveToPose(targetPose);
+    return deferredStraightDriveToPose(targetPose).withTimeout(3);
   }
 
   /**
@@ -90,8 +93,9 @@ public class Orchestrator {
    */
   public Command shootAmp() {
     return Commands.sequence(
-        shooter.manualShoot(3.5 / 12).withTimeout(0.5),
-        Commands.parallel(indexer.setPercent(1), shooter.manualShoot(3.5 / 12))
+        shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED).withTimeout(0.5),
+        Commands.parallel(
+                indexer.setPercent(1), shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED))
             .until(() -> !indexer.getLimitSwitchPressed())
             .withTimeout(2));
   }
@@ -102,7 +106,10 @@ public class Orchestrator {
    * @return The command to move the arm to setpoint
    */
   public Command alignArmAmp() {
-    return arm.toSetpoint(ArmConstants.AMP_POSITION).until(arm::atSetpoint);
+    return Commands.parallel(
+        arm.toSetpoint(ArmConstants.AMP_POSITION),
+        Commands.waitUntil(arm::atSetpoint),
+        Commands.waitSeconds(3));
   }
 
   public Command goToAmp() {
@@ -133,7 +140,7 @@ public class Orchestrator {
    * @return The command for scoring in the amp from any spot on the field.
    */
   public Command scoreAmp() {
-    return Commands.parallel(alignArmAmp()).andThen(shootAmp());
+    return alignArmAmp().andThen(shootAmp());
   }
 
   /**
@@ -144,8 +151,20 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter.manualShoot(0.85).withTimeout(1),
-        Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5));
+            shooter
+                .manualShoot(ShooterConstants.SHOOT_SPEED)
+                .withTimeout(5)
+                .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
+                .andThen(
+                    Commands.parallel(
+                        Commands.runOnce(shooterTimer::start),
+                        shooter
+                            .manualShoot(ShooterConstants.SHOOT_SPEED)
+                            .until(() -> shooterTimer.hasElapsed(3)))),
+            Commands.parallel(
+                    shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
+                .withTimeout(5))
+        .finallyDo(shooterTimer::reset);
   }
 
   /**
@@ -205,23 +224,20 @@ public class Orchestrator {
   }
 
   public Command pullBack() {
-    if (!pullBack) {
-      return Commands.parallel(
-              indexer.setPercent(IndexerConstants.BACKUP_SPEED),
-              shooter.manualShoot(-0.2),
-              intake.stop())
-          .withTimeout(IndexerConstants.BACKUP_TIME)
-          .andThen(
-              Commands.parallel(
-                      arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
-                      indexer.setPercent(0).until(() -> true),
-                      shooter.manualShoot(0).until(() -> true),
-                      intake.stop().until(() -> true))
-                  .withTimeout(5))
-          .finallyDo(() -> pullBack = true);
-    } else {
-      return Commands.none();
-    }
+    return (Commands.parallel(
+                indexer.setPercent(IndexerConstants.BACKUP_SPEED),
+                shooter.manualShoot(-0.2),
+                intake.stop())
+            .withTimeout(IndexerConstants.BACKUP_TIME)
+            .andThen(
+                Commands.parallel(
+                        arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
+                        indexer.setPercent(0).until(() -> true),
+                        shooter.manualShoot(0).until(() -> true),
+                        intake.stop().until(() -> true))
+                    .withTimeout(5))
+            .finallyDo(() -> pullBack = true))
+        .onlyIf(() -> !pullBack);
   }
 
   /**
@@ -230,12 +246,12 @@ public class Orchestrator {
    * @return The command to move the robot and intake.
    */
   public Command driveWhileIntaking() {
-    return Commands.parallel(
-        intake.intake().until(() -> RobotState.getInstance().hasNote),
+    return Commands.race(
+        intakeBasic(),
         Commands.run(
-                () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)),
+                () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(2), 0.0, 0.0)),
                 drive)
-            .withTimeout(2));
+            .withTimeout(5));
   }
 
   /**
@@ -245,7 +261,6 @@ public class Orchestrator {
    */
   public Command basicVisionIntake() {
     return Commands.sequence(
-        indexer.setPercent(0.33),
         arm.toSetpoint(ArmConstants.STOW),
         Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
         deferredStraightDriveToPose(
@@ -255,7 +270,7 @@ public class Orchestrator {
                     drive
                         .getRotation()
                         .plus(AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle()))))),
-        intake.intake().until(() -> RobotState.getInstance().hasNote));
+        driveWhileIntaking());
   }
 
   /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
