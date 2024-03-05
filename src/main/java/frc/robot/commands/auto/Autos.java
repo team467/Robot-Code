@@ -73,12 +73,12 @@ public class Autos {
     };
   }
 
-  public Command scoreOneNoteMobility(StartingPosition position) {
-    return Commands.sequence(oneNoteAuto().andThen(mobilityAuto(position)));
-  }
-
   public Command oneNoteAuto() {
     return orchestrator.fullAlignShootSpeaker();
+  }
+
+  public Command scoreOneNoteMobility(StartingPosition position) {
+    return Commands.sequence(oneNoteAuto().andThen(mobilityAuto(position)));
   }
 
   public Command twoNoteAuto(StartingPosition position) {
