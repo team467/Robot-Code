@@ -149,14 +149,14 @@ public class Orchestrator {
   public Command shootBasic() {
     return Commands.sequence(
             shooter
-                .manualShoot(0.85)
+                .manualShoot(ShooterConstants.SHOOT_SPEED)
                 .withTimeout(5)
-                .until(() -> shooter.atVelocity(0.85))
+                .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
                 .andThen(
                     Commands.parallel(
                         Commands.runOnce(shooterTimer::start),
-                        shooter.manualShoot(0.85).until(() -> shooterTimer.hasElapsed(3)))),
-            Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5))
+                        shooter.manualShoot(ShooterConstants.SHOOT_SPEED).until(() -> shooterTimer.hasElapsed(3)))),
+            Commands.parallel(shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1)).withTimeout(5))
         .finallyDo(shooterTimer::reset);
   }
 
