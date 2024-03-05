@@ -258,12 +258,6 @@ public class Orchestrator {
         intake.intake().until(() -> RobotState.getInstance().hasNote));
   }
 
-  /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
-  Will use intakeBasic in parallel. */
-  public Command fullVisionIntake() {
-    return null;
-  }
-
   /**
    * Expels the intake if we want to get rid of a note.
    *
