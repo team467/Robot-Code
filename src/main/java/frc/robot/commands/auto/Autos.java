@@ -35,10 +35,12 @@ public class Autos {
         AllianceFlipUtil.shouldFlip()
             ? AllianceFlipUtil.apply(FieldConstants.Subwoofer.ampFaceCorner)
             : AllianceFlipUtil.apply(FieldConstants.Subwoofer.sourceFaceCorner));
-    public final Pose2d startingPosition;
+    private final Pose2d startingPosition;
 
-    private StartingPosition(Pose2d startingPosition) {
+    StartingPosition(Pose2d startingPosition) {
       this.startingPosition = startingPosition;
+      Logger.recordOutput(
+          "Autos/StartingPositions/" + this, startingPosition);
     }
 
     public Pose2d getStartingPosition() {
@@ -46,52 +48,55 @@ public class Autos {
     }
   };
 
-  private void setNotePositions(StartingPosition position) {
-    if (Constants.getRobot() == Constants.RobotType.ROBOT_SIMBOT || 1 == 1) {
-      drive.setPose(position.getStartingPosition());
-    }
-    switch (position) {
-      case LEFT -> {
-        this.noteTranslation =
-            AllianceFlipUtil.apply(
-                FieldConstants.StagingLocations.spikeTranslations[
-                    AllianceFlipUtil.shouldFlip() ? 2 : 0]);
-        this.secondNoteTranslation =
-            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
-        this.thirdNoteTranslation =
-            AllianceFlipUtil.apply(
-                FieldConstants.StagingLocations.spikeTranslations[
-                    AllianceFlipUtil.shouldFlip() ? 0 : 2]);
-      }
-      case CENTER -> {
-        this.noteTranslation =
-            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
-        this.secondNoteTranslation =
-            AllianceFlipUtil.apply(
-                FieldConstants.StagingLocations.spikeTranslations[
-                    AllianceFlipUtil.shouldFlip() ? 0 : 2]);
-        this.thirdNoteTranslation =
-            AllianceFlipUtil.apply(
-                FieldConstants.StagingLocations.spikeTranslations[
-                    AllianceFlipUtil.shouldFlip() ? 2 : 0]);
-      }
-      case RIGHT -> {
-        this.noteTranslation =
-            AllianceFlipUtil.apply(
-                FieldConstants.StagingLocations.spikeTranslations[
-                    AllianceFlipUtil.shouldFlip() ? 0 : 2]);
-        this.secondNoteTranslation =
-            AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
-        this.thirdNoteTranslation =
-            AllianceFlipUtil.apply(
-                FieldConstants.StagingLocations.spikeTranslations[
-                    AllianceFlipUtil.shouldFlip() ? 2 : 0]);
-      }
-    }
+  private Command setNotePositions(StartingPosition position) {
+    return Commands.runOnce(
+        () -> {
+          if (Constants.getRobot() == Constants.RobotType.ROBOT_SIMBOT) {
+            drive.setPose(position.getStartingPosition());
+          }
+          switch (position) {
+            case LEFT -> {
+              this.noteTranslation =
+                  AllianceFlipUtil.apply(
+                      FieldConstants.StagingLocations.spikeTranslations[
+                          AllianceFlipUtil.shouldFlip() ? 2 : 0]);
+              this.secondNoteTranslation =
+                  AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
+              this.thirdNoteTranslation =
+                  AllianceFlipUtil.apply(
+                      FieldConstants.StagingLocations.spikeTranslations[
+                          AllianceFlipUtil.shouldFlip() ? 0 : 2]);
+            }
+            case CENTER -> {
+              this.noteTranslation =
+                  AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
+              this.secondNoteTranslation =
+                  AllianceFlipUtil.apply(
+                      FieldConstants.StagingLocations.spikeTranslations[
+                          AllianceFlipUtil.shouldFlip() ? 0 : 2]);
+              this.thirdNoteTranslation =
+                  AllianceFlipUtil.apply(
+                      FieldConstants.StagingLocations.spikeTranslations[
+                          AllianceFlipUtil.shouldFlip() ? 2 : 0]);
+            }
+            case RIGHT -> {
+              this.noteTranslation =
+                  AllianceFlipUtil.apply(
+                      FieldConstants.StagingLocations.spikeTranslations[
+                          AllianceFlipUtil.shouldFlip() ? 0 : 2]);
+              this.secondNoteTranslation =
+                  AllianceFlipUtil.apply(FieldConstants.StagingLocations.spikeTranslations[1]);
+              this.thirdNoteTranslation =
+                  AllianceFlipUtil.apply(
+                      FieldConstants.StagingLocations.spikeTranslations[
+                          AllianceFlipUtil.shouldFlip() ? 2 : 0]);
+            }
+          }
 
-    Logger.recordOutput("Autos/NotePositions/0", noteTranslation);
-    Logger.recordOutput("Autos/NotePositions/1", secondNoteTranslation);
-    Logger.recordOutput("Autos/NotePositions/2", thirdNoteTranslation);
+          Logger.recordOutput("Autos/NotePositions/0", noteTranslation);
+          Logger.recordOutput("Autos/NotePositions/1", secondNoteTranslation);
+          Logger.recordOutput("Autos/NotePositions/2", thirdNoteTranslation);
+        });
   }
 
   public Command mobilityAuto(StartingPosition position) {
@@ -114,44 +119,49 @@ public class Autos {
   }
 
   public Command twoNoteAuto(StartingPosition position) {
-    setNotePositions(position);
-    return orchestrator
-        .fullAlignShootSpeaker()
+    return setNotePositions(position)
         .andThen(
-            Commands.parallel(
-                orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
-        .andThen(orchestrator.fullAlignShootSpeaker());
-  }
-
-  public Command threeNoteAuto(StartingPosition position) {
-    setNotePositions(position);
-    return orchestrator
-        .fullAlignShootSpeaker()
-        .andThen(
-            Commands.parallel(
-                orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
-        .andThen(orchestrator.fullAlignShootSpeaker())
-        .andThen(
-            Commands.parallel(
-                    orchestrator.driveToNote(secondNoteTranslation), orchestrator.intakeBasic())
+            orchestrator
+                .fullAlignShootSpeaker()
+                .andThen(
+                    Commands.parallel(
+                        orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
                 .andThen(orchestrator.fullAlignShootSpeaker()));
   }
 
+  public Command threeNoteAuto(StartingPosition position) {
+    return setNotePositions(position)
+        .andThen(
+            orchestrator
+                .fullAlignShootSpeaker()
+                .andThen(
+                    Commands.parallel(
+                        orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
+                .andThen(orchestrator.fullAlignShootSpeaker())
+                .andThen(
+                    Commands.parallel(
+                            orchestrator.driveToNote(secondNoteTranslation),
+                            orchestrator.intakeBasic())
+                        .andThen(orchestrator.fullAlignShootSpeaker())));
+  }
+
   public Command fourNoteAuto(StartingPosition position) {
-    setNotePositions(position);
-    return orchestrator
-        .fullAlignShootSpeaker()
+    return setNotePositions(position)
         .andThen(
-            Commands.parallel(
-                orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
-        .andThen(orchestrator.fullAlignShootSpeaker())
-        .andThen(
-            Commands.parallel(
-                    orchestrator.driveToNote(secondNoteTranslation), orchestrator.intakeBasic())
-                .andThen(orchestrator.fullAlignShootSpeaker()))
-        .andThen(
-            Commands.parallel(
-                orchestrator.driveToNote(thirdNoteTranslation), orchestrator.intakeBasic()))
-        .andThen(orchestrator.fullAlignShootSpeaker());
+            orchestrator
+                .fullAlignShootSpeaker()
+                .andThen(
+                    Commands.parallel(
+                        orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
+                .andThen(orchestrator.fullAlignShootSpeaker())
+                .andThen(
+                    Commands.parallel(
+                            orchestrator.driveToNote(secondNoteTranslation),
+                            orchestrator.intakeBasic())
+                        .andThen(orchestrator.fullAlignShootSpeaker()))
+                .andThen(
+                    Commands.parallel(
+                        orchestrator.driveToNote(thirdNoteTranslation), orchestrator.intakeBasic()))
+                .andThen(orchestrator.fullAlignShootSpeaker()));
   }
 }
