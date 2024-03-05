@@ -33,7 +33,7 @@ public class Orchestrator {
   private final Arm arm;
 
   @AutoLogOutput private boolean pullBack = false;
-  @AutoLogOutput private final Timer shooterTimer = new Timer();
+  private final Timer shooterTimer = new Timer();
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
