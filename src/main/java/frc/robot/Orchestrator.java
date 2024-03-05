@@ -153,7 +153,7 @@ public class Orchestrator {
                 Commands.runOnce(shooterTimer::start),
                         shooter.manualShoot(0.85).until(()->shooterTimer.hasElapsed(3)))
         ),
-        Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5));
+        Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5)).finallyDo(shooterTimer::reset);
   }
 
   /**
