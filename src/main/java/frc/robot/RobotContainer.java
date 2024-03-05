@@ -63,7 +63,7 @@ public class RobotContainer {
   private Arm arm;
   private Vision vision;
   private Pixy2 pixy2;
-  //  private Leds leds;
+    private Leds leds;
   private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
   private Orchestrator orchestrator;
@@ -123,7 +123,7 @@ public class RobotContainer {
           indexer = new Indexer(new IndexerIOPhysical());
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
-          //          leds = new Leds();
+                    leds = new Leds();
           climber = new Climber(new ClimberIOSparkMax());
         }
 
