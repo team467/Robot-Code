@@ -39,7 +39,6 @@ import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOPhysical;
-import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.shooter.Shooter;
