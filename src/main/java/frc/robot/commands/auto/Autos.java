@@ -7,7 +7,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
-import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.Orchestrator;
 import frc.robot.subsystems.drive.Drive;
@@ -45,14 +44,11 @@ public class Autos {
     public Pose2d getStartingPosition() {
       return startingPosition;
     }
-  };
+  }
 
   private Command setNotePositions(StartingPosition position) {
     return Commands.runOnce(
         () -> {
-          if (Constants.getRobot() == Constants.RobotType.ROBOT_SIMBOT) {
-            drive.setPose(position.getStartingPosition());
-          }
           switch (position) {
             case LEFT -> {
               this.noteTranslation = getNotePositions(0, false);
@@ -87,29 +83,35 @@ public class Autos {
   }
 
   public Command mobilityAuto(StartingPosition position) {
-    return switch (position) {
-      case LEFT, CENTER -> new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-          .withTimeout(5);
-      case RIGHT -> Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0, 8, 0)))
-          .withTimeout(0.125)
-          .andThen(new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive).withTimeout(5));
-      default -> Commands.none();
-    };
+    return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
+        .andThen(
+            switch (position) {
+              case LEFT, CENTER -> new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
+                  .withTimeout(5);
+              case RIGHT -> Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0, 8, 0)))
+                  .withTimeout(0.125)
+                  .andThen(
+                      new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
+                          .withTimeout(5));
+              default -> Commands.none();
+            });
   }
 
   public Command oneNoteAuto() {
-    return shoot();
+    return orchestrator.shootBasic();
   }
 
   public Command scoreOneNoteMobility(StartingPosition position) {
-    return Commands.sequence(oneNoteAuto().andThen(mobilityAuto(position)));
+
+    return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
+        .andThen(Commands.sequence(oneNoteAuto().andThen(mobilityAuto(position))));
   }
 
   public Command twoNoteAuto(StartingPosition position) {
-    return setNotePositions(position)
+    return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
+        .andThen(setNotePositions(position))
         .andThen(
-            orchestrator
-                .fullAlignShootSpeaker()
+            oneNoteAuto()
                 .andThen(
                     Commands.parallel(
                         orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
@@ -119,8 +121,7 @@ public class Autos {
   public Command threeNoteAuto(StartingPosition position) {
     return setNotePositions(position)
         .andThen(
-            orchestrator
-                .fullAlignShootSpeaker()
+            oneNoteAuto()
                 .andThen(
                     Commands.parallel(
                         orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
@@ -149,7 +150,7 @@ public class Autos {
   public Command fourNoteAuto(StartingPosition position) {
     return setNotePositions(position)
         .andThen(
-            shoot()
+            oneNoteAuto()
                 .andThen(
                     Commands.parallel(
                         orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
