@@ -249,7 +249,7 @@ public class RobotContainer {
     operatorController.pov(90).whileTrue(arm.runPercent(0));
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
-    driverController.leftBumper().whileTrue(orchestrator.scoreAmp());
+    driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     //    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
   }
   /**
