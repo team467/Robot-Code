@@ -19,10 +19,9 @@ import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import frc.robot.subsystems.shooter.ShooterConstants;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Orchestrator {
@@ -95,7 +94,8 @@ public class Orchestrator {
   public Command shootAmp() {
     return Commands.sequence(
         shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED).withTimeout(0.5),
-        Commands.parallel(indexer.setPercent(1), shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED))
+        Commands.parallel(
+                indexer.setPercent(1), shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED))
             .until(() -> !indexer.getLimitSwitchPressed())
             .withTimeout(2));
   }
@@ -148,12 +148,16 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter.manualShoot(0.85).withTimeout(5).until(()->shooter.atVelocity(0.85)).andThen(
-                Commands.parallel(
-                Commands.runOnce(shooterTimer::start),
-                        shooter.manualShoot(0.85).until(()->shooterTimer.hasElapsed(3)))
-        ),
-        Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5)).finallyDo(shooterTimer::reset);
+            shooter
+                .manualShoot(0.85)
+                .withTimeout(5)
+                .until(() -> shooter.atVelocity(0.85))
+                .andThen(
+                    Commands.parallel(
+                        Commands.runOnce(shooterTimer::start),
+                        shooter.manualShoot(0.85).until(() -> shooterTimer.hasElapsed(3)))),
+            Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5))
+        .finallyDo(shooterTimer::reset);
   }
 
   /**
