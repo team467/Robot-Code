@@ -242,9 +242,9 @@ public class Orchestrator {
     return Commands.race(
         intakeBasic(),
         Commands.run(
-                () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(10), 0.0, 0.0)),
+                () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(2), 0.0, 0.0)),
                 drive)
-            .withTimeout(10));
+            .withTimeout(5));
   }
 
   /**
