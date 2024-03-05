@@ -164,6 +164,8 @@ public class Leds extends SubsystemBase {
       } else {
         mode = LedMode.STRAIGHT_NOTE_DETECTION;
       }
+    } else {
+      mode = LedMode.OFF;
     }
   }
 
