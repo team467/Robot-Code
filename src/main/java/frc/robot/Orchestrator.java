@@ -144,13 +144,14 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter.manualShoot(0.85).withTimeout(1),
-        Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5));
+            shooter.manualShoot(0.85).withTimeout(1),
+            Commands.parallel(shooter.manualShoot(0.85), indexer.setPercent(1)).withTimeout(5))
+        .finallyDo(() -> arm.toSetpoint(ArmConstants.STOW));
   }
 
   /**
    * Calculates the angle to align the arm to the speaker from anywhere on the field. Does arcTan of
-   * ((height of center of the speaker - height of the shooter) / distance to speaker)
+   * ((height of center of the speaker - height of the shooter) / distance to speaker) )
    *
    * @return The command to move the arm to the correct setPoint for shooting from its current
    *     location.

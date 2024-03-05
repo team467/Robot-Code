@@ -200,6 +200,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     drive.setDefaultCommand(
         new DriveWithJoysticks(
@@ -235,7 +236,7 @@ public class RobotContainer {
         .whileTrue(
             intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
 
-    operatorController.leftBumper().whileTrue(orchestrator.intakeBasic());
+    driverController.leftTrigger().toggleOnTrue(orchestrator.intakeBasic());
     operatorController.leftBumper().onFalse(orchestrator.pullBack());
 
     operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
