@@ -76,7 +76,7 @@ public class Autos {
     return Commands.runOnce(
         () -> {
           switch (position.get()) {
-            case LEFT -> {
+            case RIGHT -> {
               this.noteTranslation = getNotePositions(0, false);
               this.secondNoteTranslation = getNotePositions(1, false);
               this.thirdNoteTranslation = getNotePositions(2, true);
@@ -86,7 +86,7 @@ public class Autos {
               this.secondNoteTranslation = getNotePositions(2, false);
               this.thirdNoteTranslation = getNotePositions(0, true);
             }
-            case RIGHT -> {
+            case LEFT -> {
               this.noteTranslation = getNotePositions(2, false);
               this.secondNoteTranslation = getNotePositions(1, false);
               this.thirdNoteTranslation = getNotePositions(0, true);
