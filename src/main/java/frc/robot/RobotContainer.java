@@ -235,22 +235,19 @@ public class RobotContainer {
     shooter.setDefaultCommand(shooter.manualShoot(0));
     arm.setDefaultCommand(arm.hold());
     climber.setDefaultCommand(climber.raiseOrLower(0));
-    driverController.b().onTrue(climber.setRatchet(false));
-    driverController.x().onTrue(climber.setRatchet(true));
+
 
     // operator controller
     operatorController.a().whileTrue(shooter.manualShoot(ShooterConstants.SHOOT_SPEED));
     operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
     operatorController.x().onTrue(arm.toSetpoint(ArmConstants.STOW));
     operatorController.y().whileTrue(shooter.manualShoot(-1));
-    //    TODO: add back in when solonoid is added
-    //    operatorController.back().whileTrue(solonoidLock);
-    //    operatorController.back().whileFalse(solonoidUnlock);
+    operatorController.back().whileTrue(climber.setRatchet(false));
+    operatorController.back().whileFalse(climber.setRatchet(true));
 
     // operator d pad
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
     operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
-    operatorController.x().whileTrue(arm.runPercent(0));
     operatorController
         .pov(90)
         .whileTrue(
@@ -267,8 +264,10 @@ public class RobotContainer {
     driverController.leftTrigger().toggleOnTrue(orchestrator.intakeBasic());
     driverController.rightTrigger().onTrue(orchestrator.indexBasic());
     driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()));
+    driverController.b().onTrue(climber.setRatchet(false));
+    driverController.x().onTrue(climber.setRatchet(true));
 
-    //    driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker());
+    //    driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker()); //TODO: add back in when fixed
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
