@@ -167,6 +167,13 @@ public class Orchestrator {
         .finallyDo(shooterTimer::reset);
   }
 
+  public Command indexBasic() {
+    return indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).until(()->!indexer.getLimitSwitchPressed())
+            .andThen(Commands.parallel(Commands.runOnce(shooterTimer::start),
+                    indexer.setPercent(IndexerConstants.INDEX_SPEED.get())
+            )).until(()->shooterTimer.hasElapsed(0.5)).withTimeout(10).finallyDo(shooterTimer::reset);
+  }
+
   /**
    * Calculates the angle to align the arm to the speaker from anywhere on the field. Does arcTan of
    * ((height of center of the speaker - height of the shooter) / distance to speaker)

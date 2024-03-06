@@ -249,9 +249,13 @@ public class RobotContainer {
     operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
     operatorController.pov(90).whileTrue(arm.runPercent(0));
 
-    driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
+    driverController.rightBumper().onTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
-    //    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
+    driverController.leftTrigger().toggleOnTrue(orchestrator.intakeBasic());
+    driverController.rightTrigger().onTrue(orchestrator.indexBasic());
+    driverController.a().onTrue(Commands.runOnce(()->drive.stopWithX()));
+
+    //    driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker());
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
