@@ -27,6 +27,7 @@ import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOSparkMAX;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
@@ -254,10 +255,18 @@ public class RobotContainer {
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
     operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
     operatorController.x().whileTrue(arm.runPercent(0));
-    operatorController.pov(90).whileTrue(climber.raiseOrLower(0.2));
-    operatorController.pov(270).whileTrue(climber.raiseOrLower(-0.2));
-    driverController.b().whileTrue(climber.unlockRatchet());
-    driverController.x().whileTrue(climber.stop());
+    operatorController
+        .pov(90)
+        .whileTrue(
+            climber
+                .raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT)
+                .withTimeout(ClimberConstants.BACKUP_TIME)
+                .andThen(climber.raiseOrLower(ClimberConstants.CLIMBER_FORWARD_PERCENT)));
+    operatorController
+        .pov(270)
+        .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
+    driverController.b().whileTrue(climber.setRatchet(false));
+    driverController.x().whileTrue(climber.setRatchet(true));
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().whileTrue(orchestrator.scoreAmp());

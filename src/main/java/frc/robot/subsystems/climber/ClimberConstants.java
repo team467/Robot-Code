@@ -1,27 +1,29 @@
 package frc.robot.subsystems.climber;
 
-import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
 
 public class ClimberConstants {
   public static final int CLIMBER_RATCHET_ID;
-  public static final TunableNumber CLIMBER_KP;
-  public static final TunableNumber CLIMBER_KD;
   public static final double ROTS_TO_METERS;
+  public static final double CLIMBER_FORWARD_PERCENT;
+  public static final double CLIMBER_BACKWARD_PERCENT;
+  public static final double BACKUP_TIME;
 
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2024_COMP -> {
         CLIMBER_RATCHET_ID = 0;
-        CLIMBER_KP = new TunableNumber("Climber/ClimberKP", 0.0);
-        CLIMBER_KD = new TunableNumber("Climber/ClimberKD", 0.0);
         ROTS_TO_METERS = 1.0;
+        CLIMBER_FORWARD_PERCENT = 0.2;
+        CLIMBER_BACKWARD_PERCENT = -0.2;
+        BACKUP_TIME = 0.1;
       }
       default -> {
         CLIMBER_RATCHET_ID = 0;
-        CLIMBER_KP = new TunableNumber("Climber/ClimberKP", 0.0);
-        CLIMBER_KD = new TunableNumber("Climber/ClimberKD", 0.0);
         ROTS_TO_METERS = 0.0;
+        CLIMBER_FORWARD_PERCENT = 0.0;
+        CLIMBER_BACKWARD_PERCENT = 0.0;
+        BACKUP_TIME = 0.0;
       }
     }
   }

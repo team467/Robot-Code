@@ -19,28 +19,32 @@ public class ClimberIOSparkMax implements ClimberIO {
   private SparkLimitSwitch fowardLimitSwitchRight;
 
   public ClimberIOSparkMax() {
+    //Motors and Encoders
     climberLeft = new CANSparkMax(Schematic.CLIMBER_LEFT_ID, CANSparkLowLevel.MotorType.kBrushless);
-    climberLeft.setInverted(false);
+    climberLeft.setInverted(true);
     climberLeftEncoder = climberLeft.getEncoder();
     climberLeftEncoder.setPositionConversionFactor(ClimberConstants.ROTS_TO_METERS);
     climberRight =
         new CANSparkMax(Schematic.CLIMBER_RIGHT_ID, CANSparkLowLevel.MotorType.kBrushless);
-    climberRight.setInverted(false);
+    climberRight.setInverted(true);
     climberRightEncoder = climberRight.getEncoder();
     climberRightEncoder.setPositionConversionFactor(ClimberConstants.ROTS_TO_METERS);
-    climberRatchet = new Relay(ClimberConstants.CLIMBER_RATCHET_ID, Relay.Direction.kReverse);
-    climberLeft.setIdleMode(CANSparkBase.IdleMode.kBrake);
     climberRight.setIdleMode(CANSparkBase.IdleMode.kBrake);
+    climberLeft.setIdleMode(CANSparkBase.IdleMode.kBrake);
     climberRight.enableVoltageCompensation(12);
     climberLeft.enableVoltageCompensation(12);
     climberRight.setSmartCurrentLimit(80);
     climberLeft.setSmartCurrentLimit(80);
+    //Limit Switches
     reverseLimitSwitchLeft = climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     fowardLimitSwitchLeft = climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     reverseLimitSwitchRight =
         climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     fowardLimitSwitchRight =
         climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+    //Ratchet
+    climberRatchet = new Relay(ClimberConstants.CLIMBER_RATCHET_ID, Relay.Direction.kReverse);
+    climberRatchet.set(Relay.Value.kOff);
   }
 
   @Override
@@ -66,27 +70,13 @@ public class ClimberIOSparkMax implements ClimberIO {
   }
 
   public void setLeftMotorPercentOutput(double percentOutput) {
-    //    if ((climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
-    //            ||
-    // climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed())
-    //        && percentOutput < 0) {
-    //      climberLeft.set(0);
-    //    } else {
     climberLeft.set(percentOutput);
     Logger.recordOutput("Climber/LeftPercentOutput", percentOutput);
-    //    }
   }
 
   public void setRightMotorPercentOutput(double percentOutput) {
-    //    if ((climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()
-    //            ||
-    // climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed())
-    //        && percentOutput < 0) {
-    //      climberRight.set(0);
-    //    } else {
     climberRight.set(percentOutput);
     Logger.recordOutput("Climber/RightPercentOutput", percentOutput);
-    //    }
   }
 
   public void setRatchetLocked(boolean locked) {
