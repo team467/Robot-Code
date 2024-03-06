@@ -14,8 +14,8 @@ public class ClimberConstants {
       case ROBOT_2024_COMP -> {
         CLIMBER_RATCHET_ID = 0;
         ROTS_TO_METERS = 1.0;
-        CLIMBER_FORWARD_PERCENT = 0.2;
-        CLIMBER_BACKWARD_PERCENT = -0.2;
+        CLIMBER_FORWARD_PERCENT = 0.6;
+        CLIMBER_BACKWARD_PERCENT = -0.6;
         BACKUP_TIME = 0.1;
       }
       default -> {

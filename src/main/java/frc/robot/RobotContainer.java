@@ -233,7 +233,7 @@ public class RobotContainer {
     indexer.setDefaultCommand(indexer.setPercent(0));
     shooter.setDefaultCommand(shooter.manualShoot(0));
     arm.setDefaultCommand(arm.hold());
-    climber.setDefaultCommand(climber.stop());
+    climber.setDefaultCommand(climber.raiseOrLower(0));
 
     // operator controller
     operatorController
@@ -265,8 +265,8 @@ public class RobotContainer {
     operatorController
         .pov(270)
         .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
-    driverController.b().whileTrue(climber.setRatchet(false));
-    driverController.x().whileTrue(climber.setRatchet(true));
+    driverController.b().onTrue(climber.setRatchet(false));
+    driverController.x().onTrue(climber.setRatchet(true));
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().whileTrue(orchestrator.scoreAmp());

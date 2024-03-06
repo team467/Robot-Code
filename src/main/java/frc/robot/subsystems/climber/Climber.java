@@ -37,7 +37,8 @@ public class Climber extends SubsystemBase {
     return Commands.run(
         () -> {
           climberIO.setMotorsOutputPercent(percentOutput);
-        });
+        },
+        this);
   }
   /**
    * Command to disable the climber
@@ -48,14 +49,6 @@ public class Climber extends SubsystemBase {
     return Commands.run(
         () -> {
           climberIO.setRatchetLocked(locked);
-        },
-        this);
-  }
-
-  public Command stop() {
-    return Commands.run(
-        () -> {
-          climberIO.setMotorsOutputPercent(0);
         },
         this);
   }

@@ -19,7 +19,7 @@ public class ClimberIOSparkMax implements ClimberIO {
   private SparkLimitSwitch fowardLimitSwitchRight;
 
   public ClimberIOSparkMax() {
-    //Motors and Encoders
+    // Motors and Encoders
     climberLeft = new CANSparkMax(Schematic.CLIMBER_LEFT_ID, CANSparkLowLevel.MotorType.kBrushless);
     climberLeft.setInverted(true);
     climberLeftEncoder = climberLeft.getEncoder();
@@ -35,14 +35,14 @@ public class ClimberIOSparkMax implements ClimberIO {
     climberLeft.enableVoltageCompensation(12);
     climberRight.setSmartCurrentLimit(80);
     climberLeft.setSmartCurrentLimit(80);
-    //Limit Switches
+    // Limit Switches
     reverseLimitSwitchLeft = climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     fowardLimitSwitchLeft = climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     reverseLimitSwitchRight =
         climberRight.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     fowardLimitSwitchRight =
         climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
-    //Ratchet
+    // Ratchet
     climberRatchet = new Relay(ClimberConstants.CLIMBER_RATCHET_ID, Relay.Direction.kReverse);
     climberRatchet.set(Relay.Value.kOff);
   }
