@@ -231,7 +231,6 @@ public class Orchestrator {
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
-                .withTimeout(10)
                 .finallyDo(() -> pullBack = false))
         .andThen(pullBack().finallyDo(() -> pullBack = true));
   }
