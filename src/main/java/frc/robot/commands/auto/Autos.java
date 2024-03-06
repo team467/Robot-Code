@@ -10,6 +10,7 @@ import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants;
 import frc.robot.Orchestrator;
 import frc.robot.subsystems.drive.Drive;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Autos {
@@ -46,10 +47,10 @@ public class Autos {
     }
   }
 
-  private Command setNotePositions(StartingPosition position) {
+  private Command setNotePositions(Supplier<StartingPosition> position) {
     return Commands.runOnce(
         () -> {
-          switch (position) {
+          switch (position.get()) {
             case LEFT -> {
               this.noteTranslation = getNotePositions(0, false);
               this.secondNoteTranslation = getNotePositions(1, false);
@@ -86,12 +87,12 @@ public class Autos {
     return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
         .andThen(
             switch (position) {
-              case LEFT, CENTER -> new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
+              case LEFT, CENTER -> new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
                   .withTimeout(5);
               case RIGHT -> Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0, 8, 0)))
                   .withTimeout(0.125)
                   .andThen(
-                      new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
+                      new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
                           .withTimeout(5));
               default -> Commands.none();
             });
@@ -109,7 +110,7 @@ public class Autos {
 
   public Command twoNoteAuto(StartingPosition position) {
     return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
-        .andThen(setNotePositions(position))
+        .andThen(setNotePositions(() -> position))
         .andThen(
             oneNoteAuto()
                 .andThen(
@@ -119,7 +120,7 @@ public class Autos {
   }
 
   public Command threeNoteAuto(StartingPosition position) {
-    return setNotePositions(position)
+    return setNotePositions(() -> position)
         .andThen(
             oneNoteAuto()
                 .andThen(
@@ -148,7 +149,7 @@ public class Autos {
   }
 
   public Command fourNoteAuto(StartingPosition position) {
-    return setNotePositions(position)
+    return setNotePositions(() -> position)
         .andThen(
             oneNoteAuto()
                 .andThen(
