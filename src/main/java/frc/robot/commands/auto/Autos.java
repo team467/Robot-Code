@@ -116,9 +116,7 @@ public class Autos {
                           AllianceFlipUtil.apply(Units.feetToMeters(6.75)), 0, 0, drive)
                       .withTimeout(5);
                   case LEFT -> Commands.run(
-                          () ->
-                              drive.runVelocity(
-                                  new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
+                          () -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
                       .withTimeout(1)
                       .andThen(
                           new StraightDriveToPose(
@@ -132,9 +130,7 @@ public class Autos {
                           Units.feetToMeters(6.75), 0, 0, drive)
                       .withTimeout(5);
                   case RIGHT -> Commands.run(
-                          () ->
-                              drive.runVelocity(
-                                  new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
+                          () -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
                       .withTimeout(1)
                       .andThen(
                           new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
