@@ -236,6 +236,7 @@ public class RobotContainer {
     operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
     operatorController.x().onTrue(arm.toSetpoint(ArmConstants.STOW));
     operatorController.y().whileTrue(shooter.manualShoot(-1));
+//    TODO: add back in when solonoid is added
 //    operatorController.back().whileTrue(solonoidLock);
 //    operatorController.back().whileFalse(solonoidUnlock);
 
