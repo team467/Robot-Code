@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -151,29 +150,24 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-            shooter
-                .manualShoot(ShooterConstants.SHOOT_SPEED)
-                .withTimeout(5)
-                .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
-                .andThen(
-                    Commands.race(
-                        new WaitCommand(3),
-                        shooter
-                            .manualShoot(ShooterConstants.SHOOT_SPEED))),
-            Commands.parallel(
-                    shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
-                .withTimeout(5));
+        shooter
+            .manualShoot(ShooterConstants.SHOOT_SPEED)
+            .withTimeout(5)
+            .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
+            .andThen(
+                Commands.race(
+                    new WaitCommand(3), shooter.manualShoot(ShooterConstants.SHOOT_SPEED))),
+        Commands.parallel(shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
+            .withTimeout(5));
   }
 
   public Command indexBasic() {
     return (indexer
-        .setPercent(IndexerConstants.INDEX_SPEED.get())
-        .until(() -> !indexer.getLimitSwitchPressed())).andThen(
-                Commands.race(
-                        new WaitCommand(2),
-                        indexer.setPercent(IndexerConstants.INDEX_SPEED.get())
-                )
-            )
+            .setPercent(IndexerConstants.INDEX_SPEED.get())
+            .until(() -> !indexer.getLimitSwitchPressed()))
+        .andThen(
+            Commands.race(
+                new WaitCommand(2), indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
         .withTimeout(10);
   }
 
