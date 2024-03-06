@@ -236,7 +236,6 @@ public class RobotContainer {
     arm.setDefaultCommand(arm.hold());
     climber.setDefaultCommand(climber.raiseOrLower(0));
 
-
     // operator controller
     operatorController.a().whileTrue(shooter.manualShoot(ShooterConstants.SHOOT_SPEED));
     operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
@@ -268,7 +267,8 @@ public class RobotContainer {
     driverController.b().onTrue(climber.setRatchet(false));
     driverController.x().onTrue(climber.setRatchet(true));
 
-    //    driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker()); //TODO: add back in when fixed
+    //    driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker()); //TODO: add back in
+    // when fixed
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
