@@ -8,6 +8,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.TunableNumber;
 import frc.robot.commands.auto.StraightDriveToPose;
@@ -33,7 +34,6 @@ public class Orchestrator {
   private final Arm arm;
 
   @AutoLogOutput private boolean pullBack = false;
-  private final Timer shooterTimer = new Timer();
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
@@ -156,28 +156,25 @@ public class Orchestrator {
                 .withTimeout(5)
                 .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
                 .andThen(
-                    Commands.parallel(
-                        Commands.runOnce(shooterTimer::start),
+                    Commands.race(
+                        new WaitCommand(3),
                         shooter
-                            .manualShoot(ShooterConstants.SHOOT_SPEED)
-                            .until(() -> shooterTimer.hasElapsed(3)))),
+                            .manualShoot(ShooterConstants.SHOOT_SPEED))),
             Commands.parallel(
                     shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
-                .withTimeout(5))
-        .finallyDo(shooterTimer::reset);
+                .withTimeout(5));
   }
 
   public Command indexBasic() {
-    return indexer
+    return (indexer
         .setPercent(IndexerConstants.INDEX_SPEED.get())
-        .until(() -> !indexer.getLimitSwitchPressed())
-        .andThen(
-            Commands.parallel(
-                Commands.runOnce(shooterTimer::start),
-                indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
-        .until(() -> shooterTimer.hasElapsed(0.5))
-        .withTimeout(10)
-        .finallyDo(shooterTimer::reset);
+        .until(() -> !indexer.getLimitSwitchPressed())).andThen(
+                Commands.race(
+                        new WaitCommand(2),
+                        indexer.setPercent(IndexerConstants.INDEX_SPEED.get())
+                )
+            )
+        .withTimeout(10);
   }
 
   /**
