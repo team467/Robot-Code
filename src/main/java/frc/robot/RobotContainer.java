@@ -41,6 +41,7 @@ import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
@@ -231,18 +232,13 @@ public class RobotContainer {
     arm.setDefaultCommand(arm.hold());
 
     // operator controller
-    operatorController
-        .y()
-        .whileTrue(
-            intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
-
-    driverController.leftTrigger().toggleOnTrue(orchestrator.intakeBasic());
-    operatorController.leftBumper().onFalse(orchestrator.pullBack());
-
+    operatorController.a().whileTrue(shooter.manualShoot(ShooterConstants.SHOOT_SPEED));
     operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
-    operatorController.rightBumper().whileTrue(orchestrator.expelShindex());
-    operatorController.a().whileTrue(orchestrator.shootBasic());
-    operatorController.x().whileTrue(orchestrator.scoreAmp());
+    operatorController.x().onTrue(arm.toSetpoint(ArmConstants.STOW));
+    operatorController.y().whileTrue(shooter.manualShoot(-1));
+//    operatorController.back().whileTrue(solonoidLock);
+//    operatorController.back().whileFalse(solonoidUnlock);
+
 
     // operator d pad
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
@@ -252,6 +248,7 @@ public class RobotContainer {
     driverController.rightBumper().onTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     driverController.leftTrigger().toggleOnTrue(orchestrator.intakeBasic());
+    driverController.leftTrigger().onFalse(orchestrator.pullBack());
     driverController.rightTrigger().onTrue(orchestrator.indexBasic());
     driverController.a().onTrue(Commands.runOnce(()->drive.stopWithX()));
 
