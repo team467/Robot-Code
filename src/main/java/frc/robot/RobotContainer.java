@@ -259,6 +259,7 @@ public class RobotContainer {
         .pov(270)
         .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
 
+    // driver controller
     driverController.rightBumper().onTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     driverController.leftTrigger().toggleOnTrue(orchestrator.intakeBasic());
