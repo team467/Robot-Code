@@ -247,7 +247,6 @@ public class RobotContainer {
     driverController.rightBumper().onTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     driverController.leftTrigger().toggleOnTrue(orchestrator.intakeBasic());
-    driverController.leftTrigger().onFalse(orchestrator.pullBack());
     driverController.rightTrigger().onTrue(orchestrator.indexBasic());
     driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()));
 
