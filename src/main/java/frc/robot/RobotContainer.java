@@ -279,7 +279,8 @@ public class RobotContainer {
     // Click A: X lock drive train
     driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()));
 
-//driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker()); //TODO: add back in when fixed
+    // driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker()); //TODO: add back in
+    // when fixed
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
