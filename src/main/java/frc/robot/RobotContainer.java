@@ -234,15 +234,17 @@ public class RobotContainer {
     shooter.setDefaultCommand(shooter.manualShoot(0));
     arm.setDefaultCommand(arm.hold());
     climber.setDefaultCommand(climber.raiseOrLower(0));
+    driverController.b().onTrue(climber.setRatchet(false));
+    driverController.x().onTrue(climber.setRatchet(true));
 
     // operator controller
     operatorController
-        .leftBumper()
-        .and(() -> !indexer.getLimitSwitchPressed())
-        .whileTrue(
-            (intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
-                .onlyWhile(() -> !indexer.getLimitSwitchPressed())
-                .andThen(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(0.2)));
+            .leftBumper()
+            .and(() -> !indexer.getLimitSwitchPressed())
+            .whileTrue(
+                    (intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
+                            .onlyWhile(() -> !indexer.getLimitSwitchPressed())
+                            .andThen(indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).withTimeout(0.2)));
 
     operatorController.leftBumper().whileTrue(orchestrator.intakeBasic());
     operatorController.leftBumper().onFalse(orchestrator.pullBack());
@@ -265,8 +267,6 @@ public class RobotContainer {
     operatorController
         .pov(270)
         .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
-    driverController.b().onTrue(climber.setRatchet(false));
-    driverController.x().onTrue(climber.setRatchet(true));
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().whileTrue(orchestrator.scoreAmp());
