@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
@@ -111,34 +110,31 @@ public class Autos {
 
   public Command mobilityAuto(StartingPosition position) {
     return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
-
-            .andThen(
-                    (
-                            switch (position) {
-                              case RIGHT, CENTER -> new StraightDriveToPose(AllianceFlipUtil.apply(Units.feetToMeters(6.75)), 0, 0, drive)
-                                      .withTimeout(5);
-                              case LEFT -> Commands.run(() -> drive.runVelocity(new ChassisSpeeds(8, 0, 0)))
-                                      .withTimeout(0.25)
-                                      .andThen(
-                                              new StraightDriveToPose(AllianceFlipUtil.apply(Units.feetToMeters(6.75)), 0, 0, drive)
-                                                      .withTimeout(5));
-                            })
-            .onlyIf(AllianceFlipUtil::shouldFlip)
-            )
-
-
-
-
-            .andThen((
-                    switch (position) {
-                      case LEFT, CENTER -> new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-                              .withTimeout(5);
-                      case RIGHT -> Commands.run(() -> drive.runVelocity(new ChassisSpeeds(8, 0, 0)))
-                              .withTimeout(0.25)
-                              .andThen(
-                                      new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-                                              .withTimeout(5));
-                    }).onlyIf(()->!AllianceFlipUtil.shouldFlip()));
+        .andThen(
+            (switch (position) {
+                  case RIGHT, CENTER -> new StraightDriveToPose(
+                          AllianceFlipUtil.apply(Units.feetToMeters(6.75)), 0, 0, drive)
+                      .withTimeout(5);
+                  case LEFT -> Commands.run(() -> drive.runVelocity(new ChassisSpeeds(8, 0, 0)))
+                      .withTimeout(0.25)
+                      .andThen(
+                          new StraightDriveToPose(
+                                  AllianceFlipUtil.apply(Units.feetToMeters(6.75)), 0, 0, drive)
+                              .withTimeout(5));
+                })
+                .onlyIf(AllianceFlipUtil::shouldFlip))
+        .andThen(
+            (switch (position) {
+                  case LEFT, CENTER -> new StraightDriveToPose(
+                          Units.feetToMeters(6.75), 0, 0, drive)
+                      .withTimeout(5);
+                  case RIGHT -> Commands.run(() -> drive.runVelocity(new ChassisSpeeds(8, 0, 0)))
+                      .withTimeout(0.25)
+                      .andThen(
+                          new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
+                              .withTimeout(5));
+                })
+                .onlyIf(() -> !AllianceFlipUtil.shouldFlip()));
   }
 
   public Command oneNoteAuto() {
