@@ -1,6 +1,7 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -27,14 +28,38 @@ public class Autos {
 
   public enum StartingPosition {
     LEFT(
-        AllianceFlipUtil.shouldFlip()
-            ? AllianceFlipUtil.apply(FieldConstants.Subwoofer.sourceFaceCorner)
-            : AllianceFlipUtil.apply(FieldConstants.Subwoofer.ampFaceCorner)),
-    CENTER(AllianceFlipUtil.apply(FieldConstants.Subwoofer.centerFace)),
+        new Pose2d(
+            AllianceFlipUtil.apply(
+                    AllianceFlipUtil.shouldFlip()
+                        ? FieldConstants.Subwoofer.sourceFaceCorner
+                        : FieldConstants.Subwoofer.ampFaceCorner)
+                .getTranslation(),
+            AllianceFlipUtil.apply(
+                    AllianceFlipUtil.shouldFlip()
+                        ? FieldConstants.Subwoofer.sourceFaceCorner
+                        : FieldConstants.Subwoofer.ampFaceCorner)
+                .getRotation()
+                .plus(Rotation2d.fromDegrees(180)))),
+    CENTER(
+        new Pose2d(
+            AllianceFlipUtil.apply(FieldConstants.Subwoofer.centerFace.getTranslation()),
+            AllianceFlipUtil.apply(
+                FieldConstants.Subwoofer.centerFace
+                    .getRotation()
+                    .plus(Rotation2d.fromRadians(Units.degreesToRadians(180)))))),
     RIGHT(
-        AllianceFlipUtil.shouldFlip()
-            ? AllianceFlipUtil.apply(FieldConstants.Subwoofer.ampFaceCorner)
-            : AllianceFlipUtil.apply(FieldConstants.Subwoofer.sourceFaceCorner));
+        new Pose2d(
+            AllianceFlipUtil.apply(
+                    AllianceFlipUtil.shouldFlip()
+                        ? FieldConstants.Subwoofer.ampFaceCorner
+                        : FieldConstants.Subwoofer.sourceFaceCorner)
+                .getTranslation(),
+            AllianceFlipUtil.apply(
+                    AllianceFlipUtil.shouldFlip()
+                        ? FieldConstants.Subwoofer.ampFaceCorner
+                        : FieldConstants.Subwoofer.sourceFaceCorner)
+                .getRotation()
+                .plus(Rotation2d.fromDegrees(180))));
     private final Pose2d startingPosition;
 
     StartingPosition(Pose2d startingPosition) {
@@ -104,8 +129,7 @@ public class Autos {
 
   public Command scoreOneNoteMobility(StartingPosition position) {
 
-    return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
-        .andThen(Commands.sequence(oneNoteAuto().andThen(mobilityAuto(position))));
+    return Commands.sequence(oneNoteAuto().andThen(mobilityAuto(position)));
   }
 
   public Command twoNoteAuto(StartingPosition position) {
