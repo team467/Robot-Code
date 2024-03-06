@@ -31,7 +31,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
@@ -236,10 +235,9 @@ public class RobotContainer {
     operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
     operatorController.x().onTrue(arm.toSetpoint(ArmConstants.STOW));
     operatorController.y().whileTrue(shooter.manualShoot(-1));
-//    TODO: add back in when solonoid is added
-//    operatorController.back().whileTrue(solonoidLock);
-//    operatorController.back().whileFalse(solonoidUnlock);
-
+    //    TODO: add back in when solonoid is added
+    //    operatorController.back().whileTrue(solonoidLock);
+    //    operatorController.back().whileFalse(solonoidUnlock);
 
     // operator d pad
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
@@ -251,7 +249,7 @@ public class RobotContainer {
     driverController.leftTrigger().toggleOnTrue(orchestrator.intakeBasic());
     driverController.leftTrigger().onFalse(orchestrator.pullBack());
     driverController.rightTrigger().onTrue(orchestrator.indexBasic());
-    driverController.a().onTrue(Commands.runOnce(()->drive.stopWithX()));
+    driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()));
 
     //    driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker());
   }

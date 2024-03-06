@@ -168,10 +168,16 @@ public class Orchestrator {
   }
 
   public Command indexBasic() {
-    return indexer.setPercent(IndexerConstants.INDEX_SPEED.get()).until(()->!indexer.getLimitSwitchPressed())
-            .andThen(Commands.parallel(Commands.runOnce(shooterTimer::start),
-                    indexer.setPercent(IndexerConstants.INDEX_SPEED.get())
-            )).until(()->shooterTimer.hasElapsed(0.5)).withTimeout(10).finallyDo(shooterTimer::reset);
+    return indexer
+        .setPercent(IndexerConstants.INDEX_SPEED.get())
+        .until(() -> !indexer.getLimitSwitchPressed())
+        .andThen(
+            Commands.parallel(
+                Commands.runOnce(shooterTimer::start),
+                indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
+        .until(() -> shooterTimer.hasElapsed(0.5))
+        .withTimeout(10)
+        .finallyDo(shooterTimer::reset);
   }
 
   /**
