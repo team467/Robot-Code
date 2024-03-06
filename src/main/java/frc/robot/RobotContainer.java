@@ -26,6 +26,9 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOSparkMAX;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberConstants;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -63,6 +66,7 @@ public class RobotContainer {
   private Vision vision;
   private Pixy2 pixy2;
   private Leds leds;
+  private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
   private Orchestrator orchestrator;
 
@@ -122,6 +126,7 @@ public class RobotContainer {
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
           leds = new Leds();
+          climber = new Climber(new ClimberIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
@@ -228,6 +233,9 @@ public class RobotContainer {
     indexer.setDefaultCommand(indexer.setPercent(0));
     shooter.setDefaultCommand(shooter.manualShoot(0));
     arm.setDefaultCommand(arm.hold());
+    climber.setDefaultCommand(climber.raiseOrLower(0));
+    driverController.b().onTrue(climber.setRatchet(false));
+    driverController.x().onTrue(climber.setRatchet(true));
 
     // operator controller
     operatorController
@@ -246,7 +254,17 @@ public class RobotContainer {
     // operator d pad
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
     operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
-    operatorController.pov(90).whileTrue(arm.runPercent(0));
+    operatorController.x().whileTrue(arm.runPercent(0));
+    operatorController
+        .pov(90)
+        .whileTrue(
+            climber
+                .raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT)
+                .withTimeout(ClimberConstants.BACKUP_TIME)
+                .andThen(climber.raiseOrLower(ClimberConstants.CLIMBER_FORWARD_PERCENT)));
+    operatorController
+        .pov(270)
+        .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
 
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
