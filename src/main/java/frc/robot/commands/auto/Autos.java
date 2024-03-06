@@ -115,7 +115,8 @@ public class Autos {
             oneNoteAuto()
                 .andThen(
                     Commands.parallel(
-                        orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
+                        orchestrator.driveToNote(() -> noteTranslation),
+                        orchestrator.intakeBasic()))
                 .andThen(shoot()));
   }
 
@@ -125,11 +126,12 @@ public class Autos {
             oneNoteAuto()
                 .andThen(
                     Commands.parallel(
-                        orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
+                        orchestrator.driveToNote(() -> noteTranslation),
+                        orchestrator.intakeBasic()))
                 .andThen(shoot())
                 .andThen(
                     Commands.parallel(
-                            orchestrator.driveToNote(secondNoteTranslation),
+                            orchestrator.driveToNote(() -> secondNoteTranslation),
                             orchestrator.intakeBasic())
                         .andThen(shoot())));
   }
@@ -154,16 +156,18 @@ public class Autos {
             oneNoteAuto()
                 .andThen(
                     Commands.parallel(
-                        orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic()))
+                        orchestrator.driveToNote(() -> noteTranslation),
+                        orchestrator.intakeBasic()))
                 .andThen(shoot())
                 .andThen(
                     Commands.parallel(
-                            orchestrator.driveToNote(secondNoteTranslation),
+                            orchestrator.driveToNote(() -> secondNoteTranslation),
                             orchestrator.intakeBasic())
                         .andThen(shoot()))
                 .andThen(
                     Commands.parallel(
-                        orchestrator.driveToNote(thirdNoteTranslation), orchestrator.intakeBasic()))
+                        orchestrator.driveToNote(() -> thirdNoteTranslation),
+                        orchestrator.intakeBasic()))
                 .andThen(shoot()));
   }
 }
