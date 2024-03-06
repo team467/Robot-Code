@@ -70,10 +70,6 @@ public class Shooter extends SubsystemBase {
         this);
   }
 
-  public boolean atVelocity(double velocitySetpoint) {
-    return inputs.shooterLeftVelocityRadPerSec >= velocitySetpoint
-        && inputs.shooterRightVelocityRadPerSec >= velocitySetpoint;
-  }
   /**
    * @param percent the volts that the shooter should be set to
    * @return A command that sets the shooter voltage to that of the inputed volts
