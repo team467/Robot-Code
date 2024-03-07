@@ -20,6 +20,7 @@ import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
 import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.subsystems.arm.Arm;
@@ -69,6 +70,7 @@ public class RobotContainer {
   private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
   private Orchestrator orchestrator;
+  private Autos autos;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -170,6 +172,8 @@ public class RobotContainer {
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autos = new Autos(drive, orchestrator);
+
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
@@ -184,6 +188,31 @@ public class RobotContainer {
                     drive::runCharacterizationVolts,
                     drive::getCharacterizationVelocity))
             .andThen(this::configureButtonBindings));
+
+    autoChooser.addOption("Score One Note", autos.oneNoteAuto());
+    autoChooser.addOption("Mobility [LEFT]", autos.mobilityAuto(Autos.StartingPosition.LEFT));
+    autoChooser.addOption(
+        "Score One Note + Mobility [LEFT]",
+        autos.scoreOneNoteMobility(Autos.StartingPosition.LEFT));
+    autoChooser.addOption("Score Two Notes [LEFT]", autos.twoNoteAuto(Autos.StartingPosition.LEFT));
+    autoChooser.addOption(
+        "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
+    autoChooser.addOption("Mobility [RIGHT]", autos.mobilityAuto(Autos.StartingPosition.RIGHT));
+    autoChooser.addOption(
+        "Score One Note + Mobility [RIGHT]",
+        autos.scoreOneNoteMobility(Autos.StartingPosition.RIGHT));
+    autoChooser.addOption(
+        "Score Two Notes [RIGHT]", autos.twoNoteAuto(Autos.StartingPosition.RIGHT));
+    autoChooser.addOption(
+        "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
+    autoChooser.addOption("Mobility [CENTER]", autos.mobilityAuto(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score One Note + Mobility [CENTER]",
+        autos.scoreOneNoteMobility(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score Two Notes [CENTER]", autos.twoNoteAuto(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score Three Notes [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)

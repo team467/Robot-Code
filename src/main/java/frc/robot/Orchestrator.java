@@ -62,10 +62,11 @@ public class Orchestrator {
    * @param targetTranslation The Translation2d for one of the notes on the field during auto.
    * @return The command for driving to a note during auto.
    */
-  public Command driveToNote(Translation2d targetTranslation) {
+  public Command driveToNote(Supplier<Translation2d> targetTranslation) {
     Supplier<Rotation2d> targetRotation =
-        () -> targetTranslation.minus(drive.getPose().getTranslation()).getAngle();
-    return deferredStraightDriveToPose(() -> new Pose2d(targetTranslation, targetRotation.get()));
+        () -> targetTranslation.get().minus(drive.getPose().getTranslation()).getAngle();
+    return deferredStraightDriveToPose(
+        () -> new Pose2d(targetTranslation.get(), targetRotation.get()));
   }
 
   /**
@@ -222,6 +223,7 @@ public class Orchestrator {
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
+                .withTimeout(10)
                 .finallyDo(() -> pullBack = false))
         .andThen(pullBack().finallyDo(() -> pullBack = true));
   }
