@@ -189,31 +189,30 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(this::configureButtonBindings));
 
-
     autoChooser.addOption("Score One Note", autos.oneNoteAuto());
     autoChooser.addOption("Mobility [LEFT]", autos.mobilityAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption(
-            "Score One Note + Mobility [LEFT]",
-            autos.scoreOneNoteMobility(Autos.StartingPosition.LEFT));
+        "Score One Note + Mobility [LEFT]",
+        autos.scoreOneNoteMobility(Autos.StartingPosition.LEFT));
     autoChooser.addOption("Score Two Notes [LEFT]", autos.twoNoteAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption(
-            "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
+        "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption("Mobility [RIGHT]", autos.mobilityAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
-            "Score One Note + Mobility [RIGHT]",
-            autos.scoreOneNoteMobility(Autos.StartingPosition.RIGHT));
+        "Score One Note + Mobility [RIGHT]",
+        autos.scoreOneNoteMobility(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
-            "Score Two Notes [RIGHT]", autos.twoNoteAuto(Autos.StartingPosition.RIGHT));
+        "Score Two Notes [RIGHT]", autos.twoNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
-            "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
+        "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption("Mobility [CENTER]", autos.mobilityAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-            "Score One Note + Mobility [CENTER]",
-            autos.scoreOneNoteMobility(Autos.StartingPosition.CENTER));
+        "Score One Note + Mobility [CENTER]",
+        autos.scoreOneNoteMobility(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-            "Score Two Notes [CENTER]", autos.twoNoteAuto(Autos.StartingPosition.CENTER));
+        "Score Two Notes [CENTER]", autos.twoNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-            "Score Three Notes [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
+        "Score Three Notes [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)
