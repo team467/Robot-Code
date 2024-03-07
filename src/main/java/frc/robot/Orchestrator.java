@@ -167,8 +167,8 @@ public class Orchestrator {
             .until(() -> !indexer.getLimitSwitchPressed()))
         .andThen(
             Commands.race(
-                new WaitCommand(2), indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
-        .withTimeout(10);
+                new WaitCommand(1), indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
+        .withTimeout(7);
   }
 
   /**
