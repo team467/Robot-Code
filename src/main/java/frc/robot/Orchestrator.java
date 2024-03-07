@@ -5,9 +5,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.TunableNumber;
 import frc.robot.commands.auto.StraightDriveToPose;
@@ -33,7 +33,6 @@ public class Orchestrator {
   private final Arm arm;
 
   @AutoLogOutput private boolean pullBack = false;
-  private final Timer shooterTimer = new Timer();
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
@@ -151,20 +150,25 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-            shooter
-                .manualShoot(ShooterConstants.SHOOT_SPEED)
-                .withTimeout(5)
-                .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
-                .andThen(
-                    Commands.parallel(
-                        Commands.runOnce(shooterTimer::start),
-                        shooter
-                            .manualShoot(ShooterConstants.SHOOT_SPEED)
-                            .until(() -> shooterTimer.hasElapsed(3)))),
-            Commands.parallel(
-                    shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
-                .withTimeout(5))
-        .finallyDo(shooterTimer::reset);
+        shooter
+            .manualShoot(ShooterConstants.SHOOT_SPEED)
+            .withTimeout(5)
+            .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
+            .andThen(
+                Commands.race(
+                    new WaitCommand(3), shooter.manualShoot(ShooterConstants.SHOOT_SPEED))),
+        Commands.parallel(shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
+            .withTimeout(5));
+  }
+
+  public Command indexBasic() {
+    return (indexer
+            .setPercent(IndexerConstants.INDEX_SPEED.get())
+            .until(() -> !indexer.getLimitSwitchPressed()))
+        .andThen(
+            Commands.race(
+                new WaitCommand(2), indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
+        .withTimeout(10);
   }
 
   /**
@@ -218,7 +222,6 @@ public class Orchestrator {
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
-                .withTimeout(10)
                 .finallyDo(() -> pullBack = false))
         .andThen(pullBack().finallyDo(() -> pullBack = true));
   }

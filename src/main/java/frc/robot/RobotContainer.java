@@ -34,7 +34,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
@@ -44,6 +43,7 @@ import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
@@ -205,6 +205,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     drive.setDefaultCommand(
         new DriveWithJoysticks(
@@ -234,27 +235,26 @@ public class RobotContainer {
     shooter.setDefaultCommand(shooter.manualShoot(0));
     arm.setDefaultCommand(arm.hold());
     climber.setDefaultCommand(climber.raiseOrLower(0));
-    driverController.b().onTrue(climber.setRatchet(false));
-    driverController.x().onTrue(climber.setRatchet(true));
 
     // operator controller
-    operatorController
-        .y()
-        .whileTrue(
-            intake.intake().alongWith(indexer.setPercent(IndexerConstants.INDEX_SPEED.get())));
-
-    operatorController.leftBumper().whileTrue(orchestrator.intakeBasic());
-    operatorController.leftBumper().onFalse(orchestrator.pullBack());
-
+    // Hold A: Spin up shooter
+    operatorController.a().whileTrue(shooter.manualShoot(ShooterConstants.SHOOT_SPEED));
+    // Hold B: Expel intake
     operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
-    operatorController.rightBumper().whileTrue(orchestrator.expelShindex());
-    operatorController.a().whileTrue(orchestrator.shootBasic());
-    operatorController.x().whileTrue(orchestrator.scoreAmp());
+    // Click X: Move arm to stow position
+    operatorController.x().onTrue(arm.toSetpoint(ArmConstants.STOW));
+    // Hold Y: Expel the shooter
+    operatorController.y().whileTrue(shooter.manualShoot(-1));
+    // Back button (toggle switch): unlock/lock climber ratchet
+    operatorController.back().whileTrue(climber.setRatchet(false));
+    operatorController.back().whileFalse(climber.setRatchet(true));
 
     // operator d pad
+    // Hold Up: Move arm up
     operatorController.pov(0).whileTrue(arm.runPercent(0.2));
+    // Hold Down: Move arm down
     operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
-    operatorController.x().whileTrue(arm.runPercent(0));
+    // Hold Right: Move climber up
     operatorController
         .pov(90)
         .whileTrue(
@@ -262,13 +262,25 @@ public class RobotContainer {
                 .raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT)
                 .withTimeout(ClimberConstants.BACKUP_TIME)
                 .andThen(climber.raiseOrLower(ClimberConstants.CLIMBER_FORWARD_PERCENT)));
+    // Hold Left: Move climber down
     operatorController
         .pov(270)
         .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
 
-    driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
+    // driver controller
+    // Click Right Bumper: Move arm to stow position
+    driverController.rightBumper().onTrue(arm.toSetpoint(ArmConstants.STOW));
+    // Click Left Bumper: Move arm to amp position
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
-    //    driverController.leftBumper().whileTrue(orchestrator.alignArmSpeaker());
+    // Click left Trigger: Intake (until clicked again or has a note)
+    driverController.leftTrigger().toggleOnTrue(orchestrator.intakeBasic());
+    // Click right Trigger: Run indexer
+    driverController.rightTrigger().onTrue(orchestrator.indexBasic());
+    // Click A: X lock drive train
+    driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()));
+
+    // driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker()); //TODO: add back in
+    // when fixed
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
