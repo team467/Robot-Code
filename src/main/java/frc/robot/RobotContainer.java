@@ -220,7 +220,7 @@ public class RobotContainer {
             Commands.runEnd(
                     () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
                     () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0))
-                .withTimeout(0.69)
+                .withTimeout(1.2)
                 .ignoringDisable(true));
 
     // Configure the button bindings
