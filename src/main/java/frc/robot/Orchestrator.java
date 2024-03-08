@@ -169,7 +169,9 @@ public class Orchestrator {
         .andThen(
             Commands.race(
                     new WaitCommand(1), indexer.setPercent(IndexerConstants.INDEX_SPEED.get()))
-                .andThen(arm.toSetpoint(ArmConstants.STOW)))
+                .andThen(Commands.parallel(
+        arm.toSetpoint(ArmConstants.AMP_POSITION),
+        Commands.waitUntil(arm::atSetpoint)).withTimeout(3)))
         .withTimeout(7);
   }
 
