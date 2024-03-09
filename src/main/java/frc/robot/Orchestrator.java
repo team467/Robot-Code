@@ -243,7 +243,7 @@ public class Orchestrator {
   public Command intakeBasic() {
     return Commands.sequence(
             arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5)))
-                .until(arm::atSetpoint)
+                .until(arm::limitSwitchPressed)
                 .withTimeout(2),
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
