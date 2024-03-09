@@ -7,7 +7,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.TunableNumber;
 import frc.robot.commands.auto.StraightDriveToPose;
@@ -168,10 +167,13 @@ public class Orchestrator {
             .until(() -> !indexer.getLimitSwitchPressed()))
         .andThen(
             Commands.race(
-                    Commands.waitSeconds(0.5), indexer.setPercent(IndexerConstants.INDEX_SPEED.get()))
-                .andThen(Commands.parallel(
-        arm.toSetpoint(ArmConstants.AMP_POSITION),
-        Commands.waitUntil(arm::atSetpoint)).withTimeout(3)))
+                    Commands.waitSeconds(0.5),
+                    indexer.setPercent(IndexerConstants.INDEX_SPEED.get()))
+                .andThen(
+                    Commands.parallel(
+                            arm.toSetpoint(ArmConstants.AMP_POSITION),
+                            Commands.waitUntil(arm::atSetpoint))
+                        .withTimeout(3)))
         .withTimeout(3);
   }
 
