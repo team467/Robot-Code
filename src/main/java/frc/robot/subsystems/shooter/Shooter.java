@@ -76,12 +76,13 @@ public class Shooter extends SubsystemBase {
    */
   public Command manualShoot(double percent) {
     return Commands.run(
-        () -> {
-          io.setShooterVelocity(percent);
-          PIDMode = false;
-          robotState.shooting = true;
-        },
-        this).finallyDo(()->robotState.shooting=false);
+            () -> {
+              io.setShooterVelocity(percent);
+              PIDMode = false;
+              robotState.shooting = true;
+            },
+            this)
+        .finallyDo(() -> robotState.shooting = false);
   }
 
   public Command manualShootVolts(double volts) {
