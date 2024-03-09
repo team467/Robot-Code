@@ -157,7 +157,7 @@ public class Orchestrator {
             .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
             .andThen(
                 Commands.race(
-                    new WaitCommand(3), shooter.manualShoot(ShooterConstants.SHOOT_SPEED))),
+                    Commands.waitSeconds(3), shooter.manualShoot(ShooterConstants.SHOOT_SPEED))),
         Commands.parallel(shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
             .withTimeout(5));
   }
@@ -168,7 +168,10 @@ public class Orchestrator {
             .until(() -> !indexer.getLimitSwitchPressed()))
         .andThen(
             Commands.race(
-                new WaitCommand(0.5), indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
+                    Commands.waitSeconds(0.5), indexer.setPercent(IndexerConstants.INDEX_SPEED.get()))
+                .andThen(Commands.parallel(
+        arm.toSetpoint(ArmConstants.AMP_POSITION),
+        Commands.waitUntil(arm::atSetpoint)).withTimeout(3)))
         .withTimeout(3);
   }
 
