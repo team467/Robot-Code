@@ -273,7 +273,7 @@ public class RobotContainer {
     operatorController.x().onTrue(arm.toSetpoint(ArmConstants.STOW));
     // Hold Y: Expel the shooter
     operatorController.y().whileTrue(shooter.manualShoot(-1));
-
+    // Hold RB: Duck the arm to fit under stage
     operatorController
         .rightBumper()
         .whileTrue(arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))));
@@ -318,7 +318,7 @@ public class RobotContainer {
         .onTrue(
             Commands.parallel(
                     arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
-                    Commands.waitUntil(arm::atSetpoint))
+                    Commands.waitUntil(arm::limitSwitchPressed))
                 .withTimeout(2));
     // Click Left Bumper: Move arm to amp position
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
