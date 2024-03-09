@@ -12,16 +12,21 @@ import frc.robot.FieldConstants;
 import frc.robot.Orchestrator;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Autos {
   private final Drive drive;
   private final Orchestrator orchestrator;
-  @AutoLogOutput(key = "Autos/Notes/0") private Translation2d noteTranslation;
-  @AutoLogOutput(key = "Autos/Notes/1") private Translation2d secondNoteTranslation;
-  @AutoLogOutput(key = "Autos/Notes/2") private Translation2d thirdNoteTranslation;
+
+  @AutoLogOutput(key = "Autos/Notes/0")
+  private Translation2d noteTranslation;
+
+  @AutoLogOutput(key = "Autos/Notes/1")
+  private Translation2d secondNoteTranslation;
+
+  @AutoLogOutput(key = "Autos/Notes/2")
+  private Translation2d thirdNoteTranslation;
 
   public Autos(Drive drive, Orchestrator orchestrator) {
     this.drive = drive;
