@@ -43,7 +43,6 @@ import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -267,7 +266,7 @@ public class RobotContainer {
 
     // operator controller
     // Hold A: Spin up shooter
-    operatorController.a().whileTrue(shooter.manualShoot(ShooterConstants.SHOOT_SPEED));
+    operatorController.a().whileTrue(orchestrator.spinUpFlywheel());
     // Hold B: Expel intake
     operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
     // Click X: Move arm to stow position

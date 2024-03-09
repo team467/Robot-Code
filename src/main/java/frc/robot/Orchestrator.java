@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.TunableNumber;
 import frc.robot.commands.auto.StraightDriveToPose;
@@ -130,6 +131,13 @@ public class Orchestrator {
                             .minus(drive.getPose().getTranslation())
                             .getAngle()
                             .minus(Rotation2d.fromRadians(Math.PI)))));
+  }
+
+  public Command spinUpFlywheel() {
+    return new ConditionalCommand(
+        shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED),
+        shooter.manualShoot(ShooterConstants.SHOOT_SPEED),
+        () -> arm.getAngle() > Units.degreesToRadians(65));
   }
 
   /**
