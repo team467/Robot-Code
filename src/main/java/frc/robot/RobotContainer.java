@@ -302,8 +302,13 @@ public class RobotContainer {
     // driver controller
     // Hold Right Bumper: Move arm to stow position and move it back up once let go
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
-    driverController.rightBumper().onFalse(Commands.parallel(arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS),
-            Commands.waitUntil(arm::atSetpoint)).withTimeout(2));
+    driverController
+        .rightBumper()
+        .onFalse(
+            Commands.parallel(
+                    arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS),
+                    Commands.waitUntil(arm::atSetpoint))
+                .withTimeout(2));
     // Click Left Bumper: Move arm to amp position
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     // Click left Trigger: Intake (until clicked again or has a note)
