@@ -22,7 +22,7 @@ public interface ClimberIO {
 
   default void updateInputs(ClimberIOInputs inputs) {}
 
-  void setMotorsOutputPercent(double percentOutput);
+  default void setMotorsOutputPercent(double percentOutput) {}
 
   default void setRatchetLocked(boolean locked) {}
 

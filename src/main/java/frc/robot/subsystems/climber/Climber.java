@@ -52,4 +52,8 @@ public class Climber extends SubsystemBase {
         },
         this);
   }
+
+  public boolean getRatchet() {
+    return climberIOInputs.ratchetLocked;
+  }
 }

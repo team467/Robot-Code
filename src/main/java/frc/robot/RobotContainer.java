@@ -18,7 +18,6 @@ import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacter
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
-import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveWithDpad;
@@ -29,7 +28,7 @@ import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOSparkMAX;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberConstants;
-import frc.robot.subsystems.climber.ClimberIOSparkMax;
+import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -47,7 +46,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
-import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -109,12 +107,12 @@ public class RobotContainer {
                       Units.inchesToMeters(15.5)),
                   new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
 
-          vision =
-              new Vision(
-                  List.of(
-                          new VisionIOPhotonVision("front", front),
-                          new VisionIOPhotonVision("back", back))
-                      .toArray(new frc.lib.io.vision.VisionIO[0]));
+          //          vision =
+          //              new Vision(
+          //                  List.of(
+          //                          new VisionIOPhotonVision("front", front),
+          //                          new VisionIOPhotonVision("back", back))
+          //                      .toArray(new frc.lib.io.vision.VisionIO[0]));
 
           drive =
               new Drive(
@@ -128,7 +126,7 @@ public class RobotContainer {
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
           leds = new Leds();
-          climber = new Climber(new ClimberIOSparkMax());
+          //          climber = new Climber(new ClimberIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
@@ -168,7 +166,9 @@ public class RobotContainer {
     if (intake == null) {
       intake = new Intake(new IntakeIO() {});
     }
-
+    if (climber == null) {
+      climber = new Climber(new ClimberIO() {});
+    }
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -290,11 +290,15 @@ public class RobotContainer {
             climber
                 .raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT)
                 .withTimeout(ClimberConstants.BACKUP_TIME)
-                .andThen(climber.raiseOrLower(ClimberConstants.CLIMBER_FORWARD_PERCENT)));
+                .andThen(climber.raiseOrLower(ClimberConstants.CLIMBER_FORWARD_PERCENT))
+                .onlyWhile(() -> !climber.getRatchet()));
     // Hold Left: Move climber down
     operatorController
         .pov(270)
-        .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
+        .whileTrue(
+            climber
+                .raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT)
+                .onlyWhile(() -> !climber.getRatchet()));
 
     // driver controller
     // Click Right Bumper: Move arm to stow position
