@@ -150,15 +150,20 @@ public class Orchestrator {
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter
-            .manualShoot(ShooterConstants.SHOOT_SPEED)
-            .withTimeout(5)
-            .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
-            .andThen(
-                Commands.race(
-                    Commands.waitSeconds(3), shooter.manualShoot(ShooterConstants.SHOOT_SPEED))),
-        Commands.parallel(shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
-            .withTimeout(5));
+            shooter
+                .manualShoot(ShooterConstants.SHOOT_SPEED)
+                .withTimeout(1.5)
+                .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
+                .andThen(
+                    Commands.race(
+                        Commands.waitSeconds(1.5),
+                        shooter.manualShoot(ShooterConstants.SHOOT_SPEED))),
+            Commands.parallel(
+                    shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
+                .withTimeout(1))
+        .andThen(
+            Commands.parallel(
+                shooter.manualShoot(0).until(() -> true), indexer.setPercent(0).until(() -> true)));
   }
 
   public Command indexBasic() {
@@ -171,10 +176,9 @@ public class Orchestrator {
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()))
                 .andThen(
                     Commands.parallel(
-                            arm.toSetpoint(ArmConstants.STOW),
-                            Commands.waitUntil(arm::atSetpoint))
-                        .withTimeout(3)))
-        .withTimeout(3);
+                            arm.toSetpoint(ArmConstants.STOW), Commands.waitUntil(arm::atSetpoint))
+                        .withTimeout(1)))
+        .withTimeout(1);
   }
 
   /**
