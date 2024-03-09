@@ -273,6 +273,16 @@ public class RobotContainer {
     operatorController.x().onTrue(arm.toSetpoint(ArmConstants.STOW));
     // Hold Y: Expel the shooter
     operatorController.y().whileTrue(shooter.manualShoot(-1));
+
+    operatorController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
+    operatorController
+            .rightBumper()
+            .onFalse(
+                    Commands.parallel(
+                                    arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS),
+                                    Commands.waitUntil(arm::atSetpoint))
+                            .withTimeout(2));
+
     // Back button (toggle switch): unlock/lock climber ratchet
     operatorController.back().whileTrue(climber.setRatchet(false));
     operatorController.back().whileFalse(climber.setRatchet(true));
@@ -300,15 +310,8 @@ public class RobotContainer {
                 .onlyWhile(() -> !climber.getRatchet()));
 
     // driver controller
-    // Hold Right Bumper: Move arm to stow position and move it back up once let go
+    // Hold Right Bumper: Move arm to stow position
     driverController.rightBumper().whileTrue(arm.toSetpoint(ArmConstants.STOW));
-    driverController
-        .rightBumper()
-        .onFalse(
-            Commands.parallel(
-                    arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS),
-                    Commands.waitUntil(arm::atSetpoint))
-                .withTimeout(2));
     // Click Left Bumper: Move arm to amp position
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     // Click left Trigger: Intake (until clicked again or has a note)
