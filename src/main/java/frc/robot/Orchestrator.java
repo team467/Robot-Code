@@ -171,7 +171,7 @@ public class Orchestrator {
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()))
                 .andThen(
                     Commands.parallel(
-                            arm.toSetpoint(ArmConstants.AMP_POSITION),
+                            arm.toSetpoint(ArmConstants.STOW),
                             Commands.waitUntil(arm::atSetpoint))
                         .withTimeout(3)))
         .withTimeout(3);
