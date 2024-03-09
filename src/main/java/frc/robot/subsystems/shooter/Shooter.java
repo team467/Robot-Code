@@ -79,8 +79,9 @@ public class Shooter extends SubsystemBase {
         () -> {
           io.setShooterVelocity(percent);
           PIDMode = false;
+          robotState.shooting = true;
         },
-        this);
+        this).finallyDo(()->robotState.shooting=false);
   }
 
   public Command manualShootVolts(double volts) {
