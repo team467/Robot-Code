@@ -242,7 +242,9 @@ public class Orchestrator {
    */
   public Command intakeBasic() {
     return Commands.sequence(
-            arm.toSetpoint(ArmConstants.STOW).until(arm::atSetpoint).withTimeout(2),
+            arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5)))
+                .until(arm::atSetpoint)
+                .withTimeout(2),
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
