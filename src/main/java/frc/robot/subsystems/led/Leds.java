@@ -133,7 +133,7 @@ public class Leds extends SubsystemBase {
     } else if (false) { // TODO: need state variable for auto finished
       mode = LedMode.AUTO_FINISHED;
 
-    } else if (false) { // TODO: need state variable for autonomous
+    } else if (DriverStation.isAutonomous()) { // TODO: need state variable for autonomous
       mode = LedMode.AUTONOMOUS;
 
     } else if (state.hanging) {
