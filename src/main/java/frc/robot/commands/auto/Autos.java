@@ -113,14 +113,13 @@ public class Autos {
         .andThen(
             (switch (position) {
                   case RIGHT, CENTER -> new StraightDriveToPose(
-                          AllianceFlipUtil.apply(Units.feetToMeters(6.75)), 0, 0, drive)
+                          Units.feetToMeters(-6.75), 0, 0, drive)
                       .withTimeout(5);
                   case LEFT -> Commands.run(
                           () -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
                       .withTimeout(1)
                       .andThen(
-                          new StraightDriveToPose(
-                                  AllianceFlipUtil.apply(Units.feetToMeters(6.75)), 0, 0, drive)
+                          new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
                               .withTimeout(5));
                 })
                 .onlyIf(AllianceFlipUtil::shouldFlip))
