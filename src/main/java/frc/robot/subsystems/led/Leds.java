@@ -199,7 +199,7 @@ public class Leds extends SubsystemBase {
         break;
 
       case CAN_SHOOT:
-        solid(Section.FULL, Color.kBlueViolet);
+        solid(Section.FULL, Color.kCadetBlue);
         // has the same color as shooting except it's solid
         break;
 
@@ -207,7 +207,7 @@ public class Leds extends SubsystemBase {
         // leds glow in the direction it's shooting
         wave(
             Section.FULL,
-            Color.kBlueViolet,
+            Color.kCadetBlue,
             Color.kBlack,
             waveAllianceCycleLength,
             waveAllianceDuration);
