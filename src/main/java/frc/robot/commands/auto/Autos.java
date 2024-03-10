@@ -118,45 +118,45 @@ public class Autos {
 
   public Command mobilityAuto(StartingPosition position) {
     return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
-            .andThen(
-                    Commands.either(
-                            Commands.select(
-                                    Map.of(
-                                            StartingPosition.RIGHT,
-                                            new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
-                                                    .withTimeout(5),
-                                            StartingPosition.CENTER,
-                                            new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
-                                                    .withTimeout(5),
-                                            StartingPosition.LEFT,
-                                            Commands.run(
-                                                            () ->
-                                                                    drive.runVelocity(
-                                                                            new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
-                                                    .withTimeout(1)
-                                                    .andThen(
-                                                            new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
-                                                                    .withTimeout(5))),
-                                    () -> position),
-                            Commands.select(
-                                    Map.of(
-                                            StartingPosition.LEFT,
-                                            new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-                                                    .withTimeout(5),
-                                            StartingPosition.CENTER,
-                                            new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
-                                                    .withTimeout(5),
-                                            StartingPosition.RIGHT,
-                                            Commands.run(
-                                                            () ->
-                                                                    drive.runVelocity(
-                                                                            new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
-                                                    .withTimeout(1)
-                                                    .andThen(
-                                                            new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-                                                                    .withTimeout(5))),
-                                    () -> position),
-                            AllianceFlipUtil::shouldFlip));
+        .andThen(
+            Commands.either(
+                Commands.select(
+                    Map.of(
+                        StartingPosition.RIGHT,
+                        new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
+                            .withTimeout(5),
+                        StartingPosition.CENTER,
+                        new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
+                            .withTimeout(5),
+                        StartingPosition.LEFT,
+                        Commands.run(
+                                () ->
+                                    drive.runVelocity(
+                                        new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
+                            .withTimeout(1)
+                            .andThen(
+                                new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
+                                    .withTimeout(5))),
+                    () -> position),
+                Commands.select(
+                    Map.of(
+                        StartingPosition.LEFT,
+                        new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
+                            .withTimeout(5),
+                        StartingPosition.CENTER,
+                        new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
+                            .withTimeout(5),
+                        StartingPosition.RIGHT,
+                        Commands.run(
+                                () ->
+                                    drive.runVelocity(
+                                        new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
+                            .withTimeout(1)
+                            .andThen(
+                                new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
+                                    .withTimeout(5))),
+                    () -> position),
+                AllianceFlipUtil::shouldFlip));
   }
 
   public Command oneNoteAuto() {
