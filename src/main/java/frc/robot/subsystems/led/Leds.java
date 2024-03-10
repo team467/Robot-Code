@@ -192,14 +192,14 @@ public class Leds extends SubsystemBase {
       case IN_RANGE:
         wave(
             Section.FULL,
-            Color.kBeige,
+            Color.kGreen,
             Color.kBlack,
             waveAllianceCycleLength,
             waveAllianceDuration);
         break;
 
       case CAN_SHOOT:
-        solid(Section.FULL, Color.kCadetBlue);
+        solid(Section.FULL, Color.kGreen);
         // has the same color as shooting except it's solid
         break;
 
@@ -207,14 +207,14 @@ public class Leds extends SubsystemBase {
         // leds glow in the direction it's shooting
         wave(
             Section.FULL,
-            Color.kCadetBlue,
+            Color.kGreen,
             Color.kBlack,
             waveAllianceCycleLength,
             waveAllianceDuration);
         break;
 
       case CONTAINING:
-        solid(Section.FULL, Color.kAquamarine);
+        solid(Section.FULL, Color.kGreen);
         break;
 
       case INTAKING:
@@ -265,7 +265,7 @@ public class Leds extends SubsystemBase {
         break;
 
       case OFF:
-        solid(Section.FULL, Color.kBlack);
+        wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
         break;
 
       default:
@@ -353,7 +353,7 @@ public class Leds extends SubsystemBase {
    *
    * @param percent The percentage of the section to apply the solid color to. Value should be
    *     between 0.0 and 1.0.
-   * @param color The color to be applied.
+   * @param color1 The color to be applied.
    */
   private void solid(double percent, Color color1, Color color2) {
     int color1Pixels = (int) Math.round(MathUtil.clamp(length * percent, 0, length));
