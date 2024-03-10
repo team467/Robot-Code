@@ -19,6 +19,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Autos {
   private final Drive drive;
+  private final Arm arm;
   private final Orchestrator orchestrator;
 
   @AutoLogOutput(key = "Autos/Notes/0")
