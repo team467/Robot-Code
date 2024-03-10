@@ -323,9 +323,9 @@ public class RobotContainer {
     // Click Left Bumper: Move arm to amp position
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     // Click left Trigger: Intake (until clicked again or has a note)
-    driverController.leftTrigger().toggleOnTrue(orchestrator.intakeBasic());
+    driverController.leftTrigger(0.15).toggleOnTrue(orchestrator.intakeBasic());
     // Click right Trigger: Run indexer
-    driverController.rightTrigger().onTrue(orchestrator.indexBasic());
+    driverController.rightTrigger(0.15).onTrue(orchestrator.indexBasic());
     // Click A: X lock drive train
     driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()));
 
