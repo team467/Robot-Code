@@ -171,7 +171,7 @@ public class RobotContainer {
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    autos = new Autos(drive, orchestrator);
+    autos = new Autos(drive, arm, orchestrator);
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());

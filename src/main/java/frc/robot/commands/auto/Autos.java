@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants;
 import frc.robot.Orchestrator;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -28,8 +30,9 @@ public class Autos {
   @AutoLogOutput(key = "Autos/Notes/2")
   private Translation2d thirdNoteTranslation;
 
-  public Autos(Drive drive, Orchestrator orchestrator) {
+  public Autos(Drive drive, Arm arm, Orchestrator orchestrator) {
     this.drive = drive;
+    this.arm = arm;
     this.orchestrator = orchestrator;
   }
 
@@ -142,7 +145,11 @@ public class Autos {
   }
 
   public Command oneNoteAuto() {
-    return orchestrator.shootBasic();
+    return arm.runPercent(-0.3)
+        .until(arm::limitSwitchPressed)
+        .withTimeout(1)
+        .andThen(arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).withTimeout(1))
+        .andThen(orchestrator.shootBasic());
   }
 
   public Command scoreOneNoteMobility(StartingPosition position) {
