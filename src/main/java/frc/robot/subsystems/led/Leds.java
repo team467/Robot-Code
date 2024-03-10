@@ -139,7 +139,7 @@ public class Leds extends SubsystemBase {
     } else if (state.hanging) {
       mode = LedMode.HANGING;
 
-    } else if (state.shooting) {
+    } else if (state.shooting && state.hasNote) {
       mode = LedMode.SHOOTING;
 
     } else if (state.canShoot && state.hasNote) {
