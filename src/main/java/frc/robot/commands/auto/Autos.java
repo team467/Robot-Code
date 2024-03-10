@@ -21,14 +21,9 @@ public class Autos {
   private final Drive drive;
   private final Arm arm;
   private final Orchestrator orchestrator;
-
-  @AutoLogOutput(key = "Autos/Notes/0")
+  private StartingPosition startingPosition;
   private Translation2d noteTranslation;
-
-  @AutoLogOutput(key = "Autos/Notes/1")
   private Translation2d secondNoteTranslation;
-
-  @AutoLogOutput(key = "Autos/Notes/2")
   private Translation2d thirdNoteTranslation;
 
   public Autos(Drive drive, Arm arm, Orchestrator orchestrator) {
@@ -84,6 +79,7 @@ public class Autos {
   }
 
   private Command setNotePositions(Supplier<StartingPosition> position) {
+    this.startingPosition = position.get();
     return Commands.runOnce(
         () -> {
           switch (position.get()) {
@@ -160,7 +156,9 @@ public class Autos {
 
   public Command twoNoteAuto(StartingPosition position) {
     return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
-        .andThen(setNotePositions(() -> position))
+        .andThen(
+            Commands.runOnce(() -> setNotePositions(() -> position))
+                .until(() -> noteTranslation != null))
         .andThen(
             oneNoteAuto()
                 .andThen(
@@ -187,17 +185,11 @@ public class Autos {
   }
 
   private Command shoot() {
-    return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0, 0, 0)))
-        .onlyWhile(
-            () ->
-                drive
-                        .getPose()
-                        .getTranslation()
-                        .getDistance(
-                            AllianceFlipUtil.apply(
-                                FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()))
-                    > Units.inchesToMeters(30))
-        .andThen(orchestrator.fullAlignShootSpeaker());
+    return orchestrator
+        .deferredStraightDriveToPose(() -> startingPosition.getStartingPosition())
+        .withTimeout(2)
+        .andThen(arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).withTimeout(0.3))
+        .andThen(orchestrator.shootBasic());
   }
 
   public Command fourNoteAuto(StartingPosition position) {
