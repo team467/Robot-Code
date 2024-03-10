@@ -153,8 +153,8 @@ public class Orchestrator {
   }
 
   /**
-   * Shoots with a velocity setpoint of 9999 rad per seconds, this needs to be tuned. Turns off the
-   * indexer and the shooter when the limit switch is not pressed.
+   * Shoots with 10.5 volts of power. Turns off the indexer and the shooter when the limit switch is
+   * not pressed.
    *
    * @return The command to shoot the note.
    */
