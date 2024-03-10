@@ -133,10 +133,6 @@ public class Orchestrator {
   }
 
   public Command spinUpFlywheel() {
-    //    return new ConditionalCommand(
-    //        shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED),
-    //        shooter.manualShoot(ShooterConstants.SHOOT_SPEED),
-    //        () -> arm.getAngle() > Units.degreesToRadians(65));
     return (shooter
             .manualShoot(ShooterConstants.AMP_SCORE_SPEED)
             .onlyIf(() -> arm.getAngle() > Units.degreesToRadians(65)))
