@@ -34,7 +34,7 @@ public class Pixy2IOPhysical implements Pixy2IO {
     if (hasChanged(inputs)) {
       age = 0;
     } else {
-      age = age + 1;
+      age++;
     }
     inputs.age = pixyTable.getEntry("Age").getDouble(0.0);
     inputs.x = pixyTable.getEntry("X").getDouble(0.0);
@@ -43,6 +43,6 @@ public class Pixy2IOPhysical implements Pixy2IO {
     inputs.signature = pixyTable.getEntry("Signature").getDouble(0.0);
     inputs.width = pixyTable.getEntry("Width").getDouble(0.0);
     inputs.height = pixyTable.getEntry("Height").getDouble(0.0);
-    inputs.seesNote = pixyTable.getEntry("Valid").getInteger(0) == 1 && age < 10;
+    inputs.seesNote = pixyTable.getEntry("Valid").getBoolean(false) && age < 1000;
   }
 }
