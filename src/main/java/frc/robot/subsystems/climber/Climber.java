@@ -35,10 +35,11 @@ public class Climber extends SubsystemBase {
    */
   public Command raiseOrLower(double percentOutput) {
     return Commands.run(
-        () -> {
-          climberIO.setMotorsOutputPercent(percentOutput);
-        },
-        this);
+            () -> {
+              climberIO.setMotorsOutputPercent(percentOutput);
+            },
+            this)
+        .onlyWhile(() -> !climberIOInputs.ratchetLocked);
   }
   /**
    * Command to disable the climber

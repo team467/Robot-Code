@@ -301,15 +301,11 @@ public class RobotContainer {
             climber
                 .raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT)
                 .withTimeout(ClimberConstants.BACKUP_TIME)
-                .andThen(climber.raiseOrLower(ClimberConstants.CLIMBER_FORWARD_PERCENT))
-                .onlyWhile(() -> !climber.getRatchet()));
+                .andThen(climber.raiseOrLower(ClimberConstants.CLIMBER_FORWARD_PERCENT)));
     // Hold Left: Move climber down
     operatorController
         .pov(270)
-        .whileTrue(
-            climber
-                .raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT)
-                .onlyWhile(() -> !climber.getRatchet()));
+        .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
 
     // driver controller
     // Click Right Bumper: Move arm to stow position
