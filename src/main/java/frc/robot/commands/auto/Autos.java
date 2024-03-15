@@ -167,9 +167,8 @@ public class Autos {
         .andThen(orchestrator.shootBasic());
   }
 
-  public Command scoreOneNoteMobility(StartingPosition position) { // TODO: Delete after comp
-    return Commands.parallel(oneNoteAuto(), Commands.waitSeconds(11))
-        .andThen(mobilityAuto(position));
+  public Command scoreOneNoteMobility(StartingPosition position) {
+    return oneNoteAuto().andThen(mobilityAuto(position));
   }
 
   public Command twoNoteAuto(StartingPosition position) {
