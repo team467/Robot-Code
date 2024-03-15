@@ -55,6 +55,7 @@ public class DriveWithJoysticks extends Command {
 
   @Override
   public void execute() {
+    Logger.recordOutput("Drive/MaxAngularSpeed", MAX_ANGULAR_SPEED);
     // Get values from double suppliers
     double leftX = leftXFilter.calculate(leftXSupplier.get());
     double leftY = leftYFilter.calculate(leftYSupplier.get());
@@ -90,7 +91,7 @@ public class DriveWithJoysticks extends Command {
           new ChassisSpeeds(
               linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED,
               linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
-              rightX * MAX_ANGULAR_SPEED);
+              rightX * DriveConstants.MAX_LINEAR_SPEED);
     } else {
       if (AllianceFlipUtil.shouldFlip()) {
         Logger.recordOutput("Drive/FlipAlliance", true);

@@ -23,16 +23,17 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("Intake", intakeInputs);
-    robotState.intaking = this.getCurrentCommand() == intake();
   }
 
   public Command intake() {
     return Commands.run(
-        () -> {
-          Logger.recordOutput("Intake/DesiredSpeed", IntakeConstants.INTAKE_SPEED.get());
-          intakeIO.setSpeed(IntakeConstants.INTAKE_SPEED.get());
-        },
-        this);
+            () -> {
+              Logger.recordOutput("Intake/DesiredSpeed", IntakeConstants.INTAKE_SPEED.get());
+              intakeIO.setSpeed(IntakeConstants.INTAKE_SPEED.get());
+              robotState.intaking = true;
+            },
+            this)
+        .finallyDo(() -> robotState.intaking = false);
   }
 
   public Command release() {

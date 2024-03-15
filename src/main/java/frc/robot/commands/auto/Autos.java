@@ -10,19 +10,31 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants;
 import frc.robot.Orchestrator;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.drive.Drive;
+import java.util.Map;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Autos {
   private final Drive drive;
+  private final Arm arm;
   private final Orchestrator orchestrator;
+
+  @AutoLogOutput(key = "Autos/Notes/0")
   private Translation2d noteTranslation;
+
+  @AutoLogOutput(key = "Autos/Notes/1")
   private Translation2d secondNoteTranslation;
+
+  @AutoLogOutput(key = "Autos/Notes/2")
   private Translation2d thirdNoteTranslation;
 
-  public Autos(Drive drive, Orchestrator orchestrator) {
+  public Autos(Drive drive, Arm arm, Orchestrator orchestrator) {
     this.drive = drive;
+    this.arm = arm;
     this.orchestrator = orchestrator;
   }
 
@@ -92,10 +104,6 @@ public class Autos {
               this.thirdNoteTranslation = getNotePositions(0, true);
             }
           }
-
-          Logger.recordOutput("Autos/NotePositions/0", noteTranslation);
-          Logger.recordOutput("Autos/NotePositions/1", secondNoteTranslation);
-          Logger.recordOutput("Autos/NotePositions/2", thirdNoteTranslation);
         });
   }
 
@@ -111,41 +119,56 @@ public class Autos {
   public Command mobilityAuto(StartingPosition position) {
     return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
         .andThen(
-            (switch (position) {
-                  case RIGHT, CENTER -> new StraightDriveToPose(
-                          AllianceFlipUtil.apply(Units.feetToMeters(6.75)), 0, 0, drive)
-                      .withTimeout(5);
-                  case LEFT -> Commands.run(
-                          () -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
-                      .withTimeout(1)
-                      .andThen(
-                          new StraightDriveToPose(
-                                  AllianceFlipUtil.apply(Units.feetToMeters(6.75)), 0, 0, drive)
-                              .withTimeout(5));
-                })
-                .onlyIf(AllianceFlipUtil::shouldFlip))
-        .andThen(
-            (switch (position) {
-                  case LEFT, CENTER -> new StraightDriveToPose(
-                          Units.feetToMeters(6.75), 0, 0, drive)
-                      .withTimeout(5);
-                  case RIGHT -> Commands.run(
-                          () -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
-                      .withTimeout(1)
-                      .andThen(
-                          new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-                              .withTimeout(5));
-                })
-                .onlyIf(() -> !AllianceFlipUtil.shouldFlip()));
+            Commands.either(
+                Commands.select(
+                    Map.of(
+                        StartingPosition.RIGHT,
+                        new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
+                            .withTimeout(5),
+                        StartingPosition.CENTER,
+                        new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
+                            .withTimeout(5),
+                        StartingPosition.LEFT,
+                        Commands.run(
+                                () ->
+                                    drive.runVelocity(
+                                        new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
+                            .withTimeout(1)
+                            .andThen(
+                                new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
+                                    .withTimeout(5))),
+                    () -> position),
+                Commands.select(
+                    Map.of(
+                        StartingPosition.LEFT,
+                        new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
+                            .withTimeout(5),
+                        StartingPosition.CENTER,
+                        new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
+                            .withTimeout(5),
+                        StartingPosition.RIGHT,
+                        Commands.run(
+                                () ->
+                                    drive.runVelocity(
+                                        new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
+                            .withTimeout(1)
+                            .andThen(
+                                new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
+                                    .withTimeout(5))),
+                    () -> position),
+                AllianceFlipUtil::shouldFlip));
   }
 
   public Command oneNoteAuto() {
-    return orchestrator.shootBasic();
+    return arm.runPercent(-0.3)
+        .until(arm::limitSwitchPressed)
+        .withTimeout(1)
+        .andThen(arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).withTimeout(1))
+        .andThen(orchestrator.shootBasic());
   }
 
   public Command scoreOneNoteMobility(StartingPosition position) {
-
-    return Commands.sequence(oneNoteAuto().andThen(mobilityAuto(position)));
+    return oneNoteAuto().andThen(mobilityAuto(position));
   }
 
   public Command twoNoteAuto(StartingPosition position) {
@@ -155,7 +178,7 @@ public class Autos {
             oneNoteAuto()
                 .andThen(
                     Commands.parallel(
-                        orchestrator.driveToNote(() -> noteTranslation),
+                        orchestrator.driveToNote(() -> noteTranslation).withTimeout(5),
                         orchestrator.intakeBasic()))
                 .andThen(shoot()));
   }

@@ -7,7 +7,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.TunableNumber;
 import frc.robot.commands.auto.StraightDriveToPose;
@@ -133,6 +132,16 @@ public class Orchestrator {
                             .minus(Rotation2d.fromRadians(Math.PI)))));
   }
 
+  public Command spinUpFlywheel() {
+    return (shooter
+            .manualShoot(ShooterConstants.AMP_SCORE_SPEED)
+            .onlyIf(() -> arm.getAngle() > Units.degreesToRadians(65)))
+        .andThen(
+            shooter
+                .manualShoot(ShooterConstants.SHOOT_SPEED)
+                .onlyIf(() -> arm.getAngle() < Units.degreesToRadians(65)));
+  }
+
   /**
    * Uses goToAmp(), alignArmAmp(), and shootBasic() to move the robot to the amp and then line up
    * and shoot.
@@ -144,22 +153,27 @@ public class Orchestrator {
   }
 
   /**
-   * Shoots with a velocity setpoint of 9999 rad per seconds, this needs to be tuned. Turns off the
-   * indexer and the shooter when the limit switch is not pressed.
+   * Shoots with 10.5 volts of power. Turns off the indexer and the shooter when the limit switch is
+   * not pressed.
    *
    * @return The command to shoot the note.
    */
   public Command shootBasic() {
     return Commands.sequence(
-        shooter
-            .manualShoot(ShooterConstants.SHOOT_SPEED)
-            .withTimeout(5)
-            .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
-            .andThen(
-                Commands.race(
-                    new WaitCommand(3), shooter.manualShoot(ShooterConstants.SHOOT_SPEED))),
-        Commands.parallel(shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
-            .withTimeout(5));
+            shooter
+                .manualShoot(ShooterConstants.SHOOT_SPEED)
+                .withTimeout(1.5)
+                .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
+                .andThen(
+                    Commands.race(
+                        Commands.waitSeconds(1.5),
+                        shooter.manualShoot(ShooterConstants.SHOOT_SPEED))),
+            Commands.parallel(
+                    shooter.manualShoot(ShooterConstants.SHOOT_SPEED), indexer.setPercent(1))
+                .withTimeout(1))
+        .andThen(
+            Commands.parallel(
+                shooter.manualShoot(0).until(() -> true), indexer.setPercent(0).until(() -> true)));
   }
 
   public Command indexBasic() {
@@ -168,8 +182,13 @@ public class Orchestrator {
             .until(() -> !indexer.getLimitSwitchPressed()))
         .andThen(
             Commands.race(
-                new WaitCommand(1), indexer.setPercent(IndexerConstants.INDEX_SPEED.get())))
-        .withTimeout(7);
+                    Commands.waitSeconds(0.5),
+                    indexer.setPercent(IndexerConstants.INDEX_SPEED.get()))
+                .andThen(
+                    Commands.parallel(
+                            arm.toSetpoint(ArmConstants.STOW), Commands.waitUntil(arm::atSetpoint))
+                        .withTimeout(1)))
+        .withTimeout(1);
   }
 
   /**
@@ -219,7 +238,9 @@ public class Orchestrator {
    */
   public Command intakeBasic() {
     return Commands.sequence(
-            arm.toSetpoint(ArmConstants.STOW).until(arm::atSetpoint).withTimeout(2),
+            arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5)))
+                .until(arm::limitSwitchPressed)
+                .withTimeout(2),
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)

@@ -160,4 +160,8 @@ public class Arm extends SubsystemBase {
   public boolean atSetpoint() {
     return feedback.atGoal();
   }
+
+  public boolean limitSwitchPressed() {
+    return inputs.limitSwitchPressed;
+  }
 }
