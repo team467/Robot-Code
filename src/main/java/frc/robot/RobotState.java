@@ -47,6 +47,10 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/NoteAngle")
   public double noteAngle = 0;
 
+  /** If the duck button is pressed */
+  @AutoLogOutput(key = "RobotState/Duck")
+  public boolean duck = false;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
