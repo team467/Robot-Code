@@ -29,8 +29,14 @@ public class RobotState {
   public boolean intaking = false;
 
   /** Set true if the robot is currently hanging from the chain or in the process of climbing. */
-  @AutoLogOutput(key = "RobotState/Hanging")
-  public boolean hanging = false;
+  @AutoLogOutput(key = "RobotState/ClimberUp")
+  public boolean climberUp = false;
+
+  @AutoLogOutput(key = "RobotState/ClimberDown")
+  public boolean climberDown = false;
+
+  @AutoLogOutput(key = "RobotState/ClimberRatchet")
+  public boolean climberRatchet = false;
 
   /**
    * Set true if the robot currently contains a note. Used to prevent the robot from picking up a
