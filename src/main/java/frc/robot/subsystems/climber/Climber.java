@@ -36,9 +36,12 @@ public class Climber extends SubsystemBase {
   public Command raiseOrLower(double percentOutput) {
     return Commands.run(
             () -> {
+              Logger.recordOutput("Climber/OutputDesired", percentOutput);
               climberIO.setMotorsOutputPercent(percentOutput);
             },
             this)
+        .onlyWhile(() -> !climberIOInputs.ratchetLocked)
+        .beforeStarting(Commands.none())
         .onlyWhile(() -> !climberIOInputs.ratchetLocked);
   }
   /**
@@ -47,7 +50,7 @@ public class Climber extends SubsystemBase {
    * @return no return
    */
   public Command setRatchet(boolean locked) {
-    return Commands.run(
+    return Commands.runOnce(
         () -> {
           climberIO.setRatchetLocked(locked);
         },
