@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
+
+import java.awt.image.AreaAveragingScaleFilter;
 import java.util.List;
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -37,6 +39,10 @@ public class Leds extends SubsystemBase {
     LOW_BATTERY_ALERT,
     DISABLED,
     DEFAULT,
+    DUCK,
+    CLIMBER_UP,
+    CLIMBER_DOWN,
+    CLIMBER_SOLENOID_DISENGAGED,
     OFF
   }
 
@@ -134,7 +140,7 @@ public class Leds extends SubsystemBase {
     } else if (false) { // TODO: need state variable for auto finished
       mode = LedMode.AUTO_FINISHED;
 
-    } else if (DriverStation.isAutonomous()) { // TODO: need state variable for autonomous
+    } else if (DriverStation.isAutonomous()) {
       mode = LedMode.AUTONOMOUS;
 
     } else if (state.hanging) {
@@ -155,6 +161,9 @@ public class Leds extends SubsystemBase {
     } else if (state.intaking) {
       mode = LedMode.INTAKING;
 
+    } else if (state.duck) {
+      mode = LedMode.DUCK;
+
     } else if (state.seeNote) {
       if (state.noteAngle <= -noteAngle) { // TODO: need to change to constant once angle known
         mode = LedMode.LEFT_NOTE_DETECTION;
@@ -174,7 +183,6 @@ public class Leds extends SubsystemBase {
     switch (mode) {
       case ESTOPPED:
         solid(Section.FULL, Color.kRed);
-        // strobe(Section.FULL, Color.kRed, strobeFastDuration);
         break;
 
       case AUTO_FINISHED:
@@ -265,13 +273,17 @@ public class Leds extends SubsystemBase {
         }
         break;
 
+      case DUCK:
+        solid(Section.BOTTOM_HALF, Color.kYellow);
+        break;
+
       case DEFAULT:
         wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
         break;
-       case OFF:
+
+      case OFF:
         solid(Section.FULL, Color.kBlack);
         break;
-
 
       default:
         wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
