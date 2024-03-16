@@ -29,6 +29,10 @@ public class Climber extends SubsystemBase {
   /**
    * Command to raise or lower the climber arms If percentOutput is negative, the climber will lower
    * If percentOutput is positive, the climber will raise
+   * If percentOutput is 0, the climber will stop
+   * If the ratchet is locked, the climber will not move.
+   * It does nothing before the command and then checks if the ratchet is locked.
+   * Ends the command if the ratchet is locked.
    *
    * @param percentOutput takes a number from -1 to 1.
    * @return no return
