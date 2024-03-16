@@ -24,7 +24,7 @@ public class Autos {
   private final Arm arm;
   private final Orchestrator orchestrator;
 
-  private double MOBILITY_DRIVE_DISTANCE = 6.75;
+  private double MOBILITY_DRIVE_DISTANCE = Units.feetToMeters(6.75);
 
   @AutoLogOutput(key = "Autos/Notes/0")
   private Translation2d noteTranslation;
@@ -140,7 +140,7 @@ public class Autos {
     return Commands.defer(
         () ->
             new StraightDriveToPose(
-                Units.feetToMeters(AllianceFlipUtil.applyRelative(distance)), 0, 0, drive),
+                AllianceFlipUtil.applyRelative(distance), 0, 0, drive),
         Set.of(drive));
   }
 
