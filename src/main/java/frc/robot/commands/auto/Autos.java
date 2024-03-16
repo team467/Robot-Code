@@ -14,14 +14,16 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.drive.Drive;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 
 public class Autos {
   private final Drive drive;
   private final Arm arm;
   private final Orchestrator orchestrator;
+
+  private double MOBILITY_DRIVE_DISTANCE = Units.feetToMeters(6.75);
 
   @AutoLogOutput(key = "Autos/Notes/0")
   private Translation2d noteTranslation;
@@ -39,48 +41,62 @@ public class Autos {
   }
 
   public enum StartingPosition {
-    LEFT(
-        new Pose2d(
-            AllianceFlipUtil.apply(
-                    AllianceFlipUtil.shouldFlip()
-                        ? FieldConstants.Subwoofer.sourceFaceCorner
-                        : FieldConstants.Subwoofer.ampFaceCorner)
-                .getTranslation(),
-            AllianceFlipUtil.apply(
-                    AllianceFlipUtil.shouldFlip()
-                        ? FieldConstants.Subwoofer.sourceFaceCorner
-                        : FieldConstants.Subwoofer.ampFaceCorner)
-                .getRotation()
-                .plus(Rotation2d.fromDegrees(180)))),
-    CENTER(
-        new Pose2d(
-            AllianceFlipUtil.apply(FieldConstants.Subwoofer.centerFace.getTranslation()),
-            AllianceFlipUtil.apply(
-                FieldConstants.Subwoofer.centerFace
-                    .getRotation()
-                    .plus(Rotation2d.fromRadians(Units.degreesToRadians(180)))))),
-    RIGHT(
-        new Pose2d(
-            AllianceFlipUtil.apply(
-                    AllianceFlipUtil.shouldFlip()
-                        ? FieldConstants.Subwoofer.ampFaceCorner
-                        : FieldConstants.Subwoofer.sourceFaceCorner)
-                .getTranslation(),
-            AllianceFlipUtil.apply(
-                    AllianceFlipUtil.shouldFlip()
-                        ? FieldConstants.Subwoofer.ampFaceCorner
-                        : FieldConstants.Subwoofer.sourceFaceCorner)
-                .getRotation()
-                .plus(Rotation2d.fromDegrees(180))));
-    private final Pose2d startingPosition;
-
-    StartingPosition(Pose2d startingPosition) {
-      this.startingPosition = startingPosition;
-      Logger.recordOutput("Autos/StartingPositions/" + this, startingPosition);
-    }
+    LEFT,
+    CENTER,
+    RIGHT;
 
     public Pose2d getStartingPosition() {
-      return startingPosition;
+      return getRelativeStartingPosition().getStartingPosition();
+    }
+
+    RelativeStartingPosition getRelativeStartingPosition() {
+      switch (this) {
+        case LEFT:
+          return AllianceFlipUtil.shouldFlip()
+              ? RelativeStartingPosition.NEAR_SOURCE
+              : RelativeStartingPosition.NEAR_AMP;
+        case CENTER:
+          return RelativeStartingPosition.CENTER;
+
+        case RIGHT:
+          return AllianceFlipUtil.shouldFlip()
+              ? RelativeStartingPosition.NEAR_AMP
+              : RelativeStartingPosition.NEAR_SOURCE;
+      }
+      throw new RuntimeException("Invalid position");
+    }
+  }
+
+  private enum RelativeStartingPosition {
+    NEAR_AMP,
+    CENTER,
+    NEAR_SOURCE;
+
+    public Pose2d getStartingPosition() {
+      switch (this) {
+        case NEAR_AMP:
+          return AllianceFlipUtil.apply(
+              new Pose2d(
+                  FieldConstants.Subwoofer.ampFaceCorner.getTranslation(),
+                  FieldConstants.Subwoofer.ampFaceCorner
+                      .getRotation()
+                      .plus(Rotation2d.fromDegrees(180))));
+        case CENTER:
+          return AllianceFlipUtil.apply(
+              new Pose2d(
+                  FieldConstants.Subwoofer.centerFace.getTranslation(),
+                  FieldConstants.Subwoofer.centerFace
+                      .getRotation()
+                      .plus(Rotation2d.fromRadians(Units.degreesToRadians(180)))));
+        case NEAR_SOURCE:
+          return AllianceFlipUtil.apply(
+              new Pose2d(
+                  FieldConstants.Subwoofer.sourceFaceCorner.getTranslation(),
+                  FieldConstants.Subwoofer.sourceFaceCorner
+                      .getRotation()
+                      .plus(Rotation2d.fromDegrees(180))));
+      }
+      throw new RuntimeException("Invalid position");
     }
   }
 
@@ -119,44 +135,24 @@ public class Autos {
   public Command mobilityAuto(StartingPosition position) {
     return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
         .andThen(
-            Commands.either(
-                Commands.select(
-                    Map.of(
-                        StartingPosition.RIGHT,
-                        new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
-                            .withTimeout(5),
-                        StartingPosition.CENTER,
-                        new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
-                            .withTimeout(5),
-                        StartingPosition.LEFT,
-                        Commands.run(
-                                () ->
-                                    drive.runVelocity(
-                                        new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
-                            .withTimeout(1)
-                            .andThen(
-                                new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
-                                    .withTimeout(5))),
-                    () -> position),
-                Commands.select(
-                    Map.of(
-                        StartingPosition.LEFT,
-                        new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-                            .withTimeout(5),
-                        StartingPosition.CENTER,
-                        new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-                            .withTimeout(5),
-                        StartingPosition.RIGHT,
-                        Commands.run(
-                                () ->
-                                    drive.runVelocity(
-                                        new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
-                            .withTimeout(1)
-                            .andThen(
-                                new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-                                    .withTimeout(5))),
-                    () -> position),
-                AllianceFlipUtil::shouldFlip));
+            Commands.select(
+                Map.of(
+                    RelativeStartingPosition.NEAR_SOURCE,
+                    driveXDistance(MOBILITY_DRIVE_DISTANCE).withTimeout(5),
+                    RelativeStartingPosition.CENTER,
+                    driveXDistance(MOBILITY_DRIVE_DISTANCE).withTimeout(5),
+                    RelativeStartingPosition.NEAR_AMP,
+                    Commands.run(
+                            () -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
+                        .withTimeout(1)
+                        .andThen(driveXDistance(MOBILITY_DRIVE_DISTANCE).withTimeout(5))),
+                () -> position.getRelativeStartingPosition()));
+  }
+
+  private Command driveXDistance(double distance) {
+    return Commands.defer(
+        () -> new StraightDriveToPose(AllianceFlipUtil.applyRelative(distance), 0, 0, drive),
+        Set.of(drive));
   }
 
   public Command oneNoteAuto() {
