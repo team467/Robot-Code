@@ -6,8 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.FieldConstants;
-import frc.robot.subsystems.robotstate.RobotState;
+import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -60,7 +59,7 @@ public class Shooter extends SubsystemBase {
   /**
    * @param velocitySetpoint the velocity that the shooter should be set to
    * @return A command that sets the PIDMode to true, and then sets to PID setpoint to that of the
-   *     inputed velocitySetpoint
+   *     inputted velocitySetpoint
    */
   public Command shoot(double velocitySetpoint) {
     return Commands.run(
@@ -70,11 +69,23 @@ public class Shooter extends SubsystemBase {
         },
         this);
   }
+
   /**
-   * @param volts the volts that the shooter should be set to
+   * @param percent the volts that the shooter should be set to
    * @return A command that sets the shooter voltage to that of the inputed volts
    */
-  public Command manualShoot(double volts) {
+  public Command manualShoot(double percent) {
+    return Commands.run(
+            () -> {
+              io.setShooterVelocity(percent);
+              PIDMode = false;
+              robotState.shooting = true;
+            },
+            this)
+        .finallyDo(() -> robotState.shooting = false);
+  }
+
+  public Command manualShootVolts(double volts) {
     return Commands.run(
         () -> {
           io.setShooterVoltage(volts);
@@ -93,19 +104,9 @@ public class Shooter extends SubsystemBase {
       return shooterFeedback.atSetpoint();
     }
   }
-  /**
-   * @param distanceFromSpeaker the robots distance from the speaker
-   * @return calculates the hypotenuse of the hight of the speaker and the inputed distance
-   */
-  public double calculateShootingDistance(double distanceFromSpeaker) {
-    return Math.hypot(FieldConstants.Speaker.centerSpeakerOpening.getZ(), distanceFromSpeaker);
-  }
-  /**
-   * @param distanceFromSpeaker the robots distance from the speaker
-   * @return the angle at which the shooter must be to shoot into the speaker
-   */
-  public double calculateShootingAngle(double distanceFromSpeaker) {
-    return Math.abs(
-        Math.atan(FieldConstants.Speaker.centerSpeakerOpening.getZ() / distanceFromSpeaker));
+
+  public boolean atVelocity(double velocitySetpoint) {
+    return inputs.shooterLeftVelocityRadPerSec >= velocitySetpoint - 0.05
+        && inputs.shooterRightVelocityRadPerSec >= velocitySetpoint - 0.05;
   }
 }

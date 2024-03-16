@@ -12,31 +12,38 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.lib.io.gyro3d.GyroADIS16470;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
-import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.arm.ArmIOSparkMAX;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberConstants;
+import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMAX;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
+import frc.robot.subsystems.indexer.IndexerIOPhysical;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOPhysical;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
-import java.util.List;
+import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -55,7 +62,11 @@ public class RobotContainer {
   private Arm arm;
   private Vision vision;
   private Pixy2 pixy2;
+  private Leds leds;
+  private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
+  private Orchestrator orchestrator;
+  private Autos autos;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -70,20 +81,6 @@ public class RobotContainer {
     if (Constants.getMode() != Constants.Mode.REPLAY) {
       switch (Constants.getRobot()) {
         case ROBOT_2023 -> {
-          Transform3d front =
-              new Transform3d(
-                  new Translation3d(6 * 0.01, -10 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
-                  new Rotation3d());
-          Transform3d right =
-              new Transform3d(
-                  new Translation3d(2 * 0.01, -12 * 0.01 - Units.inchesToMeters(2.0), 42 * 0.01),
-                  new Rotation3d(0, 0, -0.5 * Math.PI));
-          vision =
-              new Vision(
-                  List.of(
-                          new VisionIOPhotonVision("front", front),
-                          new VisionIOPhotonVision("right", right))
-                      .toArray(new frc.lib.io.vision.VisionIO[0]));
           drive =
               new Drive(
                   new GyroPigeon2(Schematic.GYRO_ID),
@@ -92,14 +89,42 @@ public class RobotContainer {
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
         }
-        case ROBOT_2024C -> {
+        case ROBOT_2024_COMP -> {
+          Transform3d front =
+              new Transform3d(
+                  new Translation3d(
+                      Units.inchesToMeters(6.74),
+                      Units.inchesToMeters(-10.991),
+                      Units.inchesToMeters(15.875)),
+                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
+          Transform3d back =
+              new Transform3d(
+                  new Translation3d(
+                      Units.inchesToMeters(-11.89),
+                      Units.inchesToMeters(0),
+                      Units.inchesToMeters(15.5)),
+                  new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
+
+          //          vision =
+          //              new Vision(
+          //                  List.of(
+          //                          new VisionIOPhotonVision("front", front),
+          //                          new VisionIOPhotonVision("back", back))
+          //                      .toArray(new frc.lib.io.vision.VisionIO[0]));
+
           drive =
               new Drive(
-                  new GyroADIS16470(),
+                  new GyroPigeon2(Schematic.GYRO_ID),
                   new ModuleIOSparkMAX(0),
                   new ModuleIOSparkMAX(1),
                   new ModuleIOSparkMAX(2),
                   new ModuleIOSparkMAX(3));
+          arm = new Arm(new ArmIOSparkMAX());
+          indexer = new Indexer(new IndexerIOPhysical());
+          intake = new Intake(new IntakeIOPhysical());
+          shooter = new Shooter(new ShooterIOPhysical());
+          leds = new Leds();
+          //          climber = new Climber(new ClimberIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
@@ -139,10 +164,14 @@ public class RobotContainer {
     if (intake == null) {
       intake = new Intake(new IntakeIO() {});
     }
-
-    Leds leds = new Leds();
+    if (climber == null) {
+      climber = new Climber(new ClimberIO() {});
+    }
+    orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autos = new Autos(drive, arm, orchestrator);
+
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
@@ -158,6 +187,40 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    autoChooser.addOption("Score One Note", autos.oneNoteAuto());
+    autoChooser.addOption("Mobility [LEFT]", autos.mobilityAuto(Autos.StartingPosition.LEFT));
+    autoChooser.addOption(
+        "Score One Note + Mobility [LEFT]",
+        autos.scoreOneNoteMobility(Autos.StartingPosition.LEFT));
+    autoChooser.addOption("Score Two Notes [LEFT]", autos.twoNoteAuto(Autos.StartingPosition.LEFT));
+    autoChooser.addOption(
+        "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
+    autoChooser.addOption("Mobility [RIGHT]", autos.mobilityAuto(Autos.StartingPosition.RIGHT));
+    autoChooser.addOption(
+        "Score One Note + Mobility [RIGHT]",
+        autos.scoreOneNoteMobility(Autos.StartingPosition.RIGHT));
+    autoChooser.addOption(
+        "Score Two Notes [RIGHT]", autos.twoNoteAuto(Autos.StartingPosition.RIGHT));
+    autoChooser.addOption(
+        "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
+    autoChooser.addOption("Mobility [CENTER]", autos.mobilityAuto(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score One Note + Mobility [CENTER]",
+        autos.scoreOneNoteMobility(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score Two Notes [CENTER]", autos.twoNoteAuto(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score Three Notes [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
+
+    // Rumble on intake
+    new Trigger(() -> RobotState.getInstance().hasNote)
+        .onTrue(
+            Commands.runEnd(
+                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
+                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0))
+                .withTimeout(1.2)
+                .ignoringDisable(true));
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -169,6 +232,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     drive.setDefaultCommand(
         new DriveWithJoysticks(
@@ -191,8 +255,78 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-  }
 
+    // stop when doing nothing
+    intake.setDefaultCommand(intake.stop());
+    indexer.setDefaultCommand(indexer.setPercent(0));
+    shooter.setDefaultCommand(shooter.manualShoot(0));
+    arm.setDefaultCommand(arm.hold());
+    climber.setDefaultCommand(climber.raiseOrLower(0));
+
+    // operator controller
+    // Hold A: Spin up shooter
+    operatorController.a().whileTrue(orchestrator.spinUpFlywheel());
+    // Hold B: Expel intake
+    operatorController.b().whileTrue(orchestrator.expelIntakeIndex());
+    // Click X: Move arm to stow position
+    operatorController.x().onTrue(arm.toSetpoint(ArmConstants.STOW));
+    // Hold Y: Expel the shooter
+    operatorController.y().whileTrue(shooter.manualShoot(-1));
+    // Hold RB: Duck the arm to fit under stage
+    operatorController
+        .rightBumper()
+        .whileTrue(arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))));
+    operatorController
+        .rightBumper()
+        .onFalse(
+            Commands.parallel(
+                    arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS),
+                    Commands.waitUntil(arm::atSetpoint))
+                .withTimeout(2));
+
+    // Back button (toggle switch): unlock/lock climber ratchet
+    operatorController.back().whileTrue(climber.setRatchet(false));
+    operatorController.back().whileFalse(climber.setRatchet(true));
+
+    // operator d pad
+    // Hold Up: Move arm up
+    operatorController.pov(0).whileTrue(arm.runPercent(0.2));
+    // Hold Down: Move arm down
+    operatorController.pov(180).whileTrue(arm.runPercent(-0.2));
+    // Hold Right: Move climber up
+    operatorController
+        .pov(90)
+        .whileTrue(
+            climber
+                .raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT)
+                .withTimeout(ClimberConstants.BACKUP_TIME)
+                .andThen(climber.raiseOrLower(ClimberConstants.CLIMBER_FORWARD_PERCENT)));
+    // Hold Left: Move climber down
+    operatorController
+        .pov(270)
+        .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
+
+    // driver controller
+    // Click Right Bumper: Move arm to stow position
+    driverController
+        .rightBumper()
+        .onTrue(
+            Commands.parallel(
+                    arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
+                    Commands.waitUntil(arm::limitSwitchPressed))
+                .withTimeout(2));
+    // Click Left Bumper: Move arm to amp position
+    driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
+    // Click left Trigger: Intake (until clicked again or has a note)
+    driverController.leftTrigger(0.15).toggleOnTrue(orchestrator.intakeBasic());
+    // Click right Trigger: Run indexer
+    driverController.rightTrigger(0.15).onTrue(orchestrator.indexBasic());
+    // Click A: X lock drive train
+    driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()));
+
+    // driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker()); //TODO: add back in
+    // when fixed
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

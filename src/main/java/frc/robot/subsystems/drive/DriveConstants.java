@@ -40,10 +40,10 @@ public class DriveConstants {
         TURN_KP = new TunableNumber("Drive/Module/TurnKP", 3.256);
         TURN_KD = new TunableNumber("Drive/Module/TurnKD", 0.05);
       }
-      case ROBOT_2024C -> {
+      case ROBOT_2024_COMP -> {
         TRACK_WIDTH_X = Units.inchesToMeters(9 * 2);
         TRACK_WIDTH_Y = Units.inchesToMeters(9 * 2);
-        MAX_LINEAR_SPEED = Units.feetToMeters(16.0);
+        MAX_LINEAR_SPEED = Units.feetToMeters(16.6);
         WHEEL_DIAMETER = Units.inchesToMeters(4);
         ABSOLUTE_ANGLE_OFFSET =
             new Rotation2d[] {

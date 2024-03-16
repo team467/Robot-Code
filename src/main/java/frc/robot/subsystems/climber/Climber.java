@@ -1,16 +1,14 @@
 package frc.robot.subsystems.climber;
 
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
   private final ClimberIO climberIO;
   private final ClimberIOInputsAutoLogged climberIOInputs = new ClimberIOInputsAutoLogged();
-  private final Relay climberLock = new Relay(0); // TODO: Add constant for channel
-  // TODO: Add Soloenoid
 
   /**
    * ClimberIO object, gets inputs for ClimberIO object
@@ -21,8 +19,11 @@ public class Climber extends SubsystemBase {
     super();
 
     this.climberIO = climberIO;
+  }
 
-    climberIO.updateInput(climberIOInputs);
+  public void periodic() {
+    climberIO.updateInputs(climberIOInputs);
+    Logger.processInputs("Climber", climberIOInputs);
   }
 
   /**
@@ -34,22 +35,26 @@ public class Climber extends SubsystemBase {
    */
   public Command raiseOrLower(double percentOutput) {
     return Commands.run(
-        () -> {
-          climberIO.setMotorOutputPercent(percentOutput);
-        },
-        this);
+            () -> {
+              climberIO.setMotorsOutputPercent(percentOutput);
+            },
+            this)
+        .onlyWhile(() -> !climberIOInputs.ratchetLocked);
   }
-
   /**
    * Command to disable the climber
    *
    * @return no return
    */
-  public Command stop() {
+  public Command setRatchet(boolean locked) {
     return Commands.run(
         () -> {
-          climberIO.setMotorOutputPercent(0);
+          climberIO.setRatchetLocked(locked);
         },
         this);
+  }
+
+  public boolean getRatchet() {
+    return climberIOInputs.ratchetLocked;
   }
 }

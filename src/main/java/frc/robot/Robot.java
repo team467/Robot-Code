@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.robotstate.RobotState;
 import java.io.IOException;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -30,6 +29,7 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
   private RobotState state = RobotState.getInstance();
+  private PowerDistribution pdp;
 
   private static final int LOW_VOLTAGE = 9;
 
@@ -70,7 +70,7 @@ public class Robot extends LoggedRobot {
         if (folder != null) {
           Logger.addDataReceiver(new WPILOGWriter(folder));
         }
-        new PowerDistribution(Schematic.POWER_DIST_ID, Schematic.POWER_DIST_TYPE);
+        pdp = new PowerDistribution(Schematic.POWER_DIST_ID, Schematic.POWER_DIST_TYPE);
 
         // See https://github.com/Mechanical-Advantage/AdvantageScope/blob/main/docs/REV-LOGGING.md
         Logger.registerURCL(URCL.startExternal());
@@ -99,6 +99,9 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
+    if (Constants.getMode() == Constants.Mode.REAL) {
+      Logger.recordOutput("PDP Voltage", pdp.getVoltage());
+    }
   }
 
   /** This function is called periodically during all modes. */

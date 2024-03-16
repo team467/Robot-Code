@@ -3,7 +3,7 @@ package frc.robot.subsystems.indexer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.robotstate.RobotState;
+import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
@@ -41,6 +41,6 @@ public class Indexer extends SubsystemBase {
    * @return if the indexers limit switch is pressed
    */
   public boolean getLimitSwitchPressed() {
-    return inputs.indexerLimitSwitchLeftPressed || inputs.indexerLimitSwitchRightPressed;
+    return inputs.indexerLimitSwitchPressed;
   }
 }

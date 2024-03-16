@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.robotstate.RobotState;
+import frc.robot.RobotState;
 import java.util.List;
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -56,7 +56,7 @@ public class Leds extends SubsystemBase {
 
   // Constants
   private static final int minLoopCycleCount = 10;
-  private static final int length = 10;
+  private static final int length = 40;
   private static final double strobeFastDuration = 0.1;
   private static final double strobeSlowDuration = 0.2;
   private static final double breathDuration = 1.0;
@@ -87,11 +87,13 @@ public class Leds extends SubsystemBase {
     ledTestingEntry = ledTable.getEntry("Testing");
     ledTestingEntry.setBoolean(false);
 
-    leds = new AddressableLED(0);
     buffer = new AddressableLEDBuffer(length);
+
+    leds = new AddressableLED(0);
     leds.setLength(length);
     leds.setData(buffer);
     leds.start();
+
     loadingNotifier =
         new Notifier(
             () -> {
@@ -131,13 +133,13 @@ public class Leds extends SubsystemBase {
     } else if (false) { // TODO: need state variable for auto finished
       mode = LedMode.AUTO_FINISHED;
 
-    } else if (false) { // TODO: need state variable for autonomous
+    } else if (DriverStation.isAutonomous()) { // TODO: need state variable for autonomous
       mode = LedMode.AUTONOMOUS;
 
     } else if (state.hanging) {
       mode = LedMode.HANGING;
 
-    } else if (state.shooting) {
+    } else if (state.shooting && state.hasNote) {
       mode = LedMode.SHOOTING;
 
     } else if (state.canShoot && state.hasNote) {
@@ -162,6 +164,8 @@ public class Leds extends SubsystemBase {
       } else {
         mode = LedMode.STRAIGHT_NOTE_DETECTION;
       }
+    } else {
+      mode = LedMode.OFF;
     }
   }
 
@@ -188,14 +192,14 @@ public class Leds extends SubsystemBase {
       case IN_RANGE:
         wave(
             Section.FULL,
-            Color.kBeige,
+            Color.kGreen,
             Color.kBlack,
             waveAllianceCycleLength,
             waveAllianceDuration);
         break;
 
       case CAN_SHOOT:
-        solid(Section.FULL, Color.kBlueViolet);
+        solid(Section.FULL, Color.kGreen);
         // has the same color as shooting except it's solid
         break;
 
@@ -203,14 +207,14 @@ public class Leds extends SubsystemBase {
         // leds glow in the direction it's shooting
         wave(
             Section.FULL,
-            Color.kBlueViolet,
+            Color.kGreen,
             Color.kBlack,
             waveAllianceCycleLength,
             waveAllianceDuration);
         break;
 
       case CONTAINING:
-        solid(Section.FULL, Color.kAquamarine);
+        solid(Section.FULL, Color.kGreen);
         break;
 
       case INTAKING:
@@ -225,12 +229,12 @@ public class Leds extends SubsystemBase {
 
       case LEFT_NOTE_DETECTION:
         // leds glow on left side
-        solid(0.5, Color.kYellow, Color.kBlack);
+        solidOnSide(false, Color.kYellow);
         break;
 
       case RIGHT_NOTE_DETECTION:
         // leds glows on right side
-        solid(0.5, Color.kBlack, Color.kYellow);
+        solidOnSide(true, Color.kYellow);
         break;
 
       case STRAIGHT_NOTE_DETECTION:
@@ -261,7 +265,7 @@ public class Leds extends SubsystemBase {
         break;
 
       case OFF:
-        solid(Section.FULL, Color.kBlack);
+        wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
         break;
 
       default:
@@ -320,12 +324,36 @@ public class Leds extends SubsystemBase {
   }
 
   /**
+   * Applies a solid color to a side of the two LED strips.
+   *
+   * @param onRight should light up right side
+   * @param color The color to be applied.
+   */
+  private void solidOnSide(boolean onRight, Color color) {
+    if (onRight) {
+      for (int i = 0; i < length / 2; i++) {
+        buffer.setLED(i, Color.kBlack);
+      }
+      for (int i = length / 2; i < length; i++) {
+        buffer.setLED(i, color);
+      }
+    } else { // On the left
+      for (int i = 0; i < length / 2; i++) {
+        buffer.setLED(i, color);
+      }
+      for (int i = length / 2; i < length; i++) {
+        buffer.setLED(i, Color.kBlack);
+      }
+    }
+  }
+
+  /**
    * Applies a solid color to a given section of an LED strip. The section is filled with the
    * specified color.
    *
    * @param percent The percentage of the section to apply the solid color to. Value should be
    *     between 0.0 and 1.0.
-   * @param color The color to be applied.
+   * @param color1 The color to be applied.
    */
   private void solid(double percent, Color color1, Color color2) {
     int color1Pixels = (int) Math.round(MathUtil.clamp(length * percent, 0, length));
