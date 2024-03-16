@@ -14,6 +14,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.drive.Drive;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -22,6 +23,8 @@ public class Autos {
   private final Drive drive;
   private final Arm arm;
   private final Orchestrator orchestrator;
+
+  private double MOBILITY_DRIVE_DISTANCE = 6.75;
 
   @AutoLogOutput(key = "Autos/Notes/0")
   private Translation2d noteTranslation;
@@ -119,44 +122,26 @@ public class Autos {
   public Command mobilityAuto(StartingPosition position) {
     return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
         .andThen(
-            Commands.either(
-                Commands.select(
-                    Map.of(
-                        StartingPosition.RIGHT,
-                        new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
-                            .withTimeout(5),
-                        StartingPosition.CENTER,
-                        new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
-                            .withTimeout(5),
-                        StartingPosition.LEFT,
-                        Commands.run(
-                                () ->
-                                    drive.runVelocity(
-                                        new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
-                            .withTimeout(1)
-                            .andThen(
-                                new StraightDriveToPose(Units.feetToMeters(-6.75), 0, 0, drive)
-                                    .withTimeout(5))),
-                    () -> position),
-                Commands.select(
-                    Map.of(
-                        StartingPosition.LEFT,
-                        new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-                            .withTimeout(5),
-                        StartingPosition.CENTER,
-                        new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-                            .withTimeout(5),
-                        StartingPosition.RIGHT,
-                        Commands.run(
-                                () ->
-                                    drive.runVelocity(
-                                        new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
-                            .withTimeout(1)
-                            .andThen(
-                                new StraightDriveToPose(Units.feetToMeters(6.75), 0, 0, drive)
-                                    .withTimeout(5))),
-                    () -> position),
-                AllianceFlipUtil::shouldFlip));
+            Commands.select(
+                Map.of(
+                    StartingPosition.RIGHT,
+                    driveXDistance(MOBILITY_DRIVE_DISTANCE).withTimeout(5),
+                    StartingPosition.CENTER,
+                    driveXDistance(MOBILITY_DRIVE_DISTANCE).withTimeout(5),
+                    StartingPosition.LEFT,
+                    Commands.run(
+                            () -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
+                        .withTimeout(1)
+                        .andThen(driveXDistance(MOBILITY_DRIVE_DISTANCE).withTimeout(5))),
+                () -> position));
+  }
+
+  private Command driveXDistance(double distance) {
+    return Commands.defer(
+        () ->
+            new StraightDriveToPose(
+                Units.feetToMeters(AllianceFlipUtil.applyRelative(distance)), 0, 0, drive),
+        Set.of(drive));
   }
 
   public Command oneNoteAuto() {
