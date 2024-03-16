@@ -96,7 +96,7 @@ public class RobotContainer {
           Transform3d front =
               new Transform3d(
                   new Translation3d(
-                      Units.inchesToMeters(6.74),
+                      Units.inchesToMeters(5.237),
                       Units.inchesToMeters(-10.991),
                       Units.inchesToMeters(15.875)),
                   new Rotation3d(0, Units.degreesToRadians(-30), 0));
