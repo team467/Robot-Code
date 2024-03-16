@@ -56,7 +56,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     inputs.appliedVoltsRight = climberRight.getBusVoltage() * climberRight.getAppliedOutput();
     inputs.currentAmpsRight = climberRight.getOutputCurrent();
     inputs.ClimberRightPosition = climberRightEncoder.getPosition();
-    inputs.ratchetLocked = ratchetLocked;
+    inputs.ratchetLocked = climberRatchet.get().equals(Relay.Value.kOff);
     inputs.reverseLimitSwitchLeftPressed = reverseLimitSwitchLeft.isPressed();
     inputs.forwardLimitSwitchLeftPressed = fowardLimitSwitchLeft.isPressed();
     inputs.reverseLimitSwitchRightPressed = reverseLimitSwitchRight.isPressed();
