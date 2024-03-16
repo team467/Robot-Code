@@ -82,7 +82,7 @@ public class Constants {
   }
 
   public static final Map<RobotType, String> logFolders =
-      Map.of(RobotType.ROBOT_2023, "/media/sda1", RobotType.ROBOT_2024C, "/media/sda1");
+      Map.of(RobotType.ROBOT_2023, "/media/sda1", RobotType.ROBOT_2024_COMP, "/media/sda1");
 
   public enum RobotType {
     ROBOT_2023,
