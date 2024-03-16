@@ -74,6 +74,7 @@ public class Robot extends LoggedRobot {
 
         // See https://github.com/Mechanical-Advantage/AdvantageScope/blob/main/docs/REV-LOGGING.md
         Logger.registerURCL(URCL.startExternal());
+        URCL.start();
       }
 
         // Running a physics simulator, log to local folder
