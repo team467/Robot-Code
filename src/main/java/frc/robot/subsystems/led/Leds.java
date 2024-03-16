@@ -36,7 +36,8 @@ public class Leds extends SubsystemBase {
     RED_ALLIANCE,
     LOW_BATTERY_ALERT,
     DISABLED,
-    OFF,
+    DEFAULT,
+    OFF
   }
 
   @AutoLogOutput(key = "LEDs/Mode")
@@ -165,7 +166,7 @@ public class Leds extends SubsystemBase {
         mode = LedMode.STRAIGHT_NOTE_DETECTION;
       }
     } else {
-      mode = LedMode.OFF;
+      mode = LedMode.DEFAULT;
     }
   }
 
@@ -264,9 +265,13 @@ public class Leds extends SubsystemBase {
         }
         break;
 
-      case OFF:
+      case DEFAULT:
         wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
         break;
+       case OFF:
+        solid(Section.FULL, Color.kBlack);
+        break;
+
 
       default:
         wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
