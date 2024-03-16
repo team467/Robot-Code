@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
-
-import java.awt.image.AreaAveragingScaleFilter;
 import java.util.List;
 import org.littletonrobotics.junction.AutoLogOutput;
 

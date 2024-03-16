@@ -112,15 +112,15 @@ public class Orchestrator {
   }
 
   public Command duck() {
-    return arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))).alongWith(Commands.runOnce(
-            () -> RobotState.getInstance().duck = true
-    ));
+    return arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5)))
+        .alongWith(Commands.runOnce(() -> RobotState.getInstance().duck = true));
   }
+
   public Command unDuck() {
     return Commands.parallel(
-                    arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS),
-                    Commands.waitUntil(arm::atSetpoint))
-            .withTimeout(2).beforeStarting(() -> RobotState.getInstance().duck = false);
+            arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS), Commands.waitUntil(arm::atSetpoint))
+        .withTimeout(2)
+        .beforeStarting(() -> RobotState.getInstance().duck = false);
   }
 
   public Command goToAmp() {
