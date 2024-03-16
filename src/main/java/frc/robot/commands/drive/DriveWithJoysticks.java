@@ -43,6 +43,11 @@ public class DriveWithJoysticks extends Command {
     this.rightXSupplier = rightXSupplier;
     this.robotRelativeOverride = robotRelativeOverride;
 
+    /*
+    https://www.khanacademy.org/science/physics/torque-angular-momentum/rotational-kinematics/v/relationship-between-angular-velocity-and-speed
+    If speed = angular velocity * radius, then we can re-arrange it into Angular Velocity = Speed / Radius.
+    We assume that the speed we care about is the maximum speed, and our radius is distance from the center of the robot to a module (ie Translation2d::getNorm).
+     */
     MAX_ANGULAR_SPEED =
         DriveConstants.MAX_LINEAR_SPEED
             / Arrays.stream(drive.getModuleTranslations())
@@ -103,7 +108,7 @@ public class DriveWithJoysticks extends Command {
           ChassisSpeeds.fromFieldRelativeSpeeds(
               linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED,
               linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
-              rightX * DriveConstants.MAX_LINEAR_SPEED,
+              rightX * MAX_ANGULAR_SPEED,
               RobotOdometry.getInstance().getLatestPose().getRotation());
     }
     drive.runVelocity(speeds);
