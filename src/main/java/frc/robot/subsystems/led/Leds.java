@@ -23,11 +23,13 @@ public class Leds extends SubsystemBase {
     ESTOPPED,
     AUTO_FINISHED,
     AUTONOMOUS,
+    CLIMBER_SOLENOIDS_DISENGAGED,
     HANGING,
     IN_RANGE,
     CAN_SHOOT,
     SHOOTING,
     CONTAINING,
+    DUCK,
     INTAKING,
     LEFT_NOTE_DETECTION,
     RIGHT_NOTE_DETECTION,
@@ -136,6 +138,9 @@ public class Leds extends SubsystemBase {
     } else if (false) { // TODO: need state variable for autonomous
       mode = LedMode.AUTONOMOUS;
 
+    } else if (state.climberSolenoidsDisengaged) {
+      mode = LedMode.CLIMBER_SOLENOIDS_DISENGAGED;
+
     } else if (state.hanging) {
       mode = LedMode.HANGING;
 
@@ -150,6 +155,9 @@ public class Leds extends SubsystemBase {
 
     } else if (state.hasNote) {
       mode = LedMode.CONTAINING;
+
+    } else if (state.duck) {
+      mode = LedMode.DUCK;
 
     } else if (state.intaking) {
       mode = LedMode.INTAKING;
@@ -183,6 +191,10 @@ public class Leds extends SubsystemBase {
         wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveFastCycleLength, waveFastDuration);
         break;
 
+      case CLIMBER_SOLENOIDS_DISENGAGED:
+        rainbow(Section.FULL, rainbowCycleLength, rainbowDuration);
+        break;
+
       case HANGING:
         solid(Section.FULL, new Color("#006400")); // Dark Green is 0x006400
         break;
@@ -213,6 +225,10 @@ public class Leds extends SubsystemBase {
 
       case CONTAINING:
         solid(Section.FULL, Color.kAquamarine);
+        break;
+
+      case DUCK:
+        solidMiddle(0.5, Color.kYellow);
         break;
 
       case INTAKING:

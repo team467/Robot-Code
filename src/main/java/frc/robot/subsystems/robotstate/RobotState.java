@@ -32,12 +32,20 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/Hanging")
   public boolean hanging = false;
 
+  /** Set true if climber solenoids are disengaged */
+  @AutoLogOutput(key = "RobotState/ClimberSolenoidsDisengaged")
+  public boolean climberSolenoidsDisengaged = false;
+
   /**
    * Set true if the robot currently contains a note. Used to prevent the robot from picking up a
    * second note.
    */
   @AutoLogOutput(key = "RobotState/HasNote")
   public boolean hasNote = false;
+
+  /** Set true if the robot arm lowers down */
+  @AutoLogOutput(key = "RobotState/Duck")
+  public boolean duck = false;
 
   /** Set true if the not angle data is valid */
   @AutoLogOutput(key = "RobotState/SeeNote")
