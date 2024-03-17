@@ -168,7 +168,7 @@ public class Autos {
         .withTimeout(0.1)
         .andThen(
             oneNoteAuto()
-                .andThen(scoreCycle(() -> noteTranslation, Rotation2d.fromDegrees(0)))
+                .andThen(scoreCycle(() -> noteTranslation, Rotation2d.fromDegrees(2)))
                 .andThen(scoreCycle(() -> secondNoteTranslation, position::getStartingPosition))
                 .andThen(stageNoteCycle(() -> thirdNoteTranslation, Rotation2d.fromDegrees(10))));
   }
@@ -234,58 +234,59 @@ public class Autos {
   }
 
   private Command stageNoteCycle(
-          Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
+      Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
     return Commands.race(
-                    orchestrator
-                            .deferredStraightDriveToPose(
-                                    () ->
-                                            new Pose2d(
-                                                    drive.getPose().getTranslation().getX(),
-                                                    noteTranslation.get().getY()
-                                                            + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
-                                                    new Rotation2d()))
-                            .andThen(
-                                    orchestrator.deferredStraightDriveToPose(
-                                            () ->
-                                                    new Pose2d(
-                                                            noteTranslation.get().getX(),
-                                                            drive.getPose().getTranslation().getY(),
-                                                            new Rotation2d())))
-                            .withTimeout(3),
-                    orchestrator.intakeBasic())
-            .withTimeout(5)
-            .andThen(
-                    orchestrator
-                            .deferredStraightDriveToPose(shootPosition)
-                            .withTimeout(3)
-                            .alongWith(shoot().withTimeout(5)));
+            orchestrator
+                .deferredStraightDriveToPose(
+                    () ->
+                        new Pose2d(
+                            drive.getPose().getTranslation().getX(),
+                            noteTranslation.get().getY()
+                                + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
+                            new Rotation2d()))
+                .andThen(
+                    orchestrator.deferredStraightDriveToPose(
+                        () ->
+                            new Pose2d(
+                                noteTranslation.get().getX(),
+                                drive.getPose().getTranslation().getY(),
+                                new Rotation2d())))
+                .withTimeout(3),
+            orchestrator.intakeBasic())
+        .withTimeout(5)
+        .andThen(
+            orchestrator
+                .deferredStraightDriveToPose(shootPosition)
+                .withTimeout(3)
+                .alongWith(shoot().withTimeout(5)));
   }
 
-  private Command stageNoteCycle(
-          Supplier<Translation2d> noteTranslation, Rotation2d armAngle) {
+  private Command stageNoteCycle(Supplier<Translation2d> noteTranslation, Rotation2d armAngle) {
     return Commands.race(
-                    orchestrator
-                            .deferredStraightDriveToPose(
-                                    () ->
-                                            new Pose2d(
-                                                    drive.getPose().getTranslation().getX(),
-                                                    noteTranslation.get().getY()
-                                                            + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
-                                                    new Rotation2d()))
-                            .andThen(
-                                    orchestrator.deferredStraightDriveToPose(
-                                            () ->
-                                                    new Pose2d(
-                                                            noteTranslation.get().getX(),
-                                                            drive.getPose().getTranslation().getY(),
-                                                            new Rotation2d())))
-                            .withTimeout(3),
-                    orchestrator.intakeBasic())
-            .withTimeout(5)
-            .andThen(Commands.parallel(
-                            arm.toSetpoint(armAngle),
-                            Commands.waitUntil(arm::atSetpoint),
-                            Commands.waitSeconds(0.1))
-                    .withTimeout(4)).andThen(shoot());
+            orchestrator
+                .deferredStraightDriveToPose(
+                    () ->
+                        new Pose2d(
+                            drive.getPose().getTranslation().getX(),
+                            noteTranslation.get().getY()
+                                + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
+                            new Rotation2d()))
+                .andThen(
+                    orchestrator.deferredStraightDriveToPose(
+                        () ->
+                            new Pose2d(
+                                noteTranslation.get().getX(),
+                                drive.getPose().getTranslation().getY(),
+                                new Rotation2d())))
+                .withTimeout(3),
+            orchestrator.intakeBasic())
+        .withTimeout(5)
+        .andThen(
+            Commands.parallel(
+                    arm.toSetpoint(armAngle),
+                    Commands.waitUntil(arm::atSetpoint),
+                    Commands.waitSeconds(0.1))
+                .withTimeout(4))
+        .andThen(orchestrator.turnToSpeaker().alongWith(shoot()));
   }
 }

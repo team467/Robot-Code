@@ -212,17 +212,19 @@ public class Orchestrator {
    *     location.
    */
   public Command alignArmSpeaker() { // TODO: Not working. Abishek, Fix this
-    return Commands.defer(
-        () ->
-            arm.toSetpoint(
-                new Rotation2d(
-                    Math.abs(
-                        Math.atan(
-                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                    - Math.sin(arm.getAngle() + ArmConstants.STOW.getRadians())
-                                        * Units.inchesToMeters(28))
-                                / drive.getPose().getTranslation().getDistance(speaker))))),
-        Set.of(arm));
+    //    return Commands.defer(
+    //        () ->
+    //            arm.toSetpoint(
+    //                new Rotation2d(
+    //                    Math.abs(
+    //                        Math.atan(
+    //                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
+    //                                    - Math.sin(arm.getAngle() +
+    // ArmConstants.STOW.getRadians())
+    //                                        * Units.inchesToMeters(28))
+    //                                / drive.getPose().getTranslation().getDistance(speaker))))),
+    //        Set.of(arm));
+    return Commands.none();
   }
 
   /**
