@@ -194,7 +194,7 @@ public class Autos {
   }
 
   private Command shoot() {
-    return orchestrator.spinUpFlywheel().withTimeout(3).andThen(orchestrator.shootBasic());
+    return orchestrator.shootBasic();
   }
 
   public Command fourNoteAuto(StartingPosition position) {
@@ -222,11 +222,8 @@ public class Autos {
   private Command scoreCycle(
       Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
     return Commands.race(orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic())
-        .andThen(
-            orchestrator
-                .deferredStraightDriveToPose(shootPosition)
-                .withTimeout(3)
-                .alongWith(shoot().withTimeout(5)));
+        .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(4))
+        .andThen(shoot().withTimeout(4));
   }
 
   private Command stageNoteCycle(
@@ -236,17 +233,20 @@ public class Autos {
                 .deferredStraightDriveToPose(
                     () ->
                         new Pose2d(
-                            noteTranslation.get().getX(),
-                            drive.getPose().getTranslation().getY(),
-                            AllianceFlipUtil.apply(Rotation2d.fromDegrees(180))))
+                            drive.getPose().getTranslation().getX(),
+                            noteTranslation.get().getY()
+                                + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
+                            new Rotation2d()))
                 .andThen(
                     orchestrator.deferredStraightDriveToPose(
                         () ->
                             new Pose2d(
-                                drive.getPose().getTranslation().getX(),
-                                noteTranslation.get().getY(),
-                                AllianceFlipUtil.apply(Rotation2d.fromDegrees(180))))),
+                                noteTranslation.get().getX(),
+                                drive.getPose().getTranslation().getY(),
+                                new Rotation2d())))
+                .withTimeout(3),
             orchestrator.intakeBasic())
+        .withTimeout(5)
         .andThen(
             orchestrator
                 .deferredStraightDriveToPose(shootPosition)
