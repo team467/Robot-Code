@@ -13,7 +13,7 @@ public class IntakeIOPhysical implements IntakeIO {
 
   public IntakeIOPhysical() {
     intakeMotor = new CANSparkMax(Schematic.INTAKE_ID, MotorType.kBrushless);
-    intakeMotor.setIdleMode(IdleMode.kCoast);
+    intakeMotor.setIdleMode(IdleMode.kBrake);
     intakeMotor.setInverted(false);
     intakeMotor.enableVoltageCompensation(12);
 
