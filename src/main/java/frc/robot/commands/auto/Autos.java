@@ -161,7 +161,7 @@ public class Autos {
   }
 
   public Command noVisionFourNoteAuto() {
-    return noVisionInit(()->StartingPosition.CENTER)
+    return noVisionInit(() -> StartingPosition.CENTER)
         .andThen(
             oneNoteAuto()
                 .andThen(scoreCycle(() -> noteTranslation, Rotation2d.fromDegrees(5)))
@@ -171,19 +171,22 @@ public class Autos {
 
   private Command noVisionInit(Supplier<StartingPosition> position) {
     return Commands.parallel(
-            Commands.runOnce(() -> drive.setPose(position.get().getStartingPosition())).withTimeout(0.1),
-            setNotePositions(position).withTimeout(0.1));
+        Commands.runOnce(() -> drive.setPose(position.get().getStartingPosition()))
+            .withTimeout(0.1),
+        setNotePositions(position).withTimeout(0.1));
   }
 
   public Command threeNoteAuto(StartingPosition position) {
-    return noVisionInit(()->position)
-        .andThen(
-            oneNoteAuto()).andThen(scoreCycle(()->noteTranslation, position::getStartingPosition))
-            .andThen(scoreCycle(()->secondNoteTranslation, Rotation2d.fromDegrees(5)));
+    return noVisionInit(() -> position)
+        .andThen(oneNoteAuto())
+        .andThen(scoreCycle(() -> noteTranslation, position::getStartingPosition))
+        .andThen(scoreCycle(() -> secondNoteTranslation, Rotation2d.fromDegrees(5)));
   }
+
   public Command noVisionTwoNoteAuto(StartingPosition position) {
-    return noVisionInit(()->position)
-            .andThen(oneNoteAuto()).andThen(scoreCycle(()->noteTranslation, position::getStartingPosition));
+    return noVisionInit(() -> position)
+        .andThen(oneNoteAuto())
+        .andThen(scoreCycle(() -> noteTranslation, position::getStartingPosition));
   }
 
   private Command scoreCycle(
@@ -201,7 +204,8 @@ public class Autos {
                     arm.toSetpoint(armAngle),
                     Commands.waitUntil(arm::atSetpoint),
                     Commands.waitSeconds(0.1),
-                    Commands.sequence(Commands.waitSeconds(1.5), orchestrator.shootBasic().withTimeout(4)))
+                    Commands.sequence(
+                        Commands.waitSeconds(1.5), orchestrator.shootBasic().withTimeout(4)))
                 .withTimeout(3));
   }
 
