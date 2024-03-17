@@ -1,7 +1,6 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -92,17 +91,17 @@ public class Autos {
                 case RIGHT -> {
                   this.noteTranslation = getNotePositions(0, false);
                   this.secondNoteTranslation = getNotePositions(1, false);
-                  this.thirdNoteTranslation = getNotePositions(2, true);
+                  this.thirdNoteTranslation = getNotePositions(2, false);
                 }
                 case CENTER -> {
                   this.noteTranslation = getNotePositions(1, false);
                   this.secondNoteTranslation = getNotePositions(2, false);
-                  this.thirdNoteTranslation = getNotePositions(0, true);
+                  this.thirdNoteTranslation = getNotePositions(4, true);
                 }
                 case LEFT -> {
                   this.noteTranslation = getNotePositions(2, false);
                   this.secondNoteTranslation = getNotePositions(1, false);
-                  this.thirdNoteTranslation = getNotePositions(0, true);
+                  this.thirdNoteTranslation = getNotePositions(0, false);
                 }
               }
             })
