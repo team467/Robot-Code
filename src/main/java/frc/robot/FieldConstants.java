@@ -96,7 +96,7 @@ public class FieldConstants {
 
     public static final Pose2d centerFace =
         new Pose2d(
-            Units.inchesToMeters(35.775),
+            Units.inchesToMeters(35.775 + 20 - 6),
             Units.inchesToMeters(218.416),
             Rotation2d.fromDegrees(180 + 180));
   }
