@@ -1,6 +1,7 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -172,7 +173,7 @@ public class Autos {
             oneNoteAuto()
                 .andThen(scoreCycle(() -> noteTranslation, position::getStartingPosition))
                 .andThen(scoreCycle(() -> secondNoteTranslation, position::getStartingPosition))
-                .andThen(scoreCycle(() -> thirdNoteTranslation, position::getStartingPosition)));
+                .andThen(stageNoteCycle(() -> thirdNoteTranslation, position::getStartingPosition)));
   }
 
   public Command threeNoteAuto(StartingPosition position) {
@@ -221,5 +222,17 @@ public class Autos {
       Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
     return Commands.race(orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic())
         .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(3).alongWith(shoot().withTimeout(5)));
+  }
+  private Command stageNoteCycle(Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
+    return Commands.race(orchestrator.deferredStraightDriveToPose(()->new Pose2d(
+            noteTranslation.get().getX(), drive.getPose().getTranslation().getY(), AllianceFlipUtil.apply(Rotation2d.fromDegrees(180))
+            ))
+                    .andThen(
+                            orchestrator.deferredStraightDriveToPose(()->new Pose2d(
+                                    drive.getPose().getTranslation().getX(), noteTranslation.get().getY(), AllianceFlipUtil.apply(Rotation2d.fromDegrees(180))
+                            ))
+                    ), orchestrator.intakeBasic())
+            .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(3).alongWith(shoot().withTimeout(5)));
+
   }
 }
