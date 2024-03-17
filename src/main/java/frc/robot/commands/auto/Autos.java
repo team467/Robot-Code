@@ -161,9 +161,7 @@ public class Autos {
   }
 
   public Command noVisionFourNoteAuto() {
-    return Commands.parallel(
-            Commands.runOnce(() -> drive.setPose(StartingPosition.CENTER.getStartingPosition())).withTimeout(0.1),
-            setNotePositions(() -> StartingPosition.CENTER).withTimeout(0.1))
+    return noVisionInit(()->StartingPosition.CENTER)
         .andThen(
             oneNoteAuto()
                 .andThen(scoreCycle(() -> noteTranslation, Rotation2d.fromDegrees(5)))
@@ -171,42 +169,17 @@ public class Autos {
                 .andThen(stageNoteCycle(() -> thirdNoteTranslation, Rotation2d.fromDegrees(10))));
   }
 
-  public Command threeNoteAuto(StartingPosition position) {
-    return setNotePositions(() -> position)
-        .andThen(
-            oneNoteAuto()
-                .andThen(
-                    Commands.parallel(
-                        orchestrator.driveToNote(() -> noteTranslation),
-                        orchestrator.intakeBasic()))
-                .andThen(orchestrator.shootBasic())
-                .andThen(
-                    Commands.parallel(
-                            orchestrator.driveToNote(() -> secondNoteTranslation),
-                            orchestrator.intakeBasic())
-                        .andThen(orchestrator.shootBasic())));
+  private Command noVisionInit(Supplier<StartingPosition> position) {
+    return Commands.parallel(
+            Commands.runOnce(() -> drive.setPose(position.get().getStartingPosition())).withTimeout(0.1),
+            setNotePositions(position).withTimeout(0.1));
   }
 
-  public Command fourNoteAuto(StartingPosition position) {
-    return setNotePositions(() -> position)
+  public Command threeNoteAuto(StartingPosition position) {
+    return noVisionInit(()->position)
         .andThen(
-            oneNoteAuto()
-                .withTimeout(1)
-                .andThen(
-                    Commands.parallel(
-                        orchestrator.driveToNote(() -> noteTranslation),
-                        orchestrator.intakeBasic()))
-                .andThen(orchestrator.shootBasic())
-                .andThen(
-                    Commands.parallel(
-                            orchestrator.driveToNote(() -> secondNoteTranslation),
-                            orchestrator.intakeBasic())
-                        .andThen(orchestrator.shootBasic()))
-                .andThen(
-                    Commands.parallel(
-                        orchestrator.driveToNote(() -> thirdNoteTranslation),
-                        orchestrator.intakeBasic()))
-                .andThen(orchestrator.shootBasic()));
+            oneNoteAuto()).andThen(scoreCycle(()->noteTranslation, Rotation2d.fromDegrees(5)))
+            .andThen(scoreCycle(()->secondNoteTranslation, position::getStartingPosition));
   }
 
   private Command scoreCycle(
