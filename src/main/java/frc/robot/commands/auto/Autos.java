@@ -178,8 +178,12 @@ public class Autos {
   public Command threeNoteAuto(StartingPosition position) {
     return noVisionInit(()->position)
         .andThen(
-            oneNoteAuto()).andThen(scoreCycle(()->noteTranslation, Rotation2d.fromDegrees(5)))
-            .andThen(scoreCycle(()->secondNoteTranslation, position::getStartingPosition));
+            oneNoteAuto()).andThen(scoreCycle(()->noteTranslation, position::getStartingPosition))
+            .andThen(scoreCycle(()->secondNoteTranslation, Rotation2d.fromDegrees(5)));
+  }
+  public Command noVisionTwoNoteAuto(StartingPosition position) {
+    return noVisionInit(()->position)
+            .andThen(oneNoteAuto()).andThen(scoreCycle(()->noteTranslation, position::getStartingPosition));
   }
 
   private Command scoreCycle(
