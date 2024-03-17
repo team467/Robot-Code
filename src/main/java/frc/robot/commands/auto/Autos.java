@@ -179,16 +179,12 @@ public class Autos {
                     Commands.parallel(
                         orchestrator.driveToNote(() -> noteTranslation),
                         orchestrator.intakeBasic()))
-                .andThen(shoot())
+                .andThen(orchestrator.shootBasic())
                 .andThen(
                     Commands.parallel(
                             orchestrator.driveToNote(() -> secondNoteTranslation),
                             orchestrator.intakeBasic())
-                        .andThen(shoot())));
-  }
-
-  private Command shoot() {
-    return orchestrator.shootBasic();
+                        .andThen(orchestrator.shootBasic())));
   }
 
   public Command fourNoteAuto(StartingPosition position) {
@@ -200,24 +196,24 @@ public class Autos {
                     Commands.parallel(
                         orchestrator.driveToNote(() -> noteTranslation),
                         orchestrator.intakeBasic()))
-                .andThen(shoot())
+                .andThen(orchestrator.shootBasic())
                 .andThen(
                     Commands.parallel(
                             orchestrator.driveToNote(() -> secondNoteTranslation),
                             orchestrator.intakeBasic())
-                        .andThen(shoot()))
+                        .andThen(orchestrator.shootBasic()))
                 .andThen(
                     Commands.parallel(
                         orchestrator.driveToNote(() -> thirdNoteTranslation),
                         orchestrator.intakeBasic()))
-                .andThen(shoot()));
+                .andThen(orchestrator.shootBasic()));
   }
 
   private Command scoreCycle(
       Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
     return Commands.race(orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic())
         .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(4))
-        .andThen(shoot().withTimeout(4));
+        .andThen(orchestrator.shootBasic().withTimeout(4));
   }
 
   private Command scoreCycle(Supplier<Translation2d> noteTranslation, Rotation2d armAngle) {
@@ -228,7 +224,7 @@ public class Autos {
                     arm.toSetpoint(armAngle),
                     Commands.waitUntil(arm::atSetpoint),
                     Commands.waitSeconds(0.1),
-                    Commands.sequence(Commands.waitSeconds(1.5), shoot().withTimeout(4)))
+                    Commands.sequence(Commands.waitSeconds(1.5), orchestrator.shootBasic().withTimeout(4)))
                 .withTimeout(3));
   }
 
@@ -257,7 +253,7 @@ public class Autos {
             orchestrator
                 .deferredStraightDriveToPose(shootPosition)
                 .withTimeout(3)
-                .alongWith(shoot().withTimeout(5)));
+                .alongWith(orchestrator.shootBasic().withTimeout(5)));
   }
 
   private Command stageNoteCycle(Supplier<Translation2d> noteTranslation, Rotation2d armAngle) {
@@ -291,6 +287,6 @@ public class Autos {
         .andThen(
             orchestrator
                 .turnToSpeaker()
-                .alongWith(Commands.sequence(Commands.waitSeconds(2), shoot())));
+                .alongWith(Commands.sequence(Commands.waitSeconds(2), orchestrator.shootBasic())));
   }
 }
