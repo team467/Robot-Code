@@ -168,20 +168,27 @@ public class Autos {
                 .andThen(scoreCycle(() -> secondNoteTranslation, Rotation2d.fromDegrees(10)))
                 .andThen(stageNoteCycle(() -> thirdNoteTranslation, Rotation2d.fromDegrees(10))));
   }
-    private Command noVisionInit(Supplier<StartingPosition> position) {
-        return Commands.parallel(
-                Commands.runOnce(() -> drive.setPose(position.get().getStartingPosition()))
-                        .withTimeout(0.1),
-                setNotePositions(position).withTimeout(0.1));
-    }
-  public Command noVisionThreeNoteAutoLeftOnly() {
+
+  private Command noVisionInit(Supplier<StartingPosition> position) {
+    return Commands.parallel(
+        Commands.runOnce(() -> drive.setPose(position.get().getStartingPosition()))
+            .withTimeout(0.1),
+        setNotePositions(position).withTimeout(0.1));
+  }
+
+  public Command threeNoteAutoLeftOnly() {
     StartingPosition position = StartingPosition.LEFT;
     return setNotePositions(() -> position)
         .andThen(() -> drive.setPose(position.getStartingPosition()))
         .andThen(oneNoteAuto())
+            .andThen(() -> drive.runVelocity(new ChassisSpeeds(1, 0, 0)))
+        .withTimeout(0.5)
         .andThen(orchestrator.driveToNote(() -> noteTranslation))
         .andThen(orchestrator.turnToSpeaker())
-        .andThen(arm.toSetpoint(new Rotation2d(Units.degreesToRadians(10))).withTimeout(1).andThen(shoot()))
+        .andThen(
+            arm.toSetpoint(new Rotation2d(Units.degreesToRadians(10)))
+                .withTimeout(1)
+                .andThen(orchestrator.shootBasic()))
         .andThen(
             Commands.race(
                 orchestrator.driveToNote(() -> secondNoteTranslation), orchestrator.intakeBasic()))
@@ -193,7 +200,10 @@ public class Autos {
                         noteTranslation.getY(),
                         new Rotation2d(0))))
         .andThen(orchestrator.turnToSpeaker())
-        .andThen(arm.toSetpoint(new Rotation2d(Units.degreesToRadians(17.5))).withTimeout(1).andThen(shoot()));
+        .andThen(
+            arm.toSetpoint(new Rotation2d(Units.degreesToRadians(17.5)))
+                .withTimeout(1)
+                .andThen(orchestrator.shootBasic()));
   }
 
   public Command threeNoteAuto(StartingPosition position) {
@@ -264,14 +274,16 @@ public class Autos {
                     () ->
                         new Pose2d(
                             drive.getPose().getTranslation().getX()
-                            - AllianceFlipUtil.applyRelative(Units.inchesToMeters(20)),noteTranslation.get().getY()
+                                - AllianceFlipUtil.applyRelative(Units.inchesToMeters(20)),
+                            noteTranslation.get().getY()
                                 + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
                             new Rotation2d()))
                 .andThen(
                     orchestrator.deferredStraightDriveToPose(
                         () ->
                             new Pose2d(
-                                noteTranslation.get().getX()- AllianceFlipUtil.applyRelative(Units.inchesToMeters(9)),
+                                noteTranslation.get().getX()
+                                    - AllianceFlipUtil.applyRelative(Units.inchesToMeters(9)),
                                 drive.getPose().getTranslation().getY(),
                                 new Rotation2d())))
                 .withTimeout(3),
@@ -283,7 +295,8 @@ public class Autos {
                     Commands.waitUntil(arm::atSetpoint),
                     Commands.waitSeconds(0.1))
                 .withTimeout(4))
-        .andThen(orchestrator
+        .andThen(
+            orchestrator
                 .turnToSpeaker()
                 .alongWith(Commands.sequence(Commands.waitSeconds(2), orchestrator.shootBasic())));
   }
