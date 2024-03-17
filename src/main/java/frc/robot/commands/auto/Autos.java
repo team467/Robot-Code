@@ -75,26 +75,11 @@ public class Autos {
     public Pose2d getStartingPosition() {
       switch (this) {
         case NEAR_AMP:
-          return AllianceFlipUtil.apply(
-              new Pose2d(
-                  FieldConstants.Subwoofer.ampFaceCorner.getTranslation(),
-                  FieldConstants.Subwoofer.ampFaceCorner
-                      .getRotation()
-                      .plus(Rotation2d.fromDegrees(180))));
+          return AllianceFlipUtil.apply(FieldConstants.Subwoofer.ampFaceCorner);
         case CENTER:
-          return AllianceFlipUtil.apply(
-              new Pose2d(
-                  FieldConstants.Subwoofer.centerFace.getTranslation(),
-                  FieldConstants.Subwoofer.centerFace
-                      .getRotation()
-                      .plus(Rotation2d.fromRadians(Units.degreesToRadians(180)))));
+          return AllianceFlipUtil.apply(FieldConstants.Subwoofer.centerFace);
         case NEAR_SOURCE:
-          return AllianceFlipUtil.apply(
-              new Pose2d(
-                  FieldConstants.Subwoofer.sourceFaceCorner.getTranslation(),
-                  FieldConstants.Subwoofer.sourceFaceCorner
-                      .getRotation()
-                      .plus(Rotation2d.fromDegrees(180))));
+          return AllianceFlipUtil.apply(FieldConstants.Subwoofer.sourceFaceCorner);
       }
       throw new RuntimeException("Invalid position");
     }
