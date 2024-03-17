@@ -132,7 +132,7 @@ public class Autos {
                             () -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
                         .withTimeout(1)
                         .andThen(driveXDistance(MOBILITY_DRIVE_DISTANCE).withTimeout(5))),
-                () -> position.getRelativeStartingPosition()));
+                position::getRelativeStartingPosition));
   }
 
   private Command driveXDistance(double distance) {
@@ -193,7 +193,7 @@ public class Autos {
   }
 
   private Command shoot() {
-    return orchestrator.fullAlignShootSpeaker();
+    return orchestrator.shootBasic();
   }
 
   public Command fourNoteAuto(StartingPosition position) {
@@ -221,7 +221,7 @@ public class Autos {
   private Command scoreCycle(
       Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
     return Commands.race(orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic())
-        .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(4))
+        .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(3))
         .andThen(shoot().withTimeout(3));
   }
 }
