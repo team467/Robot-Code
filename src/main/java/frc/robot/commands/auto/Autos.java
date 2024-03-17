@@ -181,7 +181,7 @@ public class Autos {
         .andThen(oneNoteAuto())
         .andThen(orchestrator.driveToNote(() -> noteTranslation))
         .andThen(orchestrator.turnToSpeaker())
-        .andThen(arm.toSetpoint(new Rotation2d(10)).withTimeout(1).andThen(shoot()))
+        .andThen(arm.toSetpoint(new Rotation2d(Units.degreesToRadians(10))).withTimeout(1).andThen(shoot()))
         .andThen(
             Commands.race(
                 orchestrator.driveToNote(() -> secondNoteTranslation), orchestrator.intakeBasic()))
@@ -193,7 +193,7 @@ public class Autos {
                         noteTranslation.getY(),
                         new Rotation2d(0))))
         .andThen(orchestrator.turnToSpeaker())
-        .andThen(arm.toSetpoint(new Rotation2d(17.5)).withTimeout(1).andThen(shoot()));
+        .andThen(arm.toSetpoint(new Rotation2d(Units.degreesToRadians(17.5))).withTimeout(1).andThen(shoot()));
   }
 
   public Command threeNoteAuto(StartingPosition position) {
