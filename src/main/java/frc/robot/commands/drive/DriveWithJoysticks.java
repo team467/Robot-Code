@@ -109,7 +109,7 @@ public class DriveWithJoysticks extends Command {
               linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED,
               linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
               rightX * MAX_ANGULAR_SPEED,
-              RobotOdometry.getInstance().getLatestPose().getRotation());
+              RobotOdometry.getInstance().getPoseEstimator().getEstimatedPosition().getRotation());
     }
     drive.runVelocity(speeds);
   }
