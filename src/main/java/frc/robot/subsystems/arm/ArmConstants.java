@@ -33,7 +33,7 @@ public class ArmConstants {
         STOW = Rotation2d.fromDegrees(-13.95);
         GEAR_RATIO = new GearRatio(228.571429, 1);
         AMP_POSITION = Rotation2d.fromDegrees(78.26);
-        TOLERENCE = Units.degreesToRadians(0.5);
+        TOLERENCE = Units.degreesToRadians(0.25);
         AFTER_INTAKE_POS = Rotation2d.fromDegrees(-9.75);
       }
       default -> {
