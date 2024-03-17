@@ -101,7 +101,7 @@ public class Autos {
                 }
                 case LEFT -> {
                   this.noteTranslation = getNotePositions(2, false);
-                  this.secondNoteTranslation = getNotePositions(1, false);
+                  this.secondNoteTranslation = getNotePositions(4, true);
                   this.thirdNoteTranslation = getNotePositions(0, false);
                 }
               }
@@ -177,6 +177,28 @@ public class Autos {
                 .andThen(stageNoteCycle(() -> thirdNoteTranslation, Rotation2d.fromDegrees(10))));
   }
 
+  public Command noVisionThreeNoteAutoLeftOnly() {
+    StartingPosition position = StartingPosition.LEFT;
+    return setNotePositions(() -> position)
+        .andThen(() -> drive.setPose(position.getStartingPosition()))
+        .andThen(oneNoteAuto())
+        .andThen(orchestrator.driveToNote(() -> noteTranslation))
+        .andThen(orchestrator.turnToSpeaker())
+        .andThen(arm.toSetpoint(new Rotation2d(10)).withTimeout(1).andThen(shoot()))
+        .andThen(
+            Commands.race(
+                orchestrator.driveToNote(() -> secondNoteTranslation), orchestrator.intakeBasic()))
+        .andThen(
+            orchestrator.deferredStraightDriveToPose(
+                () ->
+                    new Pose2d(
+                        FieldConstants.Stage.center.getX(),
+                        noteTranslation.getY(),
+                        new Rotation2d(0))))
+        .andThen(orchestrator.turnToSpeaker())
+        .andThen(arm.toSetpoint(new Rotation2d(17.5)).withTimeout(1).andThen(shoot()));
+  }
+
   public Command threeNoteAuto(StartingPosition position) {
     return setNotePositions(() -> position)
         .andThen(
@@ -234,58 +256,59 @@ public class Autos {
   }
 
   private Command stageNoteCycle(
-          Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
+      Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
     return Commands.race(
-                    orchestrator
-                            .deferredStraightDriveToPose(
-                                    () ->
-                                            new Pose2d(
-                                                    drive.getPose().getTranslation().getX(),
-                                                    noteTranslation.get().getY()
-                                                            + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
-                                                    new Rotation2d()))
-                            .andThen(
-                                    orchestrator.deferredStraightDriveToPose(
-                                            () ->
-                                                    new Pose2d(
-                                                            noteTranslation.get().getX(),
-                                                            drive.getPose().getTranslation().getY(),
-                                                            new Rotation2d())))
-                            .withTimeout(3),
-                    orchestrator.intakeBasic())
-            .withTimeout(5)
-            .andThen(
-                    orchestrator
-                            .deferredStraightDriveToPose(shootPosition)
-                            .withTimeout(3)
-                            .alongWith(shoot().withTimeout(5)));
+            orchestrator
+                .deferredStraightDriveToPose(
+                    () ->
+                        new Pose2d(
+                            drive.getPose().getTranslation().getX(),
+                            noteTranslation.get().getY()
+                                + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
+                            new Rotation2d()))
+                .andThen(
+                    orchestrator.deferredStraightDriveToPose(
+                        () ->
+                            new Pose2d(
+                                noteTranslation.get().getX(),
+                                drive.getPose().getTranslation().getY(),
+                                new Rotation2d())))
+                .withTimeout(3),
+            orchestrator.intakeBasic())
+        .withTimeout(5)
+        .andThen(
+            orchestrator
+                .deferredStraightDriveToPose(shootPosition)
+                .withTimeout(3)
+                .alongWith(shoot().withTimeout(5)));
   }
 
-  private Command stageNoteCycle(
-          Supplier<Translation2d> noteTranslation, Rotation2d armAngle) {
+  private Command stageNoteCycle(Supplier<Translation2d> noteTranslation, Rotation2d armAngle) {
     return Commands.race(
-                    orchestrator
-                            .deferredStraightDriveToPose(
-                                    () ->
-                                            new Pose2d(
-                                                    drive.getPose().getTranslation().getX(),
-                                                    noteTranslation.get().getY()
-                                                            + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
-                                                    new Rotation2d()))
-                            .andThen(
-                                    orchestrator.deferredStraightDriveToPose(
-                                            () ->
-                                                    new Pose2d(
-                                                            noteTranslation.get().getX(),
-                                                            drive.getPose().getTranslation().getY(),
-                                                            new Rotation2d())))
-                            .withTimeout(3),
-                    orchestrator.intakeBasic())
-            .withTimeout(5)
-            .andThen(Commands.parallel(
-                            arm.toSetpoint(armAngle),
-                            Commands.waitUntil(arm::atSetpoint),
-                            Commands.waitSeconds(0.1))
-                    .withTimeout(4)).andThen(shoot());
+            orchestrator
+                .deferredStraightDriveToPose(
+                    () ->
+                        new Pose2d(
+                            drive.getPose().getTranslation().getX(),
+                            noteTranslation.get().getY()
+                                + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
+                            new Rotation2d()))
+                .andThen(
+                    orchestrator.deferredStraightDriveToPose(
+                        () ->
+                            new Pose2d(
+                                noteTranslation.get().getX(),
+                                drive.getPose().getTranslation().getY(),
+                                new Rotation2d())))
+                .withTimeout(3),
+            orchestrator.intakeBasic())
+        .withTimeout(5)
+        .andThen(
+            Commands.parallel(
+                    arm.toSetpoint(armAngle),
+                    Commands.waitUntil(arm::atSetpoint),
+                    Commands.waitSeconds(0.1))
+                .withTimeout(4))
+        .andThen(shoot());
   }
 }

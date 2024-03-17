@@ -215,6 +215,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Score Three Notes [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
+    autoChooser.addOption(
+        "Score Three Notes Left Colum Only [LEFT]", autos.noVisionThreeNoteAutoLeftOnly());
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)
