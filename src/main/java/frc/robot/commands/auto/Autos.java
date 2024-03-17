@@ -96,7 +96,7 @@ public class Autos {
                 case CENTER -> {
                   this.noteTranslation = getNotePositions(1, false);
                   this.secondNoteTranslation = getNotePositions(2, false);
-                  this.thirdNoteTranslation = getNotePositions(4, true);
+                  this.thirdNoteTranslation = getNotePositions(0, false);
                 }
                 case LEFT -> {
                   this.noteTranslation = getNotePositions(2, false);
@@ -192,7 +192,7 @@ public class Autos {
   }
 
   private Command shoot() {
-    return orchestrator.shootBasic();
+    return orchestrator.spinUpFlywheel().withTimeout(3).andThen(orchestrator.shootBasic());
   }
 
   public Command fourNoteAuto(StartingPosition position) {
@@ -220,7 +220,6 @@ public class Autos {
   private Command scoreCycle(
       Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
     return Commands.race(orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic())
-        .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(3))
-        .andThen(shoot().withTimeout(3));
+        .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(3).alongWith(shoot().withTimeout(5)));
   }
 }

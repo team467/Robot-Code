@@ -175,7 +175,7 @@ public class Orchestrator {
     return Commands.sequence(
             shooter
                 .manualShoot(ShooterConstants.SHOOT_SPEED)
-                .withTimeout(1.5)
+                .withTimeout(.5)
                 .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
                 .andThen(
                     Commands.race(
