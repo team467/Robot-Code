@@ -12,7 +12,6 @@ public class ClimberIOSparkMax implements ClimberIO {
   private final CANSparkMax climberRight;
   private final RelativeEncoder climberRightEncoder;
   private final Relay climberRatchet;
-  private boolean ratchetLocked = false;
   private SparkLimitSwitch reverseLimitSwitchLeft;
   private SparkLimitSwitch fowardLimitSwitchLeft;
   private SparkLimitSwitch reverseLimitSwitchRight;
@@ -56,7 +55,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     inputs.appliedVoltsRight = climberRight.getBusVoltage() * climberRight.getAppliedOutput();
     inputs.currentAmpsRight = climberRight.getOutputCurrent();
     inputs.ClimberRightPosition = climberRightEncoder.getPosition();
-    inputs.ratchetLocked = ratchetLocked;
+    inputs.ratchetLocked = climberRatchet.get().equals(Relay.Value.kOff);
     inputs.reverseLimitSwitchLeftPressed = reverseLimitSwitchLeft.isPressed();
     inputs.forwardLimitSwitchLeftPressed = fowardLimitSwitchLeft.isPressed();
     inputs.reverseLimitSwitchRightPressed = reverseLimitSwitchRight.isPressed();
@@ -80,8 +79,7 @@ public class ClimberIOSparkMax implements ClimberIO {
   }
 
   public void setRatchetLocked(boolean locked) {
-    climberRatchet.set(ratchetLocked ? Relay.Value.kOff : Relay.Value.kOn);
-    ratchetLocked = locked;
+    climberRatchet.set(locked ? Relay.Value.kOff : Relay.Value.kOn);
   }
 
   @Override
