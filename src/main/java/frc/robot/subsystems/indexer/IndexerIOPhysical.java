@@ -15,7 +15,7 @@ public class IndexerIOPhysical implements IndexerIO {
 
   public IndexerIOPhysical() {
     indexer = new CANSparkMax(Schematic.INDEXER_ID, MotorType.kBrushless);
-    indexer.setIdleMode(IdleMode.kBrake);
+    indexer.setIdleMode(IdleMode.kCoast);
     indexer.setInverted(false);
     indexerEncoder = indexer.getEncoder();
     indexerLimitSwitch = indexer.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
