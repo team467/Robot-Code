@@ -186,9 +186,9 @@ public class Autos {
             setNotePositions(() -> position))
         .andThen(
             oneNoteAuto()
-                .andThen(scoreCycle(()->noteTranslation, position::getStartingPosition))
-                .andThen(scoreCycle(()->secondNoteTranslation, position::getStartingPosition))
-                .andThen(scoreCycle(()->thirdNoteTranslation, position::getStartingPosition)));
+                .andThen(scoreCycle(() -> noteTranslation, position::getStartingPosition))
+                .andThen(scoreCycle(() -> secondNoteTranslation, position::getStartingPosition))
+                .andThen(scoreCycle(() -> thirdNoteTranslation, position::getStartingPosition)));
   }
 
   public Command threeNoteAuto(StartingPosition position) {
@@ -232,11 +232,11 @@ public class Autos {
                         orchestrator.intakeBasic()))
                 .andThen(shoot()));
   }
-  private Command scoreCycle(Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
-    return Commands.race(
-            orchestrator.driveToNote(noteTranslation),
-            orchestrator.intakeBasic())
-                .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(4))
-            .andThen(shoot().withTimeout(3));
+
+  private Command scoreCycle(
+      Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
+    return Commands.race(orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic())
+        .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(4))
+        .andThen(shoot().withTimeout(3));
   }
 }

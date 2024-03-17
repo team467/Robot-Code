@@ -65,7 +65,8 @@ public class Orchestrator {
     Supplier<Rotation2d> targetRotation =
         () -> targetTranslation.get().minus(drive.getPose().getTranslation()).getAngle();
     return deferredStraightDriveToPose(
-        () -> new Pose2d(targetTranslation.get(), targetRotation.get())).withTimeout(5);
+            () -> new Pose2d(targetTranslation.get(), targetRotation.get()))
+        .withTimeout(5);
   }
 
   /**
