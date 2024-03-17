@@ -157,11 +157,7 @@ public class Autos {
     return setNotePositions(() -> position)
         .andThen(
             oneNoteAuto()
-                .andThen(
-                    Commands.parallel(
-                        orchestrator.driveToNote(() -> noteTranslation).withTimeout(5),
-                        orchestrator.intakeBasic()))
-                .andThen(shoot()));
+                .andThen(scoreCycle(() -> noteTranslation, position::getStartingPosition)));
   }
 
   public Command noVisionFourNoteAuto() {
@@ -169,12 +165,12 @@ public class Autos {
     return Commands.parallel(
             Commands.runOnce(() -> drive.setPose(position.getStartingPosition())),
             setNotePositions(() -> position))
+        .withTimeout(0.1)
         .andThen(
             oneNoteAuto()
-                .andThen(scoreCycle(() -> noteTranslation, position::getStartingPosition))
+                .andThen(scoreCycle(() -> noteTranslation, Rotation2d.fromDegrees(0)))
                 .andThen(scoreCycle(() -> secondNoteTranslation, position::getStartingPosition))
-                .andThen(
-                    stageNoteCycle(() -> thirdNoteTranslation, position::getStartingPosition)));
+                .andThen(stageNoteCycle(() -> thirdNoteTranslation, Rotation2d.fromDegrees(10))));
   }
 
   public Command threeNoteAuto(StartingPosition position) {
@@ -226,31 +222,70 @@ public class Autos {
         .andThen(shoot().withTimeout(4));
   }
 
-  private Command stageNoteCycle(
-      Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
-    return Commands.race(
-            orchestrator
-                .deferredStraightDriveToPose(
-                    () ->
-                        new Pose2d(
-                            drive.getPose().getTranslation().getX(),
-                            noteTranslation.get().getY()
-                                + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
-                            new Rotation2d()))
-                .andThen(
-                    orchestrator.deferredStraightDriveToPose(
-                        () ->
-                            new Pose2d(
-                                noteTranslation.get().getX(),
-                                drive.getPose().getTranslation().getY(),
-                                new Rotation2d())))
-                .withTimeout(3),
-            orchestrator.intakeBasic())
-        .withTimeout(5)
+  private Command scoreCycle(Supplier<Translation2d> noteTranslation, Rotation2d armAngle) {
+    return Commands.race(orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic())
         .andThen(
-            orchestrator
-                .deferredStraightDriveToPose(shootPosition)
-                .withTimeout(3)
-                .alongWith(shoot().withTimeout(5)));
+            Commands.parallel(
+                    arm.toSetpoint(armAngle),
+                    Commands.waitUntil(arm::atSetpoint),
+                    Commands.waitSeconds(0.1))
+                .withTimeout(2))
+        .andThen(shoot().withTimeout(4));
+  }
+
+  private Command stageNoteCycle(
+          Supplier<Translation2d> noteTranslation, Supplier<Pose2d> shootPosition) {
+    return Commands.race(
+                    orchestrator
+                            .deferredStraightDriveToPose(
+                                    () ->
+                                            new Pose2d(
+                                                    drive.getPose().getTranslation().getX(),
+                                                    noteTranslation.get().getY()
+                                                            + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
+                                                    new Rotation2d()))
+                            .andThen(
+                                    orchestrator.deferredStraightDriveToPose(
+                                            () ->
+                                                    new Pose2d(
+                                                            noteTranslation.get().getX(),
+                                                            drive.getPose().getTranslation().getY(),
+                                                            new Rotation2d())))
+                            .withTimeout(3),
+                    orchestrator.intakeBasic())
+            .withTimeout(5)
+            .andThen(
+                    orchestrator
+                            .deferredStraightDriveToPose(shootPosition)
+                            .withTimeout(3)
+                            .alongWith(shoot().withTimeout(5)));
+  }
+
+  private Command stageNoteCycle(
+          Supplier<Translation2d> noteTranslation, Rotation2d armAngle) {
+    return Commands.race(
+                    orchestrator
+                            .deferredStraightDriveToPose(
+                                    () ->
+                                            new Pose2d(
+                                                    drive.getPose().getTranslation().getX(),
+                                                    noteTranslation.get().getY()
+                                                            + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
+                                                    new Rotation2d()))
+                            .andThen(
+                                    orchestrator.deferredStraightDriveToPose(
+                                            () ->
+                                                    new Pose2d(
+                                                            noteTranslation.get().getX(),
+                                                            drive.getPose().getTranslation().getY(),
+                                                            new Rotation2d())))
+                            .withTimeout(3),
+                    orchestrator.intakeBasic())
+            .withTimeout(5)
+            .andThen(Commands.parallel(
+                            arm.toSetpoint(armAngle),
+                            Commands.waitUntil(arm::atSetpoint),
+                            Commands.waitSeconds(0.1))
+                    .withTimeout(4)).andThen(shoot());
   }
 }
