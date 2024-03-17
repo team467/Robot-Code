@@ -197,7 +197,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Score One Note + Mobility [LEFT]",
         autos.scoreOneNoteMobility(Autos.StartingPosition.LEFT));
-    autoChooser.addOption("Score Two Notes [LEFT]", autos.twoNoteAuto(Autos.StartingPosition.LEFT));
+    autoChooser.addOption(
+        "Score Two Notes [LEFT]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption(
         "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption("Mobility [RIGHT]", autos.mobilityAuto(Autos.StartingPosition.RIGHT));
@@ -205,7 +206,7 @@ public class RobotContainer {
         "Score One Note + Mobility [RIGHT]",
         autos.scoreOneNoteMobility(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
-        "Score Two Notes [RIGHT]", autos.twoNoteAuto(Autos.StartingPosition.RIGHT));
+        "Score Two Notes [RIGHT]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
         "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption("Mobility [CENTER]", autos.mobilityAuto(Autos.StartingPosition.CENTER));
@@ -213,7 +214,7 @@ public class RobotContainer {
         "Score One Note + Mobility [CENTER]",
         autos.scoreOneNoteMobility(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-        "Score Two Notes [CENTER]", autos.twoNoteAuto(Autos.StartingPosition.CENTER));
+        "Score Two Notes [CENTER]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
         "Score Three Notes [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
