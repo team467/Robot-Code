@@ -271,9 +271,11 @@ public class Orchestrator {
             .andThen(
                 Commands.parallel(
                         arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
+                        Commands.waitUntil(arm::atSetpoint),
                         indexer.setPercent(0).until(() -> true),
                         shooter.manualShoot(0).until(() -> true),
-                        intake.stop().until(() -> true))
+                        intake.stop().until(() -> true),
+                        Commands.waitSeconds(0.5))
                     .withTimeout(5))
             .finallyDo(() -> pullBack = true))
         .onlyIf(() -> !pullBack);
