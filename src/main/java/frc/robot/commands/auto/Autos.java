@@ -141,6 +141,10 @@ public class Autos {
         Set.of(drive));
   }
 
+  private Command shoot() {
+    return orchestrator.shootBasic();
+  }
+
   public Command oneNoteAuto() {
     return arm.runPercent(-0.3)
         .until(arm::limitSwitchPressed)
@@ -187,10 +191,6 @@ public class Autos {
                             orchestrator.driveToNote(() -> secondNoteTranslation),
                             orchestrator.intakeBasic())
                         .andThen(shoot())));
-  }
-
-  private Command shoot() {
-    return orchestrator.shootBasic();
   }
 
   public Command fourNoteAuto(StartingPosition position) {
