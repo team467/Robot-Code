@@ -154,8 +154,10 @@ public class Autos {
     return noVisionInit(() -> StartingPosition.CENTER)
         .andThen(
             oneNoteAuto()
-                .andThen(scoreCycle(() -> noteTranslations[0], Rotation2d.fromDegrees(5)))
-                .andThen(scoreCycle(() -> noteTranslations[1], Rotation2d.fromDegrees(10)))
+                .andThen(
+                    scoreCycle(() -> noteTranslations[0], Rotation2d.fromDegrees(5), () -> false))
+                .andThen(
+                    scoreCycle(() -> noteTranslations[1], Rotation2d.fromDegrees(10), () -> false))
                 .andThen(stageNoteCycle(() -> noteTranslations[2], Rotation2d.fromDegrees(10))));
   }
 
@@ -172,11 +174,13 @@ public class Autos {
         .andThen(
             scoreCycle(
                 () -> noteTranslations[0],
-                Rotation2d.fromDegrees(position == StartingPosition.CENTER ? 5 : 10)))
+                Rotation2d.fromDegrees(position == StartingPosition.CENTER ? 5 : 10),
+                () -> position != StartingPosition.CENTER))
         .andThen(
             scoreCycle(
                 () -> noteTranslations[1],
-                Rotation2d.fromDegrees(position == StartingPosition.CENTER ? 10 : 5)));
+                Rotation2d.fromDegrees(position == StartingPosition.CENTER ? 10 : 5),
+                () -> position != StartingPosition.CENTER));
   }
 
   public Command noVisionTwoNoteAuto(StartingPosition position) {
@@ -194,12 +198,7 @@ public class Autos {
       Supplier<Pose2d> shootPosition,
       BooleanSupplier backUp) {
     return Commands.race(
-            Commands.sequence(
-                Commands.run(
-                        () -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(4), 0, 0)))
-                    .withTimeout(0.5)
-                    .onlyIf(backUp),
-                orchestrator.driveToNote(intakePosition)),
+            Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
             orchestrator.intakeBasic())
         .andThen(
             orchestrator
@@ -209,8 +208,16 @@ public class Autos {
         .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1));
   }
 
-  private Command scoreCycle(Supplier<Translation2d> intakePosition, Rotation2d armAngle) {
-    return Commands.race(orchestrator.driveToNote(intakePosition), orchestrator.intakeBasic())
+  private Command backUp() {
+    return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(4), 0, 0)))
+        .withTimeout(0.5);
+  }
+
+  private Command scoreCycle(
+      Supplier<Translation2d> intakePosition, Rotation2d armAngle, BooleanSupplier backUp) {
+    return Commands.race(
+            Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
+            orchestrator.intakeBasic())
         .andThen(
             Commands.parallel(
                     orchestrator.turnToSpeaker().withTimeout(2),
