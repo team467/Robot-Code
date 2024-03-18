@@ -26,14 +26,8 @@ public class Autos {
 
   private double MOBILITY_DRIVE_DISTANCE = Units.feetToMeters(6.75);
 
-  @AutoLogOutput(key = "Autos/Notes/0")
-  private Translation2d noteTranslation;
-
-  @AutoLogOutput(key = "Autos/Notes/1")
-  private Translation2d secondNoteTranslation;
-
-  @AutoLogOutput(key = "Autos/Notes/2")
-  private Translation2d thirdNoteTranslation;
+  @AutoLogOutput(key = "Autos/Notes/")
+  private Translation2d[] noteTranslations = new Translation2d[3];
 
   public Autos(Drive drive, Arm arm, Orchestrator orchestrator) {
     this.drive = drive;
@@ -91,19 +85,19 @@ public class Autos {
             () -> {
               switch (position.get()) {
                 case RIGHT -> {
-                  this.noteTranslation = getNotePositions(0, false);
-                  this.secondNoteTranslation = getNotePositions(1, false);
-                  this.thirdNoteTranslation = getNotePositions(2, false);
+                  this.noteTranslations[0] = getNotePositions(0, false);
+                  this.secondNoteTranslation[1] = getNotePositions(1, false);
+                  this.thirdNoteTranslation[2] = getNotePositions(2, false);
                 }
                 case CENTER -> {
-                  this.noteTranslation = getNotePositions(1, false);
-                  this.secondNoteTranslation = getNotePositions(2, false);
-                  this.thirdNoteTranslation = getNotePositions(0, false);
+                       this.noteTranslations[0] = getNotePositions(1, false);
+                  this.secondNoteTranslation[1] = getNotePositions(2, false);
+                   this.thirdNoteTranslation[2] = getNotePositions(0, false);
                 }
                 case LEFT -> {
-                  this.noteTranslation = getNotePositions(2, false);
-                  this.secondNoteTranslation = getNotePositions(1, false);
-                  this.thirdNoteTranslation = getNotePositions(0, false);
+                       this.noteTranslations[0] = getNotePositions(2, false);
+                  this.secondNoteTranslation[1] = getNotePositions(1, false);
+                   this.thirdNoteTranslation[2] = getNotePositions(0, false);
                 }
               }
             })
@@ -157,24 +151,13 @@ public class Autos {
     return oneNoteAuto().andThen(mobilityAuto(position));
   }
 
-  public Command twoNoteAuto(StartingPosition position) {
-    return setNotePositions(() -> position)
-        .andThen(
-            oneNoteAuto()
-                .andThen(
-                    scoreCycle(
-                        () -> noteTranslation,
-                        position::getStartingPosition,
-                        () -> position != StartingPosition.CENTER)));
-  }
-
   public Command noVisionFourNoteAuto() {
     return noVisionInit(() -> StartingPosition.CENTER)
         .andThen(
             oneNoteAuto()
-                .andThen(scoreCycle(() -> noteTranslation, Rotation2d.fromDegrees(5)))
-                .andThen(scoreCycle(() -> secondNoteTranslation, Rotation2d.fromDegrees(10)))
-                .andThen(stageNoteCycle(() -> thirdNoteTranslation, Rotation2d.fromDegrees(10))));
+                .andThen(scoreCycle(() -> noteTranslations[0], Rotation2d.fromDegrees(5)))
+                .andThen(scoreCycle(() -> noteTranslations[1], Rotation2d.fromDegrees(10)))
+                .andThen(stageNoteCycle(() -> noteTranslations[2], Rotation2d.fromDegrees(10))));
   }
 
   private Command noVisionInit(Supplier<StartingPosition> position) {
@@ -189,12 +172,12 @@ public class Autos {
         .andThen(oneNoteAuto())
         .andThen(
             scoreCycle(
-                () -> noteTranslation,
+                () -> noteTranslations[0],
                 position::getStartingPosition,
                 () -> position != StartingPosition.CENTER))
         .andThen(
             scoreCycle(
-                () -> secondNoteTranslation,
+                () -> noteTranslations[1],
                 position::getStartingPosition,
                 () -> position != StartingPosition.CENTER));
   }
@@ -204,7 +187,7 @@ public class Autos {
         .andThen(oneNoteAuto())
         .andThen(
             scoreCycle(
-                () -> noteTranslation,
+                () -> noteTranslations[0],
                 position::getStartingPosition,
                 () -> position != StartingPosition.CENTER));
   }
