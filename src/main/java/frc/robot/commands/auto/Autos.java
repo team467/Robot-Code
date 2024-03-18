@@ -86,18 +86,18 @@ public class Autos {
               switch (position.get()) {
                 case RIGHT -> {
                   this.noteTranslations[0] = getNotePositions(0, false);
-                  this.secondNoteTranslation[1] = getNotePositions(1, false);
-                  this.thirdNoteTranslation[2] = getNotePositions(2, false);
+                  this.noteTranslations[1] = getNotePositions(1, false);
+                  this.noteTranslations[2] = getNotePositions(2, false);
                 }
                 case CENTER -> {
                        this.noteTranslations[0] = getNotePositions(1, false);
-                  this.secondNoteTranslation[1] = getNotePositions(2, false);
-                   this.thirdNoteTranslation[2] = getNotePositions(0, false);
+                  this.noteTranslations[1] = getNotePositions(2, false);
+                   this.noteTranslations[2] = getNotePositions(0, false);
                 }
                 case LEFT -> {
                        this.noteTranslations[0] = getNotePositions(2, false);
-                  this.secondNoteTranslation[1] = getNotePositions(1, false);
-                   this.thirdNoteTranslation[2] = getNotePositions(0, false);
+                  this.noteTranslations[1] = getNotePositions(1, false);
+                   this.noteTranslations[2] = getNotePositions(0, false);
                 }
               }
             })
