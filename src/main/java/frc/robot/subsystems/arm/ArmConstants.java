@@ -26,14 +26,14 @@ public class ArmConstants {
         KG = new TunableNumber("Arm/KG", 0);
         KS = new TunableNumber("Arm/KS", 0.0);
         KV = new TunableNumber("Arm/KV", 0.0);
-        KP = new TunableNumber("Arm/KP", 30);
+        KP = new TunableNumber("Arm/KP", 66);
         KD = new TunableNumber("Arm/KD", 0);
         MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", Double.POSITIVE_INFINITY);
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Units.degreesToRadians(900));
         STOW = Rotation2d.fromDegrees(-13.95);
         GEAR_RATIO = new GearRatio(228.571429, 1);
         AMP_POSITION = Rotation2d.fromDegrees(78.26);
-        TOLERENCE = Units.degreesToRadians(0.5);
+        TOLERENCE = Units.degreesToRadians(0.25);
         AFTER_INTAKE_POS = Rotation2d.fromDegrees(-9.75);
       }
       default -> {
