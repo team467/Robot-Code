@@ -197,25 +197,24 @@ public class Autos {
       Supplier<Pose2d> shootPosition,
       BooleanSupplier backUp) {
     return Commands.race(
+      Commands.sequence(
             Commands.run(() -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(4), 0, 0)))
                 .withTimeout(0.5)
-                .onlyIf(backUp)
-                .andThen(orchestrator.driveToNote(intakePosition)),
+                .onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
             orchestrator.intakeBasic())
-        .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(4).alongWith(orchestrator.spinUpFlywheel())).andThen(orchestrator.indexBasic().withTimeout(1));
+        .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(2.5).alongWith(orchestrator.spinUpFlywheel())).andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1));
   }
 
   private Command scoreCycle(Supplier<Translation2d> intakePosition, Rotation2d armAngle) {
     return Commands.race(orchestrator.driveToNote(intakePosition), orchestrator.intakeBasic())
         .andThen(
             Commands.parallel(
-                    orchestrator.turnToSpeaker().withTimeout(3),
-                    arm.toSetpoint(armAngle),
-                    Commands.waitUntil(arm::atSetpoint),
-                    Commands.waitSeconds(0.1),
-                    Commands.sequence(
-                        Commands.waitSeconds(1.5), orchestrator.spinUpFlywheel())).andThen(orchestrator.indexBasic().withTimeout(0.5))
-                .withTimeout(3));
+                    orchestrator.turnToSpeaker().withTimeout(2),
+                    arm.toSetpoint(armAngle).withTimeout(0.2),
+                    Commands.waitUntil(arm::atSetpoint).withTimeout(0.2),
+                    Commands.waitSeconds(0.1),orchestrator.spinUpFlywheel())
+                    .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(0.5))
+                ).withTimeout(3.5);
   }
 
   private Command stageNoteCycle(Supplier<Translation2d> intakePosition, Rotation2d armAngle) {
@@ -242,13 +241,11 @@ public class Autos {
         .withTimeout(5)
         .andThen(
             Commands.parallel(
-                    arm.toSetpoint(armAngle),
-                    Commands.waitUntil(arm::atSetpoint),
-                    Commands.waitSeconds(0.1))
-                .withTimeout(4))
-        .andThen(
-            orchestrator
-                .turnToSpeaker()
-                .alongWith(Commands.sequence(Commands.waitSeconds(1), orchestrator.shootBasic())));
+                    orchestrator.turnToSpeaker().withTimeout(2),
+                    arm.toSetpoint(armAngle).withTimeout(0.2),
+                    Commands.waitUntil(arm::atSetpoint).withTimeout(0.2),
+                    Commands.waitSeconds(0.1), orchestrator.spinUpFlywheel())
+                    .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(0.5))
+                ).withTimeout(3.5);
   }
 }
