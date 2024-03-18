@@ -232,7 +232,7 @@ public class Autos {
                     Commands.waitUntil(arm::atSetpoint),
                     Commands.waitSeconds(0.1),
                     Commands.sequence(
-                        Commands.waitSeconds(1.5), orchestrator.shootBasic().withTimeout(4)))
+                        Commands.waitSeconds(1.5), orchestrator.spinUpFlywheel())).andThen(orchestrator.indexBasic().withTimeout(0.5))
                 .withTimeout(3));
   }
 
@@ -267,6 +267,6 @@ public class Autos {
         .andThen(
             orchestrator
                 .turnToSpeaker()
-                .alongWith(Commands.sequence(Commands.waitSeconds(2), orchestrator.shootBasic())));
+                .alongWith(Commands.sequence(Commands.waitSeconds(1), orchestrator.shootBasic())));
   }
 }
