@@ -210,21 +210,21 @@ public class Autos {
   }
 
   private Command scoreCycle(
-      Supplier<Translation2d> noteTranslation,
+      Supplier<Translation2d> intakePosition,
       Supplier<Pose2d> shootPosition,
       BooleanSupplier backUp) {
     return Commands.race(
             Commands.run(() -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(4), 0, 0)))
                 .withTimeout(0.5)
                 .onlyIf(backUp)
-                .andThen(orchestrator.driveToNote(noteTranslation)),
+                .andThen(orchestrator.driveToNote(intakePosition)),
             orchestrator.intakeBasic())
         .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(4))
         .andThen(orchestrator.shootBasic().withTimeout(4));
   }
 
-  private Command scoreCycle(Supplier<Translation2d> noteTranslation, Rotation2d armAngle) {
-    return Commands.race(orchestrator.driveToNote(noteTranslation), orchestrator.intakeBasic())
+  private Command scoreCycle(Supplier<Translation2d> intakePosition, Rotation2d armAngle) {
+    return Commands.race(orchestrator.driveToNote(intakePosition), orchestrator.intakeBasic())
         .andThen(
             Commands.parallel(
                     orchestrator.turnToSpeaker().withTimeout(3),
@@ -236,7 +236,7 @@ public class Autos {
                 .withTimeout(3));
   }
 
-  private Command stageNoteCycle(Supplier<Translation2d> noteTranslation, Rotation2d armAngle) {
+  private Command stageNoteCycle(Supplier<Translation2d> intakePosition, Rotation2d armAngle) {
     return Commands.race(
             orchestrator
                 .deferredStraightDriveToPose(
@@ -244,14 +244,14 @@ public class Autos {
                         new Pose2d(
                             drive.getPose().getTranslation().getX()
                                 - AllianceFlipUtil.applyRelative(Units.inchesToMeters(20)),
-                            noteTranslation.get().getY()
+                            intakePosition.get().getY()
                                 + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
                             new Rotation2d()))
                 .andThen(
                     orchestrator.deferredStraightDriveToPose(
                         () ->
                             new Pose2d(
-                                noteTranslation.get().getX()
+                                intakePosition.get().getX()
                                     - AllianceFlipUtil.applyRelative(Units.inchesToMeters(9)),
                                 drive.getPose().getTranslation().getY(),
                                 new Rotation2d())))
