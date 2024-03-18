@@ -219,8 +219,7 @@ public class Autos {
                 .onlyIf(backUp)
                 .andThen(orchestrator.driveToNote(intakePosition)),
             orchestrator.intakeBasic())
-        .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(4))
-        .andThen(orchestrator.shootBasic().withTimeout(4));
+        .andThen(orchestrator.deferredStraightDriveToPose(shootPosition).withTimeout(4).alongWith(orchestrator.spinUpFlywheel())).andThen(orchestrator.indexBasic().withTimeout(1));
   }
 
   private Command scoreCycle(Supplier<Translation2d> intakePosition, Rotation2d armAngle) {
