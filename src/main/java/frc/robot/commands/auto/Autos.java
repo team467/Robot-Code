@@ -180,8 +180,8 @@ public class Autos {
   private Command noVisionInit(Supplier<StartingPosition> position) {
     return Commands.parallel(
         Commands.runOnce(() -> drive.setPose(position.get().getStartingPosition()))
-            .withTimeout(0.1),
-        setNotePositions(position).withTimeout(0.1));
+            .withTimeout(0.02),
+        setNotePositions(position).withTimeout(0.02));
   }
 
   public Command threeNoteAuto(StartingPosition position) {
