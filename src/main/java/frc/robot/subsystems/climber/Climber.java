@@ -30,7 +30,9 @@ public class Climber extends SubsystemBase {
 
   /**
    * Command to raise or lower the climber arms If percentOutput is negative, the climber will lower
-   * If percentOutput is positive, the climber will raise
+   * If percentOutput is positive, the climber will raise If percentOutput is 0, the climber will
+   * stop If the ratchet is locked, the climber will not move. It does nothing before the command
+   * and then checks if the ratchet is locked. Ends the command if the ratchet is locked.
    *
    * @param percentOutput takes a number from -1 to 1.
    * @return no return
@@ -38,15 +40,17 @@ public class Climber extends SubsystemBase {
   public Command raiseOrLower(double percentOutput) {
     return Commands.run(
             () -> {
+              Logger.recordOutput("Climber/OutputDesired", percentOutput);
               climberIO.setMotorsOutputPercent(percentOutput);
             },
             this)
-        .beforeStarting(
+        .onlyWhile(() -> !climberIOInputs.ratchetLocked)
+        .beforeStarting(Commands.none().alongWith(
             Commands.runOnce(
                 () -> {
                   RobotState.getInstance().climberUp = percentOutput > 0;
                   RobotState.getInstance().climberDown = percentOutput < 0;
-                }))
+                })))
         .onlyWhile(() -> !climberIOInputs.ratchetLocked);
   }
   /**
@@ -55,7 +59,7 @@ public class Climber extends SubsystemBase {
    * @return no return
    */
   public Command setRatchet(boolean locked) {
-    return Commands.run(
+    return Commands.runOnce(
         () -> {
           climberIO.setRatchetLocked(locked);
         },

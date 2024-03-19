@@ -18,6 +18,7 @@ import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacter
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
+import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveWithDpad;
@@ -42,9 +43,11 @@ import frc.robot.subsystems.intake.IntakeIOPhysical;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
+import frc.robot.subsystems.pixy2.Pixy2IOPhysical;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
+import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -106,12 +109,12 @@ public class RobotContainer {
                       Units.inchesToMeters(15.5)),
                   new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
 
-          //          vision =
-          //              new Vision(
-          //                  List.of(
-          //                          new VisionIOPhotonVision("front", front),
-          //                          new VisionIOPhotonVision("back", back))
-          //                      .toArray(new frc.lib.io.vision.VisionIO[0]));
+          vision =
+              new Vision(
+                  List.of(
+                          new VisionIOPhotonVision("front", front),
+                          new VisionIOPhotonVision("back", back))
+                      .toArray(new frc.lib.io.vision.VisionIO[0]));
 
           drive =
               new Drive(
@@ -125,6 +128,7 @@ public class RobotContainer {
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
           leds = new Leds();
+          pixy2 = new Pixy2(new Pixy2IOPhysical());
           //          climber = new Climber(new ClimberIOSparkMax());
         }
 
