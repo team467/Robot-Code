@@ -199,8 +199,7 @@ public class Autos {
       Supplier<Pose2d> shootPosition,
       BooleanSupplier backUp) {
     return Commands.race(
-            Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition))
-                .alongWith(orchestrator.stopFlywheel()),
+            Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
             orchestrator.intakeBasic())
         .andThen(
             orchestrator
@@ -220,14 +219,13 @@ public class Autos {
       Supplier<Translation2d> intakePosition, Rotation2d armAngle, BooleanSupplier backUp) {
     return Commands.race(
             Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
-            orchestrator.intakeBasic().alongWith(orchestrator.stopFlywheel()))
+            orchestrator.intakeBasic())
         .andThen(
             Commands.parallel(
                     orchestrator.turnToSpeaker().withTimeout(1.5),
                     arm.toSetpoint(armAngle).withTimeout(0.2),
                     Commands.waitUntil(arm::atSetpoint).withTimeout(.2))
                 .andThen(orchestrator.spinUpFlywheel().withTimeout(1.2))
-                .andThen(Commands.print("INDEX TIME!!1"))
                 .andThen(orchestrator.indexBasic().alongWith(Commands.print("actually indexing")))
                 .withTimeout(2))
         .andThen(orchestrator.stopFlywheel());
