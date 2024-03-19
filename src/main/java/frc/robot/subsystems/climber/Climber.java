@@ -45,12 +45,14 @@ public class Climber extends SubsystemBase {
             },
             this)
         .onlyWhile(() -> !climberIOInputs.ratchetLocked)
-        .beforeStarting(Commands.none().alongWith(
-            Commands.runOnce(
-                () -> {
-                  RobotState.getInstance().climberUp = percentOutput > 0;
-                  RobotState.getInstance().climberDown = percentOutput < 0;
-                })))
+        .beforeStarting(
+            Commands.none()
+                .alongWith(
+                    Commands.runOnce(
+                        () -> {
+                          RobotState.getInstance().climberUp = percentOutput > 0;
+                          RobotState.getInstance().climberDown = percentOutput < 0;
+                        })))
         .onlyWhile(() -> !climberIOInputs.ratchetLocked);
   }
   /**
