@@ -84,26 +84,26 @@ public class Autos {
             () -> {
               switch (position.get()) {
                 case RIGHT -> {
-                  this.noteTranslations[0] = getNotePositions(0, false);
-                  this.noteTranslations[1] = getNotePositions(1, false);
-                  this.noteTranslations[2] = getNotePositions(2, false);
+                  this.noteTranslations[0] = getNotePositions(0, false, true);
+                  this.noteTranslations[1] = getNotePositions(1, false, false);
+                  this.noteTranslations[2] = getNotePositions(2, false, false);
                 }
                 case CENTER -> {
-                  this.noteTranslations[0] = getNotePositions(1, false);
-                  this.noteTranslations[1] = getNotePositions(2, false);
-                  this.noteTranslations[2] = getNotePositions(0, false);
+                  this.noteTranslations[0] = getNotePositions(1, false, true);
+                  this.noteTranslations[1] = getNotePositions(2, false, false);
+                  this.noteTranslations[2] = getNotePositions(0, false, false);
                 }
                 case LEFT -> {
-                  this.noteTranslations[0] = getNotePositions(2, false);
-                  this.noteTranslations[1] = getNotePositions(1, false);
-                  this.noteTranslations[2] = getNotePositions(0, false);
+                  this.noteTranslations[0] = getNotePositions(2, false, true);
+                  this.noteTranslations[1] = getNotePositions(1, false, false);
+                  this.noteTranslations[2] = getNotePositions(0, false, false);
                 }
               }
             })
         .until(() -> true);
   }
 
-  private Translation2d getNotePositions(int index, boolean centerNotes) {
+  private Translation2d getNotePositions(int index, boolean centerNotes, boolean offset) {
     Translation2d noteTranslation =
         centerNotes
             ? FieldConstants.StagingLocations.centerlineTranslations[
@@ -112,7 +112,8 @@ public class Autos {
                 AllianceFlipUtil.shouldFlip() ? 2 - index : index];
     return AllianceFlipUtil.apply(
         new Translation2d(
-            noteTranslation.getX() - Units.inchesToMeters(7), noteTranslation.getY()));
+            noteTranslation.getX() - (offset ? Units.inchesToMeters(7) : 0),
+            noteTranslation.getY()));
   }
 
   public Command mobilityAuto(StartingPosition position) {
@@ -180,7 +181,7 @@ public class Autos {
             scoreCycle(
                 () -> noteTranslations[1],
                 Rotation2d.fromDegrees(position == StartingPosition.CENTER ? 10 : 5),
-                () -> position != StartingPosition.CENTER));
+                () -> false));
   }
 
   public Command noVisionTwoNoteAuto(StartingPosition position) {
@@ -204,7 +205,7 @@ public class Autos {
             orchestrator
                 .deferredStraightDriveToPose(shootPosition)
                 .withTimeout(2.5)
-                .alongWith(orchestrator.spinUpFlywheel()))
+                .alongWith(orchestrator.spinUpFlywheel().withTimeout(1.5)))
         .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1));
   }
 
@@ -217,20 +218,17 @@ public class Autos {
       Supplier<Translation2d> intakePosition, Rotation2d armAngle, BooleanSupplier backUp) {
     return Commands.race(
             Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
-            orchestrator.intakeBasic())
+            orchestrator.intakeBasic().alongWith(orchestrator.stopFlywheel().withTimeout(0.2)))
         .andThen(
             Commands.parallel(
-                    orchestrator.turnToSpeaker().withTimeout(2),
+                    orchestrator.turnToSpeaker().withTimeout(1.5),
                     arm.toSetpoint(armAngle).withTimeout(0.2),
-                    Commands.waitUntil(arm::atSetpoint).withTimeout(0.2),
-                    Commands.waitSeconds(0.1),
-                    orchestrator.spinUpFlywheel())
-                .andThen(
-                    orchestrator
-                        .indexBasic()
-                        .alongWith(orchestrator.spinUpFlywheel())
-                        .withTimeout(0.5)))
-        .withTimeout(3.5);
+                    Commands.waitUntil(arm::atSetpoint).withTimeout(.2))
+                .andThen(orchestrator.spinUpFlywheel().withTimeout(1.2))
+                .andThen(Commands.print("INDEX TIME!!1"))
+                .andThen(orchestrator.indexBasic().alongWith(Commands.print("actually indexing")))
+                .withTimeout(2))
+        .andThen(orchestrator.stopFlywheel().withTimeout(0.2));
   }
 
   private Command stageNoteCycle(Supplier<Translation2d> intakePosition, Rotation2d armAngle) {

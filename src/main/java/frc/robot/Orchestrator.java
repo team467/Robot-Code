@@ -204,6 +204,10 @@ public class Orchestrator {
         .withTimeout(1);
   }
 
+  public Command stopFlywheel() {
+    return Commands.run(() -> shooter.manualShoot(0));
+  }
+
   /**
    * Calculates the angle to align the arm to the speaker from anywhere on the field. Does arcTan of
    * ((height of center of the speaker - height of the shooter) / distance to speaker)
