@@ -199,14 +199,16 @@ public class Autos {
       Supplier<Pose2d> shootPosition,
       BooleanSupplier backUp) {
     return Commands.race(
-            Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)).alongWith(orchestrator.stopFlywheel()),
+            Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition))
+                .alongWith(orchestrator.stopFlywheel()),
             orchestrator.intakeBasic())
         .andThen(
             orchestrator
                 .deferredStraightDriveToPose(shootPosition)
                 .withTimeout(2.5)
                 .alongWith(orchestrator.spinUpFlywheel().withTimeout(1.5)))
-        .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1)).andThen(orchestrator.stopFlywheel());
+        .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1))
+        .andThen(orchestrator.stopFlywheel());
   }
 
   private Command backUp() {
