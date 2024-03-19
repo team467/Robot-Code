@@ -199,14 +199,14 @@ public class Autos {
       Supplier<Pose2d> shootPosition,
       BooleanSupplier backUp) {
     return Commands.race(
-            Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
+            Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)).alongWith(orchestrator.stopFlywheel()),
             orchestrator.intakeBasic())
         .andThen(
             orchestrator
                 .deferredStraightDriveToPose(shootPosition)
                 .withTimeout(2.5)
                 .alongWith(orchestrator.spinUpFlywheel().withTimeout(1.5)))
-        .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1));
+        .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1)).andThen(orchestrator.stopFlywheel());
   }
 
   private Command backUp() {
@@ -218,7 +218,7 @@ public class Autos {
       Supplier<Translation2d> intakePosition, Rotation2d armAngle, BooleanSupplier backUp) {
     return Commands.race(
             Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
-            orchestrator.intakeBasic().alongWith(orchestrator.stopFlywheel().withTimeout(0.2)))
+            orchestrator.intakeBasic().alongWith(orchestrator.stopFlywheel()))
         .andThen(
             Commands.parallel(
                     orchestrator.turnToSpeaker().withTimeout(1.5),
@@ -228,7 +228,7 @@ public class Autos {
                 .andThen(Commands.print("INDEX TIME!!1"))
                 .andThen(orchestrator.indexBasic().alongWith(Commands.print("actually indexing")))
                 .withTimeout(2))
-        .andThen(orchestrator.stopFlywheel().withTimeout(0.2));
+        .andThen(orchestrator.stopFlywheel());
   }
 
   private Command stageNoteCycle(Supplier<Translation2d> intakePosition, Rotation2d armAngle) {

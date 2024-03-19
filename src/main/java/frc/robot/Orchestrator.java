@@ -205,7 +205,7 @@ public class Orchestrator {
   }
 
   public Command stopFlywheel() {
-    return Commands.run(() -> shooter.manualShoot(0));
+    return shooter.manualShoot(0).withTimeout(0.2);
   }
 
   /**
