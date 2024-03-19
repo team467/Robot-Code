@@ -224,10 +224,9 @@ public class Autos {
             Commands.parallel(
                     orchestrator.turnToSpeaker().withTimeout(1.5),
                     arm.toSetpoint(armAngle).withTimeout(0.2),
-                    Commands.waitUntil(arm::atSetpoint).withTimeout(.2))
-                .andThen(orchestrator.spinUpFlywheel().withTimeout(1.2))
-                .andThen(orchestrator.indexBasic().alongWith(Commands.print("actually indexing")))
-                .withTimeout(2))
+                    Commands.waitUntil(arm::atSetpoint).withTimeout(.2),orchestrator.spinUpFlywheel().withTimeout(1.7))
+                .andThen(orchestrator.indexBasic().alongWith(Commands.print("actually indexing")).withTimeout(2))
+                )
         .andThen(orchestrator.stopFlywheel());
   }
 
