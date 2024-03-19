@@ -23,7 +23,6 @@ public class Leds extends SubsystemBase {
     ESTOPPED,
     AUTO_FINISHED,
     AUTONOMOUS,
-    HANGING,
     IN_RANGE,
     CAN_SHOOT,
     SHOOTING,
@@ -36,7 +35,12 @@ public class Leds extends SubsystemBase {
     RED_ALLIANCE,
     LOW_BATTERY_ALERT,
     DISABLED,
-    OFF,
+    DEFAULT,
+    DUCK,
+    CLIMBER_UP,
+    CLIMBER_DOWN,
+    CLIMBER_SOLENOID_DISENGAGED,
+    OFF
   }
 
   @AutoLogOutput(key = "LEDs/Mode")
@@ -130,14 +134,11 @@ public class Leds extends SubsystemBase {
       } else {
         mode = LedMode.DISABLED;
       }
-    } else if (false) { // TODO: need state variable for auto finished
+    } else if (DriverStation.isAutonomous() && Timer.getMatchTime() <= 1) { // TODO: Test this
       mode = LedMode.AUTO_FINISHED;
 
-    } else if (DriverStation.isAutonomous()) { // TODO: need state variable for autonomous
+    } else if (DriverStation.isAutonomous()) {
       mode = LedMode.AUTONOMOUS;
-
-    } else if (state.hanging) {
-      mode = LedMode.HANGING;
 
     } else if (state.shooting && state.hasNote) {
       mode = LedMode.SHOOTING;
@@ -154,6 +155,12 @@ public class Leds extends SubsystemBase {
     } else if (state.intaking) {
       mode = LedMode.INTAKING;
 
+    } else if (state.climberUp) {
+      mode = LedMode.CLIMBER_UP;
+    } else if (state.climberDown) {
+      mode = LedMode.CLIMBER_DOWN;
+    } else if (state.climberRatchet) {
+      mode = LedMode.CLIMBER_SOLENOID_DISENGAGED;
     } else if (state.seeNote) {
       if (state.noteAngle <= -noteAngle) { // TODO: need to change to constant once angle known
         mode = LedMode.LEFT_NOTE_DETECTION;
@@ -165,7 +172,7 @@ public class Leds extends SubsystemBase {
         mode = LedMode.STRAIGHT_NOTE_DETECTION;
       }
     } else {
-      mode = LedMode.OFF;
+      mode = LedMode.DEFAULT;
     }
   }
 
@@ -173,7 +180,6 @@ public class Leds extends SubsystemBase {
     switch (mode) {
       case ESTOPPED:
         solid(Section.FULL, Color.kRed);
-        // strobe(Section.FULL, Color.kRed, strobeFastDuration);
         break;
 
       case AUTO_FINISHED:
@@ -183,10 +189,6 @@ public class Leds extends SubsystemBase {
 
       case AUTONOMOUS:
         wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveFastCycleLength, waveFastDuration);
-        break;
-
-      case HANGING:
-        solid(Section.FULL, new Color("#006400")); // Dark Green is 0x006400
         break;
 
       case IN_RANGE:
@@ -264,8 +266,28 @@ public class Leds extends SubsystemBase {
         }
         break;
 
-      case OFF:
+      case DUCK:
+        solid(Section.BOTTOM_HALF, Color.kYellow);
+        break;
+
+      case CLIMBER_UP:
+        rainbow(Section.TOP_HALF, rainbowCycleLength, rainbowDuration, true);
+        break;
+
+      case CLIMBER_DOWN:
+        rainbow(Section.BOTTOM_HALF, rainbowCycleLength, rainbowDuration, false);
+        break;
+
+      case CLIMBER_SOLENOID_DISENGAGED:
+        rainbow(Section.FULL, rainbowCycleLength, rainbowDuration, true);
+        break;
+
+      case DEFAULT:
         wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
+        break;
+
+      case OFF:
+        solid(Section.FULL, Color.kBlack);
         break;
 
       default:
@@ -274,6 +296,9 @@ public class Leds extends SubsystemBase {
     }
 
     leds.setData(buffer);
+    if (state.duck) {
+      mode = LedMode.DUCK;
+    }
   }
 
   @Override
@@ -432,14 +457,26 @@ public class Leds extends SubsystemBase {
    * @param cycleLength the length of a complete rainbow cycle in degrees
    * @param duration the duration of the rainbow effect in seconds
    */
-  private void rainbow(Section section, double cycleLength, double duration) {
-    double x = (1 - ((Timer.getFPGATimestamp() / duration) % 1.0)) * 180.0;
-    double xDiffPerLed = 180.0 / cycleLength;
-    for (int i = 0; i < section.end(); i++) {
-      x += xDiffPerLed;
-      x %= 180.0;
-      if (i >= section.start()) {
-        buffer.setHSV(i, (int) x, 255, 255);
+  private void rainbow(Section section, double cycleLength, double duration, boolean up) {
+    if (up) {
+      double x = (1 - ((Timer.getFPGATimestamp() / duration) % 1.0)) * 180.0;
+      double xDiffPerLed = 180.0 / cycleLength;
+      for (int i = section.start(); i < section.end(); i++) {
+        x += xDiffPerLed;
+        x %= 180.0;
+        if (i >= section.start()) {
+          buffer.setHSV(i, (int) x, 255, 255);
+        }
+      }
+    } else {
+      double x = ((Timer.getFPGATimestamp() / duration) % 1.0) * 180.0;
+      double xDiffPerLed = 180.0 / cycleLength;
+      for (int i = section.start(); i < section.end(); i++) {
+        x += xDiffPerLed;
+        x %= 180.0;
+        if (i >= section.start()) {
+          buffer.setHSV(i, (int) x, 255, 255);
+        }
       }
     }
   }

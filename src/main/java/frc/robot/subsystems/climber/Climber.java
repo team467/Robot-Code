@@ -3,6 +3,7 @@ package frc.robot.subsystems.climber;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
@@ -24,6 +25,7 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     climberIO.updateInputs(climberIOInputs);
     Logger.processInputs("Climber", climberIOInputs);
+    RobotState.getInstance().climberRatchet = climberIOInputs.ratchetLocked;
   }
 
   /**
@@ -43,7 +45,14 @@ public class Climber extends SubsystemBase {
             },
             this)
         .onlyWhile(() -> !climberIOInputs.ratchetLocked)
-        .beforeStarting(Commands.none())
+        .beforeStarting(
+            Commands.none()
+                .alongWith(
+                    Commands.runOnce(
+                        () -> {
+                          RobotState.getInstance().climberUp = percentOutput > 0;
+                          RobotState.getInstance().climberDown = percentOutput < 0;
+                        })))
         .onlyWhile(() -> !climberIOInputs.ratchetLocked);
   }
   /**
