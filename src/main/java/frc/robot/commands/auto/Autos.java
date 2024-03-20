@@ -140,11 +140,13 @@ public class Autos {
   }
 
   public Command oneNoteAuto() {
-    return arm.runPercent(-0.3)
+    return arm.runPercent(-0.3).raceWith(orchestrator.spinUpFlywheel().withTimeout(1.7))
         .until(arm::limitSwitchPressed)
         .withTimeout(1)
-        .andThen(arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).withTimeout(1))
-        .andThen(orchestrator.shootBasic().withTimeout(3));
+        .andThen(Commands.parallel(arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).withTimeout(1), 
+        Commands.waitUntil(arm::atSetpoint).withTimeout(.2),
+                    orchestrator.spinUpFlywheel().withTimeout(1.7)))
+        .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(0.5));
   }
 
   public Command scoreOneNoteMobility(StartingPosition position) {
