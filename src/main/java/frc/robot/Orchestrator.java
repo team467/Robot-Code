@@ -205,7 +205,7 @@ public class Orchestrator {
   }
 
   public Command stopFlywheel() {
-    return shooter.manualShoot(0).until(() -> true);
+    return shooter.manualShoot(0).withTimeout(1);
   }
 
   /**
@@ -265,7 +265,8 @@ public class Orchestrator {
                 .until(() -> RobotState.getInstance().hasNote)
                 .withTimeout(10)
                 .finallyDo(() -> pullBack = false))
-        .andThen(pullBack().finallyDo(() -> pullBack = true));
+            .andThen(pullBack().finallyDo(() -> pullBack = true))
+            .handleInterrupt(() -> pullBack = false);
   }
 
   public Command pullBack() {

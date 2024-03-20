@@ -204,16 +204,19 @@ public class Autos {
       Supplier<Translation2d> intakePosition,
       Supplier<Pose2d> shootPosition,
       BooleanSupplier backUp) {
-    return Commands.race(
-            Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
-            orchestrator.intakeBasic())
+    return orchestrator
+            .stopFlywheel()
+            .andThen(
+                    Commands.race(
+                            Commands.sequence(
+                                    backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
+                            orchestrator.intakeBasic()))
         .andThen(
             orchestrator
                 .deferredStraightDriveToPose(shootPosition)
                 .withTimeout(2.5)
                 .alongWith(orchestrator.spinUpFlywheel().withTimeout(1.5)))
-        .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1))
-        .andThen(orchestrator.stopFlywheel());
+            .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1));
   }
 
   private Command backUp() {
@@ -223,9 +226,14 @@ public class Autos {
 
   private Command scoreCycle(
       Supplier<Translation2d> intakePosition, Rotation2d armAngle, BooleanSupplier backUp) {
-    return Commands.race(
-            Commands.sequence(backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
-            orchestrator.intakeBasic())
+    return orchestrator
+            .stopFlywheel()
+            .andThen(
+                    Commands.race(
+                            Commands.sequence(
+                                    backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
+                            orchestrator.intakeBasic()))
+            .andThen(Commands.waitSeconds(0.75))
         .andThen(
             Commands.parallel(
                     orchestrator.turnToSpeaker().withTimeout(1.5),
@@ -236,7 +244,7 @@ public class Autos {
                     orchestrator
                         .indexBasic()
                         .alongWith(Commands.print("actually indexing"))
-                        .withTimeout(2)))
+                            .withTimeout(1)))
         .andThen(orchestrator.stopFlywheel());
   }
 

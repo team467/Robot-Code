@@ -91,10 +91,7 @@ public class FieldConstants {
             Units.inchesToMeters(24.2), Units.inchesToMeters(174.0), Rotation2d.fromDegrees(-61.4));
 
     public static final Pose2d centerFace =
-        new Pose2d(
-            Units.inchesToMeters(49.775),
-            Units.inchesToMeters(218.416),
-            new Rotation2d());
+            new Pose2d(Units.inchesToMeters(49.775), Units.inchesToMeters(218.416), new Rotation2d());
   }
 
   public static final class Stage {
