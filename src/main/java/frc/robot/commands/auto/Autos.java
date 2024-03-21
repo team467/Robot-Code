@@ -188,7 +188,7 @@ public class Autos {
                 () -> noteTranslations[0],
                 position::getStartingPosition,
                 () -> position != StartingPosition.CENTER))
-            .andThen(scoreCycle(() -> noteTranslations[1], position::getStartingPosition, () -> true));
+        .andThen(scoreCycle(() -> noteTranslations[1], position::getStartingPosition, () -> true));
   }
 
   public Command noVisionTwoNoteAuto(StartingPosition position) {
