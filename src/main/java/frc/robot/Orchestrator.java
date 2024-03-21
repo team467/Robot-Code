@@ -21,7 +21,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.Set;
 import java.util.function.Supplier;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Orchestrator {
   private final Drive drive;
@@ -31,7 +30,6 @@ public class Orchestrator {
   private final Pixy2 pixy2;
   private final Arm arm;
 
-  @AutoLogOutput private boolean pullBack = false;
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
@@ -263,29 +261,24 @@ public class Orchestrator {
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
-                .withTimeout(10)
-                .finallyDo(() -> pullBack = false))
-            .andThen(pullBack().finallyDo(() -> pullBack = true))
-            .handleInterrupt(() -> pullBack = false);
+                    .withTimeout(10))
+            .andThen(pullBack());
   }
 
   public Command pullBack() {
-    return (Commands.parallel(
-                indexer.setPercent(IndexerConstants.BACKUP_SPEED),
-                shooter.manualShoot(-0.2),
-                intake.stop())
+    return Commands.parallel(
+                    indexer.setPercent(IndexerConstants.BACKUP_SPEED),
+                    shooter.manualShoot(-0.2),
+                    intake.stop())
             .withTimeout(IndexerConstants.BACKUP_TIME)
             .andThen(
-                Commands.parallel(
-                        arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
-                        Commands.waitUntil(arm::atSetpoint),
-                        indexer.setPercent(0).until(() -> true),
-                        shooter.manualShoot(0).until(() -> true),
-                        intake.stop().until(() -> true),
-                        Commands.waitSeconds(0.5))
-                    .withTimeout(5))
-            .finallyDo(() -> pullBack = true))
-        .onlyIf(() -> !pullBack);
+                    Commands.parallel(
+                                    arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
+                                    indexer.setPercent(0).until(() -> true),
+                                    shooter.manualShoot(0).until(() -> true),
+                                    intake.stop().until(() -> true),
+                                    Commands.waitSeconds(0.5))
+                            .withTimeout(5));
   }
 
   /**

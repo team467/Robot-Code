@@ -229,9 +229,10 @@ public class Autos {
     return orchestrator
             .stopFlywheel()
             .andThen(
-                    Commands.race(
+                    Commands.parallel(
                             Commands.sequence(
-                                    backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
+                                    backUp().onlyIf(backUp),
+                                    orchestrator.driveToNote(intakePosition).withTimeout(3)),
                             orchestrator.intakeBasic()))
             .andThen(Commands.waitSeconds(0.75))
         .andThen(
