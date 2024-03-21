@@ -192,7 +192,7 @@ public class Autos {
             scoreCycle(
                 () -> noteTranslations[1],
                     position::getStartingPosition,
-                    () -> position != StartingPosition.CENTER));
+                    () -> true));
   }
 
   public Command noVisionTwoNoteAuto(StartingPosition position) {
