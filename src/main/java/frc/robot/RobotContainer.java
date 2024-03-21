@@ -18,7 +18,6 @@ import frc.lib.characterization.FeedForwardCharacterization.FeedForwardCharacter
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
-import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveWithDpad;
@@ -47,7 +46,6 @@ import frc.robot.subsystems.pixy2.Pixy2IOPhysical;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
-import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -109,12 +107,12 @@ public class RobotContainer {
                       Units.inchesToMeters(15.5)),
                   new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
 
-          vision =
-              new Vision(
-                  List.of(
-                          new VisionIOPhotonVision("front", front),
-                          new VisionIOPhotonVision("back", back))
-                      .toArray(new frc.lib.io.vision.VisionIO[0]));
+          //          vision =
+          //              new Vision(
+          //                  List.of(
+          //                          new VisionIOPhotonVision("front", front),
+          //                          new VisionIOPhotonVision("back", back))
+          //                      .toArray(new frc.lib.io.vision.VisionIO[0]));
 
           drive =
               new Drive(
@@ -197,7 +195,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Score One Note + Mobility [LEFT]",
         autos.scoreOneNoteMobility(Autos.StartingPosition.LEFT));
-    autoChooser.addOption("Score Two Notes [LEFT]", autos.twoNoteAuto(Autos.StartingPosition.LEFT));
+    autoChooser.addOption(
+        "Score Two Notes [LEFT]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption(
         "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption("Mobility [RIGHT]", autos.mobilityAuto(Autos.StartingPosition.RIGHT));
@@ -205,7 +204,7 @@ public class RobotContainer {
         "Score One Note + Mobility [RIGHT]",
         autos.scoreOneNoteMobility(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
-        "Score Two Notes [RIGHT]", autos.twoNoteAuto(Autos.StartingPosition.RIGHT));
+        "Score Two Notes [RIGHT]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
         "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption("Mobility [CENTER]", autos.mobilityAuto(Autos.StartingPosition.CENTER));
@@ -213,9 +212,10 @@ public class RobotContainer {
         "Score One Note + Mobility [CENTER]",
         autos.scoreOneNoteMobility(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-        "Score Two Notes [CENTER]", autos.twoNoteAuto(Autos.StartingPosition.CENTER));
+        "Score Two Notes [CENTER]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
         "Score Three Notes [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
+    autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)

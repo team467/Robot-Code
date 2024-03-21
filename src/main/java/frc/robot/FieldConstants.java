@@ -84,21 +84,14 @@ public class FieldConstants {
   public static final class Subwoofer {
     public static final Pose2d ampFaceCorner =
         new Pose2d(
-            Units.inchesToMeters(35.775),
-            Units.inchesToMeters(239.366),
-            Rotation2d.fromDegrees(-120));
+            Units.inchesToMeters(26.9), Units.inchesToMeters(260.15), Rotation2d.fromDegrees(64.6));
 
     public static final Pose2d sourceFaceCorner =
         new Pose2d(
-            Units.inchesToMeters(35.775),
-            Units.inchesToMeters(197.466),
-            Rotation2d.fromDegrees(120));
+            Units.inchesToMeters(24.2), Units.inchesToMeters(174.0), Rotation2d.fromDegrees(-61.4));
 
     public static final Pose2d centerFace =
-        new Pose2d(
-            Units.inchesToMeters(35.775),
-            Units.inchesToMeters(218.416),
-            Rotation2d.fromDegrees(180));
+        new Pose2d(Units.inchesToMeters(49.775), Units.inchesToMeters(218.416), new Rotation2d());
   }
 
   public static final class Stage {

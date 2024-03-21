@@ -13,7 +13,7 @@ public class IntakeConstants {
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2024_COMP -> {
-        INTAKE_SPEED = new TunableNumber("Intake/IntakeSpeed", 1); // 0.75
+        INTAKE_SPEED = new TunableNumber("Intake/IntakeSpeed", 1);
         RELEASE_SPEED = -1;
         STOP_SPEED = 0.0;
         GEAR_RATIO = new GearRatio(18, 28);
