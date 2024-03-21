@@ -181,13 +181,13 @@ public class Autos {
         .andThen(
             scoreCycle(
                 () -> noteTranslations[0],
-                Rotation2d.fromDegrees(position == StartingPosition.CENTER ? 5 : 10),
+                    position::getStartingPosition,
                 () -> position != StartingPosition.CENTER))
         .andThen(
             scoreCycle(
                 () -> noteTranslations[1],
-                Rotation2d.fromDegrees(position == StartingPosition.CENTER ? 10 : 5),
-                () -> false));
+                    position::getStartingPosition,
+                    () -> position != StartingPosition.CENTER));
   }
 
   public Command noVisionTwoNoteAuto(StartingPosition position) {
@@ -207,7 +207,7 @@ public class Autos {
     return orchestrator
             .stopFlywheel()
             .andThen(
-                    Commands.race(
+                    Commands.parallel(
                             Commands.sequence(
                                     backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
                             orchestrator.intakeBasic()))
