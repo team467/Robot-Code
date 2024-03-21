@@ -128,7 +128,7 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOPhysical());
           leds = new Leds();
           pixy2 = new Pixy2(new Pixy2IOPhysical());
-          climber = new Climber(new ClimberIOSparkMax());
+//          climber = new Climber(new ClimberIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
