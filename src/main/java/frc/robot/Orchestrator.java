@@ -122,6 +122,18 @@ public class Orchestrator {
         Commands.waitSeconds(3));
   }
 
+  public Command duck() {
+    return arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5)))
+        .alongWith(Commands.runOnce(() -> RobotState.getInstance().duck = true));
+  }
+
+  public Command unDuck() {
+    return Commands.parallel(
+            arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS), Commands.waitUntil(arm::atSetpoint))
+        .withTimeout(2)
+        .beforeStarting(() -> RobotState.getInstance().duck = false);
+  }
+
   public Command goToAmp() {
     TunableNumber AMP_DISTANCE_OFFSET = new TunableNumber("Orchestrator/AmpDistance", 1);
     Supplier<Pose2d> targetPose =

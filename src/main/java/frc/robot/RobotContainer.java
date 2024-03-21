@@ -279,16 +279,8 @@ public class RobotContainer {
     // Hold Y: Expel the shooter
     operatorController.y().whileTrue(shooter.manualShoot(-1));
     // Hold RB: Duck the arm to fit under stage
-    operatorController
-        .rightBumper()
-        .whileTrue(arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))));
-    operatorController
-        .rightBumper()
-        .onFalse(
-            Commands.parallel(
-                    arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS),
-                    Commands.waitUntil(arm::atSetpoint))
-                .withTimeout(2));
+    operatorController.rightBumper().whileTrue(orchestrator.duck());
+    operatorController.rightBumper().onFalse(orchestrator.unDuck());
 
     // Back button (toggle switch): unlock/lock climber ratchet
     operatorController.back().whileTrue(climber.setRatchet(false));
