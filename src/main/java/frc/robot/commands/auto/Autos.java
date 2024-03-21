@@ -89,9 +89,9 @@ public class Autos {
                   this.noteTranslations[2] = getNotePositions(2, false, false);
                 }
                 case CENTER -> {
-                  this.noteTranslations[0] = getNotePositions(1, false, true);
-                  this.noteTranslations[1] = getNotePositions(2, false, false);
-                  this.noteTranslations[2] = getNotePositions(0, false, false);
+                  this.noteTranslations[0] = getNotePositions(1, false, true, false);
+                  this.noteTranslations[1] = getNotePositions(2, false, false, false);
+                  this.noteTranslations[2] = getNotePositions(0, false, false, false);
                 }
                 case LEFT -> {
                   this.noteTranslations[0] = getNotePositions(2, false, true);
@@ -104,12 +104,17 @@ public class Autos {
   }
 
   private Translation2d getNotePositions(int index, boolean centerNotes, boolean offset) {
+    return getNotePositions(index, centerNotes, offset, true);
+  }
+
+  private Translation2d getNotePositions(
+          int index, boolean centerNotes, boolean offset, boolean flip) {
     Translation2d noteTranslation =
         centerNotes
             ? FieldConstants.StagingLocations.centerlineTranslations[
-                AllianceFlipUtil.shouldFlip() ? 4 - index : index]
+                flip && AllianceFlipUtil.shouldFlip() ? 4 - index : index]
             : FieldConstants.StagingLocations.spikeTranslations[
-                AllianceFlipUtil.shouldFlip() ? 2 - index : index];
+                flip && AllianceFlipUtil.shouldFlip() ? 2 - index : index];
     return AllianceFlipUtil.apply(
         new Translation2d(
             noteTranslation.getX() - (offset ? Units.inchesToMeters(7) : 0),
