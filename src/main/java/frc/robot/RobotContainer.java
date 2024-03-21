@@ -30,6 +30,7 @@ import frc.robot.subsystems.arm.ArmIOSparkMAX;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -129,7 +130,7 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOPhysical());
           leds = new Leds();
           pixy2 = new Pixy2(new Pixy2IOPhysical());
-          //          climber = new Climber(new ClimberIOSparkMax());
+          climber = new Climber(new ClimberIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
