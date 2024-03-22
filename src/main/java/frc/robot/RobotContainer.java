@@ -42,7 +42,6 @@ import frc.robot.subsystems.intake.IntakeIOPhysical;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
-import frc.robot.subsystems.pixy2.Pixy2IOPhysical;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
@@ -126,7 +125,7 @@ public class RobotContainer {
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
           leds = new Leds();
-          pixy2 = new Pixy2(new Pixy2IOPhysical());
+          // pixy2 = new Pixy2(new Pixy2IOPhysical());
           //          climber = new Climber(new ClimberIOSparkMax());
         }
 
