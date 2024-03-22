@@ -1,11 +1,8 @@
 package frc.robot;
 
-import static edu.wpi.first.apriltag.AprilTagFields.k2024Crescendo;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
-import java.io.IOException;
 
 /**
  * Contains various field dimensions and useful reference points. Dimensions are in meters, and sets
@@ -118,10 +115,11 @@ public class FieldConstants {
   public static final AprilTagFieldLayout aprilTags;
 
   static {
-    try {
-      aprilTags = AprilTagFieldLayout.loadFromResource(k2024Crescendo.m_resourceFile);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    //    try {
+    // aprilTags = AprilTagFieldLayout.loadFromResource(k2024Crescendo.m_resourceFile);
+    aprilTags = null;
+    //    } catch (IOException e) {
+    //      throw new RuntimeException(e);
+    //    }
   }
 }
