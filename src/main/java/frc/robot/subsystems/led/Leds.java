@@ -134,7 +134,7 @@ public class Leds extends SubsystemBase {
       } else {
         mode = LedMode.DISABLED;
       }
-    } else if (DriverStation.isAutonomous() && Timer.getMatchTime() <= 1) { // TODO: Test this
+    } else if (false) { // TODO: Test this
       mode = LedMode.AUTO_FINISHED;
 
     } else if (DriverStation.isAutonomous()) {
@@ -296,9 +296,9 @@ public class Leds extends SubsystemBase {
     }
 
     leds.setData(buffer);
-    if (state.duck) {
-      mode = LedMode.DUCK;
-    }
+//    if (state.duck) {
+//      mode = LedMode.DUCK;
+//    }
   }
 
   @Override
