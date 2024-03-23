@@ -18,7 +18,7 @@ public class ClimberConstants {
         ROTS_TO_METERS = 0.00584;
         CLIMBER_FORWARD_PERCENT = 0.6;
         CLIMBER_BACKWARD_PERCENT = -0.6;
-        BACKUP_TIME = 0.1;
+        BACKUP_TIME = 0.2;
         SOFT_LIMIT_POSITION = (float) Units.inchesToMeters(1);
       }
       default -> {
