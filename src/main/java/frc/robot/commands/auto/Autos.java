@@ -151,9 +151,9 @@ public class Autos {
         .withTimeout(1)
         .andThen(
             Commands.parallel(
-                arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).withTimeout(1),
+                arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).withTimeout(.5),
                 Commands.waitUntil(arm::atSetpoint).withTimeout(.2),
-                orchestrator.spinUpFlywheel().withTimeout(1.7)))
+                orchestrator.spinUpFlywheel().withTimeout(1)))
         .andThen(
             orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(0.5));
   }
