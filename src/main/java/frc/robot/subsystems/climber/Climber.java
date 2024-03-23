@@ -48,7 +48,7 @@ public class Climber extends SubsystemBase {
               climberIO.setMotorsOutputPercent(percentOutput);
             },
             this)
-        .onlyWhile(() -> !climberIOInputs.ratchetLocked && climberIOInputs.ClimberRightPosition > ClimberConstants.SOFT_LIMIT_POSITION && climberIOInputs.ClimberLeftPosition > ClimberConstants.SOFT_LIMIT_POSITION)
+        .onlyWhile(() -> !climberIOInputs.ratchetLocked && (climberIOInputs.ClimberRightPosition > ClimberConstants.SOFT_LIMIT_POSITION && climberIOInputs.ClimberLeftPosition > ClimberConstants.SOFT_LIMIT_POSITION &&percentOutput<0))
         .beforeStarting(
             Commands.none()
                 .alongWith(
@@ -57,7 +57,7 @@ public class Climber extends SubsystemBase {
                           RobotState.getInstance().climberUp = percentOutput > 0;
                           RobotState.getInstance().climberDown = percentOutput < 0;
                         })))
-        .onlyWhile(() -> !climberIOInputs.ratchetLocked && climberIOInputs.ClimberRightPosition > ClimberConstants.SOFT_LIMIT_POSITION && climberIOInputs.ClimberLeftPosition > ClimberConstants.SOFT_LIMIT_POSITION).finallyDo(()->{
+        .onlyWhile(() -> !climberIOInputs.ratchetLocked && (climberIOInputs.ClimberRightPosition > ClimberConstants.SOFT_LIMIT_POSITION && climberIOInputs.ClimberLeftPosition > ClimberConstants.SOFT_LIMIT_POSITION && percentOutput<0)).finallyDo(()->{
                 RobotState.getInstance().climberUp = false;
                 RobotState.getInstance().climberDown = false;});
   }
