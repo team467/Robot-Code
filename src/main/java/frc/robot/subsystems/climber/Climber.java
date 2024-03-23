@@ -53,7 +53,9 @@ public class Climber extends SubsystemBase {
                           RobotState.getInstance().climberUp = percentOutput > 0;
                           RobotState.getInstance().climberDown = percentOutput < 0;
                         })))
-        .onlyWhile(() -> !climberIOInputs.ratchetLocked);
+        .onlyWhile(() -> !climberIOInputs.ratchetLocked).finallyDo(()->{
+                RobotState.getInstance().climberUp = false;
+                RobotState.getInstance().climberDown = false;});
   }
   /**
    * Command to disable the climber
