@@ -296,9 +296,9 @@ public class Leds extends SubsystemBase {
     }
 
     leds.setData(buffer);
-//    if (state.duck) {
-//      mode = LedMode.DUCK;
-//    }
+    //    if (state.duck) {
+    //      mode = LedMode.DUCK;
+    //    }
   }
 
   @Override
