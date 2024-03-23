@@ -8,6 +8,7 @@ public class ClimberConstants {
   public static final double CLIMBER_FORWARD_PERCENT;
   public static final double CLIMBER_BACKWARD_PERCENT;
   public static final double BACKUP_TIME;
+  public static final double SOFT_LIMIT_POSITION;
 
   static {
     switch (Constants.getRobot()) {
@@ -17,6 +18,7 @@ public class ClimberConstants {
         CLIMBER_FORWARD_PERCENT = 0.6;
         CLIMBER_BACKWARD_PERCENT = -0.6;
         BACKUP_TIME = 0.1;
+        SOFT_LIMIT_POSITION = 0.1;
       }
       default -> {
         CLIMBER_RATCHET_ID = 0;
@@ -24,6 +26,7 @@ public class ClimberConstants {
         CLIMBER_FORWARD_PERCENT = 0.0;
         CLIMBER_BACKWARD_PERCENT = 0.0;
         BACKUP_TIME = 0.0;
+        SOFT_LIMIT_POSITION = 0.0;
       }
     }
   }

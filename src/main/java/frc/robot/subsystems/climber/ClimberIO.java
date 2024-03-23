@@ -37,4 +37,5 @@ public interface ClimberIO {
   default boolean getLimitSwitchLeft() {
     return true;
   }
+  default void resetPosition() {}
 }

@@ -91,4 +91,9 @@ public class ClimberIOSparkMax implements ClimberIO {
   public boolean getLimitSwitchRight() {
     return fowardLimitSwitchRight.isPressed() || reverseLimitSwitchRight.isPressed();
   }
+  @Override
+  public void resetPosition() {
+    climberLeftEncoder.setPosition(0);
+    climberRightEncoder.setPosition(0);
+  }
 }
