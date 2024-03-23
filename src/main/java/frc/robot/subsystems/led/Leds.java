@@ -159,7 +159,7 @@ public class Leds extends SubsystemBase {
       mode = LedMode.CLIMBER_UP;
     } else if (state.climberDown) {
       mode = LedMode.CLIMBER_DOWN;
-    } else if (state.climberRatchet) {
+    } else if (!state.climberRatchet) {
       mode = LedMode.CLIMBER_SOLENOID_DISENGAGED;
     } else if (state.seeNote) {
       if (state.noteAngle <= -noteAngle) { // TODO: need to change to constant once angle known
