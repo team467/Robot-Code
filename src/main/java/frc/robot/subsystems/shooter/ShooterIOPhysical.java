@@ -28,6 +28,9 @@ public class ShooterIOPhysical implements ShooterIO {
     shooterRightEncoder.setVelocityConversionFactor(rotsToRads / 60);
     shooterLeftEncoder.setPositionConversionFactor(rotsToRads);
     shooterRightEncoder.setPositionConversionFactor(rotsToRads);
+
+    shooterLeft.setSmartCurrentLimit(35);
+    shooterRight.setSmartCurrentLimit(35);
   }
 
   public void updateInputs(ShooterIOInputs inputs) {
