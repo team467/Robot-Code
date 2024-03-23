@@ -126,11 +126,11 @@ public class Autos {
         .andThen(
             Commands.select(
                 Map.of(
-                    RelativeStartingPosition.NEAR_SOURCE,
+                    RelativeStartingPosition.NEAR_AMP,
                     driveXDistance(MOBILITY_DRIVE_DISTANCE).withTimeout(5),
                     RelativeStartingPosition.CENTER,
                     driveXDistance(MOBILITY_DRIVE_DISTANCE).withTimeout(5),
-                    RelativeStartingPosition.NEAR_AMP,
+                    RelativeStartingPosition.NEAR_SOURCE,
                     Commands.run(
                             () -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
                         .withTimeout(1)
