@@ -1,5 +1,6 @@
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public class ClimberConstants {
@@ -14,11 +15,11 @@ public class ClimberConstants {
     switch (Constants.getRobot()) {
       case ROBOT_2024_COMP -> {
         CLIMBER_RATCHET_ID = 0;
-        ROTS_TO_METERS = 1.0;
+        ROTS_TO_METERS = 0.00584;
         CLIMBER_FORWARD_PERCENT = 0.6;
         CLIMBER_BACKWARD_PERCENT = -0.6;
         BACKUP_TIME = 0.1;
-        SOFT_LIMIT_POSITION = 0.1f;
+        SOFT_LIMIT_POSITION = (float) Units.inchesToMeters(1);
       }
       default -> {
         CLIMBER_RATCHET_ID = 0;
