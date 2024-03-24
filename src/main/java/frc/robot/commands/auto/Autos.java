@@ -159,7 +159,7 @@ public class Autos {
   }
 
   public Command scoreOneNoteMobility(StartingPosition position) {
-    return oneNoteAuto().andThen(mobilityAuto(position));
+    return oneNoteAuto().alongWith(Commands.waitSeconds(8)).andThen(mobilityAuto(position)); // TODO: remove 8 second delay
   }
 
   public Command noVisionFourNoteAuto() {
