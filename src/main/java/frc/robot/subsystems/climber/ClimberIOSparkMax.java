@@ -34,8 +34,8 @@ public class ClimberIOSparkMax implements ClimberIO {
     climberLeft.enableVoltageCompensation(12);
     climberRight.setSmartCurrentLimit(40);
     climberLeft.setSmartCurrentLimit(40);
-    climberRight.enableSoftLimit(CANSparkBase.SoftLimitDirection.kReverse, true);
-    climberLeft.enableSoftLimit(CANSparkBase.SoftLimitDirection.kReverse, true);
+    climberRight.enableSoftLimit(CANSparkBase.SoftLimitDirection.kReverse, false);
+    climberLeft.enableSoftLimit(CANSparkBase.SoftLimitDirection.kReverse, false);
     climberRight.enableSoftLimit(CANSparkBase.SoftLimitDirection.kForward, true);
     climberLeft.enableSoftLimit(CANSparkBase.SoftLimitDirection.kForward, true);
     climberLeft.setSoftLimit(
