@@ -20,6 +20,7 @@ public class Climber extends SubsystemBase {
     super();
 
     this.climberIO = climberIO;
+    climberIO.resetPosition();
   }
 
   public void periodic() {
