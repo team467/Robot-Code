@@ -36,10 +36,16 @@ public class ClimberIOSparkMax implements ClimberIO {
     climberLeft.setSmartCurrentLimit(40);
     climberRight.enableSoftLimit(CANSparkBase.SoftLimitDirection.kReverse, true);
     climberLeft.enableSoftLimit(CANSparkBase.SoftLimitDirection.kReverse, true);
+    climberRight.enableSoftLimit(CANSparkBase.SoftLimitDirection.kForward, true);
+    climberLeft.enableSoftLimit(CANSparkBase.SoftLimitDirection.kForward, true);
     climberLeft.setSoftLimit(
-        CANSparkBase.SoftLimitDirection.kReverse, ClimberConstants.SOFT_LIMIT_POSITION);
+        CANSparkBase.SoftLimitDirection.kReverse, ClimberConstants.LOWER_LIMIT_POSITION);
     climberRight.setSoftLimit(
-        CANSparkBase.SoftLimitDirection.kReverse, ClimberConstants.SOFT_LIMIT_POSITION);
+        CANSparkBase.SoftLimitDirection.kReverse, ClimberConstants.LOWER_LIMIT_POSITION);
+    climberLeft.setSoftLimit(
+        CANSparkBase.SoftLimitDirection.kForward, ClimberConstants.UPPER_LIMIT_POSITION);
+    climberRight.setSoftLimit(
+        CANSparkBase.SoftLimitDirection.kForward, ClimberConstants.UPPER_LIMIT_POSITION);
     // Limit Switches
     reverseLimitSwitchLeft = climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     fowardLimitSwitchLeft = climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
