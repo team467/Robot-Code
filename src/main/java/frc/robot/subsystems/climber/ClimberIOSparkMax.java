@@ -20,7 +20,7 @@ public class ClimberIOSparkMax implements ClimberIO {
   public ClimberIOSparkMax() {
     // Motors and Encoders
     climberLeft = new CANSparkMax(Schematic.CLIMBER_LEFT_ID, CANSparkLowLevel.MotorType.kBrushless);
-    climberLeft.setInverted(true);
+    climberLeft.setInverted(false);
     climberLeftEncoder = climberLeft.getEncoder();
     climberLeftEncoder.setPositionConversionFactor(ClimberConstants.ROTS_TO_METERS);
     climberRight =
