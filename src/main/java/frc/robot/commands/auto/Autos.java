@@ -300,29 +300,32 @@ public class Autos {
 
   private Command stageNoteCycleSubwoofer(
       Supplier<Translation2d> intakePosition, Supplier<Pose2d> shootPosition) {
-    return Commands.parallel(
-            orchestrator
-                .deferredStraightDriveToPose(
-                    () ->
-                        new Pose2d(
-                            drive.getPose().getTranslation().getX()
-                                + AllianceFlipUtil.applyRelative(Units.inchesToMeters(5)),
-                            intakePosition.get().getY()
-                                + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
-                            drive.getRotation()))
-                .andThen(
-                    orchestrator.deferredStraightDriveToPose(
+    return orchestrator
+        .stopFlywheel()
+        .andThen(
+            Commands.parallel(
+                orchestrator
+                    .deferredStraightDriveToPose(
                         () ->
                             new Pose2d(
-                                intakePosition.get().getX()
-                                    - AllianceFlipUtil.applyRelative(Units.inchesToMeters(15)),
-                                drive.getPose().getTranslation().getY(),
-                                intakePosition
-                                    .get()
-                                    .minus(drive.getPose().getTranslation())
-                                    .getAngle())))
-                .withTimeout(3),
-            orchestrator.intakeBasic())
+                                drive.getPose().getTranslation().getX()
+                                    + AllianceFlipUtil.applyRelative(Units.inchesToMeters(5)),
+                                intakePosition.get().getY()
+                                    + AllianceFlipUtil.applyRelative(Units.inchesToMeters(-5)),
+                                drive.getRotation()))
+                    .andThen(
+                        orchestrator.deferredStraightDriveToPose(
+                            () ->
+                                new Pose2d(
+                                    intakePosition.get().getX()
+                                        - AllianceFlipUtil.applyRelative(Units.inchesToMeters(15)),
+                                    drive.getPose().getTranslation().getY(),
+                                    intakePosition
+                                        .get()
+                                        .minus(drive.getPose().getTranslation())
+                                        .getAngle())))
+                    .withTimeout(3),
+                orchestrator.intakeBasic()))
         .withTimeout(5)
         .andThen(
             orchestrator
