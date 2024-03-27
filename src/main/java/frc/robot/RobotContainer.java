@@ -29,6 +29,7 @@ import frc.robot.subsystems.arm.ArmIOSparkMAX;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -42,7 +43,6 @@ import frc.robot.subsystems.intake.IntakeIOPhysical;
 import frc.robot.subsystems.led.Leds;
 import frc.robot.subsystems.pixy2.Pixy2;
 import frc.robot.subsystems.pixy2.Pixy2IO;
-import frc.robot.subsystems.pixy2.Pixy2IOPhysical;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
@@ -126,8 +126,8 @@ public class RobotContainer {
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
           leds = new Leds();
-          pixy2 = new Pixy2(new Pixy2IOPhysical());
-          //          climber = new Climber(new ClimberIOSparkMax());
+          // pixy2 = new Pixy2(new Pixy2IOPhysical());
+          climber = new Climber(new ClimberIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
@@ -214,7 +214,10 @@ public class RobotContainer {
     autoChooser.addOption(
         "Score Two Notes [CENTER]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-        "Score Three Notes [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
+        "Score Three Notes (amp) [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score Three Notes (stage) [CENTER]",
+        autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
 
     // Rumble on intake
