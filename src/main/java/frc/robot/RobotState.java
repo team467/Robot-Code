@@ -36,7 +36,7 @@ public class RobotState {
   public boolean climberDown = false;
 
   @AutoLogOutput(key = "RobotState/ClimberRatchet")
-  public boolean climberRatchet = false;
+  public boolean climberRatchet = true;
 
   /**
    * Set true if the robot currently contains a note. Used to prevent the robot from picking up a

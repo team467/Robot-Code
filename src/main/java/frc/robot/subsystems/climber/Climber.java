@@ -20,12 +20,16 @@ public class Climber extends SubsystemBase {
     super();
 
     this.climberIO = climberIO;
+    climberIO.resetPosition();
   }
 
   public void periodic() {
     climberIO.updateInputs(climberIOInputs);
     Logger.processInputs("Climber", climberIOInputs);
     RobotState.getInstance().climberRatchet = climberIOInputs.ratchetLocked;
+    if (getLimitSwitchLeft() && getLimitSwitchRight()) {
+      climberIO.resetPosition();
+    }
   }
 
   /**
@@ -53,7 +57,12 @@ public class Climber extends SubsystemBase {
                           RobotState.getInstance().climberUp = percentOutput > 0;
                           RobotState.getInstance().climberDown = percentOutput < 0;
                         })))
-        .onlyWhile(() -> !climberIOInputs.ratchetLocked);
+        .onlyWhile(() -> !climberIOInputs.ratchetLocked)
+        .finallyDo(
+            () -> {
+              RobotState.getInstance().climberUp = false;
+              RobotState.getInstance().climberDown = false;
+            });
   }
   /**
    * Command to disable the climber
@@ -70,5 +79,13 @@ public class Climber extends SubsystemBase {
 
   public boolean getRatchet() {
     return climberIOInputs.ratchetLocked;
+  }
+
+  public boolean getLimitSwitchLeft() {
+    return climberIO.getLimitSwitchLeft();
+  }
+
+  public boolean getLimitSwitchRight() {
+    return climberIO.getLimitSwitchRight();
   }
 }

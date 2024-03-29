@@ -134,7 +134,7 @@ public class Leds extends SubsystemBase {
       } else {
         mode = LedMode.DISABLED;
       }
-    } else if (DriverStation.isAutonomous() && Timer.getMatchTime() <= 1) { // TODO: Test this
+    } else if (false) { // TODO: Test this
       mode = LedMode.AUTO_FINISHED;
 
     } else if (DriverStation.isAutonomous()) {
@@ -159,7 +159,7 @@ public class Leds extends SubsystemBase {
       mode = LedMode.CLIMBER_UP;
     } else if (state.climberDown) {
       mode = LedMode.CLIMBER_DOWN;
-    } else if (state.climberRatchet) {
+    } else if (!state.climberRatchet) {
       mode = LedMode.CLIMBER_SOLENOID_DISENGAGED;
     } else if (state.seeNote) {
       if (state.noteAngle <= -noteAngle) { // TODO: need to change to constant once angle known
@@ -296,9 +296,9 @@ public class Leds extends SubsystemBase {
     }
 
     leds.setData(buffer);
-    if (state.duck) {
-      mode = LedMode.DUCK;
-    }
+    //    if (state.duck) {
+    //      mode = LedMode.DUCK;
+    //    }
   }
 
   @Override

@@ -25,6 +25,8 @@ public class IndexerIOPhysical implements IndexerIO {
             * IndexerConstants.INDEXER_GEAR_RATIO.getRotationsPerInput());
     indexerEncoder.setPositionConversionFactor(
         Units.rotationsToRadians(1) * IndexerConstants.INDEXER_GEAR_RATIO.getRotationsPerInput());
+
+    indexer.setSmartCurrentLimit(40);
   }
 
   public void updateInputs(IndexerIOInputs inputs) {
