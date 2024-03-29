@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.TunableNumber;
 import frc.robot.commands.auto.StraightDriveToPose;
@@ -225,20 +226,11 @@ public class Orchestrator {
    * @return The command to move the arm to the correct setPoint for shooting from its current
    *     location.
    */
-  public Command alignArmSpeaker() { // TODO: Not working. Abishek, Fix this
-    //    return Commands.defer(
-    //        () ->
-    //            arm.toSetpoint(
-    //                new Rotation2d(
-    //                    Math.abs(
-    //                        Math.atan(
-    //                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-    //                                    - Math.sin(arm.getAngle() +
-    // ArmConstants.STOW.getRadians())
-    //                                        * Units.inchesToMeters(28))
-    //                                / drive.getPose().getTranslation().getDistance(speaker))))),
-    //        Set.of(arm));
-    return Commands.none();
+  public Command alignArmSpeaker(Trigger button) {
+    return Commands.either(
+        arm.toSetpoint(Rotation2d.fromDegrees(5)),
+        arm.toSetpoint(Rotation2d.fromDegrees(10)),
+        button::getAsBoolean);
   }
 
   /**
@@ -247,7 +239,7 @@ public class Orchestrator {
    * @return The command to move the robot and the arm in preparation to shoot.
    */
   public Command fullAlignSpeaker() {
-    return Commands.sequence(turnToSpeaker(), alignArmSpeaker());
+    return Commands.sequence(turnToSpeaker(), alignArmSpeaker(new Trigger(() -> true)));
   }
 
   /**
