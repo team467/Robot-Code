@@ -29,7 +29,6 @@ import frc.robot.subsystems.arm.ArmIOSparkMAX;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -215,7 +214,10 @@ public class RobotContainer {
     autoChooser.addOption(
         "Score Two Notes [CENTER]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-        "Score Three Notes [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
+        "Score Three Notes (amp) [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score Three Notes (stage) [CENTER]",
+        autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
 
     // Rumble on intake

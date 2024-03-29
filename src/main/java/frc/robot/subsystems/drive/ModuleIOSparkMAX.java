@@ -83,7 +83,7 @@ public class ModuleIOSparkMAX implements ModuleIO {
     driveMotor.enableVoltageCompensation(12);
     turnMotor.enableVoltageCompensation(12);
 
-    driveMotor.setSmartCurrentLimit(53);
+    driveMotor.setSmartCurrentLimit(50);
     turnMotor.setSmartCurrentLimit(40);
 
     this.index = index;

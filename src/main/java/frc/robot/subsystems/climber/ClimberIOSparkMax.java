@@ -32,8 +32,20 @@ public class ClimberIOSparkMax implements ClimberIO {
     climberLeft.setIdleMode(CANSparkBase.IdleMode.kBrake);
     climberRight.enableVoltageCompensation(12);
     climberLeft.enableVoltageCompensation(12);
-    climberRight.setSmartCurrentLimit(80);
-    climberLeft.setSmartCurrentLimit(80);
+    climberRight.setSmartCurrentLimit(40);
+    climberLeft.setSmartCurrentLimit(40);
+    climberRight.enableSoftLimit(CANSparkBase.SoftLimitDirection.kReverse, false);
+    climberLeft.enableSoftLimit(CANSparkBase.SoftLimitDirection.kReverse, false);
+    climberRight.enableSoftLimit(CANSparkBase.SoftLimitDirection.kForward, true);
+    climberLeft.enableSoftLimit(CANSparkBase.SoftLimitDirection.kForward, true);
+    climberLeft.setSoftLimit(
+        CANSparkBase.SoftLimitDirection.kReverse, ClimberConstants.LOWER_LIMIT_POSITION);
+    climberRight.setSoftLimit(
+        CANSparkBase.SoftLimitDirection.kReverse, ClimberConstants.LOWER_LIMIT_POSITION);
+    climberLeft.setSoftLimit(
+        CANSparkBase.SoftLimitDirection.kForward, ClimberConstants.UPPER_LIMIT_POSITION);
+    climberRight.setSoftLimit(
+        CANSparkBase.SoftLimitDirection.kForward, ClimberConstants.UPPER_LIMIT_POSITION);
     // Limit Switches
     reverseLimitSwitchLeft = climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     fowardLimitSwitchLeft = climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
@@ -90,5 +102,11 @@ public class ClimberIOSparkMax implements ClimberIO {
   @Override
   public boolean getLimitSwitchRight() {
     return fowardLimitSwitchRight.isPressed() || reverseLimitSwitchRight.isPressed();
+  }
+
+  @Override
+  public void resetPosition() {
+    climberLeftEncoder.setPosition(0);
+    climberRightEncoder.setPosition(0);
   }
 }
