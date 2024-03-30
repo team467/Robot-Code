@@ -1,8 +1,16 @@
 package frc.robot;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Filesystem;
+import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Contains various field dimensions and useful reference points. Dimensions are in meters, and sets
@@ -112,14 +120,30 @@ public class FieldConstants {
   }
 
   public static final double aprilTagWidth = Units.inchesToMeters(6.50);
-  public static final AprilTagFieldLayout aprilTags;
+  public static final AprilTagFieldLayout aprilTags = AprilTagLayoutType.OFFICIAL.layout;
 
-  static {
-    //    try {
-    // aprilTags = AprilTagFieldLayout.loadFromResource(k2024Crescendo.m_resourceFile);
-    aprilTags = null;
-    //    } catch (IOException e) {
-    //      throw new RuntimeException(e);
-    //    }
+  public enum AprilTagLayoutType {
+    OFFICIAL("2024-official"),
+    SPEAKERS_ONLY("2024-speakers"),
+    AMPS_ONLY("2024-amps");
+
+    AprilTagLayoutType(String name) {
+      try {
+        layout =
+            new AprilTagFieldLayout(
+                Path.of(Filesystem.getDeployDirectory().getPath(), "apriltags", name + ".json"));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+      try {
+        layoutString = new ObjectMapper().writeValueAsString(layout);
+      } catch (JsonProcessingException e) {
+        throw new RuntimeException(
+            "Failed to serialize AprilTag layout JSON " + toString() + "for apriltags");
+      }
+    }
+
+    private final AprilTagFieldLayout layout;
+    private final String layoutString;
   }
 }
