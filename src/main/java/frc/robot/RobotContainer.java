@@ -306,6 +306,12 @@ public class RobotContainer {
         .pov(270)
         .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
 
+    operatorController
+            .leftBumper()
+            .whileTrue(
+                    orchestrator.alignArmSpeaker(
+                            operatorController.leftBumper())); // TODO: add back in when fixed
+    operatorController.leftBumper().onFalse(arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS));
     // driver controller
     // Click Right Bumper: Move arm to stow position
     driverController
@@ -323,12 +329,6 @@ public class RobotContainer {
     driverController.rightTrigger(0.15).onTrue(orchestrator.indexBasic());
     // Click A: X lock drive train
     driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()));
-
-    driverController
-        .rightBumper()
-        .onTrue(
-            orchestrator.alignArmSpeaker(
-                operatorController.leftBumper())); // TODO: add back in when fixed
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
