@@ -54,7 +54,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     fowardLimitSwitchRight =
         climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     // Ratchet
-    climberRatchet = new Relay(ClimberConstants.CLIMBER_RATCHET_ID, Relay.Direction.kReverse);
+    climberRatchet = new Relay(ClimberConstants.CLIMBER_RATCHET_ID, Relay.Direction.kForward);
     climberRatchet.set(Relay.Value.kOff);
   }
 
