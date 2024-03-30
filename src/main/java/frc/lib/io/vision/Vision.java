@@ -37,7 +37,7 @@ public class Vision extends SubsystemBase {
   private RobotOdometry odometry;
   private final TunableNumber poseDifferenceThreshold =
       new TunableNumber("Vision/VisionPoseThreshold", POSE_DIFFERENCE_THRESHOLD_METERS);
-  private final TunableNumber stdDevSlope = new TunableNumber("Vision/stdDevSlope", 0.20);
+  private final TunableNumber stdDevSlope = new TunableNumber("Vision/stdDevSlope", 0.50);
   private final TunableNumber stdDevPower = new TunableNumber("Vision/stdDevPower", 2.0);
   private final TunableNumber stdDevMultiTagFactor =
       new TunableNumber("Vision/stdDevMultiTagFactor", 0.2);
