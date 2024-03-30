@@ -29,6 +29,7 @@ import frc.robot.subsystems.arm.ArmIOSparkMAX;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -307,10 +308,10 @@ public class RobotContainer {
         .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
 
     operatorController
-            .leftBumper()
-            .whileTrue(
-                    orchestrator.alignArmSpeaker(
-                            operatorController.leftBumper())); // TODO: add back in when fixed
+        .leftBumper()
+        .whileTrue(
+            orchestrator.alignArmSpeaker(
+                operatorController.leftBumper())); // TODO: add back in when fixed
     operatorController.leftBumper().onFalse(arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS));
     // driver controller
     // Click Right Bumper: Move arm to stow position
