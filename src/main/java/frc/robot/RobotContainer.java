@@ -308,13 +308,14 @@ public class RobotContainer {
 
     // driver controller
     // Click Right Bumper: Move arm to stow position
-    driverController
-        .rightBumper()
-        .onTrue(
-            Commands.parallel(
-                    arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
-                    Commands.waitUntil(arm::limitSwitchPressed))
-                .withTimeout(2));
+    //    driverController
+    //        .rightBumper()
+    //        .onTrue(
+    //            Commands.parallel(
+    //                    arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
+    //                    Commands.waitUntil(arm::limitSwitchPressed))
+    //                .withTimeout(2));
+    driverController.rightBumper().onTrue(orchestrator.turnToSpeaker());
     // Click Left Bumper: Move arm to amp position
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     // Click left Trigger: Intake (until clicked again or has a note)
