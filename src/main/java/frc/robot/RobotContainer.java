@@ -107,12 +107,12 @@ public class RobotContainer {
                       Units.inchesToMeters(15.5)),
                   new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
 
-          //          vision =
-          //              new Vision(
-          //                  List.of(
-          //                          new VisionIOPhotonVision("front", front),
-          //                          new VisionIOPhotonVision("back", back))
-          //                      .toArray(new frc.lib.io.vision.VisionIO[0]));
+          vision =
+              new Vision(
+                  List.of(
+                          new VisionIOPhotonVision("front", front),
+                          new VisionIOPhotonVision("back", back))
+                      .toArray(new frc.lib.io.vision.VisionIO[0]));
 
           drive =
               new Drive(
