@@ -198,7 +198,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Score Two Notes [LEFT]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption(
-        "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
+        "Score Three Notes [LEFT]", autos.noVisionThreeNoteAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption("Mobility [RIGHT]", autos.mobilityAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
         "Score One Note + Mobility [RIGHT]",
@@ -206,7 +206,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Score Two Notes [RIGHT]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
-        "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
+        "Score Three Notes [RIGHT]", autos.noVisionThreeNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption("Mobility [CENTER]", autos.mobilityAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
         "Score One Note + Mobility [CENTER]",
@@ -214,11 +214,11 @@ public class RobotContainer {
     autoChooser.addOption(
         "Score Two Notes [CENTER]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-        "Score Three Notes (amp) [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
+        "Score Three Notes (amp) [CENTER]", autos.noVisionThreeNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
         "Score Three Notes (stage) [CENTER]",
         autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
-    autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
+    autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto(Autos.StartingPosition.CENTER));
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)

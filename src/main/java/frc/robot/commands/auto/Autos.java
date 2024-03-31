@@ -180,7 +180,7 @@ public class Autos {
         setNotePositions(position).withTimeout(0.02));
   }
 
-  public Command threeNoteAuto(StartingPosition position) {
+  public Command noVisionThreeNoteAuto(StartingPosition position) {
     return noVisionInit(() -> position)
         .andThen(oneNoteAuto())
         .andThen(
@@ -258,7 +258,7 @@ public class Autos {
         .andThen(orchestrator.stopFlywheel());
   }
 
-  private Command stageNoteCycle(Supplier<Translation2d> intakePosition, Rotation2d armAngle) {
+  private Command stageNoteCycle(Supplier<Translation2d> intakePosition) {
     return Commands.race(
             orchestrator
                 .deferredStraightDriveToPose(
