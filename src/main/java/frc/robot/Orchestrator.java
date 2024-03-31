@@ -225,7 +225,16 @@ public class Orchestrator {
    * @return The command to move the arm to the correct setPoint for shooting from its current
    *     location.
    */
-  public Command alignArmSpeaker() { // TODO: Not working. Abishek, Fix this
+  public Command alignArmSpeaker(
+      Supplier<Double> distance) { // TODO: Not working. Abishek, Fix this
+    return Commands.defer(
+        () ->
+            arm.toSetpoint(
+                Rotation2d.fromDegrees(
+                    (-3.1419 * (distance.get() * distance.get()))
+                        + (23.725 * distance.get())
+                        - 30.103)),
+        Set.of(arm));
     //    return Commands.defer(
     //        () ->
     //            arm.toSetpoint(
@@ -238,7 +247,7 @@ public class Orchestrator {
     //                                        * Units.inchesToMeters(28))
     //                                / drive.getPose().getTranslation().getDistance(speaker))))),
     //        Set.of(arm));
-    return Commands.none();
+    //    return Commands.none();
   }
 
   /**
@@ -246,8 +255,8 @@ public class Orchestrator {
    *
    * @return The command to move the robot and the arm in preparation to shoot.
    */
-  public Command fullAlignSpeaker() {
-    return Commands.sequence(turnToSpeaker(), alignArmSpeaker());
+  public Command fullAlignSpeaker(Supplier<Double> distance) {
+    return Commands.sequence(turnToSpeaker(), alignArmSpeaker(distance));
   }
 
   /**
@@ -256,8 +265,8 @@ public class Orchestrator {
    *
    * @return The command to align both the robot and the arm, and then shoots at full power.
    */
-  public Command fullAlignShootSpeaker() {
-    return Commands.sequence(fullAlignSpeaker(), shootBasic());
+  public Command fullAlignShootSpeaker(Supplier<Double> distance) {
+    return Commands.sequence(fullAlignSpeaker(distance), shootBasic());
   }
 
   /**

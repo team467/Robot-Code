@@ -318,6 +318,16 @@ public class RobotContainer {
     //                    Commands.waitUntil(arm::limitSwitchPressed))
     //                .withTimeout(2));
     driverController.rightBumper().onTrue(orchestrator.turnToSpeaker());
+    driverController
+        .rightBumper()
+        .whileTrue(
+            orchestrator.alignArmSpeaker(
+                () ->
+                    drive
+                        .getPose()
+                        .getTranslation()
+                        .getDistance(
+                            FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
     // Click Left Bumper: Move arm to amp position
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     // Click left Trigger: Intake (until clicked again or has a note)
