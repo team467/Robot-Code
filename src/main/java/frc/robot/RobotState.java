@@ -1,4 +1,4 @@
-package frc.robot.subsystems.robotstate;
+package frc.robot;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -7,6 +7,14 @@ import org.littletonrobotics.junction.AutoLogOutput;
  * leds or for the shooter to know if the system has a game piece in the robot.
  */
 public class RobotState {
+
+  /** Set true if robot is in range of the speaker */
+  @AutoLogOutput(key = "RobotState/InRange")
+  public boolean inRange = false;
+
+  /** Set true if robot can shoot into speaker */
+  @AutoLogOutput(key = "RobotState/CanShoot")
+  public boolean canShoot = false;
 
   /** Set by the robot if the batter is less than 9V */
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
@@ -21,8 +29,14 @@ public class RobotState {
   public boolean intaking = false;
 
   /** Set true if the robot is currently hanging from the chain or in the process of climbing. */
-  @AutoLogOutput(key = "RobotState/Hanging")
-  public boolean hanging = false;
+  @AutoLogOutput(key = "RobotState/ClimberUp")
+  public boolean climberUp = false;
+
+  @AutoLogOutput(key = "RobotState/ClimberDown")
+  public boolean climberDown = false;
+
+  @AutoLogOutput(key = "RobotState/ClimberRatchet")
+  public boolean climberRatchet = true;
 
   /**
    * Set true if the robot currently contains a note. Used to prevent the robot from picking up a
@@ -38,6 +52,10 @@ public class RobotState {
   /** Angle from the front of the robot to a note on the floor in degrees */
   @AutoLogOutput(key = "RobotState/NoteAngle")
   public double noteAngle = 0;
+
+  /** If the duck button is pressed */
+  @AutoLogOutput(key = "RobotState/Duck")
+  public boolean duck = false;
 
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;

@@ -6,14 +6,15 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.GeomUtils;
+import frc.lib.utils.RobotOdometry;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import java.util.Arrays;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveWithJoysticks extends Command {
   private final Drive drive;
@@ -42,6 +43,11 @@ public class DriveWithJoysticks extends Command {
     this.rightXSupplier = rightXSupplier;
     this.robotRelativeOverride = robotRelativeOverride;
 
+    /*
+    https://www.khanacademy.org/science/physics/torque-angular-momentum/rotational-kinematics/v/relationship-between-angular-velocity-and-speed
+    If speed = angular velocity * radius, then we can re-arrange it into Angular Velocity = Speed / Radius.
+    We assume that the speed we care about is the maximum speed, and our radius is distance from the center of the robot to a module (ie Translation2d::getNorm).
+     */
     MAX_ANGULAR_SPEED =
         DriveConstants.MAX_LINEAR_SPEED
             / Arrays.stream(drive.getModuleTranslations())
@@ -54,6 +60,7 @@ public class DriveWithJoysticks extends Command {
 
   @Override
   public void execute() {
+    Logger.recordOutput("Drive/MaxAngularSpeed", MAX_ANGULAR_SPEED);
     // Get values from double suppliers
     double leftX = leftXFilter.calculate(leftXSupplier.get());
     double leftY = leftYFilter.calculate(leftYSupplier.get());
@@ -83,29 +90,27 @@ public class DriveWithJoysticks extends Command {
         new Pose2d(new Translation2d(), linearDirection)
             .transformBy(GeomUtils.transformFromTranslation(linearMagnitude, 0))
             .getTranslation();
-
-    // Convert to meters per second
-    ChassisSpeeds speeds =
-        new ChassisSpeeds(
-            linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED,
-            linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
-            rightX * MAX_ANGULAR_SPEED);
-
-    // Convert from field relative
-    if (robotRelativeOverride.get()) {
-      Rotation2d driveRotation = drive.getPose().getRotation();
-      if (DriverStation.getAlliance().isEmpty()
-          || DriverStation.getAlliance().get() == Alliance.Red) {
-        driveRotation = driveRotation.plus(new Rotation2d(Math.PI));
+    ChassisSpeeds speeds;
+    if (!robotRelativeOverride.get()) {
+      speeds =
+          new ChassisSpeeds(
+              linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED,
+              linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
+              rightX * DriveConstants.MAX_LINEAR_SPEED);
+    } else {
+      if (AllianceFlipUtil.shouldFlip()) {
+        Logger.recordOutput("Drive/FlipAlliance", true);
+        linearVelocity = linearVelocity.rotateBy(Rotation2d.fromRadians(Math.PI));
+      } else {
+        Logger.recordOutput("Drive/FlipAlliance", false);
       }
       speeds =
           ChassisSpeeds.fromFieldRelativeSpeeds(
-              speeds.vxMetersPerSecond,
-              speeds.vyMetersPerSecond,
-              speeds.omegaRadiansPerSecond,
-              driveRotation);
+              linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED,
+              linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
+              rightX * MAX_ANGULAR_SPEED,
+              RobotOdometry.getInstance().getPoseEstimator().getEstimatedPosition().getRotation());
     }
-
     drive.runVelocity(speeds);
   }
 

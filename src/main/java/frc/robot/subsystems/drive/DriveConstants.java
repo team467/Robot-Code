@@ -35,22 +35,22 @@ public class DriveConstants {
             };
         DRIVE_GEAR_RATIO = new GearRatio(6.75, 1);
         TURN_GEAR_RATIO = new GearRatio(12.8, 1);
-        DRIVE_KS = new TunableNumber("Drive/Module/DriveKS", 0.49385);
-        DRIVE_KV = new TunableNumber("Drive/Module/DriveKV", 2.60818);
-        TURN_KP = new TunableNumber("Drive/Module/TurnKP", 3.256);
-        TURN_KD = new TunableNumber("Drive/Module/TurnKD", 0.05);
+        DRIVE_KS = new TunableNumber("Drive/Module/DriveKS", 0.17181);
+        DRIVE_KV = new TunableNumber("Drive/Module/DriveKV", 2.2858);
+        TURN_KP = new TunableNumber("Drive/Module/TurnKP", 3.89); // 3.256
+        TURN_KD = new TunableNumber("Drive/Module/TurnKD", 0);
       }
-      case ROBOT_2024A -> {
-        TRACK_WIDTH_X = Units.inchesToMeters(11.5 * 2);
-        TRACK_WIDTH_Y = Units.inchesToMeters(11.5 * 2);
-        MAX_LINEAR_SPEED = Units.feetToMeters(16.0);
+      case ROBOT_2024_COMP -> {
+        TRACK_WIDTH_X = Units.inchesToMeters(9 * 2);
+        TRACK_WIDTH_Y = Units.inchesToMeters(9 * 2);
+        MAX_LINEAR_SPEED = Units.feetToMeters(16.6);
         WHEEL_DIAMETER = Units.inchesToMeters(4);
         ABSOLUTE_ANGLE_OFFSET =
             new Rotation2d[] {
-              Rotation2d.fromDegrees(277.4),
-              Rotation2d.fromDegrees(46.6),
-              Rotation2d.fromDegrees(89.7),
-              Rotation2d.fromDegrees(-137.7),
+              Rotation2d.fromDegrees(-80.51 + 180),
+              Rotation2d.fromDegrees(-47.11),
+              Rotation2d.fromDegrees(5.80),
+              Rotation2d.fromDegrees(177.01),
             };
         DRIVE_GEAR_RATIO = new GearRatio(6.12, 1);
         TURN_GEAR_RATIO = new GearRatio(12.8, 1);

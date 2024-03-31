@@ -11,13 +11,20 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
 import frc.lib.utils.LocalADStarAK;
 import frc.lib.utils.RobotOdometry;
+import frc.robot.FieldConstants;
+import frc.robot.RobotState;
+import frc.robot.commands.auto.StraightDriveToPose;
+import java.util.Set;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -26,6 +33,9 @@ public class Drive extends SubsystemBase {
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
+
+  private RobotState state = RobotState.getInstance();
+  private static final double inRangeDistancetoSpeaker = 3;
 
   private final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(getModuleTranslations());
@@ -91,21 +101,33 @@ public class Drive extends SubsystemBase {
     }
 
     // Update odometry
-
-    // Update odometry
     SwerveModulePosition[] wheelDeltas = new SwerveModulePosition[4];
     for (int i = 0; i < 4; i++) {
       wheelDeltas[i] = modules[i].getPositionDelta();
     }
-    // The twist represents the motion of the robot since the last
-    // loop cycle in x, y, and theta based only on the modules,
-    // without the gyro. The gyro is always disconnected in simulation.
-    var twist = kinematics.toTwist2d(wheelDeltas);
+
+    // Update gyro angle
     if (gyroInputs.connected) {
-      twist = new Twist2d(twist.dx, twist.dy, gyroInputs.yaw.minus(lastGyroRotation).getRadians());
+      // Use the real gyro angle
       lastGyroRotation = gyroInputs.yaw;
+    } else {
+      // Use the angle delta from the kinematics and module deltas
+      Twist2d twist = kinematics.toTwist2d(wheelDeltas);
+      lastGyroRotation = lastGyroRotation.plus(new Rotation2d(twist.dtheta));
     }
-    odometry.addDriveData(Timer.getFPGATimestamp(), twist);
+
+    odometry.getPoseEstimator().update(lastGyroRotation, getModulePositions());
+
+    updateRobotState();
+  }
+
+  private void updateRobotState() {
+    double distance =
+        getPose()
+            .getTranslation()
+            .getDistance(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
+    Logger.recordOutput("Drive/SpeakerDistance", distance);
+    state.inRange = distance < inRangeDistancetoSpeaker;
   }
 
   /**
@@ -175,15 +197,23 @@ public class Drive extends SubsystemBase {
     return states;
   }
 
+  private SwerveModulePosition[] getModulePositions() {
+    SwerveModulePosition[] positions = new SwerveModulePosition[4];
+    for (int i = 0; i < 4; i++) {
+      positions[i] = modules[i].getPosition();
+    }
+    return positions;
+  }
+
   /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
-    return odometry.getLatestPose();
+    return odometry.getPoseEstimator().getEstimatedPosition();
   }
 
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
-    return odometry.getLatestPose().getRotation();
+    return odometry.getPoseEstimator().getEstimatedPosition().getRotation();
   }
 
   public double getPitchVelocity() {
@@ -200,16 +230,22 @@ public class Drive extends SubsystemBase {
 
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
-    odometry.resetPose(pose);
+    odometry.getPoseEstimator().resetPosition(lastGyroRotation, getModulePositions(), pose);
   }
 
   /** Returns an array of module translations. */
-  public Translation2d[] getModuleTranslations() {
+  public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
       new Translation2d(DriveConstants.TRACK_WIDTH_X / 2.0, DriveConstants.TRACK_WIDTH_Y / 2.0),
       new Translation2d(DriveConstants.TRACK_WIDTH_X / 2.0, -DriveConstants.TRACK_WIDTH_Y / 2.0),
       new Translation2d(-DriveConstants.TRACK_WIDTH_X / 2.0, DriveConstants.TRACK_WIDTH_Y / 2.0),
       new Translation2d(-DriveConstants.TRACK_WIDTH_X / 2.0, -DriveConstants.TRACK_WIDTH_Y / 2.0)
     };
+  }
+
+  public Command driveToNote(Supplier<Double> angle) {
+    return Commands.defer(
+        () -> new StraightDriveToPose(0, 0, Units.degreesToRadians(angle.get()), this),
+        Set.of(this));
   }
 }

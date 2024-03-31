@@ -1,6 +1,9 @@
 package frc.robot.subsystems.led;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -8,7 +11,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.robotstate.RobotState;
+import frc.robot.RobotState;
 import java.util.List;
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -20,7 +23,8 @@ public class Leds extends SubsystemBase {
     ESTOPPED,
     AUTO_FINISHED,
     AUTONOMOUS,
-    HANGING,
+    IN_RANGE,
+    CAN_SHOOT,
     SHOOTING,
     CONTAINING,
     INTAKING,
@@ -31,7 +35,12 @@ public class Leds extends SubsystemBase {
     RED_ALLIANCE,
     LOW_BATTERY_ALERT,
     DISABLED,
-    OFF,
+    DEFAULT,
+    DUCK,
+    CLIMBER_UP,
+    CLIMBER_DOWN,
+    CLIMBER_SOLENOID_DISENGAGED,
+    OFF
   }
 
   @AutoLogOutput(key = "LEDs/Mode")
@@ -51,7 +60,7 @@ public class Leds extends SubsystemBase {
 
   // Constants
   private static final int minLoopCycleCount = 10;
-  private static final int length = 10;
+  private static final int length = 40;
   private static final double strobeFastDuration = 0.1;
   private static final double strobeSlowDuration = 0.2;
   private static final double breathDuration = 1.0;
@@ -66,13 +75,29 @@ public class Leds extends SubsystemBase {
   private static final double waveAllianceDuration = 2.0;
   private static final double autoFadeTime = 2.5; // 3s nominal
   private static final double autoFadeMaxTime = 5.0; // Return to normal
+  private static final double noteAngle = 5.0;
+
+  /** Creates a Network table for testing led modes and colors */
+  private NetworkTable ledTable;
+  /** Sets the mode for led in network table and allows to test led modes */
+  private NetworkTableEntry ledModeEntry;
+  /** Allows testing in leds by enabling testing mode */
+  private NetworkTableEntry ledTestingEntry;
 
   public Leds() {
-    leds = new AddressableLED(0);
+    ledTable = NetworkTableInstance.getDefault().getTable("Leds");
+    ledModeEntry = ledTable.getEntry("Mode");
+    ledModeEntry.setString("OFF");
+    ledTestingEntry = ledTable.getEntry("Testing");
+    ledTestingEntry.setBoolean(false);
+
     buffer = new AddressableLEDBuffer(length);
+
+    leds = new AddressableLED(0);
     leds.setLength(length);
     leds.setData(buffer);
     leds.start();
+
     loadingNotifier =
         new Notifier(
             () -> {
@@ -95,37 +120,9 @@ public class Leds extends SubsystemBase {
 
     if (DriverStation.isEStopped()) {
       mode = LedMode.ESTOPPED;
-
-    } else if (false) { // TODO: need state variable for auto finished
-      mode = LedMode.AUTO_FINISHED;
-
-    } else if (false) { // TODO: need state variable for autonomous
-      mode = LedMode.AUTONOMOUS;
-
-    } else if (false) { // TODO: need state variable for hanging
-      mode = LedMode.HANGING;
-
-    } else if (false) { // TODO: need state variable for shooting
-      mode = LedMode.SHOOTING;
-
-    } else if (false) { // TODO: need state variable for containing
-      mode = LedMode.CONTAINING;
-
-    } else if (false) { // TODO: need state variable for intaking
-      mode = LedMode.INTAKING;
-
-    } else if (false) { // TODO: need state variable for left note detection
-      mode = LedMode.LEFT_NOTE_DETECTION;
-
-    } else if (false) { // TODO: need state variable for right note detection
-      mode = LedMode.RIGHT_NOTE_DETECTION;
-
-    } else if (false) { // TODO: need state variable for straight note detection
-      mode = LedMode.STRAIGHT_NOTE_DETECTION;
-
     } else if (state.lowBatteryAlert) {
       mode = LedMode.LOW_BATTERY_ALERT;
-
+      // low battery mode at top for testing purposes
     } else if (DriverStation.isDisabled()) {
       if (DriverStation.getAlliance().isPresent()) {
         if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
@@ -133,12 +130,49 @@ public class Leds extends SubsystemBase {
         } else {
           mode = LedMode.RED_ALLIANCE;
         }
+
       } else {
         mode = LedMode.DISABLED;
       }
+    } else if (false) { // TODO: Test this
+      mode = LedMode.AUTO_FINISHED;
 
+    } else if (DriverStation.isAutonomous()) {
+      mode = LedMode.AUTONOMOUS;
+
+    } else if (state.shooting && state.hasNote) {
+      mode = LedMode.SHOOTING;
+
+    } else if (state.canShoot && state.hasNote) {
+      mode = LedMode.CAN_SHOOT;
+
+    } else if (state.inRange && state.hasNote) {
+      mode = LedMode.IN_RANGE;
+
+    } else if (state.hasNote) {
+      mode = LedMode.CONTAINING;
+
+    } else if (state.intaking) {
+      mode = LedMode.INTAKING;
+
+    } else if (state.climberUp) {
+      mode = LedMode.CLIMBER_UP;
+    } else if (state.climberDown) {
+      mode = LedMode.CLIMBER_DOWN;
+    } else if (!state.climberRatchet) {
+      mode = LedMode.CLIMBER_SOLENOID_DISENGAGED;
+    } else if (state.seeNote) {
+      if (state.noteAngle <= -noteAngle) { // TODO: need to change to constant once angle known
+        mode = LedMode.LEFT_NOTE_DETECTION;
+
+      } else if (state.noteAngle >= noteAngle) {
+        mode = LedMode.RIGHT_NOTE_DETECTION;
+
+      } else {
+        mode = LedMode.STRAIGHT_NOTE_DETECTION;
+      }
     } else {
-      mode = LedMode.OFF;
+      mode = LedMode.DEFAULT;
     }
   }
 
@@ -146,7 +180,6 @@ public class Leds extends SubsystemBase {
     switch (mode) {
       case ESTOPPED:
         solid(Section.FULL, Color.kRed);
-        // strobe(Section.FULL, Color.kRed, strobeFastDuration);
         break;
 
       case AUTO_FINISHED:
@@ -158,22 +191,32 @@ public class Leds extends SubsystemBase {
         wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveFastCycleLength, waveFastDuration);
         break;
 
-      case HANGING:
-        solid(Section.FULL, Color.kDarkGreen);
+      case IN_RANGE:
+        wave(
+            Section.FULL,
+            Color.kGreen,
+            Color.kBlack,
+            waveAllianceCycleLength,
+            waveAllianceDuration);
+        break;
+
+      case CAN_SHOOT:
+        solid(Section.FULL, Color.kGreen);
+        // has the same color as shooting except it's solid
         break;
 
       case SHOOTING:
         // leds glow in the direction it's shooting
         wave(
             Section.FULL,
-            Color.kMagenta,
+            Color.kGreen,
             Color.kBlack,
             waveAllianceCycleLength,
             waveAllianceDuration);
         break;
 
       case CONTAINING:
-        solid(Section.FULL, Color.kAquamarine);
+        solid(Section.FULL, Color.kGreen);
         break;
 
       case INTAKING:
@@ -188,17 +231,17 @@ public class Leds extends SubsystemBase {
 
       case LEFT_NOTE_DETECTION:
         // leds glow on left side
-        solid(0.5, Color.kYellow, Color.kBlack);
+        solidOnSide(false, Color.kYellow);
         break;
 
       case RIGHT_NOTE_DETECTION:
         // leds glows on right side
-        solid(0.5, Color.kBlack, Color.kYellow);
+        solidOnSide(true, Color.kYellow);
         break;
 
       case STRAIGHT_NOTE_DETECTION:
         // leds glow in the middle
-        solidMiddle(0.5, Color.kBeige);
+        solidMiddle(0.5, Color.kYellowGreen);
         break;
 
       case BLUE_ALLIANCE:
@@ -211,7 +254,7 @@ public class Leds extends SubsystemBase {
         break;
 
       case LOW_BATTERY_ALERT:
-        solid(Section.FULL, Color.kOrange);
+        strobe(Section.FULL, Color.kRed, 1);
         break;
 
       case DISABLED:
@@ -221,6 +264,26 @@ public class Leds extends SubsystemBase {
         } else {
           wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
         }
+        break;
+
+      case DUCK:
+        solid(Section.BOTTOM_HALF, Color.kYellow);
+        break;
+
+      case CLIMBER_UP:
+        rainbow(Section.TOP_HALF, rainbowCycleLength, rainbowDuration, true);
+        break;
+
+      case CLIMBER_DOWN:
+        rainbow(Section.BOTTOM_HALF, rainbowCycleLength, rainbowDuration, false);
+        break;
+
+      case CLIMBER_SOLENOID_DISENGAGED:
+        rainbow(Section.FULL, rainbowCycleLength, rainbowDuration, true);
+        break;
+
+      case DEFAULT:
+        wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
         break;
 
       case OFF:
@@ -233,6 +296,9 @@ public class Leds extends SubsystemBase {
     }
 
     leds.setData(buffer);
+    //    if (state.duck) {
+    //      mode = LedMode.DUCK;
+    //    }
   }
 
   @Override
@@ -246,8 +312,12 @@ public class Leds extends SubsystemBase {
     // Stop loading notifier if running
     loadingNotifier.stop();
 
-    // updateState();
-    // mode = LedMode.HANGING;
+    if (ledTestingEntry.getBoolean(false)) {
+      mode = LedMode.valueOf(ledModeEntry.getString("OFF"));
+    } else {
+      updateState();
+      ledModeEntry.setString(mode.toString());
+    }
     updateLeds();
   }
 
@@ -279,12 +349,36 @@ public class Leds extends SubsystemBase {
   }
 
   /**
+   * Applies a solid color to a side of the two LED strips.
+   *
+   * @param onRight should light up right side
+   * @param color The color to be applied.
+   */
+  private void solidOnSide(boolean onRight, Color color) {
+    if (onRight) {
+      for (int i = 0; i < length / 2; i++) {
+        buffer.setLED(i, Color.kBlack);
+      }
+      for (int i = length / 2; i < length; i++) {
+        buffer.setLED(i, color);
+      }
+    } else { // On the left
+      for (int i = 0; i < length / 2; i++) {
+        buffer.setLED(i, color);
+      }
+      for (int i = length / 2; i < length; i++) {
+        buffer.setLED(i, Color.kBlack);
+      }
+    }
+  }
+
+  /**
    * Applies a solid color to a given section of an LED strip. The section is filled with the
    * specified color.
    *
    * @param percent The percentage of the section to apply the solid color to. Value should be
    *     between 0.0 and 1.0.
-   * @param color The color to be applied.
+   * @param color1 The color to be applied.
    */
   private void solid(double percent, Color color1, Color color2) {
     int color1Pixels = (int) Math.round(MathUtil.clamp(length * percent, 0, length));
@@ -298,7 +392,7 @@ public class Leds extends SubsystemBase {
 
   private void solidMiddle(double percent, Color color2) {
     double middlePercent = 1 - percent;
-    int color1Pixels = (int) Math.round(MathUtil.clamp(length * middlePercent, 0, length));
+    int color1Pixels = (int) Math.round(MathUtil.clamp(length * (middlePercent / 2), 0, length));
     for (int i = 0; i < color1Pixels; i++) {
       buffer.setLED(i, Color.kBlack);
     }
@@ -363,14 +457,26 @@ public class Leds extends SubsystemBase {
    * @param cycleLength the length of a complete rainbow cycle in degrees
    * @param duration the duration of the rainbow effect in seconds
    */
-  private void rainbow(Section section, double cycleLength, double duration) {
-    double x = (1 - ((Timer.getFPGATimestamp() / duration) % 1.0)) * 180.0;
-    double xDiffPerLed = 180.0 / cycleLength;
-    for (int i = 0; i < section.end(); i++) {
-      x += xDiffPerLed;
-      x %= 180.0;
-      if (i >= section.start()) {
-        buffer.setHSV(i, (int) x, 255, 255);
+  private void rainbow(Section section, double cycleLength, double duration, boolean up) {
+    if (up) {
+      double x = (1 - ((Timer.getFPGATimestamp() / duration) % 1.0)) * 180.0;
+      double xDiffPerLed = 180.0 / cycleLength;
+      for (int i = section.start(); i < section.end(); i++) {
+        x += xDiffPerLed;
+        x %= 180.0;
+        if (i >= section.start()) {
+          buffer.setHSV(i, (int) x, 255, 255);
+        }
+      }
+    } else {
+      double x = ((Timer.getFPGATimestamp() / duration) % 1.0) * 180.0;
+      double xDiffPerLed = 180.0 / cycleLength;
+      for (int i = section.start(); i < section.end(); i++) {
+        x += xDiffPerLed;
+        x %= 180.0;
+        if (i >= section.start()) {
+          buffer.setHSV(i, (int) x, 255, 255);
+        }
       }
     }
   }
