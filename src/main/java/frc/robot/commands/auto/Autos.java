@@ -167,9 +167,9 @@ public class Autos {
         .andThen(
             oneNoteAuto()
                 .andThen(
-                    scoreCycle(() -> noteTranslations[0], () -> false))
+                    scoreFromPlaceCycle(() -> noteTranslations[0], () -> false))
                 .andThen(
-                    scoreCycle(() -> noteTranslations[1], () -> false))
+                    scoreFromPlaceCycle(() -> noteTranslations[1], () -> false))
                 .andThen(stageNoteCycle(() -> noteTranslations[2])));
   }
 
@@ -184,18 +184,18 @@ public class Autos {
     return noVisionInit(() -> position)
         .andThen(oneNoteAuto())
         .andThen(
-            scoreCycle(
+            scoreFromPositionCycle(
                 () -> noteTranslations[0],
                 position::getStartingPosition,
                 () -> position != StartingPosition.CENTER))
-        .andThen(scoreCycle(() -> noteTranslations[1], position::getStartingPosition, () -> true));
+        .andThen(scoreFromPositionCycle(() -> noteTranslations[1], position::getStartingPosition, () -> true));
   }
 
   public Command noVisionTwoNoteAuto(StartingPosition position) {
     return noVisionInit(() -> position)
         .andThen(oneNoteAuto())
         .andThen(
-            scoreCycle(
+            scoreFromPositionCycle(
                 () -> noteTranslations[0],
                 position::getStartingPosition,
                 () -> position != StartingPosition.CENTER));
@@ -205,14 +205,14 @@ public class Autos {
     return noVisionInit(() -> position)
         .andThen(oneNoteAuto())
         .andThen(
-            scoreCycle(
+            scoreFromPositionCycle(
                 () -> noteTranslations[0],
                 position::getStartingPosition,
                 () -> position != StartingPosition.CENTER))
         .andThen(stageNoteCycleSubwoofer(() -> noteTranslations[2], position::getStartingPosition));
   }
 
-  private Command scoreCycle(
+  private Command scoreFromPositionCycle(
       Supplier<Translation2d> intakePosition,
       Supplier<Pose2d> shootPosition,
       BooleanSupplier backUp) {
@@ -236,7 +236,7 @@ public class Autos {
         .withTimeout(0.5);
   }
 
-  private Command scoreCycle(
+  private Command scoreFromPlaceCycle(
       Supplier<Translation2d> intakePosition, BooleanSupplier backUp) {
     return orchestrator
         .stopFlywheel()
