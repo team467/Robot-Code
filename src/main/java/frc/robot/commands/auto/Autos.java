@@ -162,15 +162,15 @@ public class Autos {
     return oneNoteAuto().andThen(mobilityAuto(position));
   }
 
-  public Command noVisionFourNoteAuto() {
-    return noVisionInit(() -> StartingPosition.CENTER)
+  public Command noVisionFourNoteAuto(StartingPosition position) {
+    return noVisionInit(()->position)
         .andThen(
             oneNoteAuto()
                 .andThen(
-                    scoreCycle(() -> noteTranslations[0], Rotation2d.fromDegrees(5), () -> false))
+                    scoreCycle(() -> noteTranslations[0], () -> false))
                 .andThen(
-                    scoreCycle(() -> noteTranslations[1], Rotation2d.fromDegrees(10), () -> false))
-                .andThen(stageNoteCycle(() -> noteTranslations[2], Rotation2d.fromDegrees(10))));
+                    scoreCycle(() -> noteTranslations[1], () -> false))
+                .andThen(stageNoteCycle(() -> noteTranslations[2])));
   }
 
   private Command noVisionInit(Supplier<StartingPosition> position) {
@@ -237,7 +237,7 @@ public class Autos {
   }
 
   private Command scoreCycle(
-      Supplier<Translation2d> intakePosition, Rotation2d armAngle, BooleanSupplier backUp) {
+      Supplier<Translation2d> intakePosition, BooleanSupplier backUp) {
     return orchestrator
         .stopFlywheel()
         .andThen(
@@ -248,10 +248,7 @@ public class Autos {
                 orchestrator.intakeBasic()))
         .andThen(Commands.waitSeconds(0.75))
         .andThen(
-            Commands.parallel(
-                    orchestrator.turnToSpeaker().withTimeout(1.5),
-                    arm.toSetpoint(armAngle).withTimeout(0.2),
-                    Commands.waitUntil(arm::atSetpoint).withTimeout(.2),
+            Commands.parallel(orchestrator.fullAlignSpeaker(),
                     orchestrator.spinUpFlywheel().withTimeout(1.7))
                 .andThen(
                     orchestrator
@@ -285,11 +282,8 @@ public class Autos {
         .withTimeout(5)
         .andThen(
             Commands.parallel(
-                    orchestrator.turnToSpeaker().withTimeout(2),
-                    arm.toSetpoint(armAngle).withTimeout(0.2),
-                    Commands.waitUntil(arm::atSetpoint).withTimeout(0.2),
-                    Commands.waitSeconds(0.1),
-                    orchestrator.spinUpFlywheel())
+                    orchestrator.fullAlignSpeaker(),
+                    orchestrator.spinUpFlywheel().withTimeout(1.7))
                 .andThen(
                     orchestrator
                         .indexBasic()
