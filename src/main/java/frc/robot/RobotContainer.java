@@ -23,6 +23,7 @@ import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
+import frc.robot.commands.drive.StolenJoystick;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmIO;
@@ -265,7 +266,6 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
     // stop when doing nothing
     intake.setDefaultCommand(intake.stop());
     indexer.setDefaultCommand(indexer.setPercent(0));
@@ -317,7 +317,12 @@ public class RobotContainer {
     //                    arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
     //                    Commands.waitUntil(arm::limitSwitchPressed))
     //                .withTimeout(2));
-    driverController.rightBumper().onTrue(orchestrator.turnToSpeaker());
+    driverController.rightBumper().whileTrue(new StolenJoystick(drive, driverController::getLeftX, driverController::getLeftY,() ->
+            new Pose2d(
+                    drive.getPose().getTranslation(), AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())
+                            .minus(drive.getPose().getTranslation())
+                            .getAngle()
+                            .minus(Rotation2d.fromDegrees(180))).getRotation(), () -> true));
     driverController
         .rightBumper()
         .whileTrue(
