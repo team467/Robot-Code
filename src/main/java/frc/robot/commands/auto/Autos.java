@@ -248,7 +248,13 @@ public class Autos {
                 orchestrator.intakeBasic()))
         .andThen(Commands.waitSeconds(0.75))
         .andThen(
-            Commands.parallel(orchestrator.fullAlignSpeaker(),
+            Commands.parallel(orchestrator.fullAlignSpeaker(() ->
+                    drive
+                            .getPose()
+                            .getTranslation()
+                            .getDistance(
+                                    AllianceFlipUtil.apply(
+                                            FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()))),
                     orchestrator.spinUpFlywheel().withTimeout(1.7))
                 .andThen(
                     orchestrator
@@ -282,7 +288,13 @@ public class Autos {
         .withTimeout(5)
         .andThen(
             Commands.parallel(
-                    orchestrator.fullAlignSpeaker(),
+                    orchestrator.fullAlignSpeaker(() ->
+                            drive
+                                    .getPose()
+                                    .getTranslation()
+                                    .getDistance(
+                                            AllianceFlipUtil.apply(
+                                                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()))),
                     orchestrator.spinUpFlywheel().withTimeout(1.7))
                 .andThen(
                     orchestrator
