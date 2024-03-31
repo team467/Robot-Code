@@ -163,13 +163,11 @@ public class Autos {
   }
 
   public Command noVisionFourNoteAuto(StartingPosition position) {
-    return noVisionInit(()->position)
+    return noVisionInit(() -> position)
         .andThen(
             oneNoteAuto()
-                .andThen(
-                    scoreFromPlaceCycle(() -> noteTranslations[0], () -> false))
-                .andThen(
-                    scoreFromPlaceCycle(() -> noteTranslations[1], () -> false))
+                .andThen(scoreFromPlaceCycle(() -> noteTranslations[0], () -> false))
+                .andThen(scoreFromPlaceCycle(() -> noteTranslations[1], () -> false))
                 .andThen(stageNoteCycle(() -> noteTranslations[2])));
   }
 
@@ -188,7 +186,9 @@ public class Autos {
                 () -> noteTranslations[0],
                 position::getStartingPosition,
                 () -> position != StartingPosition.CENTER))
-        .andThen(scoreFromPositionCycle(() -> noteTranslations[1], position::getStartingPosition, () -> true));
+        .andThen(
+            scoreFromPositionCycle(
+                () -> noteTranslations[1], position::getStartingPosition, () -> true));
   }
 
   public Command noVisionTwoNoteAuto(StartingPosition position) {
@@ -248,13 +248,16 @@ public class Autos {
                 orchestrator.intakeBasic()))
         .andThen(Commands.waitSeconds(0.75))
         .andThen(
-            Commands.parallel(orchestrator.fullAlignSpeaker(() ->
-                    drive
-                            .getPose()
-                            .getTranslation()
-                            .getDistance(
+            Commands.parallel(
+                    orchestrator.fullAlignSpeaker(
+                        () ->
+                            drive
+                                .getPose()
+                                .getTranslation()
+                                .getDistance(
                                     AllianceFlipUtil.apply(
-                                            FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()))),
+                                        FieldConstants.Speaker.centerSpeakerOpening
+                                            .toTranslation2d()))),
                     orchestrator.spinUpFlywheel().withTimeout(1.7))
                 .andThen(
                     orchestrator
@@ -288,13 +291,15 @@ public class Autos {
         .withTimeout(5)
         .andThen(
             Commands.parallel(
-                    orchestrator.fullAlignSpeaker(() ->
+                    orchestrator.fullAlignSpeaker(
+                        () ->
                             drive
-                                    .getPose()
-                                    .getTranslation()
-                                    .getDistance(
-                                            AllianceFlipUtil.apply(
-                                                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()))),
+                                .getPose()
+                                .getTranslation()
+                                .getDistance(
+                                    AllianceFlipUtil.apply(
+                                        FieldConstants.Speaker.centerSpeakerOpening
+                                            .toTranslation2d()))),
                     orchestrator.spinUpFlywheel().withTimeout(1.7))
                 .andThen(
                     orchestrator

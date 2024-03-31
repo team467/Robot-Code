@@ -216,11 +216,13 @@ public class RobotContainer {
     autoChooser.addOption(
         "Score Two Notes [CENTER]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-        "Score Three Notes (amp) [CENTER]", autos.noVisionThreeNoteAuto(Autos.StartingPosition.CENTER));
+        "Score Three Notes (amp) [CENTER]",
+        autos.noVisionThreeNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
         "Score Three Notes (stage) [CENTER]",
         autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
-    autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score Four Notes [CENTER]", autos.noVisionFourNoteAuto(Autos.StartingPosition.CENTER));
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)
