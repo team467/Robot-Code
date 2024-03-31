@@ -26,7 +26,7 @@ public class ArmConstants {
         KG = new TunableNumber("Arm/KG", 0);
         KS = new TunableNumber("Arm/KS", 0.0);
         KV = new TunableNumber("Arm/KV", 0.0);
-        KP = new TunableNumber("Arm/KP", 66);
+        KP = new TunableNumber("Arm/KP", 35); // 66
         KD = new TunableNumber("Arm/KD", 0);
         MAX_VELOCITY = new TunableNumber("Arm/MaxVelocity", Double.POSITIVE_INFINITY);
         MAX_ACCELERATION = new TunableNumber("Arm/MaxAcceleration", Units.degreesToRadians(900));
