@@ -327,7 +327,8 @@ public class RobotContainer {
                         .getPose()
                         .getTranslation()
                         .getDistance(
-                            AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()))));
+                            AllianceFlipUtil.apply(
+                                FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()))));
     // Click Left Bumper: Move arm to amp position
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     // Click left Trigger: Intake (until clicked again or has a note)
