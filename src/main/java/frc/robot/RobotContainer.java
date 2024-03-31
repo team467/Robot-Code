@@ -317,12 +317,16 @@ public class RobotContainer {
     //                    arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
     //                    Commands.waitUntil(arm::limitSwitchPressed))
     //                .withTimeout(2));
-    driverController.rightBumper().whileTrue(new StolenJoystick(drive, driverController::getLeftX, driverController::getLeftY,() ->
-            new Pose2d(
-                    drive.getPose().getTranslation(), AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())
-                            .minus(drive.getPose().getTranslation())
-                            .getAngle()
-                            .minus(Rotation2d.fromDegrees(180))).getRotation(), () -> true));
+    driverController
+        .rightBumper()
+        .whileTrue(
+            new StolenJoystick(
+                drive,
+                driverController::getLeftX,
+                driverController::getLeftY,
+                () -> drive.getPose(),
+                FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
+                () -> true));
     driverController
         .rightBumper()
         .whileTrue(
