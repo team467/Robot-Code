@@ -223,7 +223,7 @@ public class Leds extends SubsystemBase {
         break;
 
       case SHOOTER_SPEED_READY:
-        strobe(Section.FULL, Color.kGreen, 0.5);
+        strobe(Section.FULL, Color.kGreen, .1);
         break;
       case INTAKING:
         // leds glow in the direction it's intaking
