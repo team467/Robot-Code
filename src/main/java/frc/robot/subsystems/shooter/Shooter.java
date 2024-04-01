@@ -55,7 +55,7 @@ public class Shooter extends SubsystemBase {
     }
     Logger.recordOutput("Shooter/setPointVelocity", shooterFeedback.getSetpoint());
     Logger.recordOutput("Shooter/error", shooterFeedback.getVelocityError());
-      robotState.ShooterSpeedIsReady = ShooterSpeedIsReady();
+    robotState.shooterSpeedIsReady = ShooterSpeedIsReady();
   }
   /**
    * @param velocitySetpoint the velocity that the shooter should be set to
@@ -99,7 +99,10 @@ public class Shooter extends SubsystemBase {
    *     that of the setpoint of the PID.
    */
   public boolean ShooterSpeedIsReady() {
-    return io.shooterLeftVelocityRadPerSec >= ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC && io.shooterLeftVelocityRadPerSec >= ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC;
+    return inputs.shooterLeftVelocityRadPerSec
+            >= ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC
+        && inputs.shooterRightVelocityRadPerSec
+            >= ShooterConstants.SHOOTER_READY_VELOCITY_RAD_PER_SEC;
   }
 
   public boolean atVelocity(double velocitySetpoint) {

@@ -141,7 +141,7 @@ public class Leds extends SubsystemBase {
     } else if (DriverStation.isAutonomous()) {
       mode = LedMode.AUTONOMOUS;
 
-    } else if (state.ShooterSpeedIsReady) {
+    } else if (state.shooterSpeedIsReady) {
       mode = LedMode.SHOOTER_SPEED_READY;
     } else if (state.shooting && state.hasNote) {
       mode = LedMode.SHOOTING;
