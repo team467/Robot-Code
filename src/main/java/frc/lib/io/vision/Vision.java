@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.utils.RobotOdometry;
 import frc.lib.utils.TunableNumber;
@@ -211,6 +212,10 @@ public class Vision extends SubsystemBase {
     avgDist /= numTags;
     // Decrease std devs if multiple targets are visible
     if (numTags > 1) estStdDevs = estStdDevs.times(stdDevMultiTagFactor.get());
+    // Disable vision if in auto
+    if (DriverStation.isAutonomous()) {
+      estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+    }
     // Increase std devs based on (average) distance
     if (numTags == 1 && avgDist > MAX_DISTANCE_TO_TARGET_METERS) {
       estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
