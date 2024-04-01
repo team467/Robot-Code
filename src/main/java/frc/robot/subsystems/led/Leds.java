@@ -27,6 +27,7 @@ public class Leds extends SubsystemBase {
     CAN_SHOOT,
     SHOOTING,
     CONTAINING,
+    SHOOTER_SPEED_READY,
     INTAKING,
     LEFT_NOTE_DETECTION,
     RIGHT_NOTE_DETECTION,
@@ -140,6 +141,8 @@ public class Leds extends SubsystemBase {
     } else if (DriverStation.isAutonomous()) {
       mode = LedMode.AUTONOMOUS;
 
+    } else if (state.ShooterSpeedIsReady) {
+      mode = LedMode.SHOOTER_SPEED_READY;
     } else if (state.shooting && state.hasNote) {
       mode = LedMode.SHOOTING;
 
@@ -219,6 +222,9 @@ public class Leds extends SubsystemBase {
         solid(Section.FULL, Color.kGreen);
         break;
 
+      case SHOOTER_SPEED_READY:
+        strobe(Section.FULL, Color.kGreen, 0.5);
+        break;
       case INTAKING:
         // leds glow in the direction it's intaking
         wave(
