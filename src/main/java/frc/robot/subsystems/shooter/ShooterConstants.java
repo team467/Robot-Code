@@ -26,7 +26,7 @@ public class ShooterConstants {
         SHOOT_SPEED = 0.0;
       }
       case ROBOT_2024_COMP -> {
-        SHOOTER_READY_VELOCITY_RAD_PER_SEC = 0.0;
+        SHOOTER_READY_VELOCITY_RAD_PER_SEC = 450;
         SHOOTER_KS = new TunableNumber("Shooter/ShooterKS", 0.05);
         SHOOTER_KV = new TunableNumber("Shooter/ShooterKV", 0.05);
         SHOOTER_KP = new TunableNumber("Shooter/ShooterKP", 1.0);

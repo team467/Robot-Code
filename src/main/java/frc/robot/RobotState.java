@@ -57,6 +57,10 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/Duck")
   public boolean duck = false;
 
+  /** If the shooter is at the speed needed to shoot into the speaker */
+  @AutoLogOutput(key = "RobotState/ShooterSpeedReady")
+  public boolean shooterSpeedIsReady = false;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
