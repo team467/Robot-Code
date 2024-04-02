@@ -23,6 +23,7 @@ import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
+import frc.robot.commands.drive.StolenJoystick;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmIO;
@@ -265,7 +266,6 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
     // stop when doing nothing
     intake.setDefaultCommand(intake.stop());
     indexer.setDefaultCommand(indexer.setPercent(0));
@@ -317,18 +317,20 @@ public class RobotContainer {
     //                    arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
     //                    Commands.waitUntil(arm::limitSwitchPressed))
     //                .withTimeout(2));
-    driverController.rightBumper().onTrue(orchestrator.turnToSpeaker());
+    //    driverController
+    //        .rightBumper()
+    //        .whileTrue(
     driverController
         .rightBumper()
         .whileTrue(
-            orchestrator.alignArmSpeaker(
-                () ->
-                    drive
-                        .getPose()
-                        .getTranslation()
-                        .getDistance(
-                            AllianceFlipUtil.apply(
-                                FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()))));
+            new StolenJoystick(
+                    drive,
+                    () -> -driverController.getLeftY(),
+                    () -> -driverController.getLeftX(),
+                    () -> drive.getPose(),
+                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
+                    () -> true)
+                .alongWith(orchestrator.alignArmSpeaker(() -> drive.getPose())));
     // Click Left Bumper: Move arm to amp position
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     // Click left Trigger: Intake (until clicked again or has a note)
