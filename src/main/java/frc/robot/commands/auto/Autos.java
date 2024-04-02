@@ -220,9 +220,10 @@ public class Autos {
         .stopFlywheel()
         .andThen(
             Commands.parallel(
-                Commands.sequence(
-                    backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
-                orchestrator.intakeBasic()))
+                    Commands.sequence(
+                        backUp().onlyIf(backUp), orchestrator.driveToNote(intakePosition)),
+                    orchestrator.intakeBasic())
+                .withTimeout(3))
         .andThen(
             orchestrator
                 .deferredStraightDriveToPose(shootPosition)
