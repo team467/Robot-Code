@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.utils.RobotOdometry;
 import frc.lib.utils.TunableNumber;
@@ -97,7 +98,7 @@ public class Vision extends SubsystemBase {
         Pose2d estimatedRobotPose2d = ios[i].estimatedRobotPose.toPose2d();
 
         // only update the pose estimator if the vision subsystem is enabled
-        if (isEnabled) {
+        if (isEnabled && !DriverStation.isAutonomous()) {
           // when updating the pose estimator, specify standard deviations based on the distance
           // from the robot to the AprilTag (the greater the distance, the less confident we are
           // in the measurement)
