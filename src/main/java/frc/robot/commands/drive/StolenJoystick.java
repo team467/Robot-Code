@@ -7,11 +7,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.GeomUtils;
+import frc.lib.utils.RobotOdometry;
 import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
@@ -32,8 +32,8 @@ public class StolenJoystick extends Command {
   private final SlewRateLimiter leftXFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
   private final SlewRateLimiter leftYFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
 
-  private TunableNumber rotationKP = new TunableNumber("StolenJoystick/KP", 10);
-  private TunableNumber rotationKD = new TunableNumber("StolenJoystick/KD", 0.5);
+  private TunableNumber rotationKP = new TunableNumber("StolenJoystick/KP", 2.5);
+  private TunableNumber rotationKD = new TunableNumber("StolenJoystick/KD", 0.0);
   private final PIDController rotationPid;
   private final double MAX_ANGULAR_SPEED;
 
@@ -60,6 +60,7 @@ public class StolenJoystick extends Command {
 
     rotationPid = new PIDController(rotationKP.get(), 0.0, rotationKD.get());
     rotationPid.enableContinuousInput(-Math.PI, Math.PI);
+    rotationPid.setTolerance(Units.degreesToRadians(4));
 
     addRequirements(drive);
   }
@@ -110,27 +111,21 @@ public class StolenJoystick extends Command {
         rotationPid.calculate(
             robotOrientation.get().getRotation().getRadians(), targetAngle.getRadians());
     // Convert to meters per second
-    ChassisSpeeds speeds =
-        new ChassisSpeeds(
-            linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED,
-            linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
-            angularVelocity);
+    ChassisSpeeds speeds;
     Logger.recordOutput("StolenJoystick/AngularVelocity", angularVelocity);
 
-    // Convert from field relative
-    if (robotRelativeOverride.get()) {
-      Rotation2d driveRotation = drive.getPose().getRotation();
-      if (DriverStation.getAlliance().isEmpty()
-          || DriverStation.getAlliance().get() == Alliance.Red) {
-        driveRotation = driveRotation.plus(new Rotation2d(Math.PI));
-      }
-      speeds =
-          ChassisSpeeds.fromFieldRelativeSpeeds(
-              speeds.vxMetersPerSecond,
-              speeds.vyMetersPerSecond,
-              speeds.omegaRadiansPerSecond,
-              driveRotation);
+    if (AllianceFlipUtil.shouldFlip()) {
+      Logger.recordOutput("Drive/FlipAlliance", true);
+      linearVelocity = linearVelocity.rotateBy(Rotation2d.fromRadians(Math.PI));
+    } else {
+      Logger.recordOutput("Drive/FlipAlliance", false);
     }
+    speeds =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED,
+            linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED,
+            angularVelocity,
+            RobotOdometry.getInstance().getPoseEstimator().getEstimatedPosition().getRotation());
 
     drive.runVelocity(speeds);
   }

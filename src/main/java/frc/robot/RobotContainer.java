@@ -317,27 +317,20 @@ public class RobotContainer {
     //                    arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
     //                    Commands.waitUntil(arm::limitSwitchPressed))
     //                .withTimeout(2));
+    //    driverController
+    //        .rightBumper()
+    //        .whileTrue(
     driverController
         .rightBumper()
         .whileTrue(
             new StolenJoystick(
-                drive,
-                driverController::getLeftX,
-                driverController::getLeftY,
-                () -> drive.getPose(),
-                FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
-                () -> true));
-    driverController
-        .rightBumper()
-        .whileTrue(
-            orchestrator.alignArmSpeaker(
-                () ->
-                    drive
-                        .getPose()
-                        .getTranslation()
-                        .getDistance(
-                            AllianceFlipUtil.apply(
-                                FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()))));
+                    drive,
+                    () -> -driverController.getLeftY(),
+                    () -> -driverController.getLeftX(),
+                    () -> drive.getPose(),
+                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
+                    () -> true)
+                .alongWith(orchestrator.alignArmSpeaker(() -> drive.getPose())));
     // Click Left Bumper: Move arm to amp position
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     // Click left Trigger: Intake (until clicked again or has a note)

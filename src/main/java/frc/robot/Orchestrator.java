@@ -225,15 +225,24 @@ public class Orchestrator {
    * @return The command to move the arm to the correct setPoint for shooting from its current
    *     location.
    */
-  public Command alignArmSpeaker(
-      Supplier<Double> distance) { // TODO: Not working. Abishek, Fix this
+  public Command alignArmSpeaker(Supplier<Pose2d> robotPose) {
     return Commands.defer(
-        () ->
-            arm.toSetpoint(
-                Rotation2d.fromDegrees(
-                    (-3.1419 * (distance.get() * distance.get()))
-                        + (23.725 * distance.get())
-                        - 30.103)),
+        () -> {
+          Supplier<Double> distance =
+              () ->
+                  robotPose
+                      .get()
+                      .getTranslation()
+                      .getDistance(
+                          AllianceFlipUtil.apply(
+                              FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()));
+          return arm.toSetpoint(
+              () ->
+                  Rotation2d.fromDegrees(
+                      (-3.1419 * (distance.get() * distance.get()))
+                          + (23.725 * distance.get())
+                          - 30.103));
+        },
         Set.of(arm));
     //    return Commands.defer(
     //        () ->
@@ -255,8 +264,8 @@ public class Orchestrator {
    *
    * @return The command to move the robot and the arm in preparation to shoot.
    */
-  public Command fullAlignSpeaker(Supplier<Double> distance) {
-    return Commands.sequence(turnToSpeaker(), alignArmSpeaker(distance));
+  public Command fullAlignSpeaker(Supplier<Pose2d> robotPose) {
+    return Commands.sequence(turnToSpeaker(), alignArmSpeaker(robotPose));
   }
 
   /**
@@ -265,8 +274,8 @@ public class Orchestrator {
    *
    * @return The command to align both the robot and the arm, and then shoots at full power.
    */
-  public Command fullAlignShootSpeaker(Supplier<Double> distance) {
-    return Commands.sequence(fullAlignSpeaker(distance), shootBasic());
+  public Command fullAlignShootSpeaker(Supplier<Pose2d> robotPose) {
+    return Commands.sequence(fullAlignSpeaker(robotPose), shootBasic());
   }
 
   /**
