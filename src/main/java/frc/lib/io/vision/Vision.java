@@ -97,7 +97,8 @@ public class Vision extends SubsystemBase {
         lastTimestamps[i] = ios[i].lastCameraTimestamp;
         Pose2d estimatedRobotPose2d = ios[i].estimatedRobotPose.toPose2d();
 
-        // only update the pose estimator if the vision subsystem is enabled and is not in autonomous
+        // only update the pose estimator if the vision subsystem is enabled and is not in
+        // autonomous
         if (isEnabled && !DriverStation.isAutonomous()) {
           // when updating the pose estimator, specify standard deviations based on the distance
           // from the robot to the AprilTag (the greater the distance, the less confident we are

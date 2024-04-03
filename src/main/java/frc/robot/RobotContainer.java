@@ -320,11 +320,18 @@ public class RobotContainer {
                     () -> true)
                 .alongWith(orchestrator.alignArmSpeaker(() -> drive.getPose())));
     driverController
-            .rightBumper()
-                    .onTrue(orchestrator.armToHome()).and(()-> arm.getCurrentCommand() == arm.getDefaultCommand());
+        .rightBumper()
+        .onTrue(orchestrator.armToHome())
+        .and(() -> arm.getCurrentCommand() == arm.getDefaultCommand());
     // Click Left Bumper: Move arm to amp position
-    driverController.leftBumper().onTrue(orchestrator.alignArmAmp()).and(()-> arm.getCurrentCommand() != arm.getDefaultCommand());
-    driverController.leftBumper().onTrue(orchestrator.alignArmAmp()).and(()-> arm.getCurrentCommand() == arm.getDefaultCommand());
+    driverController
+        .leftBumper()
+        .onTrue(orchestrator.alignArmAmp())
+        .and(() -> arm.getCurrentCommand() != arm.getDefaultCommand());
+    driverController
+        .leftBumper()
+        .onTrue(orchestrator.alignArmAmp())
+        .and(() -> arm.getCurrentCommand() == arm.getDefaultCommand());
     // Click left Trigger: Intake (until clicked again or has a note)
     driverController.leftTrigger(0.15).toggleOnTrue(orchestrator.intakeBasic());
     // Click right Trigger: Run indexer
