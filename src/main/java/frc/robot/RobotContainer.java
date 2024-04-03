@@ -308,21 +308,9 @@ public class RobotContainer {
         .pov(270)
         .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
 
-    // driver controller
-    // Click Right Bumper: Move arm to stow position
-    //    driverController
-    //        .rightBumper()
-    //        .onTrue(
-    //            Commands.parallel(
-    //                    arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
-    //                    Commands.waitUntil(arm::limitSwitchPressed))
-    //                .withTimeout(2));
-    //    driverController
-    //        .rightBumper()
-    //        .whileTrue(
     driverController
         .rightBumper()
-        .whileTrue(
+        .toggleOnTrue(
             new StolenJoystick(
                     drive,
                     () -> -driverController.getLeftY(),
@@ -331,17 +319,18 @@ public class RobotContainer {
                     FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
                     () -> true)
                 .alongWith(orchestrator.alignArmSpeaker(() -> drive.getPose())));
+    driverController
+            .rightBumper()
+                    .onTrue(orchestrator.armToHome()).and(()-> arm.getCurrentCommand() == arm.getDefaultCommand());
     // Click Left Bumper: Move arm to amp position
-    driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
+    driverController.leftBumper().onTrue(orchestrator.alignArmAmp()).and(()-> arm.getCurrentCommand() != arm.getDefaultCommand());
+    driverController.leftBumper().onTrue(orchestrator.alignArmAmp()).and(()-> arm.getCurrentCommand() == arm.getDefaultCommand());
     // Click left Trigger: Intake (until clicked again or has a note)
     driverController.leftTrigger(0.15).toggleOnTrue(orchestrator.intakeBasic());
     // Click right Trigger: Run indexer
     driverController.rightTrigger(0.15).onTrue(orchestrator.indexBasic());
     // Click A: X lock drive train
     driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()));
-
-    // driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker()); //TODO: add back in
-    // when fixed
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
