@@ -303,7 +303,7 @@ public class RobotContainer {
     operatorController.back().whileTrue(climber.setRatchet(false));
     operatorController.back().whileFalse(climber.setRatchet(true));
     // Click LB: turn to speaker and align the arm to speaker
-    operatorController.leftBumper().onTrue(orchestrator.fullAlignSpeaker(()->drive.getPose()));
+    //operatorController.leftBumper().onTrue(orchestrator.fullAlignSpeaker(() -> drive.getPose()));
 
     // operator d pad
     // Hold Up: Move arm up
