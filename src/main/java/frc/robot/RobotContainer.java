@@ -338,14 +338,10 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(
             Commands.sequence(
-                orchestrator.armToHome().onlyIf(
-                        () ->
-                                Units.radiansToDegrees(arm.getAngle())
-                                        >= ArmConstants.AMP_POSITION.getDegrees() - 10),
-                orchestrator.alignArmAmp().onlyIf(
-                        () ->
-                                Units.radiansToDegrees(arm.getAngle())
-                                        < ArmConstants.AMP_POSITION.getDegrees() - 10)));
+                orchestrator.armToHome().onlyIf(() -> arm.getAngle() > Units.degreesToRadians(65)),
+                orchestrator
+                    .alignArmAmp()
+                    .onlyIf(() -> arm.getAngle() < Units.degreesToRadians(65))));
     // Click left Trigger: Intake (until clicked again or has a note)
     driverController.leftTrigger(0.15).toggleOnTrue(orchestrator.intakeBasic());
     // Click right Trigger: Run indexer
