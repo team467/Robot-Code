@@ -32,8 +32,8 @@ public class StolenJoystick extends Command {
   private final SlewRateLimiter leftXFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
   private final SlewRateLimiter leftYFilter = new SlewRateLimiter(1 / TIME_TO_FULL_SPEED);
 
-  private TunableNumber rotationKP = new TunableNumber("StolenJoystick/KP", 0.5);
-  private TunableNumber rotationKD = new TunableNumber("StolenJoystick/KD", 0.5);
+  private TunableNumber rotationKP = new TunableNumber("StolenJoystick/KP", 5); // 0.5
+  private TunableNumber rotationKD = new TunableNumber("StolenJoystick/KD", 0);
   private final PIDController rotationPid;
   private final double MAX_ANGULAR_SPEED;
 
