@@ -37,12 +37,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "amp to center"
@@ -61,7 +55,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake center to stage"
+                  "pathName": "Intake center to center"
                 }
               },
               {
@@ -71,12 +65,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
           }
         },
         {
@@ -108,12 +96,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
           }
         },
         {

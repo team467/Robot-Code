@@ -181,7 +181,12 @@ public class RobotContainer {
     autos = new Autos(drive, arm, orchestrator);
 
     // Named commands for auto
-    NamedCommands.registerCommand("intake", orchestrator.intakeBasic());
+    NamedCommands.registerCommand(
+        "intake",
+        orchestrator
+            .intakeBasic()
+            .beforeStarting(orchestrator.stopFlywheel().withTimeout(0.2))
+            .withTimeout(3));
     NamedCommands.registerCommand("spinFlywheel", orchestrator.spinUpFlywheel().withTimeout(0.6));
     NamedCommands.registerCommand("shoot", orchestrator.shootBasic());
     NamedCommands.registerCommand("oneNote", autos.oneNoteAuto());
