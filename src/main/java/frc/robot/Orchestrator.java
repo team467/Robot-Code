@@ -241,7 +241,7 @@ public class Orchestrator {
                   Rotation2d.fromDegrees(
                       (-3.1419 * (distance.get() * distance.get()))
                           + (23.725 * distance.get())
-                          - 28.103)); // 30.103
+                          - 29.103)); // 30.103
         },
         Set.of(arm));
     //    return Commands.defer(
