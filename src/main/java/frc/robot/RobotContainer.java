@@ -179,6 +179,7 @@ public class RobotContainer {
       climber = new Climber(new ClimberIO() {});
     }
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
+    autos = new Autos(drive, arm, orchestrator);
 
     // Named commands for auto
     NamedCommands.registerCommand("intake", orchestrator.intakeBasic());
@@ -187,7 +188,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("oneNote", autos.oneNoteAuto());
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    autos = new Autos(drive, arm, orchestrator);
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
