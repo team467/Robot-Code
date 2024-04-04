@@ -50,7 +50,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -72,9 +71,6 @@ public class RobotContainer {
   private Leds leds;
   private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
-
-  @AutoLogOutput(key = "RobotContanier/ampToggle")
-  private boolean toggleAmp = false;
 
   private Orchestrator orchestrator;
   private Autos autos;
@@ -341,13 +337,15 @@ public class RobotContainer {
     driverController
         .leftBumper()
         .onTrue(
-            Commands.runOnce(() -> {
-              toggleAmp = !toggleAmp;
-            System.out.println("toggleAmp " + toggleAmp);
-                    })
-                .andThen(
-                    Commands.either(
-                        orchestrator.alignArmAmp(), orchestrator.armToHome(), () -> toggleAmp)));
+            Commands.sequence(
+                orchestrator.armToHome().onlyIf(
+                        () ->
+                                Units.radiansToDegrees(arm.getAngle())
+                                        >= ArmConstants.AMP_POSITION.getDegrees() - 10),
+                orchestrator.alignArmAmp().onlyIf(
+                        () ->
+                                Units.radiansToDegrees(arm.getAngle())
+                                        < ArmConstants.AMP_POSITION.getDegrees() - 10)));
     // Click left Trigger: Intake (until clicked again or has a note)
     driverController.leftTrigger(0.15).toggleOnTrue(orchestrator.intakeBasic());
     // Click right Trigger: Run indexer
