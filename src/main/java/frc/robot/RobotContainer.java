@@ -302,6 +302,8 @@ public class RobotContainer {
     // Back button (toggle switch): unlock/lock climber ratchet
     operatorController.back().whileTrue(climber.setRatchet(false));
     operatorController.back().whileFalse(climber.setRatchet(true));
+    // Click LB: turn to speaker and align the arm to speaker
+    operatorController.leftBumper().onTrue(orchestrator.fullAlignSpeaker(()->drive.getPose()));
 
     // operator d pad
     // Hold Up: Move arm up
