@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -178,6 +179,12 @@ public class RobotContainer {
       climber = new Climber(new ClimberIO() {});
     }
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
+
+    // Named commands for auto
+    NamedCommands.registerCommand("intake", orchestrator.intakeBasic());
+    NamedCommands.registerCommand("spinFlywheel", orchestrator.spinUpFlywheel().withTimeout(0.6));
+    NamedCommands.registerCommand("shoot", orchestrator.shootBasic());
+    NamedCommands.registerCommand("oneNote", autos.oneNoteAuto());
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autos = new Autos(drive, arm, orchestrator);
