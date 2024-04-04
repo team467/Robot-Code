@@ -166,10 +166,8 @@ public class Autos {
     return noVisionInit(() -> StartingPosition.CENTER)
         .andThen(
             oneNoteAuto()
-                .andThen(
-                    scoreCycle(() -> noteTranslations[0], Rotation2d.fromDegrees(5), () -> false))
-                .andThen(
-                    scoreCycle(() -> noteTranslations[1], Rotation2d.fromDegrees(10), () -> false))
+                .andThen(scoreCycle(() -> noteTranslations[0]))
+                .andThen(scoreCycle(() -> noteTranslations[1]))
                 .andThen(stageNoteCycle(() -> noteTranslations[2], Rotation2d.fromDegrees(10))));
   }
 
@@ -237,23 +235,26 @@ public class Autos {
         .withTimeout(0.5);
   }
 
-  private Command scoreCycle(
-      Supplier<Translation2d> intakePosition, Rotation2d armAngle, BooleanSupplier backUp) {
+  private Command scoreCycle(Supplier<Translation2d> intakePosition) {
     return orchestrator
         .stopFlywheel()
         .andThen(
             Commands.parallel(
-                Commands.sequence(
-                    backUp().onlyIf(backUp),
-                    orchestrator.driveToNote(intakePosition).withTimeout(3)),
+                orchestrator.driveToNote(intakePosition).withTimeout(3),
                 orchestrator.intakeBasic()))
         .andThen(Commands.waitSeconds(0.75))
         .andThen(
-            Commands.parallel(
-                    orchestrator.turnToSpeaker().withTimeout(1.5),
-                    arm.toSetpoint(armAngle).withTimeout(0.2),
-                    Commands.waitUntil(arm::atSetpoint).withTimeout(.2),
-                    orchestrator.spinUpFlywheel().withTimeout(1.7))
+            Commands.sequence(
+                    new StraightDriveToPose(
+                            new Pose2d(
+                                FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
+                                drive.getRotation()),
+                            drive)
+                        .withTimeout(0.5),
+                    Commands.parallel(
+                        orchestrator.turnToSpeaker().withTimeout(1.5),
+                        orchestrator.alignArmSpeaker(drive::getPose),
+                        orchestrator.spinUpFlywheel().withTimeout(1.7)))
                 .andThen(
                     orchestrator
                         .indexBasic()
