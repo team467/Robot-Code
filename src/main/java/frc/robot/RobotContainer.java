@@ -50,7 +50,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
-import java.util.function.BooleanSupplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -72,8 +72,10 @@ public class RobotContainer {
   private Leds leds;
   private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
-  private BooleanSupplier togggleAmp = () -> true;
-  private BooleanSupplier toggleSpeakerAlign = () -> true;
+
+  @AutoLogOutput(key = "RobotContanier/ampToggle")
+  private boolean toggleAmp = false;
+
   private Orchestrator orchestrator;
   private Autos autos;
 
@@ -325,28 +327,27 @@ public class RobotContainer {
 
     driverController
         .rightBumper()
-        .onTrue(
-            Commands.either(
-                    Commands.parallel(
-                            new StolenJoystick(
-                                drive,
-                                () -> -driverController.getLeftY(),
-                                () -> -driverController.getLeftX(),
-                                () -> drive.getPose(),
-                                FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
-                                () -> true),
-                            orchestrator.alignArmSpeaker(() -> drive.getPose()))
-                        .until(() -> !toggleSpeakerAlign.getAsBoolean()),
-                    arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS),
-                    toggleSpeakerAlign)
-                .beforeStarting(
-                    () -> toggleSpeakerAlign = () -> !toggleSpeakerAlign.getAsBoolean()));
+        .toggleOnTrue(
+            Commands.parallel(
+                new StolenJoystick(
+                    drive,
+                    () -> -driverController.getLeftY(),
+                    () -> -driverController.getLeftX(),
+                    () -> drive.getPose(),
+                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
+                    () -> true),
+                orchestrator.alignArmSpeaker(() -> drive.getPose())));
     // Click Left Bumper: Move arm to amp position or home position
     driverController
         .leftBumper()
         .onTrue(
-            Commands.either(orchestrator.alignArmAmp(), orchestrator.armToHome(), togggleAmp)
-                .andThen(() -> togggleAmp = () -> !togggleAmp.getAsBoolean()));
+            Commands.runOnce(() -> {
+              toggleAmp = !toggleAmp;
+            System.out.println("toggleAmp " + toggleAmp);
+                    })
+                .andThen(
+                    Commands.either(
+                        orchestrator.alignArmAmp(), orchestrator.armToHome(), () -> toggleAmp)));
     // Click left Trigger: Intake (until clicked again or has a note)
     driverController.leftTrigger(0.15).toggleOnTrue(orchestrator.intakeBasic());
     // Click right Trigger: Run indexer
