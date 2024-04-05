@@ -100,7 +100,8 @@ public class Autos {
                 }
               }
             })
-        .until(() -> true);
+        .until(() -> true)
+        .withName("setNotePositions");
   }
 
   private Translation2d getNotePositions(int index, boolean centerNotes, boolean offset) {
@@ -135,13 +136,15 @@ public class Autos {
                             () -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(9), 0, 0)))
                         .withTimeout(1)
                         .andThen(driveXDistance(MOBILITY_DRIVE_DISTANCE).withTimeout(5))),
-                position::getRelativeStartingPosition));
+                position::getRelativeStartingPosition))
+        .withName("mobilityAuto");
   }
 
   private Command driveXDistance(double distance) {
     return Commands.defer(
-        () -> new StraightDriveToPose(AllianceFlipUtil.applyRelative(distance), 0, 0, drive),
-        Set.of(drive));
+            () -> new StraightDriveToPose(AllianceFlipUtil.applyRelative(distance), 0, 0, drive),
+            Set.of(drive))
+        .withName("driveXDistance");
   }
 
   public Command oneNoteAuto() {
@@ -155,11 +158,12 @@ public class Autos {
                 Commands.waitUntil(arm::atSetpoint).withTimeout(.2),
                 orchestrator.spinUpFlywheel().withTimeout(1)))
         .andThen(
-            orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(0.5));
+            orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(0.5))
+        .withName("oneNoteAuto");
   }
 
   public Command scoreOneNoteMobility(StartingPosition position) {
-    return oneNoteAuto().andThen(mobilityAuto(position));
+    return oneNoteAuto().andThen(mobilityAuto(position)).withName("scoreOneNoteMobility");
   }
 
   public Command noVisionFourNoteAuto() {
@@ -168,14 +172,16 @@ public class Autos {
             oneNoteAuto()
                 .andThen(scoreCycle(() -> noteTranslations[0]))
                 .andThen(scoreCycle(() -> noteTranslations[1]))
-                .andThen(stageNoteCycle(() -> noteTranslations[2], Rotation2d.fromDegrees(10))));
+                .andThen(stageNoteCycle(() -> noteTranslations[2], Rotation2d.fromDegrees(10))))
+        .withName("noVisionFourNoteAuto");
   }
 
   private Command noVisionInit(Supplier<StartingPosition> position) {
     return Commands.parallel(
-        Commands.runOnce(() -> drive.setPose(position.get().getStartingPosition()))
-            .withTimeout(0.02),
-        setNotePositions(position).withTimeout(0.02));
+            Commands.runOnce(() -> drive.setPose(position.get().getStartingPosition()))
+                .withTimeout(0.02),
+            setNotePositions(position).withTimeout(0.02))
+        .withName("noVisionInit");
   }
 
   public Command threeNoteAuto(StartingPosition position) {
@@ -186,7 +192,8 @@ public class Autos {
                 () -> noteTranslations[0],
                 position::getStartingPosition,
                 () -> position != StartingPosition.CENTER))
-        .andThen(scoreCycle(() -> noteTranslations[1], position::getStartingPosition, () -> true));
+        .andThen(scoreCycle(() -> noteTranslations[1], position::getStartingPosition, () -> true))
+        .withName("threeNoteAuto");
   }
 
   public Command noVisionTwoNoteAuto(StartingPosition position) {
@@ -196,7 +203,8 @@ public class Autos {
             scoreCycle(
                 () -> noteTranslations[0],
                 position::getStartingPosition,
-                () -> position != StartingPosition.CENTER));
+                () -> position != StartingPosition.CENTER))
+        .withName("noVisionTwoNoteAuto");
   }
 
   public Command threeNoteStageAuto(StartingPosition position) {
@@ -207,7 +215,8 @@ public class Autos {
                 () -> noteTranslations[0],
                 position::getStartingPosition,
                 () -> position != StartingPosition.CENTER))
-        .andThen(stageNoteCycleSubwoofer(() -> noteTranslations[2], position::getStartingPosition));
+        .andThen(stageNoteCycleSubwoofer(() -> noteTranslations[2], position::getStartingPosition))
+        .withName("threeNoteStageAuto");
   }
 
   private Command scoreCycle(
@@ -227,12 +236,14 @@ public class Autos {
                 .deferredStraightDriveToPose(shootPosition)
                 .withTimeout(2.5)
                 .alongWith(orchestrator.spinUpFlywheel().withTimeout(1.5)))
-        .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1));
+        .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1))
+        .withName("scoreCycle");
   }
 
   private Command backUp() {
     return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(Units.feetToMeters(4), 0, 0)))
-        .withTimeout(0.5);
+        .withTimeout(0.5)
+        .withName("backUp");
   }
 
   private Command scoreCycle(Supplier<Translation2d> intakePosition) {
@@ -260,7 +271,8 @@ public class Autos {
                         .indexBasic()
                         .alongWith(Commands.print("actually indexing"))
                         .withTimeout(1)))
-        .andThen(orchestrator.stopFlywheel());
+        .andThen(orchestrator.stopFlywheel())
+        .withName("scoreCycle");
   }
 
   private Command stageNoteCycle(Supplier<Translation2d> intakePosition, Rotation2d armAngle) {
@@ -297,7 +309,8 @@ public class Autos {
                         .indexBasic()
                         .alongWith(orchestrator.spinUpFlywheel())
                         .withTimeout(0.5)))
-        .withTimeout(3.5);
+        .withTimeout(3.5)
+        .withName("stageNoteCycle");
   }
 
   private Command stageNoteCycleSubwoofer(
@@ -335,6 +348,7 @@ public class Autos {
                 .withTimeout(2.5)
                 .alongWith(orchestrator.spinUpFlywheel().withTimeout(1.5)))
         .andThen(orchestrator.indexBasic().alongWith(orchestrator.spinUpFlywheel()).withTimeout(1))
-        .andThen(orchestrator.stopFlywheel());
+        .andThen(orchestrator.stopFlywheel())
+        .withName("stageNoteCycleSubwoofer");
   }
 }

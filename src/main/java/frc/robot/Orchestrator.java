@@ -50,7 +50,8 @@ public class Orchestrator {
   }
 
   public Command deferredStraightDriveToPose(Supplier<Pose2d> pose) {
-    return Commands.defer(() -> new StraightDriveToPose(pose.get(), drive), Set.of(drive));
+    return Commands.defer(() -> new StraightDriveToPose(pose.get(), drive), Set.of(drive))
+        .withName("deferredStraightDriveToPose");
   }
 
   /**
@@ -76,7 +77,8 @@ public class Orchestrator {
         .andThen(
             deferredStraightDriveToPose(
                     () -> new Pose2d(targetTranslation.get(), drive.getRotation()))
-                .withTimeout(5));
+                .withTimeout(5))
+        .withName("driveToNote");
   }
 
   /**
@@ -93,7 +95,7 @@ public class Orchestrator {
                     .minus(drive.getPose().getTranslation())
                     .getAngle()
                     .minus(Rotation2d.fromDegrees(180)));
-    return deferredStraightDriveToPose(targetPose).withTimeout(3);
+    return deferredStraightDriveToPose(targetPose).withTimeout(3).withName("turnToSpeaker");
   }
 
   /**
@@ -103,11 +105,12 @@ public class Orchestrator {
    */
   public Command shootAmp() {
     return Commands.sequence(
-        shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED).withTimeout(0.5),
-        Commands.parallel(
-                indexer.setPercent(1), shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED))
-            .until(() -> !indexer.getLimitSwitchPressed())
-            .withTimeout(2));
+            shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED).withTimeout(0.5),
+            Commands.parallel(
+                    indexer.setPercent(1), shooter.manualShoot(ShooterConstants.AMP_SCORE_SPEED))
+                .until(() -> !indexer.getLimitSwitchPressed())
+                .withTimeout(2))
+        .withName("shootAmp");
   }
 
   /**
@@ -117,14 +120,16 @@ public class Orchestrator {
    */
   public Command alignArmAmp() {
     return Commands.parallel(
-        arm.toSetpoint(ArmConstants.AMP_POSITION),
-        Commands.waitUntil(arm::atSetpoint),
-        Commands.waitSeconds(3));
+            arm.toSetpoint(ArmConstants.AMP_POSITION),
+            Commands.waitUntil(arm::atSetpoint),
+            Commands.waitSeconds(3))
+        .withName("alignArmAmp");
   }
 
   public Command duck() {
     return arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5)))
-        .alongWith(Commands.runOnce(() -> RobotState.getInstance().duck = true));
+        .alongWith(Commands.runOnce(() -> RobotState.getInstance().duck = true))
+        .withName("duck");
   }
 
   public Command unDuck() {
@@ -162,7 +167,8 @@ public class Orchestrator {
         .andThen(
             shooter
                 .manualShoot(ShooterConstants.SHOOT_SPEED)
-                .onlyIf(() -> arm.getAngle() < Units.degreesToRadians(65)));
+                .onlyIf(() -> arm.getAngle() < Units.degreesToRadians(65)))
+        .withName("spinUpFlywheel");
   }
 
   /**
@@ -196,7 +202,8 @@ public class Orchestrator {
                 .withTimeout(1))
         .andThen(
             Commands.parallel(
-                shooter.manualShoot(0).until(() -> true), indexer.setPercent(0).until(() -> true)));
+                shooter.manualShoot(0).until(() -> true), indexer.setPercent(0).until(() -> true)))
+        .withName("shootBasic");
   }
 
   public Command indexBasic() {
@@ -211,11 +218,12 @@ public class Orchestrator {
                     Commands.parallel(
                             arm.toSetpoint(ArmConstants.STOW), Commands.waitUntil(arm::atSetpoint))
                         .withTimeout(1)))
-        .withTimeout(1);
+        .withTimeout(1)
+        .withName("indexBasic");
   }
 
   public Command stopFlywheel() {
-    return shooter.manualShoot(0).withTimeout(0.5);
+    return shooter.manualShoot(0).withTimeout(0.5).withName("stopFlywheel");
   }
 
   /**
@@ -227,23 +235,24 @@ public class Orchestrator {
    */
   public Command alignArmSpeaker(Supplier<Pose2d> robotPose) {
     return Commands.defer(
-        () -> {
-          Supplier<Double> distance =
-              () ->
-                  robotPose
-                      .get()
-                      .getTranslation()
-                      .getDistance(
-                          AllianceFlipUtil.apply(
-                              FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()));
-          return arm.toSetpoint(
-              () ->
-                  Rotation2d.fromDegrees(
-                      (-3.1419 * (distance.get() * distance.get()))
-                          + (23.725 * distance.get())
-                          - 29.103)); // 30.103
-        },
-        Set.of(arm));
+            () -> {
+              Supplier<Double> distance =
+                  () ->
+                      robotPose
+                          .get()
+                          .getTranslation()
+                          .getDistance(
+                              AllianceFlipUtil.apply(
+                                  FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()));
+              return arm.toSetpoint(
+                  () ->
+                      Rotation2d.fromDegrees(
+                          (-3.1419 * (distance.get() * distance.get()))
+                              + (23.725 * distance.get())
+                              - 29.103)); // 30.103
+            },
+            Set.of(arm))
+        .withName("alignArmSpeaker");
     //    return Commands.defer(
     //        () ->
     //            arm.toSetpoint(
@@ -265,7 +274,8 @@ public class Orchestrator {
    * @return The command to move the robot and the arm in preparation to shoot.
    */
   public Command fullAlignSpeaker(Supplier<Pose2d> robotPose) {
-    return Commands.sequence(turnToSpeaker(), alignArmSpeaker(robotPose));
+    return Commands.sequence(turnToSpeaker(), alignArmSpeaker(robotPose))
+        .withName("fullAlignSpeaker");
   }
 
   /**
@@ -292,7 +302,8 @@ public class Orchestrator {
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
                 .withTimeout(10))
-        .andThen(pullBack());
+        .andThen(pullBack())
+        .withName("intakeBasic");
   }
 
   public Command pullBack() {
@@ -308,7 +319,8 @@ public class Orchestrator {
                     shooter.manualShoot(0).until(() -> true),
                     intake.stop().until(() -> true),
                     Commands.waitSeconds(0.5))
-                .withTimeout(5));
+                .withTimeout(5))
+        .withName("pullBack");
   }
 
   /**
@@ -318,11 +330,12 @@ public class Orchestrator {
    */
   public Command driveWhileIntaking() {
     return Commands.race(
-        intakeBasic(),
-        Commands.run(
-                () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(2), 0.0, 0.0)),
-                drive)
-            .withTimeout(5));
+            intakeBasic(),
+            Commands.run(
+                    () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(2), 0.0, 0.0)),
+                    drive)
+                .withTimeout(5))
+        .withName("driveWhileIntaking");
   }
 
   /**
@@ -356,7 +369,7 @@ public class Orchestrator {
    * @return The command to release a note in the intake.
    */
   public Command expelIntake() {
-    return intake.release();
+    return intake.release().withName("expelIntake");
   }
 
   /**
@@ -365,7 +378,8 @@ public class Orchestrator {
    * @return The command to release a note in the shooter and indexer.
    */
   public Command expelShindex() {
-    return Commands.parallel(shooter.manualShoot(-0.2), indexer.setPercent(-1.0));
+    return Commands.parallel(shooter.manualShoot(-0.2), indexer.setPercent(-1.0))
+        .withName("expelShindex");
   }
 
   /**
@@ -378,8 +392,8 @@ public class Orchestrator {
   }
 
   public Command expelIntakeIndex() {
-    return Commands.parallel(
-        indexer.setPercent(-IndexerConstants.INDEX_SPEED.get()), expelIntake());
+    return Commands.parallel(indexer.setPercent(-IndexerConstants.INDEX_SPEED.get()), expelIntake())
+        .withName("expelIntakeIndex");
   }
   /**
    * Sets the arm to the home position, completely down.
@@ -387,6 +401,6 @@ public class Orchestrator {
    * @return The command to move the arm to the home position.
    */
   public Command armToHome() {
-    return arm.toSetpoint(ArmConstants.STOW);
+    return arm.toSetpoint(ArmConstants.STOW).withName("armToHome");
   }
 }
