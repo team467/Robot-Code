@@ -24,7 +24,7 @@ public class IntakeIOPhysical implements IntakeIO {
         Units.rotationsPerMinuteToRadiansPerSecond(1)
             * IntakeConstants.GEAR_RATIO.getRotationsPerInput());
 
-    intakeMotor.setSmartCurrentLimit(80);
+    intakeMotor.setSmartCurrentLimit(60);
   }
 
   // Sets speed to motor, speed range is [-1,1].
