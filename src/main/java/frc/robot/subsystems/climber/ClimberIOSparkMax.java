@@ -28,8 +28,8 @@ public class ClimberIOSparkMax implements ClimberIO {
     climberRight.setInverted(true);
     climberRightEncoder = climberRight.getEncoder();
     climberRightEncoder.setPositionConversionFactor(ClimberConstants.ROTS_TO_METERS);
-    climberRight.setIdleMode(CANSparkBase.IdleMode.kCoast);
-    climberLeft.setIdleMode(CANSparkBase.IdleMode.kCoast);
+    climberRight.setIdleMode(CANSparkBase.IdleMode.kBrake);
+    climberLeft.setIdleMode(CANSparkBase.IdleMode.kBrake);
     climberRight.enableVoltageCompensation(12);
     climberLeft.enableVoltageCompensation(12);
     climberRight.setSmartCurrentLimit(40);
