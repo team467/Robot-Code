@@ -304,7 +304,7 @@ public class Orchestrator {
                 .andThen(
                     Commands.parallel(
                             indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
-                        .withTimeout(0.5))
+                        .withTimeout(0.25))
                 .withTimeout(10))
         .andThen(pullBack())
         .withName("intakeBasic");
