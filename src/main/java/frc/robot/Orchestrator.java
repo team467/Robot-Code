@@ -301,6 +301,10 @@ public class Orchestrator {
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
+                .andThen(
+                    Commands.parallel(
+                            indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
+                        .withTimeout(0.5))
                 .withTimeout(10))
         .andThen(pullBack())
         .withName("intakeBasic");
