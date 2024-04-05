@@ -309,14 +309,14 @@ public class Orchestrator {
   public Command pullBack() {
     return Commands.parallel(
             indexer.setPercent(IndexerConstants.BACKUP_SPEED),
-            shooter.manualShoot(-0.2),
+            // shooter.manualShoot(-0.2),
             intake.stop())
         .withTimeout(IndexerConstants.BACKUP_TIME)
         .andThen(
             Commands.parallel(
                     arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
                     indexer.setPercent(0).until(() -> true),
-                    shooter.manualShoot(0).until(() -> true),
+                    // shooter.manualShoot(0).until(() -> true),
                     intake.stop().until(() -> true),
                     Commands.waitSeconds(0.5))
                 .withTimeout(5))
