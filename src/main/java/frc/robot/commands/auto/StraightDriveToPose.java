@@ -78,6 +78,7 @@ public class StraightDriveToPose extends Command {
     this.poseSupplier = targetPoseSupplier;
     addRequirements(drive);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    setName("StraightDriveToPose");
   }
 
   @Override

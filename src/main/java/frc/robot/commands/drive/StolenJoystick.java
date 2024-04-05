@@ -63,6 +63,7 @@ public class StolenJoystick extends Command {
     rotationPid.setTolerance(Units.degreesToRadians(5));
 
     addRequirements(drive);
+    setName("StolenJoystick");
   }
 
   @Override

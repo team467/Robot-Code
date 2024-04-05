@@ -243,7 +243,8 @@ public class RobotContainer {
                     () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
                     () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0))
                 .withTimeout(1.2)
-                .ignoringDisable(true));
+                .ignoringDisable(true)
+                .withName("rumble"));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -257,7 +258,11 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
+    driverController
+        .y()
+        .onTrue(
+            Commands.runOnce(() -> isRobotOriented = !isRobotOriented)
+                .withName("robotOrientedToggle"));
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,
@@ -275,7 +280,8 @@ public class RobotContainer {
                             new Pose2d(
                                 drive.getPose().getTranslation(),
                                 AllianceFlipUtil.apply(new Rotation2d()))))
-                .ignoringDisable(true));
+                .ignoringDisable(true)
+                .withName("resetGyro"));
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
@@ -327,29 +333,33 @@ public class RobotContainer {
         .rightBumper()
         .toggleOnTrue(
             Commands.parallel(
-                new StolenJoystick(
-                    drive,
-                    () -> -driverController.getLeftY(),
-                    () -> -driverController.getLeftX(),
-                    () -> drive.getPose(),
-                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
-                    () -> true),
-                orchestrator.alignArmSpeaker(() -> drive.getPose())));
+                    new StolenJoystick(
+                        drive,
+                        () -> -driverController.getLeftY(),
+                        () -> -driverController.getLeftX(),
+                        () -> drive.getPose(),
+                        FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
+                        () -> true),
+                    orchestrator.alignArmSpeaker(() -> drive.getPose()))
+                .withName("stolenJoystickToggle"));
     // Click Left Bumper: Move arm to amp position or home position
     driverController
         .leftBumper()
         .onTrue(
             Commands.sequence(
-                orchestrator.armToHome().onlyIf(() -> arm.getAngle() > Units.degreesToRadians(65)),
-                orchestrator
-                    .alignArmAmp()
-                    .onlyIf(() -> arm.getAngle() < Units.degreesToRadians(65))));
+                    orchestrator
+                        .armToHome()
+                        .onlyIf(() -> arm.getAngle() > Units.degreesToRadians(65)),
+                    orchestrator
+                        .alignArmAmp()
+                        .onlyIf(() -> arm.getAngle() < Units.degreesToRadians(65)))
+                .withName("armPositionChanger"));
     // Click left Trigger: Intake (until clicked again or has a note)
     driverController.leftTrigger(0.15).toggleOnTrue(orchestrator.intakeBasic());
     // Click right Trigger: Run indexer
     driverController.rightTrigger(0.15).onTrue(orchestrator.indexBasic());
     // Click A: X lock drive train
-    driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()));
+    driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()).withName("xlock"));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
