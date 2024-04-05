@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -49,7 +50,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -71,8 +71,7 @@ public class RobotContainer {
   private Leds leds;
   private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
-  private BooleanSupplier togggleAmp = () -> true;
-  private BooleanSupplier toggleSpeakerAlign = () -> true;
+
   private Orchestrator orchestrator;
   private Autos autos;
 
@@ -177,9 +176,20 @@ public class RobotContainer {
       climber = new Climber(new ClimberIO() {});
     }
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
+    autos = new Autos(drive, arm, orchestrator);
+
+    // Named commands for auto
+    NamedCommands.registerCommand(
+        "intake",
+        orchestrator
+            .intakeBasic()
+            .beforeStarting(orchestrator.stopFlywheel().withTimeout(0.2))
+            .withTimeout(3));
+    NamedCommands.registerCommand("spinFlywheel", orchestrator.spinUpFlywheel().withTimeout(0.6));
+    NamedCommands.registerCommand("shoot", orchestrator.shootBasic());
+    NamedCommands.registerCommand("oneNote", autos.oneNoteAuto());
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    autos = new Autos(drive, arm, orchestrator);
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
@@ -292,6 +302,8 @@ public class RobotContainer {
     // Back button (toggle switch): unlock/lock climber ratchet
     operatorController.back().whileTrue(climber.setRatchet(false));
     operatorController.back().whileFalse(climber.setRatchet(true));
+    // Click LB: turn to speaker and align the arm to speaker
+    // operatorController.leftBumper().onTrue(orchestrator.fullAlignSpeaker(() -> drive.getPose()));
 
     // operator d pad
     // Hold Up: Move arm up
@@ -313,28 +325,25 @@ public class RobotContainer {
 
     driverController
         .rightBumper()
-        .onTrue(
-            Commands.either(
-                    Commands.parallel(
-                            new StolenJoystick(
-                                drive,
-                                () -> -driverController.getLeftY(),
-                                () -> -driverController.getLeftX(),
-                                () -> drive.getPose(),
-                                FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
-                                () -> true),
-                            orchestrator.alignArmSpeaker(() -> drive.getPose()))
-                        .until(() -> !toggleSpeakerAlign.getAsBoolean()),
-                    arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS),
-                    toggleSpeakerAlign)
-                .beforeStarting(
-                    () -> toggleSpeakerAlign = () -> !toggleSpeakerAlign.getAsBoolean()));
+        .toggleOnTrue(
+            Commands.parallel(
+                new StolenJoystick(
+                    drive,
+                    () -> -driverController.getLeftY(),
+                    () -> -driverController.getLeftX(),
+                    () -> drive.getPose(),
+                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
+                    () -> true),
+                orchestrator.alignArmSpeaker(() -> drive.getPose())));
     // Click Left Bumper: Move arm to amp position or home position
     driverController
         .leftBumper()
         .onTrue(
-            Commands.either(orchestrator.alignArmAmp(), orchestrator.armToHome(), togggleAmp)
-                .andThen(() -> togggleAmp = () -> !togggleAmp.getAsBoolean()));
+            Commands.sequence(
+                orchestrator.armToHome().onlyIf(() -> arm.getAngle() > Units.degreesToRadians(65)),
+                orchestrator
+                    .alignArmAmp()
+                    .onlyIf(() -> arm.getAngle() < Units.degreesToRadians(65))));
     // Click left Trigger: Intake (until clicked again or has a note)
     driverController.leftTrigger(0.15).toggleOnTrue(orchestrator.intakeBasic());
     // Click right Trigger: Run indexer

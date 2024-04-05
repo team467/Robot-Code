@@ -215,7 +215,7 @@ public class Orchestrator {
   }
 
   public Command stopFlywheel() {
-    return shooter.manualShoot(0).withTimeout(1);
+    return shooter.manualShoot(0).withTimeout(0.5);
   }
 
   /**
@@ -241,7 +241,7 @@ public class Orchestrator {
                   Rotation2d.fromDegrees(
                       (-3.1419 * (distance.get() * distance.get()))
                           + (23.725 * distance.get())
-                          - 30.103));
+                          - 29.103)); // 30.103
         },
         Set.of(arm));
     //    return Commands.defer(
