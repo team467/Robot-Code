@@ -235,6 +235,15 @@ public class RobotContainer {
         "Score Three Notes (stage) [CENTER]",
         autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
+    autoChooser.addOption(
+        "Score 1 + Mobility (Delay) [LEFT]",
+        autos.scoreOneNoteMobilityWithDelay(Autos.StartingPosition.LEFT));
+    autoChooser.addOption(
+        "Score 1 + Mobility (delay) [CENTER]",
+        autos.scoreOneNoteMobilityWithDelay(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score 1 + Mobility (delay) [RIGHT]",
+        autos.scoreOneNoteMobilityWithDelay(Autos.StartingPosition.RIGHT));
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)

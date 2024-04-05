@@ -166,6 +166,13 @@ public class Autos {
     return oneNoteAuto().andThen(mobilityAuto(position)).withName("scoreOneNoteMobility");
   }
 
+  public Command scoreOneNoteMobilityWithDelay(StartingPosition position) {
+    return oneNoteAuto()
+        .andThen(Commands.waitSeconds(10))
+        .andThen(mobilityAuto(position))
+        .withName("scoreOneNoteMobilityWithDelay");
+  }
+
   public Command noVisionFourNoteAuto() {
     return noVisionInit(() -> StartingPosition.CENTER)
         .andThen(
