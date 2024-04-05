@@ -156,7 +156,7 @@ public class Leds extends SubsystemBase {
     } else if (state.intaking) {
       mode = LedMode.INTAKING;
     } else if (state.lowBatteryAlert) {
-        mode = LedMode.LOW_BATTERY_ALERT;
+      mode = LedMode.LOW_BATTERY_ALERT;
     } else if (state.climberUp) {
       mode = LedMode.CLIMBER_UP;
     } else if (state.climberDown) {
