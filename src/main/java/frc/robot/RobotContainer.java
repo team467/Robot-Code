@@ -74,6 +74,7 @@ public class RobotContainer {
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   private Orchestrator orchestrator;
+  private Autos autos;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -177,15 +178,6 @@ public class RobotContainer {
     }
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
-    // Named commands for auto
-    NamedCommands.registerCommand(
-        "intake",
-        orchestrator
-            .intakeBasic()
-            .beforeStarting(orchestrator.stopFlywheel().withTimeout(0.2))
-            .withTimeout(3));
-    NamedCommands.registerCommand("spinFlywheel", orchestrator.spinUpFlywheel().withTimeout(0.6));
-    NamedCommands.registerCommand("shoot", orchestrator.shootBasic());
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)
@@ -202,10 +194,9 @@ public class RobotContainer {
     configureAutoChoices();
   }
   private void configureAutoChoices() {
+      autos = new Autos(drive, arm, orchestrator, autoChooser::getResponses);
 
-    Autos autos = new Autos(drive, arm, orchestrator, autoChooser::getResponses);
-
-    // Set up auto routines
+      // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
     autoChooser.addOption(
@@ -255,6 +246,19 @@ public class RobotContainer {
             "Score Three Notes (stage) [CENTER]",
             autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
+    registerNamedCommands();
+  }
+  private void registerNamedCommands() {
+    // Named commands for PathPlanner Auto
+    NamedCommands.registerCommand(
+            "intake",
+            orchestrator
+                    .intakeBasic()
+                    .beforeStarting(orchestrator.stopFlywheel().withTimeout(0.2))
+                    .withTimeout(3));
+    NamedCommands.registerCommand("spinFlywheel", orchestrator.spinUpFlywheel().withTimeout(0.6));
+    NamedCommands.registerCommand("shoot", orchestrator.shootBasic());
+    NamedCommands.registerCommand("oneNote", autos.oneNoteAuto());
   }
 
   /**
