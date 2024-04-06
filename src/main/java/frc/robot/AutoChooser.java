@@ -24,7 +24,7 @@ public class AutoChooser extends VirtualSubsystem {
   private List<AutoQuestionResponse> lastResponses;
 
   public AutoChooser(String key) {
-    routineChooser = new LoggedDashboardChooser<>(key + "/Routine");
+    routineChooser = new LoggedDashboardChooser<>(key + "/AutoChooser");
     routineChooser.addDefaultOption(defaultRoutine.name(), defaultRoutine);
     lastRoutine = defaultRoutine;
     lastResponses = List.of();
