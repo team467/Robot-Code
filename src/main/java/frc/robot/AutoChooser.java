@@ -134,18 +134,10 @@ public class AutoChooser extends VirtualSubsystem {
 
   /** Responses to auto routine questions. */
   public static enum AutoQuestionResponse {
-    AMP,
+    LEFT,
     CENTER,
-    SOURCE,
-    ONE,
-    TWO,
-    THREE,
-    SOURCE_WALL,
-    SOURCE_MIDDLE,
-    MIDDLE,
-    AMP_MIDDLE,
-    AMP_WALL,
-    SCORE_POOPED,
-    FOURTH_CENTER,
+    RIGHT,
+    YES,
+    NO
   }
 }

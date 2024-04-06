@@ -4,7 +4,9 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+import static frc.robot.AutoChooser.AutoQuestionResponse.NO;
+import static frc.robot.AutoChooser.AutoQuestionResponse.YES;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
@@ -50,7 +52,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
 import java.util.List;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -80,7 +81,7 @@ public class RobotContainer {
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+  private final AutoChooser autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -189,7 +190,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("shoot", orchestrator.shootBasic());
     NamedCommands.registerCommand("oneNote", autos.oneNoteAuto());
 
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new AutoChooser("Auto Choices");
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
@@ -206,44 +207,54 @@ public class RobotContainer {
                     drive::getCharacterizationVelocity))
             .andThen(this::configureButtonBindings));
 
-    autoChooser.addOption("Score One Note", autos.oneNoteAuto());
-    autoChooser.addOption("Mobility [LEFT]", autos.mobilityAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption(
-        "Score One Note + Mobility [LEFT]",
-        autos.scoreOneNoteMobility(Autos.StartingPosition.LEFT));
-    autoChooser.addOption(
-        "Score Two Notes [LEFT]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.LEFT));
+        "Mobility",
+        List.of(
+            new AutoChooser.AutoQuestion(
+                "Starting Position?",
+                List.of(
+                    AutoChooser.AutoQuestionResponse.RIGHT,
+                    AutoChooser.AutoQuestionResponse.CENTER,
+                    AutoChooser.AutoQuestionResponse.LEFT)),
+            new AutoChooser.AutoQuestion("Score Preloaded?", List.of(YES, NO)),
+            new AutoChooser.AutoQuestion("With Delay?", List.of(YES, NO))),
+        autoChooser.getResponses().get(1) == YES
+            ? (autoChooser.getResponses().get(2) == YES
+                ? autos.scoreOneNoteMobilityWithDelay(
+                    Autos.StartingPosition.valueOf(autoChooser.getResponses().get(0).toString()))
+                : autos.scoreOneNoteMobility(
+                    Autos.StartingPosition.valueOf(autoChooser.getResponses().get(0).toString())))
+            : (autoChooser.getResponses().get(2) == YES
+                ? Commands.waitSeconds(10)
+                    .andThen(
+                        autos.mobilityAuto(
+                            Autos.StartingPosition.valueOf(
+                                autoChooser.getResponses().get(0).toString())))
+                : autos.mobilityAuto(
+                    Autos.StartingPosition.valueOf(autoChooser.getResponses().get(0).toString()))));
+
+    autoChooser.addOption("Score One Note Only", autos.oneNoteAuto());
+
+    autoChooser.addOption("Score Two Notes",
+            List.of(
+                    new AutoChooser.AutoQuestion(
+                            "Starting Position",
+                      List.of(AutoChooser.AutoQuestionResponse.RIGHT, AutoChooser.AutoQuestionResponse.CENTER, AutoChooser.AutoQuestionResponse.LEFT)
+                    )
+
+            ), autos.noVisionTwoNoteAuto(Autos.StartingPosition.valueOf(autoChooser.getResponses().get(0).toString()))
+            );
+
     autoChooser.addOption(
         "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
-    autoChooser.addOption("Mobility [RIGHT]", autos.mobilityAuto(Autos.StartingPosition.RIGHT));
-    autoChooser.addOption(
-        "Score One Note + Mobility [RIGHT]",
-        autos.scoreOneNoteMobility(Autos.StartingPosition.RIGHT));
-    autoChooser.addOption(
-        "Score Two Notes [RIGHT]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
         "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
-    autoChooser.addOption("Mobility [CENTER]", autos.mobilityAuto(Autos.StartingPosition.CENTER));
-    autoChooser.addOption(
-        "Score One Note + Mobility [CENTER]",
-        autos.scoreOneNoteMobility(Autos.StartingPosition.CENTER));
-    autoChooser.addOption(
-        "Score Two Notes [CENTER]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
         "Score Three Notes (amp) [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
         "Score Three Notes (stage) [CENTER]",
         autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
-    autoChooser.addOption(
-        "Score 1 + Mobility (Delay) [LEFT]",
-        autos.scoreOneNoteMobilityWithDelay(Autos.StartingPosition.LEFT));
-    autoChooser.addOption(
-        "Score 1 + Mobility (delay) [CENTER]",
-        autos.scoreOneNoteMobilityWithDelay(Autos.StartingPosition.CENTER));
-    autoChooser.addOption(
-        "Score 1 + Mobility (delay) [RIGHT]",
-        autos.scoreOneNoteMobilityWithDelay(Autos.StartingPosition.RIGHT));
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)
@@ -376,6 +387,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return Commands.print("Chosen Auto: " + autoChooser.getName()).andThen(autoChooser.get());
   }
 }
