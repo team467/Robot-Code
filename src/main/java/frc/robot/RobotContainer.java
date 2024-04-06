@@ -246,8 +246,7 @@ public class RobotContainer {
                     AutoChooser.AutoQuestionResponse.RIGHT,
                     AutoChooser.AutoQuestionResponse.CENTER,
                     AutoChooser.AutoQuestionResponse.LEFT)),
-
-                new AutoChooser.AutoQuestion("2nd Note Position?", List.of(AMP, STAGE))),
+            new AutoChooser.AutoQuestion("2nd Note Position?", List.of(AMP, STAGE))),
         autos.threeNoteAuto());
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
     registerNamedCommands();

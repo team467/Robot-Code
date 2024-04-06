@@ -230,9 +230,7 @@ public class Autos {
             Commands.either(
                 threeNoteAuto(Autos.StartingPosition.CENTER),
                 threeNoteStageAuto(Autos.StartingPosition.CENTER),
-                () ->responses.get()
-                        .get(1)
-                        .equals(AMP))),
+                () -> responses.get().get(1).equals(AMP))),
         () -> responses.get().get(0));
   }
 
