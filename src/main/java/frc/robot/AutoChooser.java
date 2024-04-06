@@ -138,6 +138,8 @@ public class AutoChooser extends VirtualSubsystem {
     CENTER,
     RIGHT,
     YES,
-    NO
+    NO,
+    AMP,
+    STAGE
   }
 }

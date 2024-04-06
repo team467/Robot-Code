@@ -4,8 +4,7 @@
 
 package frc.robot;
 
-import static frc.robot.AutoChooser.AutoQuestionResponse.NO;
-import static frc.robot.AutoChooser.AutoQuestionResponse.YES;
+import static frc.robot.AutoChooser.AutoQuestionResponse.*;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.*;
@@ -239,14 +238,17 @@ public class RobotContainer {
             () -> Autos.StartingPosition.valueOf(autoChooser.getResponses().get(0).toString())));
 
     autoChooser.addOption(
-        "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
-    autoChooser.addOption(
-        "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
-    autoChooser.addOption(
-        "Score Three Notes (amp) [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
-    autoChooser.addOption(
-        "Score Three Notes (stage) [CENTER]",
-        autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
+        "Score Three Notes",
+        List.of(
+            new AutoChooser.AutoQuestion(
+                "Starting Position",
+                List.of(
+                    AutoChooser.AutoQuestionResponse.RIGHT,
+                    AutoChooser.AutoQuestionResponse.CENTER,
+                    AutoChooser.AutoQuestionResponse.LEFT)),
+
+                new AutoChooser.AutoQuestion("2nd Note Position?", List.of(AMP, STAGE))),
+        autos.threeNoteAuto());
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
     registerNamedCommands();
   }

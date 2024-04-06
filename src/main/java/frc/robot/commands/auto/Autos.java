@@ -1,6 +1,6 @@
 package frc.robot.commands.auto;
 
-import static frc.robot.AutoChooser.AutoQuestionResponse.YES;
+import static frc.robot.AutoChooser.AutoQuestionResponse.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -207,7 +207,7 @@ public class Autos {
         .withName("noVisionInit");
   }
 
-  public Command threeNoteAuto(StartingPosition position) {
+  private Command threeNoteAuto(StartingPosition position) {
     return noVisionInit(() -> position)
         .andThen(oneNoteAuto())
         .andThen(
@@ -217,6 +217,23 @@ public class Autos {
                 () -> position != StartingPosition.CENTER))
         .andThen(scoreCycle(() -> noteTranslations[1], position::getStartingPosition, () -> true))
         .withName("threeNoteAuto");
+  }
+
+  public Command threeNoteAuto() {
+    return Commands.select(
+        Map.of(
+            LEFT,
+            threeNoteAuto(StartingPosition.LEFT),
+            RIGHT,
+            threeNoteAuto(StartingPosition.RIGHT),
+            CENTER,
+            Commands.either(
+                threeNoteAuto(Autos.StartingPosition.CENTER),
+                threeNoteStageAuto(Autos.StartingPosition.CENTER),
+                () ->responses.get()
+                        .get(1)
+                        .equals(AMP))),
+        () -> responses.get().get(0));
   }
 
   public Command noVisionTwoNoteAuto(Supplier<StartingPosition> position) {
