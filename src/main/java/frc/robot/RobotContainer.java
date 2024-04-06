@@ -178,7 +178,6 @@ public class RobotContainer {
     }
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
 
-
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)
         .onTrue(
@@ -193,69 +192,73 @@ public class RobotContainer {
     configureButtonBindings();
     configureAutoChoices();
   }
-  private void configureAutoChoices() {
-      autos = new Autos(drive, arm, orchestrator, autoChooser::getResponses);
 
-      // Set up auto routines
+  private void configureAutoChoices() {
+    autos = new Autos(drive, arm, orchestrator, autoChooser::getResponses);
+
+    // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
     autoChooser.addOption(
-            "Drive Characterization",
-            Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
-                    .andThen(
-                            new FeedForwardCharacterization(
-                                    drive,
-                                    true,
-                                    new FeedForwardCharacterizationData("drive"),
-                                    drive::runCharacterizationVolts,
-                                    drive::getCharacterizationVelocity))
-                    .andThen(this::configureButtonBindings));
+        "Drive Characterization",
+        Commands.runOnce(() -> drive.setPose(new Pose2d()), drive)
+            .andThen(
+                new FeedForwardCharacterization(
+                    drive,
+                    true,
+                    new FeedForwardCharacterizationData("drive"),
+                    drive::runCharacterizationVolts,
+                    drive::getCharacterizationVelocity))
+            .andThen(this::configureButtonBindings));
 
     autoChooser.addOption(
-            "Mobility",
-            List.of(
-                    new AutoChooser.AutoQuestion(
-                            "Starting Position?",
-                            List.of(
-                                    AutoChooser.AutoQuestionResponse.RIGHT,
-                                    AutoChooser.AutoQuestionResponse.CENTER,
-                                    AutoChooser.AutoQuestionResponse.LEFT)),
-                    new AutoChooser.AutoQuestion("Score Preloaded?", List.of(YES, NO)),
-                    new AutoChooser.AutoQuestion("With Delay?", List.of(YES, NO))),
-            autos.mobilityOptions());
+        "Mobility",
+        List.of(
+            new AutoChooser.AutoQuestion(
+                "Starting Position?",
+                List.of(
+                    AutoChooser.AutoQuestionResponse.RIGHT,
+                    AutoChooser.AutoQuestionResponse.CENTER,
+                    AutoChooser.AutoQuestionResponse.LEFT)),
+            new AutoChooser.AutoQuestion("Score Preloaded?", List.of(YES, NO)),
+            new AutoChooser.AutoQuestion("With Delay?", List.of(YES, NO))),
+        autos.mobilityOptions());
 
     autoChooser.addOption("Score One Note Only", autos.oneNoteAuto());
 
-    autoChooser.addOption("Score Two Notes",
-            List.of(
-                    new AutoChooser.AutoQuestion(
-                            "Starting Position",
-                            List.of(AutoChooser.AutoQuestionResponse.RIGHT, AutoChooser.AutoQuestionResponse.CENTER, AutoChooser.AutoQuestionResponse.LEFT)
-                    )
+    autoChooser.addOption(
+        "Score Two Notes",
+        List.of(
+            new AutoChooser.AutoQuestion(
+                "Starting Position",
+                List.of(
+                    AutoChooser.AutoQuestionResponse.RIGHT,
+                    AutoChooser.AutoQuestionResponse.CENTER,
+                    AutoChooser.AutoQuestionResponse.LEFT))),
+        autos.noVisionTwoNoteAuto(
+            () -> Autos.StartingPosition.valueOf(autoChooser.getResponses().get(0).toString())));
 
-            ), autos.noVisionTwoNoteAuto(()->Autos.StartingPosition.valueOf(autoChooser.getResponses().get(0).toString()))
-    );
-
     autoChooser.addOption(
-            "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
+        "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption(
-            "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
+        "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
-            "Score Three Notes (amp) [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
+        "Score Three Notes (amp) [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-            "Score Three Notes (stage) [CENTER]",
-            autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
+        "Score Three Notes (stage) [CENTER]",
+        autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
     registerNamedCommands();
   }
+
   private void registerNamedCommands() {
     // Named commands for PathPlanner Auto
     NamedCommands.registerCommand(
-            "intake",
-            orchestrator
-                    .intakeBasic()
-                    .beforeStarting(orchestrator.stopFlywheel().withTimeout(0.2))
-                    .withTimeout(3));
+        "intake",
+        orchestrator
+            .intakeBasic()
+            .beforeStarting(orchestrator.stopFlywheel().withTimeout(0.2))
+            .withTimeout(3));
     NamedCommands.registerCommand("spinFlywheel", orchestrator.spinUpFlywheel().withTimeout(0.6));
     NamedCommands.registerCommand("shoot", orchestrator.shootBasic());
     NamedCommands.registerCommand("oneNote", autos.oneNoteAuto());
