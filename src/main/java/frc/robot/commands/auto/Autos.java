@@ -21,17 +21,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class Autos {
   private final Drive drive;
   private final Arm arm;
   private final Orchestrator orchestrator;
   private final Supplier<List<AutoChooser.AutoQuestionResponse>> responses;
-
   private double MOBILITY_DRIVE_DISTANCE = Units.feetToMeters(6.75);
   private Translation2d[] noteTranslations = new Translation2d[3];
+
+  public Autos(
+      Drive drive,
+      Arm arm,
+      Orchestrator orchestrator,
+      Supplier<List<AutoChooser.AutoQuestionResponse>> responses) {
+    this.drive = drive;
+    this.orchestrator = orchestrator;
+    this.arm = arm;
+    this.responses = responses;
+  }
 
   public enum StartingPosition {
     LEFT,
@@ -122,20 +130,23 @@ public class Autos {
   }
 
   public Command mobilityOptions() {
-    return Commands.either(
-        Commands.either(
-            scoreOneNoteMobilityWithDelay(
-                Autos.StartingPosition.valueOf(responses.get().get(0).toString())),
-            scoreOneNoteMobility(Autos.StartingPosition.valueOf(responses.get().get(0).toString())),
-            () -> responses.get().get(2).equals(YES)),
-        Commands.either(
-            Commands.waitSeconds(10)
-                .andThen(
-                    mobilityAuto(
-                        Autos.StartingPosition.valueOf(responses.get().get(0).toString()))),
-            mobilityAuto(Autos.StartingPosition.valueOf(responses.get().get(0).toString())),
-            () -> responses.get().get(2).equals(YES)),
-        () -> responses.get().get(1).equals(YES));
+    return Commands.deferredProxy(
+        () ->
+            Commands.either(
+                Commands.either(
+                    scoreOneNoteMobilityWithDelay(
+                        Autos.StartingPosition.valueOf(responses.get().get(0).toString())),
+                    scoreOneNoteMobility(
+                        Autos.StartingPosition.valueOf(responses.get().get(0).toString())),
+                    () -> responses.get().get(2).equals(YES)),
+                Commands.either(
+                    Commands.waitSeconds(10)
+                        .andThen(
+                            mobilityAuto(
+                                Autos.StartingPosition.valueOf(responses.get().get(0).toString()))),
+                    mobilityAuto(Autos.StartingPosition.valueOf(responses.get().get(0).toString())),
+                    () -> responses.get().get(2).equals(YES)),
+                () -> responses.get().get(1).equals(YES)));
   }
 
   public Command mobilityAuto(StartingPosition position) {
