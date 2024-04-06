@@ -8,31 +8,32 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.robot.AutoChooser;
 import frc.robot.FieldConstants;
 import frc.robot.Orchestrator;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.drive.Drive;
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
+import static frc.robot.AutoChooser.AutoQuestionResponse.YES;
+
+
+@RequiredArgsConstructor
 public class Autos {
   private final Drive drive;
   private final Arm arm;
   private final Orchestrator orchestrator;
+  private final Supplier<List<AutoChooser.AutoQuestionResponse>> responses;
 
   private double MOBILITY_DRIVE_DISTANCE = Units.feetToMeters(6.75);
-
-  //  @AutoLogOutput(key = "Autos/Notes/")
   private Translation2d[] noteTranslations = new Translation2d[3];
-
-  public Autos(Drive drive, Arm arm, Orchestrator orchestrator) {
-    this.drive = drive;
-    this.arm = arm;
-    this.orchestrator = orchestrator;
-  }
 
   public enum StartingPosition {
     LEFT,
@@ -122,6 +123,25 @@ public class Autos {
             noteTranslation.getY()));
   }
 
+  public Command mobilityOptions() {
+    return Commands.either(
+            (responses.get().get(2) == YES
+            ? scoreOneNoteMobilityWithDelay(
+            Autos.StartingPosition.valueOf(responses.get().get(0).toString()))
+            : scoreOneNoteMobility(
+            Autos.StartingPosition.valueOf(responses.get().get(0).toString()))),
+            (responses.get().get(2) == YES
+            ? Commands.waitSeconds(10)
+            .andThen(
+                    mobilityAuto(
+                            Autos.StartingPosition.valueOf(
+                                    responses.get().get(0).toString())))
+            : mobilityAuto(
+            Autos.StartingPosition.valueOf(responses.get().get(0).toString()))),
+            ()->responses.get().get(1).equals(YES)
+            );
+  }
+
   public Command mobilityAuto(StartingPosition position) {
     return Commands.runOnce(() -> drive.setPose(position.getStartingPosition()))
         .andThen(
@@ -162,11 +182,11 @@ public class Autos {
         .withName("oneNoteAuto");
   }
 
-  public Command scoreOneNoteMobility(StartingPosition position) {
+  private Command scoreOneNoteMobility(StartingPosition position) {
     return oneNoteAuto().andThen(mobilityAuto(position)).withName("scoreOneNoteMobility");
   }
 
-  public Command scoreOneNoteMobilityWithDelay(StartingPosition position) {
+  private Command scoreOneNoteMobilityWithDelay(StartingPosition position) {
     return oneNoteAuto()
         .andThen(Commands.waitSeconds(10))
         .andThen(mobilityAuto(position))
@@ -203,14 +223,14 @@ public class Autos {
         .withName("threeNoteAuto");
   }
 
-  public Command noVisionTwoNoteAuto(StartingPosition position) {
-    return noVisionInit(() -> position)
+  public Command noVisionTwoNoteAuto(Supplier<StartingPosition> position) {
+    return noVisionInit(position)
         .andThen(oneNoteAuto())
         .andThen(
             scoreCycle(
                 () -> noteTranslations[0],
-                position::getStartingPosition,
-                () -> position != StartingPosition.CENTER))
+                    ()->position.get().getStartingPosition(),
+                () -> position.get() != StartingPosition.CENTER))
         .withName("noVisionTwoNoteAuto");
   }
 
