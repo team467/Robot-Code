@@ -1,5 +1,7 @@
 package frc.robot.commands.auto;
 
+import static frc.robot.AutoChooser.AutoQuestionResponse.YES;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -14,16 +16,12 @@ import frc.robot.Orchestrator;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.drive.Drive;
-import lombok.RequiredArgsConstructor;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
-
-import static frc.robot.AutoChooser.AutoQuestionResponse.YES;
-
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class Autos {
@@ -125,21 +123,19 @@ public class Autos {
 
   public Command mobilityOptions() {
     return Commands.either(
-            (responses.get().get(2) == YES
-            ? scoreOneNoteMobilityWithDelay(
-            Autos.StartingPosition.valueOf(responses.get().get(0).toString()))
-            : scoreOneNoteMobility(
-            Autos.StartingPosition.valueOf(responses.get().get(0).toString()))),
-            (responses.get().get(2) == YES
-            ? Commands.waitSeconds(10)
-            .andThen(
+        Commands.either(
+            scoreOneNoteMobilityWithDelay(
+                Autos.StartingPosition.valueOf(responses.get().get(0).toString())),
+            scoreOneNoteMobility(Autos.StartingPosition.valueOf(responses.get().get(0).toString())),
+            () -> responses.get().get(2).equals(YES)),
+        Commands.either(
+            Commands.waitSeconds(10)
+                .andThen(
                     mobilityAuto(
-                            Autos.StartingPosition.valueOf(
-                                    responses.get().get(0).toString())))
-            : mobilityAuto(
-            Autos.StartingPosition.valueOf(responses.get().get(0).toString()))),
-            ()->responses.get().get(1).equals(YES)
-            );
+                        Autos.StartingPosition.valueOf(responses.get().get(0).toString()))),
+            mobilityAuto(Autos.StartingPosition.valueOf(responses.get().get(0).toString())),
+            () -> responses.get().get(2).equals(YES)),
+        () -> responses.get().get(1).equals(YES));
   }
 
   public Command mobilityAuto(StartingPosition position) {
@@ -229,7 +225,7 @@ public class Autos {
         .andThen(
             scoreCycle(
                 () -> noteTranslations[0],
-                    ()->position.get().getStartingPosition(),
+                () -> position.get().getStartingPosition(),
                 () -> position.get() != StartingPosition.CENTER))
         .withName("noVisionTwoNoteAuto");
   }
