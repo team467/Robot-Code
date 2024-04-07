@@ -103,13 +103,18 @@ public class AutoChooser extends VirtualSubsystem {
     if (!selectedRoutine.equals(lastRoutine)) {
       var questions = selectedRoutine.questions();
       for (int i = 0; i < maxQuestions; i++) {
-        if (i < questions.size() && questions.get(i).conditionMet()) {
-          questionPublishers.get(i).set(questions.get(i).question());
-          questionChoosers
-              .get(i)
-              .setOptions(
-                  questions.get(i).responses().stream().map(Enum::toString).toArray(String[]::new),
-                  String.valueOf(questions.get(i).defaultOption));
+        if (i < questions.size()) {
+          System.out.println(questions.get(i).conditionMet().getAsBoolean());
+          if (questions.get(i).conditionMet().getAsBoolean()) {
+            questionPublishers.get(i).set(questions.get(i).question());
+            questionChoosers
+                .get(i)
+                .setOptions(
+                    questions.get(i).responses().stream()
+                        .map(Enum::toString)
+                        .toArray(String[]::new),
+                    String.valueOf(questions.get(i).defaultOption));
+          }
         } else {
           questionPublishers.get(i).set("");
           questionChoosers.get(i).setOptions(new String[] {});
@@ -136,15 +141,15 @@ public class AutoChooser extends VirtualSubsystem {
   /** A question to ask for customizing an auto routine. */
   public static record AutoQuestion(
       String question, List<AutoQuestionResponse> responses, AutoQuestionResponse defaultOption) {
-    private static BooleanSupplier conditionMet = () -> true;
+    private static BooleanSupplier condition;
 
     public AutoQuestion conditional(BooleanSupplier condition) {
-      AutoQuestion.conditionMet = condition;
+      AutoQuestion.condition = condition;
       return this;
     }
 
-    private boolean conditionMet() {
-      return conditionMet.getAsBoolean();
+    private BooleanSupplier conditionMet() {
+      return condition;
     }
   }
 
