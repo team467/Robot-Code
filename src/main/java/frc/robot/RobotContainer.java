@@ -6,6 +6,7 @@ package frc.robot;
 
 import static frc.robot.AutoChooser.AutoQuestionResponse.*;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
@@ -80,7 +81,7 @@ public class RobotContainer {
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
-  private final AutoChooser autoChooser = new AutoChooser("Auto Choices");
+  private final AutoChooser autoChooser = new AutoChooser("Auto Choices", AutoBuilder.buildAutoChooser());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

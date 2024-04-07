@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.SwitchableChooser;
@@ -23,6 +24,27 @@ public class AutoChooser extends VirtualSubsystem {
   private AutoRoutine lastRoutine;
   private List<AutoQuestionResponse> lastResponses;
 
+  public AutoChooser(String key, SendableChooser chooser) {
+    routineChooser = new LoggedDashboardChooser<>(key, chooser);
+    routineChooser.addDefaultOption(defaultRoutine.name(), defaultRoutine);
+    lastRoutine = defaultRoutine;
+    lastResponses = List.of();
+
+    // Publish questions and choosers
+    questionPublishers = new ArrayList<>();
+    questionChoosers = new ArrayList<>();
+    for (int i = 0; i < maxQuestions; i++) {
+      var publisher =
+              NetworkTableInstance.getDefault()
+                      .getStringTopic("/SmartDashboard/" + key + "/Question #" + Integer.toString(i + 1))
+                      .publish();
+      publisher.set("NA");
+      questionPublishers.add(publisher);
+      questionChoosers.add(
+              new SwitchableChooser(key + "/Question #" + Integer.toString(i + 1) + " Chooser"));
+      System.out.println("AutoChooser Initialized");
+    }
+  }
   public AutoChooser(String key) {
     routineChooser = new LoggedDashboardChooser<>(key);
     routineChooser.addDefaultOption(defaultRoutine.name(), defaultRoutine);
