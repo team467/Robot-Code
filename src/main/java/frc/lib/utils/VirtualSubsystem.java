@@ -1,23 +1,22 @@
 package frc.lib.utils;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 import java.util.List;
 
 /** Represents a subsystem unit that requires a periodic callback but not a hardware mutex. */
-public abstract class VirtualSubsystem {
+public abstract class VirtualSubsystem extends SubsystemBase {
   private static List<VirtualSubsystem> subsystems = new ArrayList<>();
 
   public VirtualSubsystem() {
     subsystems.add(this);
   }
 
-  /** Calls {@link #periodic()} on all virtual subsystems. */
   public static void periodicAll() {
-    for (var subsystem : subsystems) {
+    for (VirtualSubsystem subsystem : subsystems) {
       subsystem.periodic();
     }
   }
 
-  /** This method is called periodically once per loop cycle. */
   public abstract void periodic();
 }
