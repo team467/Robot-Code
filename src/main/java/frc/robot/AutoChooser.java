@@ -104,7 +104,6 @@ public class AutoChooser extends VirtualSubsystem {
       var questions = selectedRoutine.questions();
       for (int i = 0; i < maxQuestions; i++) {
         if (i < questions.size()) {
-          System.out.println(questions.get(i).conditionMet().getAsBoolean());
           if (questions.get(i).conditionMet().getAsBoolean()) {
             questionPublishers.get(i).set(questions.get(i).question());
             questionChoosers
@@ -142,13 +141,16 @@ public class AutoChooser extends VirtualSubsystem {
   public static record AutoQuestion(
       String question, List<AutoQuestionResponse> responses, AutoQuestionResponse defaultOption) {
     private static BooleanSupplier condition;
+    private static Boolean conditionSet = false;
 
     public AutoQuestion conditional(BooleanSupplier condition) {
+      conditionSet = true;
       AutoQuestion.condition = condition;
       return this;
     }
 
     private BooleanSupplier conditionMet() {
+      if (conditionSet) return () -> true;
       return condition;
     }
   }
