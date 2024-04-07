@@ -194,9 +194,9 @@ public class RobotContainer {
 
   private void configureAutoChoices() {
     autos = new Autos(drive, arm, orchestrator, autoChooser::getResponses);
+    registerNamedCommands();
 
     // Set up auto routines
-    autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
     autoChooser.addOption(
         "Drive Characterization",
@@ -249,7 +249,6 @@ public class RobotContainer {
             new AutoChooser.AutoQuestion("2nd Note Position?", List.of(AMP, STAGE))),
         autos.threeNoteAuto());
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
-    registerNamedCommands();
   }
 
   private void registerNamedCommands() {
