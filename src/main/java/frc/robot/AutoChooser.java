@@ -12,7 +12,7 @@ import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class AutoChooser extends VirtualSubsystem {
-  private static final int maxQuestions = 4;
+  private static final int maxQuestions = 3;
   private static final AutoRoutine defaultRoutine =
       new AutoRoutine("Do Nothing", List.of(), Commands.none());
 
