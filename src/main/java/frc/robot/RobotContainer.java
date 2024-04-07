@@ -252,9 +252,7 @@ public class RobotContainer {
             new AutoChooser.AutoQuestion("3rd Note Position?", List.of(AMP, STAGE), AMP)
                 .conditional(
                     () -> {
-                      Boolean b = autoChooser.getAnswer(0).equals(CENTER);
-                      System.out.println(autoChooser.getAnswer(0));
-                      return b;
+                      return autoChooser.getAnswer(0).equals(CENTER) || autoChooser.getAnswer(0).equals(NULL);
                     })),
         autos.threeNoteAuto());
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
