@@ -72,6 +72,8 @@ public class AutoChooser extends VirtualSubsystem {
 
   /** Returns the selected auto command. */
   public Command get() {
+    System.out.println("Chosen Auto: " + getName());
+    System.out.println("Auto Options: " + getResponses());
     return lastRoutine.command();
   }
 
