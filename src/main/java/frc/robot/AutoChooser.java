@@ -35,16 +35,17 @@ public class AutoChooser extends VirtualSubsystem {
     questionChoosers = new ArrayList<>();
     for (int i = 0; i < maxQuestions; i++) {
       var publisher =
-              NetworkTableInstance.getDefault()
-                      .getStringTopic("/SmartDashboard/" + key + "/Question #" + Integer.toString(i + 1))
-                      .publish();
+          NetworkTableInstance.getDefault()
+              .getStringTopic("/SmartDashboard/" + key + "/Question #" + Integer.toString(i + 1))
+              .publish();
       publisher.set("NA");
       questionPublishers.add(publisher);
       questionChoosers.add(
-              new SwitchableChooser(key + "/Question #" + Integer.toString(i + 1) + " Chooser"));
+          new SwitchableChooser(key + "/Question #" + Integer.toString(i + 1) + " Chooser"));
     }
     System.out.println("AutoChooser Initialized");
   }
+
   public AutoChooser(String key) {
     routineChooser = new LoggedDashboardChooser<>(key);
     routineChooser.addDefaultOption(defaultRoutine.name(), defaultRoutine);
