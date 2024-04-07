@@ -107,7 +107,8 @@ public class AutoChooser extends VirtualSubsystem {
           questionChoosers
               .get(i)
               .setOptions(
-                  questions.get(i).responses().stream().map(Enum::toString).toArray(String[]::new));
+                  questions.get(i).responses().stream().map(Enum::toString).toArray(String[]::new),
+                  String.valueOf(questions.get(i).defaultOption));
         } else {
           questionPublishers.get(i).set("");
           questionChoosers.get(i).setOptions(new String[] {});
@@ -132,7 +133,8 @@ public class AutoChooser extends VirtualSubsystem {
       String name, List<AutoQuestion> questions, Command command) {}
 
   /** A question to ask for customizing an auto routine. */
-  public static record AutoQuestion(String question, List<AutoQuestionResponse> responses) {}
+  public static record AutoQuestion(
+      String question, List<AutoQuestionResponse> responses, AutoQuestionResponse defaultOption) {}
 
   /** Responses to auto routine questions. */
   public static enum AutoQuestionResponse {

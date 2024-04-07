@@ -74,6 +74,15 @@ public class SwitchableChooser implements LoggedDashboardInput {
     periodic();
   }
 
+  public void setOptions(String[] options, String defaultOption) {
+    this.defaultOption = defaultOption;
+    if (Arrays.equals(options, this.options)) {
+      return;
+    }
+    this.options = options.length == 0 ? new String[] {placeholder} : options;
+    optionsPublisher.set(this.options);
+    periodic();
+  }
   /** Returns the selected option. */
   public String get() {
     return Objects.equals(active, placeholder) ? null : active;

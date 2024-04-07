@@ -218,9 +218,10 @@ public class RobotContainer {
                 List.of(
                     AutoChooser.AutoQuestionResponse.RIGHT,
                     AutoChooser.AutoQuestionResponse.CENTER,
-                    AutoChooser.AutoQuestionResponse.LEFT)),
-            new AutoChooser.AutoQuestion("Score Preloaded?", List.of(YES, NO)),
-            new AutoChooser.AutoQuestion("With Delay?", List.of(YES, NO))),
+                    AutoChooser.AutoQuestionResponse.LEFT),
+                CENTER),
+            new AutoChooser.AutoQuestion("Score Preloaded?", List.of(YES, NO), YES),
+            new AutoChooser.AutoQuestion("With Delay?", List.of(YES, NO), YES)),
         autos.mobilityOptions());
 
     autoChooser.addOption("Score One Note Only", autos.oneNoteAuto());
@@ -233,7 +234,8 @@ public class RobotContainer {
                 List.of(
                     AutoChooser.AutoQuestionResponse.RIGHT,
                     AutoChooser.AutoQuestionResponse.CENTER,
-                    AutoChooser.AutoQuestionResponse.LEFT))),
+                    AutoChooser.AutoQuestionResponse.LEFT),
+                CENTER)),
         autos.noVisionTwoNoteAuto(
             () -> Autos.StartingPosition.valueOf(autoChooser.getResponses().get(0).toString())));
 
@@ -245,8 +247,9 @@ public class RobotContainer {
                 List.of(
                     AutoChooser.AutoQuestionResponse.RIGHT,
                     AutoChooser.AutoQuestionResponse.CENTER,
-                    AutoChooser.AutoQuestionResponse.LEFT)),
-            new AutoChooser.AutoQuestion("2nd Note Position?", List.of(AMP, STAGE))),
+                    AutoChooser.AutoQuestionResponse.LEFT),
+                CENTER),
+            new AutoChooser.AutoQuestion("2nd Note Position?", List.of(AMP, STAGE), AMP)),
         autos.threeNoteAuto());
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
   }
