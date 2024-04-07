@@ -42,8 +42,8 @@ public class AutoChooser extends VirtualSubsystem {
       questionPublishers.add(publisher);
       questionChoosers.add(
               new SwitchableChooser(key + "/Question #" + Integer.toString(i + 1) + " Chooser"));
-      System.out.println("AutoChooser Initialized");
     }
+    System.out.println("AutoChooser Initialized");
   }
   public AutoChooser(String key) {
     routineChooser = new LoggedDashboardChooser<>(key);
