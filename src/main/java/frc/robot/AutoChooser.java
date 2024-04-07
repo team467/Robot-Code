@@ -104,14 +104,12 @@ public class AutoChooser extends VirtualSubsystem {
       var questions = selectedRoutine.questions();
       for (int i = 0; i < maxQuestions; i++) {
         if (i < questions.size()) {
-          if (questions.get(i).conditionMet().getAsBoolean()) {
-            questionPublishers.get(i).set(questions.get(i).question());
+          if (questions.get(i).conditionMet()) {
+            questionPublishers.get(i).set(questions.get(i).question);
             questionChoosers
                 .get(i)
                 .setOptions(
-                    questions.get(i).responses().stream()
-                        .map(Enum::toString)
-                        .toArray(String[]::new),
+                    questions.get(i).responses.stream().map(Enum::toString).toArray(String[]::new),
                     String.valueOf(questions.get(i).defaultOption));
           }
         } else {
@@ -128,7 +126,7 @@ public class AutoChooser extends VirtualSubsystem {
       String responseString = questionChoosers.get(i).get();
       lastResponses.add(
           responseString == null
-              ? lastRoutine.questions().get(i).responses().get(0)
+              ? lastRoutine.questions().get(i).responses.get(0)
               : AutoQuestionResponse.valueOf(responseString));
     }
   }
@@ -138,20 +136,42 @@ public class AutoChooser extends VirtualSubsystem {
       String name, List<AutoQuestion> questions, Command command) {}
 
   /** A question to ask for customizing an auto routine. */
-  public static record AutoQuestion(
-      String question, List<AutoQuestionResponse> responses, AutoQuestionResponse defaultOption) {
-    private static BooleanSupplier condition;
-    private static Boolean conditionSet = false;
+  public static class AutoQuestion {
+    private static class ConditionWrapper {
+      private BooleanSupplier condition;
+      private boolean conditionSet = false;
+      private boolean defaultCondition = true;
+
+      public void setCondition(BooleanSupplier condition) {
+        this.condition = condition;
+        conditionSet = true;
+      }
+
+      public boolean isConditionMet() {
+        return conditionSet ? condition.getAsBoolean() : defaultCondition;
+      }
+    }
+
+    private final String question;
+    private final List<AutoQuestionResponse> responses;
+    private final AutoQuestionResponse defaultOption;
+    private final ConditionWrapper conditionWrapper = new ConditionWrapper();
+
+    public AutoQuestion(
+        String question, List<AutoQuestionResponse> responses, AutoQuestionResponse defaultOption) {
+      this.question = question;
+      this.responses = responses;
+      this.defaultOption = defaultOption;
+    }
 
     public AutoQuestion conditional(BooleanSupplier condition) {
-      conditionSet = true;
-      AutoQuestion.condition = condition;
+      conditionWrapper.setCondition(condition);
       return this;
     }
 
-    private BooleanSupplier conditionMet() {
-      if (conditionSet) return () -> true;
-      return condition;
+    public boolean conditionMet() {
+      System.out.println(conditionWrapper.isConditionMet());
+      return conditionWrapper.isConditionMet();
     }
   }
 
