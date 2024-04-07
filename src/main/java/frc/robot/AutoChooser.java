@@ -9,6 +9,7 @@ import frc.lib.utils.SwitchableChooser;
 import frc.lib.utils.VirtualSubsystem;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class AutoChooser extends VirtualSubsystem {
@@ -41,8 +42,8 @@ public class AutoChooser extends VirtualSubsystem {
       questionPublishers.add(publisher);
       questionChoosers.add(
           new SwitchableChooser(key + "/Question #" + Integer.toString(i + 1) + " Chooser"));
-      System.out.println("AutoChooser Initialized");
     }
+    System.out.println("AutoChooser Initialized");
   }
 
   /** Registers a new auto routine that can be selected. */
@@ -102,7 +103,7 @@ public class AutoChooser extends VirtualSubsystem {
     if (!selectedRoutine.equals(lastRoutine)) {
       var questions = selectedRoutine.questions();
       for (int i = 0; i < maxQuestions; i++) {
-        if (i < questions.size()) {
+        if (i < questions.size() && questions.get(i).conditionMet()) {
           questionPublishers.get(i).set(questions.get(i).question());
           questionChoosers
               .get(i)
@@ -134,7 +135,18 @@ public class AutoChooser extends VirtualSubsystem {
 
   /** A question to ask for customizing an auto routine. */
   public static record AutoQuestion(
-      String question, List<AutoQuestionResponse> responses, AutoQuestionResponse defaultOption) {}
+      String question, List<AutoQuestionResponse> responses, AutoQuestionResponse defaultOption) {
+    private static BooleanSupplier conditionMet = () -> true;
+
+    public AutoQuestion conditional(BooleanSupplier condition) {
+      AutoQuestion.conditionMet = condition;
+      return this;
+    }
+
+    private boolean conditionMet() {
+      return conditionMet.getAsBoolean();
+    }
+  }
 
   /** Responses to auto routine questions. */
   public static enum AutoQuestionResponse {

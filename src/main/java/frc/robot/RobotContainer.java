@@ -249,7 +249,12 @@ public class RobotContainer {
                     AutoChooser.AutoQuestionResponse.CENTER,
                     AutoChooser.AutoQuestionResponse.LEFT),
                 CENTER),
-            new AutoChooser.AutoQuestion("2nd Note Position?", List.of(AMP, STAGE), AMP)),
+            new AutoChooser.AutoQuestion("2nd Note Position?", List.of(AMP, STAGE), AMP)
+                .conditional(
+                    () -> {
+                      List<AutoChooser.AutoQuestionResponse> responses = autoChooser.getResponses();
+                      return !responses.isEmpty() && responses.get(0).equals(CENTER);
+                    })),
         autos.threeNoteAuto());
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
   }
