@@ -10,7 +10,10 @@
       "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
-      "/SmartDashboard/Auto Choices": "String Chooser"
+      "/SmartDashboard/Auto Choices": "String Chooser",
+      "/SmartDashboard/Auto Choices/Question #1 Chooser": "String Chooser",
+      "/SmartDashboard/Auto Choices/Question #2 Chooser": "String Chooser",
+      "/SmartDashboard/Auto Choices/Question #3 Chooser": "String Chooser"
     }
   },
   "NetworkTables": {
