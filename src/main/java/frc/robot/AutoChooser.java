@@ -131,6 +131,11 @@ public class AutoChooser extends VirtualSubsystem {
     }
   }
 
+  public Enum<AutoQuestionResponse> getAnswer(int i) {
+    if (!getResponses().isEmpty()) return lastResponses.get(i);
+    return AutoQuestionResponse.NULL;
+  }
+
   /** A customizable auto routine associated with a single command. */
   private static final record AutoRoutine(
       String name, List<AutoQuestion> questions, Command command) {}
@@ -183,6 +188,7 @@ public class AutoChooser extends VirtualSubsystem {
     YES,
     NO,
     AMP,
-    STAGE
+    STAGE,
+    NULL
   }
 }
