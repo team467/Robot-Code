@@ -176,7 +176,7 @@ public class AutoChooser extends VirtualSubsystem {
   }
 
   /** Responses to auto routine questions. */
-  public static enum AutoQuestionResponse {
+  public enum AutoQuestionResponse {
     LEFT,
     CENTER,
     RIGHT,
