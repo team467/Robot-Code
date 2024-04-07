@@ -249,11 +249,11 @@ public class RobotContainer {
                     AutoChooser.AutoQuestionResponse.CENTER,
                     AutoChooser.AutoQuestionResponse.LEFT),
                 CENTER),
-            new AutoChooser.AutoQuestion("3rd Note Position?", List.of(AMP, STAGE), AMP)
-                .conditional(
-                    () -> {
-                      return autoChooser.getAnswer(0).equals(CENTER) || autoChooser.getAnswer(0).equals(NULL);
-                    })),
+            new AutoChooser.AutoQuestion("3rd Note Position? (Center only)", List.of(AMP, STAGE), AMP)
+                //TODO: fix this conditional
+//                .conditional(
+//                    () -> autoChooser.getAnswer(0).equals(CENTER) || autoChooser.getAnswer(0).equals(NULL))
+        ),
         autos.threeNoteAuto());
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
   }
