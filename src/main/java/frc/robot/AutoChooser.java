@@ -41,6 +41,7 @@ public class AutoChooser extends VirtualSubsystem {
       questionPublishers.add(publisher);
       questionChoosers.add(
           new SwitchableChooser(key + "/Question #" + Integer.toString(i + 1) + " Chooser"));
+      System.out.println("AutoChooser Initialized");
     }
   }
 
@@ -84,6 +85,7 @@ public class AutoChooser extends VirtualSubsystem {
     return lastResponses;
   }
 
+  @Override
   public void periodic() {
     // Skip updates when actively running in auto
     if (DriverStation.isAutonomousEnabled() && lastRoutine != null && lastResponses == null) {
@@ -103,9 +105,7 @@ public class AutoChooser extends VirtualSubsystem {
           questionChoosers
               .get(i)
               .setOptions(
-                  questions.get(i).responses().stream()
-                      .map((AutoQuestionResponse response) -> response.toString())
-                      .toArray(String[]::new));
+                  questions.get(i).responses().stream().map(Enum::toString).toArray(String[]::new));
         } else {
           questionPublishers.get(i).set("");
           questionChoosers.get(i).setOptions(new String[] {});
