@@ -221,7 +221,7 @@ public class RobotContainer {
                     AutoChooser.AutoQuestionResponse.LEFT),
                 CENTER),
             new AutoChooser.AutoQuestion("Score Preloaded?", List.of(YES, NO), YES),
-            new AutoChooser.AutoQuestion("With Delay?", List.of(YES, NO), YES)),
+            new AutoChooser.AutoQuestion("With Delay?", List.of(YES, NO), NO)),
         autos.mobilityOptions());
 
     autoChooser.addOption("Score One Note Only", autos.oneNoteAuto());
@@ -250,11 +250,7 @@ public class RobotContainer {
                     AutoChooser.AutoQuestionResponse.LEFT),
                 CENTER),
             new AutoChooser.AutoQuestion("3rd Note Position?", List.of(AMP, STAGE), AMP)
-                .conditional(
-                    () -> {
-                      List<AutoChooser.AutoQuestionResponse> responses = autoChooser.getResponses();
-                      return !responses.isEmpty() && responses.get(0).equals(CENTER);
-                    })),
+                .conditional(() -> false)),
         autos.threeNoteAuto());
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
   }
