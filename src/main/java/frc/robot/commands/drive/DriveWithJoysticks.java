@@ -56,6 +56,7 @@ public class DriveWithJoysticks extends Command {
                 .get();
 
     addRequirements(drive);
+    setName("DriveWithJoysticks");
   }
 
   @Override

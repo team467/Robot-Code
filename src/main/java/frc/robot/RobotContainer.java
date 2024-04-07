@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -70,6 +71,7 @@ public class RobotContainer {
   private Leds leds;
   private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
+
   private Orchestrator orchestrator;
   private Autos autos;
 
@@ -174,9 +176,20 @@ public class RobotContainer {
       climber = new Climber(new ClimberIO() {});
     }
     orchestrator = new Orchestrator(drive, intake, indexer, shooter, pixy2, arm);
+    autos = new Autos(drive, arm, orchestrator);
+
+    // Named commands for auto
+    NamedCommands.registerCommand(
+        "intake",
+        orchestrator
+            .intakeBasic()
+            .beforeStarting(orchestrator.stopFlywheel().withTimeout(0.2))
+            .withTimeout(3));
+    NamedCommands.registerCommand("spinFlywheel", orchestrator.spinUpFlywheel().withTimeout(0.6));
+    NamedCommands.registerCommand("shoot", orchestrator.shootBasic());
+    NamedCommands.registerCommand("oneNote", autos.oneNoteAuto());
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    autos = new Autos(drive, arm, orchestrator);
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
@@ -222,6 +235,15 @@ public class RobotContainer {
         "Score Three Notes (stage) [CENTER]",
         autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
+    autoChooser.addOption(
+        "Score 1 + Mobility (Delay) [LEFT]",
+        autos.scoreOneNoteMobilityWithDelay(Autos.StartingPosition.LEFT));
+    autoChooser.addOption(
+        "Score 1 + Mobility (delay) [CENTER]",
+        autos.scoreOneNoteMobilityWithDelay(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score 1 + Mobility (delay) [RIGHT]",
+        autos.scoreOneNoteMobilityWithDelay(Autos.StartingPosition.RIGHT));
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)
@@ -230,7 +252,8 @@ public class RobotContainer {
                     () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
                     () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0))
                 .withTimeout(1.2)
-                .ignoringDisable(true));
+                .ignoringDisable(true)
+                .withName("rumble"));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -244,7 +267,11 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
+    driverController
+        .y()
+        .onTrue(
+            Commands.runOnce(() -> isRobotOriented = !isRobotOriented)
+                .withName("robotOrientedToggle"));
     drive.setDefaultCommand(
         new DriveWithJoysticks(
             drive,
@@ -262,7 +289,8 @@ public class RobotContainer {
                             new Pose2d(
                                 drive.getPose().getTranslation(),
                                 AllianceFlipUtil.apply(new Rotation2d()))))
-                .ignoringDisable(true));
+                .ignoringDisable(true)
+                .withName("resetGyro"));
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
@@ -289,6 +317,8 @@ public class RobotContainer {
     // Back button (toggle switch): unlock/lock climber ratchet
     operatorController.back().whileTrue(climber.setRatchet(false));
     operatorController.back().whileFalse(climber.setRatchet(true));
+    // Click LB: turn to speaker and align the arm to speaker
+    // operatorController.leftBumper().onTrue(orchestrator.fullAlignSpeaker(() -> drive.getPose()));
 
     // operator d pad
     // Hold Up: Move arm up
@@ -308,40 +338,37 @@ public class RobotContainer {
         .pov(270)
         .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
 
-    // driver controller
-    // Click Right Bumper: Move arm to stow position
-    //    driverController
-    //        .rightBumper()
-    //        .onTrue(
-    //            Commands.parallel(
-    //                    arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
-    //                    Commands.waitUntil(arm::limitSwitchPressed))
-    //                .withTimeout(2));
-    //    driverController
-    //        .rightBumper()
-    //        .whileTrue(
     driverController
         .rightBumper()
-        .whileTrue(
-            new StolenJoystick(
-                    drive,
-                    () -> -driverController.getLeftY(),
-                    () -> -driverController.getLeftX(),
-                    () -> drive.getPose(),
-                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
-                    () -> true)
-                .alongWith(orchestrator.alignArmSpeaker(() -> drive.getPose())));
-    // Click Left Bumper: Move arm to amp position
-    driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
+        .toggleOnTrue(
+            Commands.parallel(
+                    new StolenJoystick(
+                        drive,
+                        () -> -driverController.getLeftY(),
+                        () -> -driverController.getLeftX(),
+                        () -> drive.getPose(),
+                        FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
+                        () -> true),
+                    orchestrator.alignArmSpeaker(() -> drive.getPose()))
+                .withName("stolenJoystickToggle"));
+    // Click Left Bumper: Move arm to amp position or home position
+    driverController
+        .leftBumper()
+        .onTrue(
+            Commands.sequence(
+                    orchestrator
+                        .armToHome()
+                        .onlyIf(() -> arm.getAngle() > Units.degreesToRadians(65)),
+                    orchestrator
+                        .alignArmAmp()
+                        .onlyIf(() -> arm.getAngle() < Units.degreesToRadians(65)))
+                .withName("armPositionChanger"));
     // Click left Trigger: Intake (until clicked again or has a note)
     driverController.leftTrigger(0.15).toggleOnTrue(orchestrator.intakeBasic());
     // Click right Trigger: Run indexer
     driverController.rightTrigger(0.15).onTrue(orchestrator.indexBasic());
     // Click A: X lock drive train
-    driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()));
-
-    // driverController.leftBumper().onTrue(orchestrator.alignArmSpeaker()); //TODO: add back in
-    // when fixed
+    driverController.a().onTrue(Commands.runOnce(() -> drive.stopWithX()).withName("xlock"));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

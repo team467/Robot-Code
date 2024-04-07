@@ -15,6 +15,7 @@ public class DriveWithDpad extends Command {
     this.drive = drive;
     this.povSupplier = povSupplier;
     addRequirements(drive);
+    setName("DriveWithDpad");
   }
 
   @Override
