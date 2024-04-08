@@ -220,7 +220,7 @@ public class RobotContainer {
                     AutoChooser.AutoQuestionResponse.CENTER,
                     AutoChooser.AutoQuestionResponse.LEFT),
                 CENTER),
-            new AutoChooser.AutoQuestion("Score Preloaded?", List.of(YES, NO), YES),
+            new AutoChooser.AutoQuestion("Score Preloaded?", List.of(YES, NO)),
             new AutoChooser.AutoQuestion("With Delay?", List.of(YES, NO), NO)),
         autos.mobilityOptions());
 
@@ -249,7 +249,7 @@ public class RobotContainer {
                     AutoChooser.AutoQuestionResponse.CENTER,
                     AutoChooser.AutoQuestionResponse.LEFT),
                 CENTER),
-            new AutoChooser.AutoQuestion("3rd Note Position? (Center only)", List.of(AMP, STAGE), AMP)
+            new AutoChooser.AutoQuestion("3rd Note Position? (Center only)", List.of(AMP, STAGE))
                 //TODO: fix this conditional
 //                .conditional(
 //                    () -> autoChooser.getAnswer(0).equals(CENTER) || autoChooser.getAnswer(0).equals(NULL))
