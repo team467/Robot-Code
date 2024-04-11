@@ -168,8 +168,8 @@ public class AutoChooser extends VirtualSubsystem {
       this.responses = responses;
       this.defaultOption = defaultOption;
     }
-    public AutoQuestion(
-            String question, List<AutoQuestionResponse> responses) {
+
+    public AutoQuestion(String question, List<AutoQuestionResponse> responses) {
       this(question, responses, responses.get(0));
     }
 
