@@ -16,8 +16,9 @@ public interface VisionIO {
   class VisionIOInputs {
     Pose3d estimatedRobotPose = new Pose3d();
     double estimatedRobotPoseTimestamp = 0.0;
-    int[] estimatedRobotPoseTags = new int[] {};
+    boolean[] tagsSeen = new boolean[] {};
     double lastCameraTimestamp = 0.0;
+    double minAmbiguity = 0.0;
   }
 
   /**
