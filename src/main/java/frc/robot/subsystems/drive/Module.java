@@ -17,7 +17,8 @@ public class Module {
   private PIDController turnFeedback =
       new PIDController(DriveConstants.TURN_KP.get(), 0.0, DriveConstants.TURN_KD.get());
   private Rotation2d angleSetpoint = null; // Setpoint for closed loop control, null for open loop
-  private Double speedSetpoint = null; // Setpoint for closed loop control, null for open loop
+  private Double speedSetpoint = null; // Setpoint for closed loop control, null for open
+  private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
   private double lastPositionMeters = 0.0; // Used for delta calculation
 
   public Module(ModuleIO io, int index) {
@@ -30,6 +31,12 @@ public class Module {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Drive/Module" + index, inputs);
+
+    // On first cycle, reset relative turn encoder
+    // Wait until absolute angle is nonzero in case it wasn't initialized yet
+    if (turnRelativeOffset == null && inputs.turnAbsolutePosition.getRadians() != 0.0) {
+      turnRelativeOffset = inputs.turnAbsolutePosition.minus(inputs.turnPosition);
+    }
 
     // Update controllers if tunable numbers have changed
     if (DriveConstants.TURN_KP.hasChanged(hashCode())
@@ -104,7 +111,11 @@ public class Module {
 
   /** Returns the current turn angle of the module. */
   public Rotation2d getAngle() {
-    return inputs.turnAbsolutePosition;
+    if (turnRelativeOffset == null) {
+      return new Rotation2d();
+    } else {
+      return inputs.turnPosition.plus(turnRelativeOffset);
+    }
   }
 
   /** Returns the module position (turn angle and drive position). */

@@ -97,22 +97,7 @@ public class ModuleIOSparkMAX implements ModuleIO {
     inputs.driveAppliedVolts = driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
     inputs.driveCurrentAmps = new double[] {driveMotor.getOutputCurrent()};
     inputs.turnVelocityRadPerSec = turnEncoder.getVelocity();
-
-    // Reset the turn encoder sometimes when not moving
-    if (turnEncoder.getVelocity() < Units.degreesToRadians(0.5)) {
-      if (++resetCount >= 500) {
-        resetCount = 0;
-        turnEncoder.setPosition(
-            MathUtil.angleModulus(
-                Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble())
-                    .minus(DriveConstants.ABSOLUTE_ANGLE_OFFSET[index])
-                    .getRadians()));
-      }
-    } else {
-      resetCount = 0;
-    }
     inputs.turnPosition = new Rotation2d(turnEncoder.getPosition());
-
     inputs.turnAbsolutePosition =
         Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble())
             .minus(DriveConstants.ABSOLUTE_ANGLE_OFFSET[index]);
