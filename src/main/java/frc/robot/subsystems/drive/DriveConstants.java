@@ -18,6 +18,7 @@ public class DriveConstants {
   public static final TunableNumber DRIVE_KV;
   public static final TunableNumber TURN_KP;
   public static final TunableNumber TURN_KD;
+  public static final double ODOMETRY_FREQUENCY;
 
   static {
     switch (Constants.getRobot()) {
@@ -39,6 +40,7 @@ public class DriveConstants {
         DRIVE_KV = new TunableNumber("Drive/Module/DriveKV", 2.2858);
         TURN_KP = new TunableNumber("Drive/Module/TurnKP", 3.89); // 3.256
         TURN_KD = new TunableNumber("Drive/Module/TurnKD", 0);
+        ODOMETRY_FREQUENCY = 250.0; // 4ms
       }
       case ROBOT_2024_COMP -> {
         TRACK_WIDTH_X = Units.inchesToMeters(9 * 2);
@@ -58,6 +60,7 @@ public class DriveConstants {
         DRIVE_KV = new TunableNumber("Drive/Module/DriveKV", 2.60818);
         TURN_KP = new TunableNumber("Drive/Module/TurnKP", 4.5);
         TURN_KD = new TunableNumber("Drive/Module/TurnKD", 0.1);
+        ODOMETRY_FREQUENCY = 250.0; // 4ms
       }
       case ROBOT_SIMBOT -> {
         TRACK_WIDTH_X = 0.65;
@@ -71,6 +74,7 @@ public class DriveConstants {
         DRIVE_KV = new TunableNumber("Drive/Module/DriveKV", 5.27611);
         TURN_KP = new TunableNumber("Drive/Module/TurnKP", 23.0);
         TURN_KD = new TunableNumber("Drive/Module/TurnKD", 0.0);
+        ODOMETRY_FREQUENCY = 250.0; // 4ms
       }
       default -> {
         TRACK_WIDTH_X = 0;
@@ -84,6 +88,7 @@ public class DriveConstants {
         DRIVE_KV = new TunableNumber("Drive/Module/DriveKV");
         TURN_KP = new TunableNumber("Drive/Module/TurnKP");
         TURN_KD = new TunableNumber("Drive/Module/TurnKD");
+        ODOMETRY_FREQUENCY = 50.0; // 20ms
       }
     }
   }
