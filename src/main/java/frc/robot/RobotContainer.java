@@ -17,10 +17,12 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroPigeon2;
 import frc.lib.io.vision.Vision;
+import frc.lib.io.vision.VisionIOPhotonVision;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.DriveWithJoysticks;
+import frc.robot.commands.drive.StolenJoystick;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmIO;
@@ -28,6 +30,7 @@ import frc.robot.subsystems.arm.ArmIOSparkMAX;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -44,6 +47,7 @@ import frc.robot.subsystems.pixy2.Pixy2IO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOPhysical;
+import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -105,12 +109,12 @@ public class RobotContainer {
                       Units.inchesToMeters(15.5)),
                   new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
 
-          //          vision =
-          //              new Vision(
-          //                  List.of(
-          //                          new VisionIOPhotonVision("front", front),
-          //                          new VisionIOPhotonVision("back", back))
-          //                      .toArray(new frc.lib.io.vision.VisionIO[0]));
+          vision =
+              new Vision(
+                  List.of(
+                          new VisionIOPhotonVision("front", front),
+                          new VisionIOPhotonVision("back", back))
+                      .toArray(new frc.lib.io.vision.VisionIO[0]));
 
           drive =
               new Drive(
@@ -124,7 +128,8 @@ public class RobotContainer {
           intake = new Intake(new IntakeIOPhysical());
           shooter = new Shooter(new ShooterIOPhysical());
           leds = new Leds();
-          //          climber = new Climber(new ClimberIOSparkMax());
+          // pixy2 = new Pixy2(new Pixy2IOPhysical());
+          climber = new Climber(new ClimberIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
@@ -192,7 +197,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Score One Note + Mobility [LEFT]",
         autos.scoreOneNoteMobility(Autos.StartingPosition.LEFT));
-    autoChooser.addOption("Score Two Notes [LEFT]", autos.twoNoteAuto(Autos.StartingPosition.LEFT));
+    autoChooser.addOption(
+        "Score Two Notes [LEFT]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption(
         "Score Three Notes [LEFT]", autos.threeNoteAuto(Autos.StartingPosition.LEFT));
     autoChooser.addOption("Mobility [RIGHT]", autos.mobilityAuto(Autos.StartingPosition.RIGHT));
@@ -200,7 +206,7 @@ public class RobotContainer {
         "Score One Note + Mobility [RIGHT]",
         autos.scoreOneNoteMobility(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
-        "Score Two Notes [RIGHT]", autos.twoNoteAuto(Autos.StartingPosition.RIGHT));
+        "Score Two Notes [RIGHT]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption(
         "Score Three Notes [RIGHT]", autos.threeNoteAuto(Autos.StartingPosition.RIGHT));
     autoChooser.addOption("Mobility [CENTER]", autos.mobilityAuto(Autos.StartingPosition.CENTER));
@@ -208,9 +214,13 @@ public class RobotContainer {
         "Score One Note + Mobility [CENTER]",
         autos.scoreOneNoteMobility(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-        "Score Two Notes [CENTER]", autos.twoNoteAuto(Autos.StartingPosition.CENTER));
+        "Score Two Notes [CENTER]", autos.noVisionTwoNoteAuto(Autos.StartingPosition.CENTER));
     autoChooser.addOption(
-        "Score Three Notes [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
+        "Score Three Notes (amp) [CENTER]", autos.threeNoteAuto(Autos.StartingPosition.CENTER));
+    autoChooser.addOption(
+        "Score Three Notes (stage) [CENTER]",
+        autos.threeNoteStageAuto(Autos.StartingPosition.CENTER));
+    autoChooser.addOption("Score Four Notes [CENTER]", autos.noVisionFourNoteAuto());
 
     // Rumble on intake
     new Trigger(() -> RobotState.getInstance().hasNote)
@@ -255,7 +265,6 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
     // stop when doing nothing
     intake.setDefaultCommand(intake.stop());
     indexer.setDefaultCommand(indexer.setPercent(0));
@@ -273,16 +282,8 @@ public class RobotContainer {
     // Hold Y: Expel the shooter
     operatorController.y().whileTrue(shooter.manualShoot(-1));
     // Hold RB: Duck the arm to fit under stage
-    operatorController
-        .rightBumper()
-        .whileTrue(arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))));
-    operatorController
-        .rightBumper()
-        .onFalse(
-            Commands.parallel(
-                    arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS),
-                    Commands.waitUntil(arm::atSetpoint))
-                .withTimeout(2));
+    operatorController.rightBumper().whileTrue(orchestrator.duck());
+    operatorController.rightBumper().onFalse(orchestrator.unDuck());
 
     // Back button (toggle switch): unlock/lock climber ratchet
     operatorController.back().whileTrue(climber.setRatchet(false));
@@ -308,13 +309,27 @@ public class RobotContainer {
 
     // driver controller
     // Click Right Bumper: Move arm to stow position
+    //    driverController
+    //        .rightBumper()
+    //        .onTrue(
+    //            Commands.parallel(
+    //                    arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
+    //                    Commands.waitUntil(arm::limitSwitchPressed))
+    //                .withTimeout(2));
+    //    driverController
+    //        .rightBumper()
+    //        .whileTrue(
     driverController
         .rightBumper()
-        .onTrue(
-            Commands.parallel(
-                    arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5))),
-                    Commands.waitUntil(arm::limitSwitchPressed))
-                .withTimeout(2));
+        .whileTrue(
+            new StolenJoystick(
+                    drive,
+                    () -> -driverController.getLeftY(),
+                    () -> -driverController.getLeftX(),
+                    () -> drive.getPose(),
+                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d(),
+                    () -> true)
+                .alongWith(orchestrator.alignArmSpeaker(() -> drive.getPose())));
     // Click Left Bumper: Move arm to amp position
     driverController.leftBumper().onTrue(orchestrator.alignArmAmp());
     // Click left Trigger: Intake (until clicked again or has a note)

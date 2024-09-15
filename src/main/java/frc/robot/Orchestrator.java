@@ -21,7 +21,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.Set;
 import java.util.function.Supplier;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Orchestrator {
   private final Drive drive;
@@ -31,7 +30,6 @@ public class Orchestrator {
   private final Pixy2 pixy2;
   private final Arm arm;
 
-  @AutoLogOutput private boolean pullBack = false;
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
 
@@ -65,7 +63,20 @@ public class Orchestrator {
     Supplier<Rotation2d> targetRotation =
         () -> targetTranslation.get().minus(drive.getPose().getTranslation()).getAngle();
     return deferredStraightDriveToPose(
-        () -> new Pose2d(targetTranslation.get(), targetRotation.get()));
+            () ->
+                new Pose2d(
+                    drive
+                        .getPose()
+                        .getTranslation()
+                        .plus(
+                            new Translation2d(
+                                AllianceFlipUtil.applyRelative(Units.feetToMeters(0.531)), 0)),
+                    targetRotation.get()))
+        .withTimeout(2)
+        .andThen(
+            deferredStraightDriveToPose(
+                    () -> new Pose2d(targetTranslation.get(), drive.getRotation()))
+                .withTimeout(5));
   }
 
   /**
@@ -109,6 +120,18 @@ public class Orchestrator {
         arm.toSetpoint(ArmConstants.AMP_POSITION),
         Commands.waitUntil(arm::atSetpoint),
         Commands.waitSeconds(3));
+  }
+
+  public Command duck() {
+    return arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5)))
+        .alongWith(Commands.runOnce(() -> RobotState.getInstance().duck = true));
+  }
+
+  public Command unDuck() {
+    return Commands.parallel(
+            arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS), Commands.waitUntil(arm::atSetpoint))
+        .withTimeout(2)
+        .beforeStarting(() -> RobotState.getInstance().duck = false);
   }
 
   public Command goToAmp() {
@@ -162,7 +185,7 @@ public class Orchestrator {
     return Commands.sequence(
             shooter
                 .manualShoot(ShooterConstants.SHOOT_SPEED)
-                .withTimeout(1.5)
+                .withTimeout(.5)
                 .until(() -> shooter.atVelocity(ShooterConstants.SHOOT_SPEED))
                 .andThen(
                     Commands.race(
@@ -191,6 +214,10 @@ public class Orchestrator {
         .withTimeout(1);
   }
 
+  public Command stopFlywheel() {
+    return shooter.manualShoot(0).withTimeout(1);
+  }
+
   /**
    * Calculates the angle to align the arm to the speaker from anywhere on the field. Does arcTan of
    * ((height of center of the speaker - height of the shooter) / distance to speaker)
@@ -198,18 +225,38 @@ public class Orchestrator {
    * @return The command to move the arm to the correct setPoint for shooting from its current
    *     location.
    */
-  public Command alignArmSpeaker() { // TODO: Not working. Abishek, Fix this
+  public Command alignArmSpeaker(Supplier<Pose2d> robotPose) {
     return Commands.defer(
-        () ->
-            arm.toSetpoint(
-                new Rotation2d(
-                    Math.abs(
-                        Math.atan(
-                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
-                                    - Math.sin(arm.getAngle() + ArmConstants.STOW.getRadians())
-                                        * Units.inchesToMeters(28))
-                                / drive.getPose().getTranslation().getDistance(speaker))))),
+        () -> {
+          Supplier<Double> distance =
+              () ->
+                  robotPose
+                      .get()
+                      .getTranslation()
+                      .getDistance(
+                          AllianceFlipUtil.apply(
+                              FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()));
+          return arm.toSetpoint(
+              () ->
+                  Rotation2d.fromDegrees(
+                      (-3.1419 * (distance.get() * distance.get()))
+                          + (23.725 * distance.get())
+                          - 30.103));
+        },
         Set.of(arm));
+    //    return Commands.defer(
+    //        () ->
+    //            arm.toSetpoint(
+    //                new Rotation2d(
+    //                    Math.abs(
+    //                        Math.atan(
+    //                            (FieldConstants.Speaker.centerSpeakerOpening.getZ()
+    //                                    - Math.sin(arm.getAngle() +
+    // ArmConstants.STOW.getRadians())
+    //                                        * Units.inchesToMeters(28))
+    //                                / drive.getPose().getTranslation().getDistance(speaker))))),
+    //        Set.of(arm));
+    //    return Commands.none();
   }
 
   /**
@@ -217,8 +264,8 @@ public class Orchestrator {
    *
    * @return The command to move the robot and the arm in preparation to shoot.
    */
-  public Command fullAlignSpeaker() {
-    return Commands.sequence(turnToSpeaker(), alignArmSpeaker());
+  public Command fullAlignSpeaker(Supplier<Pose2d> robotPose) {
+    return Commands.sequence(turnToSpeaker(), alignArmSpeaker(robotPose));
   }
 
   /**
@@ -227,8 +274,8 @@ public class Orchestrator {
    *
    * @return The command to align both the robot and the arm, and then shoots at full power.
    */
-  public Command fullAlignShootSpeaker() {
-    return Commands.sequence(fullAlignSpeaker(), shootBasic());
+  public Command fullAlignShootSpeaker(Supplier<Pose2d> robotPose) {
+    return Commands.sequence(fullAlignSpeaker(robotPose), shootBasic());
   }
 
   /**
@@ -244,26 +291,24 @@ public class Orchestrator {
             Commands.parallel(
                     indexer.setPercent(IndexerConstants.INDEX_SPEED.get()), intake.intake())
                 .until(() -> RobotState.getInstance().hasNote)
-                .withTimeout(10)
-                .finallyDo(() -> pullBack = false))
-        .andThen(pullBack().finallyDo(() -> pullBack = true));
+                .withTimeout(10))
+        .andThen(pullBack());
   }
 
   public Command pullBack() {
-    return (Commands.parallel(
-                indexer.setPercent(IndexerConstants.BACKUP_SPEED),
-                shooter.manualShoot(-0.2),
-                intake.stop())
-            .withTimeout(IndexerConstants.BACKUP_TIME)
-            .andThen(
-                Commands.parallel(
-                        arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
-                        indexer.setPercent(0).until(() -> true),
-                        shooter.manualShoot(0).until(() -> true),
-                        intake.stop().until(() -> true))
-                    .withTimeout(5))
-            .finallyDo(() -> pullBack = true))
-        .onlyIf(() -> !pullBack);
+    return Commands.parallel(
+            indexer.setPercent(IndexerConstants.BACKUP_SPEED),
+            shooter.manualShoot(-0.2),
+            intake.stop())
+        .withTimeout(IndexerConstants.BACKUP_TIME)
+        .andThen(
+            Commands.parallel(
+                    arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS).until(arm::atSetpoint),
+                    indexer.setPercent(0).until(() -> true),
+                    shooter.manualShoot(0).until(() -> true),
+                    intake.stop().until(() -> true),
+                    Commands.waitSeconds(0.5))
+                .withTimeout(5));
   }
 
   /**

@@ -18,6 +18,15 @@ public class AllianceFlipUtil {
     throw new IllegalStateException("Utility class");
   }
 
+  /** Negates a distance based on current alliance color. */
+  public static double applyRelative(double distance) {
+    if (shouldFlip()) {
+      return -distance;
+    } else {
+      return distance;
+    }
+  }
+
   /** Flips an x coordinate to the correct side of the field based on the current alliance color. */
   public static double apply(double xCoordinate) {
     if (shouldFlip()) {

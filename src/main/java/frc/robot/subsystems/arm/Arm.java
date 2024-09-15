@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -106,6 +107,15 @@ public class Arm extends SubsystemBase {
     return Commands.run(
         () -> {
           feedback.setGoal(setpointAngle.getRadians());
+          feedbackMode = true;
+        },
+        this);
+  }
+
+  public Command toSetpoint(Supplier<Rotation2d> setpointAngle) {
+    return Commands.run(
+        () -> {
+          feedback.setGoal(setpointAngle.get().getRadians());
           feedbackMode = true;
         },
         this);

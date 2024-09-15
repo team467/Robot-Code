@@ -12,7 +12,6 @@ public class ClimberIOSparkMax implements ClimberIO {
   private final CANSparkMax climberRight;
   private final RelativeEncoder climberRightEncoder;
   private final Relay climberRatchet;
-  private boolean ratchetLocked = false;
   private SparkLimitSwitch reverseLimitSwitchLeft;
   private SparkLimitSwitch fowardLimitSwitchLeft;
   private SparkLimitSwitch reverseLimitSwitchRight;
@@ -33,8 +32,20 @@ public class ClimberIOSparkMax implements ClimberIO {
     climberLeft.setIdleMode(CANSparkBase.IdleMode.kBrake);
     climberRight.enableVoltageCompensation(12);
     climberLeft.enableVoltageCompensation(12);
-    climberRight.setSmartCurrentLimit(80);
-    climberLeft.setSmartCurrentLimit(80);
+    climberRight.setSmartCurrentLimit(40);
+    climberLeft.setSmartCurrentLimit(40);
+    climberRight.enableSoftLimit(CANSparkBase.SoftLimitDirection.kReverse, false);
+    climberLeft.enableSoftLimit(CANSparkBase.SoftLimitDirection.kReverse, false);
+    climberRight.enableSoftLimit(CANSparkBase.SoftLimitDirection.kForward, true);
+    climberLeft.enableSoftLimit(CANSparkBase.SoftLimitDirection.kForward, true);
+    climberLeft.setSoftLimit(
+        CANSparkBase.SoftLimitDirection.kReverse, ClimberConstants.LOWER_LIMIT_POSITION);
+    climberRight.setSoftLimit(
+        CANSparkBase.SoftLimitDirection.kReverse, ClimberConstants.LOWER_LIMIT_POSITION);
+    climberLeft.setSoftLimit(
+        CANSparkBase.SoftLimitDirection.kForward, ClimberConstants.UPPER_LIMIT_POSITION);
+    climberRight.setSoftLimit(
+        CANSparkBase.SoftLimitDirection.kForward, ClimberConstants.UPPER_LIMIT_POSITION);
     // Limit Switches
     reverseLimitSwitchLeft = climberLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     fowardLimitSwitchLeft = climberLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
@@ -43,7 +54,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     fowardLimitSwitchRight =
         climberRight.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     // Ratchet
-    climberRatchet = new Relay(ClimberConstants.CLIMBER_RATCHET_ID, Relay.Direction.kReverse);
+    climberRatchet = new Relay(ClimberConstants.CLIMBER_RATCHET_ID, Relay.Direction.kForward);
     climberRatchet.set(Relay.Value.kOff);
   }
 
@@ -56,7 +67,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     inputs.appliedVoltsRight = climberRight.getBusVoltage() * climberRight.getAppliedOutput();
     inputs.currentAmpsRight = climberRight.getOutputCurrent();
     inputs.ClimberRightPosition = climberRightEncoder.getPosition();
-    inputs.ratchetLocked = ratchetLocked;
+    inputs.ratchetLocked = climberRatchet.get().equals(Relay.Value.kOff);
     inputs.reverseLimitSwitchLeftPressed = reverseLimitSwitchLeft.isPressed();
     inputs.forwardLimitSwitchLeftPressed = fowardLimitSwitchLeft.isPressed();
     inputs.reverseLimitSwitchRightPressed = reverseLimitSwitchRight.isPressed();
@@ -80,8 +91,7 @@ public class ClimberIOSparkMax implements ClimberIO {
   }
 
   public void setRatchetLocked(boolean locked) {
-    climberRatchet.set(ratchetLocked ? Relay.Value.kOff : Relay.Value.kOn);
-    ratchetLocked = locked;
+    climberRatchet.set(locked ? Relay.Value.kOff : Relay.Value.kOn);
   }
 
   @Override
@@ -92,5 +102,11 @@ public class ClimberIOSparkMax implements ClimberIO {
   @Override
   public boolean getLimitSwitchRight() {
     return fowardLimitSwitchRight.isPressed() || reverseLimitSwitchRight.isPressed();
+  }
+
+  @Override
+  public void resetPosition() {
+    climberLeftEncoder.setPosition(0);
+    climberRightEncoder.setPosition(0);
   }
 }

@@ -10,11 +10,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.utils.RobotOdometry;
 import frc.lib.utils.TunableNumber;
 import frc.robot.FieldConstants;
-import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
@@ -38,7 +38,7 @@ public class Vision extends SubsystemBase {
   private RobotOdometry odometry;
   private final TunableNumber poseDifferenceThreshold =
       new TunableNumber("Vision/VisionPoseThreshold", POSE_DIFFERENCE_THRESHOLD_METERS);
-  private final TunableNumber stdDevSlope = new TunableNumber("Vision/stdDevSlope", 0.10);
+  private final TunableNumber stdDevSlope = new TunableNumber("Vision/stdDevSlope", 0.50);
   private final TunableNumber stdDevPower = new TunableNumber("Vision/stdDevPower", 2.0);
   private final TunableNumber stdDevMultiTagFactor =
       new TunableNumber("Vision/stdDevMultiTagFactor", 0.2);
@@ -98,16 +98,16 @@ public class Vision extends SubsystemBase {
         Pose2d estimatedRobotPose2d = ios[i].estimatedRobotPose.toPose2d();
 
         // only update the pose estimator if the vision subsystem is enabled
-        if (isEnabled) {
+        if (isEnabled && !DriverStation.isAutonomous()) {
           // when updating the pose estimator, specify standard deviations based on the distance
           // from the robot to the AprilTag (the greater the distance, the less confident we are
           // in the measurement)
-          odometry.addVisionData(
-              List.of(
-                  new RobotOdometry.TimestampedVisionUpdate(
-                      ios[i].estimatedRobotPoseTimestamp,
-                      estimatedRobotPose2d,
-                      getStandardDeviations(i, estimatedRobotPose2d))));
+          odometry
+              .getPoseEstimator()
+              .addVisionMeasurement(
+                  estimatedRobotPose2d,
+                  ios[i].estimatedRobotPoseTimestamp,
+                  getStandardDeviations(i, estimatedRobotPose2d));
           isVisionUpdating = true;
         }
 
@@ -171,7 +171,12 @@ public class Vision extends SubsystemBase {
   public boolean posesHaveConverged() {
     for (int i = 0; i < visionIOs.length; i++) {
       Pose3d robotPose = ios[i].estimatedRobotPose;
-      if (odometry.getLatestPose().minus(robotPose.toPose2d()).getTranslation().getNorm()
+      if (odometry
+              .getPoseEstimator()
+              .getEstimatedPosition()
+              .minus(robotPose.toPose2d())
+              .getTranslation()
+              .getNorm()
           < poseDifferenceThreshold.get()) {
         Logger.recordOutput("Vision/posesInLine", true);
         return true;
@@ -188,7 +193,7 @@ public class Vision extends SubsystemBase {
    * @param estimatedPose The estimated pose to guess standard deviations for.
    */
   private Matrix<N3, N1> getStandardDeviations(int index, Pose2d estimatedPose) {
-    Matrix<N3, N1> estStdDevs = VecBuilder.fill(0.1, 0.1, 1);
+    Matrix<N3, N1> estStdDevs = VecBuilder.fill(1, 1, 0.5);
     int[] tags = ios[index].estimatedRobotPoseTags;
     int numTags = 0;
     double avgDist = 0;
