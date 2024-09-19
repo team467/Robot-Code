@@ -326,31 +326,6 @@ public class Orchestrator {
   }
 
   /**
-   * Intakes after seeing note with Pixy2.
-   *
-   * @return The command to intake after a note is seen.
-   */
-  public Command basicVisionIntake() {
-    return Commands.sequence(
-        arm.toSetpoint(ArmConstants.STOW),
-        Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
-        deferredStraightDriveToPose(
-            () ->
-                new Pose2d(
-                    drive.getPose().getTranslation(),
-                    drive
-                        .getRotation()
-                        .plus(AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle()))))),
-        driveWhileIntaking());
-  }
-
-  /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
-  Will use intakeBasic in parallel. */
-  public Command fullVisionIntake() {
-    return null;
-  }
-
-  /**
    * Expels the intake if we want to get rid of a note.
    *
    * @return The command to release a note in the intake.
