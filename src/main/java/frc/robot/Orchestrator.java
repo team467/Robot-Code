@@ -115,11 +115,21 @@ public class Orchestrator {
         Commands.waitSeconds(3));
   }
 
+  /**
+   * Lowers the arm to duck under stage.
+   *
+   * @return The command to move the arm down.
+   */
   public Command duck() {
     return arm.toSetpoint(ArmConstants.STOW.minus(Rotation2d.fromDegrees(5)))
         .alongWith(Commands.runOnce(() -> RobotState.getInstance().duck = true));
   }
 
+  /**
+   * Raises the arm back up after ducking the arm.
+   *
+   * @return The command to move the arm ack up to proper position.
+   */
   public Command unDuck() {
     return Commands.parallel(
             arm.toSetpoint(ArmConstants.AFTER_INTAKE_POS), Commands.waitUntil(arm::atSetpoint))
