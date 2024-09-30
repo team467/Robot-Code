@@ -10,11 +10,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Schematic;
@@ -108,16 +103,19 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnAppliedVolts = turnMotor.getMotorVoltage();
     turnCurrent = turnMotor.getSupplyCurrent();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(100.0, drivePosition, turnPosition, turnAbsolutePosition); // Required for odometry, use faster rate
     BaseStatusSignal.setUpdateFrequencyForAll(
-            50.0,
-            driveVelocity,
-            driveAppliedVolts,
-            driveCurrent,
-            turnVelocity,
-            turnAppliedVolts,
-            turnCurrent
-    );
+        100.0,
+        drivePosition,
+        turnPosition,
+        turnAbsolutePosition); // Required for odometry, use faster rate
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0,
+        driveVelocity,
+        driveAppliedVolts,
+        driveCurrent,
+        turnVelocity,
+        turnAppliedVolts,
+        turnCurrent);
     driveMotor.optimizeBusUtilization();
     turnMotor.optimizeBusUtilization();
 
@@ -127,15 +125,15 @@ public class ModuleIOTalonFX implements ModuleIO {
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-            drivePosition,
-            driveVelocity,
-            driveAppliedVolts,
-            driveCurrent,
-            turnAbsolutePosition,
-            turnPosition,
-            turnVelocity,
-            turnAppliedVolts,
-            turnCurrent);
+        drivePosition,
+        driveVelocity,
+        driveAppliedVolts,
+        driveCurrent,
+        turnAbsolutePosition,
+        turnPosition,
+        turnVelocity,
+        turnAppliedVolts,
+        turnCurrent);
 
     inputs.driveVelocityMetersPerSec = driveVelocity.getValueAsDouble() * rotsToMeters;
     inputs.drivePositionMeters = drivePosition.getValueAsDouble() * rotsToMeters;
@@ -164,7 +162,10 @@ public class ModuleIOTalonFX implements ModuleIO {
   @Override
   public void setDriveBrakeMode(boolean brake) {
     var config = new MotorOutputConfigs();
-    config.Inverted = isDriveMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    config.Inverted =
+        isDriveMotorInverted
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive;
     config.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     driveMotor.getConfigurator().apply(config);
   }
@@ -172,7 +173,10 @@ public class ModuleIOTalonFX implements ModuleIO {
   @Override
   public void setTurnBrakeMode(boolean brake) {
     var config = new MotorOutputConfigs();
-    config.Inverted = isTurnMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    config.Inverted =
+        isTurnMotorInverted
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive;
     config.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     turnMotor.getConfigurator().apply(config);
   }

@@ -95,13 +95,9 @@ public class ModuleIOCombinedShithole implements ModuleIO {
     driveAppliedVolts = driveMotor.getMotorVoltage();
     driveCurrent = driveMotor.getSupplyCurrent();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(100.0, drivePosition); // Required for odometry, use faster rate
     BaseStatusSignal.setUpdateFrequencyForAll(
-            50.0,
-            driveVelocity,
-            driveAppliedVolts,
-            driveCurrent
-    );
+        100.0, drivePosition); // Required for odometry, use faster rate
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0, driveVelocity, driveAppliedVolts, driveCurrent);
     driveMotor.optimizeBusUtilization();
 
     this.index = index;
@@ -110,11 +106,7 @@ public class ModuleIOCombinedShithole implements ModuleIO {
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-            drivePosition,
-            driveVelocity,
-            driveAppliedVolts,
-            driveCurrent,
-            turnAbsolutePosition);
+        drivePosition, driveVelocity, driveAppliedVolts, driveCurrent, turnAbsolutePosition);
 
     inputs.driveVelocityMetersPerSec = driveVelocity.getValueAsDouble() * rotsToMeters;
     inputs.drivePositionMeters = drivePosition.getValueAsDouble() * rotsToMeters;
@@ -143,7 +135,10 @@ public class ModuleIOCombinedShithole implements ModuleIO {
   @Override
   public void setDriveBrakeMode(boolean brake) {
     var config = new MotorOutputConfigs();
-    config.Inverted = isDriveMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    config.Inverted =
+        isDriveMotorInverted
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive;
     config.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     driveMotor.getConfigurator().apply(config);
   }
