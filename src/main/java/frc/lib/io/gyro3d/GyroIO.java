@@ -13,6 +13,9 @@ public interface GyroIO {
     public double rollRate = 0.0;
     public double yawRate = 0.0;
     public double pitchRate = 0.0;
+
+    public double[] odometryYawTimestamps = new double[] {};
+    public Rotation2d[] odometryYawPositions = new Rotation2d[] {};
   }
 
   /**

@@ -17,8 +17,9 @@ public class Module {
   private PIDController turnFeedback =
       new PIDController(DriveConstants.TURN_KP.get(), 0.0, DriveConstants.TURN_KD.get());
   private Rotation2d angleSetpoint = null; // Setpoint for closed loop control, null for open loop
-  private Double speedSetpoint = null; // Setpoint for closed loop control, null for open loop
-  private double lastPositionMeters = 0.0; // Used for delta calculation
+  private Double speedSetpoint = null; // Setpoint for closed loop control, null for open
+  private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
+  private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
   public Module(ModuleIO io, int index) {
     this.io = io;
@@ -27,9 +28,22 @@ public class Module {
     turnFeedback.enableContinuousInput(-Math.PI, Math.PI);
   }
 
-  public void periodic() {
+  /**
+   * Update inputs without running the rest of the periodic logic. This is useful since these
+   * updates need to be properly thread-locked.
+   */
+  public void updateInputs() {
     io.updateInputs(inputs);
+  }
+
+  public void periodic() {
     Logger.processInputs("Drive/Module" + index, inputs);
+
+    // On first cycle, reset relative turn encoder
+    // Wait until absolute angle is nonzero in case it wasn't initialized yet
+    if (turnRelativeOffset == null && inputs.turnAbsolutePosition.getRadians() != 0.0) {
+      turnRelativeOffset = inputs.turnAbsolutePosition.minus(inputs.turnPosition);
+    }
 
     // Update controllers if tunable numbers have changed
     if (DriveConstants.TURN_KP.hasChanged(hashCode())
@@ -60,6 +74,17 @@ public class Module {
         // Run drive controller
         io.setDriveVoltage(driveFeedforward.calculate(adjustSpeedSetpoint));
       }
+    }
+
+    // Calculate positions for odometry
+    int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
+    odometryPositions = new SwerveModulePosition[sampleCount];
+    for (int i = 0; i < sampleCount; i++) {
+      double positionMeters = inputs.odometryDrivePositionsMeter[i];
+      Rotation2d angle =
+          inputs.odometryTurnPositions[i].plus(
+              turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d());
+      odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
     }
   }
 
@@ -104,7 +129,11 @@ public class Module {
 
   /** Returns the current turn angle of the module. */
   public Rotation2d getAngle() {
-    return inputs.turnAbsolutePosition;
+    if (turnRelativeOffset == null) {
+      return new Rotation2d();
+    } else {
+      return inputs.turnPosition.plus(turnRelativeOffset);
+    }
   }
 
   /** Returns the module position (turn angle and drive position). */
@@ -112,12 +141,14 @@ public class Module {
     return new SwerveModulePosition(inputs.drivePositionMeters, getAngle());
   }
 
-  /** Returns the module position delta since the last call to this method. */
-  public SwerveModulePosition getPositionDelta() {
-    var delta =
-        new SwerveModulePosition(inputs.drivePositionMeters - lastPositionMeters, getAngle());
-    lastPositionMeters = inputs.drivePositionMeters;
-    return delta;
+  /** Returns the module positions received this cycle. */
+  public SwerveModulePosition[] getOdometryPositions() {
+    return odometryPositions;
+  }
+
+  /** Returns the timestamps of the samples received this cycle. */
+  public double[] getOdometryTimestamps() {
+    return inputs.odometryTimestamps;
   }
 
   /** Returns the module state (turn angle and drive velocity). */
