@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -32,12 +31,6 @@ public class Orchestrator {
 
   private final Translation2d speaker =
       AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
-
-  //  static {
-  //    // TODO put this where it actually belongs
-  //    Map<Double, Double> test = new HashMap<>();
-  //    test.put(Units.inchesToMeters(44.1), Units.degreesToRadians(1.2));
-  //  }
 
   public Orchestrator(
       Drive drive, Intake intake, Indexer indexer, Shooter shooter, Pixy2 pixy2, Arm arm) {
@@ -163,16 +156,6 @@ public class Orchestrator {
             shooter
                 .manualShoot(ShooterConstants.SHOOT_SPEED)
                 .onlyIf(() -> arm.getAngle() < Units.degreesToRadians(65)));
-  }
-
-  /**
-   * Uses goToAmp(), alignArmAmp(), and shootBasic() to move the robot to the amp and then line up
-   * and shoot.
-   *
-   * @return The command for scoring in the amp from any spot on the field.
-   */
-  public Command scoreAmp() {
-    return alignArmAmp().andThen(shootAmp());
   }
 
   /**
@@ -312,45 +295,6 @@ public class Orchestrator {
   }
 
   /**
-   * Turns on the intake while driving for 2 seconds, both happening in parallel.
-   *
-   * @return The command to move the robot and intake.
-   */
-  public Command driveWhileIntaking() {
-    return Commands.race(
-        intakeBasic(),
-        Commands.run(
-                () -> drive.runVelocity(new ChassisSpeeds(Units.inchesToMeters(2), 0.0, 0.0)),
-                drive)
-            .withTimeout(5));
-  }
-
-  /**
-   * Intakes after seeing note with Pixy2.
-   *
-   * @return The command to intake after a note is seen.
-   */
-  public Command basicVisionIntake() {
-    return Commands.sequence(
-        arm.toSetpoint(ArmConstants.STOW),
-        Commands.waitUntil(() -> arm.atSetpoint() && pixy2.seesNote()).withTimeout(2),
-        deferredStraightDriveToPose(
-            () ->
-                new Pose2d(
-                    drive.getPose().getTranslation(),
-                    drive
-                        .getRotation()
-                        .plus(AllianceFlipUtil.apply(Rotation2d.fromDegrees(pixy2.getAngle()))))),
-        driveWhileIntaking());
-  }
-
-  /* TODO: Complete once pixy is done. Will drive towards note using the angle and distance supplied by the pixy2.
-  Will use intakeBasic in parallel. */
-  public Command fullVisionIntake() {
-    return null;
-  }
-
-  /**
    * Expels the intake if we want to get rid of a note.
    *
    * @return The command to release a note in the intake.
@@ -381,6 +325,7 @@ public class Orchestrator {
     return Commands.parallel(
         indexer.setPercent(-IndexerConstants.INDEX_SPEED.get()), expelIntake());
   }
+
   /**
    * Sets the arm to the home position, completely down.
    *
