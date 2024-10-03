@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -11,20 +13,17 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.characterization.SysIdFactory;
 import frc.lib.io.gyro3d.GyroIO;
 import frc.lib.io.gyro3d.GyroIOInputsAutoLogged;
 import frc.lib.utils.LocalADStarAK;
 import frc.lib.utils.RobotOdometry;
 import frc.robot.FieldConstants;
 import frc.robot.RobotState;
-import frc.robot.commands.auto.StraightDriveToPose;
-import java.util.Set;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -42,6 +41,8 @@ public class Drive extends SubsystemBase {
   private final RobotOdometry odometry;
   private Rotation2d lastGyroRotation = new Rotation2d();
 
+  private final SysIdFactory sysIdFactory;
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -55,6 +56,16 @@ public class Drive extends SubsystemBase {
     modules[3] = new Module(brModuleIO, 3);
 
     odometry = RobotOdometry.getInstance();
+
+    sysIdFactory =
+        new SysIdFactory(
+            this,
+            voltage -> {
+              for (Module module : modules) {
+                module.runCharacterization(voltage.in(Volts));
+              }
+            });
+
     Pathfinding.setPathfinder(new LocalADStarAK());
     AutoBuilder.configureHolonomic(
         this::getPose,
@@ -171,22 +182,6 @@ public class Drive extends SubsystemBase {
     stop();
   }
 
-  /** Runs forwards at the commanded voltage. */
-  public void runCharacterizationVolts(double volts) {
-    for (int i = 0; i < 4; i++) {
-      modules[i].runCharacterization(volts);
-    }
-  }
-
-  /** Returns the average drive velocity in meters/sec. */
-  public double getCharacterizationVelocity() {
-    double driveVelocityAverage = 0.0;
-    for (var module : modules) {
-      driveVelocityAverage += module.getCharacterizationVelocity();
-    }
-    return driveVelocityAverage / 4.0;
-  }
-
   /** Returns the module states (turn angles and drive velocities) for all the modules. */
   @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
@@ -243,9 +238,25 @@ public class Drive extends SubsystemBase {
     };
   }
 
-  public Command driveToNote(Supplier<Double> angle) {
-    return Commands.defer(
-        () -> new StraightDriveToPose(0, 0, Units.degreesToRadians(angle.get()), this),
-        Set.of(this));
+  /**
+   * Returns a command to run a quasistatic sysid test in the specified direction.
+   *
+   * @param direction The direction in which to run the test.
+   * @return A command to run the test.
+   * @see SysIdRoutine#quasistatic(SysIdRoutine.Direction)
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return sysIdFactory.quasistatic(direction);
+  }
+
+  /**
+   * Returns a command to run a dynamic sysid test in the specified direction.
+   *
+   * @param direction The direction in which to run the test.
+   * @return A command to run the test.
+   * @see SysIdRoutine#dynamic(SysIdRoutine.Direction)
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return sysIdFactory.dynamic(direction);
   }
 }
