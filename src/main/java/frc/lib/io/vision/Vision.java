@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.utils.RobotOdometry;
 import frc.lib.utils.TunableNumber;
@@ -26,9 +25,13 @@ import org.littletonrobotics.junction.Logger;
  * PhotonVision.
  */
 public class Vision extends SubsystemBase {
+  private static final int EXPIRATION_COUNT = 5;
+
   private VisionIO[] visionIOs;
   private final VisionIOInputsAutoLogged[] ios;
   private double[] lastTimestamps;
+  private final Pose2d[] detectedAprilTags;
+  private int[] cyclesWithNoResults;
 
   private AprilTagFieldLayout layout;
 
@@ -42,6 +45,8 @@ public class Vision extends SubsystemBase {
   private final TunableNumber stdDevPower = new TunableNumber("Vision/stdDevPower", 2.0);
   private final TunableNumber stdDevMultiTagFactor =
       new TunableNumber("Vision/stdDevMultiTagFactor", 0.2);
+  private final TunableNumber stdDevFactorAmbiguity =
+      new TunableNumber("Vision/StdDevSlopeFactorAmbiguity", 1.0);
 
   /**
    * Create a new Vision subsystem. The number of VisionIO objects passed to the constructor must
@@ -68,6 +73,12 @@ public class Vision extends SubsystemBase {
     for (AprilTag tag : layout.getTags()) {
       Logger.recordOutput("Vision/AprilTags/" + tag.ID, tag.pose);
     }
+
+    // index corresponds to tag ID; so, add 1 since there is no tag ID 0
+    this.detectedAprilTags = new Pose2d[this.layout.getTags().size() + 1];
+    for (int i = 0; i < this.detectedAprilTags.length; i++) {
+      this.detectedAprilTags[i] = new Pose2d();
+    }
   }
 
   /**
@@ -79,49 +90,60 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     isVisionUpdating = false;
     for (int i = 0; i < visionIOs.length; i++) {
-
       visionIOs[i].updateInputs(ios[i]);
       Logger.processInputs("Vision/" + i, ios[i]);
 
-      // "zero" the robot poses and which tags are seen such that old data is not used if no new
-      // data has been available in the past 0.1 seconds
-      if (ios[i].lastCameraTimestamp + 0.1 < lastTimestamps[i]) {
-        Logger.recordOutput("Vision/" + i + "/RobotPose", new Pose2d());
-        for (AprilTag tag : this.layout.getTags()) {
-          Logger.recordOutput("Vision/" + i + "/TagID" + "_" + tag.ID, false);
-        }
-      }
+      processNewVisionData(i);
+    }
+    // set the pose of all the tags to the current robot pose such that no vision target lines are
+    // displayed in AdvantageScope
+    for (int tagIndex = 0; tagIndex < this.detectedAprilTags.length; tagIndex++) {
+      this.detectedAprilTags[tagIndex] = odometry.getPoseEstimator().getEstimatedPosition();
+    }
 
-      // only process the vision data if the timestamp is newer than the last one
-      if (lastTimestamps[i] < ios[i].lastCameraTimestamp) {
-        lastTimestamps[i] = ios[i].lastCameraTimestamp;
-        Pose2d estimatedRobotPose2d = ios[i].estimatedRobotPose.toPose2d();
-
-        // only update the pose estimator if the vision subsystem is enabled
-        if (isEnabled && !DriverStation.isAutonomous()) {
-          // when updating the pose estimator, specify standard deviations based on the distance
-          // from the robot to the AprilTag (the greater the distance, the less confident we are
-          // in the measurement)
-          odometry
-              .getPoseEstimator()
-              .addVisionMeasurement(
-                  estimatedRobotPose2d,
-                  ios[i].estimatedRobotPoseTimestamp,
-                  getStandardDeviations(i, estimatedRobotPose2d));
-          isVisionUpdating = true;
+    for (int visionIndex = 0; visionIndex < visionIOs.length; visionIndex++) {
+      for (int tagID = 1; tagID < ios[visionIndex].tagsSeen.length; tagID++) {
+        if (ios[visionIndex].tagsSeen[tagID]) {
+          this.detectedAprilTags[tagID] =
+              this.layout.getTagPose(tagID).orElse(new Pose3d()).toPose2d();
         }
-
-        for (AprilTag tag : this.layout.getTags()) {
-          Logger.recordOutput("Vision/" + i + "/TagID" + "_" + tag.ID, false);
-        }
-        for (int tagID : ios[i].estimatedRobotPoseTags) {
-          Logger.recordOutput("Vision/" + i + "/TagID" + "_" + tagID, true);
-        }
-
-        Logger.recordOutput("Vision/" + i + "/RobotPose", estimatedRobotPose2d);
       }
     }
+    Logger.recordOutput("Vision/AprilTags", this.detectedAprilTags);
+
     Logger.recordOutput("Vision/IsEnabled", isEnabled);
+  }
+
+  private void processNewVisionData(int i) {
+    // only process the vision data if the timestamp is newer than the last one
+    if (this.lastTimestamps[i] < ios[i].lastCameraTimestamp) {
+      this.lastTimestamps[i] = ios[i].lastCameraTimestamp;
+      Pose2d estimatedRobotPose2d = ios[i].estimatedRobotPose.toPose2d();
+
+      // only update the pose estimator if the vision subsystem is enabled
+      if (isEnabled) {
+        // when updating the pose estimator, specify standard deviations based on the distance
+        // from the robot to the AprilTag (the greater the distance, the less confident we are
+        // in the measurement)
+        Matrix<N3, N1> stdDev = getStandardDeviations(i, estimatedRobotPose2d, ios[i].minAmbiguity);
+        odometry
+            .getPoseEstimator()
+            .addVisionMeasurement(estimatedRobotPose2d, ios[i].estimatedRobotPoseTimestamp, stdDev);
+        isVisionUpdating = true;
+      }
+
+      Logger.recordOutput("Vision/" + i + "/RobotPose3d", ios[i].estimatedRobotPose);
+      Logger.recordOutput("Vision/" + i + "/RobotPose2d", estimatedRobotPose2d);
+      this.cyclesWithNoResults[i] = 0;
+    } else {
+      this.cyclesWithNoResults[i] += 1;
+    }
+
+    // if no tags have been seen for the specified number of cycles, "zero" the robot pose
+    // such that old data is not seen in AdvantageScope
+    if (cyclesWithNoResults[i] == EXPIRATION_COUNT) {
+      Logger.recordOutput("Vision/" + i + "/RobotPose", new Pose2d());
+    }
   }
 
   /**
@@ -192,14 +214,14 @@ public class Vision extends SubsystemBase {
    *
    * @param estimatedPose The estimated pose to guess standard deviations for.
    */
-  private Matrix<N3, N1> getStandardDeviations(int index, Pose2d estimatedPose) {
+  private Matrix<N3, N1> getStandardDeviations(
+      int index, Pose2d estimatedPose, double minAmbiguity) {
     Matrix<N3, N1> estStdDevs = VecBuilder.fill(1, 1, 0.5);
-    int[] tags = ios[index].estimatedRobotPoseTags;
     int numTags = 0;
     double avgDist = 0;
-    for (int tag : tags) {
-      Optional<Pose3d> tagPose = layout.getTagPose(tag);
-      if (tagPose.isEmpty()) {
+    for (int tagID = 0; tagID < ios[index].tagsSeen.length; tagID++) {
+      Optional<Pose3d> tagPose = layout.getTagPose(tagID);
+      if (tagPose.isEmpty() || !ios[index].tagsSeen[tagID]) {
         continue;
       }
       numTags++;
@@ -218,6 +240,9 @@ public class Vision extends SubsystemBase {
     } else {
       estStdDevs = estStdDevs.times(stdDevSlope.get() * (Math.pow(avgDist, stdDevPower.get())));
     }
+
+    // Adjust standard deviations based on the ambiguity of the pose
+    estStdDevs = estStdDevs.times(stdDevFactorAmbiguity.get() * minAmbiguity / MAXIMUM_AMBIGUITY);
 
     return estStdDevs;
   }

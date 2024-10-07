@@ -7,6 +7,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /**
  * PhotonVision-based implementation of the VisionIO interface.
@@ -15,9 +16,13 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
  * https://github.com/PhotonVision/photonvision/blob/master/photonlib-java-examples/swervedriveposeestsim/src/main/java/frc/robot/Vision.java
  */
 public class VisionIOPhotonVision implements VisionIO {
+  private static final int EXPIRATION_COUNT = 5;
+
   private final PhotonCamera camera;
   private final PhotonPoseEstimator photonEstimator;
+  private final boolean[] tagsSeen;
   private double lastTimestamp = 0;
+  private int cyclesWithNoResults = 0;
 
   /**
    * Creates a new VisionIOPhotonVision object.
@@ -32,6 +37,9 @@ public class VisionIOPhotonVision implements VisionIO {
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             camera,
             robotToCamera);
+
+    // the index of the array corresponds to the tag ID; so, add one since there is no tag ID 0
+    this.tagsSeen = new boolean[FieldConstants.aprilTags.getTags().size() + 1];
   }
 
   /**
@@ -44,20 +52,41 @@ public class VisionIOPhotonVision implements VisionIO {
     Optional<EstimatedRobotPose> visionEstimate = this.photonEstimator.update();
     double latestTimestamp = camera.getLatestResult().getTimestampSeconds();
 
+    this.cyclesWithNoResults++;
+
     boolean newResult = Math.abs(latestTimestamp - lastTimestamp) > 1e-5;
     if (newResult) {
+      double minAmbiguity = 10;
+      for (PhotonTrackedTarget target : camera.getLatestResult().getTargets()) {
+        if (target.getPoseAmbiguity() < minAmbiguity) {
+          minAmbiguity = target.getPoseAmbiguity();
+        }
+      }
+      inputs.minAmbiguity = minAmbiguity;
+
       visionEstimate.ifPresent(
           estimate -> {
             inputs.estimatedRobotPose = estimate.estimatedPose;
             inputs.estimatedRobotPoseTimestamp = estimate.timestampSeconds;
-            int[] tags = new int[estimate.targetsUsed.size()];
-            for (int i = 0; i < estimate.targetsUsed.size(); i++) {
-              tags[i] = estimate.targetsUsed.get(i).getFiducialId();
+            for (int i = 0; i < this.tagsSeen.length; i++) {
+              this.tagsSeen[i] = false;
             }
-            inputs.estimatedRobotPoseTags = tags;
+            for (int i = 0; i < estimate.targetsUsed.size(); i++) {
+              this.tagsSeen[estimate.targetsUsed.get(i).getFiducialId()] = true;
+            }
+            inputs.tagsSeen = this.tagsSeen;
             inputs.lastCameraTimestamp = latestTimestamp;
             lastTimestamp = latestTimestamp;
+            this.cyclesWithNoResults = 0;
           });
+    }
+
+    // if no tags have been seen for the specified number of cycles, clear the array
+    if (this.cyclesWithNoResults == EXPIRATION_COUNT) {
+      for (int i = 0; i < this.tagsSeen.length; i++) {
+        this.tagsSeen[i] = false;
+      }
+      inputs.tagsSeen = this.tagsSeen;
     }
   }
 }

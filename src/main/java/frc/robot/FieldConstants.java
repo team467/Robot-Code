@@ -5,7 +5,9 @@ import static edu.wpi.first.apriltag.AprilTagFields.k2024Crescendo;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Contains various field dimensions and useful reference points. Dimensions are in meters, and sets
@@ -118,10 +120,13 @@ public class FieldConstants {
   public static final AprilTagFieldLayout aprilTags;
 
   static {
+    AprilTagFieldLayout tempField;
     try {
-      aprilTags = AprilTagFieldLayout.loadFromResource(k2024Crescendo.m_resourceFile);
+      tempField = AprilTagFieldLayout.loadFromResource(k2024Crescendo.m_resourceFile);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      DriverStation.reportError("Unable to load AprilTags!", e.getStackTrace());
+      tempField = new AprilTagFieldLayout(List.of(), 16.4592, 8.2296);
     }
+    aprilTags = tempField;
   }
 }

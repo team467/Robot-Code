@@ -7,6 +7,9 @@ public final class VisionConstants {
     throw new IllegalStateException(CONSTRUCTOR_EXCEPTION);
   }
 
+  // the pose ambiguity must be less than this value for the target to be considered valid
+  public static final double MAXIMUM_AMBIGUITY = 0.2;
+
   // the maximum distance between the robot and the target, for the target to be used to update the
   // robot's pose
   public static final double MAX_DISTANCE_TO_TARGET_METERS = 6.0;
