@@ -47,10 +47,10 @@ public class DriveConstants {
         WHEEL_DIAMETER = Units.inchesToMeters(4);
         ABSOLUTE_ANGLE_OFFSET =
             new Rotation2d[] {
-              Rotation2d.fromDegrees(-80.51 + 180),
-              Rotation2d.fromDegrees(-47.11),
-              Rotation2d.fromDegrees(5.80),
-              Rotation2d.fromDegrees(177.01),
+              Rotation2d.fromDegrees(136.4),
+              Rotation2d.fromDegrees(-157.06),
+              Rotation2d.fromDegrees(-13),
+              Rotation2d.fromDegrees(-1.4),
             };
         DRIVE_GEAR_RATIO = new GearRatio(6.12, 1);
         TURN_GEAR_RATIO = new GearRatio(12.8, 1);
