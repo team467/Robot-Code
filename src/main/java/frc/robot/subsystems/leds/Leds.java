@@ -23,25 +23,12 @@ public class Leds extends SubsystemBase {
     ESTOPPED,
     AUTO_FINISHED,
     AUTONOMOUS,
-    IN_RANGE,
-    CAN_SHOOT,
-    SHOOTING,
-    CONTAINING,
-    SHOOTER_SPEED_READY,
-    INTAKING,
-    LEFT_NOTE_DETECTION,
-    RIGHT_NOTE_DETECTION,
-    STRAIGHT_NOTE_DETECTION,
     BLUE_ALLIANCE,
     RED_ALLIANCE,
     LOW_BATTERY_ALERT,
     DISABLED,
-    DEFAULT,
-    DUCK,
-    CLIMBER_UP,
-    CLIMBER_DOWN,
-    CLIMBER_SOLENOID_DISENGAGED,
-    OFF
+    OFF,
+    DEFAULT
   }
 
   @AutoLogOutput(key = "LEDs/Mode")
@@ -140,40 +127,6 @@ public class Leds extends SubsystemBase {
 
     } else if (DriverStation.isAutonomous()) {
       mode = LedMode.AUTONOMOUS;
-
-    } else if (state.shooterSpeedIsReady) {
-      mode = LedMode.SHOOTER_SPEED_READY;
-    } else if (state.shooting && state.hasNote) {
-      mode = LedMode.SHOOTING;
-
-    } else if (state.canShoot && state.hasNote) {
-      mode = LedMode.CAN_SHOOT;
-
-    } else if (state.inRange && state.hasNote) {
-      mode = LedMode.IN_RANGE;
-
-    } else if (state.hasNote) {
-      mode = LedMode.CONTAINING;
-
-    } else if (state.intaking) {
-      mode = LedMode.INTAKING;
-
-    } else if (state.climberUp) {
-      mode = LedMode.CLIMBER_UP;
-    } else if (state.climberDown) {
-      mode = LedMode.CLIMBER_DOWN;
-    } else if (!state.climberRatchet) {
-      mode = LedMode.CLIMBER_SOLENOID_DISENGAGED;
-    } else if (state.seeNote) {
-      if (state.noteAngle <= -noteAngle) { // TODO: need to change to constant once angle known
-        mode = LedMode.LEFT_NOTE_DETECTION;
-
-      } else if (state.noteAngle >= noteAngle) {
-        mode = LedMode.RIGHT_NOTE_DETECTION;
-
-      } else {
-        mode = LedMode.STRAIGHT_NOTE_DETECTION;
-      }
     } else {
       mode = LedMode.DEFAULT;
     }
@@ -192,62 +145,6 @@ public class Leds extends SubsystemBase {
 
       case AUTONOMOUS:
         wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveFastCycleLength, waveFastDuration);
-        break;
-
-      case IN_RANGE:
-        wave(
-            Section.FULL,
-            Color.kGreen,
-            Color.kBlack,
-            waveAllianceCycleLength,
-            waveAllianceDuration);
-        break;
-
-      case CAN_SHOOT:
-        solid(Section.FULL, Color.kGreen);
-        // has the same color as shooting except it's solid
-        break;
-
-      case SHOOTING:
-        // leds glow in the direction it's shooting
-        wave(
-            Section.FULL,
-            Color.kGreen,
-            Color.kBlack,
-            waveAllianceCycleLength,
-            waveAllianceDuration);
-        break;
-
-      case CONTAINING:
-        solid(Section.FULL, Color.kGreen);
-        break;
-
-      case SHOOTER_SPEED_READY:
-        strobe(Section.FULL, Color.kGreen, .1);
-        break;
-      case INTAKING:
-        // leds glow in the direction it's intaking
-        wave(
-            Section.FULL,
-            Color.kPurple,
-            Color.kBlack,
-            waveAllianceCycleLength,
-            waveAllianceDuration);
-        break;
-
-      case LEFT_NOTE_DETECTION:
-        // leds glow on left side
-        solidOnSide(false, Color.kYellow);
-        break;
-
-      case RIGHT_NOTE_DETECTION:
-        // leds glows on right side
-        solidOnSide(true, Color.kYellow);
-        break;
-
-      case STRAIGHT_NOTE_DETECTION:
-        // leds glow in the middle
-        solidMiddle(0.5, Color.kYellowGreen);
         break;
 
       case BLUE_ALLIANCE:
@@ -272,22 +169,6 @@ public class Leds extends SubsystemBase {
         }
         break;
 
-      case DUCK:
-        solid(Section.BOTTOM_HALF, Color.kYellow);
-        break;
-
-      case CLIMBER_UP:
-        rainbow(Section.TOP_HALF, rainbowCycleLength, rainbowDuration, true);
-        break;
-
-      case CLIMBER_DOWN:
-        rainbow(Section.BOTTOM_HALF, rainbowCycleLength, rainbowDuration, false);
-        break;
-
-      case CLIMBER_SOLENOID_DISENGAGED:
-        rainbow(Section.FULL, rainbowCycleLength, rainbowDuration, true);
-        break;
-
       case DEFAULT:
         wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
         break;
@@ -302,9 +183,6 @@ public class Leds extends SubsystemBase {
     }
 
     leds.setData(buffer);
-    //    if (state.duck) {
-    //      mode = LedMode.DUCK;
-    //    }
   }
 
   @Override
