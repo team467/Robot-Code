@@ -1,9 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.io.BufferedReader;
@@ -14,8 +10,6 @@ import java.util.Map;
 public class Constants {
   // Change this temporarily to override the RobotType, e.g. RobotType.ROBOT_SIMBOT
   private static final RobotType ROBOT_TYPE_OVERRIDE = null;
-
-  public static final Measure<Time> loopPeriod = Milliseconds.of(20);
   public static final boolean tuningMode = false;
 
   private static final String ROBOT_FILENAME = "/home/lvuser/robot";

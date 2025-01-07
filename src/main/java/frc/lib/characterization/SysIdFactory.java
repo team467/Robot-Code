@@ -1,7 +1,6 @@
 package frc.lib.characterization;
 
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -34,7 +33,7 @@ public class SysIdFactory {
    * @param driveVoltage Sends the SysId-specified drive signal to the mechanism motors during test
    *     routines.
    */
-  public SysIdFactory(Subsystem subsystem, Consumer<Measure<Voltage>> driveVoltage) {
+  public SysIdFactory(Subsystem subsystem, Consumer<Voltage> driveVoltage) {
     this(subsystem, driveVoltage, new SysIdRoutine.Config());
   }
 
@@ -50,7 +49,7 @@ public class SysIdFactory {
    *     code.
    */
   public SysIdFactory(
-      Subsystem subsystem, Consumer<Measure<Voltage>> driveVoltage, SysIdRoutine.Config config) {
+      Subsystem subsystem, Consumer<Voltage> driveVoltage, SysIdRoutine.Config config) {
     sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
