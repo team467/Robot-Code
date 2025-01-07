@@ -118,15 +118,6 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // Rumble on intake
-    new Trigger(() -> RobotState.getInstance().hasNote)
-        .onTrue(
-            Commands.runEnd(
-                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1),
-                    () -> driverController.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0))
-                .withTimeout(1.2)
-                .ignoringDisable(true));
-
     // Configure the button bindings
     configureButtonBindings();
   }
