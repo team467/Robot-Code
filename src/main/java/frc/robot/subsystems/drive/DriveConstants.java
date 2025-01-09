@@ -1,90 +1,112 @@
 package frc.robot.subsystems.drive;
 
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import frc.lib.utils.TunableNumber;
-import frc.robot.Constants;
-import frc.robot.constants.controls.GearRatio;
 
 public class DriveConstants {
-  public static final double TRACK_WIDTH_X;
-  public static final double TRACK_WIDTH_Y;
-  public static final double MAX_LINEAR_SPEED;
-  public static final double WHEEL_DIAMETER;
-  public static final Rotation2d[] ABSOLUTE_ANGLE_OFFSET;
-  public static final GearRatio DRIVE_GEAR_RATIO;
-  public static final GearRatio TURN_GEAR_RATIO;
-  public static final TunableNumber DRIVE_KS;
-  public static final TunableNumber DRIVE_KV;
-  public static final TunableNumber TURN_KP;
-  public static final TunableNumber TURN_KD;
+  public static final double maxSpeedMetersPerSec = 4.8;
+  public static final double odometryFrequency = 100.0; // Hz
+  public static final double trackWidth = Units.inchesToMeters(26.5);
+  public static final double wheelBase = Units.inchesToMeters(26.5);
+  public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
+  public static final Translation2d[] moduleTranslations =
+      new Translation2d[] {
+        new Translation2d(trackWidth / 2.0, wheelBase / 2.0),
+        new Translation2d(trackWidth / 2.0, -wheelBase / 2.0),
+        new Translation2d(-trackWidth / 2.0, wheelBase / 2.0),
+        new Translation2d(-trackWidth / 2.0, -wheelBase / 2.0)
+      };
 
-  static {
-    switch (Constants.getRobot()) {
-      case ROBOT_2023 -> {
-        TRACK_WIDTH_X = Units.inchesToMeters(12.75 * 2);
-        TRACK_WIDTH_Y = Units.inchesToMeters(9.25 * 2);
-        MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
-        WHEEL_DIAMETER = Units.inchesToMeters(4);
-        ABSOLUTE_ANGLE_OFFSET =
-            new Rotation2d[] {
-              Rotation2d.fromDegrees(-67.4),
-              Rotation2d.fromDegrees(42.4),
-              Rotation2d.fromDegrees(169.7),
-              Rotation2d.fromDegrees(101.5),
-            };
-        DRIVE_GEAR_RATIO = new GearRatio(6.75, 1);
-        TURN_GEAR_RATIO = new GearRatio(12.8, 1);
-        DRIVE_KS = new TunableNumber("Drive/Module/DriveKS", 0.17181);
-        DRIVE_KV = new TunableNumber("Drive/Module/DriveKV", 2.2858);
-        TURN_KP = new TunableNumber("Drive/Module/TurnKP", 3.89); // 3.256
-        TURN_KD = new TunableNumber("Drive/Module/TurnKD", 0);
-      }
-      case ROBOT_2024_COMP -> {
-        TRACK_WIDTH_X = Units.inchesToMeters(9 * 2);
-        TRACK_WIDTH_Y = Units.inchesToMeters(9 * 2);
-        MAX_LINEAR_SPEED = Units.feetToMeters(16.6);
-        WHEEL_DIAMETER = Units.inchesToMeters(4);
-        ABSOLUTE_ANGLE_OFFSET =
-            new Rotation2d[] {
-              Rotation2d.fromDegrees(-80.51 + 180),
-              Rotation2d.fromDegrees(-47.11),
-              Rotation2d.fromDegrees(5.80),
-              Rotation2d.fromDegrees(177.01),
-            };
-        DRIVE_GEAR_RATIO = new GearRatio(6.12, 1);
-        TURN_GEAR_RATIO = new GearRatio(12.8, 1);
-        DRIVE_KS = new TunableNumber("Drive/Module/DriveKS", 0.49385);
-        DRIVE_KV = new TunableNumber("Drive/Module/DriveKV", 2.60818);
-        TURN_KP = new TunableNumber("Drive/Module/TurnKP", 4.5);
-        TURN_KD = new TunableNumber("Drive/Module/TurnKD", 0.1);
-      }
-      case ROBOT_SIMBOT -> {
-        TRACK_WIDTH_X = 0.65;
-        TRACK_WIDTH_Y = 0.65;
-        MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
-        WHEEL_DIAMETER = Units.inchesToMeters(2);
-        ABSOLUTE_ANGLE_OFFSET = new Rotation2d[] {new Rotation2d()};
-        DRIVE_GEAR_RATIO = new GearRatio(6.75, 1);
-        TURN_GEAR_RATIO = new GearRatio(12.8, 1);
-        DRIVE_KS = new TunableNumber("Drive/Module/DriveKS", 0.15343);
-        DRIVE_KV = new TunableNumber("Drive/Module/DriveKV", 5.27611);
-        TURN_KP = new TunableNumber("Drive/Module/TurnKP", 23.0);
-        TURN_KD = new TunableNumber("Drive/Module/TurnKD", 0.0);
-      }
-      default -> {
-        TRACK_WIDTH_X = 0;
-        TRACK_WIDTH_Y = 0;
-        MAX_LINEAR_SPEED = 0;
-        WHEEL_DIAMETER = 0;
-        ABSOLUTE_ANGLE_OFFSET = new Rotation2d[] {};
-        DRIVE_GEAR_RATIO = new GearRatio();
-        TURN_GEAR_RATIO = new GearRatio();
-        DRIVE_KS = new TunableNumber("Drive/Module/DriveKS");
-        DRIVE_KV = new TunableNumber("Drive/Module/DriveKV");
-        TURN_KP = new TunableNumber("Drive/Module/TurnKP");
-        TURN_KD = new TunableNumber("Drive/Module/TurnKD");
-      }
-    }
-  }
+  // Zeroed rotation values for each module, see setup instructions
+  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0.0);
+  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.0);
+  public static final Rotation2d backLeftZeroRotation = new Rotation2d(0.0);
+  public static final Rotation2d backRightZeroRotation = new Rotation2d(0.0);
+
+  // Device CAN IDs
+  public static final int pigeonCanId = 9;
+
+  public static final int frontLeftDriveCanId = 1;
+  public static final int backLeftDriveCanId = 3;
+  public static final int frontRightDriveCanId = 5;
+  public static final int backRightDriveCanId = 7;
+
+  public static final int frontLeftTurnCanId = 2;
+  public static final int backLeftTurnCanId = 4;
+  public static final int frontRightTurnCanId = 6;
+  public static final int backRightTurnCanId = 8;
+
+  public static final int frontLeftAbsoluteEncoderCanId = 10;
+  public static final int backLeftAbsoluteEncoderCanId = 11;
+  public static final int frontRightAbsoluteEncoderCanId = 12;
+  public static final int backRightAbsoluteEncoderCanId = 13;
+
+  // Drive motor configuration
+  public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
+      SwerveModuleConstants.ClosedLoopOutputType.Voltage;
+  public static final int driveMotorCurrentLimit = 50;
+  public static final double wheelRadiusMeters = Units.inchesToMeters(1.5);
+  public static final double driveMotorReduction =
+      (45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
+  public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
+
+  // Drive encoder configuration
+  public static final double driveEncoderPositionFactor =
+      2 * Math.PI / driveMotorReduction; // Rotor Rotations -> Wheel Radians
+  public static final double driveEncoderVelocityFactor =
+      (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
+
+  // Drive PID configuration
+  public static final double driveKp = 0.0;
+  public static final double driveKd = 0.0;
+  public static final double driveKs = 0.0;
+  public static final double driveKv = 0.1;
+  public static final double driveKa = 0.0;
+  public static final double driveSimP = 0.05;
+  public static final double driveSimD = 0.0;
+  public static final double driveSimKs = 0.0;
+  public static final double driveSimKv = 0.0789;
+
+  // Turn motor configuration
+  public static final boolean turnInverted = false;
+  public static final int turnMotorCurrentLimit = 20;
+  public static final double turnMotorReduction = 9424.0 / 203.0;
+  public static final DCMotor turnGearbox = DCMotor.getNeo550(1);
+
+  // Turn encoder configuration
+  public static final boolean turnEncoderInverted = true;
+  public static final double turnEncoderPositionFactor =
+      2 * Math.PI / turnMotorReduction; // Rotations -> Radians
+  public static final double turnEncoderVelocityFactor =
+      (2 * Math.PI) / 60.0 / turnMotorReduction; // RPM -> Rad/Sec
+
+  // Turn PID configuration
+  public static final double turnKp = 2.0;
+  public static final double turnKd = 0.0;
+  public static final double turnSimP = 8.0;
+  public static final double turnSimD = 0.0;
+  public static final double turnPIDMinInput = 0; // Radians
+  public static final double turnPIDMaxInput = 2 * Math.PI; // Radians
+
+  // PathPlanner configuration
+  public static final double robotMassKg = 74.088;
+  public static final double robotMOI = 6.883;
+  public static final double wheelCOF = 1.2;
+  public static final RobotConfig ppConfig =
+      new RobotConfig(
+          robotMassKg,
+          robotMOI,
+          new ModuleConfig(
+              wheelRadiusMeters,
+              maxSpeedMetersPerSec,
+              wheelCOF,
+              driveGearbox.withReduction(driveMotorReduction),
+              driveMotorCurrentLimit,
+              1),
+          moduleTranslations);
 }

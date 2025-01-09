@@ -1,25 +1,28 @@
 package frc.lib.utils;
 
 import frc.robot.Constants;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
+import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 /**
  * Class for a tunable number. Gets value from dashboard in tuning mode, returns default if not or
  * value not in dashboard.
  */
-public class TunableNumber {
-  private static final String tableKey = "TunableNumbers";
+public class TunableNumber implements DoubleSupplier {
+  private static final String tableKey = "/Tuning";
 
   private final String key;
   private boolean hasDefault = false;
   private double defaultValue;
-  private LoggedDashboardNumber dashboardNumber;
+  private LoggedNetworkNumber dashboardNumber;
   private Map<Integer, Double> lastHasChangedValues = new HashMap<>();
 
   /**
-   * Create a new TunableNumber
+   * Create a new LoggedTunableNumber
    *
    * @param dashboardKey Key on dashboard
    */
@@ -28,7 +31,7 @@ public class TunableNumber {
   }
 
   /**
-   * Create a new TunableNumber with the default value
+   * Create a new LoggedTunableNumber with the default value
    *
    * @param dashboardKey Key on dashboard
    * @param defaultValue Default value
@@ -48,7 +51,7 @@ public class TunableNumber {
       hasDefault = true;
       this.defaultValue = defaultValue;
       if (Constants.tuningMode) {
-        dashboardNumber = new LoggedDashboardNumber(key, defaultValue);
+        dashboardNumber = new LoggedNetworkNumber(key, defaultValue);
       }
     }
   }
@@ -83,5 +86,30 @@ public class TunableNumber {
     }
 
     return false;
+  }
+
+  /**
+   * Runs action if any of the tunableNumbers have changed
+   *
+   * @param id Unique identifier for the caller to avoid conflicts when shared between multiple *
+   *     objects. Recommended approach is to pass the result of "hashCode()"
+   * @param action Callback to run when any of the tunable numbers have changed. Access tunable
+   *     numbers in order inputted in method
+   * @param tunableNumbers All tunable numbers to check
+   */
+  public static void ifChanged(int id, Consumer<double[]> action, TunableNumber... tunableNumbers) {
+    if (Arrays.stream(tunableNumbers).anyMatch(tunableNumber -> tunableNumber.hasChanged(id))) {
+      action.accept(Arrays.stream(tunableNumbers).mapToDouble(TunableNumber::get).toArray());
+    }
+  }
+
+  /** Runs action if any of the tunableNumbers have changed */
+  public static void ifChanged(int id, Runnable action, TunableNumber... tunableNumbers) {
+    ifChanged(id, values -> action.run(), tunableNumbers);
+  }
+
+  @Override
+  public double getAsDouble() {
+    return get();
   }
 }
