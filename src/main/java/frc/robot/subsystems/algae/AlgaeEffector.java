@@ -14,7 +14,7 @@ public class AlgaeEffector extends SubsystemBase {
     this.io = io;
   }
 
-  public Command extendArm(double length) {
+  public Command extendArm() {
     return Commands.startEnd(
             () -> io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE),
             () -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
@@ -22,11 +22,22 @@ public class AlgaeEffector extends SubsystemBase {
         .withTimeout(2);
   }
 
-  public Command retractArm(double length) {
+  public Command retractArm() {
     return Commands.startEnd(
             () -> io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE),
             () -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
             this)
         .withTimeout(2);
+  }
+
+  public Command startRemoval() {
+    return Commands.startEnd(
+        () -> io.setRemovalVolts(AlgaeEffectorConstants.REMOVAL_VOLTAGE),
+        () -> io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
+        this);
+  }
+
+  public Command stopRemoval() {
+    return this.runOnce(() -> io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE));
   }
 }
