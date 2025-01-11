@@ -44,6 +44,24 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/ElevatorPosition")
   public ElevatorPosition elevatorPosition = null;
 
+  @AutoLogOutput(key = "RobotState/HasCoral")
+  public boolean hasCoral = false;
+
+  @AutoLogOutput(key = "RobotState/AlignedToReef")
+  public boolean alignedToReef = false;
+
+  @AutoLogOutput(key = "RobotState/ClimberUp")
+  public boolean climberUp = false;
+
+  @AutoLogOutput(key = "RobotState/ClimberDown")
+  public boolean climberDown = false;
+
+  @AutoLogOutput(key = "RobotState/ClimberRatchet")
+  public boolean climberRatchet = false;
+
+  @AutoLogOutput(key = "RobotState/Duck")
+  public boolean duck = false;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
