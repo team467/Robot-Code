@@ -2,8 +2,8 @@ package frc.robot.subsystems.algae;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 
 public class AlgaeEffector extends SubsystemBase {
   private final AlgaeEffectorIO io;
@@ -15,10 +15,18 @@ public class AlgaeEffector extends SubsystemBase {
   }
 
   public Command extendArm(double length) {
-    return this.runOnce(() -> io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE));
+    return Commands.startEnd(
+            () -> io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE),
+            () -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
+            this)
+        .withTimeout(2);
   }
 
   public Command retractArm(double length) {
-    return this.runOnce(() -> io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE));
+    return Commands.startEnd(
+            () -> io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE),
+            () -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
+            this)
+        .withTimeout(2);
   }
 }
