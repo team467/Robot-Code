@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AlgaeEffector extends SubsystemBase {
+  private boolean armExtended = false;
   private final AlgaeEffectorIO io;
   private PIDController pivotFeedback =
       new PIDController(AlgaeEffectorConstants.PIVOT_KP, 0, AlgaeEffectorConstants.PIVOT_KD);
@@ -16,7 +17,10 @@ public class AlgaeEffector extends SubsystemBase {
 
   public Command extendArm() {
     return Commands.startEnd(
-            () -> io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE),
+            () -> {
+              io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
+              armExtended = true;
+            },
             () -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOlTAGE),
             this)
         .withTimeout(2);
@@ -24,10 +28,17 @@ public class AlgaeEffector extends SubsystemBase {
 
   public Command retractArm() {
     return Commands.startEnd(
-            () -> io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE),
+            () -> {
+              io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE);
+              armExtended = false;
+            },
             () -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOlTAGE),
             this)
         .withTimeout(2);
+  }
+
+  public Command toggleArm() {
+    return Commands.either(retractArm(), extendArm(), () -> armExtended);
   }
 
   public Command startRemoval() {
