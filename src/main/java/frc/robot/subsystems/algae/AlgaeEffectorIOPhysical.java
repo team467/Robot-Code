@@ -6,21 +6,21 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
 
   private final SparkMax pivotMotor;
-  private final SparkMax intakeMotor;
+  private final SparkMax removalMotor;
   // TODO: Move to schematic
   private static final int PIVOT_ID = 1;
-  private static final int INTAKE = 1;
+  private static final int REMOVAL = 1;
 
   public AlgaeEffectorIOPhysical() {
     pivotMotor = new SparkMax(PIVOT_ID, MotorType.kBrushless);
-    intakeMotor = new SparkMax(INTAKE, MotorType.kBrushless);
+    removalMotor = new SparkMax(REMOVAL, MotorType.kBrushless);
   }
 
-  public void setIntakeVolts(double volts) {
+  public void setRemovalVolts(double volts) {
     pivotMotor.setVoltage(volts);
   }
 
   public void setPivotVolts(double volts) {
-    intakeMotor.setVoltage(volts);
+    removalMotor.setVoltage(volts);
   }
 }
