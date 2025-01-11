@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -33,6 +34,7 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
+  private Leds leds;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -85,6 +87,10 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim());
+        }
+
+        case ROBOT_BRIEFCASE -> {
+          leds = new Leds();
         }
       }
     }
