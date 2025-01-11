@@ -10,6 +10,7 @@ import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
   public static final double maxSpeedMetersPerSec = 4.8;
+  public static final double maxRotationalSpeedRadiansPerSec = Units.rotationsToRadians(10);
   public static final double odometryFrequency = 100.0; // Hz
   public static final double trackWidth = Units.inchesToMeters(26.5);
   public static final double wheelBase = Units.inchesToMeters(26.5);
@@ -48,7 +49,7 @@ public class DriveConstants {
 
   // Drive motor configuration
   public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
-      SwerveModuleConstants.ClosedLoopOutputType.Voltage;
+      SwerveModuleConstants.ClosedLoopOutputType.TorqueCurrentFOC;
   public static final int driveMotorCurrentLimit = 50;
   public static final double wheelRadiusMeters = Units.inchesToMeters(1.5);
   public static final double driveMotorReduction =
@@ -105,7 +106,8 @@ public class DriveConstants {
               wheelRadiusMeters,
               maxSpeedMetersPerSec,
               wheelCOF,
-              driveGearbox.withReduction(driveMotorReduction),
+              driveGearbox,
+              driveMotorReduction,
               driveMotorCurrentLimit,
               1),
           moduleTranslations);
