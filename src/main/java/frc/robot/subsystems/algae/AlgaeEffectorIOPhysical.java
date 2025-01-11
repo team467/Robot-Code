@@ -5,10 +5,10 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
 
-  // two motors (pivot, rotate)
+
   private final SparkMax pivotMotor;
   private final SparkMax intakeMotor;
-  // In schematic we add
+  // TODO: Move to schematic
   private static final int PIVOT_ID = 1;
   private static final int INTAKE = 1;
 

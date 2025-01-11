@@ -14,7 +14,7 @@ public interface AlgaeEffectorIO {
   }
 
   default void updateInputs(AlgaeEffectorIOInputs inputs) {}
-  // add in the auto logged parts to AlgaeEffectorIOInputs
+  //TODO: Add in AutoLogged
   default void setIntakeVolts(double volts) {}
 
   default void setPivotVolts(double volts) {}
