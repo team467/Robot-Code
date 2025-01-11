@@ -5,7 +5,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
 
-
   private final SparkMax pivotMotor;
   private final SparkMax intakeMotor;
   // TODO: Move to schematic
