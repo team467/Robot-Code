@@ -7,6 +7,10 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
 
   private final SparkMax pivotMotor;
   private final SparkMax removalMotor;
+
+  private final SparkLimitSwitch pivotMotorExtendLimitSwitch;
+  private final SparkLimitSwitch pivotMotorStowLimitSwitch;
+
   // TODO: Move to schematic
   private static final int PIVOT_ID = 1;
   private static final int REMOVAL_ID = 2;
@@ -14,6 +18,9 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   public AlgaeEffectorIOPhysical() {
     pivotMotor = new SparkMax(PIVOT_ID, MotorType.kBrushless);
     removalMotor = new SparkMax(REMOVAL_ID, MotorType.kBrushless);
+
+    pivotMotorExtendLimitSwitch = pivotMotor.getForwardLimitSwitch();
+    pivotMotorStowLimitSwitch = pivotMotor.getReverseLimitSwitch();
   }
 
   public void setRemovalVolts(double volts) {
