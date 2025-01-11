@@ -8,7 +8,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.*;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -18,13 +17,11 @@ import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
-
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
 
@@ -90,14 +87,14 @@ public class ModuleIOSpark implements ModuleIO {
     driveEncoder = driveSpark.getEncoder();
     turnEncoder = turnSpark.getEncoder();
     turnEncoderAbsolute =
-            new CANcoder(
-                    switch (module) {
-                      case 0 -> frontLeftAbsoluteEncoderCanId;
-                      case 1 -> frontRightAbsoluteEncoderCanId;
-                      case 2 -> backLeftAbsoluteEncoderCanId;
-                      case 3 -> backRightAbsoluteEncoderCanId;
-                      default -> 0;
-                    });
+        new CANcoder(
+            switch (module) {
+              case 0 -> frontLeftAbsoluteEncoderCanId;
+              case 1 -> frontRightAbsoluteEncoderCanId;
+              case 2 -> backLeftAbsoluteEncoderCanId;
+              case 3 -> backRightAbsoluteEncoderCanId;
+              default -> 0;
+            });
     driveController = driveSpark.getClosedLoopController();
     turnController = turnSpark.getClosedLoopController();
 
@@ -174,9 +171,9 @@ public class ModuleIOSpark implements ModuleIO {
     CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
     cancoderConfig.MagnetSensor.MagnetOffset = 0; // This is done later in the code
     cancoderConfig.MagnetSensor.SensorDirection =
-            turnEncoderInverted
-                    ? SensorDirectionValue.Clockwise_Positive
-                    : SensorDirectionValue.CounterClockwise_Positive;
+        turnEncoderInverted
+            ? SensorDirectionValue.Clockwise_Positive
+            : SensorDirectionValue.CounterClockwise_Positive;
     turnEncoderAbsolute.getConfigurator().apply(cancoderConfig);
     turnPositionAbsolute = turnEncoderAbsolute.getPosition();
 
@@ -191,11 +188,10 @@ public class ModuleIOSpark implements ModuleIO {
 
     // Initialize turn relative encoder
     tryUntilOk(
-            turnSpark,
-            5,
-            () ->
-                    turnEncoder.setPosition(turnEncoderAbsolute.getAbsolutePosition().getValueAsDouble()));
-
+        turnSpark,
+        5,
+        () ->
+            turnEncoder.setPosition(turnEncoderAbsolute.getAbsolutePosition().getValueAsDouble()));
   }
 
   @Override
