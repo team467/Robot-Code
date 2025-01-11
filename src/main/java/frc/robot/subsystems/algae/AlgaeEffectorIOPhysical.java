@@ -9,18 +9,18 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   private final SparkMax removalMotor;
   // TODO: Move to schematic
   private static final int PIVOT_ID = 1;
-  private static final int REMOVAL = 1;
+  private static final int REMOVAL_ID = 2;
 
   public AlgaeEffectorIOPhysical() {
     pivotMotor = new SparkMax(PIVOT_ID, MotorType.kBrushless);
-    removalMotor = new SparkMax(REMOVAL, MotorType.kBrushless);
+    removalMotor = new SparkMax(REMOVAL_ID, MotorType.kBrushless);
   }
 
   public void setRemovalVolts(double volts) {
-    pivotMotor.setVoltage(volts);
+    removalMotor.setVoltage(volts);
   }
 
   public void setPivotVolts(double volts) {
-    removalMotor.setVoltage(volts);
+    pivotMotor.setVoltage(volts);
   }
 }
