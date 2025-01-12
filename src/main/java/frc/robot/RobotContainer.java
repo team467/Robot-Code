@@ -94,6 +94,17 @@ public class RobotContainer {
 
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
         }
+        case ROBOT_BRIEFCASE -> {
+          drive =
+              new Drive(
+                  new GyroIO() {},
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim());
+
+          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+        }
       }
     }
 

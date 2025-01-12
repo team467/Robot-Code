@@ -9,6 +9,7 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   private final SparkMax removalMotor;
   private final SparkLimitSwitch pivotMotorExtendLimitSwitch;
   private final SparkLimitSwitch pivotMotorStoweLimitSwitch;
+
   // TODO: Move to schematic
   private static final int PIVOT_ID = 1;
   private static final int REMOVAL_ID = 2;
