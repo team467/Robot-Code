@@ -10,6 +10,8 @@ public class RobotState {
   /** Set by the robot if the batter is less than 9V */
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
   public boolean lowBatteryAlert = false;
+  @AutoLogOutput(key = "RobotState/ImpactDetected")
+  public boolean impactDetected = false;
 
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
