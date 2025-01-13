@@ -4,6 +4,8 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -92,5 +94,57 @@ public class Elevator extends SubsystemBase {
       feedback.reset(
           new TrapezoidProfile.State(inputs.positionMeters, inputs.velocityMetersPerSec));
     }
+  }
+
+  public Command toSetpoint(double setpointAngle) {
+    return Commands.run(
+        () -> {
+          feedback.setGoal(setpointAngle);
+          feedbackMode = true;
+        },
+        this);
+  }
+
+  public Command runPercent(double percent) {
+    return Commands.run(
+        () -> {
+          Logger.recordOutput("Elevator/DesiredVolts", percent * 12);
+          io.setVoltage(percent * 12);
+          feedbackMode = false;
+        },
+        this);
+  }
+
+  public Command hold() {
+    return Commands.sequence(
+        Commands.sequence(
+                Commands.runOnce(() -> io.setVoltage(0.05 * 12), this), Commands.waitSeconds(0.5))
+            .onlyIf(() -> inputs.velocityMetersPerSec < 0),
+        Commands.run(
+                () -> {
+                  if (!holdLock) {
+                    holdLock = true;
+                    if (inputs.velocityMetersPerSec < 0) {
+                      feedback.setGoal(inputs.positionMeters);
+                    } else {
+                      feedback.setGoal(inputs.positionMeters);
+                    }
+                    feedbackMode = true;
+                  }
+                },
+                this)
+            .finallyDo(() -> holdLock = false));
+  }
+
+  public double getPosition() {
+    return inputs.positionMeters;
+  }
+
+  public boolean atSetpoint() {
+    return feedback.atGoal();
+  }
+
+  public boolean limitSwitchPressed() {
+    return inputs.limitSwitchPressed;
   }
 }
