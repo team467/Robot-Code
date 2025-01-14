@@ -50,6 +50,12 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/AlignedToReef")
   public boolean alignedToReef = false;
 
+  @AutoLogOutput(key = "RobotState/AlgaeEffectorExtended")
+  public boolean algaeEffectorExtended = false;
+
+  @AutoLogOutput(key = "RobotState/AlgaeEffectorRunning")
+  public boolean algaeEffectorRunning = false;
+
   @AutoLogOutput(key = "RobotState/ClimberUp")
   public boolean climberUp = false;
 
@@ -62,6 +68,8 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/Duck")
   public boolean duck = false;
 
+  @AutoLogOutput(key = "RobotState/CollisionDetected")
+  public boolean collisionDetected = false;
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
