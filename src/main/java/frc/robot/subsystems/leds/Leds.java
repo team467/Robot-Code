@@ -26,7 +26,9 @@ public class Leds extends SubsystemBase {
     LOW_BATTERY_ALERT,
     DISABLED,
     OFF,
-    DEFAULT
+    DEFAULT,
+    BASE,
+    BASE2
   }
 
   @AutoLogOutput(key = "LEDs/Mode")
@@ -164,8 +166,16 @@ public class Leds extends SubsystemBase {
         LedPatterns.DEFAULT.applyTo(buffer);
         break;
 
+      case BASE:
+        LedPatterns.BASE.applyTo(buffer);
+        break;
+
       case OFF:
         LedPatterns.OFF.applyTo(buffer);
+        break;
+
+      case BASE2:
+        LedPatterns.BASE2.applyTo(buffer);
         break;
 
       default:
@@ -186,7 +196,11 @@ public class Leds extends SubsystemBase {
     loadingNotifier.stop();
 
     if (ledTestingEntry.getBoolean(false)) {
-      mode = LedMode.valueOf(ledModeEntry.getString("OFF"));
+      try {
+        mode = LedMode.valueOf(ledModeEntry.getString("OFF"));
+      } catch (IllegalArgumentException E) {
+
+      }
     } else {
       updateState();
       ledModeEntry.setString(mode.toString());
