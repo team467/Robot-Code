@@ -42,7 +42,8 @@ public class Drive extends SubsystemBase {
   private final SysIdRoutine sysId;
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
-
+  private final Alert impactAlert = new Alert("Impact Detected, lowering elevator to prevent flipping.",
+      AlertType.kWarning);
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
   private Rotation2d rawGyroRotation = Rotation2d.kZero;
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -308,5 +309,6 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput(
         "RobotState/ImpactDetected",
         mDifference < 0 & mDifference > (gyroInputs.pVectorM * 0.75) & aDifference < 10);
+    impactAlert.set(mDifference < 0 & mDifference > (gyroInputs.pVectorM * 0.75) & aDifference < 10);
   }
 }
