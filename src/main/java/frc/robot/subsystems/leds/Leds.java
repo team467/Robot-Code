@@ -18,6 +18,12 @@ public class Leds extends SubsystemBase {
   private RobotState state = RobotState.getInstance();
 
   public enum LedMode {
+    ALIGNED_TO_REEF,
+    ALGAE_EFFECTOR_EXTENDED,
+    ALGAE_EFFECTOR_RUNNING,
+    CLIMBER_UP,
+    DUCK,
+    COLLISION_DETECTED,
     ESTOPPED,
     AUTO_FINISHED,
     AUTONOMOUS,

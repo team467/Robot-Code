@@ -25,6 +25,10 @@ public class LedConstants {
 
   static {
     switch (Constants.getRobot()) {
+      case ROBOT_2025_COMP -> {
+        LED_CHANNEL = 0;
+        LED_COUNT = 100;
+      }
       case ROBOT_2023 -> {
         LED_CHANNEL = 0;
         LED_COUNT = 10;
