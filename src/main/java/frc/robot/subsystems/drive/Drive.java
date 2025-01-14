@@ -301,4 +301,12 @@ public class Drive extends SubsystemBase {
   public double getMaxAngularSpeedRadPerSec() {
     return maxSpeedMetersPerSec / driveBaseRadius;
   }
+
+  public void checkForImpact() {
+    double mDifference = Math.abs(gyroInputs.VectorM - gyroInputs.pVectorM);
+    double aDifference = Math.abs(gyroInputs.VectorA - gyroInputs.pVectorA);
+    Logger.recordOutput(
+        "RobotState/ImpactDetected",
+        mDifference < 0 & mDifference > (gyroInputs.pVectorM * 0.75) & aDifference < 10);
+  }
 }
