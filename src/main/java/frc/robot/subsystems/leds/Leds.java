@@ -46,24 +46,6 @@ public class Leds extends SubsystemBase {
   private final AddressableLEDBufferView right;
   private final Notifier loadingNotifier;
 
-  // Constants
-  private static final int minLoopCycleCount = 10;
-  private static final int length = 40;
-  private static final double strobeFastDuration = 0.1;
-  private static final double strobeSlowDuration = 0.2;
-  private static final double breathDuration = 1.0;
-  private static final double rainbowCycleLength = 25.0;
-  private static final double rainbowDuration = 0.25;
-  private static final double waveExponent = 0.4;
-  private static final double waveFastCycleLength = 25.0;
-  private static final double waveFastDuration = 0.25;
-  private static final double waveSlowCycleLength = 25.0;
-  private static final double waveSlowDuration = 3.0;
-  private static final double waveAllianceCycleLength = 15.0;
-  private static final double waveAllianceDuration = 2.0;
-  private static final double autoFadeTime = 2.5; // 3s nominal
-  private static final double autoFadeMaxTime = 5.0; // Return to normal
-
   /** Creates a Network table for testing led modes and colors */
   private NetworkTable ledTable;
   /** Sets the mode for led in network table and allows to test led modes */
@@ -78,14 +60,12 @@ public class Leds extends SubsystemBase {
     ledTestingEntry = ledTable.getEntry("Testing");
     ledTestingEntry.setBoolean(false);
 
-    buffer = new AddressableLEDBuffer(length);
-    left = buffer.createView(0, length / 2 - 1);
-    right = buffer.createView(length / 2, length - 1);
+    buffer = new AddressableLEDBuffer(LedConstants.LENGTH);
+    left = buffer.createView(0, LedConstants.LENGTH / 2 - 1);
+    right = buffer.createView(LedConstants.LENGTH / 2, LedConstants.LENGTH - 1);
 
-    // define patterns
-
-    leds = new AddressableLED(0);
-    leds.setLength(length);
+    leds = new AddressableLED(LedConstants.LED_CHANNEL);
+    leds.setLength(LedConstants.LENGTH);
     leds.setData(buffer);
     leds.start();
 
@@ -99,7 +79,6 @@ public class Leds extends SubsystemBase {
   }
 
   private void updateState() {
-
     // Update auto state
     lastEnabledAuto = DriverStation.isAutonomous();
     lastEnabledTime = Timer.getFPGATimestamp();
@@ -108,7 +87,6 @@ public class Leds extends SubsystemBase {
       mode = LedMode.ESTOPPED;
     } else if (state.lowBatteryAlert) {
       mode = LedMode.LOW_BATTERY_ALERT;
-      // low battery mode at top for testing purposes
     } else if (DriverStation.isDisabled()) {
       if (DriverStation.getAlliance().isPresent()) {
         if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
@@ -116,13 +94,11 @@ public class Leds extends SubsystemBase {
         } else {
           mode = LedMode.RED_ALLIANCE;
         }
-
       } else {
         mode = LedMode.DISABLED;
       }
     } else if (false) { // TODO: Test this
       mode = LedMode.AUTO_FINISHED;
-
     } else if (DriverStation.isAutonomous()) {
       mode = LedMode.AUTONOMOUS;
     } else {
@@ -135,39 +111,30 @@ public class Leds extends SubsystemBase {
       case ESTOPPED:
         LedPatterns.ESTOPPED.applyTo(buffer);
         break;
-
       case AUTO_FINISHED:
         LedPatterns.AUTO_FINISHED.applyTo(buffer);
         break;
-
       case AUTONOMOUS:
         LedPatterns.AUTONOMOUS.applyTo(buffer);
         break;
-
       case BLUE_ALLIANCE:
         LedPatterns.BLUE_ALLIANCE.applyTo(buffer);
         break;
-
       case RED_ALLIANCE:
         LedPatterns.RED_ALLIANCE.applyTo(buffer);
         break;
-
       case LOW_BATTERY_ALERT:
         LedPatterns.LOW_BATTERY_ALERT.applyTo(buffer);
         break;
-
       case DISABLED:
         LedPatterns.DISABLED.applyTo(buffer);
         break;
-
       case DEFAULT:
         LedPatterns.DEFAULT.applyTo(buffer);
         break;
-
       case OFF:
         LedPatterns.OFF.applyTo(buffer);
         break;
-
       default:
     }
 
@@ -176,13 +143,12 @@ public class Leds extends SubsystemBase {
 
   @Override
   public void periodic() {
-
     // Exit during initial cycles
     loopCycleCount += 1;
-    if (loopCycleCount < minLoopCycleCount) {
+    if (loopCycleCount < LedConstants.MIN_LOOP_CYCLE_COUNT) {
       return;
     }
-    // Stop loading notifier if running
+
     loadingNotifier.stop();
 
     if (ledTestingEntry.getBoolean(false)) {
