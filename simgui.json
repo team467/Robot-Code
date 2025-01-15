@@ -1,6 +1,7 @@
 {
   "NTProvider": {
     "types": {
+      "/AdvantageKit/RealOutputs/Alerts": "Alerts",
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
@@ -10,7 +11,9 @@
       "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
-      "/SmartDashboard/Auto Choices": "String Chooser"
+      "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/Auto Choices": "String Chooser",
+      "/SmartDashboard/Elevator Sim": "Mechanism2d"
     }
   },
   "NetworkTables": {
@@ -18,16 +21,19 @@
       "DashboardInputs": {
         "open": true
       },
-      "Drive": {
-        "open": true
-      },
-      "DriverStation": {
+      "Elevator": {
         "open": true
       },
       "open": true
     },
+    "Elevator": {
+      "open": true
+    },
+    "Shuffleboard": {
+      "open": true
+    },
     "SmartDashboard": {
-      "Auto Choices": {
+      "Elevator Sim": {
         "open": true
       },
       "open": true
@@ -41,5 +47,8 @@
         "open": true
       }
     }
+  },
+  "NetworkTables Info": {
+    "visible": true
   }
 }
