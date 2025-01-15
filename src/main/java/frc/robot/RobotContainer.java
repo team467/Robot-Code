@@ -8,7 +8,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,7 +18,6 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -48,26 +46,6 @@ public class RobotContainer {
     if (Constants.getMode() != Constants.Mode.REPLAY) {
       switch (Constants.getRobot()) {
         case ROBOT_2024_COMP -> {
-          Transform3d front =
-              new Transform3d(
-                  new Translation3d(
-                      Units.inchesToMeters(6.74),
-                      Units.inchesToMeters(-10.991),
-                      Units.inchesToMeters(15.875)),
-                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
-          Transform3d back =
-              new Transform3d(
-                  new Translation3d(
-                      Units.inchesToMeters(-11.89),
-                      Units.inchesToMeters(0),
-                      Units.inchesToMeters(15.5)),
-                  new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
-
-          vision =
-              new Vision(
-                  drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
-
           drive =
               new Drive(
                   new GyroIOPigeon2(),
