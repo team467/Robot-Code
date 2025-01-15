@@ -17,4 +17,6 @@ public interface ElevatorIO {
   default void updateInputs(ElevatorIOInputs inputs) {}
 
   default void setVoltage(double volts) {}
+
+  default void setSpeed(double speed) {}
 }
