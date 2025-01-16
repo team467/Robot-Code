@@ -4,6 +4,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.RelativeEncoder.*;
 import com.revrobotics.spark.*;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import static frc.robot.Schematic.*;
 
 public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
 
@@ -18,10 +19,6 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   // motor encoders
   private final RelativeEncoder pivotMotorEncoder;
   private final RelativeEncoder removalMotorEncoder;
-
-  // TODO: Move to schematic
-  private static final int PIVOT_ID = 1;
-  private static final int REMOVAL_ID = 2;
 
   public AlgaeEffectorIOPhysical() {
     pivotMotor = new SparkMax(PIVOT_ID, MotorType.kBrushless);
