@@ -80,7 +80,7 @@ public class RobotContainer {
                   new ModuleIOSpark(2),
                   new ModuleIOSpark(3));
 
-          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -95,14 +95,6 @@ public class RobotContainer {
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
         }
         case ROBOT_BRIEFCASE -> {
-          drive =
-              new Drive(
-                  new GyroIO() {},
-                  new ModuleIOSim(),
-                  new ModuleIOSim(),
-                  new ModuleIOSim(),
-                  new ModuleIOSim());
-
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
       }
@@ -169,8 +161,11 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    operatorController.a().onTrue(algae.toggleArm());
+    if (algae != null) {
+      operatorController.a().onTrue(algae.toggleArm());
+    }
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

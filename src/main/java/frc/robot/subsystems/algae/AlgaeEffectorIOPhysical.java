@@ -10,8 +10,8 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   private final SparkMax removalMotor;
   private final RelativeEncoder pivotMotorEncoder;
   private final RelativeEncoder removalMotorEncoder;
-  // private final SparkLimitSwitch pivotMotorExtendLimitSwitch;
-  // private final SparkLimitSwitch pivotMotorStoweLimitSwitch;
+  private final SparkLimitSwitch pivotMotorExtendLimitSwitch;
+  private final SparkLimitSwitch pivotMotorStoweLimitSwitch;
 
   // TODO: Move to schematic
   private static final int PIVOT_ID = 1;
@@ -24,8 +24,8 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
     pivotMotorEncoder = pivotMotor.getEncoder();
     removalMotorEncoder = removalMotor.getEncoder();
 
-    // pivotMotorExtendLimitSwitch = pivotMotor.getForwardLimitSwitch();
-    // pivotMotorStoweLimitSwitch = pivotMotor.getReverseLimitSwitch();
+    pivotMotorExtendLimitSwitch = pivotMotor.getForwardLimitSwitch();
+    pivotMotorStoweLimitSwitch = pivotMotor.getReverseLimitSwitch();
   }
 
   public void setRemovalVolts(double volts) {
