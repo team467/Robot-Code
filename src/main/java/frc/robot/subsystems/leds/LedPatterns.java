@@ -30,6 +30,7 @@ public class LedPatterns {
   public static final LEDPattern OFF = LEDPattern.solid(Color.kDarkViolet);
   public static final LEDPattern DEFAULT = LEDPattern.solid(Color.kDeepPink);
   public static final LEDPattern BASE2 =
-   LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkTurquoise, Color.kDarkViolet);
-   LEDPattern LedPattern = BASE2.breathe(Second.of(2));
+      LEDPattern.gradient(
+          LEDPattern.GradientType.kDiscontinuous, Color.kDarkTurquoise, Color.kDarkViolet);
+  LEDPattern LedPattern = BASE2.breathe(Second.of(2));
 }
