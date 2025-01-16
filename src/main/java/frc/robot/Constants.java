@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.Map;
 
 public class Constants {
-  // Change this temporarily to override the RobotType, e.g. RobotType.ROBOT_SIMBOT
-  private static final RobotType ROBOT_TYPE_OVERRIDE = RobotType.ROBOT_SIMBOT;
-  public static final boolean tuningMode = true;
+  // Change this temporarily to over;
+  public static final boolean tuningMode = true;ride the RobotType, e.g. RobotType.ROBOT_SIMBOT
+  private static final RobotType ROBOT_TYPE_OVERRIDE = RobotType.ROBOT_SIMBOT
 
   private static final String ROBOT_FILENAME = "/home/lvuser/robot";
   private static RobotType cachedRobotTypeFromRoborio = null;

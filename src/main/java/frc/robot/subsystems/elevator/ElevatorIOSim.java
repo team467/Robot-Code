@@ -29,7 +29,6 @@ public class ElevatorIOSim implements ElevatorIO {
   private final SparkRelativeEncoder encoder = (SparkRelativeEncoder) motor.getEncoder();
   private final SparkRelativeEncoderSim encoderSim = new SparkRelativeEncoderSim(motor);
 
-  
   // Simulation classes help us simulate what's going on, including gravity.
   private final ElevatorSim elevatorSim =
       new ElevatorSim(
@@ -82,7 +81,8 @@ public class ElevatorIOSim implements ElevatorIO {
     // First we simulate the motor to updates its state including voltage output
     motorSim.iterate(motor.get(), RobotController.getBatteryVoltage(), 0.020);
 
-    // Next, we set the elevatorSim's input to the motor's output. Note that applied output needs to by multiplied by bus voltage.
+    // Next, we set the elevatorSim's input to the motor's output. Note that applied output needs to
+    // by multiplied by bus voltage.
     elevatorSim.setInput(motor.getAppliedOutput() * motor.getBusVoltage());
 
     // Next, we update it. The standard loop time is 20ms.
@@ -115,5 +115,4 @@ public class ElevatorIOSim implements ElevatorIO {
   public void setSpeed(double speed) {
     motor.set(speed);
   }
-
 }
