@@ -8,6 +8,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class AlgaeEffector extends SubsystemBase {
   private boolean armExtended = false;
+  private boolean algaeMotorStarted = false;
   private final AlgaeEffectorIO io;
   private PIDController pivotFeedback =
       new PIDController(AlgaeEffectorConstants.PIVOT_KP, 0, AlgaeEffectorConstants.PIVOT_KD);
@@ -50,6 +51,10 @@ public class AlgaeEffector extends SubsystemBase {
   /** Makes arm either go in or out */
   public Command toggleArm() {
     return Commands.either(retractArm(), extendArm(), () -> armExtended);
+  }
+
+  public Command startAlgaeRemoval() {
+    return Commands.either(stopRemoval(), startRemoval(), () -> algaeMotorStarted);
   }
 
   /** Spins the motor to start the removal of algae */
