@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drive;
 
+import static frc.robot.Schematic.*;
+
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
@@ -27,24 +29,6 @@ public class DriveConstants {
   public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.0);
   public static final Rotation2d backLeftZeroRotation = new Rotation2d(0.0);
   public static final Rotation2d backRightZeroRotation = new Rotation2d(0.0);
-
-  // Device CAN IDs
-  public static final int pigeonCanId = 9;
-
-  public static final int frontLeftDriveCanId = 1;
-  public static final int backLeftDriveCanId = 3;
-  public static final int frontRightDriveCanId = 5;
-  public static final int backRightDriveCanId = 7;
-
-  public static final int frontLeftTurnCanId = 2;
-  public static final int backLeftTurnCanId = 4;
-  public static final int frontRightTurnCanId = 6;
-  public static final int backRightTurnCanId = 8;
-
-  public static final int frontLeftAbsoluteEncoderCanId = 10;
-  public static final int backLeftAbsoluteEncoderCanId = 11;
-  public static final int frontRightAbsoluteEncoderCanId = 12;
-  public static final int backRightAbsoluteEncoderCanId = 13;
 
   // Drive motor configuration
   public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
