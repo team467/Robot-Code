@@ -18,8 +18,8 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   private final SparkLimitSwitch pivotMotorStoweLimitSwitch;
 
   public AlgaeEffectorIOPhysical() {
-    pivotMotor = new SparkMax(pivotId, MotorType.kBrushless);
-    removalMotor = new SparkMax(removalId, MotorType.kBrushless);
+    pivotMotor = new SparkMax(algaePivotCanId, MotorType.kBrushless);
+    removalMotor = new SparkMax(algaeRemovalCanId, MotorType.kBrushless);
 
     pivotMotorEncoder = pivotMotor.getEncoder();
     removalMotorEncoder = removalMotor.getEncoder();
