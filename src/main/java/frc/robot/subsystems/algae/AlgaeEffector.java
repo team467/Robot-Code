@@ -22,7 +22,8 @@ public class AlgaeEffector extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs(getName(), inputs);
   }
-  /** Sets pivot volts and extends arm with a timeout */
+
+  /** Moves algae arm outwards */
   public Command extendArm() {
     return Commands.startEnd(
             () -> {
@@ -33,7 +34,8 @@ public class AlgaeEffector extends SubsystemBase {
             this)
         .withTimeout(2);
   }
-  /** Sets negative pivot polts, and retracts the arm back down. */
+
+  /** Moves algae arm inwards. */
   public Command retractArm() {
     return Commands.startEnd(
             () -> {
@@ -44,11 +46,13 @@ public class AlgaeEffector extends SubsystemBase {
             this)
         .withTimeout(2);
   }
+
   /** Makes arm either go in or out */
   public Command toggleArm() {
     return Commands.either(retractArm(), extendArm(), () -> armExtended);
   }
-  /** Sets removal volts and spins motors to start removal */
+
+  /** Spins the motor to start the removal of algae */
   public Command startRemoval() {
     return Commands.startEnd(
         () -> io.setRemovalVolts(AlgaeEffectorConstants.REMOVAL_VOLTAGE),
@@ -56,7 +60,7 @@ public class AlgaeEffector extends SubsystemBase {
         this);
   }
 
-  /** Sets removal volts to zero, and stops removal */
+  /** Stops spinning the removal motor */
   public Command stopRemoval() {
     return this.runOnce(() -> io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE));
   }
