@@ -1,10 +1,11 @@
 package frc.robot.subsystems.algae;
 
+import static frc.robot.Schematic.*;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.RelativeEncoder.*;
 import com.revrobotics.spark.*;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import static frc.robot.Schematic.*;
 
 public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
 

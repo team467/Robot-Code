@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drive;
 
 import static frc.lib.utils.SparkUtil.*;
+import static frc.robot.Schematic.*;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.revrobotics.AbsoluteEncoder;
@@ -20,7 +21,6 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
-import static frc.robot.Schematic.*;
 
 /**
  * Module IO implementation for Spark Flex drive motor controller, Spark Max turn motor controller,

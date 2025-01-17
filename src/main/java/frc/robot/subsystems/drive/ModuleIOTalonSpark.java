@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import static frc.lib.utils.PhoenixUtil.*;
 import static frc.lib.utils.SparkUtil.*;
+import static frc.robot.Schematic.*;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -38,7 +39,6 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.lib.utils.PhoenixUtil;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
-import static frc.robot.Schematic.*;
 
 /**
  * Module IO implementation for Spark Flex drive motor controller, Spark Max turn motor controller,
