@@ -36,6 +36,7 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
+  private AlgaeEffector algae;
   private boolean isRobotOriented = true; // Workaround, change if needed
   private AlgaeEffector algae;
   // Controller
@@ -78,6 +79,8 @@ public class RobotContainer {
                   new ModuleIOSpark(1),
                   new ModuleIOSpark(2),
                   new ModuleIOSpark(3));
+
+          // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -164,6 +167,7 @@ public class RobotContainer {
       operatorController.a().onTrue(algae.toggleArm());
     }
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

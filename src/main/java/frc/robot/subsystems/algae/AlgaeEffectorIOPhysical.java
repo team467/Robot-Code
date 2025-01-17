@@ -12,25 +12,22 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   // motors
   private final SparkMax pivotMotor;
   private final SparkMax removalMotor;
-
-  // limit switches
-  // private final SparkLimitSwitch pivotMotorExtendLimitSwitch;
-  // private final SparkLimitSwitch pivotMotorStowLimitSwitch;
-
-  // motor encoders
   private final RelativeEncoder pivotMotorEncoder;
   private final RelativeEncoder removalMotorEncoder;
+  private final SparkLimitSwitch pivotMotorExtendLimitSwitch;
+  private final SparkLimitSwitch pivotMotorStoweLimitSwitch;
 
   public AlgaeEffectorIOPhysical() {
     pivotMotor = new SparkMax(pivotId, MotorType.kBrushless);
     removalMotor = new SparkMax(removalId, MotorType.kBrushless);
 
-    // pivotMotorExtendLimitSwitch = pivotMotor.getForwardLimitSwitch();
-    // pivotMotorStowLimitSwitch = pivotMotor.getReverseLimitSwitch();
-
     pivotMotorEncoder = pivotMotor.getEncoder();
     removalMotorEncoder = removalMotor.getEncoder();
+
+    pivotMotorExtendLimitSwitch = pivotMotor.getForwardLimitSwitch();
+    pivotMotorStoweLimitSwitch = pivotMotor.getReverseLimitSwitch();
   }
+
 
   public void setRemovalVolts(double volts) {
     removalMotor.setVoltage(volts);
@@ -41,12 +38,12 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   }
 
   public void updateInputs(AlgaeEffectorIOInputs inputs) {
-    inputs.pivotVolts = pivotMotor.getBusVoltage() * pivotMotor.getAppliedOutput();
     inputs.removalVolts = removalMotor.getBusVoltage() * removalMotor.getAppliedOutput();
-    inputs.pivotAmps = pivotMotor.getOutputCurrent();
-    inputs.removalAmps = removalMotor.getOutputCurrent();
+    inputs.pivotVolts = pivotMotor.getBusVoltage() * pivotMotor.getAppliedOutput();
     inputs.pivotVelocity = pivotMotorEncoder.getVelocity();
     inputs.removalVelocity = removalMotorEncoder.getVelocity();
+    inputs.removalAmps = removalMotor.getOutputCurrent();
+    inputs.pivotAmps = pivotMotor.getOutputCurrent();
     inputs.pivotPosition = pivotMotorEncoder.getPosition();
   }
 }
