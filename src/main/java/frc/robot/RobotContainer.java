@@ -38,7 +38,6 @@ public class RobotContainer {
   private Vision vision;
   private AlgaeEffector algae;
   private boolean isRobotOriented = true; // Workaround, change if needed
-  private AlgaeEffector algae;
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);

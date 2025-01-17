@@ -28,7 +28,6 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
     pivotMotorStoweLimitSwitch = pivotMotor.getReverseLimitSwitch();
   }
 
-
   public void setRemovalVolts(double volts) {
     removalMotor.setVoltage(volts);
   }
