@@ -38,6 +38,7 @@ public class RobotContainer {
   private Vision vision;
   private AlgaeEffector algae;
   private boolean isRobotOriented = true; // Workaround, change if needed
+
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
@@ -93,7 +94,6 @@ public class RobotContainer {
 
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
         }
-
         case ROBOT_BRIEFCASE -> {
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
@@ -161,7 +161,6 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    // operator controller
     if (algae != null) {
       operatorController.a().onTrue(algae.toggleArm());
     }
