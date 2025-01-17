@@ -1,11 +1,15 @@
 package frc.robot.subsystems.algae;
 
+import static frc.robot.Schematic.*;
+
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.RelativeEncoder.*;
 import com.revrobotics.spark.*;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
 
+  // motors
   private final SparkMax pivotMotor;
   private final SparkMax removalMotor;
   private final RelativeEncoder pivotMotorEncoder;
@@ -13,13 +17,9 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   private final SparkLimitSwitch pivotMotorExtendLimitSwitch;
   private final SparkLimitSwitch pivotMotorStoweLimitSwitch;
 
-  // TODO: Move to schematic
-  private static final int PIVOT_ID = 1;
-  private static final int REMOVAL_ID = 2;
-
   public AlgaeEffectorIOPhysical() {
-    pivotMotor = new SparkMax(PIVOT_ID, MotorType.kBrushless);
-    removalMotor = new SparkMax(REMOVAL_ID, MotorType.kBrushless);
+    pivotMotor = new SparkMax(algaePivotCanId, MotorType.kBrushless);
+    removalMotor = new SparkMax(algaeRemovalCanId, MotorType.kBrushless);
 
     pivotMotorEncoder = pivotMotor.getEncoder();
     removalMotorEncoder = removalMotor.getEncoder();
