@@ -22,7 +22,7 @@ public class AlgaeEffector extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs(getName(), inputs);
   }
-  /**Sets pivot volts and extends arm with a timeout */
+  /** Sets pivot volts and extends arm with a timeout */
   public Command extendArm() {
     return Commands.startEnd(
             () -> {
@@ -33,7 +33,7 @@ public class AlgaeEffector extends SubsystemBase {
             this)
         .withTimeout(2);
   }
-/**Sets negative pivot polts, and retracts the arm back down. */
+  /** Sets negative pivot polts, and retracts the arm back down. */
   public Command retractArm() {
     return Commands.startEnd(
             () -> {
@@ -44,11 +44,11 @@ public class AlgaeEffector extends SubsystemBase {
             this)
         .withTimeout(2);
   }
-/** Makes arm either go in or out */
+  /** Makes arm either go in or out */
   public Command toggleArm() {
     return Commands.either(retractArm(), extendArm(), () -> armExtended);
   }
-/** Sets removal volts and spins motors to start removal*/
+  /** Sets removal volts and spins motors to start removal */
   public Command startRemoval() {
     return Commands.startEnd(
         () -> io.setRemovalVolts(AlgaeEffectorConstants.REMOVAL_VOLTAGE),
@@ -56,7 +56,7 @@ public class AlgaeEffector extends SubsystemBase {
         this);
   }
 
-  /**Sets removal volts to zero, and stops removal */
+  /** Sets removal volts to zero, and stops removal */
   public Command stopRemoval() {
     return this.runOnce(() -> io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE));
   }
