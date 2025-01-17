@@ -22,8 +22,8 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   private final RelativeEncoder removalMotorEncoder;
 
   public AlgaeEffectorIOPhysical() {
-    pivotMotor = new SparkMax(PIVOT_ID, MotorType.kBrushless);
-    removalMotor = new SparkMax(REMOVAL_ID, MotorType.kBrushless);
+    pivotMotor = new SparkMax(pivotId, MotorType.kBrushless);
+    removalMotor = new SparkMax(removalId, MotorType.kBrushless);
 
     // pivotMotorExtendLimitSwitch = pivotMotor.getForwardLimitSwitch();
     // pivotMotorStowLimitSwitch = pivotMotor.getReverseLimitSwitch();

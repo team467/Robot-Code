@@ -20,8 +20,8 @@ public class Schematic {
   public static final int backRightAbsoluteEncoderCanId;
 
   // Algae Effector (Motor IDs)
-  public static final int PIVOT_ID;
-  public static final int REMOVAL_ID;
+  public static final int pivotId;
+  public static final int removalId;
 
   static {
     switch (Constants.getRobot()) {
@@ -44,8 +44,8 @@ public class Schematic {
         frontRightAbsoluteEncoderCanId = 12;
         backRightAbsoluteEncoderCanId = 13;
 
-        PIVOT_ID = 0;
-        REMOVAL_ID = 0;
+        pivotId = 0;
+        removalId = 0;
       }
       case ROBOT_2025_COMP -> {
         // TODO: Change for 2025 as needed
@@ -68,8 +68,32 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 13;
 
         // Algae Effector (Motor IDs)
-        PIVOT_ID = 1;
-        REMOVAL_ID = 2;
+        pivotId = 0;
+        removalId = 0;
+      }
+
+      case ROBOT_BRIEFCASE -> {
+        // Drive (CAN IDs)
+        pigeonCanId = 0;
+
+        frontLeftDriveCanId = 0;
+        backLeftDriveCanId = 0;
+        frontRightDriveCanId = 0;
+        backRightDriveCanId = 0;
+
+        frontLeftTurnCanId = 0;
+        backLeftTurnCanId = 0;
+        frontRightTurnCanId = 0;
+        backRightTurnCanId = 0;
+
+        frontLeftAbsoluteEncoderCanId = 0;
+        backLeftAbsoluteEncoderCanId = 0;
+        frontRightAbsoluteEncoderCanId = 0;
+        backRightAbsoluteEncoderCanId = 0;
+
+        // Algae Effector (Motor IDs)
+        pivotId = 1;
+        removalId = 2;
       }
 
       default -> {
@@ -92,8 +116,8 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 0;
 
         // Algae Effector (Motor IDs)
-        PIVOT_ID = 0;
-        REMOVAL_ID = 0;
+        pivotId = 0;
+        removalId = 0;
       }
     }
   }
