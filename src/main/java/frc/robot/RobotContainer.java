@@ -53,58 +53,58 @@ public class RobotContainer {
     if (Constants.getMode() != Constants.Mode.REPLAY) {
       switch (Constants.getRobot()) {
         case ROBOT_2024_COMP -> {
-          Transform3d front = new Transform3d(
-              new Translation3d(
-                  Units.inchesToMeters(6.74),
-                  Units.inchesToMeters(-10.991),
-                  Units.inchesToMeters(15.875)),
-              new Rotation3d(0, Units.degreesToRadians(-30), 0));
-          Transform3d back = new Transform3d(
-              new Translation3d(
-                  Units.inchesToMeters(-11.89),
-                  Units.inchesToMeters(0),
-                  Units.inchesToMeters(15.5)),
-              new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
+          Transform3d front =
+              new Transform3d(
+                  new Translation3d(
+                      Units.inchesToMeters(6.74),
+                      Units.inchesToMeters(-10.991),
+                      Units.inchesToMeters(15.875)),
+                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
+          Transform3d back =
+              new Transform3d(
+                  new Translation3d(
+                      Units.inchesToMeters(-11.89),
+                      Units.inchesToMeters(0),
+                      Units.inchesToMeters(15.5)),
+                  new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
 
-          vision = new Vision(
-              drive::addVisionMeasurement,
-              new VisionIOPhotonVision(camera0Name, robotToCamera0));
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
 
-          drive = new Drive(
-              new GyroIOPigeon2(),
-              new ModuleIOSpark(0),
-              new ModuleIOSpark(1),
-              new ModuleIOSpark(2),
-              new ModuleIOSpark(3));
+          drive =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOSpark(0),
+                  new ModuleIOSpark(1),
+                  new ModuleIOSpark(2),
+                  new ModuleIOSpark(3));
 
           climber = new Climber(new ClimberIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
-          drive = new Drive(
-              new GyroIO() {
-              },
-              new ModuleIOSim(),
-              new ModuleIOSim(),
-              new ModuleIOSim(),
-              new ModuleIOSim());
+          drive =
+              new Drive(
+                  new GyroIO() {},
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim());
         }
       }
     }
 
     // Instantiate missing subsystems
     if (drive == null) {
-      drive = new Drive(
-          new GyroIO() {
-          },
-          new ModuleIO() {
-          },
-          new ModuleIO() {
-          },
-          new ModuleIO() {
-          },
-          new ModuleIO() {
-          });
+      drive =
+          new Drive(
+              new GyroIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {});
     }
 
     if (climber == null) {
@@ -152,9 +152,10 @@ public class RobotContainer {
         .start()
         .onTrue(
             Commands.runOnce(
-                () -> drive.setPose(
-                    new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-                drive)
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+                    drive)
                 .ignoringDisable(true));
     driverController
         .pov(-1)
@@ -167,7 +168,7 @@ public class RobotContainer {
     operatorController.back().whileFalse(climber.setRatchet(true));
 
     // operator d pad
-    
+
     // Hold Right: Move climber up
     operatorController
         .pov(90)
@@ -191,5 +192,3 @@ public class RobotContainer {
     return autoChooser.get();
   }
 }
-
-

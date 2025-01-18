@@ -1,6 +1,7 @@
 {
   "NTProvider": {
     "types": {
+      "/AdvantageKit/RealOutputs/Alerts": "Alerts",
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
@@ -10,11 +11,15 @@
       "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/Auto Choices": "String Chooser"
     }
   },
   "NetworkTables": {
     "AdvantageKit": {
+      "Climber": {
+        "open": true
+      },
       "DashboardInputs": {
         "open": true
       },
@@ -24,6 +29,9 @@
       "DriverStation": {
         "open": true
       },
+      "open": true
+    },
+    "Climber": {
       "open": true
     },
     "SmartDashboard": {
@@ -41,5 +49,8 @@
         "open": true
       }
     }
+  },
+  "NetworkTables Info": {
+    "visible": true
   }
 }
