@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import static frc.lib.utils.PhoenixUtil.*;
 import static frc.lib.utils.SparkUtil.*;
+import static frc.robot.Schematic.*;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -117,10 +118,10 @@ public class ModuleIOTalonSpark implements ModuleIO {
     turnEncoderAbsolute =
         new CANcoder(
             switch (module) {
-              case 0 -> frontLeftTurnCanId;
-              case 1 -> frontRightTurnCanId;
-              case 2 -> backLeftTurnCanId;
-              case 3 -> backRightTurnCanId;
+              case 0 -> frontLeftAbsoluteEncoderCanId;
+              case 1 -> frontRightAbsoluteEncoderCanId;
+              case 2 -> backLeftAbsoluteEncoderCanId;
+              case 3 -> backRightAbsoluteEncoderCanId;
               default -> 0;
             });
     turnController = turnSpark.getClosedLoopController();

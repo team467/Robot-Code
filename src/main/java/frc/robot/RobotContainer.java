@@ -17,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.subsystems.algae.AlgaeEffector;
+import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
+import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -33,6 +36,7 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
+  private AlgaeEffector algae;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -75,6 +79,8 @@ public class RobotContainer {
                   new ModuleIOSpark(1),
                   new ModuleIOSpark(2),
                   new ModuleIOSpark(3));
+
+          // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -85,6 +91,11 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim());
+
+          algae = new AlgaeEffector(new AlgaeEffectorIOSim());
+        }
+        case ROBOT_BRIEFCASE -> {
+          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
       }
     }
@@ -149,7 +160,12 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+
+    if (algae != null) {
+      operatorController.a().onTrue(algae.toggleArm());
+    }
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
