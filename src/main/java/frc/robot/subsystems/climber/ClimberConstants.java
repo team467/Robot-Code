@@ -2,7 +2,6 @@ package frc.robot.subsystems.climber;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
-
 public class ClimberConstants {
  public static final int CLIMBER_RATCHET_ID;
  public static final double CLIMBER_FORWARD_PERCENT;
@@ -12,12 +11,10 @@ public class ClimberConstants {
  public static final float UPPER_LIMIT_POSITION;
  public static final int CLIMBER_MOTOR_ID;
 
-
  // PID Controller Constants
  public static final double CLIMBER_P;
  public static final double CLIMBER_I;
  public static final double CLIMBER_D;
-
 
  // Feedforward Constants
  public static final double CLIMBER_S; // volts (V)
@@ -40,9 +37,6 @@ public class ClimberConstants {
  //  = (Pi * D) / ppr
  static final double CLIMBER_CONVERSION_FACTOR;
 
-
-
-
  static {
    switch (Constants.getRobot()) {
      case ROBOT_2025_COMP -> {
@@ -52,8 +46,7 @@ public class ClimberConstants {
        CLIMBER_BACKWARD_PERCENT = 0.0;
        BACKUP_TIME = 0.0;
        LOWER_LIMIT_POSITION = 0.0f;
-       UPPER_LIMIT_POSITION=0.0f;
-
+       UPPER_LIMIT_POSITION = 0.0f;
 
        // Simulated Variables
        CLIMBER_MOTOR_ID = 0;
@@ -77,6 +70,7 @@ public class ClimberConstants {
        NEO_PULSES_PER_REVOLUTION = 0;
        CLIMBER_CONVERSION_FACTOR = 0.0;
      }
+     
      case ROBOT_SIMBOT -> {
        // Real variables
        CLIMBER_RATCHET_ID = 0;
@@ -85,7 +79,6 @@ public class ClimberConstants {
        BACKUP_TIME = 0.0;
        LOWER_LIMIT_POSITION = 0.0f;
        UPPER_LIMIT_POSITION = 0.0f;
-
 
        // Simulated Variables
        CLIMBER_MOTOR_ID = 11;
@@ -107,9 +100,9 @@ public class ClimberConstants {
        STARTING_HEIGHT_METERS = 0.0;
        MEASUREMENT_STD_DEVS = 0.01;
        NEO_PULSES_PER_REVOLUTION = 4096;
-       CLIMBER_CONVERSION_FACTOR =
-     2.0 * Math.PI * CLIMBER_DRUM_RADIUS / NEO_PULSES_PER_REVOLUTION;
+       CLIMBER_CONVERSION_FACTOR = 2.0 * Math.PI * CLIMBER_DRUM_RADIUS / NEO_PULSES_PER_REVOLUTION;
      }
+     
      default -> {
        // Real variables
        CLIMBER_RATCHET_ID = 0;
@@ -118,7 +111,6 @@ public class ClimberConstants {
        BACKUP_TIME = 0.0;
        LOWER_LIMIT_POSITION = 0.0f;
        UPPER_LIMIT_POSITION = 0.0f;
-
 
        // Simulated Variables
        CLIMBER_MOTOR_ID = 0;
@@ -145,4 +137,5 @@ public class ClimberConstants {
    }
  }
 }
+
 

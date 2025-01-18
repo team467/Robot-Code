@@ -1,8 +1,6 @@
 package frc.robot.subsystems.climber;
 
-
 import static frc.lib.utils.SparkUtil.tryUntilOk;
-
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -14,9 +12,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj.Relay;
 
-
 public class ClimberIOSparkMax implements ClimberIO {
-
 
  private final SparkFlex climberLeader;
  private final RelativeEncoder climberLeaderEncoder;
@@ -26,11 +22,9 @@ public class ClimberIOSparkMax implements ClimberIO {
  private final int CLIMBER_LEADER_ID = 1;
  private final int CLIMBER_FOLLOWER_ID = 2;
 
-
  /**
   * Constructor initializes the climber system, including motors, encoders, limit switches, and ratchet.
   */
-
 
  public ClimberIOSparkMax() {
    climberLeader = new SparkFlex(CLIMBER_LEADER_ID, MotorType.kBrushless);
@@ -45,14 +39,11 @@ public class ClimberIOSparkMax implements ClimberIO {
        .reverseSoftLimitEnabled(false);
    ClimberLeaderConfig.encoder.positionConversionFactor(ClimberConstants.CLIMBER_CONVERSION_FACTOR);
 
-
    climberLeaderEncoder = climberLeader.getEncoder();
-
 
    climberFollower = new SparkFlex(CLIMBER_FOLLOWER_ID, MotorType.kBrushless);
    var ClimberFollowerConfig = new SparkFlexConfig();
    ClimberFollowerConfig.follow(1); // Set the follower motor to mirror the leader motor
-
 
    // Configure the leader motor using the configuration object and retry up to 5 times if it fails
    tryUntilOk(
@@ -64,12 +55,10 @@ public class ClimberIOSparkMax implements ClimberIO {
                ResetMode.kResetSafeParameters,
                PersistMode.kPersistParameters));
 
-
    tryUntilOk(climberFollower, 5, () -> climberFollower.configure(ClimberFollowerConfig,
          ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   
    // Set the encoder position to 0 retrying up to 5 times if it fails
-
 
    tryUntilOk(climberLeader, 5, () -> climberLeaderEncoder.setPosition(0.0));
    limitSwitch = climberLeader.getForwardLimitSwitch();
@@ -77,7 +66,6 @@ public class ClimberIOSparkMax implements ClimberIO {
    // Initialize the ratchet relay and set its default state to off
    climberRatchet.set(Relay.Value.kOff);
  }
-
 
  @Override
  //Updates all the inputs
@@ -90,25 +78,19 @@ public class ClimberIOSparkMax implements ClimberIO {
    inputs.climberAtTop = limitSwitch.isPressed();
  }
 
-
  @Override
  // Sets the motorss percent output
  public void setVoltage(double voltage) {
    climberLeader.setVoltage(climberLeader.getAppliedOutput());
  }
 
-
  public void setSpeed(double speed) {
    climberLeader.set(speed);
  }
 
-
-
-
  public void setRatchetLocked(boolean locked) {
    climberRatchet.set(locked ? Relay.Value.kOff : Relay.Value.kOn); // Lock or unlock the ratchet based on the parameter
  }
-
 
  @Override
  public void resetPosition() {

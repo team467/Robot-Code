@@ -1,8 +1,6 @@
 package frc.robot.subsystems.climber;
 
-
 import org.littletonrobotics.junction.AutoLog;
-
 
 public interface ClimberIO {
  @AutoLog
@@ -15,16 +13,14 @@ public interface ClimberIO {
    public boolean climberAtTop = false;
  }
 
-
  default void updateInputs(ClimberIOInputs inputs) {}
-
 
  default void setRatchetLocked(boolean locked) {}
 
-
  default void setSpeed(double speed) {}
-  default void setVoltage(double volts) {}
-
+ 
+ default void setVoltage(double volts) {}
 
  default void resetPosition() {}
 }
+

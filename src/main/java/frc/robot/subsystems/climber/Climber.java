@@ -1,19 +1,15 @@
 package frc.robot.subsystems.climber;
 
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
-
 public class Climber extends SubsystemBase {
-
 
  private final ClimberIO climberIO;
  private final ClimberIOInputsAutoLogged climberIOInputs = new ClimberIOInputsAutoLogged();
-
 
  /**
   * ClimberIO object, gets inputs for ClimberIO object
@@ -22,12 +18,9 @@ public class Climber extends SubsystemBase {
   */
  public Climber(ClimberIO climberIO) {
    super();
-
-
    this.climberIO = climberIO;
    climberIO.resetPosition();
  }
-
 
  public void periodic() {
    climberIO.updateInputs(climberIOInputs);
@@ -37,7 +30,6 @@ public class Climber extends SubsystemBase {
      climberIO.resetPosition();
    }
  }
-
 
  /**
   * Command to raise or lower the climber arms If percentOutput is negative, the climber will lower
@@ -84,14 +76,12 @@ public class Climber extends SubsystemBase {
        this);
  }
 
-
  //TODO: Review design to see if we need to move backwards to release ratchet.
 
 
  public boolean getRatchet() {
    return climberIOInputs.ratchetLocked;
  }
-
 
  public boolean getLimitSwitch() {
    return true;
