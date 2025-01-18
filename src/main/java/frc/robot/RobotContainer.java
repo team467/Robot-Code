@@ -21,6 +21,7 @@ import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -57,6 +58,11 @@ public class RobotContainer {
                   new ModuleIOSpark(1),
                   new ModuleIOSpark(2),
                   new ModuleIOSpark(3));
+
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
 
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
