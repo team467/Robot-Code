@@ -22,6 +22,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
@@ -192,11 +193,12 @@ public class ModuleIOSpark implements ModuleIO {
         turnSpark,
         5,
         () ->
-            turnEncoder.setPosition(turnEncoderAbsolute.getAbsolutePosition().getValueAsDouble()));
+            turnEncoder.setPosition(Units.rotationsToRadians(turnEncoderAbsolute.getAbsolutePosition().getValueAsDouble())));
   }
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
+    BaseStatusSignal.refreshAll(turnPositionAbsolute);
     // Update drive inputs
     sparkStickyFault = false;
     ifOk(driveSpark, driveEncoder::getPosition, (value) -> inputs.drivePositionRad = value);
