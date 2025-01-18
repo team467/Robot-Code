@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drive;
 
 import static frc.lib.utils.SparkUtil.*;
+import static frc.robot.Schematic.*;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -192,13 +193,12 @@ public class ModuleIOSpark implements ModuleIO {
         turnSpark,
         5,
         () ->
-            turnEncoder.setPosition(
-                Units.rotationsToRadians(
-                    turnEncoderAbsolute.getAbsolutePosition().getValueAsDouble())));
+            turnEncoder.setPosition(Units.rotationsToRadians(turnEncoderAbsolute.getAbsolutePosition().getValueAsDouble())));
   }
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
+    BaseStatusSignal.refreshAll(turnPositionAbsolute);
     inputs.turnPositionAbsolute = Units.rotationsToRadians(turnPositionAbsolute.getValueAsDouble());
     // Update drive inputs
     sparkStickyFault = false;

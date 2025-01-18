@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drive;
 
+import static frc.robot.Schematic.*;
+
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
@@ -30,24 +32,6 @@ public class DriveConstants {
   public static final Rotation2d backRightZeroRotation =
       new Rotation2d(3.0461928844451904 - 2 * Math.PI);
 
-  // Device CAN IDs
-  public static final int pigeonCanId = 17;
-
-  public static final int frontLeftDriveCanId = 1;
-  public static final int backLeftDriveCanId = 5;
-  public static final int frontRightDriveCanId = 7;
-  public static final int backRightDriveCanId = 3;
-
-  public static final int frontLeftTurnCanId = 2;
-  public static final int backLeftTurnCanId = 6;
-  public static final int frontRightTurnCanId = 4;
-  public static final int backRightTurnCanId = 8;
-
-  public static final int frontLeftAbsoluteEncoderCanId = 21;
-  public static final int backLeftAbsoluteEncoderCanId = 20;
-  public static final int frontRightAbsoluteEncoderCanId = 18;
-  public static final int backRightAbsoluteEncoderCanId = 19;
-
   // Drive motor configuration
   public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
       SwerveModuleConstants.ClosedLoopOutputType.Voltage;
@@ -65,7 +49,7 @@ public class DriveConstants {
   // Drive PID configuration
   public static final double driveKp = 0.0;
   public static final double driveKd = 0.0;
-  public static final double driveKs = 0;
+  public static final double driveKs = 0.0;
   public static final double driveKv = 0.1;
   public static final double driveKa = 0.0;
   public static final double driveSimP = 0.05;
@@ -88,7 +72,7 @@ public class DriveConstants {
 
   // Turn PID configuration
   public static final double turnKp = 2.0;
-  public static final double turnKd = 0;
+  public static final double turnKd = 0.0;
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
   public static final double turnPIDMinInput = -Math.PI; // Radians

@@ -1,6 +1,9 @@
 package frc.robot.subsystems.algae;
 
+import org.littletonrobotics.junction.AutoLog;
+
 public interface AlgaeEffectorIO {
+  @AutoLog
   class AlgaeEffectorIOInputs {
     // removal
     public double removalVelocity;
