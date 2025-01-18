@@ -30,7 +30,7 @@ public class RobotState {
   public boolean climberDown = false;
   /** If the climber ratchet is locked */
   @AutoLogOutput(key = "RobotState/ClimberRatchetLocked")
-  public boolean climberRatchet = false;
+  public boolean climberRatchetLocked = false;
   /** If the robot is in currently ducking */
   @AutoLogOutput(key = "RobotState/Duck")
   public boolean duck = false;
