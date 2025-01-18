@@ -118,7 +118,7 @@ public class Module {
     return inputs.driveVelocityRadPerSec;
   }
 
-  public void optimize(SwerveModuleState state, Rotation2d currentAngle){
+  private static void optimize(SwerveModuleState state, Rotation2d currentAngle){
     var delta = state.angle.minus(currentAngle);
     if (Math.abs(MathUtil.inputModulus(delta.getDegrees(), -180, 180)) > 90){
       state.speedMetersPerSecond *= -1;
