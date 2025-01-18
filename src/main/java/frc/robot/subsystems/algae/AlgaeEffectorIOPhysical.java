@@ -1,11 +1,16 @@
 package frc.robot.subsystems.algae;
 
+import static frc.lib.utils.SparkUtil.*;
 import static frc.robot.Schematic.*;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.RelativeEncoder.*;
 import com.revrobotics.spark.*;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
 
@@ -26,6 +31,16 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
 
     pivotMotorExtendLimitSwitch = pivotMotor.getForwardLimitSwitch();
     pivotMotorStoweLimitSwitch = pivotMotor.getReverseLimitSwitch();
+
+    var pivotMotorConfig = new SparkMaxConfig();
+    pivotMotorConfig.idleMode(IdleMode.kBrake);
+
+    tryUntilOk(
+        pivotMotor,
+        5,
+        () ->
+            pivotMotor.configure(
+                pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   public void setRemovalVolts(double volts) {
@@ -44,5 +59,7 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
     inputs.removalAmps = removalMotor.getOutputCurrent();
     inputs.pivotAmps = pivotMotor.getOutputCurrent();
     inputs.pivotPosition = pivotMotorEncoder.getPosition();
+    inputs.forwardLimitSwitch = pivotMotorExtendLimitSwitch.isPressed();
+    inputs.reverseLimitSwitch = pivotMotorStoweLimitSwitch.isPressed();
   }
 }

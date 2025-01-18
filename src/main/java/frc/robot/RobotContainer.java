@@ -162,8 +162,8 @@ public class RobotContainer {
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     if (algae != null) {
-      operatorController.a().onTrue(algae.toggleArm());
-      operatorController.b().onTrue(algae.startAlgaeRemoval());
+      operatorController.a().onTrue(algae.extendSpinAlgae());
+      operatorController.b().onTrue(algae.retractStopAlgae());
     }
   }
 

@@ -25,7 +25,7 @@ public class AlgaeEffector extends SubsystemBase {
   }
 
   /** Moves algae arm outwards */
-  public Command extendArm() {
+  private Command extendArm() {
     return Commands.startEnd(
             () -> {
               io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
@@ -33,11 +33,11 @@ public class AlgaeEffector extends SubsystemBase {
             },
             () -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
             this)
-        .withTimeout(2);
+        .withTimeout(0.5);
   }
 
   /** Moves algae arm inwards. */
-  public Command retractArm() {
+  private Command retractArm() {
     return Commands.startEnd(
             () -> {
               io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE);
@@ -45,7 +45,7 @@ public class AlgaeEffector extends SubsystemBase {
             },
             () -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
             this)
-        .withTimeout(2);
+        .withTimeout(0.5);
   }
 
   /** Makes arm either go in or out */
@@ -58,7 +58,7 @@ public class AlgaeEffector extends SubsystemBase {
   }
 
   /** Spins the motor to start the removal of algae */
-  public Command startRemoval() {
+  private Command startRemoval() {
     return Commands.startEnd(
         () -> io.setRemovalVolts(AlgaeEffectorConstants.REMOVAL_VOLTAGE),
         () -> io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
@@ -66,7 +66,15 @@ public class AlgaeEffector extends SubsystemBase {
   }
 
   /** Stops spinning the removal motor */
-  public Command stopRemoval() {
+  private Command stopRemoval() {
     return this.runOnce(() -> io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE));
+  }
+  /** When the arm is extended, it starts the algae motor too */
+  public Command extendSpinAlgae() {
+    return Commands.sequence(extendArm(), startRemoval());
+  }
+  /** When the arm is retracted, the motor automatically stops */
+  public Command retractStopAlgae() {
+    return Commands.sequence(stopRemoval(), retractArm());
   }
 }

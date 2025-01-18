@@ -14,6 +14,8 @@ public interface AlgaeEffectorIO {
     public double pivotAmps;
     public double pivotVolts;
     public double pivotPosition;
+    public boolean forwardLimitSwitch = false;
+    public boolean reverseLimitSwitch = false;
   }
 
   default void updateInputs(AlgaeEffectorIOInputs inputs) {}
