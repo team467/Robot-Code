@@ -163,9 +163,8 @@ public class RobotContainer {
 
     if (algae != null) {
       operatorController.a().onTrue(algae.toggleArm());
+      operatorController.b().onTrue(algae.startAlgaeRemoval());
     }
-
-    operatorController.b().onTrue(algae.startAlgaeRemoval());
   }
 
   /**

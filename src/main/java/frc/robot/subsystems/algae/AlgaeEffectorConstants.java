@@ -4,7 +4,7 @@ public class AlgaeEffectorConstants {
   public static final double STOW_ANGLE = 0.0;
   public static final double REMOVAL_ANGLE = 0.0;
 
-  public static final double REMOVAL_VOLTAGE = 6.0;
+  public static final double REMOVAL_VOLTAGE = -6.0;
   public static final double EXTEND_VOLTAGE = 1.0;
   public static final double RETRACT_VOLTAGE = -1.0;
   public static final double ZERO_VOLTAGE = 0;

@@ -11,6 +11,12 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
   public boolean lowBatteryAlert = false;
 
+  @AutoLogOutput(key = "RobotState/AlgaeAffectorExtended")
+  public boolean algaeAffectorExtended = false;
+
+  @AutoLogOutput(key = "RobotState/AlgaeMotorSpinning")
+  public boolean algaeMotorSpinning = false;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
