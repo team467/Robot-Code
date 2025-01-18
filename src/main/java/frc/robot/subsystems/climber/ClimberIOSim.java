@@ -31,7 +31,7 @@ public class ClimberIOSim implements ClimberIO {
   private final SparkRelativeEncoder encoder = (SparkRelativeEncoder) motor.getEncoder();
   private final SparkRelativeEncoderSim encoderSim = new SparkRelativeEncoderSim(motor);
 
-  // Simulation classes help us simulate what's going on, including gravity.
+  // Simulation physics
   private final ElevatorSim elevatorSim =
       new ElevatorSim(
           neo,
@@ -45,14 +45,13 @@ public class ClimberIOSim implements ClimberIO {
           ClimberConstants.MEASUREMENT_STD_DEVS,
           0.0);
 
-  // Create a Mechanism2d visualization of the elevator
+  // Visualization
   private final Mechanism2d mech2d = new Mechanism2d(20, 50);
   private final MechanismRoot2d mech2dRoot = mech2d.getRoot("Climber Root", 10, 0);
   private final MechanismLigament2d elevatorMech2d =
       mech2dRoot.append(new MechanismLigament2d("Climber", elevatorSim.getPositionMeters(), 90));
 
   public ClimberIOSim() {
-
     var motorConfig = new SparkFlexConfig();
     motorConfig
         .inverted(true)
@@ -72,45 +71,49 @@ public class ClimberIOSim implements ClimberIO {
 
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
-    // Set the distance per pulse for the encoder
+    // Reset encoders and simulation state
     encoder.setPosition(0.0);
     motorSim.enable();
     motorSim.setPosition(0.0);
     encoderSim.setPosition(0.0);
 
     // Publish Mechanism2d to SmartDashboard
-    // To view the Climber visualization, select Network Tables -> SmartDashboard -> Climber Sim
     SmartDashboard.putData("Climber Sim", mech2d);
   }
 
   @Override
   public void updateInputs(ClimberIO.ClimberIOInputs inputs) {
-
-    // First we simulate the motor to updates its state including voltage output
+    // Simulate motor state, including voltage output
     motorSim.iterate(motor.get(), RobotController.getBatteryVoltage(), 0.020);
 
-    // Next, we set the elevatorSim's input to the motor's output. Note that applied output needs to
-    // by multiplied by bus voltage.
+    // Set the elevatorSim's input to the motor's output
     elevatorSim.setInput(motor.getAppliedOutput() * motor.getBusVoltage());
 
-    // Next, we update it. The standard loop time is 20ms.
+    // Update elevatorSim
     elevatorSim.update(0.020);
 
-    // Finally, we set our simulated encoder's readings and simulated battery voltage
+    // Set simulated encoder readings and battery voltage
     encoderSim.setPosition(elevatorSim.getPositionMeters());
     encoderSim.setVelocity(elevatorSim.getVelocityMetersPerSecond());
 
-    // SimBattery estimates loaded battery voltages across all simulations
     RoboRioSim.setVInVoltage(
         BatterySim.calculateDefaultBatteryLoadedVoltage(elevatorSim.getCurrentDrawAmps()));
 
     elevatorMech2d.setLength(encoderSim.getPosition());
 
-    // Update the inputs
+    // Update inputs
     inputs.current = elevatorSim.getCurrentDrawAmps();
-    inputs.volts = encoderSim.getVelocity();
+    inputs.speed = encoderSim.getVelocity();
     inputs.position = encoderSim.getPosition();
     inputs.volts = motorSim.getAppliedOutput() * motorSim.getBusVoltage();
+    inputs.climberAtTop = inputs.position >= ClimberConstants.WINCHED_POSITION;
+    inputs.climberDeployed = inputs.position >= ClimberConstants.DEPLOYED_POSITION;
+    inputs.climberStowed = inputs.position <= 0.0;
+
+    // Reset position if the stowed limit switch is pressed
+    if (inputs.climberStowed) {
+      resetPosition();
+    }
   }
 
   @Override

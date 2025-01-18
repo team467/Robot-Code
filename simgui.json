@@ -12,7 +12,8 @@
       "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/SmartDashboard/Alerts": "Alerts",
-      "/SmartDashboard/Auto Choices": "String Chooser"
+      "/SmartDashboard/Auto Choices": "String Chooser",
+      "/SmartDashboard/Climber Sim": "Mechanism2d"
     }
   },
   "NetworkTables": {

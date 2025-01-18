@@ -9,13 +9,12 @@ public interface ClimberIO {
     public double volts = 0.0;
     public double current = 0.0;
     public double position = 0.0;
-    public boolean ratchetLocked = false;
     public boolean climberAtTop = false;
+    public boolean climberDeployed = false;
+    public boolean climberStowed = false;
   }
 
   default void updateInputs(ClimberIOInputs inputs) {}
-
-  default void setRatchetLocked(boolean locked) {}
 
   default void setSpeed(double speed) {}
 

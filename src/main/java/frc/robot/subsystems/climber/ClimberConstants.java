@@ -4,12 +4,11 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public class ClimberConstants {
-  public static final int CLIMBER_RATCHET_ID;
   public static final double CLIMBER_FORWARD_PERCENT;
   public static final double CLIMBER_BACKWARD_PERCENT;
   public static final double BACKUP_TIME;
-  public static final float LOWER_LIMIT_POSITION;
-  public static final float UPPER_LIMIT_POSITION;
+  public static final float WINCHED_POSITION;
+  public static final float DEPLOYED_POSITION;
   public static final int CLIMBER_MOTOR_ID;
 
   // PID Controller Constants
@@ -44,12 +43,11 @@ public class ClimberConstants {
     switch (Constants.getRobot()) {
       case ROBOT_2025_COMP -> {
         // Real variables
-        CLIMBER_RATCHET_ID = 0;
         CLIMBER_FORWARD_PERCENT = 0.0;
         CLIMBER_BACKWARD_PERCENT = 0.0;
         BACKUP_TIME = 0.0;
-        LOWER_LIMIT_POSITION = 0.0f;
-        UPPER_LIMIT_POSITION = 0.0f;
+        WINCHED_POSITION = 0.4f;
+        DEPLOYED_POSITION = 1.0f;
 
         // Simulated Variables
         CLIMBER_MOTOR_ID = 0;
@@ -76,12 +74,11 @@ public class ClimberConstants {
 
       case ROBOT_SIMBOT -> {
         // Real variables
-        CLIMBER_RATCHET_ID = 0;
         CLIMBER_FORWARD_PERCENT = 0.0;
         CLIMBER_BACKWARD_PERCENT = 0.0;
         BACKUP_TIME = 0.0;
-        LOWER_LIMIT_POSITION = 0.0f;
-        UPPER_LIMIT_POSITION = 0.0f;
+        WINCHED_POSITION = 0.0f;
+        DEPLOYED_POSITION = 0.0f;
 
         // Simulated Variables
         CLIMBER_MOTOR_ID = 11;
@@ -108,12 +105,11 @@ public class ClimberConstants {
 
       default -> {
         // Real variables
-        CLIMBER_RATCHET_ID = 0;
         CLIMBER_FORWARD_PERCENT = 0.0;
         CLIMBER_BACKWARD_PERCENT = 0.0;
         BACKUP_TIME = 0.0;
-        LOWER_LIMIT_POSITION = 0.0f;
-        UPPER_LIMIT_POSITION = 0.0f;
+        WINCHED_POSITION = 0.0f;
+        DEPLOYED_POSITION = 0.0f;
 
         // Simulated Variables
         CLIMBER_MOTOR_ID = 0;

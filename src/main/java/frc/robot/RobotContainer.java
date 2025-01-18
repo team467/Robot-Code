@@ -1,16 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -18,23 +11,16 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
- */
 public class RobotContainer {
   // Subsystems
-  // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
   private boolean isRobotOriented = true; // Workaround, change if needed
@@ -49,30 +35,15 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     // Instantiate active subsystems
     if (Constants.getMode() != Constants.Mode.REPLAY) {
       switch (Constants.getRobot()) {
         case ROBOT_2024_COMP -> {
-          Transform3d front =
-              new Transform3d(
-                  new Translation3d(
-                      Units.inchesToMeters(6.74),
-                      Units.inchesToMeters(-10.991),
-                      Units.inchesToMeters(15.875)),
-                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
-          Transform3d back =
-              new Transform3d(
-                  new Translation3d(
-                      Units.inchesToMeters(-11.89),
-                      Units.inchesToMeters(0),
-                      Units.inchesToMeters(15.5)),
-                  new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
-
           vision =
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
-
           drive =
               new Drive(
                   new GyroIOPigeon2(),
@@ -80,10 +51,8 @@ public class RobotContainer {
                   new ModuleIOSpark(1),
                   new ModuleIOSpark(2),
                   new ModuleIOSpark(3));
-
           climber = new Climber(new ClimberIOSparkMax());
         }
-
         case ROBOT_SIMBOT -> {
           drive =
               new Drive(
@@ -92,11 +61,12 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim());
+          climber = new Climber(new ClimberIOSim());
         }
       }
     }
 
-    // Instantiate missing subsystems
+    // Ensure default subsystems are initialized
     if (drive == null) {
       drive =
           new Drive(
@@ -106,17 +76,15 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
-
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
     }
 
+    // Autonomous chooser setup
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
-    // Drive SysId
+    // Add SysId options for drive
     autoChooser.addOption(
         "Drive SysId (Quasistatic Forward)",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -132,22 +100,17 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
+  /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
-
+    // Driver controller
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
+
     driverController
         .start()
         .onTrue(
@@ -161,26 +124,9 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    climber.setDefaultCommand(climber.raiseOrLower(0));
-
-    // Back button (toggle switch): unlock/lock climber ratchet
-    operatorController.back().whileTrue(climber.setRatchet(false));
-    operatorController.back().whileFalse(climber.setRatchet(true));
-
-    // operator d pad
-
-    // Hold Right: Move climber up
-    operatorController
-        .pov(90)
-        .whileTrue(
-            climber
-                .raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT)
-                .withTimeout(ClimberConstants.BACKUP_TIME)
-                .andThen(climber.raiseOrLower(ClimberConstants.CLIMBER_FORWARD_PERCENT)));
-    // Hold Left: Move climber down
-    operatorController
-        .pov(270)
-        .whileTrue(climber.raiseOrLower(ClimberConstants.CLIMBER_BACKWARD_PERCENT));
+    // Operator controller for climber commands
+    operatorController.a().whileTrue(climber.deploy()); // Deploy when button A is pressed
+    operatorController.b().whileTrue(climber.winch()); // Retract when button B is pressed
   }
 
   /**

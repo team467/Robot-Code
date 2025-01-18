@@ -10,14 +10,12 @@ import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.wpilibj.Relay;
 
 public class ClimberIOSparkMax implements ClimberIO {
 
   private final SparkFlex climberLeader;
   private final RelativeEncoder climberLeaderEncoder;
   private final SparkFlex climberFollower;
-  private final Relay climberRatchet;
   private SparkLimitSwitch limitSwitch;
   private final int CLIMBER_LEADER_ID = 1;
   private final int CLIMBER_FOLLOWER_ID = 2;
@@ -69,9 +67,6 @@ public class ClimberIOSparkMax implements ClimberIO {
 
     tryUntilOk(climberLeader, 5, () -> climberLeaderEncoder.setPosition(0.0));
     limitSwitch = climberLeader.getForwardLimitSwitch();
-    climberRatchet = new Relay(ClimberConstants.CLIMBER_RATCHET_ID, Relay.Direction.kForward);
-    // Initialize the ratchet relay and set its default state to off
-    climberRatchet.set(Relay.Value.kOff);
   }
 
   @Override
@@ -81,8 +76,14 @@ public class ClimberIOSparkMax implements ClimberIO {
     inputs.current = climberLeader.getOutputCurrent();
     inputs.speed = climberLeader.get();
     inputs.position = climberLeaderEncoder.getPosition();
-    inputs.ratchetLocked = climberRatchet.get().equals(Relay.Value.kOff);
-    inputs.climberAtTop = limitSwitch.isPressed();
+    inputs.climberAtTop = inputs.position >= ClimberConstants.WINCHED_POSITION;
+    inputs.climberDeployed = inputs.position >= ClimberConstants.DEPLOYED_POSITION;
+    inputs.climberStowed = limitSwitch.isPressed();
+
+    // Reset position if the stowed limit switch is pressed
+    if (inputs.climberStowed) {
+      resetPosition();
+    }
   }
 
   @Override
@@ -93,13 +94,6 @@ public class ClimberIOSparkMax implements ClimberIO {
 
   public void setSpeed(double speed) {
     climberLeader.set(speed);
-  }
-
-  public void setRatchetLocked(boolean locked) {
-    climberRatchet.set(
-        locked
-            ? Relay.Value.kOff
-            : Relay.Value.kOn); // Lock or unlock the ratchet based on the parameter
   }
 
   @Override
