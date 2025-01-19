@@ -65,8 +65,8 @@ public class LedPatterns {
       RAINBOW.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
 
   // Center of Mass
-  public static final Color COM_BLUE = new Color(35, 47, 68);
-  public static final Color COM_GOLD = new Color(192, 180, 91);
+  public static final Color COM_BLUE = new Color(32, 42, 68);
+  public static final Color COM_GOLD = new Color(197, 178, 88);
   public static final Color COM_WHITE = new Color(255, 255, 255);
 
   public static final LEDPattern SOLID_COM_BLUE = LEDPattern.solid(COM_BLUE);
