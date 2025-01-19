@@ -12,13 +12,18 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import java.io.ObjectInputFilter.Config;
 
-public class ElevatorIOSparkMAX implements ElevatorIO {
-  private SparkMax Spark;
-  private RelativeEncoder Encoder;
+public class ElevatorIOPhysical implements ElevatorIO {
+  private final SparkMax Spark;
+  private final RelativeEncoder Encoder;
   private final SparkClosedLoopController Controller;
+  private final SparkLimitSwitch elevatorStoweLimitSwitch;
 
-  public ElevatorIOSparkMAX(int elevator) {
+  public ElevatorIOPhysical() {
     Spark = new SparkMax(elevatorCanId, MotorType.kBrushless);
+    Encoder = Spark.getEncoder();
+    elevatorStoweLimitSwitch = Spark.getReverseLimitSwitch();
+    Controller = Spark.getClosedLoopController();
+
     var Config = new SparkMaxConfig();
     Config.inverted(false).idleMode(IdleMode.kBrake).smartCurrentLimit(elevatorCurrentLimit);
     tryUntilOk(
@@ -28,10 +33,13 @@ public class ElevatorIOSparkMAX implements ElevatorIO {
             Spark.configure(
                 Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
     tryUntilOk(Spark, 5, () -> Encoder.setPosition(0.0));
-    Controller = Spark.getClosedLoopController();
   }
 
   public void updateInputs(ElevatorIOInputs inputs) {
     inputs.velocityMetersPerSec = (Encoder.getVelocity() * 2 * Math.PI) * 0.004;
+    inputs.elevatorAppliedVolts = Spark.getBusVoltage() * Spark.getAppliedOutput();
+    inputs.elevatorCurrentAmps = Spark.getOutputCurrent();
+    inputs.positionMeters = Encoder.getPosition();
+    inputs.limitSwitchPressed = elevatorStoweLimitSwitch.isPressed();
   }
 }
