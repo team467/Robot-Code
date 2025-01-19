@@ -33,32 +33,25 @@ public class Leds extends SubsystemBase {
     DISABLED,
     OFF,
     DEFAULT,
-    BASE,
-    BASE2
   }
 
   @AutoLogOutput(key = "LEDs/Mode")
   LedMode mode = LedMode.OFF;
 
-  // Robot state tracking
   public int loopCycleCount = 0;
   public double autoFinishedTime = 0.0;
 
   private boolean lastEnabledAuto = false;
   private double lastEnabledTime = 0.0;
 
-  // LED IO
   private final AddressableLED leds;
   private final AddressableLEDBuffer buffer;
   private final AddressableLEDBufferView left;
   private final AddressableLEDBufferView right;
   private final Notifier loadingNotifier;
 
-  /** Creates a Network table for testing led modes and colors */
   private NetworkTable ledTable;
-  /** Sets the mode for led in network table and allows to test led modes */
   private NetworkTableEntry ledModeEntry;
-  /** Allows testing in leds by enabling testing mode */
   private NetworkTableEntry ledTestingEntry;
 
   public Leds() {
@@ -80,14 +73,13 @@ public class Leds extends SubsystemBase {
     loadingNotifier =
         new Notifier(
             () -> {
-              LedPatterns.BREATH.applyTo(buffer);
+              LedPatterns.SOLID_RED.applyTo(buffer);
               leds.setData(buffer);
             });
     loadingNotifier.startPeriodic(0.02);
   }
 
   private void updateState() {
-    // Update auto state
     lastEnabledAuto = DriverStation.isAutonomous();
     lastEnabledTime = Timer.getFPGATimestamp();
 
@@ -105,7 +97,7 @@ public class Leds extends SubsystemBase {
       } else {
         mode = LedMode.DISABLED;
       }
-    } else if (false) { // TODO: Test this
+    } else if (false) {
       mode = LedMode.AUTO_FINISHED;
     } else if (DriverStation.isAutonomous()) {
       mode = LedMode.AUTONOMOUS;
@@ -116,44 +108,54 @@ public class Leds extends SubsystemBase {
 
   private void updateLeds() {
     switch (mode) {
+        // TODO: replace STROBE_RED with actual animations
       case ESTOPPED:
-        LedPatterns.ESTOPPED.applyTo(buffer);
+        LedPatterns.SOLID_RED.applyTo(buffer);
         break;
       case AUTO_FINISHED:
-        LedPatterns.AUTO_FINISHED.applyTo(buffer);
+        LedPatterns.SOLID_RED.applyTo(buffer);
         break;
       case AUTONOMOUS:
-        LedPatterns.AUTONOMOUS.applyTo(buffer);
+        LedPatterns.SOLID_RED.applyTo(buffer);
         break;
       case BLUE_ALLIANCE:
-        LedPatterns.BLUE_ALLIANCE.applyTo(buffer);
+        LedPatterns.SOLID_RED.applyTo(buffer);
         break;
       case RED_ALLIANCE:
-        LedPatterns.RED_ALLIANCE.applyTo(buffer);
+        LedPatterns.SOLID_RED.applyTo(buffer);
         break;
       case LOW_BATTERY_ALERT:
-        LedPatterns.LOW_BATTERY_ALERT.applyTo(buffer);
+        LedPatterns.SOLID_RED.applyTo(buffer);
         break;
       case DISABLED:
-        LedPatterns.DISABLED.applyTo(buffer);
+        LedPatterns.SOLID_RED.applyTo(buffer);
         break;
       case DEFAULT:
-        LedPatterns.DEFAULT.applyTo(buffer);
+        LedPatterns.SOLID_RED.applyTo(buffer);
         break;
-
-      case BASE:
-        LedPatterns.BASE.applyTo(buffer);
+      case ALIGNED_TO_REEF:
+        LedPatterns.SOLID_RED.applyTo(buffer);
         break;
-
+      case ALGAE_EFFECTOR_EXTENDED:
+        LedPatterns.SOLID_RED.applyTo(buffer);
+        break;
+      case ALGAE_EFFECTOR_RUNNING:
+        LedPatterns.SOLID_RED.applyTo(buffer);
+        break;
+      case CLIMBER_UP:
+        LedPatterns.SOLID_RED.applyTo(buffer);
+        break;
+      case DUCK:
+        LedPatterns.SOLID_RED.applyTo(buffer);
+        break;
+      case COLLISION_DETECTED:
+        LedPatterns.SOLID_RED.applyTo(buffer);
+        break;
       case OFF:
-        LedPatterns.OFF.applyTo(buffer);
+        LedPatterns.SOLID_RED.applyTo(buffer);
         break;
-
-      case BASE2:
-        LedPatterns.BASE2.applyTo(buffer);
-        break;
-
       default:
+        LedPatterns.SOLID_RED.applyTo(buffer);
     }
 
     leds.setData(buffer);
@@ -161,7 +163,6 @@ public class Leds extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Exit during initial cycles
     loopCycleCount += 1;
     if (loopCycleCount < LedConstants.MIN_LOOP_CYCLE_COUNT) {
       return;
@@ -173,7 +174,6 @@ public class Leds extends SubsystemBase {
       try {
         mode = LedMode.valueOf(ledModeEntry.getString("OFF"));
       } catch (IllegalArgumentException E) {
-
       }
     } else {
       updateState();
