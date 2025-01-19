@@ -91,4 +91,29 @@ public class LedPatterns {
       LEDPattern.steps(Map.of(0, COM_BLUE, 0.33, COM_GOLD, 0.66, COM_WHITE));
   public static final LEDPattern SCROLLING_STRIPE_COM =
       STRIPE_COM.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
+
+  // FRC
+  public static final LEDPattern SOLID_FRC_BLUE = LEDPattern.solid(Color.kFirstBlue);
+  public static final LEDPattern SOLID_FRC_RED = LEDPattern.solid(Color.kFirstRed);
+  public static final LEDPattern SOLID_FRC_WHITE = SOLID_WHITE;
+
+  public static final LEDPattern STROBE_FRC_BLUE = SOLID_FRC_BLUE.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_FRC_RED = SOLID_FRC_RED.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_FRC_WHITE = SOLID_FRC_WHITE.blink(Seconds.of(STROBE_TIME));
+
+  public static final LEDPattern BREATH_FRC_BLUE = SOLID_FRC_BLUE.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_FRC_RED = SOLID_FRC_RED.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_FRC_WHITE =
+      SOLID_FRC_WHITE.breathe(Seconds.of(BREATH_TIME));
+
+  public static final LEDPattern GRADIENT_FRC =
+      LEDPattern.gradient(
+          LEDPattern.GradientType.kContinuous, Color.kFirstBlue, Color.kWhite, Color.kFirstRed);
+  public static final LEDPattern SCROLLING_GRADIENT_FRC =
+      GRADIENT_FRC.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
+
+  public static final LEDPattern STRIPE_FRC =
+      LEDPattern.steps(Map.of(0, Color.kFirstBlue, 0.33, Color.kWhite, 0.66, Color.kFirstRed));
+  public static final LEDPattern SCROLLING_STRIP_FRC =
+      STRIPE_FRC.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
 }
