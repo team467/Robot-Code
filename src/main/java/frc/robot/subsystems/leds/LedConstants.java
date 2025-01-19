@@ -14,6 +14,9 @@ public class LedConstants {
   public static final int MIN_LOOP_CYCLE_COUNT = 10;
   public static final int LENGTH = 40;
 
+  public static final double BREATH_TIME = 0.0;
+  public static final double STROBE_TIME = 0.0;
+
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2025_COMP -> {

@@ -1,7 +1,7 @@
 package frc.robot.subsystems.leds;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.subsystems.leds.LedConstants.LED_SPACING;
+import static frc.robot.subsystems.leds.LedConstants.*;
 
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
@@ -26,38 +26,38 @@ public class LedPatterns {
   public static final LEDPattern SOLID_SILVER = LEDPattern.solid(Color.kSilver);
 
   // Strobing
-  public static final LEDPattern STROBE_RED = SOLID_RED.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_ORANGE = SOLID_ORANGE.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_YELLOW = SOLID_YELLOW.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_GREEN = SOLID_GREEN.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_CYAN = SOLID_CYAN.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_BLUE = SOLID_BLUE.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_PURPLE = SOLID_PURPLE.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_PINK = SOLID_PINK.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_MAGENTA = SOLID_MAGENTA.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_BROWN = SOLID_BROWN.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_GRAY = SOLID_GRAY.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_WHITE = SOLID_WHITE.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_BLACK = SOLID_BLACK.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_GOLD = SOLID_GOLD.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_SILVER = SOLID_SILVER.blink(Seconds.of(0.5));
+  public static final LEDPattern STROBE_RED = SOLID_RED.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_ORANGE = SOLID_ORANGE.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_YELLOW = SOLID_YELLOW.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_GREEN = SOLID_GREEN.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_CYAN = SOLID_CYAN.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_BLUE = SOLID_BLUE.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_PURPLE = SOLID_PURPLE.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_PINK = SOLID_PINK.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_MAGENTA = SOLID_MAGENTA.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_BROWN = SOLID_BROWN.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_GRAY = SOLID_GRAY.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_WHITE = SOLID_WHITE.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_BLACK = SOLID_BLACK.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_GOLD = SOLID_GOLD.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_SILVER = SOLID_SILVER.blink(Seconds.of(STROBE_TIME));
 
   // Breathing
-  public static final LEDPattern BREATH_RED = SOLID_RED.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_ORANGE = SOLID_ORANGE.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_YELLOW = SOLID_YELLOW.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_GREEN = SOLID_GREEN.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_CYAN = SOLID_CYAN.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_BLUE = SOLID_BLUE.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_PURPLE = SOLID_PURPLE.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_PINK = SOLID_PINK.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_MAGENTA = SOLID_MAGENTA.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_BROWN = SOLID_BROWN.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_GRAY = SOLID_GRAY.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_WHITE = SOLID_WHITE.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_BLACK = SOLID_BLACK.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_GOLD = SOLID_GOLD.breathe(Seconds.of(2.0));
-  public static final LEDPattern BREATH_SILVER = SOLID_SILVER.breathe(Seconds.of(2.0));
+  public static final LEDPattern BREATH_RED = SOLID_RED.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_ORANGE = SOLID_ORANGE.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_YELLOW = SOLID_YELLOW.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_GREEN = SOLID_GREEN.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_CYAN = SOLID_CYAN.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_BLUE = SOLID_BLUE.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_PURPLE = SOLID_PURPLE.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_PINK = SOLID_PINK.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_MAGENTA = SOLID_MAGENTA.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_BROWN = SOLID_BROWN.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_GRAY = SOLID_GRAY.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_WHITE = SOLID_WHITE.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_BLACK = SOLID_BLACK.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_GOLD = SOLID_GOLD.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATH_SILVER = SOLID_SILVER.breathe(Seconds.of(BREATH_TIME));
 
   // Rainbow
   public static final LEDPattern RAINBOW = LEDPattern.rainbow(255, 128);
@@ -73,17 +73,14 @@ public class LedPatterns {
   public static final LEDPattern SOLID_COM_GOLD = LEDPattern.solid(COM_GOLD);
   public static final LEDPattern SOLID_COM_WHITE = LEDPattern.solid(COM_WHITE);
 
-  public static final LEDPattern STROBE_COM_BLUE = SOLID_COM_BLUE.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_COM_GOLD = SOLID_COM_GOLD.blink(Seconds.of(0.5));
-  public static final LEDPattern STROBE_COM_WHITE = SOLID_COM_WHITE.blink(Seconds.of(0.5));
+  public static final LEDPattern STROBE_COM_BLUE = SOLID_COM_BLUE.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_COM_GOLD = SOLID_COM_GOLD.blink(Seconds.of(STROBE_TIME));
+  public static final LEDPattern STROBE_COM_WHITE = SOLID_COM_WHITE.blink(Seconds.of(STROBE_TIME));
 
-  public static final LEDPattern BLINK_COM_BLUE = SOLID_COM_BLUE.blink(Seconds.of(1));
-  public static final LEDPattern BLINK_COM_GOLD = SOLID_COM_GOLD.blink(Seconds.of(1));
-  public static final LEDPattern BLINK_COM_WHITE = SOLID_COM_WHITE.blink(Seconds.of(1));
-
-  public static final LEDPattern BREATHE_COM_BLUE = SOLID_COM_BLUE.breathe(Seconds.of(2));
-  public static final LEDPattern BREATHE_COM_GOLD = SOLID_COM_GOLD.breathe(Seconds.of(2));
-  public static final LEDPattern BREATHE_COM_WHITE = SOLID_COM_WHITE.breathe(Seconds.of(2));
+  public static final LEDPattern BREATHE_COM_BLUE = SOLID_COM_BLUE.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATHE_COM_GOLD = SOLID_COM_GOLD.breathe(Seconds.of(BREATH_TIME));
+  public static final LEDPattern BREATHE_COM_WHITE =
+      SOLID_COM_WHITE.breathe(Seconds.of(BREATH_TIME));
 
   public static final LEDPattern GRADIENT_COM =
       LEDPattern.gradient(LEDPattern.GradientType.kContinuous, COM_BLUE, COM_GOLD, COM_WHITE);
