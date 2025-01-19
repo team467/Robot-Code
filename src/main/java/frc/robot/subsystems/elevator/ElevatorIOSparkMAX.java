@@ -13,7 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import java.io.ObjectInputFilter.Config;
 
 public class ElevatorIOSparkMAX implements ElevatorIO {
-  private SparkBase Spark;
+  private SparkMax Spark;
   private RelativeEncoder Encoder;
   private final SparkClosedLoopController Controller;
 
