@@ -87,6 +87,8 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim());
+
+          leds = new Leds();
         }
 
         case ROBOT_BRIEFCASE -> {
