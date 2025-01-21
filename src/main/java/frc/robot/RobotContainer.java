@@ -21,6 +21,8 @@ import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.kraken.Kraken;
+import frc.robot.subsystems.kraken.KrakenIOTalon;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -37,6 +39,7 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private AlgaeEffector algae;
+  private Kraken kraken;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -96,6 +99,7 @@ public class RobotContainer {
         }
         case ROBOT_BRIEFCASE -> {
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          kraken = new Kraken(new KrakenIOTalon(1));
         }
       }
     }
@@ -164,6 +168,7 @@ public class RobotContainer {
     if (algae != null) {
       operatorController.a().onTrue(algae.toggleArm());
     }
+    driverController.rightBumper().whileTrue(kraken.setVoltage(6.0));
   }
 
   /**
