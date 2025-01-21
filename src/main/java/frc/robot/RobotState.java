@@ -10,7 +10,30 @@ public class RobotState {
   /** Set by the robot if the batter is less than 9V */
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
   public boolean lowBatteryAlert = false;
-
+  /** If the robot has a game piece */
+  @AutoLogOutput(key = "RobotState/HasCoral")
+  public boolean hasCoral = false;
+  /** If the robot is aligned to the reef */
+  @AutoLogOutput(key = "RobotState/AlignedToReef")
+  public boolean alignedToReef = false;
+  /** If the algae effector is extended */
+  @AutoLogOutput(key = "RobotState/AlgaeEffectorExtended")
+  public boolean algaeEffectorExtended = false;
+  /** If the algae effector is running */
+  @AutoLogOutput(key = "RobotState/AlgaeEffectorRunning")
+  public boolean algaeEffectorRunning = false;
+  /** If the climber is up */
+  @AutoLogOutput(key = "RobotState/ClimberUp")
+  public boolean climberUp = false;
+  /** If the climber is down */
+  @AutoLogOutput(key = "RobotState/ClimberDown")
+  public boolean climberDown = false;
+  /** If the robot is in currently ducking */
+  @AutoLogOutput(key = "RobotState/Duck")
+  public boolean duck = false;
+  /** If the robot has detected a collision */
+  @AutoLogOutput(key = "RobotState/CollisionDetected")
+  public boolean collisionDetected = false;
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
