@@ -34,7 +34,7 @@ public class Leds extends SubsystemBase {
   private final Notifier loadingNotifier;
 
   private ShuffleboardTab ledTab = Shuffleboard.getTab(this.getName());
-  private GenericEntry enableTestEntry;
+  private NetworkTableEntry enableTestEntry;
   private GenericEntry testBlinkEntry;
   private GenericEntry testBreatheEntry;
   private GenericEntry testScrollEntry;
@@ -61,12 +61,14 @@ public class Leds extends SubsystemBase {
             .withSize(2, 3)
             .withPosition(0, 0);
 
-    enableTestEntry =
-        ledTestingLayout
-            .add("Enable LED Test", enableTest)
-            .withWidget("Toggle Button")
-            .withPosition(0, 0)
-            .getEntry();
+    // enableTestEntry =
+    //     ledTestingLayout
+    //         .add("Enable LED Test", enableTest)
+    //         .withWidget("Toggle Button")
+    //         .withPosition(0, 0)
+    //         .getEntry();
+      
+    // enableTestEntry
 
     testBlinkEntry =
         ledTestingLayout
@@ -127,6 +129,8 @@ public class Leds extends SubsystemBase {
       return;
     }
     loadingNotifier.stop();
+
+    System.out.println(enableTestEntry.getBoolean(false));
 
     if (DriverStation.isTest() && enableTestEntry.getBoolean(false)) {
       try {
