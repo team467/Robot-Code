@@ -323,7 +323,7 @@ public class Leds extends SubsystemBase {
    * @param c1 The initial color of the section.
    * @param c2 The target color of the section.
    * @param duration The total duration of the breathing effect, in seconds.
-   * @param timestamp The current timestamp in seconds.
+   * @param timestamp The currentAmps timestamp in seconds.
    */
   private void breath(Section section, Color c1, Color c2, double duration, double timestamp) {
     double x = ((timestamp % breathDuration) / breathDuration) * 2.0 * Math.PI;

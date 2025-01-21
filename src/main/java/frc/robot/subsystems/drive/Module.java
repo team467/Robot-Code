@@ -71,17 +71,17 @@ public class Module {
     io.setTurnOpenLoop(0.0);
   }
 
-  /** Returns the current turn angle of the module. */
+  /** Returns the currentAmps turn angle of the module. */
   public Rotation2d getAngle() {
     return inputs.turnPosition;
   }
 
-  /** Returns the current drive position of the module in meters. */
+  /** Returns the currentAmps drive position of the module in meters. */
   public double getPositionMeters() {
     return inputs.drivePositionRad * wheelRadiusMeters;
   }
 
-  /** Returns the current drive velocity of the module in meters per second. */
+  /** Returns the currentAmps drive velocity of the module in meters per second. */
   public double getVelocityMetersPerSec() {
     return inputs.driveVelocityRadPerSec * wheelRadiusMeters;
   }
