@@ -8,37 +8,45 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Leds extends SubsystemBase {
 
   private RobotState state = RobotState.getInstance();
 
-  public enum LedMode {
-    ALIGNED_TO_REEF,
-    ALGAE_EFFECTOR_EXTENDED,
-    ALGAE_EFFECTOR_RUNNING,
-    CLIMBER_UP,
-    DUCK,
-    COLLISION_DETECTED,
-    ESTOPPED,
-    AUTO_FINISHED,
-    AUTONOMOUS,
-    BLUE_ALLIANCE,
-    RED_ALLIANCE,
-    LOW_BATTERY_ALERT,
-    DISABLED,
-    OFF,
-    DEFAULT,
-    BASE,
-    BASE2
-  }
+  private static SendableChooser<LedPatterns> ledTestPatterns = new SendableChooser<LedPatterns>();
 
-  @AutoLogOutput(key = "LEDs/Mode")
-  LedMode mode = LedMode.OFF;
+  private LedPatterns pattern;
+
+  // public enum RobotStates {
+  //   ALIGNED_TO_REEF,
+  //   ALGAE_EFFECTOR_EXTENDED,
+  //   ALGAE_EFFECTOR_RUNNING,
+  //   CLIMBER_UP,
+  //   DUCK,
+  //   COLLISION_DETECTED,
+  //   ESTOPPED,
+  //   AUTO_FINISHED,
+  //   OFF,
+  //   AUTONOMOUS,
+  //   LOW_BATTERY_ALERT,
+  //   BLUE_ALLIANCE,
+  //   RED_ALLIANCE,
+  //   DISABLED,
+  //   DEFAULT,
+
+  //   public final LEDPattern pattern;
+
+  //   private LedMode(LEDPattern pattern) {
+  //     this.pattern = pattern;
+  //   }
+  // }
+
+  // @AutoLogOutput(key = "LEDs/Mode")
+  // LedMode mode = LedMode.OFF;
 
   // Robot state tracking
   public int loopCycleCount = 0;
@@ -63,10 +71,13 @@ public class Leds extends SubsystemBase {
 
   public Leds() {
     ledTable = NetworkTableInstance.getDefault().getTable("Leds");
-    ledModeEntry = ledTable.getEntry("Mode");
-    ledModeEntry.setString("OFF");
     ledTestingEntry = ledTable.getEntry("Testing");
     ledTestingEntry.setBoolean(false);
+
+    for (LedPatterns pattern : LedPatterns.values()) {
+      ledTestPatterns.addOption(pattern.toString(), pattern);
+    }
+    Shuffleboard.getTab("LEDs").add(ledTestPatterns);
 
     buffer = new AddressableLEDBuffer(LedConstants.LENGTH);
     left = buffer.createView(0, LedConstants.LENGTH / 2 - 1);
@@ -80,84 +91,39 @@ public class Leds extends SubsystemBase {
     loadingNotifier =
         new Notifier(
             () -> {
-              LedPatterns.BREATH.applyTo(buffer);
+              LedPatterns.BREATH.pattern.applyTo(buffer);
               leds.setData(buffer);
             });
     loadingNotifier.startPeriodic(0.02);
   }
 
-  private void updateState() {
-    // Update auto state
-    lastEnabledAuto = DriverStation.isAutonomous();
-    lastEnabledTime = Timer.getFPGATimestamp();
+  // private void updateState() {
+  //   // Update auto state
+  //   lastEnabledAuto = DriverStation.isAutonomous();
+  //   lastEnabledTime = Timer.getFPGATimestamp();
 
-    if (DriverStation.isEStopped()) {
-      mode = LedMode.ESTOPPED;
-    } else if (state.lowBatteryAlert) {
-      mode = LedMode.LOW_BATTERY_ALERT;
-    } else if (DriverStation.isDisabled()) {
-      if (DriverStation.getAlliance().isPresent()) {
-        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-          mode = LedMode.BLUE_ALLIANCE;
-        } else {
-          mode = LedMode.RED_ALLIANCE;
-        }
-      } else {
-        mode = LedMode.DISABLED;
-      }
-    } else if (false) { // TODO: Test this
-      mode = LedMode.AUTO_FINISHED;
-    } else if (DriverStation.isAutonomous()) {
-      mode = LedMode.AUTONOMOUS;
-    } else {
-      mode = LedMode.DEFAULT;
-    }
-  }
-
-  private void updateLeds() {
-    switch (mode) {
-      case ESTOPPED:
-        LedPatterns.ESTOPPED.applyTo(buffer);
-        break;
-      case AUTO_FINISHED:
-        LedPatterns.AUTO_FINISHED.applyTo(buffer);
-        break;
-      case AUTONOMOUS:
-        LedPatterns.AUTONOMOUS.applyTo(buffer);
-        break;
-      case BLUE_ALLIANCE:
-        LedPatterns.BLUE_ALLIANCE.applyTo(buffer);
-        break;
-      case RED_ALLIANCE:
-        LedPatterns.RED_ALLIANCE.applyTo(buffer);
-        break;
-      case LOW_BATTERY_ALERT:
-        LedPatterns.LOW_BATTERY_ALERT.applyTo(buffer);
-        break;
-      case DISABLED:
-        LedPatterns.DISABLED.applyTo(buffer);
-        break;
-      case DEFAULT:
-        LedPatterns.DEFAULT.applyTo(buffer);
-        break;
-
-      case BASE:
-        LedPatterns.BASE.applyTo(buffer);
-        break;
-
-      case OFF:
-        LedPatterns.OFF.applyTo(buffer);
-        break;
-
-      case BASE2:
-        LedPatterns.BASE2.applyTo(buffer);
-        break;
-
-      default:
-    }
-
-    leds.setData(buffer);
-  }
+  //   if (DriverStation.isEStopped()) {
+  //     mode = LedMode.ESTOPPED;
+  //   } else if (state.lowBatteryAlert) {
+  //     mode = LedMode.LOW_BATTERY_ALERT;
+  //   } else if (DriverStation.isDisabled()) {
+  //     if (DriverStation.getAlliance().isPresent()) {
+  //       if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+  //         mode = LedMode.BLUE_ALLIANCE;
+  //       } else {
+  //         mode = LedMode.RED_ALLIANCE;
+  //       }
+  //     } else {
+  //       mode = LedMode.DISABLED;
+  //     }
+  //   } else if (false) { // TODO: Test this
+  //     mode = LedMode.AUTO_FINISHED;
+  //   } else if (DriverStation.isAutonomous()) {
+  //     mode = LedMode.AUTONOMOUS;
+  //   } else {
+  //     mode = LedMode.DEFAULT;
+  //   }
+  // }
 
   @Override
   public void periodic() {
@@ -169,16 +135,27 @@ public class Leds extends SubsystemBase {
 
     loadingNotifier.stop();
 
-    if (ledTestingEntry.getBoolean(false)) {
+    System.out.println(
+        "check booleans " + DriverStation.isTest() + " : " + ledTestingEntry.getBoolean(false));
+    if (DriverStation.isTest()) {
       try {
-        mode = LedMode.valueOf(ledModeEntry.getString("OFF"));
+        System.out.println("setting pattern to " + ledTestPatterns.getSelected().toString());
+        pattern = LedPatterns.valueOf(ledTestPatterns.getSelected().toString());
       } catch (IllegalArgumentException E) {
 
       }
     } else {
-      updateState();
-      ledModeEntry.setString(mode.toString());
+      pattern = LedPatterns.BREATH; // TODO: connect to state
     }
-    updateLeds();
+
+    System.out.println(
+        "applying pattern to "
+            + pattern.name()
+            + " : "
+            + pattern.pattern.toString()
+            + " : "
+            + ledTestPatterns.getSelected().toString());
+    pattern.pattern.applyTo(buffer);
+    leds.setData(buffer);
   }
 }
