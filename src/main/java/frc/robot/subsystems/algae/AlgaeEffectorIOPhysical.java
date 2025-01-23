@@ -19,8 +19,8 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   private final SparkMax removalMotor;
   private final RelativeEncoder pivotMotorEncoder;
   private final RelativeEncoder removalMotorEncoder;
-  private final SparkLimitSwitch pivotMotorExtendLimitSwitch;
-  private final SparkLimitSwitch pivotMotorStoweLimitSwitch;
+  private final SparkLimitSwitch forwardLimitSwitch;
+  private final SparkLimitSwitch reverseLimitSwitch;
 
   public AlgaeEffectorIOPhysical() {
     pivotMotor = new SparkMax(algaePivotCanId, MotorType.kBrushless);
@@ -29,8 +29,8 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
     pivotMotorEncoder = pivotMotor.getEncoder();
     removalMotorEncoder = removalMotor.getEncoder();
 
-    pivotMotorExtendLimitSwitch = pivotMotor.getForwardLimitSwitch();
-    pivotMotorStoweLimitSwitch = pivotMotor.getReverseLimitSwitch();
+    forwardLimitSwitch = pivotMotor.getForwardLimitSwitch();
+    reverseLimitSwitch = pivotMotor.getReverseLimitSwitch();
 
     var pivotMotorConfig = new SparkMaxConfig();
     pivotMotorConfig.idleMode(IdleMode.kBrake);
@@ -59,7 +59,7 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
     inputs.removalAmps = removalMotor.getOutputCurrent();
     inputs.pivotAmps = pivotMotor.getOutputCurrent();
     inputs.pivotPosition = pivotMotorEncoder.getPosition();
-    inputs.forwardLimitSwitch = pivotMotorExtendLimitSwitch.isPressed();
-    inputs.reverseLimitSwitch = pivotMotorStoweLimitSwitch.isPressed();
+    inputs.forwardLimitSwitch = forwardLimitSwitch.isPressed();
+    inputs.reverseLimitSwitch = reverseLimitSwitch.isPressed();
   }
 }
