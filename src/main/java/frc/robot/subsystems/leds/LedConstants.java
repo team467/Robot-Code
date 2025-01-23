@@ -1,8 +1,14 @@
 package frc.robot.subsystems.leds;
 
+import static edu.wpi.first.units.Units.Meters;
+
+import edu.wpi.first.units.measure.Distance;
 import frc.robot.Constants;
 
 public class LedConstants {
+
+  public static final Distance LED_SPACING = Meters.of(1 / 60.0);
+
   public static final int LED_CHANNEL;
   public static final int LED_COUNT;
 
