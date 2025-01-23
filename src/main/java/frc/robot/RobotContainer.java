@@ -67,12 +67,12 @@ public class RobotContainer {
                       Units.inchesToMeters(15.5)),
                   new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
           drive =
-                  new Drive(
-                          new GyroIOPigeon2(),
-                          new ModuleIOSpark(0),
-                          new ModuleIOSpark(1),
-                          new ModuleIOSpark(2),
-                          new ModuleIOSpark(3));
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOSpark(0),
+                  new ModuleIOSpark(1),
+                  new ModuleIOSpark(2),
+                  new ModuleIOSpark(3));
           vision =
               new Vision(
                   drive::addVisionMeasurement,
