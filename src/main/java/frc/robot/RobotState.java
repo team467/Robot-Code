@@ -10,6 +10,10 @@ public class RobotState {
   /** Set by the robot if the batter is less than 9V */
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
   public boolean lowBatteryAlert = false;
+
+  @AutoLogOutput(key = "RobotState/ImpactDetected")
+  public boolean impactDetected = false;
+
   /** If the robot has a game piece */
   @AutoLogOutput(key = "RobotState/HasCoral")
   public boolean hasCoral = false;
