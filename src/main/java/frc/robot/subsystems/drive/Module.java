@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -51,8 +52,9 @@ public class Module {
   /** Runs the module with the specified setpoint state. Mutates the state to optimize it. */
   public void runSetpoint(SwerveModuleState state) {
     // Optimize velocity setpoint
-    state.optimize(getAngle());
-    state.cosineScale(inputs.turnPosition);
+
+    optimize(state, getAngle());
+    state.cosineScale(state.angle);
 
     // Apply setpoints
     io.setDriveVelocity(state.speedMetersPerSecond / wheelRadiusMeters);
@@ -114,5 +116,13 @@ public class Module {
   /** Returns the module velocity in rad/sec. */
   public double getFFCharacterizationVelocity() {
     return inputs.driveVelocityRadPerSec;
+  }
+
+  private static void optimize(SwerveModuleState state, Rotation2d currentAngle) {
+    var delta = state.angle.minus(currentAngle);
+    if (Math.abs(MathUtil.inputModulus(delta.getDegrees(), -180, 180)) > 90) {
+      state.speedMetersPerSecond *= -1;
+      state.angle = state.angle.rotateBy(Rotation2d.kPi);
+    }
   }
 }
