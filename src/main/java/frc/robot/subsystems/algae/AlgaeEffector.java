@@ -3,6 +3,7 @@ package frc.robot.subsystems.algae;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -24,26 +25,35 @@ public class AlgaeEffector extends SubsystemBase {
     Logger.processInputs(getName(), inputs);
   }
 
-  /** Moves algae arm outwards */
-  private Command extendArm() {
-    return Commands.startEnd(
-            () -> {
-              io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
-              armExtended = true;
-            },
-            () -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
-            this)
-        .withTimeout(0.5);
-  }
+ 
 
   /** Moves algae arm inwards. */
   private Command retractArm() {
-    return Commands.startEnd(
+    return new FunctionalCommand(
+        () -> {
+          io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE);
+          armExtended = false;
+        },
+        () -> {
+        },
+        interrupted -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
+        () -> inputs.reverseLimitSwitch,
+        this)
+        .withTimeout(0.5);
+  }
+  
+ /** Moves algae arm outwards */
+  private Command extendArm() {
+    return new FunctionalCommand(
             () -> {
-              io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE);
-              armExtended = false;
+              io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
+              armExtended = true;
+          },
+            () -> {
+
             },
-            () -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
+        interrupted -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
+            () -> inputs.forwardLimitSwitch,    
             this)
         .withTimeout(0.5);
   }
