@@ -19,7 +19,7 @@ public interface AlgaeEffectorIO {
   }
 
   default void updateInputs(AlgaeEffectorIOInputs inputs) {}
-  // TODO: Add in AutoLogged
+
   default void setRemovalVolts(double volts) {}
 
   default void setPivotVolts(double volts) {}
