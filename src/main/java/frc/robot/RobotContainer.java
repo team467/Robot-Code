@@ -66,19 +66,17 @@ public class RobotContainer {
                       Units.inchesToMeters(0),
                       Units.inchesToMeters(15.5)),
                   new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
-
+          drive =
+                  new Drive(
+                          new GyroIOPigeon2(),
+                          new ModuleIOSpark(0),
+                          new ModuleIOSpark(1),
+                          new ModuleIOSpark(2),
+                          new ModuleIOSpark(3));
           vision =
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
-
-          drive =
-              new Drive(
-                  new GyroIOPigeon2(),
-                  new ModuleIOSpark(0),
-                  new ModuleIOSpark(1),
-                  new ModuleIOSpark(2),
-                  new ModuleIOSpark(3));
 
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
