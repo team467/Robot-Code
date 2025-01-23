@@ -13,6 +13,8 @@ public class ElevatorConstants {
   public static final TunableNumber MAX_VELOCITY;
   public static final TunableNumber MAX_ACCELERATION;
   public static final double STOW;
+  public static final double DUCK_POSITION;
+  public static final double INTAKE_POSITION;
   public static final double TOLERANCE;
   public static final int elevatorCanId = 0;
   public static final int elevatorCurrentLimit = 5;
@@ -29,6 +31,8 @@ public class ElevatorConstants {
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration");
         STOW = 0.0;
         TOLERANCE = Units.degreesToRadians(0.25);
+        DUCK_POSITION = 0.0;
+        INTAKE_POSITION = 0.0;
       }
       default -> {
         KG = new TunableNumber("Elevator/KG", 0.0);
@@ -40,6 +44,8 @@ public class ElevatorConstants {
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration", 0.0);
         STOW = 0.0;
         TOLERANCE = 0.0;
+        DUCK_POSITION = 0.0;
+        INTAKE_POSITION = 0.0;
       }
     }
   }

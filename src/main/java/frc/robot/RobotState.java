@@ -40,16 +40,6 @@ public class RobotState {
   public boolean collisionDetected = false;
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
-
-  @AutoLogOutput(key = "RobotState/ClimberUp")
-  public boolean climberUp = false;
-
-  @AutoLogOutput(key = "RobotState/ClimberDown")
-  public boolean climberDown = false;
-
-  @AutoLogOutput(key = "RobotState/ClimberRatchet")
-  public boolean climberRatchet = true;
-
   /**
    * Ensures there is only a single instance of the Robot State class.
    *
