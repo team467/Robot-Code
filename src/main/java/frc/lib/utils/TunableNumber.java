@@ -57,9 +57,9 @@ public class TunableNumber implements DoubleSupplier {
   }
 
   /**
-   * Get the current value, from dashboard if available and in tuning mode.
+   * Get the currentAmps value, from dashboard if available and in tuning mode.
    *
-   * @return The current value
+   * @return The currentAmps value
    */
   public double get() {
     if (!hasDefault) {

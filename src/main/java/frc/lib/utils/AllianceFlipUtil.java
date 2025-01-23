@@ -18,7 +18,7 @@ public class AllianceFlipUtil {
     throw new IllegalStateException("Utility class");
   }
 
-  /** Negates a distance based on current alliance color. */
+  /** Negates a distance based on currentAmps alliance color. */
   public static double applyRelative(double distance) {
     if (shouldFlip()) {
       return -distance;
@@ -27,7 +27,9 @@ public class AllianceFlipUtil {
     }
   }
 
-  /** Flips an x coordinate to the correct side of the field based on the current alliance color. */
+  /**
+   * Flips an x coordinate to the correct side of the field based on the currentAmps alliance color.
+   */
   public static double apply(double xCoordinate) {
     if (shouldFlip()) {
       return FieldConstants.fieldLength - xCoordinate;
@@ -36,7 +38,9 @@ public class AllianceFlipUtil {
     }
   }
 
-  /** Flips a translation to the correct side of the field based on the current alliance color. */
+  /**
+   * Flips a translation to the correct side of the field based on the currentAmps alliance color.
+   */
   public static Translation2d apply(Translation2d translation) {
     if (shouldFlip()) {
       return new Translation2d(FieldConstants.fieldLength - translation.getX(), translation.getY());
@@ -45,7 +49,7 @@ public class AllianceFlipUtil {
     }
   }
 
-  /** Flips a rotation based on the current alliance color. */
+  /** Flips a rotation based on the currentAmps alliance color. */
   public static Rotation2d apply(Rotation2d rotation) {
     if (shouldFlip()) {
       return new Rotation2d(-rotation.getCos(), rotation.getSin());
@@ -54,7 +58,7 @@ public class AllianceFlipUtil {
     }
   }
 
-  /** Flips a pose to the correct side of the field based on the current alliance color. */
+  /** Flips a pose to the correct side of the field based on the currentAmps alliance color. */
   public static Pose2d apply(Pose2d pose) {
     if (shouldFlip()) {
       return new Pose2d(
@@ -67,7 +71,8 @@ public class AllianceFlipUtil {
   }
 
   /**
-   * Flips a trajectory state to the correct side of the field based on the current alliance color.
+   * Flips a trajectory state to the correct side of the field based on the currentAmps alliance
+   * color.
    */
   public static Trajectory.State apply(Trajectory.State state) {
     if (shouldFlip()) {

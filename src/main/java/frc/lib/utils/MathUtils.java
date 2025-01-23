@@ -11,7 +11,7 @@ public class MathUtils {
    * Returns the weighted average of two numbers.
    *
    * @param a The first number to average
-   * @param b the current value of the variable you're trying to change
+   * @param b the currentAmps value of the variable you're trying to change
    * @param weight The weight of the second value.
    * @return The weighted average of a and b.
    */
