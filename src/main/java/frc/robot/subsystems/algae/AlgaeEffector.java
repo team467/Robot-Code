@@ -25,35 +25,30 @@ public class AlgaeEffector extends SubsystemBase {
     Logger.processInputs(getName(), inputs);
   }
 
- 
-
   /** Moves algae arm inwards. */
   private Command retractArm() {
     return new FunctionalCommand(
-        () -> {
-          io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE);
-          armExtended = false;
-        },
-        () -> {
-        },
-        interrupted -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
-        () -> inputs.reverseLimitSwitch,
-        this)
+            () -> {
+              io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE);
+              armExtended = false;
+            },
+            () -> {},
+            interrupted -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
+            () -> inputs.reverseLimitSwitch,
+            this)
         .withTimeout(0.5);
   }
-  
- /** Moves algae arm outwards */
+
+  /** Moves algae arm outwards */
   private Command extendArm() {
     return new FunctionalCommand(
             () -> {
               io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
               armExtended = true;
-          },
-            () -> {
-
             },
-        interrupted -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
-            () -> inputs.forwardLimitSwitch,    
+            () -> {},
+            interrupted -> io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE),
+            () -> inputs.forwardLimitSwitch,
             this)
         .withTimeout(0.5);
   }
