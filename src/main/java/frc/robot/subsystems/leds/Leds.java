@@ -1,20 +1,16 @@
 package frc.robot.subsystems.leds;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,28 +28,20 @@ public class Leds extends SubsystemBase {
     SCROLL
   }
 
-  public int loopCycleCount = 0;
-  public double autoFinishedTime = 0.0;
-
   private final AddressableLED leds;
   private final AddressableLEDBuffer buffer;
   private final AddressableLEDBufferView left;
   private final AddressableLEDBufferView right;
-  private final Notifier loadingNotifier;
 
-  private NetworkTableEntry enableTestEntry;
+  private NetworkTableEntry enableTest;
+  private GenericEntry enableTestEntry;
   private SendableChooser<LedPatterns> testPattern;
   private SendableChooser<Animations> testAnimation;
   private NetworkTable ledTable;
 
   private LEDPattern currentPattern = LedPatterns.BLACK.colorPatternOnly();
-  private boolean enableTest = false;
 
   public Leds() {
-
-    Shuffleboard.getTab("LEDs").add("LED Subsystem", this);
-
-
 
     // enableTestEntry =
     //     ledTestingLayout
@@ -73,29 +61,22 @@ public class Leds extends SubsystemBase {
     leds.setData(buffer);
     leds.start();
 
-    loadingNotifier =
-        new Notifier(
-            () -> {
-              currentPattern = LedPatterns.RED.breathe();
-              if (!Robot.isSimulation()) {
-                currentPattern.applyTo(buffer);
-                leds.setData(buffer);
-              }
-            });
-    loadingNotifier.startPeriodic(0.02);
+    initLedTabInShuffleboard();
   }
 
   @Override
   public void periodic() {
-    loopCycleCount += 1;
-    if (loopCycleCount < LedConstants.MIN_LOOP_CYCLE_COUNT) {
-      return;
-    }
-    loadingNotifier.stop();
 
-    if (DriverStation.isTest()) {}
+    System.out.println(
+        enableTest.getName()
+            + " "
+            + enableTest.getValue().getType().toString()
+            + " "
+            + enableTest.getBoolean(false));
 
-    if (DriverStation.isTest() && enableTestEntry.getBoolean(false)) {
+    System.out.println("Entry " + enableTestEntry.get() + " " + enableTestEntry.getBoolean(false));
+
+    if (DriverStation.isTest() && enableTest.getBoolean(false)) {
       try {
         LedPatterns pattern = testPattern.getSelected();
         Animations animation = testAnimation.getSelected();
@@ -120,67 +101,50 @@ public class Leds extends SubsystemBase {
     }
   }
 
-  @Override
-  public void initSendable(SendableBuilder builder) {
-    super.initSendable(builder);
+  private void initLedTabInShuffleboard() {
 
-    builder.publishConstString("LED Channel", "" + LedConstants.LED_CHANNEL);
-    builder.addStringProperty(
-        "Current Pattern",
-        () -> currentPattern.toString(),
-        (String x) -> {
-          System.out.println(x);
-        });
-    builder.addBooleanProperty(
-        "Enable Test",
-        () -> enableTest,
-        (boolean x) -> {
-          enableTest = x;
-        });
+    ShuffleboardTab ledTab = Shuffleboard.getTab("LEDs");
+    // ShuffleboardLayout ledTestingLayout =
+    //     ledTab
+    //         .getLayout("LED Testing Options", BuiltInLayouts.kGrid)
+    //         .withSize(2, 4)
+    //         .withPosition(0, 0);
 
-    enableTestEntry = NetworkTableInstance
-      .getDefault()
-        .getTable("SmartDashboard")
-        .getEntry("Enable LED Test");
-    enableTestEntry.setBoolean(false);
+    enableTestEntry =
+        ledTab
+            .add("Enable Test", "boolean", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
+            .withPosition(0, 0)
+            .getEntry();
 
-    this.initShuffleboardTab();
+    enableTest =
+        NetworkTableInstance.getDefault()
+            .getTable("Shuffleboard")
+            .getSubTable("LEDs")
+            .getEntry("Enable Test");
 
+    // ledTestingLayout.add("Enable Test", enableTestWidget);
+
+    // testPattern = new SendableChooser<LedPatterns>();
+    // for (LedPatterns pattern : LedPatterns.values()) {
+    //   testPattern.addOption(pattern.toString(), pattern);
+    // }
+    // testPattern.setDefaultOption("BLACK", LedPatterns.BLACK);
+    // ledTestingLayout
+    //     .add("Test Pattern", testPattern)
+    //     .withWidget(BuiltInWidgets.kComboBoxChooser)
+    //     .withPosition(0, 1);
+
+    // testAnimation = new SendableChooser<Animations>();
+    // for (Animations animation : Animations.values()) {
+    //   testAnimation.addOption(animation.toString(), animation);
+    // }
+    // testAnimation.setDefaultOption("None", Animations.NONE);
+    // ledTestingLayout
+    //     .add("Test Animation", testAnimation)
+    //     .withWidget(BuiltInWidgets.kSplitButtonChooser)
+    //     .withPosition(0, 2);
   }
-
-  private void initShuffleboardTab() {
-
-    ShuffleboardTab ledTab = Shuffleboard.getTab(this.getName());
-
-    ShuffleboardLayout ledTestingLayout = ledTab
-        .getLayout("LED Testing Options", BuiltInLayouts.kGrid)
-        .withSize(2, 3)
-        .withPosition(0, 0);
-
-    testPattern = new SendableChooser<LedPatterns>();
-    for (LedPatterns pattern : LedPatterns.values()) {
-      testPattern.addOption(pattern.toString(), pattern);
-    }
-    testPattern.setDefaultOption("BLACK", LedPatterns.BLACK);
-    ledTestingLayout
-        .add("Test Pattern", testPattern)
-        .withWidget(BuiltInWidgets.kComboBoxChooser)
-        .withPosition(0, 1);
-
-    testAnimation = new SendableChooser<Animations>();
-    for (Animations animation : Animations.values()) {
-      testAnimation.addOption(animation.toString(), animation);
-    }
-    testAnimation.setDefaultOption("None", Animations.NONE);
-    ledTestingLayout
-        .add("Test Animation", testAnimation)
-        .withWidget(BuiltInWidgets.kSplitButtonChooser)
-        .withPosition(0, 2);
-
-    ledTestingLayout.buildInto(null, null);
-
-  }
-  
 }
   // private SendableChooser<LedPatterns> testPattern;
   // private SendableChooser<Animations> testAnimation;
