@@ -10,10 +10,10 @@ public class RobotState {
   /** Set by the robot if the batter is less than 9V */
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
   public boolean lowBatteryAlert = false;
-  /** If the coral effector limit switch is pressed*/
+  /** If the coral effector limit switch is pressed */
   @AutoLogOutput(key = "RobotState/HasCoral")
   public boolean hasCoral = false;
-  /** If the hopper optical sensor is triggered*/
+  /** If the hopper optical sensor is triggered */
   @AutoLogOutput(key = "RobotState/HopperSeesCoral")
   public boolean hopperSeesCoral = false;
   /** If the robot is aligned to the reef */
