@@ -22,6 +22,9 @@ public class Schematic {
   // Algae Effector (Motor IDs)
   public static final int algaePivotCanId;
   public static final int algaeRemovalCanId;
+  // Coral Effector (Motor IDs)
+  public static final int coralHaveCoralDioId;
+  public static final int coralOnTheWayCanId;
 
   static {
     switch (Constants.getRobot()) {
@@ -46,6 +49,9 @@ public class Schematic {
 
         algaePivotCanId = 0;
         algaeRemovalCanId = 0;
+
+        coralHaveCoralDioId = 0;
+        coralOnTheWayCanId = 0;
       }
       case ROBOT_2025_COMP -> {
         // TODO: Change for 2025 as needed
@@ -70,6 +76,9 @@ public class Schematic {
         // Algae Effector (Motor IDs)
         algaePivotCanId = 0;
         algaeRemovalCanId = 0;
+
+        coralHaveCoralDioId = 0;
+        coralOnTheWayCanId = 0;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -94,6 +103,9 @@ public class Schematic {
         // Algae Effector (Motor IDs)
         algaePivotCanId = 1;
         algaeRemovalCanId = 2;
+
+        coralHaveCoralDioId = 0;
+        coralOnTheWayCanId = 0;
       }
 
       default -> {
@@ -118,6 +130,9 @@ public class Schematic {
         // Algae Effector (Motor IDs)
         algaePivotCanId = 0;
         algaeRemovalCanId = 0;
+
+        coralHaveCoralDioId = 0;
+        coralOnTheWayCanId = 0;
       }
     }
   }

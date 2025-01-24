@@ -19,5 +19,7 @@ public interface CoralEffectorIO {
 
   default void setSpeed(double speed) {}
 
-  default void setCoralGone(boolean coralGoneState) {}
+  default void haveCoral(boolean CoralOnTheWay) {
+    // CoralOnTheWay = !effectorLimitSwitchHaveCoral.get();
+  }
 }

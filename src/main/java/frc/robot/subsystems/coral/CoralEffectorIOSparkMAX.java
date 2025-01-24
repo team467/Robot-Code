@@ -1,6 +1,7 @@
 package frc.robot.subsystems.coral;
 
 import static frc.lib.utils.SparkUtil.tryUntilOk;
+import static frc.robot.Schematic.coralHaveCoralDioId;
 import static frc.robot.subsystems.coral.CoralEffectorConstants.*;
 
 import com.revrobotics.RelativeEncoder;
@@ -12,18 +13,19 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
 
   private final SparkMax effectorMotor;
   private final RelativeEncoder effectorEncoder;
-  private final SparkLimitSwitch limitSwitch;
+  private final SparkLimitSwitch motorLimitSwitch;
+  private final DigitalInput effectorLimitSwitchHaveCoral = new DigitalInput(coralHaveCoralDioId);
 
   public CoralEffectorIOSparkMAX(int motorId) {
     effectorMotor = new SparkMax(motorId, SparkLowLevel.MotorType.kBrushless);
-    limitSwitch = effectorMotor.getReverseLimitSwitch();
+    motorLimitSwitch = effectorMotor.getReverseLimitSwitch();
     effectorEncoder = effectorMotor.getEncoder();
-    // effectorEncoder =
 
     // effectorMotor.configure();
 
@@ -57,7 +59,8 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
   public void updateInputs(EffectorIOInputs inputs) {
     inputs.appliedVolts = effectorMotor.getBusVoltage() * effectorMotor.getAppliedOutput();
     inputs.currentAmps = effectorMotor.getOutputCurrent();
-    inputs.motorLimitSwitch = limitSwitch.isPressed();
+    inputs.motorLimitSwitch = motorLimitSwitch.isPressed();
+    inputs.haveCoral = effectorLimitSwitchHaveCoral.get();
   }
 
   public void setEffectorVoltage(double volts) {

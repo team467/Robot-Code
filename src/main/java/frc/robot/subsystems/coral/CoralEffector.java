@@ -14,10 +14,16 @@ public class CoralEffector extends SubsystemBase {
   private boolean PIDMode = false;
   private double currentVelocitySetpoint;
 
-  public CoralEffector(CoralEffectorIO io) {
+  public void CoralEffectorLimitSwitch(CoralEffectorIO io) {
     this.io = io;
     this.inputs = new EffectorIOInputsAutoLogged();
   }
+
+  //  public void Coral(CoralEffectorIO io, DigitalInput effectorLimitSwitchHaveCoral) {
+  //        this.io = io;
+  //        this.effectorLimitSwitchHaveCoral = effectorLimitSwitchHaveCoral;
+  //        this.inputs = new EffectorIOInputsAutoLogged();
+  //    }
 
   public void Periodic() {
     io.updateInputs(inputs);
@@ -29,7 +35,7 @@ public class CoralEffector extends SubsystemBase {
   }
 
   public boolean coralOnTheWay() {
-    return inputs.haveCoral;
+    return inputs.coralOnTheWay;
   }
 
   public Command dumpCoral() {
@@ -38,7 +44,7 @@ public class CoralEffector extends SubsystemBase {
               io.setSpeed(CoralEffectorConstants.CORAL_EFFECTOR_SPEED_OUT.get());
             },
             this)
-        .until(this::haveCoral);
+        .until(() -> !this.haveCoral());
   }
 
   public Command intakeCoral() {

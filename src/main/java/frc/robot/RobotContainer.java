@@ -20,6 +20,7 @@ import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
+import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -37,6 +38,7 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private AlgaeEffector algae;
+  private CoralEffector coral;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -94,6 +96,7 @@ public class RobotContainer {
         }
         case ROBOT_BRIEFCASE -> {
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          coral = new CoralEffector(); // new CoralEffectorIOSparkMAX(1) ----> In Parenthesis
         }
       }
     }
@@ -161,6 +164,11 @@ public class RobotContainer {
 
     if (algae != null) {
       operatorController.a().onTrue(algae.toggleArm());
+    }
+
+    if (coral != null) {
+      operatorController.x().onTrue(coral.dumpCoral());
+      operatorController.y().onTrue(coral.intakeCoral());
     }
   }
 
