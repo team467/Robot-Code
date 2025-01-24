@@ -46,8 +46,7 @@ public class Climber extends SubsystemBase {
    */
   public Command deploy() {
     return Commands.run(() -> io.setSpeed(1.0), this)
-        .until(() -> inputs.position >= ClimberConstants.DEPLOYED_POSITION)
-        .finallyDo(interrupted -> io.setSpeed(0.0));
+        .until(() -> inputs.position >= ClimberConstants.DEPLOYED_POSITION);
   }
 
   /**
@@ -57,7 +56,6 @@ public class Climber extends SubsystemBase {
    */
   public Command winch() {
     return Commands.run(() -> io.setSpeed(-1.0), this)
-        .until(() -> inputs.position <= ClimberConstants.WINCHED_POSITION)
-        .finallyDo(interrupted -> io.setSpeed(0.0));
+        .until(() -> inputs.position <= ClimberConstants.WINCHED_POSITION);
   }
 }
