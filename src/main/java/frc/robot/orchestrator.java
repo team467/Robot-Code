@@ -35,6 +35,8 @@ public class orchestrator {
     }).andThen(elevator.toSetpoint(ElevatorConstants.DUCK_POSITION));
   }
   public Command intake() {
-  return elevator.toSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(5).andThen(coralEffector.intakeCoral());
+    boolean seesCoral;
+  return elevator.toSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(5).wait(() -> seesCoral);
   }
+
 }
