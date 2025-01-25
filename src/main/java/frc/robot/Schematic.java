@@ -51,7 +51,7 @@ public class Schematic {
         // Device CAN IDs
         // TODO: Change for 2025 as needed
         // Drive (CAN IDs)
-        pigeonCanId = 9;
+        pigeonCanId = 17;
 
         frontLeftDriveCanId = 1;
         backLeftDriveCanId = 3;
