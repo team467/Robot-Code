@@ -32,6 +32,8 @@ public class Climber extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
     RobotState.getInstance().climberStowed = inputs.climberStowed;
+    RobotState.getInstance().climberDeployed = inputs.climberDeployed;
+    RobotState.getInstance().climberWinched = inputs.climberWinched;
 
     if (DriverStation.isTest()) {
       io.setSpeed(climberTestingEntry.getDouble(0.0));
@@ -44,12 +46,7 @@ public class Climber extends SubsystemBase {
    * @return the deploy command.
    */
   public Command deploy() {
-    return Commands.run(
-            () -> {
-              io.setSpeed(1.0);
-              RobotState.getInstance().climberDeployed = true;
-            },
-            this)
+    return Commands.run(() -> io.setSpeed(1.0), this)
         .until(() -> inputs.position >= ClimberConstants.DEPLOYED_POSITION);
   }
 
@@ -59,12 +56,7 @@ public class Climber extends SubsystemBase {
    * @return the winch command.
    */
   public Command winch() {
-    return Commands.run(
-            () -> {
-              io.setSpeed(-1.0);
-              RobotState.getInstance().climberWinched = true;
-            },
-            this)
+    return Commands.run(() -> io.setSpeed(-1.0), this)
         .until(() -> inputs.position <= ClimberConstants.WINCHED_POSITION);
   }
 }
