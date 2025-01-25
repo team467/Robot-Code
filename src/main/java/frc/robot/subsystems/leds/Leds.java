@@ -80,7 +80,7 @@ public class Leds extends SubsystemBase {
     loadingNotifier =
         new Notifier(
             () -> {
-              LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+              LedPatterns.RED.colorPatternOnly().applyTo(buffer);
               leds.setData(buffer);
             });
     loadingNotifier.startPeriodic(0.02);
@@ -115,55 +115,53 @@ public class Leds extends SubsystemBase {
 
   private void updateLeds() {
     switch (mode) {
-        // TODO: replace STROBE_RED with actual animations
-        // TODO: replace STROBE_RED with actual animations
       case ESTOPPED:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case AUTO_FINISHED:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case AUTONOMOUS:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case BLUE_ALLIANCE:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case RED_ALLIANCE:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case LOW_BATTERY_ALERT:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case DISABLED:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case DEFAULT:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case ALIGNED_TO_REEF:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case ALGAE_EFFECTOR_EXTENDED:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case ALGAE_EFFECTOR_RUNNING:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case CLIMBER_UP:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case DUCK:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case COLLISION_DETECTED:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       case OFF:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
         break;
       default:
-        LedPatterns.SOLID_RED.pattern.applyTo(buffer);
+        LedPatterns.RED.colorPatternOnly().applyTo(buffer);
     }
 
     leds.setData(buffer);
@@ -177,7 +175,7 @@ public class Leds extends SubsystemBase {
     }
 
     loadingNotifier.stop();
-    LEDPattern pattern = LedPatterns.SOLID_BLACK.pattern;
+    LEDPattern pattern = LedPatterns.BLACK.colorPatternOnly();
 
     System.out.println(
         "check booleans " + DriverStation.isTest() + " : " + ledTestingEntry.getBoolean(false));
@@ -185,11 +183,11 @@ public class Leds extends SubsystemBase {
     if (DriverStation.isTest()) {
       try {
         System.out.println("setting pattern to " + ledTestPatterns.getSelected().toString());
-        pattern = ledTestPatterns.getSelected().pattern;
+        pattern = ledTestPatterns.getSelected().colorPatternOnly();
       } catch (IllegalArgumentException E) {
       }
     } else {
-      pattern = LedPatterns.SOLID_BLACK.pattern; // TODO: connect to state
+      pattern = LedPatterns.BLACK.colorPatternOnly(); // TODO: connect to state
     }
 
     System.out.println(

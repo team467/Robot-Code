@@ -1,131 +1,84 @@
 package frc.robot.subsystems.leds;
 
-import static edu.wpi.first.units.Units.*;
-import static frc.robot.subsystems.leds.LedConstants.*;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
+import java.util.Map;
 
 public enum LedPatterns {
-  SOLID_RED(LEDPattern.solid(Color.kRed)),
+  BLACK(LEDPattern.solid(Color.kBlack)),
+  RED(LEDPattern.solid(Color.kRed)),
   SOLID_ORANGE(LEDPattern.solid(Color.kOrange)),
   SOLID_YELLOW(LEDPattern.solid(Color.kYellow)),
-  SOLID_BLACK(LEDPattern.solid(Color.kBlack));
+  SOLID_GREEN(LEDPattern.solid(Color.kGreen)),
+  SOLID_CYAN(LEDPattern.solid(Color.kCyan)),
+  SOLID_BLUE(LEDPattern.solid(Color.kBlue)),
+  SOLID_PURPLE(LEDPattern.solid(Color.kPurple)),
+  SOLID_PINK(LEDPattern.solid(Color.kPink)),
+  SOLID_MAGENTA(LEDPattern.solid(Color.kMagenta)),
+  SOLID_BROWN(LEDPattern.solid(Color.kBrown)),
+  SOLID_GRAY(LEDPattern.solid(Color.kGray)),
+  SOLID_WHITE(LEDPattern.solid(Color.kWhite)),
+  SOLID_GOLD(LEDPattern.solid(Color.kGold)),
+  SOLID_SILVER(LEDPattern.solid(Color.kSilver)),
 
-  /*
-  // Solid
-  public static final LEDPattern SOLID_RED = LEDPattern.solid(Color.kRed);
-  public static final LEDPattern SOLID_ORANGE = LEDPattern.solid(Color.kOrange);
-  public static final LEDPattern SOLID_YELLOW = LEDPattern.solid(Color.kYellow);
-  public static final LEDPattern SOLID_GREEN = LEDPattern.solid(Color.kGreen);
-  public static final LEDPattern SOLID_CYAN = LEDPattern.solid(Color.kCyan);
-  public static final LEDPattern SOLID_BLUE = LEDPattern.solid(Color.kBlue);
-  public static final LEDPattern SOLID_PURPLE = LEDPattern.solid(Color.kPurple);
-  public static final LEDPattern SOLID_PINK = LEDPattern.solid(Color.kPink);
-  public static final LEDPattern SOLID_MAGENTA = LEDPattern.solid(Color.kMagenta);
-  public static final LEDPattern SOLID_BROWN = LEDPattern.solid(Color.kBrown);
-  public static final LEDPattern SOLID_GRAY = LEDPattern.solid(Color.kGray);
-  public static final LEDPattern SOLID_WHITE = LEDPattern.solid(Color.kWhite);
-  public static final LEDPattern SOLID_BLACK = LEDPattern.solid(Color.kBlack);
-  public static final LEDPattern SOLID_GOLD = LEDPattern.solid(Color.kGold);
-  public static final LEDPattern SOLID_SILVER = LEDPattern.solid(Color.kSilver);
+  RAINBOW(LEDPattern.rainbow(255, 128)),
 
-  // Strobing
-  public static final LEDPattern STROBE_RED = SOLID_RED.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_ORANGE = SOLID_ORANGE.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_YELLOW = SOLID_YELLOW.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_GREEN = SOLID_GREEN.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_CYAN = SOLID_CYAN.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_BLUE = SOLID_BLUE.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_PURPLE = SOLID_PURPLE.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_PINK = SOLID_PINK.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_MAGENTA = SOLID_MAGENTA.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_BROWN = SOLID_BROWN.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_GRAY = SOLID_GRAY.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_WHITE = SOLID_WHITE.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_BLACK = SOLID_BLACK.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_GOLD = SOLID_GOLD.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_SILVER = SOLID_SILVER.blink(Seconds.of(STROBE_TIME));
-
-  // Breathing
-  public static final LEDPattern BREATH_RED = SOLID_RED.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_ORANGE = SOLID_ORANGE.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_YELLOW = SOLID_YELLOW.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_GREEN = SOLID_GREEN.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_CYAN = SOLID_CYAN.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_BLUE = SOLID_BLUE.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_PURPLE = SOLID_PURPLE.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_PINK = SOLID_PINK.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_MAGENTA = SOLID_MAGENTA.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_BROWN = SOLID_BROWN.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_GRAY = SOLID_GRAY.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_WHITE = SOLID_WHITE.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_BLACK = SOLID_BLACK.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_GOLD = SOLID_GOLD.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_SILVER = SOLID_SILVER.breathe(Seconds.of(BREATH_TIME));
-
-  // Rainbow
-  public static final LEDPattern RAINBOW = LEDPattern.rainbow(255, 128);
-  public static final LEDPattern SCROLLING_RAINBOW =
-      RAINBOW.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
-
-  // Center of Mass
-  public static final Color COM_BLUE = new Color(32, 42, 68);
-  public static final Color COM_GOLD = new Color(197, 178, 88);
-  public static final Color COM_WHITE = new Color(255, 255, 255);
-
-  public static final LEDPattern SOLID_COM_BLUE = LEDPattern.solid(COM_BLUE);
-  public static final LEDPattern SOLID_COM_GOLD = LEDPattern.solid(COM_GOLD);
-  public static final LEDPattern SOLID_COM_WHITE = LEDPattern.solid(COM_WHITE);
-
-  public static final LEDPattern STROBE_COM_BLUE = SOLID_COM_BLUE.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_COM_GOLD = SOLID_COM_GOLD.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_COM_WHITE = SOLID_COM_WHITE.blink(Seconds.of(STROBE_TIME));
-
-  public static final LEDPattern BREATHE_COM_BLUE = SOLID_COM_BLUE.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATHE_COM_GOLD = SOLID_COM_GOLD.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATHE_COM_WHITE =
-      SOLID_COM_WHITE.breathe(Seconds.of(BREATH_TIME));
-
-  public static final LEDPattern GRADIENT_COM =
-      LEDPattern.gradient(LEDPattern.GradientType.kContinuous, COM_BLUE, COM_GOLD, COM_WHITE);
-  public static final LEDPattern SCROLLING_GRADIENT_COM =
-      GRADIENT_COM.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
-
-  public static final LEDPattern STRIPE_COM =
-      LEDPattern.steps(Map.of(0, COM_BLUE, 0.33, COM_GOLD, 0.66, COM_WHITE));
-  public static final LEDPattern SCROLLING_STRIPE_COM =
-      STRIPE_COM.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
-
-  // FRC
-  public static final LEDPattern SOLID_FRC_BLUE = LEDPattern.solid(Color.kFirstBlue);
-  public static final LEDPattern SOLID_FRC_RED = LEDPattern.solid(Color.kFirstRed);
-  public static final LEDPattern SOLID_FRC_WHITE = SOLID_WHITE;
-
-  public static final LEDPattern STROBE_FRC_BLUE = SOLID_FRC_BLUE.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_FRC_RED = SOLID_FRC_RED.blink(Seconds.of(STROBE_TIME));
-  public static final LEDPattern STROBE_FRC_WHITE = SOLID_FRC_WHITE.blink(Seconds.of(STROBE_TIME));
-
-  public static final LEDPattern BREATH_FRC_BLUE = SOLID_FRC_BLUE.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_FRC_RED = SOLID_FRC_RED.breathe(Seconds.of(BREATH_TIME));
-  public static final LEDPattern BREATH_FRC_WHITE =
-      SOLID_FRC_WHITE.breathe(Seconds.of(BREATH_TIME));
-
-  public static final LEDPattern GRADIENT_FRC =
+  SOLID_COM_BLUE(LEDPattern.solid(new Color(32, 42, 68))),
+  SOLID_COM_GOLD(LEDPattern.solid(new Color(197, 178, 88))),
+  SOLID_COM_WHITE(LEDPattern.solid(new Color(255, 255, 255))),
+  GRADIENT_COM(
       LEDPattern.gradient(
-          LEDPattern.GradientType.kContinuous, Color.kFirstBlue, Color.kWhite, Color.kFirstRed);
-  public static final LEDPattern SCROLLING_GRADIENT_FRC =
-      GRADIENT_FRC.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
+          LEDPattern.GradientType.kContinuous,
+          new Color(32, 42, 68),
+          new Color(197, 178, 88),
+          new Color(255, 255, 255))),
+  STRIPE_COM(
+      LEDPattern.steps(
+          Map.of(
+              0,
+              new Color(32, 42, 68),
+              0.33,
+              new Color(197, 178, 88),
+              0.66,
+              new Color(255, 255, 255)))),
 
-  public static final LEDPattern STRIPE_FRC =
-      LEDPattern.steps(Map.of(0, Color.kFirstBlue, 0.33, Color.kWhite, 0.66, Color.kFirstRed));
-  public static final LEDPattern SCROLLING_STRIP_FRC =
-      STRIPE_FRC.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
-      */
-  ;
-  LEDPattern pattern;
+  SOLID_FRC_BLUE(LEDPattern.solid(Color.kFirstBlue)),
+  SOLID_FRC_RED(LEDPattern.solid(Color.kFirstRed)),
+  SOLID_FRC_WHITE(LEDPattern.solid(Color.kWhite)),
+  GRADIENT_FRC(
+      LEDPattern.gradient(
+          LEDPattern.GradientType.kContinuous, Color.kFirstBlue, Color.kWhite, Color.kFirstRed)),
+  STRIPE_FRC(
+      LEDPattern.steps(Map.of(0, Color.kFirstBlue, 0.33, Color.kWhite, 0.66, Color.kFirstRed)));
 
-  LedPatterns(LEDPattern solid) {
-    this.pattern = solid;
+  private static final double BREATH_TIME = 0.0;
+  private static final double STROBE_TIME = 0.0;
+  private static final Distance LED_SPACING = Meters.of(1 / 60.0);
+
+  private final LEDPattern colorPattern;
+
+  public LEDPattern colorPatternOnly() {
+    return colorPattern;
+  }
+
+  public LEDPattern blink() {
+    return colorPattern.blink(Seconds.of(STROBE_TIME));
+  }
+
+  public LEDPattern breathe() {
+    return colorPattern.breathe(Seconds.of(BREATH_TIME));
+  }
+
+  public LEDPattern scroll() {
+    return colorPattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
+  }
+
+  private LedPatterns(LEDPattern colorPattern) {
+    this.colorPattern = colorPattern;
   }
 }
