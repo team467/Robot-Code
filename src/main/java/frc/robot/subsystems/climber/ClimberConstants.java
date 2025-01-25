@@ -4,7 +4,11 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public class ClimberConstants {
+  public static final float LOWER_WINCHED_POSITION;
+  public static final float UPPER_WINCHED_POSITION;
   public static final float WINCHED_POSITION;
+  public static final float LOWER_DEPLOYED_POSITION;
+  public static final float UPPER_DEPLOYED_POSITION;
   public static final float DEPLOYED_POSITION;
   public static final int CLIMBER_MOTOR_ID;
   public static final int CLIMBER_LEADER_ID;
@@ -27,7 +31,11 @@ public class ClimberConstants {
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2025_COMP -> {
+        LOWER_WINCHED_POSITION = 0.35f;
+        UPPER_WINCHED_POSITION = 0.45f;
         WINCHED_POSITION = 0.4f;
+        LOWER_DEPLOYED_POSITION = 0.95f;
+        UPPER_DEPLOYED_POSITION = 1.1f;
         DEPLOYED_POSITION = 1.0f;
         CLIMBER_LEADER_ID = 1;
         CLIMBER_FOLLOWER_ID = 2;
@@ -48,7 +56,11 @@ public class ClimberConstants {
       }
 
       case ROBOT_SIMBOT -> {
+        LOWER_WINCHED_POSITION = 0.35f;
+        UPPER_WINCHED_POSITION = 0.45f;
         WINCHED_POSITION = 0.4f;
+        LOWER_DEPLOYED_POSITION = 0.95f;
+        UPPER_DEPLOYED_POSITION = 1.1f;
         DEPLOYED_POSITION = 1.0f;
         CLIMBER_LEADER_ID = 1;
         CLIMBER_FOLLOWER_ID = 2;
@@ -69,8 +81,12 @@ public class ClimberConstants {
       }
 
       default -> {
-        WINCHED_POSITION = 0.0f;
-        DEPLOYED_POSITION = 0.0f;
+        LOWER_WINCHED_POSITION = 0.35f;
+        UPPER_WINCHED_POSITION = 0.45f;
+        WINCHED_POSITION = 0.4f;
+        LOWER_DEPLOYED_POSITION = 0.95f;
+        UPPER_DEPLOYED_POSITION = 1.1f;
+        DEPLOYED_POSITION = 1.0f;
         CLIMBER_LEADER_ID = 0;
         CLIMBER_FOLLOWER_ID = 0;
 

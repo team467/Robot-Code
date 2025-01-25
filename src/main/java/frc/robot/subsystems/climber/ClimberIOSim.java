@@ -97,30 +97,17 @@ public class ClimberIOSim implements ClimberIO {
     inputs.speed = encoderSim.getVelocity();
     inputs.position = encoderSim.getPosition();
     inputs.volts = motorSim.getAppliedOutput() * motorSim.getBusVoltage();
-    inputs.climberWinched = inputs.position <= ClimberConstants.WINCHED_POSITION;
-    inputs.climberDeployed = inputs.position >= ClimberConstants.MAX_CLIMBER_HEIGHT_METERS;
-    inputs.climberStowed = inputs.position <= 0.0;
+    inputs.climberWinched =
+        inputs.position >= ClimberConstants.LOWER_WINCHED_POSITION
+            && inputs.position <= ClimberConstants.UPPER_WINCHED_POSITION;
+    inputs.climberDeployed =
+        inputs.position >= ClimberConstants.LOWER_DEPLOYED_POSITION
+            && inputs.position <= ClimberConstants.UPPER_DEPLOYED_POSITION;
+    inputs.climberStowed = inputs.position >= -0.5 && inputs.position <= 0.25;
 
     // Reset position if the stowed limit switch is pressed
     if (inputs.climberStowed) {
       resetPosition();
-    }
-
-    // Handle GUI inputs
-    if (SmartDashboard.getBoolean("Climber/Deploy", false)) {
-      motor.set(1.0); // Extend at full speed
-      if (inputs.position >= ClimberConstants.MAX_CLIMBER_HEIGHT_METERS) {
-        motor.set(0.0); // Stop the motor
-        SmartDashboard.putBoolean("Climber/Deploy", false);
-      }
-    }
-
-    if (SmartDashboard.getBoolean("Climber/Winch", false)) {
-      motor.set(-1.0); // Retract at full speed
-      if (inputs.position <= ClimberConstants.WINCHED_POSITION) {
-        motor.set(0.0); // Stop the motor
-        SmartDashboard.putBoolean("Climber/Winch", false);
-      }
     }
   }
 

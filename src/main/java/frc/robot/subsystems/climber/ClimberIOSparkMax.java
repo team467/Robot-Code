@@ -66,8 +66,12 @@ public class ClimberIOSparkMax implements ClimberIO {
     inputs.current = climberLeader.getOutputCurrent();
     inputs.speed = climberLeader.get();
     inputs.position = climberLeaderEncoder.getPosition();
-    inputs.climberWinched = inputs.position <= ClimberConstants.WINCHED_POSITION;
-    inputs.climberDeployed = inputs.position >= ClimberConstants.DEPLOYED_POSITION;
+    inputs.climberWinched =
+        inputs.position >= ClimberConstants.LOWER_WINCHED_POSITION
+            && inputs.position <= ClimberConstants.UPPER_WINCHED_POSITION;
+    inputs.climberDeployed =
+        inputs.position >= ClimberConstants.LOWER_DEPLOYED_POSITION
+            && inputs.position <= ClimberConstants.UPPER_DEPLOYED_POSITION;
     inputs.climberStowed = limitSwitch.isPressed();
 
     if (inputs.climberStowed) {

@@ -47,7 +47,7 @@ public class Climber extends SubsystemBase {
     // Handle GUI inputs
     if (SmartDashboard.getBoolean("Climber/Deploy", false)) {
       io.setSpeed(1.0);
-      if (inputs.position >= ClimberConstants.MAX_CLIMBER_HEIGHT_METERS) {
+      if (inputs.position >= ClimberConstants.DEPLOYED_POSITION) {
         io.setSpeed(0.0);
         SmartDashboard.putBoolean("Climber/Deploy", false);
       }
