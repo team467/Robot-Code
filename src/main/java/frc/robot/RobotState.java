@@ -41,6 +41,10 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/ElevatorPosition")
   public ElevatorPosition elevatorPosition = null;
 
+
+  @AutoLogOutput(key = "RobotState/ImpactDetected")
+  public boolean impactDetected = false;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
