@@ -44,10 +44,12 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   }
 
   public void setRemovalVolts(double volts) {
+    System.out.print("setting removal motor to " + volts);
     removalMotor.setVoltage(volts);
   }
 
   public void setPivotVolts(double volts) {
+    System.out.print("setting piv motor to " + volts);
     pivotMotor.setVoltage(volts);
   }
 
@@ -59,7 +61,11 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
     inputs.removalAmps = removalMotor.getOutputCurrent();
     inputs.pivotAmps = pivotMotor.getOutputCurrent();
     inputs.pivotPosition = pivotMotorEncoder.getPosition();
-    inputs.forwardLimitSwitch = forwardLimitSwitch.isPressed();
-    inputs.reverseLimitSwitch = reverseLimitSwitch.isPressed();
+
+    inputs.isFullyExtended = forwardLimitSwitch.isPressed();
+    System.out.print("Extend Limit switch works and is pressed" + forwardLimitSwitch.isPressed());
+
+    inputs.isStowed = reverseLimitSwitch.isPressed();
+    System.out.print("Stow Limit switch works and is pressed" + reverseLimitSwitch.isPressed());
   }
 }
