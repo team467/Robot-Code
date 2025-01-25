@@ -10,7 +10,9 @@ public class TFminiPlus {
   private final NetworkTable networkTable;
 
   public TFminiPlus(SerialPort.Port port, String tableName) {
-    serialPort = new SerialPort(115200, port); // I am using 115200 becaus is the default baud rate, could be changed
+    serialPort =
+        new SerialPort(
+            115200, port); // I am using 115200 becaus is the default baud rate, could be changed
     networkTable = NetworkTableInstance.getDefault().getTable(tableName);
   }
 
@@ -36,7 +38,7 @@ public class TFminiPlus {
 
   // Parses the distance value from the data frame
   private int parseDistance(byte[] data) {
-    // Distance is in bytes 2 and 3 
+    // Distance is in bytes 2 and 3
     return (data[2] & 0xFF) | ((data[3] & 0xFF) << 8);
   }
 
