@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
@@ -30,9 +32,7 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
-    // if (inputs.climberAtTop) {
-    //   io.resetPosition();
-    // }
+    RobotState.getInstance().climberStowed = inputs.climberStowed;
 
     if (DriverStation.isTest()) {
       io.setSpeed(climberTestingEntry.getDouble(0.0));
@@ -45,7 +45,12 @@ public class Climber extends SubsystemBase {
    * @return the deploy command.
    */
   public Command deploy() {
-    return Commands.run(() -> io.setSpeed(1.0), this)
+    return Commands.run(
+            () -> {
+              io.setSpeed(1.0);
+              RobotState.getInstance().climberDeployed = true;
+              },
+              this)
         .until(() -> inputs.position >= ClimberConstants.DEPLOYED_POSITION);
   }
 
@@ -55,7 +60,12 @@ public class Climber extends SubsystemBase {
    * @return the winch command.
    */
   public Command winch() {
-    return Commands.run(() -> io.setSpeed(-1.0), this)
+    return Commands.run(
+            () -> {
+              io.setSpeed(-1.0);
+              RobotState.getInstance().climberWinched = true;
+              },
+              this)
         .until(() -> inputs.position <= ClimberConstants.WINCHED_POSITION);
   }
 }
