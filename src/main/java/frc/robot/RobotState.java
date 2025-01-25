@@ -61,6 +61,7 @@ public class RobotState {
     CORAL_LEVEL_1,
     CORAL_LEVEL_2,
     CORAL_LEVEL_3,
+    CORAL_LEVEL_4,
     ALGAE_LEVEL_2,
     ALGAE_LEVEL_3;
   }
