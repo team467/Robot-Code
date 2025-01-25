@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
@@ -49,8 +48,8 @@ public class Climber extends SubsystemBase {
             () -> {
               io.setSpeed(1.0);
               RobotState.getInstance().climberDeployed = true;
-              },
-              this)
+            },
+            this)
         .until(() -> inputs.position >= ClimberConstants.DEPLOYED_POSITION);
   }
 
@@ -64,8 +63,8 @@ public class Climber extends SubsystemBase {
             () -> {
               io.setSpeed(-1.0);
               RobotState.getInstance().climberWinched = true;
-              },
-              this)
+            },
+            this)
         .until(() -> inputs.position <= ClimberConstants.WINCHED_POSITION);
   }
 }
