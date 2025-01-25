@@ -31,12 +31,16 @@ public class RobotState {
   /** If the climber is down */
   @AutoLogOutput(key = "RobotState/ClimberDown")
   public boolean climberDown = false;
-  /** If the robot is in currently ducking */
+  /** If the robot is currently ducking */
   @AutoLogOutput(key = "RobotState/Duck")
   public boolean duck = false;
   /** If the robot has detected a collision */
   @AutoLogOutput(key = "RobotState/CollisionDetected")
   public boolean collisionDetected = false;
+  /** the position that the elevator is at */
+  @AutoLogOutput(key = "RobotState/ElevatorPosition")
+  public ElevatorPosition elevatorPosition = null;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
@@ -50,5 +54,14 @@ public class RobotState {
       instance = new RobotState();
     }
     return instance;
+  }
+
+  public enum ElevatorPosition {
+    INTAKE,
+    CORAL_LEVEL_1,
+    CORAL_LEVEL_2,
+    CORAL_LEVEL_3,
+    ALGAE_LEVEL_2,
+    ALGAE_LEVEL_3;
   }
 }
