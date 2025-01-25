@@ -9,7 +9,7 @@ import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class ClimberIOSparkMax implements ClimberIO {
 
@@ -18,13 +18,9 @@ public class ClimberIOSparkMax implements ClimberIO {
   private final SparkMax climberFollower;
   private SparkLimitSwitch limitSwitch;
 
-  /**
-   * Constructor initializes the climber system, including motors, encoders, limit switches, and
-   * ratchet.
-   */
   public ClimberIOSparkMax() {
     climberLeader = new SparkMax(ClimberConstants.CLIMBER_LEADER_ID, MotorType.kBrushless);
-    var ClimberLeaderConfig = new SparkFlexConfig(); // Sets configuration for the leader motor
+    var ClimberLeaderConfig = new SparkMaxConfig();
     ClimberLeaderConfig.inverted(true)
         .idleMode(IdleMode.kBrake)
         .voltageCompensation(12)
@@ -39,10 +35,9 @@ public class ClimberIOSparkMax implements ClimberIO {
     climberLeaderEncoder = climberLeader.getEncoder();
 
     climberFollower = new SparkMax(ClimberConstants.CLIMBER_FOLLOWER_ID, MotorType.kBrushless);
-    var ClimberFollowerConfig = new SparkFlexConfig();
-    ClimberFollowerConfig.follow(1); // Set the follower motor to mirror the leader motor
+    var ClimberFollowerConfig = new SparkMaxConfig();
+    ClimberFollowerConfig.follow(1);
 
-    // Configure the leader motor using the configuration object and retry up to 5 times if it fails
     tryUntilOk(
         climberLeader,
         5,
@@ -61,14 +56,11 @@ public class ClimberIOSparkMax implements ClimberIO {
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters));
 
-    // Set the encoder position to 0 retrying up to 5 times if it fails
-
     tryUntilOk(climberLeader, 5, () -> climberLeaderEncoder.setPosition(0.0));
     limitSwitch = climberLeader.getForwardLimitSwitch();
   }
 
   @Override
-  // Updates all the inputs
   public void updateInputs(ClimberIOInputs inputs) {
     inputs.volts = climberLeader.getBusVoltage() * climberLeader.getAppliedOutput();
     inputs.current = climberLeader.getOutputCurrent();
@@ -78,16 +70,14 @@ public class ClimberIOSparkMax implements ClimberIO {
     inputs.climberDeployed = inputs.position >= ClimberConstants.DEPLOYED_POSITION;
     inputs.climberStowed = limitSwitch.isPressed();
 
-    // Reset position if the stowed limit switch is pressed
     if (inputs.climberStowed) {
       resetPosition();
     }
   }
 
   @Override
-  // Sets the motorss percent output
   public void setVoltage(double voltage) {
-    climberLeader.setVoltage(climberLeader.getAppliedOutput());
+    climberLeader.setVoltage(voltage);
   }
 
   public void setSpeed(double speed) {
