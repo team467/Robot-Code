@@ -9,14 +9,13 @@ import org.littletonrobotics.junction.Logger;
 public class CoralEffector extends SubsystemBase {
 
   private CoralEffectorIO io;
-  private EffectorIOInputsAutoLogged inputs = new EffectorIOInputsAutoLogged();
+  private final CoralEffectorIOInputsAutoLogged inputs = new CoralEffectorIOInputsAutoLogged();
   private final RobotState robotState = RobotState.getInstance();
   private boolean PIDMode = false;
   private double currentVelocitySetpoint;
 
-  public void CoralEffectorLimitSwitch(CoralEffectorIO io) {
+  public CoralEffector(CoralEffectorIO io) {
     this.io = io;
-    this.inputs = new EffectorIOInputsAutoLogged();
   }
 
   //  public void Coral(CoralEffectorIO io, DigitalInput effectorLimitSwitchHaveCoral) {
@@ -36,6 +35,14 @@ public class CoralEffector extends SubsystemBase {
 
   public boolean coralOnTheWay() {
     return inputs.coralOnTheWay;
+  }
+
+  public Command stop() {
+    return Commands.run(
+        () -> {
+          io.setSpeed(0);
+        },
+        this);
   }
 
   public Command dumpCoral() {

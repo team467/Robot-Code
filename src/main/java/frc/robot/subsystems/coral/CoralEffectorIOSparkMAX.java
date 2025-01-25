@@ -7,29 +7,26 @@ import static frc.robot.subsystems.coral.CoralEffectorConstants.*;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
 
-  private final SparkMax effectorMotor;
-  private final RelativeEncoder effectorEncoder;
-  private final SparkLimitSwitch motorLimitSwitch;
+  private final SparkMax motor;
+  private final RelativeEncoder encoder;
   private final DigitalInput effectorLimitSwitchHaveCoral = new DigitalInput(coralHaveCoralDioId);
 
   public CoralEffectorIOSparkMAX(int motorId) {
-    effectorMotor = new SparkMax(motorId, SparkLowLevel.MotorType.kBrushless);
-    motorLimitSwitch = effectorMotor.getReverseLimitSwitch();
-    effectorEncoder = effectorMotor.getEncoder();
+    motor = new SparkMax(motorId, SparkLowLevel.MotorType.kBrushless);
+    encoder = motor.getEncoder();
 
     // effectorMotor.configure();
 
-    var effectorConfig = new SparkFlexConfig();
+    SparkMaxConfig effectorConfig = new SparkMaxConfig();
     effectorConfig
         .idleMode(IdleMode.kBrake)
         .inverted(false)
@@ -44,32 +41,32 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
         .uvwAverageDepth(2);
 
     tryUntilOk(
-        effectorMotor,
+        motor,
         5,
         () ->
-            effectorMotor.configure(
+            motor.configure(
                 effectorConfig,
                 SparkBase.ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters));
-    tryUntilOk(effectorMotor, 5, () -> effectorEncoder.setPosition(0.0));
+    tryUntilOk(motor, 5, () -> encoder.setPosition(0.0));
   }
 
-  private void tryUntilok(SparkMax effectorMotor, int i, Object o) {}
-
-  public void updateInputs(EffectorIOInputs inputs) {
-    inputs.appliedVolts = effectorMotor.getBusVoltage() * effectorMotor.getAppliedOutput();
-    inputs.currentAmps = effectorMotor.getOutputCurrent();
-    inputs.motorLimitSwitch = motorLimitSwitch.isPressed();
+  public void updateInputs(CoralEffectorIOInputs inputs) {
+    inputs.speed = motor.get();
+    inputs.appliedVolts = motor.getBusVoltage() * motor.getAppliedOutput();
+    inputs.currentAmps = motor.getOutputCurrent();
+    inputs.temperature = motor.getMotorTemperature();
     inputs.haveCoral = effectorLimitSwitchHaveCoral.get();
+    inputs.coralOnTheWay = false;
   }
 
   public void setEffectorVoltage(double volts) {
-    effectorMotor.setVoltage(volts);
+    motor.setVoltage(volts);
   }
 
   @Override
   public void setSpeed(double speed) {
-    effectorMotor.set(speed);
+    motor.set(speed);
   }
 }
 

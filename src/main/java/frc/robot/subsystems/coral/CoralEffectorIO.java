@@ -5,21 +5,17 @@ import org.littletonrobotics.junction.AutoLog;
 public interface CoralEffectorIO {
 
   @AutoLog
-  class EffectorIOInputs {
+  class CoralEffectorIOInputs {
 
+    public double speed;
     public double appliedVolts;
     public double currentAmps;
     public double temperature;
     public boolean coralOnTheWay = false;
     public boolean haveCoral = false;
-    public boolean motorLimitSwitch = false;
   }
 
-  default void updateInputs(EffectorIOInputs inputs) {}
+  default void updateInputs(CoralEffectorIOInputs inputs) {}
 
   default void setSpeed(double speed) {}
-
-  default void haveCoral(boolean CoralOnTheWay) {
-    // CoralOnTheWay = !effectorLimitSwitchHaveCoral.get();
-  }
 }
