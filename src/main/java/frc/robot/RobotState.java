@@ -10,9 +10,12 @@ public class RobotState {
   /** Set by the robot if the batter is less than 9V */
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
   public boolean lowBatteryAlert = false;
-  /** If the robot has a game piece */
+  /** If the coral effector limit switch is pressed */
   @AutoLogOutput(key = "RobotState/HasCoral")
   public boolean hasCoral = false;
+  /** If the hopper optical sensor is triggered */
+  @AutoLogOutput(key = "RobotState/HopperSeesCoral")
+  public boolean hopperSeesCoral = false;
   /** If the robot is aligned to the reef */
   @AutoLogOutput(key = "RobotState/AlignedToReef")
   public boolean alignedToReef = false;
@@ -37,6 +40,10 @@ public class RobotState {
   /** If the robot has detected a collision */
   @AutoLogOutput(key = "RobotState/CollisionDetected")
   public boolean collisionDetected = false;
+  /** the position that the elevator is at */
+  @AutoLogOutput(key = "RobotState/ElevatorPosition")
+  public ElevatorPosition elevatorPosition = null;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
@@ -50,5 +57,15 @@ public class RobotState {
       instance = new RobotState();
     }
     return instance;
+  }
+
+  public enum ElevatorPosition {
+    INTAKE,
+    CORAL_LEVEL_1,
+    CORAL_LEVEL_2,
+    CORAL_LEVEL_3,
+    CORAL_LEVEL_4,
+    ALGAE_LEVEL_2,
+    ALGAE_LEVEL_3;
   }
 }
