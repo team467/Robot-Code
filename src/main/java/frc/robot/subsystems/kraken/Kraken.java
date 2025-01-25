@@ -11,8 +11,8 @@ public class Kraken extends SubsystemBase {
   public Kraken(KrakenIO io) {
     this.io = io;
   }
-  public Command setVoltage(double volts){
+
+  public Command setVoltage(double volts) {
     return Commands.run(() -> io.setVoltage(volts));
   }
-
 }
