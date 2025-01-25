@@ -140,7 +140,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-
     algae.setDefaultCommand(algae.stowArm());
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
