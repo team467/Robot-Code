@@ -28,6 +28,7 @@ public class RobotState {
   /** If the climber is down */
   @AutoLogOutput(key = "RobotState/Deployed")
   public boolean climberDeployed = false;
+
   @AutoLogOutput(key = "RobotState/Stowed")
   public boolean climberStowed = false;
   /** If the robot is in currently ducking */
