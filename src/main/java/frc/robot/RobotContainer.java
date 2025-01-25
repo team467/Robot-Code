@@ -169,6 +169,9 @@ public class RobotContainer {
       operatorController.a().onTrue(algae.toggleArm());
     }
     driverController.rightBumper().whileTrue(kraken.setVoltage(6.0));
+    driverController.leftBumper().whileTrue(kraken.setVoltage(-6.0));
+    driverController.rightTrigger().whileTrue(kraken.setVoltage(4.0));
+    driverController.leftTrigger().whileTrue(kraken.setVoltage(-4.0));
   }
 
   /**
