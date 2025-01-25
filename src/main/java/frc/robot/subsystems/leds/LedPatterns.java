@@ -3,12 +3,8 @@ package frc.robot.subsystems.leds;
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.leds.LedConstants.*;
 
-import static edu.wpi.first.units.Units.*;
-import static frc.robot.subsystems.leds.LedConstants.*;
-
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
-import java.util.Map;
 
 public enum LedPatterns {
   SOLID_RED(LEDPattern.solid(Color.kRed)),
