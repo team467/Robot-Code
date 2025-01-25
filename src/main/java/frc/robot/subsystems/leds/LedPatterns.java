@@ -1,10 +1,9 @@
 package frc.robot.subsystems.leds;
 
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
+import static frc.robot.subsystems.leds.LedConstants.*;
 
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
 import java.util.Map;
@@ -55,10 +54,6 @@ public enum LedPatterns {
           LEDPattern.GradientType.kContinuous, Color.kFirstBlue, Color.kWhite, Color.kFirstRed)),
   STRIPE_FRC(
       LEDPattern.steps(Map.of(0, Color.kFirstBlue, 0.33, Color.kWhite, 0.66, Color.kFirstRed)));
-
-  private static final double BREATH_TIME = 0.0;
-  private static final double STROBE_TIME = 0.0;
-  private static final Distance LED_SPACING = Meters.of(1 / 60.0);
 
   private final LEDPattern colorPattern;
 
