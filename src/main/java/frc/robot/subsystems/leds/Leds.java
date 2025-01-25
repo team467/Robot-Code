@@ -116,6 +116,7 @@ public class Leds extends SubsystemBase {
   private void updateLeds() {
     switch (mode) {
         // TODO: replace STROBE_RED with actual animations
+        // TODO: replace STROBE_RED with actual animations
       case ESTOPPED:
         LedPatterns.SOLID_RED.pattern.applyTo(buffer);
         break;
