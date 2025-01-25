@@ -26,12 +26,15 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/AlgaeEffectorRunning")
   public boolean algaeEffectorRunning = false;
   /** If the climber is up */
-  @AutoLogOutput(key = "RobotState/ClimberUp")
-  public boolean climberUp = false;
+  @AutoLogOutput(key = "RobotState/ClimberWinched")
+  public boolean climberWinched = false;
   /** If the climber is down */
-  @AutoLogOutput(key = "RobotState/ClimberDown")
-  public boolean climberDown = false;
-  /** If the robot is currently ducking */
+  @AutoLogOutput(key = "RobotState/ClimberDeployed")
+  public boolean climberDeployed = false;
+
+  @AutoLogOutput(key = "RobotState/ClimberStowed")
+  public boolean climberStowed = false;
+  /** If the robot is in currently ducking */
   @AutoLogOutput(key = "RobotState/Duck")
   public boolean duck = false;
   /** If the robot has detected a collision */
