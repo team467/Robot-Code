@@ -60,7 +60,7 @@ public class ClimberConstants {
         CARRIAGE_MASS_KG = 4.0;
         CLIMBER_DRUM_RADIUS = Units.inchesToMeters(2.0);
         MIN_CLIMBER_HEIGHT_METERS = 0.0;
-        MAX_CLIMBER_HEIGHT_METERS = 1.25;
+        MAX_CLIMBER_HEIGHT_METERS = 1.0;
         SIMULATE_GRAVITY = true;
         STARTING_HEIGHT_METERS = 0.0;
         MEASUREMENT_STD_DEVS = 0.01;
@@ -69,24 +69,24 @@ public class ClimberConstants {
       }
 
       default -> {
-        WINCHED_POSITION = 0.4f;
-        DEPLOYED_POSITION = 1.0f;
-        CLIMBER_LEADER_ID = 1;
-        CLIMBER_FOLLOWER_ID = 2;
+        WINCHED_POSITION = 0.0f;
+        DEPLOYED_POSITION = 0.0f;
+        CLIMBER_LEADER_ID = 0;
+        CLIMBER_FOLLOWER_ID = 0;
 
         CLIMBER_MOTOR_ID = 0;
-        CLIMBER_NUM_MOTORS = 2;
-        CLIMBER_GEAR_RATIO = 10;
-        CLIMBER_GEARING = 10.0;
-        CARRIAGE_MASS_KG = 4.0;
-        CLIMBER_DRUM_RADIUS = Units.inchesToMeters(2.0);
+        CLIMBER_NUM_MOTORS = 0;
+        CLIMBER_GEAR_RATIO = 0;
+        CLIMBER_GEARING = 0.0;
+        CARRIAGE_MASS_KG = 0.0;
+        CLIMBER_DRUM_RADIUS = 0.0;
         MIN_CLIMBER_HEIGHT_METERS = 0.0;
-        MAX_CLIMBER_HEIGHT_METERS = 1.25;
-        SIMULATE_GRAVITY = true;
+        MAX_CLIMBER_HEIGHT_METERS = 0.0;
+        SIMULATE_GRAVITY = false;
         STARTING_HEIGHT_METERS = 0.0;
-        MEASUREMENT_STD_DEVS = 0.01;
-        NEO_PULSES_PER_REVOLUTION = 4096;
-        CLIMBER_CONVERSION_FACTOR = 2.0 * Math.PI * CLIMBER_DRUM_RADIUS / NEO_PULSES_PER_REVOLUTION;
+        MEASUREMENT_STD_DEVS = 0.0;
+        NEO_PULSES_PER_REVOLUTION = 0.0;
+        CLIMBER_CONVERSION_FACTOR = 0.0;
       }
     }
   }
