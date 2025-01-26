@@ -34,13 +34,16 @@ public class RobotState {
   /** If the climber ratchet is locked */
   @AutoLogOutput(key = "RobotState/ClimberRatchetLocked")
   public boolean climberRatchet = false;
-/** If the robot is in currently ducking */
+  /** If the robot is in currently ducking */
   @AutoLogOutput(key = "RobotState/Duck")
   public boolean duck = false;
   /** If the robot has detected a collision */
   @AutoLogOutput(key = "RobotState/CollisionDetected")
   public boolean collisionDetected = false;
   /** The singleton instance of the RobotState class. */
+  @AutoLogOutput(key = "RobotState/ImpactDetected")
+  public boolean impactDetected = false;
+
   private static RobotState instance = null;
 
   /**
