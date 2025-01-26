@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
-import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.kraken.Kraken;
@@ -98,8 +97,7 @@ public class RobotContainer {
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
         }
         case ROBOT_BRIEFCASE -> {
-          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-          kraken = new Kraken(new KrakenIOTalon(1));
+          kraken = new Kraken(new KrakenIOTalon(7));
         }
       }
     }
@@ -169,6 +167,7 @@ public class RobotContainer {
       operatorController.a().onTrue(algae.toggleArm());
     }
     driverController.rightBumper().whileTrue(kraken.setVoltage(6.0));
+    driverController.leftBumper().whileTrue(kraken.setVoltage(-6.0));
   }
 
   /**
