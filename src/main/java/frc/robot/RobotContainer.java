@@ -93,7 +93,6 @@ public class RobotContainer {
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
         }
         case ROBOT_BRIEFCASE -> {
-          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
       }
     }
