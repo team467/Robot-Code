@@ -5,7 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.wpilibj.AnalogInput;
+//import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +18,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
+import edu.wpi.first.wpilibj.DigitalInput;;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -32,7 +33,9 @@ public class Robot extends LoggedRobot {
   private RobotState state = RobotState.getInstance();
   private LinearFilter batteryFilter = LinearFilter.movingAverage(15);
 
-  private AnalogInput photoelectricSensor = new AnalogInput(0);
+  private DigitalInput reflector = new DigitalInput(9);
+
+  //private AnalogInput photoelectricSensor = new AnalogInput(0);
 
   private static final int LOW_VOLTAGE = 9;
 
@@ -113,7 +116,9 @@ public class Robot extends LoggedRobot {
     state.lowBatteryAlert =
         batteryFilter.calculate(RobotController.getBatteryVoltage()) < LOW_VOLTAGE;
 
-    System.out.println("Sensor: " + photoelectricSensor.getValue());
+    //System.out.println("Sensor: " + photoelectricSensor.getValue());
+    System.out.println("Sensor: " + reflector.get());
+    
   }
 
   /** This function is called once when the robot is disabled. */
