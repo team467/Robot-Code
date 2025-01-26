@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
+import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.kraken.Kraken;
@@ -97,7 +98,8 @@ public class RobotContainer {
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
         }
         case ROBOT_BRIEFCASE -> {
-          kraken = new Kraken(new KrakenIOTalon(7));
+          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          kraken = new Kraken(new KrakenIOTalon(1));
         }
       }
     }
