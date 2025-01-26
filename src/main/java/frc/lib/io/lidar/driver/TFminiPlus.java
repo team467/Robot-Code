@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.SerialPort;
 public class TFminiPlus {
 
   private final SerialPort serialPort;
-  private final NetworkTable networkTable;
 
   private int distance = 0;
   private int strength = 0;
@@ -17,7 +16,6 @@ public class TFminiPlus {
     serialPort =
         new SerialPort(
             115200, port); // I am using 115200 because is the default baud rate, could be changed
-    networkTable = NetworkTableInstance.getDefault().getTable(TFminiPlus);
   }
 
   // Reads and parses data from the sensor
@@ -28,10 +26,6 @@ public class TFminiPlus {
       distance = parseDistance(data);
       strength = parseStrength(data);
       temperature = parseTemperature(data);
-
-      networkTable.getEntry("Distance").setDouble(distance);
-      networkTable.getEntry("Strength").setDouble(strength);
-      networkTable.getEntry("Temperature").setDouble(temperature);
     }
   }
 
