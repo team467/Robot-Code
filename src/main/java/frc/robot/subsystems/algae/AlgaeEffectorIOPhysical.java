@@ -1,14 +1,16 @@
 package frc.robot.subsystems.algae;
 
-import static frc.lib.utils.SparkUtil.*;
-import static frc.robot.Schematic.*;
+import static frc.lib.utils.SparkUtil.tryUntilOk;
+import static frc.robot.Schematic.algaePivotCanId;
+import static frc.robot.Schematic.algaeRemovalCanId;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.RelativeEncoder.*;
-import com.revrobotics.spark.*;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -18,7 +20,6 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   private final SparkMax pivotMotor;
   private final SparkMax removalMotor;
   private final RelativeEncoder pivotMotorEncoder;
-  private final RelativeEncoder removalMotorEncoder;
   private final SparkLimitSwitch forwardLimitSwitch;
   private final SparkLimitSwitch reverseLimitSwitch;
 
@@ -27,13 +28,21 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
     removalMotor = new SparkMax(algaeRemovalCanId, MotorType.kBrushless);
 
     pivotMotorEncoder = pivotMotor.getEncoder();
-    removalMotorEncoder = removalMotor.getEncoder();
 
     forwardLimitSwitch = pivotMotor.getForwardLimitSwitch();
     reverseLimitSwitch = pivotMotor.getReverseLimitSwitch();
 
-    var pivotMotorConfig = new SparkMaxConfig();
+    SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
     pivotMotorConfig.idleMode(IdleMode.kBrake);
+    pivotMotorConfig.inverted(AlgaeEffectorConstants.PIVOT_INVERTED);
+    pivotMotorConfig.voltageCompensation(12);
+
+    EncoderConfig pivotEncoderConfig = new EncoderConfig();
+    pivotEncoderConfig.positionConversionFactor(
+        360
+            / AlgaeEffectorConstants.NEO_PULSES_PER_REVOLUTION
+            * AlgaeEffectorConstants.PIVOT_GEAR_RATIO);
+    pivotMotorConfig.apply(pivotEncoderConfig);
 
     tryUntilOk(
         pivotMotor,
@@ -41,6 +50,20 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
         () ->
             pivotMotor.configure(
                 pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+
+    SparkMaxConfig removalMotorConfig = new SparkMaxConfig();
+    removalMotorConfig.idleMode(IdleMode.kBrake);
+    removalMotorConfig.inverted(AlgaeEffectorConstants.REMOVAL_INVERTED);
+    removalMotorConfig.voltageCompensation(12);
+
+    tryUntilOk(
+        removalMotor,
+        5,
+        () ->
+            removalMotor.configure(
+                removalMotorConfig,
+                ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters));
   }
 
   public void setRemovalVolts(double volts) {
@@ -55,7 +78,6 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
     inputs.removalVolts = removalMotor.getBusVoltage() * removalMotor.getAppliedOutput();
     inputs.pivotVolts = pivotMotor.getBusVoltage() * pivotMotor.getAppliedOutput();
     inputs.pivotVelocity = pivotMotorEncoder.getVelocity();
-    inputs.removalVelocity = removalMotorEncoder.getVelocity();
     inputs.removalAmps = removalMotor.getOutputCurrent();
     inputs.pivotAmps = pivotMotor.getOutputCurrent();
     inputs.pivotPosition = pivotMotorEncoder.getPosition();
