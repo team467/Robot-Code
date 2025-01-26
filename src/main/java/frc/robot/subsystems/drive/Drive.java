@@ -313,6 +313,8 @@ public class Drive extends SubsystemBase {
             & Math.abs(gyroInputs.VectorDiff) > 4.5
             & Math.abs(gyroInputs.VectorDiff) > (gyroInputs.pVectorM * 0.5);
     impactAlert.set(
-        gyroInputs.VectorDiff < 0 & Math.abs(gyroInputs.VectorDiff) > (gyroInputs.pVectorM * 0.7));
+        gyroInputs.VectorDiff < 0
+            & Math.abs(gyroInputs.VectorDiff) > 4.5
+            & Math.abs(gyroInputs.VectorDiff) > (gyroInputs.pVectorM * 0.5));
   }
 }
