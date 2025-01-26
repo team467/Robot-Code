@@ -92,8 +92,8 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 0;
 
         // Algae Effector (Motor IDs)
-        algaePivotCanId = 1;
-        algaeRemovalCanId = 2;
+        algaePivotCanId = 2;
+        algaeRemovalCanId = 1;
       }
 
       default -> {

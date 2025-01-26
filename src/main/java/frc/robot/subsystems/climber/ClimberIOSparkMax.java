@@ -5,27 +5,25 @@ import static frc.lib.utils.SparkUtil.tryUntilOk;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 public class ClimberIOSparkMax implements ClimberIO {
 
-  private final SparkFlex climberLeader;
+  private final SparkMax climberLeader;
   private final RelativeEncoder climberLeaderEncoder;
-  private final SparkFlex climberFollower;
+  private final SparkMax climberFollower;
   private SparkLimitSwitch limitSwitch;
-  private final int CLIMBER_LEADER_ID = 1;
-  private final int CLIMBER_FOLLOWER_ID = 2;
 
   /**
    * Constructor initializes the climber system, including motors, encoders, limit switches, and
    * ratchet.
    */
   public ClimberIOSparkMax() {
-    climberLeader = new SparkFlex(CLIMBER_LEADER_ID, MotorType.kBrushless);
+    climberLeader = new SparkMax(ClimberConstants.CLIMBER_LEADER_ID, MotorType.kBrushless);
     var ClimberLeaderConfig = new SparkFlexConfig(); // Sets configuration for the leader motor
     ClimberLeaderConfig.inverted(true)
         .idleMode(IdleMode.kBrake)
@@ -40,7 +38,7 @@ public class ClimberIOSparkMax implements ClimberIO {
 
     climberLeaderEncoder = climberLeader.getEncoder();
 
-    climberFollower = new SparkFlex(CLIMBER_FOLLOWER_ID, MotorType.kBrushless);
+    climberFollower = new SparkMax(ClimberConstants.CLIMBER_FOLLOWER_ID, MotorType.kBrushless);
     var ClimberFollowerConfig = new SparkFlexConfig();
     ClimberFollowerConfig.follow(1); // Set the follower motor to mirror the leader motor
 
@@ -76,7 +74,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     inputs.current = climberLeader.getOutputCurrent();
     inputs.speed = climberLeader.get();
     inputs.position = climberLeaderEncoder.getPosition();
-    inputs.climberAtTop = inputs.position >= ClimberConstants.WINCHED_POSITION;
+    inputs.climberWinched = inputs.position <= ClimberConstants.WINCHED_POSITION;
     inputs.climberDeployed = inputs.position >= ClimberConstants.DEPLOYED_POSITION;
     inputs.climberStowed = limitSwitch.isPressed();
 

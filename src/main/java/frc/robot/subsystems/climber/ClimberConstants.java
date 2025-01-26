@@ -4,60 +4,40 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public class ClimberConstants {
-  public static final double CLIMBER_FORWARD_PERCENT;
-  public static final double CLIMBER_BACKWARD_PERCENT;
-  public static final double BACKUP_TIME;
   public static final float WINCHED_POSITION;
   public static final float DEPLOYED_POSITION;
   public static final int CLIMBER_MOTOR_ID;
+  public static final int CLIMBER_LEADER_ID;
+  public static final int CLIMBER_FOLLOWER_ID;
 
-  // PID Controller Constants
-  public static final double CLIMBER_P;
-  public static final double CLIMBER_I;
-  public static final double CLIMBER_D;
-
-  // Feedforward Constants
-  public static final double CLIMBER_S; // volts (V)
-  public static final double CLIMBER_G; // volts (V)
-  public static final double CLIMBER_V; // volt per velocity (V/(m/s))
-  public static final double CLIMBER_A; // volt per acceleration (V/(m/s²))
   // CLimber physics
-  static final int CLIMBER_NUM_MOTORS;
-  static final int CLIMBER_GEAR_RATIO;
-  static final double CLIMBER_GEARING;
-  static final double CARRIAGE_MASS_KG;
-  static final double CLIMBER_DRUM_RADIUS;
-  // Encoder is reset to measure 0 at the bottom, so minimum height is 0.
-  static final double MIN_CLIMBER_HEIGHT_METERS;
-  static final double MAX_CLIMBER_HEIGHT_METERS;
-  static final boolean SIMULATE_GRAVITY;
-  static final double STARTING_HEIGHT_METERS;
-  static final double MEASUREMENT_STD_DEVS;
-  static final double
+  public static final int CLIMBER_NUM_MOTORS;
+  public static final int CLIMBER_GEAR_RATIO;
+  public static final double CLIMBER_GEARING;
+  public static final double CARRIAGE_MASS_KG;
+  public static final double CLIMBER_DRUM_RADIUS;
+  public static final double MIN_CLIMBER_HEIGHT_METERS;
+  public static final double MAX_CLIMBER_HEIGHT_METERS;
+  public static final boolean SIMULATE_GRAVITY;
+  public static final double STARTING_HEIGHT_METERS;
+  public static final double MEASUREMENT_STD_DEVS;
+  public static final double
       NEO_PULSES_PER_REVOLUTION; // distance per pulse = (distance per revolution) / (pulses per
   // revolution)
   //  = (Pi * D) / ppr
-  static final double CLIMBER_CONVERSION_FACTOR;
+  public static final double CLIMBER_CONVERSION_FACTOR;
 
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2025_COMP -> {
         // Real variables
-        CLIMBER_FORWARD_PERCENT = 0.0;
-        CLIMBER_BACKWARD_PERCENT = 0.0;
-        BACKUP_TIME = 0.0;
         WINCHED_POSITION = 0.4f;
         DEPLOYED_POSITION = 1.0f;
+        CLIMBER_LEADER_ID = 1;
+        CLIMBER_FOLLOWER_ID = 2;
 
         // Simulated Variables
         CLIMBER_MOTOR_ID = 0;
-        CLIMBER_P = 0.0;
-        CLIMBER_I = 0.0;
-        CLIMBER_D = 0.0;
-        CLIMBER_S = 0.0;
-        CLIMBER_G = 0.0;
-        CLIMBER_V = 0.0;
-        CLIMBER_A = 0.0;
         CLIMBER_NUM_MOTORS = 0;
         CLIMBER_GEAR_RATIO = 0;
         CLIMBER_GEARING = 0;
@@ -74,28 +54,20 @@ public class ClimberConstants {
 
       case ROBOT_SIMBOT -> {
         // Real variables
-        CLIMBER_FORWARD_PERCENT = 0.0;
-        CLIMBER_BACKWARD_PERCENT = 0.0;
-        BACKUP_TIME = 0.0;
         WINCHED_POSITION = 0.0f;
         DEPLOYED_POSITION = 0.0f;
+        CLIMBER_LEADER_ID = 0;
+        CLIMBER_FOLLOWER_ID = 0;
 
         // Simulated Variables
         CLIMBER_MOTOR_ID = 11;
-        CLIMBER_P = 5;
-        CLIMBER_I = 0.0;
-        CLIMBER_D = 0.0;
-        CLIMBER_S = 0.0;
-        CLIMBER_G = 0.762;
-        CLIMBER_V = 0.762;
-        CLIMBER_A = 0.0;
         CLIMBER_NUM_MOTORS = 2;
         CLIMBER_GEAR_RATIO = 1;
         CLIMBER_GEARING = 10.0;
         CARRIAGE_MASS_KG = 4.0;
         CLIMBER_DRUM_RADIUS = Units.inchesToMeters(2.0);
         MIN_CLIMBER_HEIGHT_METERS = 0.0;
-        MAX_CLIMBER_HEIGHT_METERS = 1.25;
+        MAX_CLIMBER_HEIGHT_METERS = 1;
         SIMULATE_GRAVITY = true;
         STARTING_HEIGHT_METERS = 0.0;
         MEASUREMENT_STD_DEVS = 0.01;
@@ -105,21 +77,13 @@ public class ClimberConstants {
 
       default -> {
         // Real variables
-        CLIMBER_FORWARD_PERCENT = 0.0;
-        CLIMBER_BACKWARD_PERCENT = 0.0;
-        BACKUP_TIME = 0.0;
         WINCHED_POSITION = 0.0f;
         DEPLOYED_POSITION = 0.0f;
+        CLIMBER_LEADER_ID = 0;
+        CLIMBER_FOLLOWER_ID = 0;
 
         // Simulated Variables
         CLIMBER_MOTOR_ID = 0;
-        CLIMBER_P = 0.0;
-        CLIMBER_I = 0.0;
-        CLIMBER_D = 0.0;
-        CLIMBER_S = 0.0;
-        CLIMBER_G = 0.0;
-        CLIMBER_V = 0.0;
-        CLIMBER_A = 0.0;
         CLIMBER_NUM_MOTORS = 0;
         CLIMBER_GEAR_RATIO = 0;
         CLIMBER_GEARING = 0;

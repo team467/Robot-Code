@@ -1,11 +1,17 @@
 package frc.robot;
 
-import static edu.wpi.first.apriltag.AprilTagFields.k2024Crescendo;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Filesystem;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Contains various field dimensions and useful reference points. Dimensions are in meters, and sets
@@ -17,111 +23,189 @@ import java.io.IOException;
  * currentAmps alliance color.
  */
 public class FieldConstants {
-  public static final double fieldLength = Units.inchesToMeters(651.223);
-  public static final double fieldWidth = Units.inchesToMeters(323.277);
-  public static final double wingX = Units.inchesToMeters(229.201);
-  public static final double podiumX = Units.inchesToMeters(126.75);
-  public static final double startingLineX = Units.inchesToMeters(74.111);
+  public static final double fieldLength = Units.inchesToMeters(690.876);
+  public static final double fieldWidth = Units.inchesToMeters(317);
+  public static final double startingLineX =
+      Units.inchesToMeters(299.438); // Measured from the inside of starting line
 
-  public static final Translation2d ampCenter =
-      new Translation2d(Units.inchesToMeters(72.455), fieldWidth);
-
-  /** Staging locations for each note */
-  public static final class StagingLocations {
-    public static final double centerlineX = fieldLength / 2.0;
-
-    // need to update
-    public static final double centerlineFirstY = Units.inchesToMeters(29.638);
-    public static final double centerlineSeparationY = Units.inchesToMeters(66);
-    public static final double spikeX = Units.inchesToMeters(114);
-    // need
-    public static final double spikeFirstY = Units.inchesToMeters(161.638);
-    public static final double spikeSeparationY = Units.inchesToMeters(57);
-
-    public static final Translation2d[] centerlineTranslations = new Translation2d[5];
-    public static final Translation2d[] spikeTranslations = new Translation2d[3];
-
-    static {
-      for (int i = 0; i < centerlineTranslations.length; i++) {
-        centerlineTranslations[i] =
-            new Translation2d(centerlineX, centerlineFirstY + (i * centerlineSeparationY));
-      }
-    }
-
-    static {
-      for (int i = 0; i < spikeTranslations.length; i++) {
-        spikeTranslations[i] = new Translation2d(spikeX, spikeFirstY + (i * spikeSeparationY));
-      }
-    }
-  }
-
-  /** Each corner of the speaker * */
-  public static final class Speaker {
-
-    // corners (blue alliance origin)
-    public static final Translation3d topRightSpeaker =
-        new Translation3d(
-            Units.inchesToMeters(18.055),
-            Units.inchesToMeters(238.815),
-            Units.inchesToMeters(83.091));
-
-    public static final Translation3d topLeftSpeaker =
-        new Translation3d(
-            Units.inchesToMeters(18.055),
-            Units.inchesToMeters(197.765),
-            Units.inchesToMeters(83.091));
-
-    public static final Translation3d bottomRightSpeaker =
-        new Translation3d(0.0, Units.inchesToMeters(238.815), Units.inchesToMeters(78.324));
-    public static final Translation3d bottomLeftSpeaker =
-        new Translation3d(0.0, Units.inchesToMeters(197.765), Units.inchesToMeters(78.324));
-
-    /** Center of the speaker opening (blue alliance) */
-    public static final Translation3d centerSpeakerOpening =
-        bottomLeftSpeaker.interpolate(topRightSpeaker, 0.5);
-  }
-
-  public static final class Subwoofer {
-    public static final Pose2d ampFaceCorner =
-        new Pose2d(
-            Units.inchesToMeters(26.9), Units.inchesToMeters(260.15), Rotation2d.fromDegrees(64.6));
-
-    public static final Pose2d sourceFaceCorner =
-        new Pose2d(
-            Units.inchesToMeters(24.2), Units.inchesToMeters(174.0), Rotation2d.fromDegrees(-61.4));
-
+  public static class Processor {
     public static final Pose2d centerFace =
-        new Pose2d(Units.inchesToMeters(49.775), Units.inchesToMeters(218.416), new Rotation2d());
+        new Pose2d(Units.inchesToMeters(235.726), 0, Rotation2d.fromDegrees(90));
   }
 
-  public static final class Stage {
-    public static final Pose2d podiumLeg =
-        new Pose2d(Units.inchesToMeters(126.75), Units.inchesToMeters(161.638), new Rotation2d());
+  public static class Barge {
+    public static final Translation2d farCage =
+        new Translation2d(Units.inchesToMeters(345.428), Units.inchesToMeters(286.779));
+    public static final Translation2d middleCage =
+        new Translation2d(Units.inchesToMeters(345.428), Units.inchesToMeters(242.855));
+    public static final Translation2d closeCage =
+        new Translation2d(Units.inchesToMeters(345.428), Units.inchesToMeters(199.947));
 
-    public static final Pose2d ampLeg =
+    // Measured from floor to bottom of cage
+    public static final double deepHeight = Units.inchesToMeters(3.125);
+    public static final double shallowHeight = Units.inchesToMeters(30.125);
+  }
+
+  public static class CoralStation {
+    public static final Pose2d leftCenterFace =
         new Pose2d(
-            Units.inchesToMeters(220.873),
-            Units.inchesToMeters(212.425),
-            Rotation2d.fromDegrees(-30));
-
-    public static final Pose2d sourceLeg =
+            Units.inchesToMeters(33.526),
+            Units.inchesToMeters(291.176),
+            Rotation2d.fromDegrees(90 - 144.011));
+    public static final Pose2d rightCenterFace =
         new Pose2d(
-            Units.inchesToMeters(220.873),
-            Units.inchesToMeters(110.837),
-            Rotation2d.fromDegrees(30));
+            Units.inchesToMeters(33.526),
+            Units.inchesToMeters(25.824),
+            Rotation2d.fromDegrees(144.011 - 90));
+  }
 
-    public static final Pose2d center =
-        new Pose2d(Units.inchesToMeters(192.55), Units.inchesToMeters(161.638), new Rotation2d());
+  public static class Reef {
+    public static final Translation2d center =
+        new Translation2d(Units.inchesToMeters(176.746), Units.inchesToMeters(158.501));
+    public static final double faceToZoneLine =
+        Units.inchesToMeters(12); // Side of the reef to the inside of the reef zone line
+
+    public static final Pose2d[] centerFaces =
+        new Pose2d[6]; // Starting facing the driver station in clockwise order
+    public static final List<Map<ReefHeight, Pose3d>> branchPositions =
+        new ArrayList<>(); // Starting at the right branch facing the driver station in clockwise
+
+    static {
+      // Initialize faces
+      centerFaces[0] =
+          new Pose2d(
+              Units.inchesToMeters(144.003),
+              Units.inchesToMeters(158.500),
+              Rotation2d.fromDegrees(180));
+      centerFaces[1] =
+          new Pose2d(
+              Units.inchesToMeters(160.373),
+              Units.inchesToMeters(186.857),
+              Rotation2d.fromDegrees(120));
+      centerFaces[2] =
+          new Pose2d(
+              Units.inchesToMeters(193.116),
+              Units.inchesToMeters(186.858),
+              Rotation2d.fromDegrees(60));
+      centerFaces[3] =
+          new Pose2d(
+              Units.inchesToMeters(209.489),
+              Units.inchesToMeters(158.502),
+              Rotation2d.fromDegrees(0));
+      centerFaces[4] =
+          new Pose2d(
+              Units.inchesToMeters(193.118),
+              Units.inchesToMeters(130.145),
+              Rotation2d.fromDegrees(-60));
+      centerFaces[5] =
+          new Pose2d(
+              Units.inchesToMeters(160.375),
+              Units.inchesToMeters(130.144),
+              Rotation2d.fromDegrees(-120));
+
+      // Initialize branch positions
+      for (int face = 0; face < 6; face++) {
+        Map<ReefHeight, Pose3d> fillRight = new HashMap<>();
+        Map<ReefHeight, Pose3d> fillLeft = new HashMap<>();
+        for (var level : ReefHeight.values()) {
+          Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
+          double adjustX = Units.inchesToMeters(30.738);
+          double adjustY = Units.inchesToMeters(6.469);
+
+          fillRight.put(
+              level,
+              new Pose3d(
+                  new Translation3d(
+                      poseDirection
+                          .transformBy(new Transform2d(adjustX, adjustY, new Rotation2d()))
+                          .getX(),
+                      poseDirection
+                          .transformBy(new Transform2d(adjustX, adjustY, new Rotation2d()))
+                          .getY(),
+                      level.height),
+                  new Rotation3d(
+                      0,
+                      Units.degreesToRadians(level.pitch),
+                      poseDirection.getRotation().getRadians())));
+          fillLeft.put(
+              level,
+              new Pose3d(
+                  new Translation3d(
+                      poseDirection
+                          .transformBy(new Transform2d(adjustX, -adjustY, new Rotation2d()))
+                          .getX(),
+                      poseDirection
+                          .transformBy(new Transform2d(adjustX, -adjustY, new Rotation2d()))
+                          .getY(),
+                      level.height),
+                  new Rotation3d(
+                      0,
+                      Units.degreesToRadians(level.pitch),
+                      poseDirection.getRotation().getRadians())));
+        }
+        branchPositions.add((face * 2) + 1, fillRight);
+        branchPositions.add((face * 2) + 2, fillLeft);
+      }
+    }
+  }
+
+  public static class StagingPositions {
+    // Measured from the center of the ice cream
+    public static final Pose2d leftIceCream =
+        new Pose2d(Units.inchesToMeters(48), Units.inchesToMeters(230.5), new Rotation2d());
+    public static final Pose2d middleIceCream =
+        new Pose2d(Units.inchesToMeters(48), Units.inchesToMeters(158.5), new Rotation2d());
+    public static final Pose2d rightIceCream =
+        new Pose2d(Units.inchesToMeters(48), Units.inchesToMeters(86.5), new Rotation2d());
+  }
+
+  public enum ReefHeight {
+    L4(Units.inchesToMeters(72), -90),
+    L3(Units.inchesToMeters(47.625), -35),
+    L2(Units.inchesToMeters(31.875), -35),
+    L1(Units.inchesToMeters(18), 0);
+
+    ReefHeight(double height, double pitch) {
+      this.height = height;
+      this.pitch = pitch; // in degrees
+    }
+
+    public final double height;
+    public final double pitch;
   }
 
   public static final double aprilTagWidth = Units.inchesToMeters(6.50);
-  public static final AprilTagFieldLayout aprilTags;
+  public static final AprilTagLayoutType defaultAprilTagType = AprilTagLayoutType.OFFICIAL;
+  public static final int aprilTagCount = 22;
 
-  static {
-    try {
-      aprilTags = AprilTagFieldLayout.loadFromResource(k2024Crescendo.m_resourceFile);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+  public enum AprilTagLayoutType {
+    OFFICIAL("2025-official");
+
+    AprilTagLayoutType(String name) {
+      try {
+        layout =
+            new AprilTagFieldLayout(
+                Path.of(Filesystem.getDeployDirectory().getPath(), "apriltags", name + ".json"));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+      if (layout == null) {
+        layoutString = "";
+      } else {
+        try {
+          layoutString = new ObjectMapper().writeValueAsString(layout);
+        } catch (JsonProcessingException e) {
+          throw new RuntimeException(
+              "Failed to serialize AprilTag layout JSON " + toString() + "for Northstar");
+        }
+      }
+    }
+
+    private final AprilTagFieldLayout layout;
+    private final String layoutString;
+
+    public AprilTagFieldLayout getLayout() {
+      return layout;
     }
   }
 }

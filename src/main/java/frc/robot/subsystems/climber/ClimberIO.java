@@ -9,8 +9,8 @@ public interface ClimberIO {
     public double volts = 0.0;
     public double current = 0.0;
     public double position = 0.0;
-    public boolean climberAtTop = false;
     public boolean climberDeployed = false;
+    public boolean climberWinched = false;
     public boolean climberStowed = false;
   }
 

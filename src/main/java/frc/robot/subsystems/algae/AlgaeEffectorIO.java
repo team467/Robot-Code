@@ -6,7 +6,6 @@ public interface AlgaeEffectorIO {
   @AutoLog
   class AlgaeEffectorIOInputs {
     // removal
-    public double removalVelocity;
     public double removalAmps;
     public double removalVolts;
     // pivot
@@ -14,10 +13,15 @@ public interface AlgaeEffectorIO {
     public double pivotAmps;
     public double pivotVolts;
     public double pivotPosition;
+    // limit switches
+    public boolean isFullyExtended = false;
+    public boolean isStowed = false;
+
+    public boolean isSpinning = false;
   }
 
   default void updateInputs(AlgaeEffectorIOInputs inputs) {}
-  // TODO: Add in AutoLogged
+
   default void setRemovalVolts(double volts) {}
 
   default void setPivotVolts(double volts) {}

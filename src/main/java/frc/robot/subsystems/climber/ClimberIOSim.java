@@ -106,7 +106,7 @@ public class ClimberIOSim implements ClimberIO {
     inputs.speed = encoderSim.getVelocity();
     inputs.position = encoderSim.getPosition();
     inputs.volts = motorSim.getAppliedOutput() * motorSim.getBusVoltage();
-    inputs.climberAtTop = inputs.position >= ClimberConstants.WINCHED_POSITION;
+    inputs.climberWinched = inputs.position <= ClimberConstants.WINCHED_POSITION;
     inputs.climberDeployed = inputs.position >= ClimberConstants.DEPLOYED_POSITION;
     inputs.climberStowed = inputs.position <= 0.0;
 

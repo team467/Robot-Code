@@ -148,6 +148,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    algae.setDefaultCommand(algae.stowArm());
+
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -171,7 +173,7 @@ public class RobotContainer {
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     if (algae != null) {
-      operatorController.a().onTrue(algae.toggleArm());
+      operatorController.a().whileTrue(algae.removeAlgae());
     }
 
     // Operator controller for climber commands
