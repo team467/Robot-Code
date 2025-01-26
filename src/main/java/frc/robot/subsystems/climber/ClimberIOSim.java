@@ -31,6 +31,7 @@ public class ClimberIOSim implements ClimberIO {
   private final SparkRelativeEncoder encoder = (SparkRelativeEncoder) motor.getEncoder();
   private final SparkRelativeEncoderSim encoderSim = new SparkRelativeEncoderSim(motor);
 
+  // Simulation physics
   private final ElevatorSim elevatorSim =
       new ElevatorSim(
           neo,
@@ -44,6 +45,7 @@ public class ClimberIOSim implements ClimberIO {
           ClimberConstants.MEASUREMENT_STD_DEVS,
           0.0);
 
+  // Visualization
   private final Mechanism2d mech2d = new Mechanism2d(20, 50);
   private final MechanismRoot2d mech2dRoot = mech2d.getRoot("Climber Root", 10, 0);
   private final MechanismLigament2d elevatorMech2d =
@@ -69,22 +71,28 @@ public class ClimberIOSim implements ClimberIO {
 
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
+    // Reset encoders and simulation state
     encoder.setPosition(0.0);
     motorSim.enable();
     motorSim.setPosition(0.0);
     encoderSim.setPosition(0.0);
 
+    // Publish Mechanism2d to SmartDashboard
     SmartDashboard.putData("Climber Sim", mech2d);
   }
 
   @Override
   public void updateInputs(ClimberIO.ClimberIOInputs inputs) {
+    // Simulate motor state, including voltage output
     motorSim.iterate(motor.get(), RobotController.getBatteryVoltage(), 0.020);
 
+    // Set the elevatorSim's input to the motor's output
     elevatorSim.setInput(motor.getAppliedOutput() * motor.getBusVoltage());
 
+    // Update elevatorSim
     elevatorSim.update(0.020);
 
+    // Set simulated encoder readings and battery voltage
     encoderSim.setPosition(elevatorSim.getPositionMeters());
     encoderSim.setVelocity(elevatorSim.getVelocityMetersPerSecond());
 
@@ -93,6 +101,7 @@ public class ClimberIOSim implements ClimberIO {
 
     elevatorMech2d.setLength(encoderSim.getPosition());
 
+    // Update inputs
     inputs.current = elevatorSim.getCurrentDrawAmps();
     inputs.speed = encoderSim.getVelocity();
     inputs.position = encoderSim.getPosition();

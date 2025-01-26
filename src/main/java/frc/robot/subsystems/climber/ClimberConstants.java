@@ -31,6 +31,7 @@ public class ClimberConstants {
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2025_COMP -> {
+        // Real variables
         LOWER_WINCHED_POSITION = 0.35f;
         UPPER_WINCHED_POSITION = 0.45f;
         WINCHED_POSITION = 0.4f;
@@ -40,6 +41,7 @@ public class ClimberConstants {
         CLIMBER_LEADER_ID = 1;
         CLIMBER_FOLLOWER_ID = 2;
 
+        // Simulated Variables
         CLIMBER_MOTOR_ID = 0;
         CLIMBER_NUM_MOTORS = 2;
         CLIMBER_GEAR_RATIO = 10;
@@ -56,6 +58,7 @@ public class ClimberConstants {
       }
 
       case ROBOT_SIMBOT -> {
+        // Real variables
         LOWER_WINCHED_POSITION = 0.35f;
         UPPER_WINCHED_POSITION = 0.45f;
         WINCHED_POSITION = 0.4f;
@@ -65,6 +68,7 @@ public class ClimberConstants {
         CLIMBER_LEADER_ID = 1;
         CLIMBER_FOLLOWER_ID = 2;
 
+        // Simulated Variables
         CLIMBER_MOTOR_ID = 11;
         CLIMBER_NUM_MOTORS = 2;
         CLIMBER_GEAR_RATIO = 10;
@@ -81,6 +85,7 @@ public class ClimberConstants {
       }
 
       default -> {
+        // Real variables
         LOWER_WINCHED_POSITION = 0.35f;
         UPPER_WINCHED_POSITION = 0.45f;
         WINCHED_POSITION = 0.4f;
@@ -90,6 +95,7 @@ public class ClimberConstants {
         CLIMBER_LEADER_ID = 0;
         CLIMBER_FOLLOWER_ID = 0;
 
+        // Simulated Variables
         CLIMBER_MOTOR_ID = 0;
         CLIMBER_NUM_MOTORS = 0;
         CLIMBER_GEAR_RATIO = 0;

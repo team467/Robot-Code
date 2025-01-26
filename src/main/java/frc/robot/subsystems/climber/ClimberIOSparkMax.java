@@ -18,6 +18,11 @@ public class ClimberIOSparkMax implements ClimberIO {
   private final SparkMax climberFollower;
   private SparkLimitSwitch limitSwitch;
 
+  /**
+   * Constructor initializes the climber system, including motors, encoders, limit switches, and
+   * ratchet.
+   */
+
   public ClimberIOSparkMax() {
     climberLeader = new SparkMax(ClimberConstants.CLIMBER_LEADER_ID, MotorType.kBrushless);
     var ClimberLeaderConfig = new SparkMaxConfig();
@@ -38,6 +43,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     var ClimberFollowerConfig = new SparkMaxConfig();
     ClimberFollowerConfig.follow(1);
 
+    // Configure the leader motor using the configuration object and retry up to 5 times if it fails 
     tryUntilOk(
         climberLeader,
         5,
@@ -56,11 +62,13 @@ public class ClimberIOSparkMax implements ClimberIO {
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters));
 
+    // Set the encoder position to 0 retrying up to 5 times if it fails
     tryUntilOk(climberLeader, 5, () -> climberLeaderEncoder.setPosition(0.0));
     limitSwitch = climberLeader.getForwardLimitSwitch();
   }
 
   @Override
+  // Updates all the inputs
   public void updateInputs(ClimberIOInputs inputs) {
     inputs.volts = climberLeader.getBusVoltage() * climberLeader.getAppliedOutput();
     inputs.current = climberLeader.getOutputCurrent();
@@ -74,16 +82,19 @@ public class ClimberIOSparkMax implements ClimberIO {
             && inputs.position <= ClimberConstants.UPPER_DEPLOYED_POSITION;
     inputs.climberStowed = limitSwitch.isPressed();
 
+    // Reset position if the stowed limit switch is pressed
     if (inputs.climberStowed) {
       resetPosition();
     }
   }
 
   @Override
+  // Sets the motors voltage
   public void setVoltage(double voltage) {
     climberLeader.setVoltage(voltage);
   }
 
+  // Sets the motors speed
   public void setSpeed(double speed) {
     climberLeader.set(speed);
   }
