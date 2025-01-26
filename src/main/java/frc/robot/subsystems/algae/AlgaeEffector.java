@@ -20,8 +20,8 @@ public class AlgaeEffector extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs(getName(), inputs);
     robotState.algaeEffectorStowed = inputs.isStowed;
-    robotState.algaeMotorSpinning = (inputs.removalVolts != 0.0) ? true : false;
-    robotState.algaeAffectorExtended = inputs.isFullyExtended;
+    robotState.algaeEffectorRunning = inputs.removalVolts != 0.0;
+    robotState.algaeEffectorExtended = inputs.isFullyExtended;
   }
 
   public boolean isStowed() {
