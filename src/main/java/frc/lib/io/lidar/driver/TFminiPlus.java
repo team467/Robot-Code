@@ -1,12 +1,13 @@
 package frc.lib.io.lidar.driver;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SerialPort;
 
 /**
  * TFmini Plus LiDAR Module
- * @see <a href="https://cdn.sparkfun.com/assets/1/4/2/1/9/TFmini_Plus_A02_Product_Manual_EN.pdf">Product Manual</a>
+ *
+ * @see <a
+ *     href="https://cdn.sparkfun.com/assets/1/4/2/1/9/TFmini_Plus_A02_Product_Manual_EN.pdf">Product
+ *     Manual</a>
  */
 public class TFminiPlus {
   private final SerialPort serialPort;
@@ -17,6 +18,7 @@ public class TFminiPlus {
 
   /**
    * Creates a new TFmini Plus LiDAR Module
+   *
    * @param port RS-232 port
    */
   public TFminiPlus(SerialPort.Port port) {
@@ -48,7 +50,8 @@ public class TFminiPlus {
   /**
    * Parses the distance value from the provided data frame.
    *
-   * @param data the byte array representing the received data frame, where bytes 2 and 3 contain the distance value
+   * @param data the byte array representing the received data frame, where bytes 2 and 3 contain
+   *     the distance value
    * @return the parsed distance value as an integer, in meters
    */
   private int parseDistance(byte[] data) {
@@ -59,7 +62,8 @@ public class TFminiPlus {
   /**
    * Parses the strength value from the provided data frame.
    *
-   * @param data the byte array representing the received data frame, where bytes 4 and 5 contain the strength value
+   * @param data the byte array representing the received data frame, where bytes 4 and 5 contain
+   *     the strength value
    * @return the parsed strength value as an integer
    */
   private int parseStrength(byte[] data) {
@@ -70,7 +74,8 @@ public class TFminiPlus {
   /**
    * Parses the temperature value from the provided data frame.
    *
-   * @param data the byte array representing the received data frame, where bytes 6 and 7 contain the temperature value
+   * @param data the byte array representing the received data frame, where bytes 6 and 7 contain
+   *     the temperature value
    * @return the parsed temperature value as a double, in degrees Celsius
    */
   private double parseTemperature(byte[] data) {

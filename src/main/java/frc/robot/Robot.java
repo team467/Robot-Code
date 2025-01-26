@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +31,8 @@ public class Robot extends LoggedRobot {
   private RobotContainer robotContainer;
   private RobotState state = RobotState.getInstance();
   private LinearFilter batteryFilter = LinearFilter.movingAverage(15);
+
+  private DigitalInput reflector = new DigitalInput(9);
 
   private static final int LOW_VOLTAGE = 9;
 
@@ -109,6 +112,8 @@ public class Robot extends LoggedRobot {
     // If robot has low battery, lowbatteryalert will be set to true
     state.lowBatteryAlert =
         batteryFilter.calculate(RobotController.getBatteryVoltage()) < LOW_VOLTAGE;
+
+    System.out.println("Sensor: " + reflector.get());
   }
 
   /** This function is called once when the robot is disabled. */
