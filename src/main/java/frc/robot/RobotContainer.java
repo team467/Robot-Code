@@ -18,12 +18,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
-import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
-import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -41,8 +38,8 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private AlgaeEffector algae;
-  private boolean isRobotOriented = true; // Workaround, change if needed
   private Climber climber;
+  private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -53,15 +50,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
     // Instantiate active subsystems
     if (Constants.getMode() != Constants.Mode.REPLAY) {
       switch (Constants.getRobot()) {
         case ROBOT_2024_COMP -> {
-          vision =
-              new Vision(
-                  drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
           Transform3d front =
               new Transform3d(
                   new Translation3d(
@@ -83,7 +75,12 @@ public class RobotContainer {
                   new ModuleIOSpark(1),
                   new ModuleIOSpark(2),
                   new ModuleIOSpark(3));
-          climber = new Climber(new ClimberIOSparkMax());
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
+
+          // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -94,13 +91,11 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim());
-          climber = new Climber(new ClimberIOSim());
 
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
+          climber = new Climber(new ClimberIOSim());
         }
-        case ROBOT_BRIEFCASE -> {
-          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-        }
+        case ROBOT_BRIEFCASE -> {}
       }
     }
 
@@ -114,11 +109,7 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
-    if (climber == null) {
-      climber = new Climber(new ClimberIO() {});
-    }
 
-    // Autonomous chooser setup
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -158,7 +149,6 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
-
     driverController
         .start()
         .onTrue(
@@ -176,9 +166,9 @@ public class RobotContainer {
       operatorController.a().whileTrue(algae.removeAlgae());
     }
 
-    // Operator controller for climber commands
-    operatorController.a().whileTrue(climber.deploy()); // Deploy when button A is pressed
-    operatorController.b().whileTrue(climber.winch()); // Retract when button B is pressed
+    if (climber != null) {
+      operatorController.b().onTrue(climber.winch());
+    }
   }
 
   /**

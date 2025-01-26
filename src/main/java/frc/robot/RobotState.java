@@ -22,6 +22,9 @@ public class RobotState {
   /** If the algae effector is extended */
   @AutoLogOutput(key = "RobotState/AlgaeEffectorExtended")
   public boolean algaeEffectorExtended = false;
+  /** If the algae effector is stowed */
+  @AutoLogOutput(key = "RobotState/AlgaeEffectorStowed")
+  public boolean algaeEffectorStowed = false;
   /** If the algae effector is running */
   @AutoLogOutput(key = "RobotState/AlgaeEffectorRunning")
   public boolean algaeEffectorRunning = false;
@@ -43,15 +46,6 @@ public class RobotState {
   /** the position that the elevator is at */
   @AutoLogOutput(key = "RobotState/ElevatorPosition")
   public ElevatorPosition elevatorPosition = null;
-
-  @AutoLogOutput(key = "RobotState/AlgaeAffectorExtended")
-  public boolean algaeAffectorExtended = false;
-
-  @AutoLogOutput(key = "RobotState/AlgaeMotorSpinning")
-  public boolean algaeMotorSpinning = false;
-
-  @AutoLogOutput(key = "RobotState/AlgaeAffectorStowed")
-  public boolean algaeEffectorStowed = false;
 
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
