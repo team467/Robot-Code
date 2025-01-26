@@ -18,8 +18,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
+import frc.robot.subsystems.algae.AlgaeEffectorIO;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
@@ -109,6 +111,12 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
+    if (algae == null) {
+      algae = new AlgaeEffector(new AlgaeEffectorIO() {});
+    }
+    if (climber == null) {
+      climber = new Climber(new ClimberIO() {});
+    }
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -162,13 +170,9 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    if (algae != null) {
-      operatorController.a().whileTrue(algae.removeAlgae());
-    }
+    operatorController.a().whileTrue(algae.removeAlgae());
 
-    if (climber != null) {
-      operatorController.b().onTrue(climber.winch());
-    }
+    operatorController.b().onTrue(climber.winch());
   }
 
   /**
