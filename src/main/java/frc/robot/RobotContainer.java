@@ -19,6 +19,8 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -36,6 +38,7 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private AlgaeEffector algae;
+  private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -90,6 +93,7 @@ public class RobotContainer {
                   new ModuleIOSim());
 
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
+          climber = new Climber(new ClimberIOSim());
         }
         case ROBOT_BRIEFCASE -> {}
       }
@@ -160,6 +164,10 @@ public class RobotContainer {
 
     if (algae != null) {
       operatorController.a().whileTrue(algae.removeAlgae());
+    }
+
+    if (climber != null) {
+      operatorController.b().onTrue(climber.winch());
     }
   }
 
