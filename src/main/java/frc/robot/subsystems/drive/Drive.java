@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.RobotState;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -305,12 +306,13 @@ public class Drive extends SubsystemBase {
   }
 
   public void checkForImpact() {
-    double mDifference = Math.abs(gyroInputs.VectorM - gyroInputs.pVectorM);
-    double aDifference = Math.abs(gyroInputs.VectorA - gyroInputs.pVectorA);
-    Logger.recordOutput(
-        "RobotState/ImpactDetected",
-        mDifference < 0 & mDifference > (gyroInputs.pVectorM * 0.75) & aDifference < 10);
+    /*double mDifference = Math.abs(gyroInputs.VectorM - gyroInputs.pVectorM);
+    double aDifference = Math.abs(gyroInputs.VectorA - gyroInputs.pVectorA);*/
+    RobotState.getInstance().impactDetected =
+        gyroInputs.VectorDiff < 0
+            & Math.abs(gyroInputs.VectorDiff) > 4.5
+            & Math.abs(gyroInputs.VectorDiff) > (gyroInputs.pVectorM * 0.5);
     impactAlert.set(
-        mDifference < 0 & mDifference > (gyroInputs.pVectorM * 0.75) & aDifference < 10);
+        gyroInputs.VectorDiff < 0 & Math.abs(gyroInputs.VectorDiff) > (gyroInputs.pVectorM * 0.7));
   }
 }
