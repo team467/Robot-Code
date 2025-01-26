@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class AlgaeEffector extends SubsystemBase {
-  private boolean armExtended = false;
-  private boolean algaeMotorStarted = false;
   private final AlgaeEffectorIO io;
   private PIDController pivotFeedback =
       new PIDController(AlgaeEffectorConstants.PIVOT_KP, 0, AlgaeEffectorConstants.PIVOT_KD);
@@ -28,7 +26,7 @@ public class AlgaeEffector extends SubsystemBase {
     return Commands.run(
             () -> {
               io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE);
-              io.setRemovalVolts(0);
+              io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
             })
         .until(() -> inputs.isStowed);
   }
@@ -43,11 +41,12 @@ public class AlgaeEffector extends SubsystemBase {
         this);
   }
 
+  /** Stops all algae arm actions */
   public Command stop() {
     return Commands.run(
         () -> {
-          io.setPivotVolts(0);
-          io.setRemovalVolts(0);
+          io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
+          io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
         },
         this);
   }

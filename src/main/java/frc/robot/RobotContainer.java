@@ -165,8 +165,6 @@ public class RobotContainer {
 
     if (algae != null) {
       operatorController.a().whileTrue(algae.removeAlgae());
-      // operatorController.x().whileTrue(algae.extendArm());
-      // operatorController.y().whileTrue(algae.retractArm());
     }
   }
 
