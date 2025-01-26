@@ -3,12 +3,15 @@ package frc.robot.subsystems.algae;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
+
 import org.littletonrobotics.junction.Logger;
 
 public class AlgaeEffector extends SubsystemBase {
-  private final AlgaeEffectorIO io;
 
+  private final AlgaeEffectorIO io;
   private final AlgaeEffectorIOInputsAutoLogged inputs = new AlgaeEffectorIOInputsAutoLogged();
+  private final RobotState robotState = RobotState.getInstance();
 
   public AlgaeEffector(AlgaeEffectorIO io) {
     this.io = io;
@@ -17,6 +20,9 @@ public class AlgaeEffector extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(getName(), inputs);
+    robotState.algaeEffectorStowed = inputs.isStowed;
+    robotState.algaeMotorSpinning = (inputs.removalVolts != 0.0) ? true : false;
+    robotState.algaeAffectorExtended = inputs.isFullyExtended;
   }
 
   public boolean isStowed() {
@@ -25,6 +31,10 @@ public class AlgaeEffector extends SubsystemBase {
 
   public boolean isFullyExtended() {
     return inputs.isFullyExtended;
+  }
+
+  public boolean isSpinning() {
+    return inputs.isSpinning;
   }
 
   public Command stowArm() {
