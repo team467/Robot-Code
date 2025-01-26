@@ -44,6 +44,15 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/ElevatorPosition")
   public ElevatorPosition elevatorPosition = null;
 
+  @AutoLogOutput(key = "RobotState/AlgaeAffectorExtended")
+  public boolean algaeAffectorExtended = false;
+
+  @AutoLogOutput(key = "RobotState/AlgaeMotorSpinning")
+  public boolean algaeMotorSpinning = false;
+
+  @AutoLogOutput(key = "RobotState/AlgaeAffectorStowed")
+  public boolean algaeEffectorStowed = false;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
