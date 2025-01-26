@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.util.Color;
 import java.util.Map;
 
 public enum LedPatterns {
-  BLACK(LEDPattern.solid(Color.kBlack)),
-  RED(LEDPattern.solid(Color.kRed)),
+  SOLID_BLACK(LEDPattern.solid(Color.kBlack)),
+  SOLID_RED(LEDPattern.solid(Color.kRed)),
   SOLID_ORANGE(LEDPattern.solid(Color.kOrange)),
   SOLID_YELLOW(LEDPattern.solid(Color.kYellow)),
   SOLID_GREEN(LEDPattern.solid(Color.kGreen)),
@@ -65,7 +65,7 @@ public enum LedPatterns {
     return colorPattern.blink(Seconds.of(STROBE_TIME));
   }
 
-  public LEDPattern breathe() {
+  public LEDPattern wave() {
     return colorPattern.breathe(Seconds.of(BREATH_TIME));
   }
 
