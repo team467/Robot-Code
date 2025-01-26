@@ -22,7 +22,6 @@ public class ClimberIOSparkMax implements ClimberIO {
    * Constructor initializes the climber system, including motors, encoders, limit switches, and
    * ratchet.
    */
-
   public ClimberIOSparkMax() {
     climberLeader = new SparkMax(ClimberConstants.CLIMBER_LEADER_ID, MotorType.kBrushless);
     var ClimberLeaderConfig = new SparkMaxConfig();
@@ -43,7 +42,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     var ClimberFollowerConfig = new SparkMaxConfig();
     ClimberFollowerConfig.follow(1);
 
-    // Configure the leader motor using the configuration object and retry up to 5 times if it fails 
+    // Configure the leader motor using the configuration object and retry up to 5 times if it fails
     tryUntilOk(
         climberLeader,
         5,
