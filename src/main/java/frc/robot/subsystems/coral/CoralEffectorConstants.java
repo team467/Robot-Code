@@ -28,6 +28,14 @@ public class CoralEffectorConstants {
         effectorEncoderPositionFactor = 1;
       }
 
+      case ROBOT_BRIEFCASE -> {
+        CORAL_EFFECTOR_SPEED_OUT = new TunableNumber("CoralEffector/SpeedOut", 0.5);
+        CORAL_INTAKE_SPEED = new TunableNumber("CoralEffector/SpeedIn", -0.5);
+        EFFECTOR_HOLD_PERCENT = new TunableNumber("CoralEffector/HoldPercent", 0.1);
+        effectorCurrentMotorLimit = 35;
+        effectorEncoderPositionFactor = 1;
+      }
+
       default -> {
         CORAL_EFFECTOR_SPEED_OUT = new TunableNumber("CoralEffector/SpeedOut", 0);
         CORAL_INTAKE_SPEED = new TunableNumber("CoralEffector/SpeedIn", 0);

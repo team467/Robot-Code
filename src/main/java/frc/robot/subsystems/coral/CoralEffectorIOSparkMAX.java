@@ -1,12 +1,9 @@
 package frc.robot.subsystems.coral;
 
-import static frc.lib.utils.SparkUtil.tryUntilOk;
 import static frc.robot.Schematic.coralHaveCoralDioId;
 import static frc.robot.subsystems.coral.CoralEffectorConstants.*;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.LimitSwitchConfig;
@@ -40,15 +37,15 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
 
-    tryUntilOk(
-        motor,
-        5,
-        () ->
-            motor.configure(
-                effectorConfig,
-                SparkBase.ResetMode.kResetSafeParameters,
-                PersistMode.kPersistParameters));
-    tryUntilOk(motor, 5, () -> encoder.setPosition(0.0));
+    //    tryUntilOk(
+    //        motor,
+    //        5,
+    //        () ->
+    //            motor.configure(
+    //                effectorConfig,
+    //                SparkBase.ResetMode.kResetSafeParameters,
+    //                PersistMode.kPersistParameters));
+    //    tryUntilOk(motor, 5, () -> encoder.setPosition(0.0));
   }
 
   public void updateInputs(CoralEffectorIOInputs inputs) {
@@ -66,6 +63,7 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
 
   @Override
   public void setSpeed(double speed) {
+    System.out.println("Setting Speed: " + speed);
     motor.set(speed);
   }
 }

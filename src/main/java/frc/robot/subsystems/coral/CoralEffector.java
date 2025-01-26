@@ -54,6 +54,8 @@ public class CoralEffector extends SubsystemBase {
         .until(() -> !this.haveCoral());
   }
 
+  //Stop limit switch from stopping motor - to do
+
   public Command intakeCoral() {
     return Commands.run(
             () -> {
