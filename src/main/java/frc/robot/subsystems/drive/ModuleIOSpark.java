@@ -1,6 +1,18 @@
 package frc.robot.subsystems.drive;
 
 import static frc.lib.utils.SparkUtil.*;
+import static frc.robot.Schematic.backLeftAbsoluteEncoderCanId;
+import static frc.robot.Schematic.backLeftDriveCanId;
+import static frc.robot.Schematic.backLeftTurnCanId;
+import static frc.robot.Schematic.backRightAbsoluteEncoderCanId;
+import static frc.robot.Schematic.backRightDriveCanId;
+import static frc.robot.Schematic.backRightTurnCanId;
+import static frc.robot.Schematic.frontLeftAbsoluteEncoderCanId;
+import static frc.robot.Schematic.frontLeftDriveCanId;
+import static frc.robot.Schematic.frontLeftTurnCanId;
+import static frc.robot.Schematic.frontRightAbsoluteEncoderCanId;
+import static frc.robot.Schematic.frontRightDriveCanId;
+import static frc.robot.Schematic.frontRightTurnCanId;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
