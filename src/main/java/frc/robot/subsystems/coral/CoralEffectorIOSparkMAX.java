@@ -63,6 +63,7 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
 
   @Override
   public void setSpeed(double speed) {
+    System.out.println("Setting Speed: " + speed);
     motor.set(speed);
   }
 }
