@@ -21,6 +21,8 @@ import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.coral.CoralEffector;
+import frc.robot.subsystems.coral.CoralEffectorIOSim;
+import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -93,10 +95,13 @@ public class RobotContainer {
                   new ModuleIOSim());
 
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
+          coral = new CoralEffector(new CoralEffectorIOSim(0));
         }
         case ROBOT_BRIEFCASE -> {
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-          coral = new CoralEffector(); // new CoralEffectorIOSparkMAX(1) ----> In Parenthesis
+          coral =
+              new CoralEffector(
+                  new CoralEffectorIOSparkMAX()); // new CoralEffectorIOSparkMAX(1) ----> In Parenthesis
         }
       }
     }

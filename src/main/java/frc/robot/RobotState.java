@@ -10,9 +10,6 @@ public class RobotState {
   /** Set by the robot if the batter is less than 9V */
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
   public boolean lowBatteryAlert = false;
-  /** If the robot has a game piece */
-  @AutoLogOutput(key = "RobotState/HasCoral")
-  public boolean hasCoral = false;
   /** If the robot is aligned to the reef */
   @AutoLogOutput(key = "RobotState/AlignedToReef")
   public boolean alignedToReef = false;
@@ -34,6 +31,20 @@ public class RobotState {
   /** If the robot has detected a collision */
   @AutoLogOutput(key = "RobotState/CollisionDetected")
   public boolean collisionDetected = false;
+
+  @AutoLogOutput(key = "RobotState/IntakingCoral")
+  public boolean intakingCoral = false;
+  /** If the robot has a game piece */
+  @AutoLogOutput(key = "RobotState/HaveCoral")
+  public boolean haveCoral = false;
+  /** When coral is on the way */
+  @AutoLogOutput(key = "RobotState/CoralOnTheWay")
+  public boolean coralOnTheWay = false;
+  /** Robot sending out coral */
+  @AutoLogOutput(key = "RobotState/SendCoral")
+  public boolean sendCoral = false;
+
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
