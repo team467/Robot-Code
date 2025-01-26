@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static frc.robot.Schematic.coralMotorID;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -146,6 +147,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    coral.setDefaultCommand(coral.stop());
+
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -172,8 +175,8 @@ public class RobotContainer {
     }
 
     if (coral != null) {
-      operatorController.x().onTrue(coral.dumpCoral());
-      operatorController.y().onTrue(coral.intakeCoral());
+      operatorController.x().whileTrue(coral.dumpCoral());
+      operatorController.y().whileTrue(coral.intakeCoral());
     }
   }
 

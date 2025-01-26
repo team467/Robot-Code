@@ -40,6 +40,14 @@ public class CoralEffector extends SubsystemBase {
     return inputs.coralOnTheWay;
   }
 
+  public Command stop() {
+    return Commands.run(
+        () -> {
+          io.setSpeed(0);
+        },
+        this);
+  }
+
   public Command dumpCoral() {
     return Commands.run(
             () -> {

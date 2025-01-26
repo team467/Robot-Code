@@ -19,4 +19,6 @@ public interface CoralEffectorIO {
 
   default void setSpeed(double speed) {}
 
+  
+  
 }
