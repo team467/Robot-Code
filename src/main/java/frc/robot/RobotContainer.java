@@ -22,7 +22,6 @@ import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIOSim;
-import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -83,7 +82,6 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
 
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-          climber = new Climber(new ClimberIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
@@ -100,7 +98,6 @@ public class RobotContainer {
         }
         case ROBOT_BRIEFCASE -> {
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-          climber = new Climber(new ClimberIOSparkMax());
         }
       }
     }
@@ -171,7 +168,7 @@ public class RobotContainer {
     }
 
     if (climber != null) {
-      operatorController.a().onTrue(climber.winch());
+      operatorController.b().onTrue(climber.winch());
     }
   }
 
