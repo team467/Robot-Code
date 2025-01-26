@@ -1,3 +1,7 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
@@ -13,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.subsystems.algae.AlgaeEffector;
+import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
+import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOSparkMax;
@@ -29,8 +36,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
+  // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
+  private AlgaeEffector algae;
   private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -73,6 +82,7 @@ public class RobotContainer {
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
 
+          // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
           climber = new Climber(new ClimberIOSparkMax());
         }
 
@@ -85,18 +95,12 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim());
 
+          algae = new AlgaeEffector(new AlgaeEffectorIOSim());
           climber = new Climber(new ClimberIOSim());
         }
-
-        default -> {
-          drive =
-              new Drive(
-                  new GyroIO() {},
-                  new ModuleIO() {},
-                  new ModuleIO() {},
-                  new ModuleIO() {},
-                  new ModuleIO() {});
-          climber = new Climber(new ClimberIOSparkMax()); // Default to SparkMax for unknown robots
+        case ROBOT_BRIEFCASE -> {
+          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          climber = new Climber(new ClimberIOSparkMax());
         }
       }
     }
@@ -140,6 +144,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -161,7 +166,10 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    // Climber button mappings
+    if (algae != null) {
+      operatorController.a().onTrue(algae.toggleArm());
+    }
+
     if (climber != null) {
       operatorController.a().onTrue(climber.winch());
     }
