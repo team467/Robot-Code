@@ -308,6 +308,7 @@ public class Drive extends SubsystemBase {
   public void checkForImpact() {
     /*double mDifference = Math.abs(gyroInputs.VectorM - gyroInputs.pVectorM);
     double aDifference = Math.abs(gyroInputs.VectorA - gyroInputs.pVectorA);*/
+    /*Checks if the difference between velocity in previous periodic cycle and current periodic cycle. Considers it significant if the difference is higher than 4.5. Then checks if vectorDiff is greater than 0.7 than the previous velocity*/
     RobotState.getInstance().impactDetected =
         gyroInputs.VectorDiff < 0
             & Math.abs(gyroInputs.VectorDiff) > 4.5
