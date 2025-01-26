@@ -11,10 +11,11 @@ import java.util.Map;
 
 public enum LedPatterns {
   BLACK(LEDPattern.solid(Color.kBlack)),
-  RED(LEDPattern.solid(Color.kRed));
+  RED(LEDPattern.solid(Color.kRed)),
+  RAINBOW(LEDPattern.rainbow(255, 128));
 
-  private static final double BREATH_TIME = 0.0;
-  private static final double STROBE_TIME = 0.0;
+  private static final double BREATH_TIME = 1.0;
+  private static final double STROBE_TIME = 1.0;
   private static final Distance LED_SPACING = Meters.of(1 / 60.0);
 
   private final LEDPattern colorPattern;
@@ -55,9 +56,8 @@ public enum LedPatterns {
   public static final LEDPattern SOLID_SILVER = LEDPattern.solid(Color.kSilver);
 
   // Rainbow
-  public static final LEDPattern RAINBOW = LEDPattern.rainbow(255, 128);
-  public static final LEDPattern SCROLLING_RAINBOW =
-      RAINBOW.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
+  // public static final LEDPattern SCROLLING_RAINBOW =
+  //     RAINBOW.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
 
   // Center of Mass
   public static final Color COM_BLUE = new Color(32, 42, 68);

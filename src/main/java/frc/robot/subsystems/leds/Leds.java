@@ -1,7 +1,6 @@
 package frc.robot.subsystems.leds;
 
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
@@ -35,7 +34,6 @@ public class Leds extends SubsystemBase {
   private GenericEntry enableTestEntry;
   private SendableChooser<LedPatterns> testPattern;
   private SendableChooser<Animations> testAnimation;
-  private NetworkTable ledTable;
 
   private LEDPattern currentPattern = LedPatterns.BLACK.colorPatternOnly();
 
@@ -55,8 +53,6 @@ public class Leds extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-    System.out.println("Entry " + enableTestEntry.get() + " " + enableTestEntry.getBoolean(false));
 
     if (enableTestEntry.getBoolean(false)) {
       try {
@@ -120,5 +116,3 @@ public class Leds extends SubsystemBase {
         .withPosition(0, 2);
   }
 }
-  // private SendableChooser<LedPatterns> testPattern;
-  // private SendableChooser<Animations> testAnimation;
