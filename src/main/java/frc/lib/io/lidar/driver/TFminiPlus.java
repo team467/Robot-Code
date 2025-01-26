@@ -19,7 +19,7 @@ public class TFminiPlus {
   }
 
   // Reads and parses data from the sensor
-  public void updateSensorData() {
+  public void periodic() {
     byte[] data = serialPort.read(9);
 
     if (data.length == 9 && isVaildFrame(data)) {
@@ -61,9 +61,5 @@ public class TFminiPlus {
 
   public double getTemperature() {
     return temperature;
-  }
-
-  public void periodic() {
-    updateSensorData();
   }
 }
