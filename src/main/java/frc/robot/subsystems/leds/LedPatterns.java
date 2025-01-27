@@ -81,8 +81,29 @@ public enum LedPatterns {
 
   public static final LEDPattern GRADIENT_FRC =
       LEDPattern.gradient(
-          LEDPattern.GradientType.kContinuous, Color.kFirstBlue, Color.kWhite, Color.kFirstRed);
+          LEDPattern.GradientType.kContinuous, Color.kFirstBlue, Color.kWhite, Color.kFirstRed)),
+  STRIPE_FRC(
+      LEDPattern.steps(Map.of(0, Color.kFirstBlue, 0.33, Color.kWhite, 0.66, Color.kFirstRed)));
 
-  public static final LEDPattern STRIPE_FRC =
-      LEDPattern.steps(Map.of(0, Color.kFirstBlue, 0.33, Color.kWhite, 0.66, Color.kFirstRed));
+  private final LEDPattern colorPattern;
+
+  public LEDPattern colorPatternOnly() {
+    return colorPattern;
+  }
+
+  public LEDPattern blink() {
+    return colorPattern.blink(Seconds.of(STROBE_TIME));
+  }
+
+  public LEDPattern wave() {
+    return colorPattern.breathe(Seconds.of(BREATH_TIME));
+  }
+
+  public LEDPattern scroll() {
+    return colorPattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
+  }
+
+  private LedPatterns(LEDPattern colorPattern) {
+    this.colorPattern = colorPattern;
+  }
 }

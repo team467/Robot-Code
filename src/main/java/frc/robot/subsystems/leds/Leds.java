@@ -68,51 +68,9 @@ public class Leds extends SubsystemBase {
         currentPattern = LedPatterns.RED.blink();
       }
     } else {
-      currentPattern = state.getMode().ledPattern;
+      updateState();
+      ledModeEntry.setString(mode.toString());
     }
-
-    // Load the pattern onto the LEDs
-    if (!Robot.isSimulation()) {
-      currentPattern.applyTo(buffer);
-      leds.setData(buffer);
-    } else {
-    }
-  }
-
-  private void initLedTabInShuffleboard() {
-
-    ShuffleboardTab ledTab = Shuffleboard.getTab("LEDs");
-    ShuffleboardLayout ledTestingLayout =
-        ledTab
-            .getLayout("LED Testing Options", BuiltInLayouts.kGrid)
-            .withSize(2, 4)
-            .withPosition(0, 0);
-
-    enableTestEntry =
-        ledTestingLayout
-            .add("Enable Test", "boolean", false)
-            .withWidget(BuiltInWidgets.kToggleButton)
-            .withPosition(0, 0)
-            .getEntry();
-
-    testPattern = new SendableChooser<LedPatterns>();
-    for (LedPatterns pattern : LedPatterns.values()) {
-      testPattern.addOption(pattern.toString(), pattern);
-    }
-    testPattern.setDefaultOption("BLACK", LedPatterns.BLACK);
-    ledTestingLayout
-        .add("Test Pattern", testPattern)
-        .withWidget(BuiltInWidgets.kComboBoxChooser)
-        .withPosition(0, 1);
-
-    testAnimation = new SendableChooser<Animations>();
-    for (Animations animation : Animations.values()) {
-      testAnimation.addOption(animation.toString(), animation);
-    }
-    testAnimation.setDefaultOption("None", Animations.NONE);
-    ledTestingLayout
-        .add("Test Animation", testAnimation)
-        .withWidget(BuiltInWidgets.kSplitButtonChooser)
-        .withPosition(0, 2);
+    updateLeds();
   }
 }
