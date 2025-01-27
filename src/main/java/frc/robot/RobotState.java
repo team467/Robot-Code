@@ -12,12 +12,16 @@ import org.littletonrobotics.junction.AutoLogOutput;
 public class RobotState {
 
   public enum Mode {
+
+    // 2025 Specific
     ALIGNED_TO_REEF(LedPatterns.RED.colorPatternOnly()),
     ALGAE_EFFECTOR_EXTENDED(LedPatterns.RED.colorPatternOnly()),
     ALGAE_EFFECTOR_RUNNING(LedPatterns.RED.colorPatternOnly()),
     CLIMBER_UP(LedPatterns.RED.colorPatternOnly()),
     DUCK(LedPatterns.RED.colorPatternOnly()),
     COLLISION_DETECTED(LedPatterns.RED.colorPatternOnly()),
+
+    // Same every year
     ESTOPPED(LedPatterns.RED.colorPatternOnly()),
     AUTO_FINISHED(LedPatterns.RED.colorPatternOnly()),
     AUTONOMOUS(LedPatterns.RED.colorPatternOnly()),
