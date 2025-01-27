@@ -44,7 +44,6 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/SendCoral")
   public boolean sendCoral = false;
 
-
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 

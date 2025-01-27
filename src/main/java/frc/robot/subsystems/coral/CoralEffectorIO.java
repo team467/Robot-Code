@@ -18,7 +18,4 @@ public interface CoralEffectorIO {
   default void updateInputs(CoralEffectorIOInputs inputs) {}
 
   default void setSpeed(double speed) {}
-
-  
-  
 }

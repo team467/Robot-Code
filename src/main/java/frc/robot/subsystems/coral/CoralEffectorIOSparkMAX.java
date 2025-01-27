@@ -17,7 +17,7 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
 
   private final SparkMax motor;
   private final RelativeEncoder encoder;
-  private final RelativeEncoder effectorEncoder;
+  // private final RelativeEncoder effectorEncoder;
   private final DigitalInput effectorLimitSwitchHaveCoral = new DigitalInput(coralHaveCoralDioId);
   private final DigitalInput photosensor;
 
@@ -25,8 +25,6 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
     motor = new SparkMax(coralMotorID, SparkLowLevel.MotorType.kBrushless);
     encoder = motor.getEncoder();
     photosensor = new DigitalInput(coralOnTheWayDioId);
-
-    // effectorMotor.configure();
 
     SparkMaxConfig effectorConfig = new SparkMaxConfig();
     effectorConfig
@@ -41,10 +39,6 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
         .positionConversionFactor(effectorEncoderPositionFactor)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
-
-    
-
-
   }
 
   public void updateInputs(CoralEffectorIOInputs inputs) {
@@ -54,7 +48,6 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
     inputs.velocity = motor.getAbsoluteEncoder().getVelocity();
     inputs.coralOnTheWay = photosensor.get();
     inputs.haveCoral = effectorLimitSwitchHaveCoral.get();
-
   }
 
   public void setVoltage(double volts) {
@@ -67,9 +60,3 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
     motor.set(speed);
   }
 }
-
-// Rename Coral, add encoder, find things to add for motor.configure(); such as motorid,
-// temeprature, etc.
-
-// Check MotorIOConfig file to get important implementations to code
-// Three main things to add found in Drive something

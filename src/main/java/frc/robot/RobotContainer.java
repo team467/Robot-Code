@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static frc.robot.Schematic.coralMotorID;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -19,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
+import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIOSim;
@@ -99,9 +99,7 @@ public class RobotContainer {
         }
         case ROBOT_BRIEFCASE -> {
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-          coral =
-              new CoralEffector(
-                  new CoralEffectorIOSparkMAX()); // new CoralEffectorIOSparkMAX(1) ----> In Parenthesis
+          coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
       }
     }

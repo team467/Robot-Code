@@ -81,7 +81,7 @@ public class Schematic {
 
         coralHaveCoralDioId = 0;
         coralOnTheWayDioId = 0;
-        coralMotorID = 0; 
+        coralMotorID = 0;
       }
 
       case ROBOT_BRIEFCASE -> {
