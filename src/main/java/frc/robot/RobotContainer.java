@@ -18,8 +18,11 @@ import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
-import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
+import frc.robot.subsystems.algae.AlgaeEffectorIO;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -37,6 +40,7 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private AlgaeEffector algae;
+  private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -52,6 +56,20 @@ public class RobotContainer {
     if (Constants.getMode() != Constants.Mode.REPLAY) {
       switch (Constants.getRobot()) {
         case ROBOT_2024_COMP -> {
+          Transform3d front =
+              new Transform3d(
+                  new Translation3d(
+                      Units.inchesToMeters(6.74),
+                      Units.inchesToMeters(-10.991),
+                      Units.inchesToMeters(15.875)),
+                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
+          Transform3d back =
+              new Transform3d(
+                  new Translation3d(
+                      Units.inchesToMeters(-11.89),
+                      Units.inchesToMeters(0),
+                      Units.inchesToMeters(15.5)),
+                  new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
           drive =
               new Drive(
                   new GyroIOPigeon2(),
@@ -78,10 +96,9 @@ public class RobotContainer {
                   new ModuleIOSim());
 
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
+          climber = new Climber(new ClimberIOSim());
         }
-        case ROBOT_BRIEFCASE -> {
-          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-        }
+        case ROBOT_BRIEFCASE -> {}
       }
     }
 
@@ -94,6 +111,12 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {},
               new ModuleIO() {});
+    }
+    if (algae == null) {
+      algae = new AlgaeEffector(new AlgaeEffectorIO() {});
+    }
+    if (climber == null) {
+      climber = new Climber(new ClimberIO() {});
     }
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -131,6 +154,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    algae.setDefaultCommand(algae.stowArm());
+
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -163,9 +188,9 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    if (algae != null) {
-      operatorController.a().onTrue(algae.toggleArm());
-    }
+    operatorController.a().whileTrue(algae.removeAlgae());
+
+    operatorController.b().onTrue(climber.winch());
   }
 
   /**
