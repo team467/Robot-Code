@@ -26,18 +26,18 @@ public class CoralEffector extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("CoralEffector", inputs);
-    robotState.intakingCoral = (inputs.appliedVolts != 0 && !inputs.haveCoral) ? true : false;
-    robotState.haveCoral = (inputs.haveCoral) ? true : false;
-    robotState.coralOnTheWay = (inputs.coralOnTheWay) ? true : false;
-    robotState.sendCoral = (inputs.appliedVolts != 0 && inputs.haveCoral) ? true : false;
+    robotState.intakingCoral = (inputs.appliedVolts != 0 && !inputs.hasCoral);
+    robotState.hasCoral = inputs.hasCoral;
+    robotState.hopperSeesCoral = inputs.hopperSeesCoral;
+    robotState.dumpingCoral = (inputs.appliedVolts != 0 && inputs.hopperSeesCoral);
   }
 
-  public boolean haveCoral() {
-    return inputs.haveCoral;
+  public boolean hasCoral() {
+    return inputs.hasCoral;
   }
 
-  public boolean coralOnTheWay() {
-    return inputs.coralOnTheWay;
+  public boolean hopperSeesCoral() {
+    return inputs.hopperSeesCoral;
   }
 
   public Command stop() {
@@ -54,7 +54,7 @@ public class CoralEffector extends SubsystemBase {
               io.setSpeed(CoralEffectorConstants.CORAL_EFFECTOR_SPEED_OUT.get());
             },
             this)
-        .until(() -> !this.haveCoral());
+        .until(() -> !this.hasCoral());
   }
 
   public Command intakeCoral() {
@@ -63,7 +63,7 @@ public class CoralEffector extends SubsystemBase {
               io.setSpeed(CoralEffectorConstants.CORAL_INTAKE_SPEED.get());
             },
             this)
-        .until(this::haveCoral);
+        .until(this::hasCoral);
   }
 
   // NEED TO ADD TEMPERATURE and OTHERS; Fix problems of getting using Limit Switch that is not in

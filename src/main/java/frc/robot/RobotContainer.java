@@ -18,11 +18,13 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
-import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
+import frc.robot.subsystems.algae.AlgaeEffectorIO;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
+// import frc.robot.subsystems.climber.Climber;
+// import frc.robot.subsystems.climber.ClimberIO;
+// import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIOSim;
-import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -40,6 +42,7 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private AlgaeEffector algae;
+  // private Climber climber;
   private CoralEffector coral;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -96,11 +99,9 @@ public class RobotContainer {
 
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
           coral = new CoralEffector(new CoralEffectorIOSim(0));
+          // climber = new Climber(new ClimberIOSim());
         }
-        case ROBOT_BRIEFCASE -> {
-          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-          coral = new CoralEffector(new CoralEffectorIOSparkMAX());
-        }
+        case ROBOT_BRIEFCASE -> {}
       }
     }
 
@@ -114,6 +115,12 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
+    if (algae == null) {
+      algae = new AlgaeEffector(new AlgaeEffectorIO() {});
+    }
+    // if (climber == null) {
+    // climber = new Climber(new ClimberIO() {});
+    // }
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -167,14 +174,9 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    if (algae != null) {
-      operatorController.a().onTrue(algae.toggleArm());
-    }
+    // operatorController.a().whileTrue(algae.removeAlgae());
 
-    if (coral != null) {
-      operatorController.x().whileTrue(coral.dumpCoral());
-      operatorController.y().whileTrue(coral.intakeCoral());
-    }
+    // operatorController.b().onTrue(climber.winch());
   }
 
   /**

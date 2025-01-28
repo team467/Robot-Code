@@ -11,8 +11,8 @@ public interface CoralEffectorIO {
     public double appliedVolts;
     public double currentAmps;
     public double temperature;
-    public boolean coralOnTheWay = false;
-    public boolean haveCoral = false;
+    public boolean hopperSeesCoral = false;
+    public boolean hasCoral = false;
   }
 
   default void updateInputs(CoralEffectorIOInputs inputs) {}

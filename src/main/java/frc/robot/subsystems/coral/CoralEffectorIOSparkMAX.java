@@ -1,8 +1,7 @@
 package frc.robot.subsystems.coral;
 
-import static frc.robot.Schematic.coralHaveCoralDioId;
 import static frc.robot.Schematic.coralMotorID;
-import static frc.robot.Schematic.coralOnTheWayDioId;
+import static frc.robot.Schematic.hopperReflectorSensorDioId;
 import static frc.robot.subsystems.coral.CoralEffectorConstants.*;
 
 import com.revrobotics.RelativeEncoder;
@@ -18,13 +17,12 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
   private final SparkMax motor;
   private final RelativeEncoder encoder;
   // private final RelativeEncoder effectorEncoder;
-  private final DigitalInput effectorLimitSwitchHaveCoral = new DigitalInput(coralHaveCoralDioId);
   private final DigitalInput photosensor;
 
   public CoralEffectorIOSparkMAX() {
     motor = new SparkMax(coralMotorID, SparkLowLevel.MotorType.kBrushless);
     encoder = motor.getEncoder();
-    photosensor = new DigitalInput(coralOnTheWayDioId);
+    photosensor = new DigitalInput(hopperReflectorSensorDioId);
 
     SparkMaxConfig effectorConfig = new SparkMaxConfig();
     effectorConfig
@@ -46,8 +44,8 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
     inputs.currentAmps = motor.getOutputCurrent();
     inputs.temperature = motor.getMotorTemperature();
     inputs.velocity = motor.getAbsoluteEncoder().getVelocity();
-    inputs.coralOnTheWay = photosensor.get();
-    inputs.haveCoral = effectorLimitSwitchHaveCoral.get();
+    inputs.hopperSeesCoral = photosensor.get();
+    inputs.hasCoral = motor.getForwardLimitSwitch().isPressed();
   }
 
   public void setVoltage(double volts) {

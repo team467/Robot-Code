@@ -38,8 +38,8 @@ public class CoralEffectorIOSim implements CoralEffectorIO {
     inputs.appliedVolts = motorSim.getAppliedOutput() * RobotController.getBatteryVoltage();
     inputs.currentAmps = motorSim.getMotorCurrent();
     inputs.temperature = motor.getMotorTemperature();
-    inputs.coralOnTheWay = false;
-    inputs.haveCoral = false;
+    inputs.hopperSeesCoral = false;
+    inputs.hasCoral = false;
   }
 
   public void setEffectorVoltage(double volts) {
