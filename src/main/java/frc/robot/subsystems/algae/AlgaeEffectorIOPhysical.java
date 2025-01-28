@@ -83,5 +83,7 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
     inputs.pivotPosition = pivotMotorEncoder.getPosition();
     inputs.isFullyExtended = forwardLimitSwitch.isPressed();
     inputs.isStowed = reverseLimitSwitch.isPressed();
+    inputs.pivotMotorTemp = pivotMotor.getMotorTemperature();
+    inputs.removalMotorTemp = removalMotor.getMotorTemperature();
   }
 }
