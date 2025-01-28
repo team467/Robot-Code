@@ -46,8 +46,8 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
     inputs.currentAmps = motor.getOutputCurrent();
     inputs.temperature = motor.getMotorTemperature();
     inputs.velocity = motor.getAbsoluteEncoder().getVelocity();
-    inputs.coralOnTheWay = photosensor.get();
-    inputs.haveCoral = effectorLimitSwitchHaveCoral.get();
+    inputs.hopperSeesCoral = photosensor.get();
+    inputs.hasCoral = effectorLimitSwitchHaveCoral.get();
   }
 
   public void setVoltage(double volts) {

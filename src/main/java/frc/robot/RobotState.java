@@ -16,6 +16,7 @@ public class RobotState {
   /** If the hopper optical sensor is triggered */
   @AutoLogOutput(key = "RobotState/HopperSeesCoral")
   public boolean hopperSeesCoral = false;
+
   @AutoLogOutput(key = "RobotState/IntakingCoral")
   public boolean intakingCoral = false;
   /** Robot dumping coral */
