@@ -73,6 +73,21 @@ public class RobotContainer {
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
+        case ROBOT_2025_TEST -> {
+          drive =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOSpark(0),
+                  new ModuleIOSpark(1),
+                  new ModuleIOSpark(2),
+                  new ModuleIOSpark(3));
+
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
+        }
+
         case ROBOT_SIMBOT -> {
           drive =
               new Drive(
