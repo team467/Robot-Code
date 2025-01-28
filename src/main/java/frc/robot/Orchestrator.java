@@ -9,7 +9,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.vision.Vision;
 
-public class orchestrator {
+public class Orchestrator {
 
   private final Drive drive;
   private final Elevator elevator;
@@ -18,7 +18,7 @@ public class orchestrator {
   private final Vision vision;
   private final RobotState robotState = RobotState.getInstance();
 
-  public orchestrator(
+  public Orchestrator(
       Drive drive,
       Elevator elevator,
       AlgaeEffector algaeEffector,
