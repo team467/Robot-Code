@@ -25,7 +25,7 @@ public class Schematic {
 
   static {
     switch (Constants.getRobot()) {
-      case ROBOT_2024_COMP -> {
+      case ROBOT_2025_TEST -> {
         // Drive (CAN IDs)
         pigeonCanId = 17;
 
