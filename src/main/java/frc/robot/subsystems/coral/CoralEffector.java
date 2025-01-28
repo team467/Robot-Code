@@ -9,15 +9,20 @@ import org.littletonrobotics.junction.Logger;
 public class CoralEffector extends SubsystemBase {
 
   private CoralEffectorIO io;
-  private EffectorIOInputsAutoLogged inputs = new EffectorIOInputsAutoLogged();
+  private final CoralEffectorIOInputsAutoLogged inputs = new CoralEffectorIOInputsAutoLogged();
   private final RobotState robotState = RobotState.getInstance();
   private boolean PIDMode = false;
   private double currentVelocitySetpoint;
 
   public CoralEffector(CoralEffectorIO io) {
     this.io = io;
-    this.inputs = new EffectorIOInputsAutoLogged();
   }
+
+  //  public void Coral(CoralEffectorIO io, DigitalInput effectorLimitSwitchHaveCoral) {
+  //        this.io = io;
+  //        this.effectorLimitSwitchHaveCoral = effectorLimitSwitchHaveCoral;
+  //        this.inputs = new EffectorIOInputsAutoLogged();
+  //    }
 
   public void Periodic() {
     io.updateInputs(inputs);
@@ -29,7 +34,15 @@ public class CoralEffector extends SubsystemBase {
   }
 
   public boolean coralOnTheWay() {
-    return inputs.haveCoral;
+    return inputs.coralOnTheWay;
+  }
+
+  public Command stop() {
+    return Commands.run(
+        () -> {
+          io.setSpeed(0);
+        },
+        this);
   }
 
   public Command dumpCoral() {
@@ -38,8 +51,10 @@ public class CoralEffector extends SubsystemBase {
               io.setSpeed(CoralEffectorConstants.CORAL_EFFECTOR_SPEED_OUT.get());
             },
             this)
-        .until(this::haveCoral);
+        .until(() -> !this.haveCoral());
   }
+
+  //Stop limit switch from stopping motor - to do
 
   public Command intakeCoral() {
     return Commands.run(

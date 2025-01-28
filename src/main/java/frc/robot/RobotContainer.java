@@ -23,6 +23,8 @@ import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.coral.CoralEffector;
+import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -41,6 +43,7 @@ public class RobotContainer {
   private Vision vision;
   private AlgaeEffector algae;
   private Climber climber;
+  private CoralEffector coral;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -148,6 +151,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     algae.setDefaultCommand(algae.stowArm());
+
+    coral.setDefaultCommand(coral.stop());
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
