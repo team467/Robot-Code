@@ -23,8 +23,7 @@ public class Schematic {
   public static final int algaePivotCanId;
   public static final int algaeRemovalCanId;
   // Coral Effector (Motor IDs)
-  public static final int coralHaveCoralDioId;
-  public static final int coralOnTheWayDioId;
+  public static final int hopperReflectorSensorDioId;
   public static final int coralMotorID;
 
   static {
@@ -51,8 +50,7 @@ public class Schematic {
         algaePivotCanId = 0;
         algaeRemovalCanId = 0;
 
-        coralHaveCoralDioId = 0;
-        coralOnTheWayDioId = 0;
+        hopperReflectorSensorDioId = 0;
         coralMotorID = 0;
       }
       case ROBOT_2025_COMP -> {
@@ -79,8 +77,7 @@ public class Schematic {
         algaePivotCanId = 0;
         algaeRemovalCanId = 0;
 
-        coralHaveCoralDioId = 0;
-        coralOnTheWayDioId = 0;
+        hopperReflectorSensorDioId = 0;
         coralMotorID = 0;
       }
 
@@ -108,8 +105,7 @@ public class Schematic {
         algaeRemovalCanId = 2;
 
         coralMotorID = 0;
-        coralHaveCoralDioId = 0;
-        coralOnTheWayDioId = 9;
+        hopperReflectorSensorDioId = 9;
       }
 
       default -> {
@@ -135,8 +131,7 @@ public class Schematic {
         algaePivotCanId = 0;
         algaeRemovalCanId = 0;
 
-        coralHaveCoralDioId = 0;
-        coralOnTheWayDioId = 0;
+        hopperReflectorSensorDioId = 0;
         coralMotorID = 0;
       }
     }
