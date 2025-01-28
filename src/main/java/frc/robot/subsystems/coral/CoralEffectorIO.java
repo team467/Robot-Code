@@ -7,7 +7,7 @@ public interface CoralEffectorIO {
   @AutoLog
   class CoralEffectorIOInputs {
 
-    public double speed;
+    public double velocity;
     public double appliedVolts;
     public double currentAmps;
     public double temperature;

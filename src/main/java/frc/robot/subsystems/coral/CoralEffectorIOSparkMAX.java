@@ -1,6 +1,8 @@
 package frc.robot.subsystems.coral;
 
 import static frc.robot.Schematic.coralHaveCoralDioId;
+import static frc.robot.Schematic.coralMotorID;
+import static frc.robot.Schematic.coralOnTheWayDioId;
 import static frc.robot.subsystems.coral.CoralEffectorConstants.*;
 
 import com.revrobotics.RelativeEncoder;
@@ -15,13 +17,14 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
 
   private final SparkMax motor;
   private final RelativeEncoder encoder;
+  // private final RelativeEncoder effectorEncoder;
   private final DigitalInput effectorLimitSwitchHaveCoral = new DigitalInput(coralHaveCoralDioId);
+  private final DigitalInput photosensor;
 
-  public CoralEffectorIOSparkMAX(int motorId) {
-    motor = new SparkMax(motorId, SparkLowLevel.MotorType.kBrushless);
+  public CoralEffectorIOSparkMAX() {
+    motor = new SparkMax(coralMotorID, SparkLowLevel.MotorType.kBrushless);
     encoder = motor.getEncoder();
-
-    // effectorMotor.configure();
+    photosensor = new DigitalInput(coralOnTheWayDioId);
 
     SparkMaxConfig effectorConfig = new SparkMaxConfig();
     effectorConfig
@@ -36,28 +39,18 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
         .positionConversionFactor(effectorEncoderPositionFactor)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
-
-    //    tryUntilOk(
-    //        motor,
-    //        5,
-    //        () ->
-    //            motor.configure(
-    //                effectorConfig,
-    //                SparkBase.ResetMode.kResetSafeParameters,
-    //                PersistMode.kPersistParameters));
-    //    tryUntilOk(motor, 5, () -> encoder.setPosition(0.0));
   }
 
   public void updateInputs(CoralEffectorIOInputs inputs) {
-    inputs.speed = motor.get();
     inputs.appliedVolts = motor.getBusVoltage() * motor.getAppliedOutput();
     inputs.currentAmps = motor.getOutputCurrent();
     inputs.temperature = motor.getMotorTemperature();
+    inputs.velocity = motor.getAbsoluteEncoder().getVelocity();
+    inputs.coralOnTheWay = photosensor.get();
     inputs.haveCoral = effectorLimitSwitchHaveCoral.get();
-    inputs.coralOnTheWay = false;
   }
 
-  public void setEffectorVoltage(double volts) {
+  public void setVoltage(double volts) {
     motor.setVoltage(volts);
   }
 
@@ -67,9 +60,3 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
     motor.set(speed);
   }
 }
-
-// Rename Coral, add encoder, find things to add for motor.configure(); such as motorid,
-// temeprature, etc.
-
-// Check MotorIOConfig file to get important implementations to code
-// Three main things to add found in Drive something

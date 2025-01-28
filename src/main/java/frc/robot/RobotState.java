@@ -16,6 +16,11 @@ public class RobotState {
   /** If the hopper optical sensor is triggered */
   @AutoLogOutput(key = "RobotState/HopperSeesCoral")
   public boolean hopperSeesCoral = false;
+  @AutoLogOutput(key = "RobotState/IntakingCoral")
+  public boolean intakingCoral = false;
+  /** Robot dumping coral */
+  @AutoLogOutput(key = "RobotState/SendCoral")
+  public boolean dumpingCoral = false;
   /** If the robot is aligned to the reef */
   @AutoLogOutput(key = "RobotState/AlignedToReef")
   public boolean alignedToReef = false;
