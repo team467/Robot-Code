@@ -83,7 +83,10 @@ public class Elevator extends SubsystemBase {
 
     Logger.recordOutput("Elevator/PIDEnabled", feedbackMode);
     if (feedbackMode) {
-      // TODO: implement io.setVoltage()
+      io.setVoltage(
+          feedback.calculate(inputs.positionMeters)
+              + feedforward.calculate(
+                  feedback.getSetpoint().position, feedback.getSetpoint().velocity));
 
       Logger.recordOutput("Elevator/Goal/Position", feedback.getGoal().position);
       Logger.recordOutput("Elevator/Goal/Velocity", feedback.getGoal().velocity);
