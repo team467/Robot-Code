@@ -4,12 +4,12 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public class ClimberConstants {
-  public static final float LOWER_WINCHED_POSITION;
-  public static final float UPPER_WINCHED_POSITION;
-  public static final float WINCHED_POSITION;
-  public static final float LOWER_DEPLOYED_POSITION;
-  public static final float UPPER_DEPLOYED_POSITION;
-  public static final float DEPLOYED_POSITION;
+  public static final double LOWER_WINCHED_POSITION;
+  public static final double UPPER_WINCHED_POSITION;
+  public static final double WINCHED_POSITION;
+  public static final double LOWER_DEPLOYED_POSITION;
+  public static final double UPPER_DEPLOYED_POSITION;
+  public static final double DEPLOYED_POSITION;
   public static final int CLIMBER_MOTOR_ID;
   public static final int CLIMBER_LEADER_ID;
   public static final int CLIMBER_FOLLOWER_ID;
