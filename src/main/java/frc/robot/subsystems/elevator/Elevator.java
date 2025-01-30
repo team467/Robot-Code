@@ -81,6 +81,17 @@ public class Elevator extends SubsystemBase {
       }
     }
 
+    if (!inputs.limitSwitchPressed
+        && inputs.velocityMetersPerSec < -0.01
+        && Math.abs(inputs.elevatorCurrentAmps) > ElevatorConstants.STALL_CURRENT_THRESHOLD) {
+
+      io.resetPosition();
+      if (!isCalibrated) {
+        feedback.reset(ElevatorConstants.STOW);
+        isCalibrated = true;
+      }
+    }
+
     Logger.recordOutput("Elevator/PIDEnabled", feedbackMode);
     if (feedbackMode) {
       io.setVoltage(
