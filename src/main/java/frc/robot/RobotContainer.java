@@ -79,11 +79,6 @@ public class RobotContainer {
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
 
-          vision =
-              new Vision(
-                  drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
-
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 

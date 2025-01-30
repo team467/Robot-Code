@@ -45,7 +45,6 @@ public class RobotState {
   public boolean impactDetected = false;
 
   /** The singleton instance of the RobotState class. */
-
   private static RobotState instance = null;
 
   /**
