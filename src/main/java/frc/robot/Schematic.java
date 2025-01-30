@@ -104,7 +104,7 @@ public class Schematic {
         algaePivotCanId = 1;
         algaeRemovalCanId = 2;
 
-        coralMotorID = 0;
+        coralMotorID = 2;
         hopperReflectorSensorDioId = 9;
       }
 

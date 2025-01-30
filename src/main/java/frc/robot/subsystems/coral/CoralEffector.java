@@ -17,11 +17,6 @@ public class CoralEffector extends SubsystemBase {
     this.inputs = new CoralEffectorIOInputsAutoLogged();
   }
 
-  //  public void Coral(CoralEffectorIO io, DigitalInput effectorLimitSwitchHaveCoral) {
-  //        this.io = io;
-  //        this.effectorLimitSwitchHaveCoral = effectorLimitSwitchHaveCoral;
-  //        this.inputs = new EffectorIOInputsAutoLogged();
-  //    }
   @Override
   public void periodic() {
     io.updateInputs(inputs);
@@ -29,6 +24,7 @@ public class CoralEffector extends SubsystemBase {
     robotState.intakingCoral = (inputs.appliedVolts != 0 && !inputs.hasCoral);
     robotState.hasCoral = inputs.hasCoral;
     robotState.hopperSeesCoral = inputs.hopperSeesCoral;
+    System.out.println(inputs.hopperSeesCoral);
     robotState.dumpingCoral = (inputs.appliedVolts != 0 && inputs.hopperSeesCoral);
   }
 
@@ -37,6 +33,7 @@ public class CoralEffector extends SubsystemBase {
   }
 
   public boolean hopperSeesCoral() {
+
     return inputs.hopperSeesCoral;
   }
 
@@ -65,7 +62,4 @@ public class CoralEffector extends SubsystemBase {
             this)
         .until(this::hasCoral);
   }
-
-  // NEED TO ADD TEMPERATURE and OTHERS; Fix problems of getting using Limit Switch that is not in
-
 }

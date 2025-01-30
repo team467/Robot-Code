@@ -19,7 +19,7 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
   // private final RelativeEncoder effectorEncoder;
   private final DigitalInput photosensor;
 
-  public CoralEffectorIOSparkMAX() {
+  public CoralEffectorIOSparkMAX(int i) {
     motor = new SparkMax(coralMotorID, SparkLowLevel.MotorType.kBrushless);
     encoder = motor.getEncoder();
     photosensor = new DigitalInput(hopperReflectorSensorDioId);
