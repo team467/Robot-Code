@@ -131,8 +131,7 @@ public class DriveToPose extends Command {
     var targetPose = poseSupplier.get();
 
     // Calculate drive speed
-    double currentDistance =
-        currentPose.getTranslation().getDistance(poseSupplier.get().getTranslation());
+    double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     driveErrorAbs = currentDistance;
     double driveVelocityScalar = driveController.calculate(driveErrorAbs, 0.0);
     if (driveController.atGoal()) driveVelocityScalar = 0.0;
