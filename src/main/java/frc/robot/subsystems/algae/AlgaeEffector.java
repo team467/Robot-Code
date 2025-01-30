@@ -41,7 +41,8 @@ public class AlgaeEffector extends SubsystemBase {
             () -> {
               io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE);
               io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
-            })
+            },
+            this)
         .until(() -> inputs.isStowed);
   }
 
