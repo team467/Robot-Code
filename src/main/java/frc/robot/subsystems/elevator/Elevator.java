@@ -99,10 +99,10 @@ public class Elevator extends SubsystemBase {
     }
   }
 
-  public Command toSetpoint(double setpointAngle) {
+  public Command toSetpoint(double setPositionMeters) {
     return Commands.run(
         () -> {
-          feedback.setGoal(setpointAngle);
+          feedback.setGoal(setPositionMeters);
           feedbackMode = true;
         },
         this);
