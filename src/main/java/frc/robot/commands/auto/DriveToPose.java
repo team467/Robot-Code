@@ -14,6 +14,10 @@ import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
+/**
+ * Command to drive the robot to a specified pose in a straight path. This is useful for very simple
+ * autos or for alignment.
+ */
 public class DriveToPose extends Command {
   private final Drive drive;
   private final Supplier<Pose2d> poseSupplier;
@@ -63,12 +67,22 @@ public class DriveToPose extends Command {
     }
   }
 
-  /** Drives to the specified pose under full software control. */
+  /**
+   * Drives to the specified pose under full software control.
+   *
+   * @param drive The drive subsystem
+   * @param pose The target pose
+   */
   public DriveToPose(Drive drive, Pose2d pose) {
     this(drive, () -> pose);
   }
 
-  /** Drives to the specified pose under full software control. */
+  /**
+   * Constructs a new DriveToPose command that drives the robot to a specified pose.
+   *
+   * @param drive The drive subsystem
+   * @param poseSupplier A supplier that provides the target pose
+   */
   public DriveToPose(Drive drive, Supplier<Pose2d> poseSupplier) {
     this.drive = drive;
     this.poseSupplier = poseSupplier;
