@@ -25,7 +25,7 @@ public class Constants {
       if (robot == RobotType.ROBOT_SIMBOT) { // Invalid robot
         DriverStation.reportWarning(
             "Invalid robot selected, using competition robot as default.", false);
-        return RobotType.ROBOT_2024_COMP;
+        return RobotType.ROBOT_2025_COMP;
       } else {
         return robot;
       }
@@ -63,7 +63,7 @@ public class Constants {
 
   public static Mode getMode() {
     switch (getRobot()) {
-      case ROBOT_2023, ROBOT_2024_COMP, ROBOT_BRIEFCASE -> {
+      case ROBOT_2023, ROBOT_2024_COMP, ROBOT_BRIEFCASE, ROBOT_2025_COMP, ROBOT_2025_TEST -> {
         return RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
       }
       case ROBOT_SIMBOT -> {
