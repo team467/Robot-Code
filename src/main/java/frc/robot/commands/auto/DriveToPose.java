@@ -107,7 +107,13 @@ public class DriveToPose extends Command {
     if (driveKp.hasChanged(hashCode())
         || driveKd.hasChanged(hashCode())
         || thetaKp.hasChanged(hashCode())
-        || thetaKd.hasChanged(hashCode())) {
+        || thetaKd.hasChanged(hashCode())
+        || driveMaxVelocity.hasChanged(hashCode())
+        || driveMaxAcceleration.hasChanged(hashCode())
+        || thetaMaxVelocity.hasChanged(hashCode())
+        || thetaMaxAcceleration.hasChanged(hashCode())
+        || driveTolerance.hasChanged(hashCode())
+        || thetaTolerance.hasChanged(hashCode())) {
       driveController.setP(driveKp.get());
       driveController.setD(driveKd.get());
       driveController.setConstraints(
