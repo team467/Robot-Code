@@ -12,6 +12,7 @@ public class ElevatorConstants {
   public static final TunableNumber KD;
   public static final TunableNumber MAX_VELOCITY;
   public static final TunableNumber MAX_ACCELERATION;
+  public static final double STALL_CURRENT_THRESHOLD;
   public static final double STOW;
   public static final double TOLERANCE;
   public static final int elevatorCanId = 0;
@@ -27,6 +28,7 @@ public class ElevatorConstants {
         KD = new TunableNumber("Elevator/KD", 0.0);
         MAX_VELOCITY = new TunableNumber("Elevator/MaxVelocity", Double.POSITIVE_INFINITY);
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration");
+        STALL_CURRENT_THRESHOLD = 0.0;
         STOW = 0.0;
         TOLERANCE = Units.degreesToRadians(0.25);
       }
@@ -38,6 +40,7 @@ public class ElevatorConstants {
         KD = new TunableNumber("Elevator/KD", 0.0);
         MAX_VELOCITY = new TunableNumber("Elevator/MaxVelocity", 0.0);
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration", 0.0);
+        STALL_CURRENT_THRESHOLD = 0.0;
         STOW = 0.0;
         TOLERANCE = 0.0;
       }
