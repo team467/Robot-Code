@@ -47,15 +47,16 @@ public class GyroIOPigeon2 implements GyroIO {
         BaseStatusSignal.refreshAll(yaw, yawVelocity, accelX, accelY).equals(StatusCode.OK);
     inputs.yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble());
     inputs.yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble());
-    inputs.pVectorM = inputs.VectorM;
-    inputs.VectorM =
+    inputs.previousVectorMagnitude = inputs.VectorMagnitude;
+    inputs.VectorMagnitude =
         Math.pow(
             Math.pow(accelX.getValueAsDouble() * 9.8, 2.0)
                 + Math.pow(accelY.getValueAsDouble() * 9.8, 2.0),
             0.5);
-    inputs.VectorDiff = (inputs.VectorM - inputs.pVectorM);
-    inputs.pVectorA = inputs.VectorA;
-    inputs.VectorA = Math.atan(accelY.getValueAsDouble() * 9.8 / (accelX.getValueAsDouble() * 9.8));
+    inputs.VectorDiff = (inputs.VectorMagnitude - inputs.previousVectorMagnitude);
+    inputs.previousVectorAngle = inputs.VectorAngle;
+    inputs.VectorAngle =
+        Math.atan(accelY.getValueAsDouble() * 9.8 / (accelX.getValueAsDouble() * 9.8));
     inputs.odometryYawTimestamps =
         yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryYawPositions =

@@ -312,10 +312,10 @@ public class Drive extends SubsystemBase {
     RobotState.getInstance().collisionDetected =
         gyroInputs.VectorDiff < 0
             & Math.abs(gyroInputs.VectorDiff) > 4.5
-            & Math.abs(gyroInputs.VectorDiff) > (gyroInputs.pVectorM * 0.5);
+            & Math.abs(gyroInputs.VectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5);
     impactAlert.set(
         gyroInputs.VectorDiff < 0
             & Math.abs(gyroInputs.VectorDiff) > 4.5
-            & Math.abs(gyroInputs.VectorDiff) > (gyroInputs.pVectorM * 0.5));
+            & Math.abs(gyroInputs.VectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5));
   }
 }
