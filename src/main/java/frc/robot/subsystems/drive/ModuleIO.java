@@ -18,6 +18,8 @@ public interface ModuleIO {
     public double turnAppliedVolts = 0.0;
     public double turnCurrentAmps = 0.0;
 
+    public double turnPositionAbsolute = 0.0;
+
     public double[] odometryTimestamps = new double[] {};
     public double[] odometryDrivePositionsRad = new double[] {};
     public Rotation2d[] odometryTurnPositions = new Rotation2d[] {};
