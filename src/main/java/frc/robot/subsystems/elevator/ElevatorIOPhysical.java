@@ -39,7 +39,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
     inputs.velocityMetersPerSec = (Encoder.getVelocity() * 2 * Math.PI) * 0.004;
     inputs.elevatorAppliedVolts = Spark.getBusVoltage() * Spark.getAppliedOutput();
     inputs.elevatorCurrentAmps = Spark.getOutputCurrent();
-    inputs.positionMeters = Encoder.getPosition(); //gearRatio;
+    inputs.positionMeters = Encoder.getPosition(); // gearRatio;
     inputs.limitSwitchPressed = elevatorStowLimitSwitch.isPressed();
   }
 }
