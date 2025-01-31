@@ -17,7 +17,6 @@ public class ElevatorConstants {
   public static final double TOLERANCE;
   public static final int elevatorCanId = 0;
   public static final int elevatorCurrentLimit = 5;
-  // public static final int gearRatio = 9;
 
   static {
     switch (Constants.getRobot()) {
