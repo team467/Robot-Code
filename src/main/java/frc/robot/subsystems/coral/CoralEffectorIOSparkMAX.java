@@ -33,9 +33,9 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
         .smartCurrentLimit(effectorCurrentMotorLimit)
         .voltageCompensation(12.0);
 
-    effectorConfig.limitSwitch.forwardLimitSwitchEnabled(false);
+    effectorConfig.limitSwitch.reverseLimitSwitchEnabled(false);
 
-    effectorConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyOpen);
+    effectorConfig.limitSwitch.reverseLimitSwitchType(Type.kNormallyOpen);
 
     effectorConfig
         .encoder
@@ -49,5 +49,23 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
         () ->
             motor.configure(
                 effectorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+  }
+
+  public void updateInputs(CoralEffectorIOInputs inputs) {
+    inputs.appliedVolts = motor.getBusVoltage() * motor.getAppliedOutput();
+    inputs.currentAmps = motor.getOutputCurrent();
+    inputs.temperature = motor.getMotorTemperature();
+    inputs.velocity = motor.getAbsoluteEncoder().getVelocity();
+    inputs.hopperSeesCoral = photosensor.get();
+    inputs.hasCoral = motor.getReverseLimitSwitch().isPressed();
+  }
+
+  public void setVoltage(double volts) {
+    motor.setVoltage(volts);
+  }
+
+  @Override
+  public void setSpeed(double speed) {
+    motor.set(speed);
   }
 }
