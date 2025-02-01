@@ -24,6 +24,7 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.coral.CoralEffector;
+import frc.robot.subsystems.coral.CoralEffectorIO;
 import frc.robot.subsystems.coral.CoralEffectorIOSim;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
@@ -120,6 +121,9 @@ public class RobotContainer {
     }
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
+    }
+    if (coral == null) {
+      coral = new CoralEffector(new CoralEffectorIO() {});
     }
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

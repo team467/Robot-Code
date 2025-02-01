@@ -52,7 +52,7 @@ public class AlgaeEffector extends SubsystemBase {
           io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
           io.setRemovalVolts(AlgaeEffectorConstants.REMOVAL_VOLTAGE);
         },
-        this);
+        this).until(() -> inputs.pivotPosition >= AlgaeEffectorConstants.REMOVAL_ANGLE);
   }
 
   /** Stops all algae arm actions */
