@@ -18,6 +18,7 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIO;
+import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;

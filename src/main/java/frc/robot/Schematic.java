@@ -50,7 +50,6 @@ public class Schematic {
         algaePivotCanId = 2;
         algaeRemovalCanId = 1;
 
-
         hopperReflectorSensorDioId = 0;
         coralMotorID = 0;
       }
