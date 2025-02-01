@@ -20,7 +20,6 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
-    RobotState.getInstance().climberStowed = inputs.climberStowed;
     RobotState.getInstance().climberDeployed = inputs.climberDeployed;
     RobotState.getInstance().climberWinched = inputs.climberWinched;
   }
