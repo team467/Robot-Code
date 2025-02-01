@@ -13,8 +13,8 @@ import java.io.IOException;
  *
  * <p>All translations and poses are stored with the origin at the rightmost point on the BLUE
  * ALLIANCE wall. Use the {@link frc.lib.utils.AllianceFlipUtil#apply(Translation2d)} and {@link
- * frc.lib.utils.AllianceFlipUtil#apply(Pose2d)} methods to flip these values based on the
- * currentAmps alliance color.
+ * frc.lib.utils.AllianceFlipUtil#apply(Pose2d)} methods to flip these values based on the current
+ * alliance color.
  */
 public class FieldConstants {
   public static final double fieldLength = Units.inchesToMeters(651.223);

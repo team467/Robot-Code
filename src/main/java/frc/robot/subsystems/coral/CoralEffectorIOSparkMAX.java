@@ -38,7 +38,6 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
 
     effectorConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyOpen);
 
-
     effectorConfig
         .encoder
         .positionConversionFactor(effectorEncoderPositionFactor)

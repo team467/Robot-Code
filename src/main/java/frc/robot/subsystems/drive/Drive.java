@@ -267,18 +267,18 @@ public class Drive extends SubsystemBase {
     return output;
   }
 
-  /** Returns the currentAmps odometry pose. */
+  /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
 
-  /** Returns the currentAmps odometry rotation. */
+  /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
   }
 
-  /** Resets the currentAmps odometry pose. */
+  /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }

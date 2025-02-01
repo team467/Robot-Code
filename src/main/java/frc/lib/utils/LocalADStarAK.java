@@ -90,8 +90,8 @@ public class LocalADStarAK implements Pathfinder {
    *
    * @param obs A List of Translation2d pairs representing obstacles. Each Translation2d represents
    *     opposite corners of a bounding box.
-   * @param currentRobotPos The currentAmps position of the robot. This is needed to change the
-   *     start position of the path to properly avoid obstacles
+   * @param currentRobotPos The current position of the robot. This is needed to change the start
+   *     position of the path to properly avoid obstacles
    */
   @Override
   public void setDynamicObstacles(
