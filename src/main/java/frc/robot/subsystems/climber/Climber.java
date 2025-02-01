@@ -29,12 +29,17 @@ public class Climber extends SubsystemBase {
    * @return the winch command.
    */
   public Command winch() {
-    return Commands.run(() -> io.setSpeed(-1.0), this)
+    return Commands.run(() -> io.setSpeed(ClimberConstants.WINCHED_SPEED), this)
         .until(() -> inputs.position <= ClimberConstants.WINCHED_POSITION);
   }
 
   public Command deploy() {
-    return Commands.run(() -> io.setSpeed(1.0), this)
+    return Commands.run(() -> io.setSpeed(ClimberConstants.DEPLOYED_SPEED), this)
+        .until(() -> inputs.climberDeployed);
+  }
+
+  public Command deployBypass() {
+    return Commands.run(() -> io.setSpeed(ClimberConstants.DEPLOYED_SPEED), this)
         .until(() -> inputs.position <= ClimberConstants.DEPLOYED_POSITION);
   }
 }

@@ -7,9 +7,11 @@ public class ClimberConstants {
   public static final double LOWER_WINCHED_POSITION;
   public static final double UPPER_WINCHED_POSITION;
   public static final double WINCHED_POSITION;
+  public static final double WINCHED_SPEED;
   public static final double LOWER_DEPLOYED_POSITION;
   public static final double UPPER_DEPLOYED_POSITION;
   public static final double DEPLOYED_POSITION;
+  public static final double DEPLOYED_SPEED;
   public static final int CLIMBER_MOTOR_ID;
   public static final int CLIMBER_LEADER_ID;
   public static final int CLIMBER_FOLLOWER_ID;
@@ -20,13 +22,13 @@ public class ClimberConstants {
   public static final double CLIMBER_GEARING;
   public static final double CARRIAGE_MASS_KG;
   public static final double CLIMBER_DRUM_RADIUS;
-  public static final double MIN_CLIMBER_HEIGHT_METERS;
-  public static final double MAX_CLIMBER_HEIGHT_METERS;
   public static final boolean SIMULATE_GRAVITY;
   public static final double STARTING_HEIGHT_METERS;
   public static final double MEASUREMENT_STD_DEVS;
   public static final double NEO_PULSES_PER_REVOLUTION;
   public static final double CLIMBER_CONVERSION_FACTOR;
+  public static final double MIN_CLIMBER_HEIGHT_METERS;
+  public static final double MAX_CLIMBER_HEIGHT_METERS;
 
   static {
     switch (Constants.getRobot()) {
@@ -35,9 +37,11 @@ public class ClimberConstants {
         LOWER_WINCHED_POSITION = 0.35;
         UPPER_WINCHED_POSITION = 0.45;
         WINCHED_POSITION = 0.4;
+        WINCHED_SPEED = 0.4;
         LOWER_DEPLOYED_POSITION = 0.95;
         UPPER_DEPLOYED_POSITION = 1.1;
         DEPLOYED_POSITION = 1.0;
+        DEPLOYED_SPEED = 1.0;
         CLIMBER_LEADER_ID = 1;
         CLIMBER_FOLLOWER_ID = 2;
 
@@ -62,9 +66,11 @@ public class ClimberConstants {
         LOWER_WINCHED_POSITION = 0.35;
         UPPER_WINCHED_POSITION = 0.45;
         WINCHED_POSITION = 0.4;
+        WINCHED_SPEED = 0.4;
         LOWER_DEPLOYED_POSITION = 0.95;
         UPPER_DEPLOYED_POSITION = 1.1;
         DEPLOYED_POSITION = 1.0;
+        DEPLOYED_SPEED = 1.0;
         CLIMBER_LEADER_ID = 1;
         CLIMBER_FOLLOWER_ID = 2;
 
@@ -89,9 +95,11 @@ public class ClimberConstants {
         LOWER_WINCHED_POSITION = 0.0;
         UPPER_WINCHED_POSITION = 0.0;
         WINCHED_POSITION = 0.0;
+        WINCHED_SPEED = 0.0;
         LOWER_DEPLOYED_POSITION = 0.0;
         UPPER_DEPLOYED_POSITION = 0.0;
         DEPLOYED_POSITION = 0.0;
+        DEPLOYED_SPEED = 0.0;
         CLIMBER_LEADER_ID = 0;
         CLIMBER_FOLLOWER_ID = 0;
 
