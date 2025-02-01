@@ -196,10 +196,6 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    if (algae != null) {
-      operatorController.a().onTrue(algae.toggleArm());
-    }
-
     if (coral != null) {
       operatorController.b().whileTrue(coral.dumpCoral());
       operatorController.y().whileTrue(coral.intakeCoral());
