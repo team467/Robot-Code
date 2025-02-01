@@ -48,7 +48,6 @@ public class AlgaeEffectorIOSim implements AlgaeEffectorIO {
     inputs.removalVolts = removalMotorSimVolts;
     inputs.pivotVolts = pivotMotorSimVolts;
     inputs.pivotVelocity = pivotMotorSim.getAngularVelocity().in(Units.RadiansPerSecond);
-    inputs.removalVelocity = removalMotorSim.getAngularVelocity().in(Units.RadiansPerSecond);
     inputs.removalAmps = removalMotorSim.getCurrentDrawAmps();
     inputs.pivotAmps = pivotMotorSim.getCurrentDrawAmps();
   }

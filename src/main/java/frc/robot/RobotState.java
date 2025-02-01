@@ -34,6 +34,12 @@ public class RobotState {
   /** If the algae effector is running */
   @AutoLogOutput(key = "RobotState/AlgaeEffectorRunning")
   public boolean algaeEffectorRunning = false;
+  /** If the climber is up */
+  @AutoLogOutput(key = "RobotState/ClimberWinched")
+  public boolean climberWinched = false;
+  /** If the climber is down */
+  @AutoLogOutput(key = "RobotState/ClimberDeployed")
+  public boolean climberDeployed = false;
 
   @AutoLogOutput(key = "RobotState/ClimberStowed")
   public boolean climberStowed = false;
