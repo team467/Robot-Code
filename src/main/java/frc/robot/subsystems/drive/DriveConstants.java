@@ -25,11 +25,10 @@ public class DriveConstants {
       };
 
   // Zeroed rotation values for each module, see setup instructions
-  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(-0.7623884677886963);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.3911651074886322);
-  public static final Rotation2d backLeftZeroRotation =
-      new Rotation2d(-0.22702915966510773 + Math.PI);
-  public static final Rotation2d backRightZeroRotation = new Rotation2d(3.1155149936676025);
+  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0.7470486164093018);
+  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.18867963552474976);
+  public static final Rotation2d backLeftZeroRotation = new Rotation2d(-2.998932361602783);
+  public static final Rotation2d backRightZeroRotation = new Rotation2d(-0.08283495903015138);
 
   // Drive motor configuration
   public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
