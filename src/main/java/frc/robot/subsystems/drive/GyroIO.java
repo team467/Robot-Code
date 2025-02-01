@@ -16,7 +16,7 @@ public interface GyroIO {
     /*VectorA - Vector Angle, pVectorA - record previous value*/
     public double VectorAngle;
     public double previousVectorAngle;
-    public double VectorDiff;
+    public double vectorDiff;
   }
 
   public default void updateInputs(GyroIOInputs inputs) {}

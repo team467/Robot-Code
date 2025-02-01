@@ -55,7 +55,7 @@ public class GyroIOPigeon2 implements GyroIO {
                 + Math.pow(accelY.getValueAsDouble() * 9.8, 2.0),
             0.5);
     // difference in velocities from previous velocity and current velocity
-    inputs.VectorDiff = (inputs.VectorMagnitude - inputs.previousVectorMagnitude);
+    inputs.vectorDiff = (inputs.VectorMagnitude - inputs.previousVectorMagnitude);
     // records previous velocity before updating
     inputs.previousVectorAngle = inputs.VectorAngle;
     // using x and y accel values to see what direction the robot is heading

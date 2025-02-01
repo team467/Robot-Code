@@ -312,12 +312,12 @@ public class Drive extends SubsystemBase {
     Considers it significant if the difference is higher than 4.5.
     Then checks if vectorDiff is greater than 0.7 than the previous velocity*/
     RobotState.getInstance().collisionDetected =
-        gyroInputs.VectorDiff < 0
-            & Math.abs(gyroInputs.VectorDiff) > 4.5
-            & Math.abs(gyroInputs.VectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5);
+        gyroInputs.vectorDiff < 0
+            & Math.abs(gyroInputs.vectorDiff) > 4.5
+            & Math.abs(gyroInputs.vectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5);
     impactAlert.set(
-        gyroInputs.VectorDiff < 0
-            & Math.abs(gyroInputs.VectorDiff) > 4.5
-            & Math.abs(gyroInputs.VectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5));
+        gyroInputs.vectorDiff < 0
+            & Math.abs(gyroInputs.vectorDiff) > 4.5
+            & Math.abs(gyroInputs.vectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5));
   }
 }
