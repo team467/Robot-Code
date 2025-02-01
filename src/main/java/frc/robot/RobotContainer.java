@@ -96,7 +96,7 @@ public class RobotContainer {
         }
         case ROBOT_BRIEFCASE -> {
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-          coral = new CoralEffector(new CoralEffectorIOSparkMAX(2));
+          coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
       }
     }
@@ -141,7 +141,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    coral.setDefaultCommand(coral.stop());
+    if (coral != null) {
+      coral.setDefaultCommand(coral.stop());
+    }
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive

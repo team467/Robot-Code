@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class Constants {
   // Change this temporarily to override the RobotType, e.g. RobotType.ROBOT_SIMBOT
-  private static final RobotType ROBOT_TYPE_OVERRIDE = RobotType.ROBOT_BRIEFCASE;
+  private static final RobotType ROBOT_TYPE_OVERRIDE = RobotType.ROBOT_2025_COMP;
   public static final boolean tuningMode = false;
 
   private static final String ROBOT_FILENAME = "/home/lvuser/robot";

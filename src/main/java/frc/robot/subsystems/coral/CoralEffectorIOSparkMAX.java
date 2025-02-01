@@ -22,7 +22,7 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
   // private final RelativeEncoder effectorEncoder;
   private final DigitalInput photosensor;
 
-  public CoralEffectorIOSparkMAX(int i) {
+  public CoralEffectorIOSparkMAX() {
     motor = new SparkMax(coralMotorID, MotorType.kBrushless);
     encoder = motor.getEncoder();
     photosensor = new DigitalInput(hopperReflectorSensorDioId);
@@ -50,24 +50,5 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
         () ->
             motor.configure(
                 effectorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
-  }
-
-  public void updateInputs(CoralEffectorIOInputs inputs) {
-    inputs.appliedVolts = motor.getBusVoltage() * motor.getAppliedOutput();
-    inputs.currentAmps = motor.getOutputCurrent();
-    inputs.temperature = motor.getMotorTemperature();
-    inputs.velocity = motor.getAbsoluteEncoder().getVelocity();
-    inputs.hopperSeesCoral = photosensor.get();
-    inputs.hasCoral = motor.getForwardLimitSwitch().isPressed();
-  }
-
-  public void setVoltage(double volts) {
-    motor.setVoltage(volts);
-  }
-
-  @Override
-  public void setSpeed(double speed) {
-    System.out.println("Setting Speed: " + speed);
-    motor.set(speed);
   }
 }

@@ -24,7 +24,6 @@ public class CoralEffector extends SubsystemBase {
     robotState.intakingCoral = (inputs.appliedVolts != 0 && !inputs.hasCoral);
     robotState.hasCoral = inputs.hasCoral;
     robotState.hopperSeesCoral = inputs.hopperSeesCoral;
-    System.out.println(inputs.hopperSeesCoral);
     robotState.dumpingCoral = (inputs.appliedVolts != 0 && inputs.hopperSeesCoral);
   }
 
