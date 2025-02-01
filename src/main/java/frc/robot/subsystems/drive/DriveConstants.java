@@ -3,6 +3,7 @@ package frc.robot.subsystems.drive;
 import static frc.robot.Schematic.*;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,10 +12,10 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
-  public static final double maxSpeedMetersPerSec = Units.feetToMeters(16.6);
+  public static final double maxSpeedMetersPerSec = Units.feetToMeters(15.0);
   public static final double odometryFrequency = 100.0; // Hz
-  public static final double trackWidth = Units.inchesToMeters(20.5);
-  public static final double wheelBase = Units.inchesToMeters(20.5);
+  public static final double trackWidth = Units.inchesToMeters(23);
+  public static final double wheelBase = Units.inchesToMeters(23.5);
   public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
   public static final Translation2d[] moduleTranslations =
       new Translation2d[] {
@@ -32,11 +33,11 @@ public class DriveConstants {
 
   // Drive motor configuration
   public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
-      SwerveModuleConstants.ClosedLoopOutputType.Voltage;
-  public static final int driveMotorCurrentLimit = 50;
+      ClosedLoopOutputType.TorqueCurrentFOC;
+  public static final int driveMotorCurrentLimit = 120;
   public static final double wheelRadiusMeters = Units.inchesToMeters(2);
-  public static final double driveMotorReduction = 6.12;
-  public static final DCMotor driveGearbox = DCMotor.getNEO(1);
+  public static final double driveMotorReduction = 6.75;
+  public static final DCMotor driveGearbox = DCMotor.getKrakenX60Foc(1);
 
   // Drive encoder configuration
   public static final double driveEncoderPositionFactor =
@@ -45,10 +46,10 @@ public class DriveConstants {
       (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
 
   // Drive PID configuration
-  public static final double driveKp = 0.0;
+  public static final double driveKp = 20;
   public static final double driveKd = 0.0;
-  public static final double driveKs = 0.1559;
-  public static final double driveKv = 0.12854;
+  public static final double driveKs = 2.23;
+  public static final double driveKv = 0.0;
   public static final double driveKa = 0.0;
   public static final double driveSimP = 0.05;
   public static final double driveSimD = 0.0;
@@ -69,7 +70,7 @@ public class DriveConstants {
       (2 * Math.PI) / 60.0 / turnMotorReduction; // RPM -> Rad/Sec
 
   // Turn PID configuration
-  public static final double turnKp = 2.0;
+  public static final double turnKp = 3.5;
   public static final double turnKd = 0.0;
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
