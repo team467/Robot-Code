@@ -46,6 +46,14 @@ public class AlgaeEffector extends SubsystemBase {
         .until(() -> inputs.isStowed);
   }
 
+  public Command stowArmBypass() {
+    return Commands.run(
+        () -> {
+          io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE);
+          io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
+        });
+  }
+
   /** When the arm is extended, it starts the algae motor too */
   public Command removeAlgae() {
     return Commands.run(
