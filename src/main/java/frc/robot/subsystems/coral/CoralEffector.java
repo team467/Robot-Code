@@ -51,7 +51,7 @@ public class CoralEffector extends SubsystemBase {
               io.setSpeed(CoralEffectorConstants.CORAL_EFFECTOR_SPEED_OUT.get());
             },
             this)
-        .until(() -> !this.hasCoral());
+        .until(() -> this.hasCoral() == false); // /ITS FALSE
   }
 
   public Command intakeCoral() {

@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static frc.robot.Schematic.coralMotorID;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -20,11 +19,7 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
-// import frc.robot.subsystems.climber.Climber;
-// import frc.robot.subsystems.climber.ClimberIO;
-// import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.coral.CoralEffector;
-import frc.robot.subsystems.coral.CoralEffectorIOSim;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
@@ -43,7 +38,6 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private AlgaeEffector algae;
-  // private Climber climber;
   private CoralEffector coral;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -99,34 +93,24 @@ public class RobotContainer {
                   new ModuleIOSim());
 
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
-          coral = new CoralEffector(new CoralEffectorIOSim(0));
-          // climber = new Climber(new ClimberIOSim());
         }
         case ROBOT_BRIEFCASE -> {
-          if (coral == null) {
-            coral = new CoralEffector(new CoralEffectorIOSparkMAX(coralMotorID));
-          }
+          // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          coral = new CoralEffector(new CoralEffectorIOSparkMAX(2));
         }
       }
     }
 
     // Instantiate missing subsystems
-    //    if (drive == null) {
-    //      drive =
-    //          new Drive(
-    //              new GyroIO() {},
-    //              new ModuleIO() {},
-    //              new ModuleIO() {},
-    //              new ModuleIO() {},
-    //              new ModuleIO() {});
-    //    }
-    //    if (algae == null) {
-    //      algae = new AlgaeEffector(new AlgaeEffectorIO() {});
-    //    }
-
-    // if (climber == null) {
-    // climber = new Climber(new ClimberIO() {});
-    // }
+    if (drive == null) {
+      drive =
+          new Drive(
+              new GyroIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {});
+    }
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -180,14 +164,12 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    // operatorController.a().whileTrue(algae.removeAlgae());
-
-    // operatorController.b().onTrue(climber.winch());
+    if (algae != null) {
+      operatorController.a().onTrue(algae.toggleArm());
+    }
 
     if (coral != null) {
-      //      operatorController.x().onTrue(coral.dumpCoral());
-      //      operatorController.y().onTrue(coral.intakeCoral());
-      operatorController.x().whileTrue(coral.dumpCoral());
+      operatorController.b().whileTrue(coral.dumpCoral());
       operatorController.y().whileTrue(coral.intakeCoral());
     }
   }
