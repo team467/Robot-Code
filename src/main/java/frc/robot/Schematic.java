@@ -63,14 +63,14 @@ public class Schematic {
         frontRightTurnCanId = 6;
         backRightTurnCanId = 8;
 
-        frontLeftAbsoluteEncoderCanId = 10;
-        backLeftAbsoluteEncoderCanId = 11;
-        frontRightAbsoluteEncoderCanId = 12;
-        backRightAbsoluteEncoderCanId = 13;
+        frontLeftAbsoluteEncoderCanId = 18;
+        backLeftAbsoluteEncoderCanId = 21;
+        frontRightAbsoluteEncoderCanId = 19;
+        backRightAbsoluteEncoderCanId = 20;
 
         // Algae Effector (Motor IDs)
-        algaePivotCanId = 0;
-        algaeRemovalCanId = 0;
+        algaePivotCanId = 12;
+        algaeRemovalCanId = 13;
       }
 
       case ROBOT_BRIEFCASE -> {
