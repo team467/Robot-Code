@@ -64,15 +64,19 @@ public class CoralEffector extends SubsystemBase {
 
   public Command dumpCoralBypass() {
     return Commands.run(
-        () -> {
-          io.setSpeed(CoralEffectorConstants.CORAL_EFFECTOR_SPEED_OUT.get());
-        });
+            () -> {
+              io.setSpeed(CoralEffectorConstants.CORAL_EFFECTOR_SPEED_OUT.get());
+            },
+            this)
+        .withTimeout(3);
   }
 
   public Command intakeCoralBypass() {
     return Commands.run(
-        () -> {
-          io.setSpeed(CoralEffectorConstants.CORAL_INTAKE_SPEED.get());
-        });
+            () -> {
+              io.setSpeed(CoralEffectorConstants.CORAL_INTAKE_SPEED.get());
+            },
+            this)
+        .withTimeout(3);
   }
 }
