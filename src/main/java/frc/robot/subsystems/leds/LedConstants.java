@@ -6,7 +6,7 @@ public class LedConstants {
   public static final int LED_CHANNEL;
   public static final int LED_COUNT;
 
-  public static final int LENGTH = 40;
+  public static final int LENGTH = 10; // for briefcase
 
   static {
     switch (Constants.getRobot()) {

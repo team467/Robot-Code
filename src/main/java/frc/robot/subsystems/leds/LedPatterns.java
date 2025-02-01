@@ -56,8 +56,8 @@ public enum LedPatterns {
   STRIPE_FRC(
       LEDPattern.steps(Map.of(0, Color.kFirstBlue, 0.33, Color.kWhite, 0.66, Color.kFirstRed)));
 
-  private static final double BREATH_TIME = 10.0;
-  private static final double STROBE_TIME = 10.0;
+  private static final double BREATH_TIME = 3.0;
+  private static final double STROBE_TIME = 1.0;
   private static final Distance LED_SPACING = Meters.of(1 / 60.0);
 
   private final LEDPattern colorPattern;
