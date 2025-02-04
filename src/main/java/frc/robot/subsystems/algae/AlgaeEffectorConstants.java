@@ -19,4 +19,8 @@ public class AlgaeEffectorConstants {
 
   public static double NEO_PULSES_PER_REVOLUTION = 42;
   public static double PIVOT_GEAR_RATIO = 1;
+
+  public static final int PIVOT_MOTOR_CURRENT_LIMIT = 6;
+  
+  public static final int REMOVAL_MOTOR_CURRENT_LIMIT = 6;
 }
