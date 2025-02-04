@@ -24,7 +24,6 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.coral.CoralEffector;
-import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -104,7 +103,7 @@ public class RobotContainer {
         }
         case ROBOT_BRIEFCASE -> {
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-          coral = new CoralEffector(new CoralEffectorIOSparkMAX());
+          // coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
       }
     }
@@ -163,7 +162,7 @@ public class RobotContainer {
       coral.setDefaultCommand(coral.stop());
     }
 
-    algae.setDefaultCommand(algae.stowArm());
+    algae.setDefaultCommand(algae.stop());
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
@@ -202,6 +201,7 @@ public class RobotContainer {
       operatorController.y().whileTrue(coral.intakeCoral());
     }
     operatorController.a().whileTrue(algae.removeAlgae());
+    operatorController.x().whileTrue(algae.stowArm());
 
     operatorController.b().onTrue(climber.winch());
   }
