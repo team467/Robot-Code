@@ -112,7 +112,7 @@ public class Elevator extends SubsystemBase {
     return Commands.run(
         () -> {
           Logger.recordOutput("Elevator/DesiredVolts", percent * 12);
-          io.setVoltage(percent * 12);
+          io.setPercent(percent);
           feedbackMode = false;
         },
         this);

@@ -22,6 +22,9 @@ public class Schematic {
   // Algae Effector (Motor IDs)
   public static final int algaePivotCanId;
   public static final int algaeRemovalCanId;
+  // Coral Effector (Motor IDs)
+  public static final int hopperReflectorSensorDioId;
+  public static final int coralMotorID;
 
   static {
     switch (Constants.getRobot()) {
@@ -46,6 +49,9 @@ public class Schematic {
 
         algaePivotCanId = 0;
         algaeRemovalCanId = 0;
+
+        hopperReflectorSensorDioId = 0;
+        coralMotorID = 0;
       }
       case ROBOT_2025_COMP -> {
         // Device CAN IDs
@@ -69,8 +75,11 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 20;
 
         // Algae Effector (Motor IDs)
-        algaePivotCanId = 12;
-        algaeRemovalCanId = 13;
+        algaePivotCanId = 0;
+        algaeRemovalCanId = 0;
+
+        hopperReflectorSensorDioId = 0;
+        coralMotorID = 0;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -95,6 +104,9 @@ public class Schematic {
         // Algae Effector (Motor IDs)
         algaePivotCanId = 2;
         algaeRemovalCanId = 1;
+
+        coralMotorID = 2;
+        hopperReflectorSensorDioId = 9;
       }
 
       default -> {
@@ -119,6 +131,9 @@ public class Schematic {
         // Algae Effector (Motor IDs)
         algaePivotCanId = 0;
         algaeRemovalCanId = 0;
+
+        hopperReflectorSensorDioId = 0;
+        coralMotorID = 0;
       }
     }
   }

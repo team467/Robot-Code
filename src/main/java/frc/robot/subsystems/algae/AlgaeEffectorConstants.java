@@ -2,11 +2,11 @@ package frc.robot.subsystems.algae;
 
 public class AlgaeEffectorConstants {
   public static final double STOW_ANGLE = 0.0;
-  public static final double REMOVAL_ANGLE = 0.0;
+  public static final double REMOVAL_ANGLE = 10.0;
 
-  public static final double REMOVAL_VOLTAGE = -6.0;
-  public static final double EXTEND_VOLTAGE = 4.0;
-  public static final double RETRACT_VOLTAGE = -4.0;
+  public static final double REMOVAL_VOLTAGE = -0.5;
+  public static final double EXTEND_VOLTAGE = 0.5;
+  public static final double RETRACT_VOLTAGE = -0.5;
   public static final double ZERO_VOLTAGE = 0;
 
   public static double PIVOT_ANGLE_KS = 1.0;
@@ -19,4 +19,8 @@ public class AlgaeEffectorConstants {
 
   public static double NEO_PULSES_PER_REVOLUTION = 42;
   public static double PIVOT_GEAR_RATIO = 1;
+
+  public static final int PIVOT_MOTOR_CURRENT_LIMIT = 6;
+  
+  public static final int REMOVAL_MOTOR_CURRENT_LIMIT = 6;
 }
