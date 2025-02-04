@@ -116,6 +116,11 @@ public class Elevator extends SubsystemBase {
 
     if (inputs.limitSwitchPressed) {
       io.resetPosition();
+      if (!isCalibrated) {
+        loop.reset(VecBuilder.fill(ElevatorConstants.STOW, inputs.velocityMetersPerSec));
+        lastProfiledReference = new State(ElevatorConstants.STOW, inputs.velocityMetersPerSec);
+        isCalibrated = true;
+      }
     }
 
     Logger.recordOutput("Elevator/PIDEnabled", feedbackMode);
