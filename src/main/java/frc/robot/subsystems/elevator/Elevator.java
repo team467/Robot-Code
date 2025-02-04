@@ -25,8 +25,8 @@ public class Elevator extends SubsystemBase {
   private final ElevatorIOInputsAutoLogged inputs;
 
   private TrapezoidProfile profile;
-  private TrapezoidProfile.State lastProfiledReference = new TrapezoidProfile.State();
-  private TrapezoidProfile.State goal;
+  private TrapezoidProfile.State lastProfiledReference;
+  private TrapezoidProfile.State goal = new TrapezoidProfile.State();
   private final LinearSystem<N2, N1, N2> elevatorPlant;
   private final KalmanFilter<N2, N1, N1> observer;
   private final LinearQuadraticRegulator<N2, N1, N1> controller;
