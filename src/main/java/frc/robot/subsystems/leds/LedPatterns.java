@@ -74,8 +74,20 @@ public enum LedPatterns {
     return colorPattern.breathe(Seconds.of(BREATH_TIME));
   }
 
+  public LEDPattern breathe(double time) {
+    return colorPattern.breathe(Seconds.of(time));
+  }
+
   public LEDPattern scroll() {
     return colorPattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
+  }
+
+  public LEDPattern overlayon(LEDPattern base) {
+    return colorPattern.overlayOn(base);
+  }
+
+  public LEDPattern blend(LEDPattern other) {
+    return colorPattern.blend(other);
   }
 
   private LedPatterns(LEDPattern colorPattern) {

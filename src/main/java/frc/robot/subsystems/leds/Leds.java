@@ -23,7 +23,11 @@ public class Leds extends SubsystemBase {
     NONE,
     BLINK,
     BREATHE,
-    SCROLL
+    SCROLL,
+    BLEND,
+    OVERLAY,
+    BREATHE_BLEND,
+    BREATHE_OVERLAY;
   }
 
   public enum Sections {
@@ -41,6 +45,7 @@ public class Leds extends SubsystemBase {
 
   private GenericEntry enableTestEntry;
   private SendableChooser<LedPatterns> testPattern;
+  private SendableChooser<LedPatterns> testPattern2;
   private SendableChooser<Animations> testAnimation;
   private SendableChooser<Sections> testSection;
   private GenericEntry testReverse;
@@ -70,6 +75,7 @@ public class Leds extends SubsystemBase {
     if (enableTestEntry.getBoolean(false)) {
       try {
         LedPatterns pattern = testPattern.getSelected();
+        LedPatterns pattern2 = testPattern2.getSelected();
         Animations animation = testAnimation.getSelected();
         applySection = testSection.getSelected();
         isReversed = testReverse.getBoolean(false);
@@ -78,6 +84,10 @@ public class Leds extends SubsystemBase {
           case BLINK -> currentPattern = pattern.blink();
           case BREATHE -> currentPattern = pattern.breathe();
           case SCROLL -> currentPattern = pattern.scroll();
+          case BLEND -> currentPattern = pattern.blend(pattern2.colorPatternOnly());
+          case OVERLAY -> currentPattern = pattern.overlayon(pattern2.colorPatternOnly());
+          case BREATHE_BLEND -> currentPattern = pattern.breathe().blend(pattern2.breathe(1.5));
+          case BREATHE_OVERLAY -> currentPattern = pattern.breathe().overlayOn(pattern2.breathe());
           default -> currentPattern = pattern.colorPatternOnly();
         }
       } catch (IllegalArgumentException E) {
@@ -115,6 +125,7 @@ public class Leds extends SubsystemBase {
             currentPattern.applyTo(middle);
           }
         }
+
         case RIGHT -> {
           if (isReversed) {
             currentPattern.applyTo(right.reversed());
@@ -152,6 +163,16 @@ public class Leds extends SubsystemBase {
     testPattern.setDefaultOption("BLACK", LedPatterns.BLACK);
     ledTestingLayout
         .add("Test Pattern", testPattern)
+        .withWidget(BuiltInWidgets.kComboBoxChooser)
+        .withPosition(0, 1);
+
+    testPattern2 = new SendableChooser<LedPatterns>();
+    for (LedPatterns pattern : LedPatterns.values()) {
+      testPattern2.addOption(pattern.toString(), pattern);
+    }
+    testPattern2.setDefaultOption("BLACK", LedPatterns.BLACK);
+    ledTestingLayout
+        .add("Test Pattern2", testPattern2)
         .withWidget(BuiltInWidgets.kComboBoxChooser)
         .withPosition(0, 1);
 
