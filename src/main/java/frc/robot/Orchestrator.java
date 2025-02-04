@@ -38,17 +38,11 @@ public class Orchestrator {
   }
 
   public Command duck() {
-    return Commands.run(
-            () -> {
-              robotState.duck = true;
-            })
-        .andThen(elevator.toSetpoint(ElevatorConstants.DUCK_POSITION));
+    return elevator.toSetpoint(ElevatorConstants.DUCK_POSITION);
   }
 
   public Command intake() {
-    //get the closest Coral Station
-    boolean leftStation = false;
-    return new StraightDriveToPose(getCoralStationPosition(leftStation), drive)
+    return new StraightDriveToPose(getClosestCoralStationPosition(), drive)
         .andThen(
             elevator
                 .toSetpoint(ElevatorConstants.INTAKE_POSITION)
@@ -63,40 +57,68 @@ public class Orchestrator {
         .andThen(elevator.toSetpoint(getCoralHeight(level)).until(elevator::atSetpoint))
         .andThen(coralEffector.dumpCoral());
   }
-  public Command removeAlgae(int level){
-    return new StraightDriveToPose(getBranchPosition(false), drive).andThen(elevator.toSetpoint(getAlgaeHeight(
-        level))).until(elevator::atSetpoint).andThen(algaeEffector.removeAlgae()).andThen(algaeEffector.stowArm());
+
+  public Command removeAlgae(int level) {
+    return new StraightDriveToPose(getBranchPosition(false), drive).andThen(
+            elevator.toSetpoint(getAlgaeHeight(
+                level))).until(elevator::atSetpoint).andThen(algaeEffector.removeAlgae())
+        .andThen(algaeEffector.stowArm());
   }
 
   public double getCoralHeight(int level) {
     //The default branch we want
     return switch (level) {
-        case 1 -> ReefHeight.L1.height;
-        case 2 -> ReefHeight.L2.height;
-        case 3 -> ReefHeight.L3.height;
-        case 4 -> ReefHeight.L4.height;
-        default -> 0.0;
+      case 1 -> ReefHeight.L1.height;
+      case 2 -> ReefHeight.L2.height;
+      case 3 -> ReefHeight.L3.height;
+      case 4 -> ReefHeight.L4.height;
+      default -> 0.0;
     }; // subtract offset
   }
-  public double getAlgaeHeight(int level){
-      //double Algae offset
-      double offset = 0.0;
-      //The default branch we want
-      double height = switch (level) {
-          case 1, 2 -> ReefHeight.L2.height;
-          case 3, 4 -> ReefHeight.L3.height;
-          default -> 0.0;
-      };
-      return height + offset;
+
+  public double getAlgaeHeight(int level) {
+    //double Algae offset
+    double offset = 0.0;
+    //The default branch we want
+    double height = switch (level) {
+      case 1, 2 -> ReefHeight.L2.height;
+      case 3, 4 -> ReefHeight.L3.height;
+      default -> 0.0;
+    };
+    return height + offset;
   }
-  public Pose2d getBranchPosition(boolean branchLeft){
-    //get face
-    int branch = 6; //face
-    if(!branchLeft){
+
+  public Pose2d getBranchPosition(boolean branchLeft) {
+    int branch = closestReefFace();
+    if (!branchLeft) {
       branch++;
     }
     return Reef.branchPositions.get(branch).get(ReefHeight.L1).toPose2d();
   }
-  public Pose2d getCoralStationPosition(boolean leftStation){
-    return leftStation ? CoralStation.leftCenterFace : CoralStation.rightCenterFace;
-  }}
+
+  public Pose2d getClosestCoralStationPosition() {
+
+    return closerToLeftCoralStation() ? CoralStation.leftCenterFace : CoralStation.rightCenterFace;
+  }
+  public boolean closerToLeftCoralStation(){
+    double distanceToLeftStation = Math.hypot(Math.abs(drive.getPose().minus(CoralStation.leftCenterFace).getX()), Math.abs(drive.getPose().minus(CoralStation.leftCenterFace).getY()));
+    double distanceToRightStation = Math.hypot(Math.abs(drive.getPose().minus(CoralStation.rightCenterFace).getX()), Math.abs(drive.getPose().minus(CoralStation.rightCenterFace).getY()));
+    return(distanceToLeftStation < distanceToRightStation);
+  }
+  public int closestReefFace(){
+    double[] reefFaceDistances = new double[6];
+
+    for(int i=0; i<6; i++) {
+      reefFaceDistances[i] = Math.abs(
+          drive.getPose().minus(FieldConstants.Reef.centerFaces[i]).getX());
+    }
+    int closestFace = 0;
+
+    for (int i = 0; i < reefFaceDistances.length; i++) {
+      if (reefFaceDistances[i] < closestFace) {
+        closestFace = i;
+      }
+    }
+    return closestFace + 1;
+  }
+}
