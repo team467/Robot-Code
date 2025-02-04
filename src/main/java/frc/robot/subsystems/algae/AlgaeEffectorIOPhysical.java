@@ -43,6 +43,8 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
             * AlgaeEffectorConstants.PIVOT_GEAR_RATIO);
     pivotMotorConfig.apply(pivotEncoderConfig);
 
+    pivotMotorConfig.smartCurrentLimit(AlgaeEffectorConstants.PIVOT_MOTOR_CURRENT_LIMIT);
+
     tryUntilOk(
         pivotMotor,
         5,
@@ -54,6 +56,8 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
     removalMotorConfig.idleMode(IdleMode.kBrake);
     removalMotorConfig.inverted(AlgaeEffectorConstants.REMOVAL_INVERTED);
     removalMotorConfig.voltageCompensation(12);
+
+    removalMotorConfig.smartCurrentLimit(AlgaeEffectorConstants.REMOVAL_MOTOR_CURRENT_LIMIT);
 
     tryUntilOk(
         removalMotor,
