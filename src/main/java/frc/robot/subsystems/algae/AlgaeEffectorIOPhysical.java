@@ -20,7 +20,7 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
   private final SparkMax pivotMotor;
   private final SparkMax removalMotor;
   private final RelativeEncoder pivotMotorEncoder;
-  private final SparkLimitSwitch forwardLimitSwitch;
+
   private final SparkLimitSwitch reverseLimitSwitch;
 
   public AlgaeEffectorIOPhysical() {
@@ -29,7 +29,6 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
 
     pivotMotorEncoder = pivotMotor.getEncoder();
 
-    forwardLimitSwitch = pivotMotor.getForwardLimitSwitch();
     reverseLimitSwitch = pivotMotor.getReverseLimitSwitch();
 
     SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
@@ -81,9 +80,13 @@ public class AlgaeEffectorIOPhysical implements AlgaeEffectorIO {
     inputs.removalAmps = removalMotor.getOutputCurrent();
     inputs.pivotAmps = pivotMotor.getOutputCurrent();
     inputs.pivotPosition = pivotMotorEncoder.getPosition();
-    inputs.isFullyExtended = forwardLimitSwitch.isPressed();
+    inputs.isFullyExtended = pivotMotorEncoder.getPosition() > AlgaeEffectorConstants.REMOVAL_ANGLE;
+
     inputs.isStowed = reverseLimitSwitch.isPressed();
     inputs.pivotMotorTemp = pivotMotor.getMotorTemperature();
     inputs.removalMotorTemp = removalMotor.getMotorTemperature();
+    if (inputs.isStowed) {
+      pivotMotorEncoder.setPosition(0.0);
+    }
   }
 }
