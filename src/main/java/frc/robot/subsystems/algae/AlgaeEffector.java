@@ -43,7 +43,9 @@ public class AlgaeEffector extends SubsystemBase {
               io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
             },
             this)
-        .until(() -> inputs.isStowed);
+        .until(() -> inputs.isStowed)
+        .withTimeout(3)
+        .andThen(stop());
   }
 
   /** When the arm is extended, it starts the algae motor too */
