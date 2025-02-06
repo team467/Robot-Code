@@ -28,6 +28,8 @@ public class GyroIOPigeon2 implements GyroIO {
   private final StatusSignal<AngularVelocity> yawVelocity = pigeon.getAngularVelocityZWorld();
   private final StatusSignal<LinearAcceleration> accelX = pigeon.getAccelerationX();
   private final StatusSignal<LinearAcceleration> accelY = pigeon.getAccelerationY();
+  private final StatusSignal<Angle> RobotPitch = pigeon.getPitch();
+  private final StatusSignal<Angle> RobotRoll = pigeon.getRoll();
 
   public GyroIOPigeon2() {
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
@@ -39,12 +41,15 @@ public class GyroIOPigeon2 implements GyroIO {
     yawPositionQueue = OdometryThread.getInstance().registerSignal(yaw::getValueAsDouble);
     accelX.setUpdateFrequency(50.0);
     accelY.setUpdateFrequency(50.0);
+    RobotPitch.setUpdateFrequency(50.0);
+    RobotRoll.setUpdateFrequency(50.0);
   }
 
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     inputs.connected =
-        BaseStatusSignal.refreshAll(yaw, yawVelocity, accelX, accelY).equals(StatusCode.OK);
+        BaseStatusSignal.refreshAll(yaw, yawVelocity, accelX, accelY, RobotRoll, RobotPitch)
+            .equals(StatusCode.OK);
     inputs.yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble());
     inputs.yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble());
     inputs.previousVectorMagnitude = inputs.VectorMagnitude;
@@ -67,6 +72,11 @@ public class GyroIOPigeon2 implements GyroIO {
         yawPositionQueue.stream()
             .map((Double value) -> Rotation2d.fromDegrees(value))
             .toArray(Rotation2d[]::new);
+    inputs.prevRoll = inputs.Roll;
+    inputs.Roll = RobotRoll.getValueAsDouble();
+    inputs.prevPitch = inputs.Pitch;
+    inputs.Pitch = RobotPitch.getValueAsDouble();
+
     yawTimestampQueue.clear();
     yawPositionQueue.clear();
   }
