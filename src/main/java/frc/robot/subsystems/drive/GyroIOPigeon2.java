@@ -72,9 +72,7 @@ public class GyroIOPigeon2 implements GyroIO {
         yawPositionQueue.stream()
             .map((Double value) -> Rotation2d.fromDegrees(value))
             .toArray(Rotation2d[]::new);
-    inputs.prevRoll = inputs.Roll;
     inputs.Roll = RobotRoll.getValueAsDouble();
-    inputs.prevPitch = inputs.Pitch;
     inputs.Pitch = RobotPitch.getValueAsDouble();
 
     yawTimestampQueue.clear();
