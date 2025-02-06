@@ -55,7 +55,7 @@ public class Orchestrator {
         .andThen(
             elevator
                 .toSetpoint(ElevatorConstants.INTAKE_POSITION)
-                .withTimeout(5)
+                .withTimeout(4)
                 .until(() -> elevator.atSetpoint() && robotState.hopperSeesCoral))
         .andThen(coralEffector.intakeCoral());
   }
