@@ -41,8 +41,9 @@ public class Drive extends SubsystemBase {
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Alert impactAlert =
       new Alert("Impact Detected, lowering elevator to prevent flipping.", AlertType.kWarning);
-  private final Alert tiltAlert = 
-      new Alert(("Tilt Threshold reached, lowering elevator to prevent flipping"),AlertType.kWarning);
+  private final Alert tiltAlert =
+      new Alert(
+          ("Tilt Threshold reached, lowering elevator to prevent flipping"), AlertType.kWarning);
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
   private final Alert gyroDisconnectedAlert =
@@ -322,9 +323,10 @@ public class Drive extends SubsystemBase {
             & Math.abs(gyroInputs.vectorDiff) > 4.5
             & Math.abs(gyroInputs.vectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5));
   }
-  public void checkForTilt() {
-      RobotState.getInstance().robotTilted = Math.abs(gyroInputs.Pitch) >= pitchThreshold || Math.abs(gyroInputs.Roll) >= rollThreshhold;
-      tiltAlert.set(RobotState.getInstance().robotTilted);
-    }
-  }
 
+  public void checkForTilt() {
+    RobotState.getInstance().robotTilted =
+        Math.abs(gyroInputs.Pitch) >= pitchThreshold || Math.abs(gyroInputs.Roll) >= rollThreshhold;
+    tiltAlert.set(RobotState.getInstance().robotTilted);
+  }
+}

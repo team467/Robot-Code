@@ -94,7 +94,7 @@ public class DriveConstants {
               driveMotorCurrentLimit,
               1),
           moduleTranslations);
-//Requirements for RobotTilt to trigger
-public static final double rollThreshhold = 10.0;
-public static final double pitchThreshold = 10.0;
+  // Requirements for RobotTilt to trigger
+  public static final double rollThreshhold = 10.0;
+  public static final double pitchThreshold = 10.0;
 }
