@@ -50,8 +50,8 @@ public class Schematic {
         algaePivotCanId = 12;
         algaeRemovalCanId = 13;
 
-        hopperReflectorSensorDioId = 0;
-        coralMotorID = 0;
+        hopperReflectorSensorDioId = 9;
+        coralMotorID = 24;
       }
       case ROBOT_2025_COMP -> {
         // Device CAN IDs
@@ -78,8 +78,8 @@ public class Schematic {
         algaePivotCanId = 12;
         algaeRemovalCanId = 13;
 
-        hopperReflectorSensorDioId = 0;
-        coralMotorID = 0;
+        hopperReflectorSensorDioId = 9;
+        coralMotorID = 14;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -105,7 +105,7 @@ public class Schematic {
         algaePivotCanId = 2;
         algaeRemovalCanId = 1;
 
-        coralMotorID = 2;
+        coralMotorID = 14;
         hopperReflectorSensorDioId = 9;
       }
 
@@ -133,7 +133,7 @@ public class Schematic {
         algaeRemovalCanId = 0;
 
         hopperReflectorSensorDioId = 0;
-        coralMotorID = 0;
+        coralMotorID = 14;
       }
     }
   }
