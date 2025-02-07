@@ -97,7 +97,7 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(1),
                   new ModuleIOTalonSpark(2),
                   new ModuleIOTalonSpark(3));
-              coral = new CoralEffector(new CoralEffectorIOSparkMAX());
+          coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
 
         case ROBOT_SIMBOT -> {
