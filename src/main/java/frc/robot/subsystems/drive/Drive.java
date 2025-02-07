@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.RobotState;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -38,12 +39,13 @@ public class Drive extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+  private final Alert impactAlert =
+      new Alert("Impact Detected, lowering elevator to prevent flipping.", AlertType.kWarning);
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
-  private final Alert impactAlert =
-      new Alert("Impact Detected, lowering elevator to prevent flipping.", AlertType.kWarning);
+
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
   private Rotation2d rawGyroRotation = Rotation2d.kZero;
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -268,18 +270,18 @@ public class Drive extends SubsystemBase {
     return output;
   }
 
-  /** Returns the currentAmps odometry pose. */
+  /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
 
-  /** Returns the currentAmps odometry rotation. */
+  /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
   }
 
-  /** Resets the currentAmps odometry pose. */
+  /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
@@ -304,12 +306,18 @@ public class Drive extends SubsystemBase {
   }
 
   public void checkForImpact() {
-    double mDifference = Math.abs(gyroInputs.VectorM - gyroInputs.pVectorM);
+    /*double mDifference = Math.abs(gyroInputs.VectorM - gyroInputs.pVectorM);
     double aDifference = Math.abs(gyroInputs.VectorA - gyroInputs.pVectorA);
-    Logger.recordOutput(
-        "RobotState/ImpactDetected",
-        mDifference < 0 & mDifference > (gyroInputs.pVectorM * 0.75) & aDifference < 10);
+    Checks if the difference between velocity in previous periodic cycle and current periodic cycle.
+    Considers it significant if the difference is higher than 4.5.
+    Then checks if vectorDiff is greater than 0.7 than the previous velocity*/
+    RobotState.getInstance().collisionDetected =
+        gyroInputs.vectorDiff < 0
+            & Math.abs(gyroInputs.vectorDiff) > 4.5
+            & Math.abs(gyroInputs.vectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5);
     impactAlert.set(
-        mDifference < 0 & mDifference > (gyroInputs.pVectorM * 0.75) & aDifference < 10);
+        gyroInputs.vectorDiff < 0
+            & Math.abs(gyroInputs.vectorDiff) > 4.5
+            & Math.abs(gyroInputs.vectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5));
   }
 }

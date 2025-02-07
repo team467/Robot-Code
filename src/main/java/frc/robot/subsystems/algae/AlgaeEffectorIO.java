@@ -8,11 +8,13 @@ public interface AlgaeEffectorIO {
     // removal
     public double removalAmps;
     public double removalVolts;
+    public double removalMotorTemp;
     // pivot
     public double pivotVelocity;
     public double pivotAmps;
     public double pivotVolts;
     public double pivotPosition;
+    public double pivotMotorTemp;
     // limit switches
     public boolean isFullyExtended = false;
     public boolean isStowed = false;

@@ -41,15 +41,22 @@ public class AlgaeEffector extends SubsystemBase {
             () -> {
               io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE);
               io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
-            })
-        .until(() -> inputs.isStowed);
+            },
+            this)
+        .until(() -> inputs.isStowed)
+        .withTimeout(3)
+        .andThen(stop());
   }
 
   /** When the arm is extended, it starts the algae motor too */
   public Command removeAlgae() {
     return Commands.run(
         () -> {
-          io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
+          if (isFullyExtended() == false) {
+            io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
+          } else {
+            io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
+          }
           io.setRemovalVolts(AlgaeEffectorConstants.REMOVAL_VOLTAGE);
         },
         this).until(() -> inputs.pivotPosition >= AlgaeEffectorConstants.REMOVAL_ANGLE);

@@ -28,24 +28,24 @@ public class Schematic {
 
   static {
     switch (Constants.getRobot()) {
-      case ROBOT_2024_COMP -> {
+      case ROBOT_2025_TEST -> {
         // Drive (CAN IDs)
-        pigeonCanId = 9;
+        pigeonCanId = 17;
 
         frontLeftDriveCanId = 1;
-        backLeftDriveCanId = 3;
-        frontRightDriveCanId = 5;
+        backLeftDriveCanId = 5;
+        frontRightDriveCanId = 3;
         backRightDriveCanId = 7;
 
         frontLeftTurnCanId = 2;
-        backLeftTurnCanId = 4;
-        frontRightTurnCanId = 6;
+        backLeftTurnCanId = 6;
+        frontRightTurnCanId = 4;
         backRightTurnCanId = 8;
 
-        frontLeftAbsoluteEncoderCanId = 10;
-        backLeftAbsoluteEncoderCanId = 11;
-        frontRightAbsoluteEncoderCanId = 12;
-        backRightAbsoluteEncoderCanId = 13;
+        frontLeftAbsoluteEncoderCanId = 21;
+        backLeftAbsoluteEncoderCanId = 20;
+        frontRightAbsoluteEncoderCanId = 18;
+        backRightAbsoluteEncoderCanId = 19;
 
         algaePivotCanId = 0;
         algaeRemovalCanId = 0;
@@ -54,9 +54,10 @@ public class Schematic {
         coralMotorID = 0;
       }
       case ROBOT_2025_COMP -> {
+        // Device CAN IDs
         // TODO: Change for 2025 as needed
         // Drive (CAN IDs)
-        pigeonCanId = 9;
+        pigeonCanId = 17;
 
         frontLeftDriveCanId = 1;
         backLeftDriveCanId = 3;
@@ -101,10 +102,10 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 0;
 
         // Algae Effector (Motor IDs)
-        algaePivotCanId = 1;
-        algaeRemovalCanId = 2;
+        algaePivotCanId = 2;
+        algaeRemovalCanId = 1;
 
-        coralMotorID = 0;
+        coralMotorID = 2;
         hopperReflectorSensorDioId = 9;
       }
 

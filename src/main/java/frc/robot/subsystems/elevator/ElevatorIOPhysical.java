@@ -42,4 +42,14 @@ public class ElevatorIOPhysical implements ElevatorIO {
     inputs.positionMeters = Encoder.getPosition();
     inputs.limitSwitchPressed = elevatorStowLimitSwitch.isPressed();
   }
+
+  @Override
+  public void setPercent(double percent) {
+    Spark.set(percent);
+  }
+
+  @Override
+  public void setVoltage(double volts) {
+    Spark.setVoltage(volts);
+  }
 }

@@ -19,14 +19,15 @@ import java.util.Map;
  *
  * <p>All translations and poses are stored with the origin at the rightmost point on the BLUE
  * ALLIANCE wall. Use the {@link frc.lib.utils.AllianceFlipUtil#apply(Translation2d)} and {@link
- * frc.lib.utils.AllianceFlipUtil#apply(Pose2d)} methods to flip these values based on the
- * currentAmps alliance color.
+ * frc.lib.utils.AllianceFlipUtil#apply(Pose2d)} methods to flip these values based on the current
+ * alliance color.
  */
 public class FieldConstants {
   public static final double fieldLength = Units.inchesToMeters(690.876);
   public static final double fieldWidth = Units.inchesToMeters(317);
   public static final double startingLineX =
       Units.inchesToMeters(299.438); // Measured from the inside of starting line
+  public static final double algaeDiameter = Units.inchesToMeters(16);
 
   public static class Processor {
     public static final Pose2d centerFace =
@@ -143,8 +144,8 @@ public class FieldConstants {
                       Units.degreesToRadians(level.pitch),
                       poseDirection.getRotation().getRadians())));
         }
-        branchPositions.add((face * 2) + 1, fillRight);
-        branchPositions.add((face * 2) + 2, fillLeft);
+        branchPositions.add(fillRight);
+        branchPositions.add(fillLeft);
       }
     }
   }

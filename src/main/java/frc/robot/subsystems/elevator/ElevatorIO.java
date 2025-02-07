@@ -16,5 +16,7 @@ public interface ElevatorIO {
 
   default void setVoltage(double volts) {}
 
+  default void setPercent(double percent) {}
+
   default void resetPosition() {}
 }
