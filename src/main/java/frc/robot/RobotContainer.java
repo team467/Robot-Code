@@ -171,7 +171,8 @@ public class RobotContainer {
       coral.setDefaultCommand(coral.stop());
     }
 
-    algae.setDefaultCommand(algae.stop());
+    // algae.setDefaultCommand(algae.stop());
+    algae.setDefaultCommand(algae.stowArm());
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
