@@ -32,16 +32,18 @@ public class Leds extends SubsystemBase {
 
   public enum Sections {
     FULL,
-    LEFT,
-    MIDDLE,
-    RIGHT
+    FIRST,
+    MIDDLE_1,
+    MIDDLE_2,
+    LAST
   }
 
   private final AddressableLED leds;
   private final AddressableLEDBuffer buffer;
-  private final AddressableLEDBufferView left;
-  private final AddressableLEDBufferView right;
-  private final AddressableLEDBufferView middle;
+  private final AddressableLEDBufferView first;
+  private final AddressableLEDBufferView middle1;
+  private final AddressableLEDBufferView middle2;
+  private final AddressableLEDBufferView last;
 
   private GenericEntry enableTestEntry;
   private SendableChooser<LedPatterns> testPattern;
@@ -51,15 +53,16 @@ public class Leds extends SubsystemBase {
   private GenericEntry testReverse;
 
   private LEDPattern currentPattern = LedPatterns.BLACK.colorPatternOnly();
-  Sections applySection = Sections.FULL;
-  Boolean isReversed = false;
+  private Sections applySection = Sections.FULL;
+  private Boolean isReversed = false;
 
   public Leds() {
 
     buffer = new AddressableLEDBuffer(LedConstants.LENGTH);
-    left = buffer.createView(0, LedConstants.LENGTH / 2 - 1);
-    middle = buffer.createView(LedConstants.LENGTH / 3, LedConstants.LENGTH * 2 / 3 - 1);
-    right = buffer.createView(LedConstants.LENGTH / 2, LedConstants.LENGTH - 1);
+    first = buffer.createView(0, LedConstants.LENGTH / 4 - 1);
+    middle1 = buffer.createView(LedConstants.LENGTH / 4, LedConstants.LENGTH / 2 - 1);
+    middle2 = buffer.createView(LedConstants.LENGTH / 2, LedConstants.LENGTH * 3 / 4 - 1);
+    last = buffer.createView(LedConstants.LENGTH * 3 / 4, LedConstants.LENGTH - 1);
 
     leds = new AddressableLED(LedConstants.LED_CHANNEL);
     leds.setLength(LedConstants.LENGTH);
@@ -73,70 +76,88 @@ public class Leds extends SubsystemBase {
   public void periodic() {
 
     if (enableTestEntry.getBoolean(false)) {
-      try {
-        LedPatterns pattern = testPattern.getSelected();
-        LedPatterns pattern2 = testPattern2.getSelected();
-        Animations animation = testAnimation.getSelected();
-        applySection = testSection.getSelected();
-        isReversed = testReverse.getBoolean(false);
-
-        switch (animation) {
-          case BLINK -> currentPattern = pattern.blink();
-          case BREATHE -> currentPattern = pattern.breathe();
-          case SCROLL -> currentPattern = pattern.scroll();
-          case BLEND -> currentPattern = pattern.blend(pattern2.colorPatternOnly());
-          case OVERLAY -> currentPattern = pattern.overlayon(pattern2.colorPatternOnly());
-          case BREATHE_BLEND -> currentPattern = pattern.breathe().blend(pattern2.breathe(1.5));
-          case BREATHE_OVERLAY -> currentPattern = pattern.breathe().overlayOn(pattern2.breathe());
-          default -> currentPattern = pattern.colorPatternOnly();
-        }
-      } catch (IllegalArgumentException E) {
-        currentPattern = LedPatterns.RED.blink();
-      }
+      processTestInputs();
     } else {
+      /* get from robot state  */
       currentPattern = state.getMode().ledPattern;
+      /*
+      applySection = state.getMode().ledSection;
+      isReversed = state.getMode().isReversed;
+      */
     }
 
     // Load the pattern onto the LEDs
-    LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
     if (!Robot.isSimulation()) {
-      switch (applySection) {
-        case FULL -> {
-          if (isReversed) {
-            // currentPattern.applyTo(buffer.reversed());
-            currentPattern.applyTo(left.reversed());
-            currentPattern.applyTo(right.reversed());
-          } else {
-            currentPattern.applyTo(buffer);
-          }
-        }
-
-        case LEFT -> {
-          if (isReversed) {
-            currentPattern.applyTo(left.reversed());
-          } else {
-            currentPattern.applyTo(left);
-          }
-        }
-        case MIDDLE -> {
-          if (isReversed) {
-            currentPattern.applyTo(middle.reversed());
-          } else {
-            currentPattern.applyTo(middle);
-          }
-        }
-
-        case RIGHT -> {
-          if (isReversed) {
-            currentPattern.applyTo(right.reversed());
-          } else {
-            currentPattern.applyTo(right);
-          }
-        }
-      }
+      loadLedPatterns();
       leds.setData(buffer);
     } else {
       // no op for simulation
+    }
+  }
+
+  private void processTestInputs() {
+    try {
+      LedPatterns pattern = testPattern.getSelected();
+      LedPatterns pattern2 = testPattern2.getSelected();
+      Animations animation = testAnimation.getSelected();
+      applySection = testSection.getSelected();
+      isReversed = testReverse.getBoolean(false);
+
+      switch (animation) {
+        case BLINK -> currentPattern = pattern.blink();
+        case BREATHE -> currentPattern = pattern.breathe();
+        case SCROLL -> currentPattern = pattern.scroll();
+        case BLEND -> currentPattern = pattern.blend(pattern2.colorPatternOnly());
+        case OVERLAY -> currentPattern = pattern.overlayon(pattern2.colorPatternOnly());
+        case BREATHE_BLEND -> currentPattern = pattern.breathe().blend(pattern2.breathe(1.5));
+        case BREATHE_OVERLAY -> currentPattern = pattern.breathe().overlayOn(pattern2.breathe());
+        default -> currentPattern = pattern.colorPatternOnly();
+      }
+    } catch (IllegalArgumentException E) {
+      currentPattern = LedPatterns.RED.blink();
+    }
+  }
+
+  private void loadLedPatterns() {
+    LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
+    switch (applySection) {
+      case FULL -> {
+        if (isReversed) {
+          // currentPattern.applyTo(buffer.reversed());
+          currentPattern.applyTo(first.reversed());
+          currentPattern.applyTo(last.reversed());
+        } else {
+          currentPattern.applyTo(buffer);
+        }
+      }
+      case FIRST -> {
+        if (isReversed) {
+          currentPattern.applyTo(first.reversed());
+        } else {
+          currentPattern.applyTo(first);
+        }
+      }
+      case MIDDLE_1 -> {
+        if (isReversed) {
+          currentPattern.applyTo(middle1.reversed());
+        } else {
+          currentPattern.applyTo(middle1);
+        }
+      }
+      case MIDDLE_2 -> {
+        if (isReversed) {
+          currentPattern.applyTo(middle2.reversed());
+        } else {
+          currentPattern.applyTo(middle2);
+        }
+      }
+      case LAST -> {
+        if (isReversed) {
+          currentPattern.applyTo(last.reversed());
+        } else {
+          currentPattern.applyTo(last);
+        }
+      }
     }
   }
 

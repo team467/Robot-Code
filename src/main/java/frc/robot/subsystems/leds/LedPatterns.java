@@ -70,6 +70,10 @@ public enum LedPatterns {
     return colorPattern.blink(Seconds.of(STROBE_TIME));
   }
 
+  public LEDPattern blink(double time) {
+    return colorPattern.blink(Seconds.of(time));
+  }
+
   public LEDPattern breathe() {
     return colorPattern.breathe(Seconds.of(BREATH_TIME));
   }
