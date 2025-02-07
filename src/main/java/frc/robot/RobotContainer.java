@@ -96,6 +96,8 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(1),
                   new ModuleIOTalonSpark(2),
                   new ModuleIOTalonSpark(3));
+                  
+          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
