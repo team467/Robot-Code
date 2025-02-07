@@ -14,6 +14,9 @@ public class ElevatorConstants {
   public static final TunableNumber MAX_ACCELERATION;
   public static final double STOW;
   public static final double TOLERANCE;
+  public static final double CARRIAGE_MASS_KG;
+  public static final double DRUM_RADIUS_METERS;
+  public static final double ELEVATOR_GEARING;
   public static final int elevatorCanId = 0;
   public static final int elevatorCurrentLimit = 5;
 
@@ -29,6 +32,9 @@ public class ElevatorConstants {
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration");
         STOW = 0.0;
         TOLERANCE = Units.degreesToRadians(0.25);
+        CARRIAGE_MASS_KG = 0;
+        DRUM_RADIUS_METERS = Units.inchesToMeters(0);
+        ELEVATOR_GEARING = 0;
       }
       default -> {
         KG = new TunableNumber("Elevator/KG", 0.0);
@@ -40,6 +46,9 @@ public class ElevatorConstants {
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration", 0.0);
         STOW = 0.0;
         TOLERANCE = 0.0;
+        CARRIAGE_MASS_KG = 0.0;
+        DRUM_RADIUS_METERS = 0.0;
+        ELEVATOR_GEARING = 0.0;
       }
     }
   }
