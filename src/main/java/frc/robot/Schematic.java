@@ -60,19 +60,19 @@ public class Schematic {
         pigeonCanId = 17;
 
         frontLeftDriveCanId = 1;
-        backLeftDriveCanId = 3;
-        frontRightDriveCanId = 5;
-        backRightDriveCanId = 7;
+        backLeftDriveCanId = 7;
+        frontRightDriveCanId = 3;
+        backRightDriveCanId = 5;
 
         frontLeftTurnCanId = 2;
-        backLeftTurnCanId = 4;
-        frontRightTurnCanId = 6;
-        backRightTurnCanId = 8;
+        backLeftTurnCanId = 8;
+        frontRightTurnCanId = 4;
+        backRightTurnCanId = 6;
 
-        frontLeftAbsoluteEncoderCanId = 10;
-        backLeftAbsoluteEncoderCanId = 11;
-        frontRightAbsoluteEncoderCanId = 12;
-        backRightAbsoluteEncoderCanId = 13;
+        frontLeftAbsoluteEncoderCanId = 18;
+        backLeftAbsoluteEncoderCanId = 21;
+        frontRightAbsoluteEncoderCanId = 19;
+        backRightAbsoluteEncoderCanId = 20;
 
         // Algae Effector (Motor IDs)
         algaePivotCanId = 0;
