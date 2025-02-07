@@ -71,7 +71,7 @@ public class RobotContainer {
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
 
-          // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+         // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
         case ROBOT_2025_TEST -> {
@@ -87,6 +87,8 @@ public class RobotContainer {
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
+
+          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
