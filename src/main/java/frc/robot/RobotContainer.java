@@ -23,7 +23,7 @@ import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
-import frc.robot.subsystems.coral.CoralEffector;
+// import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -41,7 +41,7 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private AlgaeEffector algae;
-  private CoralEffector coral;
+  // private CoralEffector coral;
   private Climber climber;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -158,9 +158,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    if (coral != null) {
-      coral.setDefaultCommand(coral.stop());
-    }
+    // if (coral != null) {
+    //   coral.setDefaultCommand(coral.stop());
+    // }
 
     // algae.setDefaultCommand(algae.stop());
     algae.setDefaultCommand(algae.stowArm());
@@ -197,12 +197,11 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    if (coral != null) {
-      operatorController.b().whileTrue(coral.dumpCoral());
-      operatorController.y().whileTrue(coral.intakeCoral());
-    }
+    // if (coral != null) {
+    //   operatorController.b().whileTrue(coral.dumpCoral());
+    //   operatorController.y().whileTrue(coral.intakeCoral());
+    // }
     operatorController.a().whileTrue(algae.removeAlgae());
-    operatorController.x().whileTrue(algae.stowArm());
 
     operatorController.b().onTrue(climber.winch());
   }
