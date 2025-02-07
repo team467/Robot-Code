@@ -47,8 +47,8 @@ public class Schematic {
         frontRightAbsoluteEncoderCanId = 18;
         backRightAbsoluteEncoderCanId = 19;
 
-        algaePivotCanId = 0;
-        algaeRemovalCanId = 0;
+        algaePivotCanId = 12;
+        algaeRemovalCanId = 13;
 
         hopperReflectorSensorDioId = 0;
         coralMotorID = 0;
@@ -75,8 +75,8 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 13;
 
         // Algae Effector (Motor IDs)
-        algaePivotCanId = 0;
-        algaeRemovalCanId = 0;
+        algaePivotCanId = 12;
+        algaeRemovalCanId = 13;
 
         hopperReflectorSensorDioId = 0;
         coralMotorID = 0;
