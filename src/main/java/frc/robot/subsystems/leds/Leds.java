@@ -51,6 +51,7 @@ public class Leds extends SubsystemBase {
   private SendableChooser<Animations> testAnimation;
   private SendableChooser<Sections> testSection;
   private GenericEntry testReverse;
+  private GenericEntry testTimer;
 
   private LEDPattern currentPattern = LedPatterns.BLACK.colorPatternOnly();
   private Sections applySection = Sections.FULL;
@@ -100,13 +101,15 @@ public class Leds extends SubsystemBase {
       LedPatterns pattern = testPattern.getSelected();
       LedPatterns pattern2 = testPattern2.getSelected();
       Animations animation = testAnimation.getSelected();
+      double timer = testTimer.getDouble(0);
       applySection = testSection.getSelected();
       isReversed = testReverse.getBoolean(false);
+      System.out.println("test timer" + timer);
 
       switch (animation) {
-        case BLINK -> currentPattern = pattern.blink();
-        case BREATHE -> currentPattern = pattern.breathe();
-        case SCROLL -> currentPattern = pattern.scroll();
+        case BLINK -> currentPattern = pattern.blink(timer);
+        case BREATHE -> currentPattern = pattern.breathe(timer);
+        case SCROLL -> currentPattern = pattern.scroll(timer);
         case BLEND -> currentPattern = pattern.blend(pattern2.colorPatternOnly());
         case OVERLAY -> currentPattern = pattern.overlayon(pattern2.colorPatternOnly());
         case BREATHE_BLEND -> currentPattern = pattern.breathe().blend(pattern2.breathe(1.5));
@@ -221,6 +224,13 @@ public class Leds extends SubsystemBase {
         ledTestingLayout
             .add("Test Reverse", "boolean", false)
             .withWidget(BuiltInWidgets.kToggleButton)
+            .withPosition(0, 0)
+            .getEntry();
+
+    testTimer =
+        ledTestingLayout
+            .add("Test Timer", 0)
+            .withWidget(BuiltInWidgets.kNumberSlider)
             .withPosition(0, 0)
             .getEntry();
   }

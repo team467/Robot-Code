@@ -86,6 +86,10 @@ public enum LedPatterns {
     return colorPattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
   }
 
+  public LEDPattern scroll(double timer) {
+    return colorPattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(timer), LED_SPACING);
+  }
+
   public LEDPattern overlayon(LEDPattern base) {
     return colorPattern.overlayOn(base);
   }
