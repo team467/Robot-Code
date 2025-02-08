@@ -150,9 +150,11 @@ public class Orchestrator {
     desiredCoralPose =
         new Pose2d(
             branchPose.getX()
-                - Units.inchesToMeters(18.375) * Math.cos(Units.degreesToRadians(desiredRotation)),
+                - Units.inchesToMeters(18.375) * Math.cos(Units.degreesToRadians(desiredRotation))
+                - Units.inchesToMeters(12) * Math.sin(Units.degreesToRadians(desiredRotation)),
             branchPose.getY()
-                - Units.inchesToMeters(18.375) * Math.sin(Units.degreesToRadians(desiredRotation)),
+                - Units.inchesToMeters(18.375) * Math.sin(Units.degreesToRadians(desiredRotation))
+                + Units.inchesToMeters(18.375) * Math.cos(Units.degreesToRadians(desiredRotation)),
             Rotation2d.fromDegrees(desiredRotation));
     return desiredCoralPose;
   }
