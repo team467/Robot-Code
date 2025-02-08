@@ -82,9 +82,9 @@ public class Elevator extends SubsystemBase {
       }
     }
 
-    if (inputs.positionMeters > maxElevatorExtension && inputs.velocityMetersPerSec > 0) {
-      io.setPosition(maxElevatorExtension);
-    }
+    //    if (inputs.positionMeters > maxElevatorExtension && inputs.velocityMetersPerSec > 0) {
+    //      io.setPosition(maxElevatorExtension);
+    //    }
 
     Logger.recordOutput("Elevator/PIDEnabled", feedbackMode);
     if (feedbackMode) {
