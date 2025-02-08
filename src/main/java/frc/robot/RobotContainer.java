@@ -98,6 +98,8 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(2),
                   new ModuleIOTalonSpark(3));
           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
+
+          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -213,7 +215,6 @@ public class RobotContainer {
       operatorController.y().whileTrue(coral.intakeCoral());
     }
     operatorController.a().whileTrue(algae.removeAlgae());
-    operatorController.x().whileTrue(algae.stowArm());
 
     operatorController.b().onTrue(climber.winch());
   }

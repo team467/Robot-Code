@@ -39,6 +39,9 @@ public class ElevatorIOPhysical implements ElevatorIO {
     inputs.velocityMetersPerSec = (Encoder.getVelocity() * 2 * Math.PI) * 0.004;
     inputs.elevatorAppliedVolts = Spark.getBusVoltage() * Spark.getAppliedOutput();
     inputs.elevatorCurrentAmps = Spark.getOutputCurrent();
+    if (inputs.positionMeters > maxElevatorExtension && inputs.velocityMetersPerSec > 0) {
+      Encoder.setPosition(maxElevatorExtension);
+    }
     inputs.positionMeters = Encoder.getPosition();
     inputs.limitSwitchPressed = elevatorStowLimitSwitch.isPressed();
   }
@@ -51,5 +54,10 @@ public class ElevatorIOPhysical implements ElevatorIO {
   @Override
   public void setVoltage(double volts) {
     Spark.setVoltage(volts);
+  }
+
+  @Override
+  public void resetPosition() {
+    Encoder.setPosition(elevatorToGround);
   }
 }
