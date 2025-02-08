@@ -16,6 +16,8 @@ public class ElevatorConstants {
   public static final double TOLERANCE;
   public static final int elevatorCanId = 0;
   public static final int elevatorCurrentLimit = 5;
+  public static final double maxElevatorExtension = Units.inchesToMeters(29.9);
+  public static final double elevatorToGround = Units.inchesToMeters(1.751);
 
   static {
     switch (Constants.getRobot()) {
