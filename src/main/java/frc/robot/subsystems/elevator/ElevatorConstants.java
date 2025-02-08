@@ -14,8 +14,8 @@ public class ElevatorConstants {
   public static final TunableNumber MAX_ACCELERATION;
   public static final double STOW;
   public static final double TOLERANCE;
-  public static final int elevatorCanId = 0;
-  public static final int elevatorCurrentLimit = 5;
+  public static final int elevatorCanId = 9;
+  public static final int elevatorCurrentLimit = 20;
 
   static {
     switch (Constants.getRobot()) {
