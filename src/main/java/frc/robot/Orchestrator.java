@@ -33,8 +33,8 @@ public class Orchestrator {
   @AutoLogOutput private Pose2d closestReefFacePose;
   @AutoLogOutput private double[] reefFaceDistances = new double[6];
 
-  private static final double CORAL_EFFECTOR_OFFSET = 12;
-  private static final double BRANCH_TO_ROBOT_BACKUP = 18.375;
+  private static final double CORAL_EFFECTOR_OFFSET = Units.inchesToMeters(12);
+  private static final double BRANCH_TO_ROBOT_BACKUP = Units.inchesToMeters(18.375);
 
   public Orchestrator(
       Drive drive, Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
