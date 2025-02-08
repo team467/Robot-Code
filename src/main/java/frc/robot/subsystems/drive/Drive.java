@@ -324,8 +324,8 @@ public class Drive extends SubsystemBase {
             & Math.abs(gyroInputs.vectorDiff) > 4.5
             & Math.abs(gyroInputs.vectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5));
   }
-  // Method checks for tilt higher than 10º on either on the roll or pitch axis
-  // Raises alert once threshold is reached. Threshold can be changed in Driver Constants
+  /* Method checks for tilt higher than 10º on either on the roll or pitch axis
+   Raises alert once threshold is reached. Threshold can be changed in Driver Constants*/
 
   public void checkForTilt() {
     RobotState.getInstance().robotTilted =
