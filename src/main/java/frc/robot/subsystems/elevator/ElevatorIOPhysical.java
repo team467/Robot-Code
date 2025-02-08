@@ -30,8 +30,8 @@ public class ElevatorIOPhysical implements ElevatorIO {
         .voltageCompensation(12.0);
     config
         .encoder
-        .positionConversionFactor(2 * Math.PI / REDUCTION)
-        .velocityConversionFactor(2 * Math.PI / REDUCTION / 60)
+        .positionConversionFactor(ENCODER_CONVERSION_FACTOR)
+        .velocityConversionFactor(ENCODER_CONVERSION_FACTOR / 60)
         .uvwAverageDepth(10)
         .uvwAverageDepth(2);
     config
