@@ -172,7 +172,6 @@ public class Orchestrator {
    * @return Command for getting the closest coral station.
    */
   public Pose2d getClosestCoralStationPosition() {
-
     return closerToLeftCoralStation() ? CoralStation.leftCenterFace : CoralStation.rightCenterFace;
   }
 
