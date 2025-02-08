@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants.CoralStation;
 import frc.robot.FieldConstants.Reef;
 import frc.robot.FieldConstants.ReefHeight;
@@ -19,7 +18,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import java.util.Set;
-import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Orchestrator {
 
@@ -28,8 +27,11 @@ public class Orchestrator {
   private final AlgaeEffector algaeEffector;
   private final CoralEffector coralEffector;
   private final RobotState robotState = RobotState.getInstance();
-  private Pose2d coralPose;
-  private int branchIndex;
+  @AutoLogOutput private Pose2d desiredCoralPose;
+  @AutoLogOutput private int branchIndex;
+  @AutoLogOutput private int closestReefFace;
+  @AutoLogOutput private Pose2d closestReefFacePose;
+  @AutoLogOutput private double[] reefFaceDistances = new double[6];
 
   public Orchestrator(
       Drive drive, Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
@@ -73,11 +75,12 @@ public class Orchestrator {
    */
   public Command placeCoral(boolean branchLeft, int level) {
     return Commands.defer(
-        () ->
-            new DriveToPose(drive, getBranchPosition(branchLeft, closestReefFace())).withTimeout(5),
-        Set.of(drive));
-    //        .andThen(elevator.toSetpoint(getCoralHeight(level)).until(elevator::atSetpoint))
-    //        .andThen(coralEffector.dumpCoral());
+            () ->
+                new DriveToPose(drive, getBranchPosition(branchLeft, closestReefFace()))
+                    .withTimeout(5),
+            Set.of(drive))
+        .andThen(elevator.toSetpoint(getCoralHeight(level)).until(elevator::atSetpoint))
+        .andThen(coralEffector.dumpCoral());
   }
 
   /**
@@ -87,11 +90,11 @@ public class Orchestrator {
    * @return Command to remove algae from reef.
    */
   public Command removeAlgae(int level) {
-    return new DriveToPose(drive, getBranchPosition(false, closestReefFace()))
+    return new DriveToPose(drive, FieldConstants.Reef.centerFaces[closestReefFace()])
         .andThen(elevator.toSetpoint(getAlgaeHeight(level)))
         .until(elevator::atSetpoint)
         .andThen(algaeEffector.removeAlgae())
-        .andThen(algaeEffector.stowArm());
+        .finallyDo(algaeEffector::stowArm);
   }
 
   /**
@@ -138,18 +141,20 @@ public class Orchestrator {
    */
   public Pose2d getBranchPosition(boolean branchLeft, int closestReefFace) {
     int branch = closestReefFace * 2;
-    if (!branchLeft) {
+    if (branchLeft) {
       branch++;
     }
     branchIndex = branch;
     Pose2d branchPose = branchPositions.get(branch).get(ReefHeight.L1).toPose2d();
     double desiredRotation = branchPose.getRotation().getDegrees() + 180;
-    return new Pose2d(
-        branchPose.getX()
-            - Units.inchesToMeters(18.375) * Math.cos(Units.degreesToRadians(desiredRotation)),
-        branchPose.getY()
-            - Units.inchesToMeters(18.375) * Math.sin(Units.degreesToRadians(desiredRotation)),
-        Rotation2d.fromDegrees(desiredRotation));
+    desiredCoralPose =
+        new Pose2d(
+            branchPose.getX()
+                - Units.inchesToMeters(18.375) * Math.cos(Units.degreesToRadians(desiredRotation)),
+            branchPose.getY()
+                - Units.inchesToMeters(18.375) * Math.sin(Units.degreesToRadians(desiredRotation)),
+            Rotation2d.fromDegrees(desiredRotation));
+    return desiredCoralPose;
   }
 
   /**
@@ -182,8 +187,7 @@ public class Orchestrator {
           Math.hypot(
               Math.abs(drive.getPose().getX() - (Reef.centerFaces[i]).getX()),
               Math.abs(drive.getPose().getY() - (Reef.centerFaces[i]).getY()));
-      Logger.recordOutput("Orchestrator/ReefFaceDistance" + i, reefFaceDistances[i]);
-      Logger.recordOutput("Orchestrator/ReefFace" + i, FieldConstants.Reef.centerFaces[i]);
+      this.reefFaceDistances[i] = reefFaceDistances[i];
     }
     int closestFace = 0;
 
@@ -192,13 +196,8 @@ public class Orchestrator {
         closestFace = i;
       }
     }
-    Logger.recordOutput("Orchestrator/ClosestReefFace", closestFace);
+    closestReefFace = closestFace;
+    closestReefFacePose = Reef.centerFaces[closestFace];
     return closestFace;
-  }
-  public void periodic() {
-    closestReefFace();
-    coralPose = getBranchPosition(false, closestReefFace());
-    Logger.recordOutput("Orchestrator/BranchIndex", branchIndex);
-    Logger.recordOutput("Orchestrator/CoralPose", coralPose);
   }
 }
