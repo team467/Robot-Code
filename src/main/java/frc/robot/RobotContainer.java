@@ -221,8 +221,8 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    //      operatorController.b().whileTrue(coral.dumpCoral());
-    //      operatorController.y().whileTrue(coral.intakeCoral());
+    driverController.b().whileTrue(coral.dumpCoral());
+    driverController.y().whileTrue(coral.intakeCoral());
     operatorController
         .y()
         .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
