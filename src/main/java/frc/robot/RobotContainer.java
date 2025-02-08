@@ -8,12 +8,14 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
@@ -26,6 +28,9 @@ import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -44,6 +49,7 @@ public class RobotContainer {
   private AlgaeEffector algae;
   private CoralEffector coral;
   private Climber climber;
+  private Elevator elevator;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -100,6 +106,7 @@ public class RobotContainer {
           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
 
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          elevator = new Elevator(new ElevatorIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -136,6 +143,9 @@ public class RobotContainer {
     }
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
+    }
+    if (elevator == null) {
+      elevator = new Elevator(new ElevatorIO() {});
     }
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -177,6 +187,7 @@ public class RobotContainer {
 
     // algae.setDefaultCommand(algae.stop());
     algae.setDefaultCommand(algae.stowArm());
+    elevator.setDefaultCommand(elevator.hold());
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
@@ -210,13 +221,23 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    if (coral != null) {
-      operatorController.b().whileTrue(coral.dumpCoral());
-      operatorController.y().whileTrue(coral.intakeCoral());
-    }
-    operatorController.a().whileTrue(algae.removeAlgae());
-
-    operatorController.b().onTrue(climber.winch());
+    driverController.b().whileTrue(coral.dumpCoral());
+    driverController.y().whileTrue(coral.intakeCoral());
+    operatorController
+        .y()
+        .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
+    operatorController.b().onTrue(elevator.toSetpoint(22)); // 28.4
+    operatorController.a().onTrue(elevator.toSetpoint(Units.inchesToMeters(22.3))); // 54.1
+    operatorController
+        .x()
+        .onTrue(
+            elevator.toSetpoint(
+                ReefHeight.L4.height - Units.inchesToMeters(17.692))); // still need L4
+    operatorController.leftBumper().whileTrue(coral.intakeCoral());
+    operatorController.rightBumper().whileTrue(coral.dumpCoral());
+    operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));
+    operatorController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
+    driverController.a().whileTrue(algae.removeAlgae());
   }
 
   /**

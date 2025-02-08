@@ -14,9 +14,9 @@ public class ElevatorConstants {
   public static final TunableNumber MAX_ACCELERATION;
   public static final double STOW;
   public static final double TOLERANCE;
-  public static final int elevatorCanId = 0;
-  public static final int elevatorCurrentLimit = 5;
-  public static final double maxElevatorExtension = Units.inchesToMeters(29.9);
+  public static final double ENCODER_CONVERSION_FACTOR;
+  public static final int elevatorCurrentLimit = 30;
+  public static final double maxElevatorExtension = Units.inchesToMeters(22.9);
   public static final double elevatorToGround = Units.inchesToMeters(1.751);
 
   static {
@@ -25,12 +25,14 @@ public class ElevatorConstants {
         KG = new TunableNumber("Elevator/KG", 0.0);
         KS = new TunableNumber("Elevator/KS", 0.0);
         KV = new TunableNumber("Elevator/KV", 0.0);
-        KP = new TunableNumber("Elevator/KP", 0.0);
+        KP = new TunableNumber("Elevator/KP", 15);
         KD = new TunableNumber("Elevator/KD", 0.0);
         MAX_VELOCITY = new TunableNumber("Elevator/MaxVelocity", Double.POSITIVE_INFINITY);
-        MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration");
+        MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration", Double.POSITIVE_INFINITY);
         STOW = 0.0;
         TOLERANCE = Units.degreesToRadians(0.25);
+        ENCODER_CONVERSION_FACTOR =
+            27.0 / 9.0 * 0.005 * 2; // 9 reduction, 27 teeth per rotation, 5 mm per tooth
       }
       default -> {
         KG = new TunableNumber("Elevator/KG", 0.0);
@@ -42,6 +44,7 @@ public class ElevatorConstants {
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration", 0.0);
         STOW = 0.0;
         TOLERANCE = 0.0;
+        ENCODER_CONVERSION_FACTOR = 0.0;
       }
     }
   }
