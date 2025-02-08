@@ -24,7 +24,10 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.coral.CoralEffector;
+import frc.robot.subsystems.coral.CoralEffectorIO;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -43,6 +46,8 @@ public class RobotContainer {
   private AlgaeEffector algae;
   private CoralEffector coral;
   private Climber climber;
+  private Elevator elevator;
+  private Orchestrator orchestrator;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -124,7 +129,13 @@ public class RobotContainer {
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
     }
-
+    if (elevator == null) {
+      elevator = new Elevator(new ElevatorIO() {});
+    }
+    if (coral == null) {
+      coral = new CoralEffector(new CoralEffectorIO() {});
+    }
+    orchestrator = new Orchestrator(drive, elevator, algae, coral);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -205,6 +216,9 @@ public class RobotContainer {
     operatorController.x().whileTrue(algae.stowArm());
 
     operatorController.b().onTrue(climber.winch());
+
+    driverController.leftBumper().onTrue(orchestrator.placeCoral(true, 1));
+    driverController.rightBumper().onTrue(orchestrator.placeCoral(false, 1));
   }
 
   /**
