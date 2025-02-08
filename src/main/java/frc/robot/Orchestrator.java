@@ -33,6 +33,9 @@ public class Orchestrator {
   @AutoLogOutput private Pose2d closestReefFacePose;
   @AutoLogOutput private double[] reefFaceDistances = new double[6];
 
+  private static final double CORAL_EFFECTOR_OFFSET = 12;
+  private static final double STATION_TO_REEF_DISTANCE = 18.375;
+
   public Orchestrator(
       Drive drive, Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
     this.drive = drive;
@@ -150,11 +153,15 @@ public class Orchestrator {
     desiredCoralPose =
         new Pose2d(
             branchPose.getX()
-                - Units.inchesToMeters(18.375) * Math.cos(Units.degreesToRadians(desiredRotation))
-                - Units.inchesToMeters(12) * Math.sin(Units.degreesToRadians(desiredRotation)),
+                - Units.inchesToMeters(STATION_TO_REEF_DISTANCE)
+                    * Math.cos(Units.degreesToRadians(desiredRotation))
+                - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET)
+                    * Math.sin(Units.degreesToRadians(desiredRotation)),
             branchPose.getY()
-                - Units.inchesToMeters(18.375) * Math.sin(Units.degreesToRadians(desiredRotation))
-                + Units.inchesToMeters(18.375) * Math.cos(Units.degreesToRadians(desiredRotation)),
+                - Units.inchesToMeters(STATION_TO_REEF_DISTANCE)
+                    * Math.sin(Units.degreesToRadians(desiredRotation))
+                + Units.inchesToMeters(STATION_TO_REEF_DISTANCE)
+                    * Math.cos(Units.degreesToRadians(desiredRotation)),
             Rotation2d.fromDegrees(desiredRotation));
     return desiredCoralPose;
   }
