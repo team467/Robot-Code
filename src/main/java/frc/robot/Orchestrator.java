@@ -34,7 +34,7 @@ public class Orchestrator {
   @AutoLogOutput private double[] reefFaceDistances = new double[6];
 
   private static final double CORAL_EFFECTOR_OFFSET = 12;
-  private static final double STATION_TO_REEF_DISTANCE = 18.375;
+  private static final double BRANCH_TO_ROBOT_BACKUP = 18.375;
 
   public Orchestrator(
       Drive drive, Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
@@ -153,14 +153,14 @@ public class Orchestrator {
     desiredCoralPose =
         new Pose2d(
             branchPose.getX()
-                - Units.inchesToMeters(STATION_TO_REEF_DISTANCE)
+                - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
                     * Math.cos(Units.degreesToRadians(desiredRotation))
                 - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET)
                     * Math.sin(Units.degreesToRadians(desiredRotation)),
             branchPose.getY()
-                - Units.inchesToMeters(STATION_TO_REEF_DISTANCE)
+                - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
                     * Math.sin(Units.degreesToRadians(desiredRotation))
-                + Units.inchesToMeters(STATION_TO_REEF_DISTANCE)
+                + Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
                     * Math.cos(Units.degreesToRadians(desiredRotation)),
             Rotation2d.fromDegrees(desiredRotation));
     return desiredCoralPose;
