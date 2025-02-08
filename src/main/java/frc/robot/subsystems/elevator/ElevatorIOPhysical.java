@@ -47,6 +47,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
   public void setPercent(double percent) {
     Spark.set(percent);
   }
+
   @Override
   public void resetPosition() {
     Encoder.setPosition(0.0);
