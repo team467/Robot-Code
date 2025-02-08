@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants.CoralStation;
 import frc.robot.FieldConstants.Reef;
 import frc.robot.FieldConstants.ReefHeight;
@@ -146,9 +145,11 @@ public class Orchestrator {
     double desiredRotation = branchPose.getRotation().getDegrees() + 180;
     return new Pose2d(
         branchPose.getX()
-            - Units.inchesToMeters(18.375) * Math.cos(Units.degreesToRadians(desiredRotation)),
+            - Units.inchesToMeters(18.375) * Math.cos(Units.degreesToRadians(desiredRotation))
+            - Units.inchesToMeters(12) * Math.cos(Units.degreesToRadians(desiredRotation + 90)),
         branchPose.getY()
-            - Units.inchesToMeters(18.375) * Math.sin(Units.degreesToRadians(desiredRotation)),
+            - Units.inchesToMeters(18.375) * Math.sin(Units.degreesToRadians(desiredRotation))
+            - Units.inchesToMeters(12) * Math.cos(Units.degreesToRadians(desiredRotation + 90)),
         Rotation2d.fromDegrees(desiredRotation));
   }
 
@@ -195,6 +196,7 @@ public class Orchestrator {
     Logger.recordOutput("Orchestrator/ClosestReefFace", closestFace);
     return closestFace;
   }
+
   public void periodic() {
     closestReefFace();
     coralPose = getBranchPosition(false, closestReefFace());
