@@ -25,6 +25,8 @@ public class Schematic {
   // Coral Effector (Motor IDs)
   public static final int hopperReflectorSensorDioId;
   public static final int coralMotorID;
+  // Elevator
+  public static final int elevatorMotorID;
 
   static {
     switch (Constants.getRobot()) {
@@ -52,6 +54,8 @@ public class Schematic {
 
         hopperReflectorSensorDioId = 9;
         coralMotorID = 24;
+
+        elevatorMotorID = 9;
       }
       case ROBOT_2025_COMP -> {
         // Device CAN IDs
@@ -80,6 +84,8 @@ public class Schematic {
 
         hopperReflectorSensorDioId = 9;
         coralMotorID = 14;
+
+        elevatorMotorID = 9;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -107,6 +113,8 @@ public class Schematic {
 
         coralMotorID = 14;
         hopperReflectorSensorDioId = 9;
+
+        elevatorMotorID = 9;
       }
 
       default -> {
@@ -133,7 +141,9 @@ public class Schematic {
         algaeRemovalCanId = 0;
 
         hopperReflectorSensorDioId = 0;
-        coralMotorID = 14;
+        coralMotorID = 0;
+
+        elevatorMotorID = 0;
       }
     }
   }

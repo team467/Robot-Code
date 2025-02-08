@@ -18,5 +18,5 @@ public interface ElevatorIO {
 
   default void setPercent(double percent) {}
 
-  default void resetPosition() {}
+  default void setPosition(double positionMeters) {}
 }

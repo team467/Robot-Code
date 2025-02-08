@@ -142,7 +142,7 @@ public class RobotContainer {
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
     }
-    if(elevator == null){
+    if (elevator == null) {
       elevator = new Elevator(new ElevatorIO() {});
     }
 
