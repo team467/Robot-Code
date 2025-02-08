@@ -52,6 +52,11 @@ public class ElevatorIOPhysical implements ElevatorIO {
   }
 
   @Override
+  public void resetPosition() {
+    Encoder.setPosition(0.0);
+  }
+
+  @Override
   public void setVoltage(double volts) {
     Spark.setVoltage(volts);
   }

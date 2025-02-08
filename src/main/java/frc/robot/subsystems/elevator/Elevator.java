@@ -74,7 +74,9 @@ public class Elevator extends SubsystemBase {
     }
 
     if (inputs.limitSwitchPressed) {
-      io.resetPosition();
+      if (inputs.positionMeters == 0) {
+        io.resetPosition();
+      }
       if (!isCalibrated) {
         feedback.reset(ElevatorConstants.STOW);
         isCalibrated = true;
