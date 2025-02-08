@@ -41,6 +41,9 @@ public class Drive extends SubsystemBase {
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Alert impactAlert =
       new Alert("Impact Detected, lowering elevator to prevent flipping.", AlertType.kWarning);
+  private final Alert tiltAlert =
+      new Alert(
+          ("Tilt Threshold reached, lowering elevator to prevent flipping"), AlertType.kWarning);
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
   private final Alert gyroDisconnectedAlert =
@@ -116,7 +119,8 @@ public class Drive extends SubsystemBase {
       module.periodic();
     }
     odometryLock.unlock();
-
+    checkForImpact();
+    checkForTilt();
     // Stop moving when disabled
     if (DriverStation.isDisabled()) {
       for (var module : modules) {
@@ -319,5 +323,13 @@ public class Drive extends SubsystemBase {
         gyroInputs.vectorDiff < 0
             & Math.abs(gyroInputs.vectorDiff) > 4.5
             & Math.abs(gyroInputs.vectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5));
+  }
+  /* Method checks for tilt higher than 10º on either on the roll or pitch axis
+  Raises alert once threshold is reached. Threshold can be changed in Driver Constants */
+
+  public void checkForTilt() {
+    RobotState.getInstance().robotTilted =
+        Math.abs(gyroInputs.pitch) >= pitchThreshold || Math.abs(gyroInputs.roll) >= rollThreshhold;
+    tiltAlert.set(RobotState.getInstance().robotTilted);
   }
 }
