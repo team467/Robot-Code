@@ -25,7 +25,7 @@ public class ElevatorConstants {
         KG = new TunableNumber("Elevator/KG", 0.0);
         KS = new TunableNumber("Elevator/KS", 0.0);
         KV = new TunableNumber("Elevator/KV", 0.0);
-        KP = new TunableNumber("Elevator/KP", 15);
+        KP = new TunableNumber("Elevator/KP", 6);
         KD = new TunableNumber("Elevator/KD", 0.0);
         MAX_VELOCITY = new TunableNumber("Elevator/MaxVelocity", Double.POSITIVE_INFINITY);
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration", Double.POSITIVE_INFINITY);

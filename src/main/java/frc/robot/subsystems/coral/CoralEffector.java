@@ -53,6 +53,14 @@ public class CoralEffector extends SubsystemBase {
         .until(() -> this.hasCoral() == false); // /ITS FALSE
   }
 
+  public Command takeBackCoral() {
+    return Commands.run(
+        () -> {
+          io.setSpeed(-0.1);
+        },
+        this);
+  }
+
   public Command intakeCoral() {
     return Commands.run(
             () -> {
