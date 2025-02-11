@@ -35,7 +35,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
         .smartCurrentLimit(elevatorCurrentLimit)
         .voltageCompensation(12.0)
         .softLimit
-        .forwardSoftLimit(Units.inchesToMeters(64))
+        .forwardSoftLimit(Units.inchesToMeters(73))
         .forwardSoftLimitEnabled(true);
     config
         .encoder
@@ -46,8 +46,8 @@ public class ElevatorIOPhysical implements ElevatorIO {
     config
         .closedLoop
         .feedbackSensor(ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder)
-        .pid(KP.get(), 0, KD.get())
-        .positionWrappingEnabled(false);
+        .positionWrappingEnabled(false)
+        .pidf(4.6, 0.0, 24.0, 0.0);
     config
         .signals
         .primaryEncoderPositionAlwaysOn(true)

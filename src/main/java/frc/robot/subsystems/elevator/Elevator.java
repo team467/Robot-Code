@@ -12,18 +12,14 @@ import org.littletonrobotics.junction.Logger;
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs;
-  private boolean feedbackMode = true;
 
   @AutoLogOutput private boolean isCalibrated = false;
   @AutoLogOutput private boolean holdLock = false;
-  @AutoLogOutput private double setpoint;
 
   public Elevator(ElevatorIO io) {
     this.io = io;
     this.inputs = new ElevatorIOInputsAutoLogged();
     io.updateInputs(inputs);
-
-    setpoint = inputs.positionMeters;
   }
 
   @Override
@@ -32,13 +28,13 @@ public class Elevator extends SubsystemBase {
     Logger.processInputs("Elevator", inputs);
 
     if (DriverStation.isDisabled()) {
-      setpoint = inputs.positionMeters;
+      io.setPosition(inputs.positionMeters);
     }
 
     if (inputs.limitSwitchPressed) {
       io.resetPosition(elevatorToGround);
       if (!isCalibrated) {
-        setpoint = ElevatorConstants.STOW;
+        io.setPosition(ElevatorConstants.STOW);
         isCalibrated = true;
       }
     }
@@ -46,20 +42,13 @@ public class Elevator extends SubsystemBase {
     //    if (inputs.positionMeters > maxElevatorExtension && inputs.velocityMetersPerSec > 0) {
     //      io.setPosition(maxElevatorExtension);
     //    }
-
-    Logger.recordOutput("Elevator/PIDEnabled", feedbackMode);
-    if (feedbackMode) {
-      io.setPosition(inputs.positionMeters);
-    } else {
-      setpoint = inputs.positionMeters;
-    }
   }
 
   public Command toSetpoint(double setpointAngle) {
     return Commands.run(
         () -> {
-          setpoint = setpointAngle;
-          feedbackMode = true;
+          Logger.recordOutput("Elevator/Setpoint", setpointAngle);
+          io.setPosition(setpointAngle);
         },
         this);
   }
@@ -69,17 +58,12 @@ public class Elevator extends SubsystemBase {
         () -> {
           Logger.recordOutput("Elevator/DesiredVolts", percent * 12);
           io.setPercent(percent);
-          feedbackMode = false;
         },
         this);
   }
 
   public double getPosition() {
     return inputs.positionMeters;
-  }
-
-  public boolean atSetpoint() {
-    return Math.abs(setpoint - inputs.positionMeters) < 0.05;
   }
 
   public boolean limitSwitchPressed() {

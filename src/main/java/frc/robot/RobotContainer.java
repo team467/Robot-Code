@@ -29,6 +29,7 @@ import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.vision.Vision;
@@ -225,12 +226,11 @@ public class RobotContainer {
     driverController.y().whileTrue(coral.intakeCoral());
     operatorController
         .y()
-        .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
-    operatorController.b().onTrue(elevator.toSetpoint(Units.inchesToMeters(16))); // 28.4 in start
-    operatorController.a().onTrue(elevator.toSetpoint(Units.inchesToMeters(36))); // 54.1 in start
-    operatorController
-        .x()
-        .onTrue(elevator.toSetpoint(Units.inchesToMeters(63.25))); // 62.9 in start
+        .onTrue(
+            elevator.toSetpoint(ElevatorConstants.elevatorToGround - Units.inchesToMeters(1.0)));
+    operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L2.height)); // 28.4 in start
+    operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height)); // 54.1 in start
+    operatorController.x().onTrue(elevator.toSetpoint(ReefHeight.L4.height)); // 62.9 in start
     operatorController.leftBumper().whileTrue(coral.intakeCoral());
     operatorController.rightBumper().whileTrue(coral.dumpCoral());
     operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));

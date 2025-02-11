@@ -17,7 +17,7 @@ public class ElevatorConstants {
   public static final double ENCODER_CONVERSION_FACTOR;
   public static final int elevatorCurrentLimit = 30;
   public static final double maxElevatorExtension = Units.inchesToMeters(22.9);
-  public static final double elevatorToGround = Units.inchesToMeters(1.751);
+  public static final double elevatorToGround = Units.inchesToMeters(17 + 6 / 8); // 17 + 6 / 8
 
   static {
     switch (Constants.getRobot()) {
@@ -32,7 +32,8 @@ public class ElevatorConstants {
         STOW = 0.0;
         TOLERANCE = Units.degreesToRadians(0.25);
         ENCODER_CONVERSION_FACTOR =
-            27.0 / 9.0 * 0.005 * 2; // 9 reduction, 27 teeth per rotation, 5 mm per tooth
+            Units.inchesToMeters((76.0 + 13.0 / 16.0) - (17.0 + 6.0 / 8.0))
+                / 49.97; // 9 reduction, 27 teeth per rotation, 5 mm per tooth
       }
       default -> {
         KG = new TunableNumber("Elevator/KG", 0.0);
