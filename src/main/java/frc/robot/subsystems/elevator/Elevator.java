@@ -44,11 +44,11 @@ public class Elevator extends SubsystemBase {
     //    }
   }
 
-  public Command toSetpoint(double setpointAngle) {
+  public Command toSetpoint(double setpointMeters) {
     return Commands.run(
         () -> {
-          Logger.recordOutput("Elevator/Setpoint", setpointAngle);
-          io.setPosition(setpointAngle);
+          Logger.recordOutput("Elevator/Setpoint", setpointMeters);
+          io.setPosition(setpointMeters);
         },
         this);
   }
