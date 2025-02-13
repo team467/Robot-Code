@@ -8,7 +8,8 @@ public class CoralEffectorConstants {
 
   public static TunableNumber CORAL_INTAKE_SPEED =
       new TunableNumber("CoralEffector/SpeedIn", 0.175);
-  public static TunableNumber CORAL_RETAKE_SPEED = new TunableNumber("CoralEffector/RetakeSpeed", -0.15);
+  public static TunableNumber CORAL_RETAKE_SPEED =
+      new TunableNumber("CoralEffector/RetakeSpeed", -0.15);
   public static TunableNumber EFFECTOR_HOLD_PERCENT =
       new TunableNumber("CoralEffector/HoldPercent", 0.1);
   public static int effectorCurrentMotorLimit = 35;
