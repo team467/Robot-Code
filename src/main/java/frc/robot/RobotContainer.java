@@ -220,9 +220,21 @@ public class RobotContainer {
 
     operatorController.b().onTrue(climber.winch());
 
-    driverController.leftBumper().onTrue(fieldAlignment.alignToReef(true).andThen(
-        orchestrator.placeCoral(1)));
-    driverController.rightBumper().onTrue(fieldAlignment.alignToReef(false).andThen(orchestrator.placeCoral(1)));
+    driverController
+        .leftBumper()
+        .onTrue(fieldAlignment.alignToReef(true).andThen(orchestrator.placeCoral(1)));
+    driverController
+        .rightBumper()
+        .onTrue(fieldAlignment.alignToReef(false).andThen(orchestrator.placeCoral(1)));
+    driverController
+        .b()
+        .toggleOnTrue(
+            fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
+    driverController
+        .y()
+        .toggleOnTrue(
+            fieldAlignment.faceCoralStation(
+                driverController::getLeftX, driverController::getLeftY));
   }
 
   /**

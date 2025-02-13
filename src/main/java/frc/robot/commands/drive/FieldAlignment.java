@@ -11,7 +11,6 @@ import frc.robot.FieldConstants.CoralStation;
 import frc.robot.FieldConstants.Reef;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.commands.auto.DriveToPose;
-import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
@@ -25,8 +24,8 @@ public class FieldAlignment {
   @AutoLogOutput private Pose2d closestReefFacePose;
   @AutoLogOutput private double[] reefFaceDistances = new double[6];
 
-  private static final double CORAL_EFFECTOR_OFFSET = Units.inchesToMeters(12);
-  private static final double BRANCH_TO_ROBOT_BACKUP = Units.inchesToMeters(18.375);
+  private static final double CORAL_EFFECTOR_OFFSET = -12;
+  private static final double BRANCH_TO_ROBOT_BACKUP = -18.375;
   private final Drive drive;
 
   public FieldAlignment(Drive drive) {
@@ -73,12 +72,12 @@ public class FieldAlignment {
                 - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
                     * Math.cos(branchPose.getRotation().getRadians())
                 - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET)
-                    * Math.sin(Units.degreesToRadians(branchPose.getRotation().getRadians())),
+                    * Math.sin(branchPose.getRotation().getRadians()),
             branchPose.getY()
                 - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
-                    * Math.sin(Units.degreesToRadians(branchPose.getRotation().getRadians()))
+                    * Math.sin(branchPose.getRotation().getRadians())
                 + Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
-                    * Math.cos(Units.degreesToRadians(branchPose.getRotation().getRadians())),
+                    * Math.cos(branchPose.getRotation().getRadians()),
             branchPose.getRotation());
     return desiredCoralPose;
   }
