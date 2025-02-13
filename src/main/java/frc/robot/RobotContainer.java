@@ -224,12 +224,12 @@ public class RobotContainer {
     driverController.b().whileTrue(coral.dumpCoral());
     driverController.y().whileTrue(coral.intakeCoral());
     operatorController
-        .y()
-        .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
-    operatorController.b().onTrue(elevator.toSetpoint(22)); // 28.4
-    operatorController.a().onTrue(elevator.toSetpoint(Units.inchesToMeters(22.3))); // 54.1
-    operatorController
         .x()
+        .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
+    operatorController.y().onTrue(elevator.toSetpoint(22)); // 28.4 (L2)
+    operatorController.a().onTrue(elevator.toSetpoint(Units.inchesToMeters(22.3))); // 54.1 (L3)
+    operatorController
+        .b()
         .onTrue(
             elevator.toSetpoint(
                 ReefHeight.L4.height - Units.inchesToMeters(17.692))); // still need L4
