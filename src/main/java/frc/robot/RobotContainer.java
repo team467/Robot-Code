@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.FieldConstants.Reef;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIO;
 import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
@@ -48,7 +48,8 @@ public class RobotContainer {
   private CoralEffector coral;
   private Climber climber;
   private Elevator elevator;
-  private Orchestrator orchestrator;
+  private final Orchestrator orchestrator;
+  private final FieldAlignment fieldAlignment;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -137,6 +138,7 @@ public class RobotContainer {
       coral = new CoralEffector(new CoralEffectorIO() {});
     }
     orchestrator = new Orchestrator(drive, elevator, algae, coral);
+    fieldAlignment = new FieldAlignment(drive);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -218,30 +220,9 @@ public class RobotContainer {
 
     operatorController.b().onTrue(climber.winch());
 
-    driverController.leftBumper().onTrue(orchestrator.placeCoral(true, 1));
-    driverController.rightBumper().onTrue(orchestrator.placeCoral(false, 1));
-    driverController
-        .y()
-        .toggleOnTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                driverController::getLeftX,
-                driverController::getLeftY,
-                () ->
-                    Rotation2d.fromDegrees(
-                        Reef.centerFaces[orchestrator.closestReefFace()].getRotation().getDegrees()
-                            + 180)));
-    driverController
-        .x()
-        .toggleOnTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                driverController::getLeftX,
-                driverController::getLeftY,
-                () ->
-                    Rotation2d.fromDegrees(
-                        orchestrator.getClosestCoralStationPosition().getRotation().getDegrees()
-                            + 180)));
+    driverController.leftBumper().onTrue(fieldAlignment.alignToReef(true).andThen(
+        orchestrator.placeCoral(1)));
+    driverController.rightBumper().onTrue(fieldAlignment.alignToReef(false).andThen(orchestrator.placeCoral(1)));
   }
 
   /**
