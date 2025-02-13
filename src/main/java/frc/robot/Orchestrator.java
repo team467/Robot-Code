@@ -46,7 +46,6 @@ public class Orchestrator {
   /**
    * Places coral on branch after getting in position.
    *
-   * @param branchLeft
    * @param level
    * @return Command for placing coral.
    */
