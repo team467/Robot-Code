@@ -18,6 +18,8 @@ import frc.robot.RobotState;
 public class Leds extends SubsystemBase {
 
   private RobotState state = RobotState.getInstance();
+  private final AddressableLED leds;
+  public static AddressableLEDBuffer buffer = new AddressableLEDBuffer(LedConstants.LENGTH * 3);
 
   public enum Animations {
     NONE,
@@ -31,19 +33,73 @@ public class Leds extends SubsystemBase {
   }
 
   public enum Sections {
-    FULL,
-    FIRST,
-    MIDDLE_1,
-    MIDDLE_2,
-    LAST
-  }
+    FULL(
+        0,
+        LedConstants.LENGTH * 3 / 2 - 1,
+        LedConstants.LENGTH * 3 / 2,
+        LedConstants.LENGTH * 3 - 1),
+    BASE1(LedConstants.BASE1_START, LedConstants.BASE1_END),
+    BASE2(LedConstants.BASE2_START, LedConstants.BASE2_END),
+    BASE1_BASE2(
+        LedConstants.BASE1_START,
+        LedConstants.BASE1_END,
+        LedConstants.BASE2_START,
+        LedConstants.BASE2_END),
+    BAR(LedConstants.BAR_START, LedConstants.BAR_END),
 
-  private final AddressableLED leds;
-  private final AddressableLEDBuffer buffer;
-  private final AddressableLEDBufferView first;
-  private final AddressableLEDBufferView middle1;
-  private final AddressableLEDBufferView middle2;
-  private final AddressableLEDBufferView last;
+    FIRST_QUARTER(
+        LedConstants.BASE1_FIRST_QUARTER_START,
+        LedConstants.BASE1_FIRST_QUARTER_END,
+        LedConstants.BASE2_FIRST_QUARTER_START,
+        LedConstants.BASE2_FIRST_QUARTER_END),
+    SECOND_QUARTER(
+        LedConstants.BASE1_SECOND_QUARTER_START,
+        LedConstants.BASE1_SECOND_QUARTER_END,
+        LedConstants.BASE2_SECOND_QUARTER_START,
+        LedConstants.BASE2_SECOND_QUARTER_END),
+    THIRD_QUARTER(
+        LedConstants.BASE1_THIRD_QUARTER_START,
+        LedConstants.BASE1_THIRD_QUARTER_END,
+        LedConstants.BASE2_THIRD_QUARTER_START,
+        LedConstants.BASE2_THIRD_QUARTER_END),
+    FOURTH_QUARTER(
+        LedConstants.BASE1_FOURTH_QUARTER_START,
+        LedConstants.BASE1_FOURTH_QUARTER_END,
+        LedConstants.BASE2_FOURTH_QUARTER_START,
+        LedConstants.BASE2_FOURTH_QUARTER_END);
+
+    private final AddressableLEDBufferView buf_view_1;
+    private final AddressableLEDBufferView buf_view_2;
+
+    private Sections(int start_1, int end_1, int start_2, int end_2) {
+      System.out.println(
+          "create section"
+              + "start_1"
+              + start_1
+              + "end_1"
+              + end_1
+              + "start_2"
+              + start_2
+              + "end_2"
+              + end_2);
+      this.buf_view_1 = buffer.createView(start_1, end_1);
+      this.buf_view_2 = buffer.createView(start_2, end_2);
+    }
+
+    private Sections(int start_1, int end_1) {
+      System.out.println("create section" + "start_1" + start_1 + "end_1" + end_1);
+      this.buf_view_1 = buffer.createView(start_1, end_1);
+      this.buf_view_2 = null;
+    }
+
+    public AddressableLEDBufferView getBufferView_1() {
+      return buf_view_1;
+    }
+
+    public AddressableLEDBufferView getBufferView_2() {
+      return buf_view_2;
+    }
+  }
 
   private GenericEntry enableTestEntry;
   private SendableChooser<LedPatterns> testPattern;
@@ -59,14 +115,8 @@ public class Leds extends SubsystemBase {
 
   public Leds() {
 
-    buffer = new AddressableLEDBuffer(LedConstants.LENGTH);
-    first = buffer.createView(0, LedConstants.LENGTH / 4 - 1);
-    middle1 = buffer.createView(LedConstants.LENGTH / 4, LedConstants.LENGTH / 2 - 1);
-    middle2 = buffer.createView(LedConstants.LENGTH / 2, LedConstants.LENGTH * 3 / 4 - 1);
-    last = buffer.createView(LedConstants.LENGTH * 3 / 4, LedConstants.LENGTH - 1);
-
     leds = new AddressableLED(LedConstants.LED_CHANNEL);
-    leds.setLength(LedConstants.LENGTH);
+    leds.setLength(LedConstants.LENGTH * 3);
     leds.setData(buffer);
     leds.start();
 
@@ -123,43 +173,15 @@ public class Leds extends SubsystemBase {
 
   private void loadLedPatterns() {
     LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
-    switch (applySection) {
-      case FULL -> {
-        if (isReversed) {
-          // currentPattern.applyTo(buffer.reversed());
-          currentPattern.applyTo(first.reversed());
-          currentPattern.applyTo(last.reversed());
-        } else {
-          currentPattern.applyTo(buffer);
-        }
+    if (isReversed) {
+      currentPattern.applyTo(applySection.getBufferView_1().reversed());
+      if (applySection.getBufferView_2() != null) {
+        currentPattern.applyTo(applySection.getBufferView_2().reversed());
       }
-      case FIRST -> {
-        if (isReversed) {
-          currentPattern.applyTo(first.reversed());
-        } else {
-          currentPattern.applyTo(first);
-        }
-      }
-      case MIDDLE_1 -> {
-        if (isReversed) {
-          currentPattern.applyTo(middle1.reversed());
-        } else {
-          currentPattern.applyTo(middle1);
-        }
-      }
-      case MIDDLE_2 -> {
-        if (isReversed) {
-          currentPattern.applyTo(middle2.reversed());
-        } else {
-          currentPattern.applyTo(middle2);
-        }
-      }
-      case LAST -> {
-        if (isReversed) {
-          currentPattern.applyTo(last.reversed());
-        } else {
-          currentPattern.applyTo(last);
-        }
+    } else {
+      currentPattern.applyTo(applySection.getBufferView_1());
+      if (applySection.getBufferView_2() != null) {
+        currentPattern.applyTo(applySection.getBufferView_2().reversed());
       }
     }
   }
