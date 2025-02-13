@@ -173,6 +173,8 @@ public class RobotContainer {
     operatorController.a().whileTrue(algae.removeAlgae());
 
     operatorController.b().onTrue(climber.winch());
+
+    operatorController.y().onTrue(climber.deploy());
   }
 
   /**

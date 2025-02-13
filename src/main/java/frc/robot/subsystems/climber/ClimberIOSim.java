@@ -22,11 +22,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ClimberIOSim implements ClimberIO {
 
-  private final DCMotor neo =
-      DCMotor.getNEO(ClimberConstants.CLIMBER_NUM_MOTORS)
-          .withReduction(ClimberConstants.CLIMBER_GEAR_RATIO);
-  private final SparkMax motor =
-      new SparkMax(ClimberConstants.CLIMBER_MOTOR_ID, MotorType.kBrushless);
+  private final DCMotor neo = DCMotor.getNEO(2).withReduction(ClimberConstants.CLIMBER_GEAR_RATIO);
+  private final SparkMax motor = new SparkMax(1, MotorType.kBrushless);
   private final SparkMaxSim motorSim = new SparkMaxSim(motor, neo);
   private final SparkRelativeEncoder encoder = (SparkRelativeEncoder) motor.getEncoder();
   private final SparkRelativeEncoderSim encoderSim = new SparkRelativeEncoderSim(motor);
@@ -112,10 +109,9 @@ public class ClimberIOSim implements ClimberIO {
     inputs.climberDeployed =
         inputs.position >= ClimberConstants.LOWER_DEPLOYED_POSITION
             && inputs.position <= ClimberConstants.UPPER_DEPLOYED_POSITION;
-    inputs.climberStowed = inputs.position >= -0.5 && inputs.position <= 0.25;
 
     // Reset position if the stowed limit switch is pressed
-    if (inputs.climberStowed) {
+    if (inputs.climberDeployed) {
       resetPosition();
     }
   }

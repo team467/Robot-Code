@@ -31,7 +31,7 @@ public class ClimberIOSparkMax implements ClimberIO {
         .smartCurrentLimit(40);
     ClimberLeaderConfig.softLimit
         .forwardSoftLimit(10)
-        .forwardSoftLimitEnabled(true)
+        .forwardSoftLimitEnabled(false)
         .reverseSoftLimitEnabled(false);
     ClimberLeaderConfig.encoder.positionConversionFactor(
         ClimberConstants.CLIMBER_CONVERSION_FACTOR);
@@ -76,13 +76,10 @@ public class ClimberIOSparkMax implements ClimberIO {
     inputs.climberWinched =
         inputs.position >= ClimberConstants.LOWER_WINCHED_POSITION
             && inputs.position <= ClimberConstants.UPPER_WINCHED_POSITION;
-    inputs.climberDeployed =
-        inputs.position >= ClimberConstants.LOWER_DEPLOYED_POSITION
-            && inputs.position <= ClimberConstants.UPPER_DEPLOYED_POSITION;
-    inputs.climberStowed = limitSwitch.isPressed();
+    inputs.climberDeployed = limitSwitch.isPressed();
 
     // Reset position if the stowed limit switch is pressed
-    if (inputs.climberStowed) {
+    if (inputs.climberDeployed) {
       resetPosition();
     }
   }
