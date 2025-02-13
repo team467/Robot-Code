@@ -56,7 +56,7 @@ public class CoralEffector extends SubsystemBase {
   public Command takeBackCoral() {
     return Commands.run(
         () -> {
-          io.setSpeed(-0.1);
+          io.setSpeed(CoralEffectorConstants.CORAL_RETAKE_SPEED.get());
         },
         this);
   }
