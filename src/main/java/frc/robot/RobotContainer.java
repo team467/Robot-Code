@@ -228,9 +228,9 @@ public class RobotContainer {
         .y()
         .onTrue(
             elevator.toSetpoint(ElevatorConstants.elevatorToGround - Units.inchesToMeters(1.0)));
-    operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L2.height)); // 28.4 in start
-    operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height)); // 54.1 in start
-    operatorController.x().onTrue(elevator.toSetpoint(ReefHeight.L4.height)); // 62.9 in start
+    operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
+    operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
+    operatorController.x().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
     operatorController.leftBumper().whileTrue(coral.intakeCoral());
     operatorController.rightBumper().whileTrue(coral.dumpCoral());
     operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));
