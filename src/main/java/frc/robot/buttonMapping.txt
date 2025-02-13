@@ -1,0 +1,23 @@
+Driver Controller:
+TODO: complete driver contoller mapping
+b -> coral, dump coral
+y -> coral, intake coral
+
+Operator Controller:
+
+x -> elevator, L1 height
+y -> elevator, L2 height
+a -> elevator, L3 height
+b -> elevator, L4 height
+
+rb -> climber, deploy (winch out)
+rt -> climber, winch (winch in)
+
+povUp (D-pad) -> elevator, manual up
+povDown (D-pad) -> elevator, manual down
+
+lb -> alage hi (remove algae)
+lt -> algae low (remove algae)
+
+start -> coral, dump coral
+back -> coral, intake coral
