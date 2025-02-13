@@ -233,11 +233,14 @@ public class RobotContainer {
         .onTrue(
             elevator.toSetpoint(
                 ReefHeight.L4.height - Units.inchesToMeters(17.692))); // still need L4
-    operatorController.leftBumper().whileTrue(coral.intakeCoral());
-    operatorController.rightBumper().whileTrue(coral.dumpCoral());
-    operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));
-    operatorController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
-    driverController.a().whileTrue(algae.removeAlgae());
+    operatorController.start().whileTrue(coral.intakeCoral());
+    operatorController.back().whileTrue(coral.dumpCoral());
+    operatorController.rightBumper().whileTrue(climber.deploy());
+    operatorController.rightTrigger().whileTrue(climber.winch());
+    operatorController.povUp().whileTrue(elevator.runPercent(0.3));
+    operatorController.povDown().whileTrue(elevator.runPercent(-0.3));
+    operatorController.leftBumper().whileTrue(algae.removeAlgae());
+    operatorController.leftTrigger().whileTrue(algae.removeAlgae());
   }
 
   /**
