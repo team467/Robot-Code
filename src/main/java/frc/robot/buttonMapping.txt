@@ -13,8 +13,8 @@ b -> elevator, L4 height
 rb -> climber, deploy (winch out)
 rt -> climber, winch (winch in)
 
-povUp (D-pad) -> elevator, positive percent
-povDown (D-pad) -> elevator, negative percent
+povUp (D-pad) -> elevator, manual up
+povDown (D-pad) -> elevator, manual down
 
 lb -> alage hi (remove algae)
 lt -> algae low (remove algae)
