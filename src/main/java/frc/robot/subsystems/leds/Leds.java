@@ -19,7 +19,7 @@ public class Leds extends SubsystemBase {
 
   private RobotState state = RobotState.getInstance();
   private final AddressableLED leds;
-  public static AddressableLEDBuffer buffer = new AddressableLEDBuffer(LedConstants.LENGTH * 3);
+  public static AddressableLEDBuffer buffer = new AddressableLEDBuffer(LedConstants.FULL_LENGTH);
 
   public enum Animations {
     NONE,
@@ -35,9 +35,9 @@ public class Leds extends SubsystemBase {
   public enum Sections {
     FULL(
         0,
-        LedConstants.LENGTH * 3 / 2 - 1,
-        LedConstants.LENGTH * 3 / 2,
-        LedConstants.LENGTH * 3 - 1),
+        LedConstants.FULL_LENGTH * 1 / 2 - 1,
+        LedConstants.FULL_LENGTH * 1 / 2,
+        LedConstants.FULL_LENGTH - 1),
     BASE1(LedConstants.BASE1_START, LedConstants.BASE1_END),
     BASE2(LedConstants.BASE2_START, LedConstants.BASE2_END),
     BASE1_BASE2(
@@ -116,7 +116,7 @@ public class Leds extends SubsystemBase {
   public Leds() {
 
     leds = new AddressableLED(LedConstants.LED_CHANNEL);
-    leds.setLength(LedConstants.LENGTH * 3);
+    leds.setLength(LedConstants.FULL_LENGTH);
     leds.setData(buffer);
     leds.start();
 
@@ -131,10 +131,7 @@ public class Leds extends SubsystemBase {
     } else {
       /* get from robot state  */
       currentPattern = state.getMode().ledPattern;
-      /*
       applySection = state.getMode().ledSection;
-      isReversed = state.getMode().isReversed;
-      */
     }
 
     // Load the pattern onto the LEDs

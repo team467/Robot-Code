@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import frc.robot.subsystems.leds.LedPatterns;
+import frc.robot.subsystems.leds.Leds.Sections;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 /**
@@ -33,9 +34,12 @@ public class RobotState {
     DEFAULT(LedPatterns.BLACK.colorPatternOnly());
 
     public final LEDPattern ledPattern;
+    public final Sections ledSection;
 
+    // ToDo - lED mode should set the section on which to light the LED
     private Mode(LEDPattern ledPattern) {
       this.ledPattern = ledPattern;
+      this.ledSection = Sections.FULL;
     }
   }
 
