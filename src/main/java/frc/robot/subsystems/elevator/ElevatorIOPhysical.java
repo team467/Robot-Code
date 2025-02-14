@@ -10,46 +10,70 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import java.io.ObjectInputFilter.Config;
+import frc.robot.Schematic;
 
 public class ElevatorIOPhysical implements ElevatorIO {
-  private final SparkMax Spark;
-  private final RelativeEncoder Encoder;
-  private final SparkClosedLoopController Controller;
+  private final SparkMax spark;
+  private final RelativeEncoder encoder;
   private final SparkLimitSwitch elevatorStowLimitSwitch;
 
   public ElevatorIOPhysical() {
-    Spark = new SparkMax(elevatorCanId, MotorType.kBrushless);
-    Encoder = Spark.getEncoder();
-    elevatorStowLimitSwitch = Spark.getReverseLimitSwitch();
-    Controller = Spark.getClosedLoopController();
+    spark = new SparkMax(Schematic.elevatorMotorID, MotorType.kBrushless);
+    encoder = spark.getEncoder();
+    elevatorStowLimitSwitch = spark.getReverseLimitSwitch();
 
-    var Config = new SparkMaxConfig();
-    Config.inverted(false).idleMode(IdleMode.kBrake).smartCurrentLimit(elevatorCurrentLimit);
+    var config = new SparkMaxConfig();
+    config
+        .idleMode(IdleMode.kBrake)
+        .inverted(false)
+        .smartCurrentLimit(elevatorCurrentLimit)
+        .voltageCompensation(12.0);
+    config
+        .encoder
+        .positionConversionFactor(ENCODER_CONVERSION_FACTOR)
+        .velocityConversionFactor(ENCODER_CONVERSION_FACTOR / 60)
+        .uvwAverageDepth(10)
+        .uvwAverageDepth(2);
+    config
+        .signals
+        .primaryEncoderPositionAlwaysOn(true)
+        .primaryEncoderPositionPeriodMs(20)
+        .primaryEncoderVelocityAlwaysOn(true)
+        .primaryEncoderVelocityPeriodMs(20)
+        .appliedOutputPeriodMs(20)
+        .busVoltagePeriodMs(20)
+        .outputCurrentPeriodMs(20);
+
     tryUntilOk(
-        Spark,
+        spark,
         5,
         () ->
-            Spark.configure(
-                Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
-    tryUntilOk(Spark, 5, () -> Encoder.setPosition(0.0));
+            spark.configure(
+                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    tryUntilOk(spark, 5, () -> encoder.setPosition(0.0));
   }
 
   public void updateInputs(ElevatorIOInputs inputs) {
-    inputs.velocityMetersPerSec = (Encoder.getVelocity() * 2 * Math.PI) * 0.004;
-    inputs.elevatorAppliedVolts = Spark.getBusVoltage() * Spark.getAppliedOutput();
-    inputs.elevatorCurrentAmps = Spark.getOutputCurrent();
-    inputs.positionMeters = Encoder.getPosition();
+
+    inputs.positionMeters = encoder.getPosition();
+    inputs.velocityMetersPerSec = encoder.getVelocity();
+    inputs.elevatorAppliedVolts = spark.getBusVoltage() * spark.getAppliedOutput();
+    inputs.elevatorCurrentAmps = spark.getOutputCurrent();
     inputs.limitSwitchPressed = elevatorStowLimitSwitch.isPressed();
   }
 
   @Override
   public void setPercent(double percent) {
-    Spark.set(percent);
+    spark.set(percent);
   }
 
   @Override
   public void setVoltage(double volts) {
-    Spark.setVoltage(volts);
+    spark.setVoltage(volts);
+  }
+
+  @Override
+  public void setPosition(double positionMeters) {
+    encoder.setPosition(positionMeters);
   }
 }

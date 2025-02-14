@@ -8,12 +8,14 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
@@ -26,9 +28,13 @@ import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIO;
+import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -47,6 +53,7 @@ public class RobotContainer {
   private AlgaeEffector algae;
   private CoralEffector coral;
   private Climber climber;
+  private Elevator elevator;
   private Elevator elevator;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
@@ -95,6 +102,19 @@ public class RobotContainer {
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
         }
+        case ROBOT_2025_COMP -> {
+          drive =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOTalonSpark(0),
+                  new ModuleIOTalonSpark(1),
+                  new ModuleIOTalonSpark(2),
+                  new ModuleIOTalonSpark(3));
+          coral = new CoralEffector(new CoralEffectorIOSparkMAX());
+
+          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          elevator = new Elevator(new ElevatorIOPhysical());
+        }
 
         case ROBOT_SIMBOT -> {
           drive =
@@ -131,6 +151,10 @@ public class RobotContainer {
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
     }
+    if (elevator == null) {
+      elevator = new Elevator(new ElevatorIO() {});
+    }
+
     if (elevator == null) {
       elevator = new Elevator(new ElevatorIO() {});
     }
@@ -178,6 +202,7 @@ public class RobotContainer {
 
     // algae.setDefaultCommand(algae.stop());
     algae.setDefaultCommand(algae.stowArm());
+    elevator.setDefaultCommand(elevator.hold());
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
@@ -235,6 +260,26 @@ public class RobotContainer {
         .toggleOnTrue(
             fieldAlignment.faceCoralStation(
                 driverController::getLeftX, driverController::getLeftY));
+    driverController.b().whileTrue(coral.dumpCoral());
+    driverController.y().whileTrue(coral.intakeCoral());
+    operatorController
+        .x()
+        .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
+    operatorController.y().onTrue(elevator.toSetpoint(22)); // 28.4 (L2)
+    operatorController.a().onTrue(elevator.toSetpoint(Units.inchesToMeters(22.3))); // 54.1 (L3)
+    operatorController
+        .b()
+        .onTrue(
+            elevator.toSetpoint(
+                ReefHeight.L4.height - Units.inchesToMeters(17.692))); // still need L4
+    operatorController.start().whileTrue(coral.intakeCoral());
+    operatorController.back().whileTrue(coral.dumpCoral());
+    operatorController.rightBumper().whileTrue(climber.deploy());
+    operatorController.rightTrigger().whileTrue(climber.winch());
+    operatorController.povUp().whileTrue(elevator.runPercent(0.3));
+    operatorController.povDown().whileTrue(elevator.runPercent(-0.3));
+    operatorController.leftBumper().whileTrue(algae.removeAlgae());
+    operatorController.leftTrigger().whileTrue(algae.removeAlgae());
   }
 
   /**
