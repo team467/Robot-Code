@@ -94,7 +94,7 @@ public enum LedPatterns {
 
   public LEDPattern scroll(double timer) {
     if (timer > 0.0) {
-    return colorPattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(timer), LED_SPACING);
+      return colorPattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(timer), LED_SPACING);
     }
     return colorPattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
   }
