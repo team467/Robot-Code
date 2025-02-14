@@ -106,9 +106,7 @@ public class ClimberIOSim implements ClimberIO {
     inputs.climberWinched =
         inputs.position >= ClimberConstants.LOWER_WINCHED_POSITION
             && inputs.position <= ClimberConstants.UPPER_WINCHED_POSITION;
-    inputs.climberDeployed =
-        inputs.position >= 0.95
-            && inputs.position <= 1.1;
+    inputs.climberDeployed = inputs.position >= 0.95 && inputs.position <= 1.1;
 
     // Reset position if the stowed limit switch is pressed
     if (inputs.climberDeployed) {

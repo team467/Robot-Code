@@ -170,11 +170,11 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    operatorController.a().whileTrue(algae.removeAlgae());
-
-    operatorController.b().onTrue(climber.winch());
-
-    operatorController.y().onTrue(climber.deploy());
+    driverController.leftBumper().whileTrue(climber.goBackward());
+    driverController.rightBumper().whileTrue(climber.goForward());
+    driverController.a().whileTrue(climber.stop());
+    driverController.b().onTrue(climber.winch());
+    driverController.x().onTrue(climber.deploy());
   }
 
   /**

@@ -34,8 +34,8 @@ public class ClimberConstants {
         LOWER_WINCHED_POSITION = 0.35;
         UPPER_WINCHED_POSITION = 0.45;
         WINCHED_POSITION = Units.rotationsToDegrees(2.55);
-        WINCH_SPEED = -1.0;
-        DEPLOY_SPEED = 1.0;
+        WINCH_SPEED = -0.5;
+        DEPLOY_SPEED = 0.5;
         CLIMBER_LEADER_ID = 1;
         CLIMBER_FOLLOWER_ID = 2;
         CLIMBER_GEAR_RATIO = 36;
