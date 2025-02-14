@@ -73,21 +73,23 @@ public class Leds extends SubsystemBase {
 
     private Sections(int start_1, int end_1, int start_2, int end_2) {
       System.out.println(
-          "create section"
-              + "start_1"
+          "create section "
+              + toString()
+              + " start_1: "
               + start_1
-              + "end_1"
+              + " end_1: "
               + end_1
-              + "start_2"
+              + " start_2: "
               + start_2
-              + "end_2"
+              + " end_2:"
               + end_2);
       this.buf_view_1 = buffer.createView(start_1, end_1);
       this.buf_view_2 = buffer.createView(start_2, end_2);
     }
 
     private Sections(int start_1, int end_1) {
-      System.out.println("create section" + "start_1" + start_1 + "end_1" + end_1);
+      System.out.println(
+          "create section " + toString() + " start_1: " + start_1 + " end_1: " + end_1);
       this.buf_view_1 = buffer.createView(start_1, end_1);
       this.buf_view_2 = null;
     }
@@ -151,7 +153,7 @@ public class Leds extends SubsystemBase {
       double timer = testTimer.getDouble(0);
       applySection = testSection.getSelected();
       isReversed = testReverse.getBoolean(false);
-      System.out.println("test timer" + timer);
+      // System.out.println("test timer" + timer);
 
       switch (animation) {
         case BLINK -> currentPattern = pattern.blink(timer);
@@ -169,7 +171,7 @@ public class Leds extends SubsystemBase {
   }
 
   private void loadLedPatterns() {
-    LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
+    // LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
     if (isReversed) {
       currentPattern.applyTo(applySection.getBufferView_1().reversed());
       if (applySection.getBufferView_2() != null) {
