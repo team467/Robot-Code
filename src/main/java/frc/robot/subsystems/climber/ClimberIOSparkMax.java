@@ -16,7 +16,7 @@ public class ClimberIOSparkMax implements ClimberIO {
   private final SparkMax climberLeader;
   private final RelativeEncoder climberLeaderEncoder;
   private final SparkMax climberFollower;
-  private SparkLimitSwitch limitSwitch;
+  private final SparkLimitSwitch limitSwitch;
 
   /**
    * Constructor initializes the climber system, including motors, encoders, limit switches, and
