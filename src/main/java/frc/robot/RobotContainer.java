@@ -50,6 +50,7 @@ public class RobotContainer {
   private Elevator elevator;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
+  private final CustomTriggers customTriggers;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -139,6 +140,7 @@ public class RobotContainer {
     }
     orchestrator = new Orchestrator(drive, elevator, algae, coral);
     fieldAlignment = new FieldAlignment(drive);
+    customTriggers = new CustomTriggers();
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -220,16 +222,17 @@ public class RobotContainer {
 
     operatorController.b().onTrue(climber.winch());
 
-    driverController
-        .leftBumper()
-        .onTrue(fieldAlignment.alignToReef(true).andThen(orchestrator.placeCoral(1)));
-    driverController
-        .rightBumper()
-        .onTrue(fieldAlignment.alignToReef(false).andThen(orchestrator.placeCoral(1)));
-    driverController
-        .b()
-        .toggleOnTrue(
-            fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
+    customTriggers
+        .alignToReefLeft(
+            driverController.leftBumper(), driverController::getLeftX, driverController::getLeftY)
+        .whileTrue(fieldAlignment.alignToReef(true));
+    customTriggers
+        .alignToReefRight(
+            driverController.rightBumper(), driverController::getLeftX, driverController::getLeftY)
+        .whileTrue(fieldAlignment.alignToReef(false));
+    customTriggers
+        .faceReef(driverController.a(), driverController::getRightX, driverController::getRightY)
+        .whileTrue(fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController
         .y()
         .toggleOnTrue(
