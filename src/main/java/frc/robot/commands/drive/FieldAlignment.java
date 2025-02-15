@@ -73,12 +73,12 @@ public class FieldAlignment {
     ;
     desiredCoralPose =
         new Pose2d(
-            branchPose.getX()
+            branchPose.getX() // Move backwards robot relative
                 - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
                     * Math.cos(branchPose.getRotation().getRadians())
                 - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET)
                     * Math.sin(branchPose.getRotation().getRadians()),
-            branchPose.getY()
+            branchPose.getY() // Move left robot relative
                 - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
                     * Math.sin(branchPose.getRotation().getRadians())
                 + Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
