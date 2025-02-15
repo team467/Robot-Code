@@ -225,6 +225,7 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
+    /*
     driverController.b().whileTrue(coral.dumpCoral());
     driverController.y().whileTrue(coral.intakeCoral());
     operatorController
@@ -239,7 +240,15 @@ public class RobotContainer {
     operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));
     operatorController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
     operatorController.leftStick().whileTrue(coral.takeBackCoral());
-    driverController.a().whileTrue(algae.removeAlgae());
+    driverController.a().whileTrue(algae.removeAlgae()); */
+
+    driverController.y().whileTrue(orchestrator.intake());
+    driverController.b().whileTrue(orchestrator.placeCoral(2));
+    driverController.a().whileTrue(orchestrator.placeCoral(3));
+    driverController.x().whileTrue(orchestrator.placeCoral(4));
+    operatorController.leftTrigger().whileTrue(orchestrator.removeAlgae(1));
+    operatorController.leftBumper().whileTrue(orchestrator.removeAlgae(2));
+
   }
 
   /**
