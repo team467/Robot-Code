@@ -25,6 +25,7 @@ import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
@@ -104,7 +105,7 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(2),
                   new ModuleIOTalonSpark(3));
           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
-
+          climber = new Climber(new ClimberIOSparkMax());
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
           elevator = new Elevator(new ElevatorIOPhysical());
         }
