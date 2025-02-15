@@ -188,6 +188,7 @@ public class RobotContainer {
     // algae.setDefaultCommand(algae.stop());
     algae.setDefaultCommand(algae.stowArm());
     elevator.setDefaultCommand(elevator.hold());
+    climber.setDefaultCommand(climber.stop());
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
@@ -223,6 +224,9 @@ public class RobotContainer {
 
     driverController.b().whileTrue(coral.dumpCoral());
     driverController.y().whileTrue(coral.intakeCoral());
+    driverController.leftBumper().whileTrue(climber.goBackward());
+    driverController.rightBumper().whileTrue(climber.goForward());
+    driverController.x().onTrue(climber.stop());
     operatorController
         .x()
         .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
