@@ -21,6 +21,8 @@ public class ElevatorIOPhysical implements ElevatorIO {
   private final RelativeEncoder encoder;
   private final DigitalInput elevatorStowLimitSwitch;
 
+  private boolean zeroedOnce = false;
+
   private final SparkClosedLoopController controller;
 
   public ElevatorIOPhysical() {
@@ -80,19 +82,31 @@ public class ElevatorIOPhysical implements ElevatorIO {
 
   @Override
   public void setPercent(double percent) {
-    spark.set(percent);
+    if (percent > 0.7) {
+      spark.set(0.7);
+    } else if (percent < -0.7) {
+      spark.set(-0.7);
+    } else {
+      spark.set(percent);
+    }
   }
 
   @Override
   public void setVoltage(double volts) {
-    if (volts > 8.0) {
+    if (!zeroedOnce && volts < 0) {
+      spark.setVoltage(-2.0);
+    } else if (volts > 8.0) {
       spark.setVoltage(8.0);
-    } else if (encoder.getPosition() < ReefHeight.L2.height) {
-      spark.setVoltage(5.0);
+    } else if (volts < -6.0) {
+      spark.setVoltage(-6.0);
+    } else if (encoder.getPosition() < ReefHeight.L2.height && volts < -2.0) {
+      spark.setVoltage(-2.0);
     } else {
       spark.setVoltage(volts);
     }
   }
+  // 0.9
+  // 1.44
 
   @Override
   public void setPosition(double position) {
@@ -101,6 +115,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
 
   @Override
   public void resetPosition(double positionMeters) {
+    zeroedOnce = true;
     encoder.setPosition(positionMeters);
   }
 }
