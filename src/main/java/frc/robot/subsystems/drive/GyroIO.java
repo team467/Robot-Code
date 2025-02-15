@@ -11,6 +11,14 @@ public interface GyroIO {
     public double yawVelocityRadPerSec = 0.0;
     public double[] odometryYawTimestamps = new double[] {};
     public Rotation2d[] odometryYawPositions = new Rotation2d[] {};
+    public double VectorMagnitude;
+    public double previousVectorMagnitude;
+    /*VectorA - Vector Angle, pVectorA - record previous value*/
+    public double VectorAngle;
+    public double previousVectorAngle;
+    public double vectorDiff;
+    public double roll;
+    public double pitch;
   }
 
   public default void updateInputs(GyroIOInputs inputs) {}

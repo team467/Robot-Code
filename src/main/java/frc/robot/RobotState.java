@@ -16,6 +16,12 @@ public class RobotState {
   /** If the hopper optical sensor is triggered */
   @AutoLogOutput(key = "RobotState/HopperSeesCoral")
   public boolean hopperSeesCoral = false;
+
+  @AutoLogOutput(key = "RobotState/IntakingCoral")
+  public boolean intakingCoral = false;
+  /** Robot dumping coral */
+  @AutoLogOutput(key = "RobotState/SendCoral")
+  public boolean dumpingCoral = false;
   /** If the robot is aligned to the reef */
   @AutoLogOutput(key = "RobotState/AlignedToReef")
   public boolean alignedToReef = false;
@@ -43,6 +49,9 @@ public class RobotState {
   /** If the robot has detected a collision */
   @AutoLogOutput(key = "RobotState/CollisionDetected")
   public boolean collisionDetected = false;
+  /** If the robot is tilting */
+  @AutoLogOutput(key = "RobotState/RobotTilted")
+  public boolean robotTilted = false;
   /** the position that the elevator is at */
   @AutoLogOutput(key = "RobotState/ElevatorPosition")
   public ElevatorPosition elevatorPosition = null;
