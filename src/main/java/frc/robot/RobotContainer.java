@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.FieldConstants.ReefHeight;
+import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
@@ -26,6 +27,7 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.coral.CoralEffector;
+import frc.robot.subsystems.coral.CoralEffectorIO;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
@@ -58,6 +60,7 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final AutoRoutines autoRoutines;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -147,8 +150,12 @@ public class RobotContainer {
     if (elevator == null) {
       elevator = new Elevator(new ElevatorIO() {});
     }
+    if (coral == null) {
+      coral = new CoralEffector(new CoralEffectorIO() {});
+    }
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoRoutines = new AutoRoutines(drive);
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
@@ -168,6 +175,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    registerAutoRoutines();
 
     // Configure the button bindings
     configureButtonBindings();
@@ -238,6 +246,24 @@ public class RobotContainer {
     operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));
     operatorController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
     driverController.a().whileTrue(algae.removeAlgae());
+  }
+
+  private void addAutoRoutine(String routineName) {
+    autoChooser.addOption(routineName, autoRoutines.getRoutines().get(routineName).cmd());
+  }
+
+  private void registerAutoRoutines() {
+    addAutoRoutine("A leave");
+    addAutoRoutine("C6L5RL");
+    addAutoRoutine("C5RL4R");
+    addAutoRoutine("B1R2LR");
+    addAutoRoutine("B1L6RL");
+    addAutoRoutine("B1R");
+    addAutoRoutine("B1L");
+    addAutoRoutine("A3LR4L");
+    addAutoRoutine("A2R3LR");
+    addAutoRoutine("C leave");
+    addAutoRoutine("B leave");
   }
 
   /**
