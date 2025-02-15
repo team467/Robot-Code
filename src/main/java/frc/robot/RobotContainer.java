@@ -224,6 +224,7 @@ public class RobotContainer {
 
     driverController.leftBumper().whileTrue(coral.dumpCoral());
     driverController.rightBumper().whileTrue(coral.intakeCoral());
+    driverController.leftStick().whileTrue(coral.takeBackCoral());
     operatorController.y().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
     operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
     operatorController.x().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
@@ -246,7 +247,6 @@ public class RobotContainer {
     operatorController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
     operatorController.leftStick().whileTrue(coral.takeBackCoral());
     */
-    driverController.a().whileTrue(algae.removeAlgae());
   }
 
   /**
