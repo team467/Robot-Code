@@ -23,6 +23,7 @@ import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -83,6 +84,18 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
 
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+        }
+
+        case ROBOT_2025_COMP -> {
+          drive =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOTalonSpark(0),
+                  new ModuleIOTalonSpark(1),
+                  new ModuleIOTalonSpark(2),
+                  new ModuleIOTalonSpark(3));
+
+          climber = new Climber(new ClimberIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
@@ -170,6 +183,7 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
+    climber.setDefaultCommand(climber.stop());
     driverController.leftBumper().whileTrue(climber.goBackward());
     driverController.rightBumper().whileTrue(climber.goForward());
     driverController.a().whileTrue(climber.stop());

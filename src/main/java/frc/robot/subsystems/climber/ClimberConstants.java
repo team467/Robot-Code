@@ -36,11 +36,11 @@ public class ClimberConstants {
         WINCHED_POSITION = Units.rotationsToDegrees(2.55);
         WINCH_SPEED = -0.5;
         DEPLOY_SPEED = 0.5;
-        CLIMBER_LEADER_ID = 1;
-        CLIMBER_FOLLOWER_ID = 2;
+        CLIMBER_LEADER_ID = 10;
+        CLIMBER_FOLLOWER_ID = 11;
         CLIMBER_GEAR_RATIO = 36;
         CLIMBER_DRUM_RADIUS = Units.inchesToMeters(0.5);
-        CLIMBER_CONVERSION_FACTOR = CLIMBER_GEAR_RATIO * 2 * Math.PI;
+        CLIMBER_CONVERSION_FACTOR = 1;
 
         // Simulated Variables
         CLIMBER_MOTOR_ID = 11;
