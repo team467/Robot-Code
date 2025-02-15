@@ -32,8 +32,6 @@ import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -53,7 +51,6 @@ public class RobotContainer {
   private AlgaeEffector algae;
   private CoralEffector coral;
   private Climber climber;
-  private Elevator elevator;
   private Elevator elevator;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
@@ -236,15 +233,6 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    if (coral != null) {
-      operatorController.b().whileTrue(coral.dumpCoral());
-      operatorController.y().whileTrue(coral.intakeCoral());
-    }
-    operatorController.a().whileTrue(algae.removeAlgae());
-    operatorController.x().whileTrue(algae.stowArm());
-
-    operatorController.b().onTrue(climber.winch());
-
     driverController
         .leftBumper()
         .onTrue(fieldAlignment.alignToReef(true).andThen(orchestrator.placeCoral(1)));
@@ -261,7 +249,6 @@ public class RobotContainer {
             fieldAlignment.faceCoralStation(
                 driverController::getLeftX, driverController::getLeftY));
     driverController.b().whileTrue(coral.dumpCoral());
-    driverController.y().whileTrue(coral.intakeCoral());
     operatorController
         .x()
         .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
