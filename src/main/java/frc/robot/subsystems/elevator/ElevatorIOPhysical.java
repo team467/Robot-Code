@@ -20,7 +20,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
   private final SparkLimitSwitch elevatorStowLimitSwitch;
 
   private final SparkClosedLoopController controller;
-
+  private double setpoint;
   public ElevatorIOPhysical() {
     spark = new SparkMax(Schematic.elevatorMotorID, MotorType.kBrushless);
     encoder = spark.getEncoder();
@@ -74,6 +74,8 @@ public class ElevatorIOPhysical implements ElevatorIO {
     inputs.elevatorAppliedVolts = spark.getBusVoltage() * spark.getAppliedOutput();
     inputs.elevatorCurrentAmps = spark.getOutputCurrent();
     inputs.limitSwitchPressed = elevatorStowLimitSwitch.isPressed();
+    inputs.elevatorSetpoint = setpoint;
+    inputs.atSetpoint = Math.abs(setpoint - inputs.positionMeters) < TOLERANCE;
   }
 
   @Override
@@ -89,6 +91,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
   @Override
   public void setPosition(double position) {
     controller.setReference(position, SparkBase.ControlType.kPosition);
+    setpoint = position;
   }
 
   @Override
