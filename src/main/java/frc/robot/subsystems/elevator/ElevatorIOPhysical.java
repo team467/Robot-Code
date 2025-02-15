@@ -12,19 +12,22 @@ import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.Schematic;
 
 public class ElevatorIOPhysical implements ElevatorIO {
   private final SparkMax spark;
   private final RelativeEncoder encoder;
-  private final SparkLimitSwitch elevatorStowLimitSwitch;
+  private final DigitalInput elevatorStowLimitSwitch;
 
   private final SparkClosedLoopController controller;
 
   public ElevatorIOPhysical() {
     spark = new SparkMax(Schematic.elevatorMotorID, MotorType.kBrushless);
     encoder = spark.getEncoder();
-    elevatorStowLimitSwitch = spark.getReverseLimitSwitch();
+    elevatorStowLimitSwitch = new DigitalInput(3);
 
     controller = spark.getClosedLoopController();
 
@@ -73,7 +76,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
     inputs.velocityMetersPerSec = encoder.getVelocity();
     inputs.elevatorAppliedVolts = spark.getBusVoltage() * spark.getAppliedOutput();
     inputs.elevatorCurrentAmps = spark.getOutputCurrent();
-    inputs.limitSwitchPressed = elevatorStowLimitSwitch.isPressed();
+    inputs.stowLimitSwitch = !elevatorStowLimitSwitch.get();
   }
 
   @Override
@@ -83,7 +86,13 @@ public class ElevatorIOPhysical implements ElevatorIO {
 
   @Override
   public void setVoltage(double volts) {
-    spark.setVoltage(volts);
+    if (volts > 8.0) {
+      spark.setVoltage(8.0);
+    } else if(encoder.getPosition()< ReefHeight.L2.height){
+      spark.setVoltage(5.0);
+    }else{
+      spark.setVoltage(volts);
+    }
   }
 
   @Override
