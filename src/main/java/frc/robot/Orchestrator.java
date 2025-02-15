@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
@@ -63,11 +64,12 @@ public class Orchestrator {
    * @return Command to remove algae from reef.
    */
   public Command removeAlgae(int level) {
-    return elevator
+    return Commands.sequence(algaeEffector.stowArm().withTimeout(3),
+        elevator
         .toSetpoint(getAlgaeHeight(level))
         .until(elevator::atSetpoint)
         .andThen(algaeEffector.removeAlgae())
-        .finallyDo(algaeEffector::stowArm);
+        .finallyDo(algaeEffector::stowArm));
   }
   /**
    * Gets the level for the branch that we want.
