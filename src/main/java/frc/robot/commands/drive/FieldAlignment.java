@@ -3,7 +3,6 @@ package frc.robot.commands.drive;
 import static frc.robot.FieldConstants.Reef.branchPositions;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -45,9 +44,7 @@ public class FieldAlignment {
         drive,
         leftJoystickX,
         leftJoystickY,
-        () ->
-                AllianceFlipUtil.apply(Reef.centerFaces[closestReefFace()])
-                    .getRotation());
+        () -> AllianceFlipUtil.apply(Reef.centerFaces[closestReefFace()]).getRotation());
   }
 
   public Command faceCoralStation(DoubleSupplier leftJoystickX, DoubleSupplier leftJoystickY) {

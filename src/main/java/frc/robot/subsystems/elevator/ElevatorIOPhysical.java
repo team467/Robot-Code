@@ -21,6 +21,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
 
   private final SparkClosedLoopController controller;
   private double setpoint;
+
   public ElevatorIOPhysical() {
     spark = new SparkMax(Schematic.elevatorMotorID, MotorType.kBrushless);
     encoder = spark.getEncoder();

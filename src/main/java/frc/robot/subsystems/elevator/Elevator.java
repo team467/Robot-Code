@@ -43,9 +43,11 @@ public class Elevator extends SubsystemBase {
     //      io.setPosition(maxElevatorExtension);
     //    }
   }
+
   public boolean atSetpoint() {
     return inputs.atSetpoint;
   }
+
   public Command toSetpoint(double setpointMeters) {
     return Commands.run(
         () -> {
