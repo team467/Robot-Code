@@ -248,7 +248,6 @@ public class RobotContainer {
     driverController.x().whileTrue(orchestrator.placeCoral(4));
     operatorController.leftTrigger().whileTrue(orchestrator.removeAlgae(1));
     operatorController.leftBumper().whileTrue(orchestrator.removeAlgae(2));
-
   }
 
   /**
