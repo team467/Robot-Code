@@ -13,7 +13,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.Schematic;
 
@@ -88,9 +87,9 @@ public class ElevatorIOPhysical implements ElevatorIO {
   public void setVoltage(double volts) {
     if (volts > 8.0) {
       spark.setVoltage(8.0);
-    } else if(encoder.getPosition()< ReefHeight.L2.height){
+    } else if (encoder.getPosition() < ReefHeight.L2.height) {
       spark.setVoltage(5.0);
-    }else{
+    } else {
       spark.setVoltage(volts);
     }
   }
