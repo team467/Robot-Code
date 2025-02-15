@@ -1,13 +1,7 @@
 package frc.robot;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Filesystem;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -173,40 +167,5 @@ public class FieldConstants {
 
     public final double height;
     public final double pitch;
-  }
-
-  public static final double aprilTagWidth = Units.inchesToMeters(6.50);
-  public static final AprilTagLayoutType defaultAprilTagType = AprilTagLayoutType.OFFICIAL;
-  public static final int aprilTagCount = 22;
-
-  public enum AprilTagLayoutType {
-    OFFICIAL("2025-official");
-
-    AprilTagLayoutType(String name) {
-      try {
-        layout =
-            new AprilTagFieldLayout(
-                Path.of(Filesystem.getDeployDirectory().getPath(), "apriltags", name + ".json"));
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-      if (layout == null) {
-        layoutString = "";
-      } else {
-        try {
-          layoutString = new ObjectMapper().writeValueAsString(layout);
-        } catch (JsonProcessingException e) {
-          throw new RuntimeException(
-              "Failed to serialize AprilTag layout JSON " + toString() + "for Northstar");
-        }
-      }
-    }
-
-    private final AprilTagFieldLayout layout;
-    private final String layoutString;
-
-    public AprilTagFieldLayout getLayout() {
-      return layout;
-    }
   }
 }
