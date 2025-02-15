@@ -13,7 +13,6 @@ public class ElevatorConstants {
   public static final TunableNumber MAX_VELOCITY;
   public static final TunableNumber MAX_ACCELERATION;
   public static final double STOW;
-  public static final double DUCK_POSITION;
   public static final double INTAKE_POSITION;
   public static final double TOLERANCE;
   public static final double ENCODER_CONVERSION_FACTOR;
@@ -33,7 +32,6 @@ public class ElevatorConstants {
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration", Double.POSITIVE_INFINITY);
         STOW = 0.0;
         TOLERANCE = Units.degreesToRadians(0.25);
-        DUCK_POSITION = 0.0;
         INTAKE_POSITION = 0.0;
         ENCODER_CONVERSION_FACTOR =
             27.0 / 9.0 * 0.005 * 2; // 9 reduction, 27 teeth per rotation, 5 mm per tooth
@@ -48,7 +46,6 @@ public class ElevatorConstants {
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration", 0.0);
         STOW = 0.0;
         TOLERANCE = 0.0;
-        DUCK_POSITION = 0.0;
         INTAKE_POSITION = 0.0;
         ENCODER_CONVERSION_FACTOR = 0.0;
       }
