@@ -206,14 +206,16 @@ public class ModuleIOTalonSpark implements ModuleIO {
     BaseStatusSignal.setUpdateFrequencyForAll(odometryFrequency, drivePosition);
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, driveVelocity, driveAppliedVolts, driveCurrent, turnPositionAbsolute);
-    ParentDevice.optimizeBusUtilizationForAll(driveTalon);
+    ParentDevice.optimizeBusUtilizationForAll(driveTalon, turnEncoderAbsolute);
 
     // Initialize turn relative encoder
     tryUntilOk(
         turnSpark,
         5,
         () ->
-            turnEncoder.setPosition(turnEncoderAbsolute.getAbsolutePosition().getValueAsDouble()));
+            turnEncoder.setPosition(
+                Units.rotationsToRadians(
+                    turnEncoderAbsolute.getAbsolutePosition().getValueAsDouble())));
   }
 
   @Override
@@ -221,6 +223,7 @@ public class ModuleIOTalonSpark implements ModuleIO {
     // Refresh all signals
     var driveStatus =
         BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent);
+    var turnEncoderStatus = BaseStatusSignal.refreshAll(turnPositionAbsolute);
 
     // Update drive inputs
     inputs.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
@@ -241,6 +244,7 @@ public class ModuleIOTalonSpark implements ModuleIO {
         new DoubleSupplier[] {turnSpark::getAppliedOutput, turnSpark::getBusVoltage},
         (values) -> inputs.turnAppliedVolts = values[0] * values[1]);
     ifOk(turnSpark, turnSpark::getOutputCurrent, (value) -> inputs.turnCurrentAmps = value);
+    inputs.turnPositionAbsolute = Units.rotationsToRadians(turnPositionAbsolute.getValueAsDouble());
     inputs.turnConnected = turnConnectedDebounce.calculate(!sparkStickyFault);
 
     // Update odometry inputs

@@ -15,15 +15,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIO;
+import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
 import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.coral.CoralEffector;
+import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -41,7 +48,9 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private AlgaeEffector algae;
+  private CoralEffector coral;
   private Climber climber;
+  private Elevator elevator;
   private Leds leds;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -58,20 +67,6 @@ public class RobotContainer {
     if (Constants.getMode() != Constants.Mode.REPLAY) {
       switch (Constants.getRobot()) {
         case ROBOT_2024_COMP -> {
-          Transform3d front =
-              new Transform3d(
-                  new Translation3d(
-                      Units.inchesToMeters(6.74),
-                      Units.inchesToMeters(-10.991),
-                      Units.inchesToMeters(15.875)),
-                  new Rotation3d(0, Units.degreesToRadians(-30), 0));
-          Transform3d back =
-              new Transform3d(
-                  new Translation3d(
-                      Units.inchesToMeters(-11.89),
-                      Units.inchesToMeters(0),
-                      Units.inchesToMeters(15.5)),
-                  new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180)));
           drive =
               new Drive(
                   new GyroIOPigeon2(),
@@ -79,12 +74,41 @@ public class RobotContainer {
                   new ModuleIOSpark(1),
                   new ModuleIOSpark(2),
                   new ModuleIOSpark(3));
+
           vision =
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
 
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+        }
+
+        case ROBOT_2025_TEST -> {
+          drive =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOSpark(0),
+                  new ModuleIOSpark(1),
+                  new ModuleIOSpark(2),
+                  new ModuleIOSpark(3));
+
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
+        }
+        case ROBOT_2025_COMP -> {
+          drive =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOTalonSpark(0),
+                  new ModuleIOTalonSpark(1),
+                  new ModuleIOTalonSpark(2),
+                  new ModuleIOTalonSpark(3));
+          coral = new CoralEffector(new CoralEffectorIOSparkMAX());
+
+          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          elevator = new Elevator(new ElevatorIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -104,6 +128,9 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
+        
+          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          // coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
       }
     }
@@ -124,6 +151,9 @@ public class RobotContainer {
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
     }
+    if (elevator == null) {
+      elevator = new Elevator(new ElevatorIO() {});
+    }
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -131,6 +161,10 @@ public class RobotContainer {
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
     // Drive SysId
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
     autoChooser.addOption(
         "Drive SysId (Quasistatic Forward)",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -154,7 +188,13 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    if (coral != null) {
+      coral.setDefaultCommand(coral.stop());
+    }
+
+    // algae.setDefaultCommand(algae.stop());
     algae.setDefaultCommand(algae.stowArm());
+    elevator.setDefaultCommand(elevator.hold());
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
@@ -164,6 +204,17 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
+
+    // Lock to 0° when A button is held
+    driverController
+        .a()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> new Rotation2d()));
+
     driverController
         .start()
         .onTrue(
@@ -177,9 +228,26 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    operatorController.a().whileTrue(algae.removeAlgae());
-
-    operatorController.b().onTrue(climber.winch());
+    driverController.b().whileTrue(coral.dumpCoral());
+    driverController.y().whileTrue(coral.intakeCoral());
+    operatorController
+        .x()
+        .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
+    operatorController.y().onTrue(elevator.toSetpoint(22)); // 28.4 (L2)
+    operatorController.a().onTrue(elevator.toSetpoint(Units.inchesToMeters(22.3))); // 54.1 (L3)
+    operatorController
+        .b()
+        .onTrue(
+            elevator.toSetpoint(
+                ReefHeight.L4.height - Units.inchesToMeters(17.692))); // still need L4
+    operatorController.start().whileTrue(coral.intakeCoral());
+    operatorController.back().whileTrue(coral.dumpCoral());
+    operatorController.rightBumper().whileTrue(climber.deploy());
+    operatorController.rightTrigger().whileTrue(climber.winch());
+    operatorController.povUp().whileTrue(elevator.runPercent(0.3));
+    operatorController.povDown().whileTrue(elevator.runPercent(-0.3));
+    operatorController.leftBumper().whileTrue(algae.removeAlgae());
+    operatorController.leftTrigger().whileTrue(algae.removeAlgae());
   }
 
   /**

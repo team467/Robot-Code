@@ -1,5 +1,7 @@
 package frc.robot.subsystems.elevator;
 
+import static frc.robot.subsystems.elevator.ElevatorConstants.*;
+
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -45,7 +47,6 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-
     Logger.processInputs("Elevator", inputs);
 
     if (DriverStation.isDisabled()) {
@@ -74,29 +75,31 @@ public class Elevator extends SubsystemBase {
     }
 
     if (inputs.limitSwitchPressed) {
-      io.resetPosition();
+      io.setPosition(elevatorToGround);
       if (!isCalibrated) {
         feedback.reset(ElevatorConstants.STOW);
         isCalibrated = true;
       }
     }
 
+    //    if (inputs.positionMeters > maxElevatorExtension && inputs.velocityMetersPerSec > 0) {
+    //      io.setPosition(maxElevatorExtension);
+    //    }
+
     Logger.recordOutput("Elevator/PIDEnabled", feedbackMode);
     if (feedbackMode) {
       io.setVoltage(
           feedback.calculate(inputs.positionMeters)
-              + feedforward.calculate(
-                  feedback.getSetpoint().position, feedback.getSetpoint().velocity));
-
-      Logger.recordOutput("Elevator/Goal/Position", feedback.getGoal().position);
-      Logger.recordOutput("Elevator/Goal/Velocity", feedback.getGoal().velocity);
-      Logger.recordOutput("Elevator/Setpoint/Position", feedback.getSetpoint().position);
-      Logger.recordOutput("Elevator/Setpoint/Velocity", feedback.getSetpoint().velocity);
-      Logger.recordOutput("Elevator/Measurement/Position", inputs.positionMeters);
+              + feedforward.calculate(feedback.getSetpoint().velocity));
     } else {
       feedback.reset(
           new TrapezoidProfile.State(inputs.positionMeters, inputs.velocityMetersPerSec));
     }
+    Logger.recordOutput("Elevator/Goal/Position", feedback.getGoal().position);
+    Logger.recordOutput("Elevator/Goal/Velocity", feedback.getGoal().velocity);
+    Logger.recordOutput("Elevator/Setpoint/Position", feedback.getSetpoint().position);
+    Logger.recordOutput("Elevator/Setpoint/Velocity", feedback.getSetpoint().velocity);
+    Logger.recordOutput("Elevator/Measured/Position", inputs.positionMeters);
   }
 
   public Command toSetpoint(double setpointAngle) {
@@ -112,7 +115,7 @@ public class Elevator extends SubsystemBase {
     return Commands.run(
         () -> {
           Logger.recordOutput("Elevator/DesiredVolts", percent * 12);
-          io.setVoltage(percent * 12);
+          io.setPercent(percent);
           feedbackMode = false;
         },
         this);
