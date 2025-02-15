@@ -19,7 +19,6 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
 
   private final SparkMax motor;
   private final RelativeEncoder encoder;
-  // private final RelativeEncoder effectorEncoder;
   private final DigitalInput photosensor;
 
   public CoralEffectorIOSparkMAX() {
