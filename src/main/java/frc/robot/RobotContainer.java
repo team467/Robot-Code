@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
-import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIO;
 import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
@@ -27,7 +26,6 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.coral.CoralEffector;
-import frc.robot.subsystems.coral.CoralEffectorIO;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
@@ -52,8 +50,8 @@ public class RobotContainer {
   private CoralEffector coral;
   private Climber climber;
   private Elevator elevator;
-  private final Orchestrator orchestrator;
-  private final FieldAlignment fieldAlignment;
+
+  private Orchestrator orchestrator;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -151,15 +149,7 @@ public class RobotContainer {
     if (elevator == null) {
       elevator = new Elevator(new ElevatorIO() {});
     }
-
-    if (elevator == null) {
-      elevator = new Elevator(new ElevatorIO() {});
-    }
-    if (coral == null) {
-      coral = new CoralEffector(new CoralEffectorIO() {});
-    }
     orchestrator = new Orchestrator(drive, elevator, algae, coral);
-    fieldAlignment = new FieldAlignment(drive);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -233,22 +223,8 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController
-        .leftBumper()
-        .onTrue(fieldAlignment.alignToReef(true).andThen(orchestrator.placeCoral(1)));
-    driverController
-        .rightBumper()
-        .onTrue(fieldAlignment.alignToReef(false).andThen(orchestrator.placeCoral(1)));
-    driverController
-        .b()
-        .toggleOnTrue(
-            fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
-    driverController
-        .y()
-        .toggleOnTrue(
-            fieldAlignment.faceCoralStation(
-                driverController::getLeftX, driverController::getLeftY));
     driverController.b().whileTrue(coral.dumpCoral());
+    driverController.y().whileTrue(coral.intakeCoral());
     operatorController
         .x()
         .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
