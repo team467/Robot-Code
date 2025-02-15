@@ -19,7 +19,8 @@ public class Leds extends SubsystemBase {
 
   private RobotState state = RobotState.getInstance();
   private final AddressableLED leds;
-  public static AddressableLEDBuffer buffer = new AddressableLEDBuffer(LedConstants.FULL_LENGTH);
+  public static final AddressableLEDBuffer buffer =
+      new AddressableLEDBuffer(LedConstants.FULL_LENGTH);
 
   public enum Animations {
     NONE,

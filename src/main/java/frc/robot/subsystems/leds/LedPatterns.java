@@ -33,22 +33,17 @@ public enum LedPatterns {
   SOLID_FRC_RED(LEDPattern.solid(Color.kFirstRed)),
 
   // Center of Mass
-  CENTER_OF_MASS_BLUE(LEDPattern.solid(new Color(32, 42, 68))),
-  CENTER_OF_MASS_GOLD(LEDPattern.solid(new Color(197, 178, 88))),
+  CENTER_OF_MASS_BLUE(LEDPattern.solid(Color.kDarkBlue)),
+  CENTER_OF_MASS_GOLD(LEDPattern.solid(Color.kDarkGoldenrod)),
 
   // Multi-Color Patterns
   RAINBOW(LEDPattern.rainbow(255, 128)),
 
   GRADIENT_COM(
       LEDPattern.gradient(
-          LEDPattern.GradientType.kContinuous,
-          new Color(32, 42, 68),
-          new Color(197, 178, 88),
-          Color.kWhite)),
+          LEDPattern.GradientType.kContinuous, Color.kDarkBlue, Color.kDarkGoldenrod)),
 
-  STRIPE_COM(
-      LEDPattern.steps(
-          Map.of(0, new Color(32, 42, 68), 0.33, new Color(197, 178, 88), 0.66, Color.kWhite))),
+  STRIPE_COM(LEDPattern.steps(Map.of(0, Color.kDarkBlue, 0.50, Color.kDarkGoldenrod))),
 
   GRADIENT_FRC(
       LEDPattern.gradient(
