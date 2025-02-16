@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.FieldConstants.ReefHeight;
+import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
@@ -51,6 +52,8 @@ public class RobotContainer {
   private CoralEffector coral;
   private Climber climber;
   private Elevator elevator;
+
+  private Orchestrator orchestrator;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -148,7 +151,7 @@ public class RobotContainer {
     if (elevator == null) {
       elevator = new Elevator(new ElevatorIO() {});
     }
-
+    orchestrator = new Orchestrator(drive, elevator, algae, coral);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -222,6 +225,7 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
+    /*
     driverController.b().whileTrue(coral.dumpCoral());
     driverController.y().whileTrue(coral.intakeCoral());
     operatorController
@@ -236,7 +240,14 @@ public class RobotContainer {
     operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));
     operatorController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
     operatorController.leftStick().whileTrue(coral.takeBackCoral());
-    driverController.a().whileTrue(algae.removeAlgae());
+    driverController.a().whileTrue(algae.removeAlgae()); */
+
+    driverController.y().whileTrue(orchestrator.intake());
+    driverController.b().whileTrue(orchestrator.placeCoral(2));
+    driverController.a().whileTrue(orchestrator.placeCoral(3));
+    driverController.x().whileTrue(orchestrator.placeCoral(4));
+    operatorController.leftTrigger().whileTrue(orchestrator.removeAlgae(1));
+    operatorController.leftBumper().whileTrue(orchestrator.removeAlgae(2));
   }
 
   /**

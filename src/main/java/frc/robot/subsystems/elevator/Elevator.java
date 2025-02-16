@@ -44,6 +44,10 @@ public class Elevator extends SubsystemBase {
     //    }
   }
 
+  public boolean atSetpoint() {
+    return inputs.atSetpoint;
+  }
+
   public Command toSetpoint(double setpointMeters) {
     return Commands.run(
         () -> {
