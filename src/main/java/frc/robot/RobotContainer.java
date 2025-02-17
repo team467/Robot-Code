@@ -242,8 +242,8 @@ public class RobotContainer {
                   elevator.toSetpoint(1.44);
                   algae.removeAlgae();
                 }));
-    operatorController.leftBumper().onTrue(climber.deploy());
-    operatorController.rightBumper().onTrue(climber.winch());
+    operatorController.rightBumper().onTrue(climber.deploy());
+    operatorController.rightTrigger().onTrue(climber.winch());
     driverController.b().onTrue(elevator.runPercent(0.3));
     driverController.y().onTrue(elevator.runPercent(-0.3));
     driverController.leftBumper().onTrue(coral.intakeCoral());
