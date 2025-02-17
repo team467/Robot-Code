@@ -37,7 +37,14 @@ public class Climber extends SubsystemBase {
     return Commands.run(() -> io.setSpeed(ClimberConstants.DEPLOY_SPEED), this)
         .until(() -> inputs.climberDeployed);
   }
+  /*
+  public Command hold(double holdPosition) {
+    return Commands.run(()->{
+        if()
+    },this);
+  }
 
+   */
   public Command stop() {
     return Commands.run(() -> io.setSpeed(0), this);
   }

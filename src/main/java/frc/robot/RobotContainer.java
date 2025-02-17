@@ -188,7 +188,7 @@ public class RobotContainer {
     // algae.setDefaultCommand(algae.stop());
     algae.setDefaultCommand(algae.stowArm());
     climber.setDefaultCommand(climber.stop());
-    elevator.setDefaultCommand(elevator.hold(elevator.getPosition()));
+    elevator.setDefaultCommand(elevator.runPercent(0.0));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
@@ -244,21 +244,16 @@ public class RobotContainer {
                 }));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
-    driverController.b().onTrue(elevator.runPercent(0.3));
-    driverController.y().onTrue(elevator.runPercent(-0.3));
-    driverController.leftBumper().onTrue(coral.intakeCoral());
-    driverController.rightBumper().onTrue(coral.takeBackCoral());
-    driverController.a().onTrue(coral.dumpCoral());
     driverController
         .rightTrigger()
         .whileTrue(
             Commands.run(
-                () -> climber.io.setSpeed(driverController.getRightTriggerAxis()), climber));
+                () -> climber.io.setSpeed(-driverController.getRightTriggerAxis()), climber));
     driverController
         .leftTrigger()
         .whileTrue(
             Commands.run(
-                () -> climber.io.setSpeed(-driverController.getLeftTriggerAxis()), climber));
+                () -> climber.io.setSpeed(driverController.getLeftTriggerAxis()), climber));
     driverController.rightTrigger().onFalse(climber.stop());
     driverController.leftTrigger().onFalse(climber.stop());
     Commands.run(
@@ -273,7 +268,7 @@ public class RobotContainer {
     driverController.a().onTrue(coral.dumpCoral());
     driverController.x().whileTrue(algae.removeAlgae());
   }
-
+  // 98 climber soft limit
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
