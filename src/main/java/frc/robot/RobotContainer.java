@@ -30,6 +30,7 @@ import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.vision.Vision;
@@ -188,8 +189,7 @@ public class RobotContainer {
 
     // algae.setDefaultCommand(algae.stop());
     algae.setDefaultCommand(algae.stowArm());
-    elevator.setDefaultCommand(elevator.hold());
-    climber.setDefaultCommand(climber.stop());
+    elevator.setDefaultCommand(elevator.runPercent(0.0));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
@@ -223,41 +223,30 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController.b().whileTrue(coral.dumpCoral());
-    driverController.y().whileTrue(coral.intakeCoral());
-    driverController
-        .rightTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> climber.io.setSpeed(driverController.getRightTriggerAxis()), climber));
-
-    driverController
-        .leftTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> climber.io.setSpeed(-driverController.getLeftTriggerAxis()), climber));
-
-    driverController.rightTrigger().onFalse(climber.stop());
-
-    driverController.leftTrigger().onFalse(climber.stop());
+    driverController.leftBumper().whileTrue(coral.dumpCoral());
+    driverController.rightBumper().whileTrue(coral.intakeCoral());
+    driverController.leftStick().whileTrue(coral.takeBackCoral());
+    operatorController.y().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
+    operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
+    operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
     operatorController
         .x()
-        .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
-    operatorController.y().onTrue(elevator.toSetpoint(22)); // 28.4 (L2)
-    operatorController.a().onTrue(elevator.toSetpoint(Units.inchesToMeters(22.3))); // 54.1 (L3)
-    operatorController
-        .b()
         .onTrue(
-            elevator.toSetpoint(
-                ReefHeight.L4.height - Units.inchesToMeters(17.692))); // still need L4
-    operatorController.start().whileTrue(coral.intakeCoral());
-    operatorController.back().whileTrue(coral.dumpCoral());
-    operatorController.rightBumper().whileTrue(climber.deploy());
-    operatorController.rightTrigger().whileTrue(climber.winch());
-    operatorController.povUp().whileTrue(elevator.runPercent(0.3));
-    operatorController.povDown().whileTrue(elevator.runPercent(-0.3));
-    operatorController.leftBumper().whileTrue(algae.removeAlgae());
-    operatorController.leftTrigger().whileTrue(algae.removeAlgae());
+            elevator.toSetpoint(ElevatorConstants.elevatorToGround - Units.inchesToMeters(1.0)));
+    operatorController.rightTrigger().whileTrue(algae.removeAlgae());
+    driverController.rightStick().whileTrue(algae.removeAlgae());
+    driverController.rightTrigger().whileTrue(elevator.runPercent(0.3));
+    driverController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
+    /*
+    operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
+    operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
+    operatorController.x().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
+    operatorController.leftBumper().whileTrue(coral.intakeCoral());
+    operatorController.rightBumper().whileTrue(coral.dumpCoral());
+    operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));
+    operatorController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
+    operatorController.leftStick().whileTrue(coral.takeBackCoral());
+    */
   }
 
   /**

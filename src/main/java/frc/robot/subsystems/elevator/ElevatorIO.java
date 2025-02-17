@@ -9,7 +9,7 @@ public interface ElevatorIO {
     public double velocityMetersPerSec = 0.0;
     public double elevatorAppliedVolts = 0.0;
     public double elevatorCurrentAmps = 0.0;
-    public boolean limitSwitchPressed = false;
+    public boolean stowLimitSwitch = false;
   }
 
   default void updateInputs(ElevatorIOInputs inputs) {}
@@ -18,5 +18,7 @@ public interface ElevatorIO {
 
   default void setPercent(double percent) {}
 
-  default void setPosition(double positionMeters) {}
+  default void setPosition(double position) {}
+
+  default void resetPosition(double positionMeters) {}
 }
