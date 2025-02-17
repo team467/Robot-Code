@@ -240,8 +240,8 @@ public class RobotContainer {
                   elevator.toSetpoint(1.44);
                   algae.removeAlgae();
                 }));
-    driverController.leftTrigger().onTrue(elevator.runPercent(0.3));
-    driverController.rightTrigger().onTrue(elevator.runPercent(-0.3));
+    driverController.b().onTrue(elevator.runPercent(0.3));
+    driverController.y().onTrue(elevator.runPercent(-0.3));
     driverController.leftBumper().onTrue(coral.intakeCoral());
     driverController.rightBumper().onTrue(coral.takeBackCoral());
     driverController.a().onTrue(coral.dumpCoral());
