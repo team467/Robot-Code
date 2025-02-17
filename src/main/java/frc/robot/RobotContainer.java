@@ -262,11 +262,11 @@ public class RobotContainer {
                 () -> climber.io.setSpeed(-driverController.getLeftTriggerAxis()), climber));
     driverController.rightTrigger().onFalse(climber.stop());
     driverController.leftTrigger().onFalse(climber.stop());
-            Commands.run(
-                () -> {
-                  elevator.toSetpoint(1.44);
-                  algae.removeAlgae();
-                }));
+    Commands.run(
+        () -> {
+          elevator.toSetpoint(1.44);
+          algae.removeAlgae();
+        });
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
     driverController.leftBumper().onTrue(coral.intakeCoral());
