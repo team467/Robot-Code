@@ -2,12 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-
 package frc.robot;
 
-
 import static frc.robot.subsystems.vision.VisionConstants.*;
-
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
@@ -39,7 +36,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -58,19 +54,14 @@ public class RobotContainer {
   private Elevator elevator;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
-
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
-
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Instantiate active subsystems
     if (Constants.getMode() != Constants.Mode.REPLAY) {
@@ -123,8 +114,7 @@ public class RobotContainer {
         case ROBOT_SIMBOT -> {
           drive =
               new Drive(
-                  new GyroIO() {
-                  },
+                  new GyroIO() {},
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim(),
@@ -144,28 +134,20 @@ public class RobotContainer {
     if (drive == null) {
       drive =
           new Drive(
-              new GyroIO() {
-              },
-              new ModuleIO() {
-              },
-              new ModuleIO() {
-              },
-              new ModuleIO() {
-              },
-              new ModuleIO() {
-              });
+              new GyroIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {});
     }
     if (algae == null) {
-      algae = new AlgaeEffector(new AlgaeEffectorIO() {
-      });
+      algae = new AlgaeEffector(new AlgaeEffectorIO() {});
     }
     if (climber == null) {
-      climber = new Climber(new ClimberIO() {
-      });
+      climber = new Climber(new ClimberIO() {});
     }
     if (elevator == null) {
-      elevator = new Elevator(new ElevatorIO() {
-      });
+      elevator = new Elevator(new ElevatorIO() {});
     }
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -193,12 +175,11 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
-
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses
-   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
-   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * instantiating a {@link GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
 
@@ -279,7 +260,6 @@ public class RobotContainer {
     operatorController.leftBumper().whileTrue(algae.removeAlgae());
     operatorController.leftTrigger().whileTrue(algae.removeAlgae());
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
