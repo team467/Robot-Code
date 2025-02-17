@@ -40,12 +40,13 @@ public class Climber extends SubsystemBase {
   }
 
   public Command hold() {
-    return Commands.run(()->{
-        io.hold();
-    },this);
+    return Commands.run(
+        () -> {
+          io.hold();
+        },
+        this);
   }
 
-   */
   public Command stop() {
     return Commands.run(() -> io.setSpeed(0), this);
   }
