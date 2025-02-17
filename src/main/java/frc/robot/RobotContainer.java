@@ -245,7 +245,6 @@ public class RobotContainer {
     driverController.leftBumper().onTrue(coral.intakeCoral());
     driverController.rightBumper().onTrue(coral.takeBackCoral());
     driverController.a().onTrue(coral.dumpCoral());
-
   }
 
   /**
