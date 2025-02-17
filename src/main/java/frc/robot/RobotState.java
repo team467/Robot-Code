@@ -15,31 +15,31 @@ public class RobotState {
   public enum Mode {
 
     // 2025 Specific
-    ALIGNED_TO_REEF(LedPatterns.RED.colorPatternOnly()),
-    ALGAE_EFFECTOR_EXTENDED(LedPatterns.RED.colorPatternOnly()),
-    ALGAE_EFFECTOR_RUNNING(LedPatterns.RED.colorPatternOnly()),
-    CLIMBER_UP(LedPatterns.RED.colorPatternOnly()),
-    DUCK(LedPatterns.RED.colorPatternOnly()),
-    COLLISION_DETECTED(LedPatterns.RED.colorPatternOnly()),
+    ALIGNED_TO_REEF(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    ALGAE_EFFECTOR_EXTENDED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    ALGAE_EFFECTOR_RUNNING(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    CLIMBER_UP(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    DUCK(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    COLLISION_DETECTED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
 
     // Same every year
-    ESTOPPED(LedPatterns.RED.colorPatternOnly()),
-    AUTO_FINISHED(LedPatterns.RED.colorPatternOnly()),
-    AUTONOMOUS(LedPatterns.RED.colorPatternOnly()),
-    BLUE_ALLIANCE(LedPatterns.RED.colorPatternOnly()),
-    RED_ALLIANCE(LedPatterns.RED.colorPatternOnly()),
-    LOW_BATTERY_ALERT(LedPatterns.RED.colorPatternOnly()),
-    DISABLED(LedPatterns.RED.colorPatternOnly()),
-    OFF(LedPatterns.BLACK.colorPatternOnly()),
-    DEFAULT(LedPatterns.BLACK.colorPatternOnly());
+    ESTOPPED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    AUTO_FINISHED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    AUTONOMOUS(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    BLUE_ALLIANCE(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    RED_ALLIANCE(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    LOW_BATTERY_ALERT(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    DISABLED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    OFF(LedPatterns.BLACK.colorPatternOnly(), Sections.FULL),
+    DEFAULT(LedPatterns.BLACK.colorPatternOnly(), Sections.FULL);
 
     public final LEDPattern ledPattern;
     public final Sections ledSection;
 
     // ToDo - lED mode should set the section on which to light the LED
-    private Mode(LEDPattern ledPattern) {
+    private Mode(LEDPattern ledPattern, Sections section) {
       this.ledPattern = ledPattern;
-      this.ledSection = Sections.FULL;
+      this.ledSection = section;
     }
   }
 
