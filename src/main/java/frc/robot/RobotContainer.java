@@ -8,7 +8,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -43,7 +42,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-
   // Subsystems
   // private final Subsystem subsystem;
   private Drive drive;
@@ -224,41 +222,45 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController.b().whileTrue(coral.dumpCoral());
-    driverController.y().whileTrue(coral.intakeCoral());
+    operatorController.x().onTrue(elevator.toSetpoint(ReefHeight.L1.height));
+    operatorController.y().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
+    operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
+    operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
+    operatorController
+        .leftTrigger()
+        .onTrue(
+            Commands.run(
+                () -> {
+                  elevator.toSetpoint(0.9);
+                  algae.removeAlgae();
+                }));
+    operatorController
+        .leftBumper()
+        .onTrue(
+            Commands.run(
+                () -> {
+                  elevator.toSetpoint(1.44);
+                  algae.removeAlgae();
+                }));
+    operatorController.leftBumper().onTrue(climber.deploy());
+    operatorController.rightBumper().onTrue(climber.winch());
+    driverController.b().onTrue(elevator.runPercent(0.3));
+    driverController.y().onTrue(elevator.runPercent(-0.3));
+    driverController.leftBumper().onTrue(coral.intakeCoral());
+    driverController.rightBumper().onTrue(coral.takeBackCoral());
+    driverController.a().onTrue(coral.dumpCoral());
     driverController
         .rightTrigger()
         .whileTrue(
             Commands.run(
                 () -> climber.io.setSpeed(driverController.getRightTriggerAxis()), climber));
-
     driverController
         .leftTrigger()
         .whileTrue(
             Commands.run(
                 () -> climber.io.setSpeed(-driverController.getLeftTriggerAxis()), climber));
-
     driverController.rightTrigger().onFalse(climber.stop());
-
     driverController.leftTrigger().onFalse(climber.stop());
-    operatorController
-        .x()
-        .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
-    operatorController.y().onTrue(elevator.toSetpoint(22)); // 28.4 (L2)
-    operatorController.a().onTrue(elevator.toSetpoint(Units.inchesToMeters(22.3))); // 54.1 (L3)
-    operatorController
-        .b()
-        .onTrue(
-            elevator.toSetpoint(
-                ReefHeight.L4.height - Units.inchesToMeters(17.692))); // still need L4
-    operatorController.start().whileTrue(coral.intakeCoral());
-    operatorController.back().whileTrue(coral.dumpCoral());
-    operatorController.rightBumper().whileTrue(climber.deploy());
-    operatorController.rightTrigger().whileTrue(climber.winch());
-    operatorController.povUp().whileTrue(elevator.runPercent(0.3));
-    operatorController.povDown().whileTrue(elevator.runPercent(-0.3));
-    operatorController.leftBumper().whileTrue(algae.removeAlgae());
-    operatorController.leftTrigger().whileTrue(algae.removeAlgae());
   }
 
   /**
