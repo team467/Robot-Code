@@ -28,7 +28,6 @@ public class RobotState {
     ELEVATOR_ALGAE_L2(LedPatterns.GREEN.colorPatternOnly(), Sections.SECOND_QUARTER),
     ELEVATOR_ALGAE_L3(LedPatterns.GREEN.colorPatternOnly(), Sections.THIRD_QUARTER),
 
-
     // Same every year
     ESTOPPED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
     AUTO_FINISHED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),

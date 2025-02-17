@@ -128,7 +128,7 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-        
+
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
           // coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
