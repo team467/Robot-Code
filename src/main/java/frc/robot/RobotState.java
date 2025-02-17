@@ -39,12 +39,21 @@ public class RobotState {
     OFF(LedPatterns.BLACK.colorPatternOnly(), Sections.FULL),
     DEFAULT(LedPatterns.BLACK.colorPatternOnly(), Sections.FULL);
 
-    public final LEDPattern ledPattern;
-    public final Sections ledSection;
+    public LEDPattern ledPatternBar = LedPatterns.BLACK.colorPatternOnly();
+    public LEDPattern ledPatternNonBar = LedPatterns.BLACK.colorPatternOnly();
+    public Sections ledSectionNonBar = Sections.BASE1_BASE2;
 
     private Mode(LEDPattern ledPattern, Sections section) {
-      this.ledPattern = ledPattern;
-      this.ledSection = section;
+      if (section.isFull()) {
+        this.ledSectionNonBar = Sections.BASE1_BASE2;
+        this.ledPatternBar = ledPattern;
+        this.ledPatternNonBar = ledPattern;
+      } else if (section.isBar()) {
+        this.ledPatternBar = ledPattern;
+      } else {
+        this.ledPatternNonBar = ledPattern;
+        this.ledSectionNonBar = section;
+      }
     }
   }
 
