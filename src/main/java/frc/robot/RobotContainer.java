@@ -128,7 +128,7 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-        
+
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
           // coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
@@ -227,9 +227,10 @@ public class RobotContainer {
     driverController
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
-    driverController.b().whileTrue(coral.dumpCoral());
-    driverController.y().whileTrue(coral.intakeCoral());
+    if (coral != null) {
+      driverController.b().whileTrue(coral.dumpCoral());
+      driverController.y().whileTrue(coral.intakeCoral());
+    }
     operatorController
         .x()
         .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
@@ -240,8 +241,10 @@ public class RobotContainer {
         .onTrue(
             elevator.toSetpoint(
                 ReefHeight.L4.height - Units.inchesToMeters(17.692))); // still need L4
-    operatorController.start().whileTrue(coral.intakeCoral());
-    operatorController.back().whileTrue(coral.dumpCoral());
+    if (coral != null) {
+      operatorController.start().whileTrue(coral.intakeCoral());
+      operatorController.back().whileTrue(coral.dumpCoral());
+    }
     operatorController.rightBumper().whileTrue(climber.deploy());
     operatorController.rightTrigger().whileTrue(climber.winch());
     operatorController.povUp().whileTrue(elevator.runPercent(0.3));
