@@ -186,7 +186,7 @@ public class RobotContainer {
 
     // algae.setDefaultCommand(algae.stop());
     algae.setDefaultCommand(algae.stowArm());
-    elevator.setDefaultCommand(elevator.runPercent(0.0));
+    elevator.setDefaultCommand(elevator.hold(elevator.getPosition()));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
@@ -240,11 +240,12 @@ public class RobotContainer {
                   elevator.toSetpoint(1.44);
                   algae.removeAlgae();
                 }));
-    driverController.b().onTrue(elevator.runPercent(0.3));
-    driverController.y().onTrue(elevator.runPercent(-0.3));
+    driverController.b().whileTrue(elevator.runPercent(0.3));
+    driverController.y().whileTrue(elevator.runPercent(-0.3));
     driverController.leftBumper().onTrue(coral.intakeCoral());
     driverController.rightBumper().onTrue(coral.takeBackCoral());
     driverController.a().onTrue(coral.dumpCoral());
+    driverController.x().whileTrue(algae.removeAlgae());
   }
 
   /**

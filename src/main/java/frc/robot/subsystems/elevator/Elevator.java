@@ -62,6 +62,14 @@ public class Elevator extends SubsystemBase {
         this);
   }
 
+  public Command hold(double holdPosition) {
+    return Commands.run(
+        () -> {
+          io.hold(holdPosition);
+        },
+        this);
+  }
+
   public double getPosition() {
     return inputs.positionMeters;
   }

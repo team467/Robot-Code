@@ -118,4 +118,13 @@ public class ElevatorIOPhysical implements ElevatorIO {
     zeroedOnce = true;
     encoder.setPosition(positionMeters);
   }
+
+  @Override
+  public void hold(double holdPosition) {
+    if (encoder.getPosition() < holdPosition) {
+      spark.setVoltage(0.05);
+    } else if (encoder.getPosition() > holdPosition) {
+      spark.setVoltage(-0.05);
+    }
+  }
 }
