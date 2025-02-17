@@ -2,9 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
 package frc.robot;
 
+
 import static frc.robot.subsystems.vision.VisionConstants.*;
+
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
@@ -30,12 +33,12 @@ import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -44,6 +47,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
   // Subsystems
   // private final Subsystem subsystem;
   private Drive drive;
@@ -54,14 +58,19 @@ public class RobotContainer {
   private Elevator elevator;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
+
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
+
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     // Instantiate active subsystems
     if (Constants.getMode() != Constants.Mode.REPLAY) {
@@ -114,7 +123,8 @@ public class RobotContainer {
         case ROBOT_SIMBOT -> {
           drive =
               new Drive(
-                  new GyroIO() {},
+                  new GyroIO() {
+                  },
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim(),
@@ -134,20 +144,28 @@ public class RobotContainer {
     if (drive == null) {
       drive =
           new Drive(
-              new GyroIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {});
+              new GyroIO() {
+              },
+              new ModuleIO() {
+              },
+              new ModuleIO() {
+              },
+              new ModuleIO() {
+              },
+              new ModuleIO() {
+              });
     }
     if (algae == null) {
-      algae = new AlgaeEffector(new AlgaeEffectorIO() {});
+      algae = new AlgaeEffector(new AlgaeEffectorIO() {
+      });
     }
     if (climber == null) {
-      climber = new Climber(new ClimberIO() {});
+      climber = new Climber(new ClimberIO() {
+      });
     }
     if (elevator == null) {
-      elevator = new Elevator(new ElevatorIO() {});
+      elevator = new Elevator(new ElevatorIO() {
+      });
     }
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -175,11 +193,12 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
+
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * instantiating a {@link GenericHID} or one of its subclasses
+   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
+   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
 
@@ -190,6 +209,7 @@ public class RobotContainer {
     // algae.setDefaultCommand(algae.stop());
     algae.setDefaultCommand(algae.stowArm());
     elevator.setDefaultCommand(elevator.runPercent(0.0));
+    climber.setDefaultCommand(climber.stop());
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
@@ -223,31 +243,43 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController.leftBumper().whileTrue(coral.dumpCoral());
-    driverController.rightBumper().whileTrue(coral.intakeCoral());
-    driverController.leftStick().whileTrue(coral.takeBackCoral());
-    operatorController.y().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
-    operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
-    operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
+    driverController.b().whileTrue(coral.dumpCoral());
+    driverController.y().whileTrue(coral.intakeCoral());
+    driverController
+        .rightTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> climber.io.setSpeed(driverController.getRightTriggerAxis()), climber));
+
+    driverController
+        .leftTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> climber.io.setSpeed(-driverController.getLeftTriggerAxis()), climber));
+
+    driverController.rightTrigger().onFalse(climber.stop());
+
+    driverController.leftTrigger().onFalse(climber.stop());
     operatorController
         .x()
+        .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
+    operatorController.y().onTrue(elevator.toSetpoint(22)); // 28.4 (L2)
+    operatorController.a().onTrue(elevator.toSetpoint(Units.inchesToMeters(22.3))); // 54.1 (L3)
+    operatorController
+        .b()
         .onTrue(
-            elevator.toSetpoint(ElevatorConstants.elevatorToGround - Units.inchesToMeters(1.0)));
-    operatorController.rightTrigger().whileTrue(algae.removeAlgae());
-    driverController.rightStick().whileTrue(algae.removeAlgae());
-    driverController.rightTrigger().whileTrue(elevator.runPercent(0.3));
-    driverController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
-    /*
-    operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
-    operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
-    operatorController.x().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
-    operatorController.leftBumper().whileTrue(coral.intakeCoral());
-    operatorController.rightBumper().whileTrue(coral.dumpCoral());
-    operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));
-    operatorController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
-    operatorController.leftStick().whileTrue(coral.takeBackCoral());
-    */
+            elevator.toSetpoint(
+                ReefHeight.L4.height - Units.inchesToMeters(17.692))); // still need L4
+    operatorController.start().whileTrue(coral.intakeCoral());
+    operatorController.back().whileTrue(coral.dumpCoral());
+    operatorController.rightBumper().whileTrue(climber.deploy());
+    operatorController.rightTrigger().whileTrue(climber.winch());
+    operatorController.povUp().whileTrue(elevator.runPercent(0.3));
+    operatorController.povDown().whileTrue(elevator.runPercent(-0.3));
+    operatorController.leftBumper().whileTrue(algae.removeAlgae());
+    operatorController.leftTrigger().whileTrue(algae.removeAlgae());
   }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
