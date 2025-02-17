@@ -8,7 +8,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,7 +28,6 @@ import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.vision.Vision;
@@ -222,30 +220,32 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController.leftBumper().whileTrue(coral.dumpCoral());
-    driverController.rightBumper().whileTrue(coral.intakeCoral());
-    driverController.leftStick().whileTrue(coral.takeBackCoral());
+    operatorController.x().onTrue(elevator.toSetpoint(ReefHeight.L1.height));
     operatorController.y().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
     operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
     operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
     operatorController
-        .x()
+        .leftTrigger()
         .onTrue(
-            elevator.toSetpoint(ElevatorConstants.elevatorToGround - Units.inchesToMeters(1.0)));
-    operatorController.rightTrigger().whileTrue(algae.removeAlgae());
-    driverController.rightStick().whileTrue(algae.removeAlgae());
-    driverController.rightTrigger().whileTrue(elevator.runPercent(0.3));
-    driverController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
-    /*
-    operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
-    operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
-    operatorController.x().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
-    operatorController.leftBumper().whileTrue(coral.intakeCoral());
-    operatorController.rightBumper().whileTrue(coral.dumpCoral());
-    operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));
-    operatorController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
-    operatorController.leftStick().whileTrue(coral.takeBackCoral());
-    */
+            Commands.run(
+                () -> {
+                  elevator.toSetpoint(0.9);
+                  algae.removeAlgae();
+                }));
+    operatorController
+        .leftBumper()
+        .onTrue(
+            Commands.run(
+                () -> {
+                  elevator.toSetpoint(1.44);
+                  algae.removeAlgae();
+                }));
+    driverController.leftTrigger().onTrue(elevator.runPercent(0.3));
+    driverController.rightTrigger().onTrue(elevator.runPercent(-0.3));
+    driverController.leftBumper().onTrue(coral.intakeCoral());
+    driverController.rightBumper().onTrue(coral.takeBackCoral());
+    driverController.a().onTrue(coral.dumpCoral());
+
   }
 
   /**
