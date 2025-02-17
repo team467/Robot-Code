@@ -11,7 +11,6 @@ public interface ClimberIO {
     public double position = 0.0;
     public boolean climberDeployed = false;
     public boolean climberWinched = false;
-    public boolean climberStowed = false;
   }
 
   default void updateInputs(ClimberIOInputs inputs) {}

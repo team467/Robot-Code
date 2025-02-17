@@ -24,6 +24,7 @@ import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
@@ -103,7 +104,7 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(2),
                   new ModuleIOTalonSpark(3));
           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
-
+          climber = new Climber(new ClimberIOSparkMax());
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
           elevator = new Elevator(new ElevatorIOPhysical());
         }
@@ -186,6 +187,8 @@ public class RobotContainer {
 
     // algae.setDefaultCommand(algae.stop());
     algae.setDefaultCommand(algae.stowArm());
+    elevator.setDefaultCommand(elevator.runPercent(0.0));
+    climber.setDefaultCommand(climber.stop());
     elevator.setDefaultCommand(elevator.hold(elevator.getPosition()));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
@@ -235,6 +238,30 @@ public class RobotContainer {
     operatorController
         .leftBumper()
         .onTrue(
+            Commands.run(
+                () -> {
+                  elevator.toSetpoint(1.44);
+                  algae.removeAlgae();
+                }));
+    operatorController.rightBumper().onTrue(climber.deploy());
+    operatorController.rightTrigger().onTrue(climber.winch());
+    driverController.b().onTrue(elevator.runPercent(0.3));
+    driverController.y().onTrue(elevator.runPercent(-0.3));
+    driverController.leftBumper().onTrue(coral.intakeCoral());
+    driverController.rightBumper().onTrue(coral.takeBackCoral());
+    driverController.a().onTrue(coral.dumpCoral());
+    driverController
+        .rightTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> climber.io.setSpeed(driverController.getRightTriggerAxis()), climber));
+    driverController
+        .leftTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> climber.io.setSpeed(-driverController.getLeftTriggerAxis()), climber));
+    driverController.rightTrigger().onFalse(climber.stop());
+    driverController.leftTrigger().onFalse(climber.stop());
             Commands.run(
                 () -> {
                   elevator.toSetpoint(1.44);

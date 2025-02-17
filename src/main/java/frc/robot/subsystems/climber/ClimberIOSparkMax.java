@@ -16,7 +16,7 @@ public class ClimberIOSparkMax implements ClimberIO {
   private final SparkMax climberLeader;
   private final RelativeEncoder climberLeaderEncoder;
   private final SparkMax climberFollower;
-  private SparkLimitSwitch limitSwitch;
+  private final SparkLimitSwitch limitSwitch;
 
   /**
    * Constructor initializes the climber system, including motors, encoders, limit switches, and
@@ -25,13 +25,13 @@ public class ClimberIOSparkMax implements ClimberIO {
   public ClimberIOSparkMax() {
     climberLeader = new SparkMax(ClimberConstants.CLIMBER_LEADER_ID, MotorType.kBrushless);
     var ClimberLeaderConfig = new SparkMaxConfig();
-    ClimberLeaderConfig.inverted(true)
+    ClimberLeaderConfig.inverted(false)
         .idleMode(IdleMode.kBrake)
         .voltageCompensation(12)
         .smartCurrentLimit(40);
     ClimberLeaderConfig.softLimit
         .forwardSoftLimit(10)
-        .forwardSoftLimitEnabled(true)
+        .forwardSoftLimitEnabled(false)
         .reverseSoftLimitEnabled(false);
     ClimberLeaderConfig.encoder.positionConversionFactor(
         ClimberConstants.CLIMBER_CONVERSION_FACTOR);
@@ -40,7 +40,7 @@ public class ClimberIOSparkMax implements ClimberIO {
 
     climberFollower = new SparkMax(ClimberConstants.CLIMBER_FOLLOWER_ID, MotorType.kBrushless);
     var ClimberFollowerConfig = new SparkMaxConfig();
-    ClimberFollowerConfig.follow(1);
+    ClimberFollowerConfig.follow(ClimberConstants.CLIMBER_LEADER_ID, true);
 
     // Configure the leader motor using the configuration object and retry up to 5 times if it fails
     tryUntilOk(
@@ -76,13 +76,10 @@ public class ClimberIOSparkMax implements ClimberIO {
     inputs.climberWinched =
         inputs.position >= ClimberConstants.LOWER_WINCHED_POSITION
             && inputs.position <= ClimberConstants.UPPER_WINCHED_POSITION;
-    inputs.climberDeployed =
-        inputs.position >= ClimberConstants.LOWER_DEPLOYED_POSITION
-            && inputs.position <= ClimberConstants.UPPER_DEPLOYED_POSITION;
-    inputs.climberStowed = limitSwitch.isPressed();
+    inputs.climberDeployed = limitSwitch.isPressed();
 
     // Reset position if the stowed limit switch is pressed
-    if (inputs.climberStowed) {
+    if (inputs.climberDeployed) {
       resetPosition();
     }
   }
