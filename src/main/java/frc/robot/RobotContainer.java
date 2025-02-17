@@ -222,12 +222,21 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController.b().whileTrue(coral.dumpCoral());
-    driverController.y().whileTrue(coral.intakeCoral());
+    driverController.leftBumper().whileTrue(coral.dumpCoral());
+    driverController.rightBumper().whileTrue(coral.intakeCoral());
+    driverController.leftStick().whileTrue(coral.takeBackCoral());
+    operatorController.y().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
+    operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
+    operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
     operatorController
-        .y()
+        .x()
         .onTrue(
             elevator.toSetpoint(ElevatorConstants.elevatorToGround - Units.inchesToMeters(1.0)));
+    operatorController.rightTrigger().whileTrue(algae.removeAlgae());
+    driverController.rightStick().whileTrue(algae.removeAlgae());
+    driverController.rightTrigger().whileTrue(elevator.runPercent(0.3));
+    driverController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
+    /*
     operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
     operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
     operatorController.x().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
@@ -236,7 +245,7 @@ public class RobotContainer {
     operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));
     operatorController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
     operatorController.leftStick().whileTrue(coral.takeBackCoral());
-    driverController.a().whileTrue(algae.removeAlgae());
+    */
   }
 
   /**
