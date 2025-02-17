@@ -8,7 +8,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
-  private final ClimberIO io;
+  public final ClimberIO io;
   private final ClimberIOInputsAutoLogged inputs;
 
   public Climber(ClimberIO io) {
@@ -36,14 +36,6 @@ public class Climber extends SubsystemBase {
   public Command deploy() {
     return Commands.run(() -> io.setSpeed(ClimberConstants.DEPLOY_SPEED), this)
         .until(() -> inputs.climberDeployed);
-  }
-
-  public Command goForward() {
-    return Commands.run(() -> io.setSpeed(0.80), this).until(() -> inputs.climberDeployed);
-  }
-
-  public Command goBackward() {
-    return Commands.run(() -> io.setSpeed(-0.80), this);
   }
 
   public Command stop() {

@@ -225,9 +225,21 @@ public class RobotContainer {
 
     driverController.b().whileTrue(coral.dumpCoral());
     driverController.y().whileTrue(coral.intakeCoral());
-    driverController.leftBumper().whileTrue(climber.goBackward());
-    driverController.rightBumper().whileTrue(climber.goForward());
-    driverController.x().onTrue(climber.stop());
+    driverController
+        .rightTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> climber.io.setSpeed(driverController.getRightTriggerAxis()), climber));
+
+    driverController
+        .leftTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> climber.io.setSpeed(-driverController.getLeftTriggerAxis()), climber));
+
+    driverController.rightTrigger().onFalse(climber.stop());
+
+    driverController.leftTrigger().onFalse(climber.stop());
     operatorController
         .x()
         .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
