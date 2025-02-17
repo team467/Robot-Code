@@ -15,20 +15,27 @@ public class RobotState {
   public enum Mode {
 
     // 2025 Specific
-    ALIGNED_TO_REEF(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
-    ALGAE_EFFECTOR_EXTENDED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
-    ALGAE_EFFECTOR_RUNNING(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
-    CLIMBER_UP(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
-    DUCK(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
-    COLLISION_DETECTED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    HAS_CORAL(LedPatterns.PURPLE.colorPatternOnly(), Sections.FULL),
+    HOPPER_SEES_CORAL(LedPatterns.PURPLE.colorPatternOnly(), Sections.BASE1),
+    INTAKING_CORAL(LedPatterns.WHITE.colorPatternOnly(), Sections.FULL),
+    ALGAE_EFFECTOR_RUNNING(LedPatterns.GREEN.scroll(), Sections.FULL),
+    CLIMBER_WINCHED(LedPatterns.RAINBOW.scroll(), Sections.FULL),
+    DUCK(LedPatterns.STRIPE_COM.scroll(), Sections.FULL),
+    ELEVATOR_CORAL_L1(LedPatterns.PURPLE.colorPatternOnly(), Sections.FIRST_QUARTER),
+    ELEVATOR_CORAL_L2(LedPatterns.PURPLE.colorPatternOnly(), Sections.SECOND_QUARTER),
+    ELEVATOR_CORAL_L3(LedPatterns.PURPLE.colorPatternOnly(), Sections.THIRD_QUARTER),
+    ELEVATOR_CORAL_L4(LedPatterns.PURPLE.colorPatternOnly(), Sections.FOURTH_QUARTER),
+    ELEVATOR_ALGAE_L2(LedPatterns.GREEN.colorPatternOnly(), Sections.SECOND_QUARTER),
+    ELEVATOR_ALGAE_L3(LedPatterns.GREEN.colorPatternOnly(), Sections.THIRD_QUARTER),
+
 
     // Same every year
     ESTOPPED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
     AUTO_FINISHED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
     AUTONOMOUS(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
     BLUE_ALLIANCE(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
-    RED_ALLIANCE(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
-    LOW_BATTERY_ALERT(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    RED_ALLIANCE(LedPatterns.BLUE.colorPatternOnly(), Sections.FULL),
+    LOW_BATTERY_ALERT(LedPatterns.RED.blink(0.5), Sections.FULL),
     DISABLED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
     OFF(LedPatterns.BLACK.colorPatternOnly(), Sections.FULL),
     DEFAULT(LedPatterns.BLACK.colorPatternOnly(), Sections.FULL);
@@ -36,7 +43,6 @@ public class RobotState {
     public final LEDPattern ledPattern;
     public final Sections ledSection;
 
-    // ToDo - lED mode should set the section on which to light the LED
     private Mode(LEDPattern ledPattern, Sections section) {
       this.ledPattern = ledPattern;
       this.ledSection = section;
