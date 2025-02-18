@@ -8,7 +8,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
-  private final ClimberIO io;
+  public final ClimberIO io;
   private final ClimberIOInputsAutoLogged inputs;
 
   public Climber(ClimberIO io) {
@@ -20,7 +20,6 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
-    RobotState.getInstance().climberStowed = inputs.climberStowed;
     RobotState.getInstance().climberDeployed = inputs.climberDeployed;
     RobotState.getInstance().climberWinched = inputs.climberWinched;
   }
@@ -30,12 +29,25 @@ public class Climber extends SubsystemBase {
    * @return the winch command.
    */
   public Command winch() {
-    return Commands.run(() -> io.setSpeed(-1.0), this)
-        .until(() -> inputs.position <= ClimberConstants.WINCHED_POSITION);
+    return Commands.run(() -> io.setSpeed(ClimberConstants.WINCH_SPEED), this)
+        .until(() -> inputs.position <= ClimberConstants.WINCHED_POSITION)
+        .andThen(hold());
   }
 
   public Command deploy() {
-    return Commands.run(() -> io.setSpeed(1.0), this)
-        .until(() -> inputs.position <= ClimberConstants.DEPLOYED_POSITION);
+    return Commands.run(() -> io.setSpeed(ClimberConstants.DEPLOY_SPEED), this)
+        .until(() -> inputs.climberDeployed);
+  }
+
+  public Command hold() {
+    return Commands.run(
+        () -> {
+          io.hold();
+        },
+        this);
+  }
+
+  public Command stop() {
+    return Commands.run(() -> io.setSpeed(0), this);
   }
 }
