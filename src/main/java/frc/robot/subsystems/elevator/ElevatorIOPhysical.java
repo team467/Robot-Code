@@ -45,12 +45,13 @@ public class ElevatorIOPhysical implements ElevatorIO {
         .alternateEncoder
         .positionConversionFactor(ENCODER_CONVERSION_FACTOR)
         .velocityConversionFactor(ENCODER_CONVERSION_FACTOR / 60)
+        .inverted(true)
         .averageDepth(2);
     config
         .closedLoop
         .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
         .positionWrappingEnabled(false)
-        .pidf(4.6, 0.0, 24.0, 0.0);
+        .pidf(8.0, 0.0, 5, 0.0); // p:4.6 d: 24
     config
         .signals
         .externalOrAltEncoderPositionAlwaysOn(true)

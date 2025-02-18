@@ -222,10 +222,30 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    operatorController.x().onTrue(elevator.toSetpoint(ReefHeight.L1.height));
-    operatorController.y().onTrue(elevator.toSetpoint(ReefHeight.L2.height));
-    operatorController.a().onTrue(elevator.toSetpoint(ReefHeight.L3.height));
-    operatorController.b().onTrue(elevator.toSetpoint(ReefHeight.L4.height));
+    operatorController
+        .x()
+        .onTrue(
+            elevator
+                .toSetpoint(ReefHeight.L1.height)
+                .andThen(elevator.hold(elevator.getPosition())));
+    operatorController
+        .y()
+        .onTrue(
+            elevator
+                .toSetpoint(ReefHeight.L2.height)
+                .andThen(elevator.hold(elevator.getPosition())));
+    operatorController
+        .a()
+        .onTrue(
+            elevator
+                .toSetpoint(ReefHeight.L3.height)
+                .andThen(elevator.hold(elevator.getPosition())));
+    operatorController
+        .b()
+        .onTrue(
+            elevator
+                .toSetpoint(ReefHeight.L4.height)
+                .andThen(elevator.hold(elevator.getPosition())));
     operatorController
         .leftTrigger()
         .onTrue(
