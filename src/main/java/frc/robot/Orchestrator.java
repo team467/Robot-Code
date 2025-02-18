@@ -64,12 +64,13 @@ public class Orchestrator {
    * @return Command to remove algae from reef.
    */
   public Command removeAlgae(int level) {
-    return Commands.sequence(algaeEffector.stowArm().withTimeout(3),
+    return Commands.sequence(
+        algaeEffector.stowArm().withTimeout(3),
         elevator
-        .toSetpoint(getAlgaeHeight(level))
-        .until(elevator::atSetpoint)
-        .andThen(algaeEffector.removeAlgae())
-        .finallyDo(algaeEffector::stowArm));
+            .toSetpoint(getAlgaeHeight(level))
+            .until(elevator::atSetpoint)
+            .andThen(algaeEffector.removeAlgae())
+            .finallyDo(algaeEffector::stowArm));
   }
   /**
    * Gets the level for the branch that we want.
