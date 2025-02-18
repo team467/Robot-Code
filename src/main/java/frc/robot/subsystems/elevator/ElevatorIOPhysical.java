@@ -8,7 +8,7 @@ import com.revrobotics.spark.*;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
@@ -27,7 +27,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
 
   public ElevatorIOPhysical() {
     spark = new SparkMax(Schematic.elevatorMotorID, MotorType.kBrushless);
-    encoder = spark.getEncoder();
+    encoder = spark.getAlternateEncoder();
     elevatorStowLimitSwitch = new DigitalInput(3);
 
     controller = spark.getClosedLoopController();
@@ -42,22 +42,21 @@ public class ElevatorIOPhysical implements ElevatorIO {
         .forwardSoftLimit(Units.inchesToMeters(73))
         .forwardSoftLimitEnabled(true);
     config
-        .encoder
+        .alternateEncoder
         .positionConversionFactor(ENCODER_CONVERSION_FACTOR)
         .velocityConversionFactor(ENCODER_CONVERSION_FACTOR / 60)
-        .uvwAverageDepth(10)
-        .uvwAverageDepth(2);
+        .averageDepth(2);
     config
         .closedLoop
-        .feedbackSensor(ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder)
+        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
         .positionWrappingEnabled(false)
         .pidf(4.6, 0.0, 24.0, 0.0);
     config
         .signals
-        .primaryEncoderPositionAlwaysOn(true)
-        .primaryEncoderPositionPeriodMs(20)
-        .primaryEncoderVelocityAlwaysOn(true)
-        .primaryEncoderVelocityPeriodMs(20)
+        .externalOrAltEncoderPositionAlwaysOn(true)
+        .externalOrAltEncoderPosition(20)
+        .externalOrAltEncoderVelocityAlwaysOn(true)
+        .externalOrAltEncoderVelocity(20)
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
@@ -76,6 +75,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
     inputs.positionMeters = encoder.getPosition();
     inputs.velocityMetersPerSec = encoder.getVelocity();
     inputs.elevatorAppliedVolts = spark.getBusVoltage() * spark.getAppliedOutput();
+    spark.getAppliedOutput();
     inputs.elevatorCurrentAmps = spark.getOutputCurrent();
     inputs.stowLimitSwitch = !elevatorStowLimitSwitch.get();
   }
@@ -122,9 +122,9 @@ public class ElevatorIOPhysical implements ElevatorIO {
   @Override
   public void hold(double holdPosition) {
     if (encoder.getPosition() < holdPosition) {
-      spark.setVoltage(0.05);
+      spark.setVoltage(0.15);
     } else if (encoder.getPosition() > holdPosition) {
-      spark.setVoltage(-0.05);
+      spark.setVoltage(-0.15);
     }
   }
 }

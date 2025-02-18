@@ -188,7 +188,7 @@ public class RobotContainer {
     // algae.setDefaultCommand(algae.stop());
     algae.setDefaultCommand(algae.stowArm());
     climber.setDefaultCommand(climber.stop());
-    elevator.setDefaultCommand(elevator.runPercent(0.0));
+    elevator.setDefaultCommand(elevator.hold(elevator.getPosition()));
 
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive

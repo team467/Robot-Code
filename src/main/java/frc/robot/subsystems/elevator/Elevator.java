@@ -34,7 +34,7 @@ public class Elevator extends SubsystemBase {
     if (inputs.stowLimitSwitch) {
       io.resetPosition(elevatorToGround);
       if (!isCalibrated) {
-        io.setPosition(ElevatorConstants.STOW);
+        io.setPosition(STOW);
         isCalibrated = true;
       }
     }
