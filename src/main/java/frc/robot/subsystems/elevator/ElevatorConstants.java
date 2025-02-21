@@ -3,6 +3,8 @@ package frc.robot.subsystems.elevator;
 import edu.wpi.first.math.util.Units;
 import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
+import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.ReefHeight;
 
 public class ElevatorConstants {
   public static final TunableNumber KG;
@@ -47,7 +49,7 @@ public class ElevatorConstants {
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration", 0.0);
         STOW = 0.0;
         TOLERANCE = 0.0;
-        INTAKE_POSITION = 0.0;
+        INTAKE_POSITION = ReefHeight.L1.height;
         ENCODER_CONVERSION_FACTOR = 0.0;
       }
     }
