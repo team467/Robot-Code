@@ -8,7 +8,7 @@ import java.util.function.DoubleSupplier;
 
 public class CustomTriggers {
   private static final double JOYSTICK_THRESHOLD = 0.2;
-  private Map<Trigger, Boolean> lastTriggerValues = new HashMap<>();
+  private final Map<Trigger, Boolean> lastButtonValues = new HashMap<>();
 
   public Trigger toggleOnTrueCancelableWithJoystick(
       Trigger buttonInput, DoubleSupplier X, DoubleSupplier Y) {
@@ -18,14 +18,14 @@ public class CustomTriggers {
           boolean joystickEngaged =
               Math.abs(X.getAsDouble()) > JOYSTICK_THRESHOLD
                   || Math.abs(Y.getAsDouble()) > JOYSTICK_THRESHOLD;
-          boolean lastValue = lastTriggerValues.getOrDefault(buttonInput, false);
+          boolean lastValue = lastButtonValues.getOrDefault(buttonInput, false);
 
           if (!joystickEngaged) {
             boolean currentValue = buttonInput.getAsBoolean();
-            lastTriggerValues.put(buttonInput, currentValue);
+            lastButtonValues.put(buttonInput, currentValue);
             return currentValue != lastValue;
           }
-          lastTriggerValues.put(buttonInput, false);
+          lastButtonValues.put(buttonInput, false);
           return false;
         });
   }
@@ -44,14 +44,14 @@ public class CustomTriggers {
                   || Math.abs(Y1.getAsDouble()) > JOYSTICK_THRESHOLD
                   || Math.abs(X2.getAsDouble()) > JOYSTICK_THRESHOLD
                   || Math.abs(Y2.getAsDouble()) > JOYSTICK_THRESHOLD;
-          boolean lastValue = lastTriggerValues.getOrDefault(buttonInput, false);
+          boolean lastValue = lastButtonValues.getOrDefault(buttonInput, false);
 
           if (!joystickEngaged) {
             boolean currentValue = buttonInput.getAsBoolean();
-            lastTriggerValues.put(buttonInput, currentValue);
+            lastButtonValues.put(buttonInput, currentValue);
             return currentValue != lastValue;
           }
-          lastTriggerValues.put(buttonInput, false);
+          lastButtonValues.put(buttonInput, false);
           return false;
         });
   }
