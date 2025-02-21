@@ -36,4 +36,30 @@ public class CustomTriggers {
           return false;
         });
   }
+
+  public Trigger toggleOnTrueCancelableWithJoysticks(
+      Trigger buttonInput,
+      DoubleSupplier X1,
+      DoubleSupplier Y1,
+      DoubleSupplier X2,
+      DoubleSupplier Y2) {
+    return new Trigger(
+        CommandScheduler.getInstance().getDefaultButtonLoop(),
+        () -> {
+          boolean joystickEngaged =
+              Math.abs(X1.getAsDouble()) > 0.2
+                  || Math.abs(Y1.getAsDouble()) > 0.2
+                  || Math.abs(X2.getAsDouble()) > 0.2
+                  || Math.abs(Y2.getAsDouble()) > 0.2;
+          boolean lastValue = lastTriggerValues.getOrDefault(buttonInput, false);
+
+          if (!joystickEngaged) {
+            boolean currentValue = buttonInput.getAsBoolean();
+            lastTriggerValues.put(buttonInput, currentValue);
+            return currentValue != lastValue;
+          }
+          lastTriggerValues.put(buttonInput, false);
+          return false;
+        });
+  }
 }
