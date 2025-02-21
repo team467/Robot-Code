@@ -31,10 +31,10 @@ public class Elevator extends SubsystemBase {
       io.setPosition(inputs.positionMeters);
     }
 
-    if (inputs.limitSwitchPressed) {
+    if (inputs.stowLimitSwitch) {
       io.resetPosition(elevatorToGround);
       if (!isCalibrated) {
-        io.setPosition(ElevatorConstants.STOW);
+        io.setPosition(STOW);
         isCalibrated = true;
       }
     }
@@ -66,11 +66,19 @@ public class Elevator extends SubsystemBase {
         this);
   }
 
+  public Command hold(double holdPosition) {
+    return Commands.run(
+        () -> {
+          io.hold(holdPosition);
+        },
+        this);
+  }
+
   public double getPosition() {
     return inputs.positionMeters;
   }
 
   public boolean limitSwitchPressed() {
-    return inputs.limitSwitchPressed;
+    return inputs.stowLimitSwitch;
   }
 }

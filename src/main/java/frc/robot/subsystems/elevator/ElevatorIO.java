@@ -12,6 +12,7 @@ public interface ElevatorIO {
     public double elevatorSetpoint = 0.0;
     public boolean limitSwitchPressed = false;
     public boolean atSetpoint = false;
+    public boolean stowLimitSwitch = false;
   }
 
   default void updateInputs(ElevatorIOInputs inputs) {}
@@ -23,4 +24,6 @@ public interface ElevatorIO {
   default void setPosition(double position) {}
 
   default void resetPosition(double positionMeters) {}
+
+  default void hold(double holdPosition) {}
 }
