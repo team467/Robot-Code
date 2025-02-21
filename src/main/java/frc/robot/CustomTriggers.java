@@ -1,71 +1,39 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.DoubleSupplier;
 
 public class CustomTriggers {
-  private boolean lastFaceReefButtonInput = false;
-  private boolean aligningToFaceReef = false;
-  private boolean lastAlignToLeftBranchInput = false;
-  private boolean aligningToLeftBranch = false;
+  private final CommandXboxController driverController;
+  private final CommandXboxController operatorController;
+  private Map<Trigger, Boolean> lastTriggerValues = new HashMap<>();
 
-  private boolean aligningToRightBranch = false;
-  private boolean lastAlignToRightBranchInput = false;
-
-  public Trigger faceReef(
-      Trigger alignButton, DoubleSupplier turnJoystickX, DoubleSupplier turnJoystickY) {
-    return new Trigger(
-        () -> {
-          boolean turnJoystickEngaged =
-              (Math.abs(turnJoystickX.getAsDouble()) > 0.2
-                  || Math.abs(turnJoystickY.getAsDouble()) > 0.2);
-          if (!turnJoystickEngaged) {
-            if (alignButton.getAsBoolean()) {
-              aligningToFaceReef = !aligningToFaceReef;
-            }
-          } else {
-            aligningToFaceReef = false;
-          }
-          lastFaceReefButtonInput = alignButton.getAsBoolean() || !turnJoystickEngaged;
-          return aligningToFaceReef;
-        });
+  public CustomTriggers(
+      CommandXboxController driverController, CommandXboxController operatorController) {
+    this.operatorController = operatorController;
+    this.driverController = driverController;
   }
 
-  public Trigger alignToReefLeft(
-      Trigger alignButton, DoubleSupplier driveJoystickX, DoubleSupplier driveJoystickY) {
+  public Trigger toggleOnTrueCancelableWithJoystick(
+      Trigger buttonInput, DoubleSupplier X, DoubleSupplier Y) {
     return new Trigger(
+        CommandScheduler.getInstance().getDefaultButtonLoop(),
         () -> {
-          boolean turnJoystickEngaged =
-              (Math.abs(driveJoystickX.getAsDouble()) > 0.2
-                  || Math.abs(driveJoystickY.getAsDouble()) > 0.2);
-          if (!turnJoystickEngaged) {
-            if (alignButton.getAsBoolean()) {
-              aligningToLeftBranch = !aligningToLeftBranch;
-            }
-          } else {
-            aligningToLeftBranch = false;
-          }
-          lastAlignToLeftBranchInput = alignButton.getAsBoolean() || !turnJoystickEngaged;
-          return aligningToLeftBranch;
-        });
-  }
+          boolean joystickEngaged =
+              Math.abs(X.getAsDouble()) > 0.2 || Math.abs(Y.getAsDouble()) > 0.2;
+          boolean lastValue = lastTriggerValues.getOrDefault(buttonInput, false);
 
-  public Trigger alignToReefRight(
-      Trigger alignButton, DoubleSupplier driveJoystickX, DoubleSupplier driveJoystickY) {
-    return new Trigger(
-        () -> {
-          boolean turnJoystickEngaged =
-              (Math.abs(driveJoystickX.getAsDouble()) > 0.2
-                  || Math.abs(driveJoystickY.getAsDouble()) > 0.2);
-          if (!turnJoystickEngaged) {
-            if (alignButton.getAsBoolean()) {
-              aligningToRightBranch = !aligningToRightBranch;
-            }
-          } else {
-            aligningToRightBranch = false;
+          if (!joystickEngaged) {
+            boolean currentValue = buttonInput.getAsBoolean();
+            lastTriggerValues.put(buttonInput, currentValue);
+            return currentValue != lastValue;
           }
-          lastAlignToRightBranchInput = alignButton.getAsBoolean() || !turnJoystickEngaged;
-          return aligningToRightBranch;
+          lastTriggerValues.put(buttonInput, false);
+          return false;
         });
   }
 }

@@ -140,7 +140,7 @@ public class RobotContainer {
     }
     orchestrator = new Orchestrator(drive, elevator, algae, coral);
     fieldAlignment = new FieldAlignment(drive);
-    customTriggers = new CustomTriggers();
+    customTriggers = new CustomTriggers(driverController, operatorController);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -221,17 +221,9 @@ public class RobotContainer {
     operatorController.x().whileTrue(algae.stowArm());
 
     operatorController.b().onTrue(climber.winch());
-
     customTriggers
-        .alignToReefLeft(
+        .toggleOnTrueCancelableWithJoystick(
             driverController.leftBumper(), driverController::getLeftX, driverController::getLeftY)
-        .whileTrue(fieldAlignment.alignToReef(true));
-    customTriggers
-        .alignToReefRight(
-            driverController.rightBumper(), driverController::getLeftX, driverController::getLeftY)
-        .whileTrue(fieldAlignment.alignToReef(false));
-    customTriggers
-        .faceReef(driverController.a(), driverController::getRightX, driverController::getRightY)
         .whileTrue(fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController
         .y()
