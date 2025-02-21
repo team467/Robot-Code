@@ -70,7 +70,7 @@ public class Orchestrator {
     return Commands.parallel(
             elevator.toSetpoint(setpoint).onlyWhile(algaeEffector::isStowed),
             algaeEffector.stowArm().onlyWhile(() -> !algaeEffector.isStowed()))
-        .until(elevator::atSetpoint);
+        .until(elevator::atSetpoint).andThen(elevator.hold(elevator.getPosition())));
   }
   /**
    * Gets the level for the branch that we want.
