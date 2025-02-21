@@ -50,8 +50,7 @@ public class Orchestrator {
    * @return Command for placing coral.
    */
   public Command placeCoral(int level) {
-    return moveElevatorToSetpoint(getCoralHeight(level))
-        .andThen(coralEffector.dumpCoral());
+    return moveElevatorToSetpoint(getCoralHeight(level)).andThen(coralEffector.dumpCoral());
   }
 
   /**
@@ -69,8 +68,9 @@ public class Orchestrator {
 
   public Command moveElevatorToSetpoint(double setpoint) {
     return Commands.parallel(
-        elevator.toSetpoint(setpoint).onlyWhile(algaeEffector::isStowed),
-        algaeEffector.stowArm().onlyWhile(() -> !algaeEffector.isStowed())).until(elevator::atSetpoint);
+            elevator.toSetpoint(setpoint).onlyWhile(algaeEffector::isStowed),
+            algaeEffector.stowArm().onlyWhile(() -> !algaeEffector.isStowed()))
+        .until(elevator::atSetpoint);
   }
   /**
    * Gets the level for the branch that we want.
