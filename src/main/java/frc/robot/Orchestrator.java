@@ -37,8 +37,7 @@ public class Orchestrator {
    * @return Command for intaking coral.
    */
   public Command intake() {
-    return elevator
-        .toSetpoint(ElevatorConstants.INTAKE_POSITION)
+    return moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
         .withTimeout(4)
         .until(() -> elevator.atSetpoint() && robotState.hopperSeesCoral)
         .andThen(coralEffector.intakeCoral());
@@ -51,9 +50,7 @@ public class Orchestrator {
    * @return Command for placing coral.
    */
   public Command placeCoral(int level) {
-    return elevator
-        .toSetpoint(getCoralHeight(level))
-        .until(elevator::atSetpoint)
+    return moveElevatorToSetpoint(getCoralHeight(level))
         .andThen(coralEffector.dumpCoral());
   }
 
@@ -65,12 +62,15 @@ public class Orchestrator {
    */
   public Command removeAlgae(int level) {
     return Commands.sequence(
-        algaeEffector.stowArm().withTimeout(3),
-        elevator
-            .toSetpoint(getAlgaeHeight(level))
-            .until(elevator::atSetpoint)
+        moveElevatorToSetpoint(getAlgaeHeight(level))
             .andThen(algaeEffector.removeAlgae())
             .finallyDo(algaeEffector::stowArm));
+  }
+
+  public Command moveElevatorToSetpoint(double setpoint) {
+    return Commands.parallel(
+        elevator.toSetpoint(setpoint).onlyWhile(algaeEffector::isStowed),
+        algaeEffector.stowArm().onlyWhile(() -> !algaeEffector.isStowed())).until(elevator::atSetpoint);
   }
   /**
    * Gets the level for the branch that we want.
