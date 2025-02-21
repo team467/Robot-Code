@@ -3,6 +3,7 @@ package frc.robot.commands.drive;
 import static frc.robot.FieldConstants.Reef.branchPositions;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -49,7 +50,10 @@ public class FieldAlignment {
 
   public Command faceCoralStation(DoubleSupplier leftJoystickX, DoubleSupplier leftJoystickY) {
     return DriveCommands.joystickDriveAtAngle(
-        drive, leftJoystickX, leftJoystickY, () -> getClosestCoralStationPosition().getRotation());
+        drive,
+        leftJoystickX,
+        leftJoystickY,
+        () -> getClosestCoralStationPosition().getRotation().rotateBy(Rotation2d.fromDegrees(180)));
   }
   /**
    * Gets position of the branch we want.
@@ -65,7 +69,6 @@ public class FieldAlignment {
     branchIndex = branch;
     Pose2d branchPose =
         AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L1).toPose2d());
-    ;
     desiredCoralPose =
         new Pose2d(
             branchPose.getX() // Move backwards robot relative
