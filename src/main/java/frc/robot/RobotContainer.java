@@ -285,7 +285,7 @@ public class RobotContainer {
     driverController.a().onTrue(coral.dumpCoral());
     driverController.x().whileTrue(algae.removeAlgae());
   }
-  // 98 climber soft limit
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
