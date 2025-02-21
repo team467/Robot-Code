@@ -107,6 +107,14 @@ public class RobotContainer {
           climber = new Climber(new ClimberIOSparkMax());
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
           elevator = new Elevator(new ElevatorIOPhysical());
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
         }
 
         case ROBOT_SIMBOT -> {
