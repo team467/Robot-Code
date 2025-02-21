@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.DoubleSupplier;
 
 public class CustomTriggers {
+  private static final double JOYSTICK_THRESHOLD = 0.2;
   private Map<Trigger, Boolean> lastTriggerValues = new HashMap<>();
 
   public Trigger toggleOnTrueCancelableWithJoystick(
@@ -16,7 +17,7 @@ public class CustomTriggers {
         CommandScheduler.getInstance().getDefaultButtonLoop(),
         () -> {
           boolean joystickEngaged =
-              Math.abs(X.getAsDouble()) > 0.2 || Math.abs(Y.getAsDouble()) > 0.2;
+              Math.abs(X.getAsDouble()) > JOYSTICK_THRESHOLD || Math.abs(Y.getAsDouble()) > JOYSTICK_THRESHOLD;
           boolean lastValue = lastTriggerValues.getOrDefault(buttonInput, false);
 
           if (!joystickEngaged) {
@@ -39,10 +40,10 @@ public class CustomTriggers {
         CommandScheduler.getInstance().getDefaultButtonLoop(),
         () -> {
           boolean joystickEngaged =
-              Math.abs(X1.getAsDouble()) > 0.2
-                  || Math.abs(Y1.getAsDouble()) > 0.2
-                  || Math.abs(X2.getAsDouble()) > 0.2
-                  || Math.abs(Y2.getAsDouble()) > 0.2;
+              Math.abs(X1.getAsDouble()) > JOYSTICK_THRESHOLD
+                  || Math.abs(Y1.getAsDouble()) > JOYSTICK_THRESHOLD
+                  || Math.abs(X2.getAsDouble()) > JOYSTICK_THRESHOLD
+                  || Math.abs(Y2.getAsDouble()) > JOYSTICK_THRESHOLD;
           boolean lastValue = lastTriggerValues.getOrDefault(buttonInput, false);
 
           if (!joystickEngaged) {
