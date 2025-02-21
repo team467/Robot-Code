@@ -223,7 +223,7 @@ public class RobotContainer {
     operatorController.b().onTrue(climber.winch());
     customTriggers
         .toggleOnTrueCancelableWithJoystick(
-            driverController.leftBumper(), driverController::getLeftX, driverController::getLeftY)
+            driverController.a(), driverController::getRightX, driverController::getRightY)
         .whileTrue(fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController
         .y()
