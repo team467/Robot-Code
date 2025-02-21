@@ -3,7 +3,6 @@ package frc.robot.subsystems.elevator;
 import edu.wpi.first.math.util.Units;
 import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
-import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefHeight;
 
 public class ElevatorConstants {
