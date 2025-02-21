@@ -267,6 +267,10 @@ public class RobotContainer {
                 }));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
+    driverController.leftBumper().onTrue(fieldAlignment.alignToReef(true));
+    driverController.rightBumper().onTrue(fieldAlignment.alignToReef(false));
+    driverController.leftTrigger().toggleOnTrue(fieldAlignment.faceCoralStation(driverController::getLeftX, driverController::getLeftY).onlyWhile(() -> !coral.hasCoral()));
+    driverController.leftTrigger().toggleOnTrue(fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY).onlyWhile(coral::hasCoral));
     driverController
         .rightTrigger()
         .whileTrue(
