@@ -71,8 +71,6 @@ public class Leds extends SubsystemBase {
 
     private final AddressableLEDBufferView buf_view_1;
     private final AddressableLEDBufferView buf_view_2;
-    private final boolean isBar;
-    private final boolean isFull;
 
     private Sections(int start_1, int end_1, int start_2, int end_2) {
       System.out.println(
@@ -88,12 +86,6 @@ public class Leds extends SubsystemBase {
               + end_2);
       this.buf_view_1 = buffer.createView(start_1, end_1);
       this.buf_view_2 = buffer.createView(start_2, end_2);
-      this.isBar = false;
-      if ((start_1 == 0) && (end_1 == LedConstants.FULL_LENGTH - 1)) {
-        this.isFull = true;
-      } else {
-        this.isFull = false;
-      }
     }
 
     private Sections(int start_1, int end_1) {
@@ -101,13 +93,6 @@ public class Leds extends SubsystemBase {
           "create section " + toString() + " start_1: " + start_1 + " end_1: " + end_1);
       this.buf_view_1 = buffer.createView(start_1, end_1);
       this.buf_view_2 = null;
-      if (start_1 == LedConstants.BAR_START) {
-        this.isBar = true;
-        this.isFull = false;
-      } else {
-        this.isBar = false;
-        this.isFull = false;
-      }
     }
 
     public AddressableLEDBufferView getBufferView_1() {
@@ -116,14 +101,6 @@ public class Leds extends SubsystemBase {
 
     public AddressableLEDBufferView getBufferView_2() {
       return buf_view_2;
-    }
-
-    public boolean isBar() {
-      return isBar;
-    }
-
-    public boolean isFull() {
-      return isFull;
     }
   }
 
@@ -135,11 +112,9 @@ public class Leds extends SubsystemBase {
   private GenericEntry testReverse;
   private GenericEntry testTimer;
 
-  LEDPattern currentPattern = LedPatterns.BLACK.colorPatternOnly();
+  private LEDPattern currentPattern = LedPatterns.BLACK.colorPatternOnly();
+  private Sections applySection = Sections.FULL;
   private Boolean isReversed = false;
-  private LEDPattern currentPatternBar = LedPatterns.BLACK.colorPatternOnly();
-  private LEDPattern currentPatternNonBar = LedPatterns.BLACK.colorPatternOnly();
-  private Sections applySectionNonBar = Sections.BASE1_BASE2;
 
   public Leds() {
 
@@ -158,9 +133,8 @@ public class Leds extends SubsystemBase {
       processTestInputs();
     } else {
       /* get from robot state  */
-      currentPatternBar = state.getMode().ledPatternBar;
-      currentPatternNonBar = state.getMode().ledPatternNonBar;
-      applySectionNonBar = state.getMode().ledSectionNonBar;
+      currentPattern = state.getMode().ledPattern;
+      applySection = state.getMode().ledSection;
     }
 
     // Load the pattern onto the LEDs
@@ -178,7 +152,7 @@ public class Leds extends SubsystemBase {
       LedPatterns pattern2 = testPattern2.getSelected();
       Animations animation = testAnimation.getSelected();
       double timer = testTimer.getDouble(0);
-      Sections applySection = testSection.getSelected();
+      applySection = testSection.getSelected();
       isReversed = testReverse.getBoolean(false);
       // System.out.println("test timer" + timer);
 
@@ -192,36 +166,22 @@ public class Leds extends SubsystemBase {
         case BREATHE_OVERLAY -> currentPattern = pattern.breathe().overlayOn(pattern2.breathe());
         default -> currentPattern = pattern.colorPatternOnly();
       }
-      if (applySection.isBar()) {
-        currentPatternBar = currentPattern;
-      } else {
-        if (applySection.isFull()) {
-          currentPatternBar = currentPattern;
-          currentPatternNonBar = currentPattern;
-          applySectionNonBar = Sections.BASE1_BASE2;
-        } else {
-          currentPatternNonBar = currentPattern;
-          applySectionNonBar = applySection;
-        }
-      }
     } catch (IllegalArgumentException E) {
       currentPattern = LedPatterns.RED.blink();
     }
   }
 
   private void loadLedPatterns() {
-    LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
-
-    currentPatternBar.applyTo(Sections.BAR.getBufferView_1());
+    // LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
     if (isReversed) {
-      currentPatternNonBar.applyTo(applySectionNonBar.getBufferView_1().reversed());
-      if (applySectionNonBar.getBufferView_2() != null) {
-        currentPatternNonBar.applyTo(applySectionNonBar.getBufferView_2().reversed());
+      currentPattern.applyTo(applySection.getBufferView_1().reversed());
+      if (applySection.getBufferView_2() != null) {
+        currentPattern.applyTo(applySection.getBufferView_2().reversed());
       }
     } else {
-      currentPatternNonBar.applyTo(applySectionNonBar.getBufferView_1());
-      if (applySectionNonBar.getBufferView_2() != null) {
-        currentPatternNonBar.applyTo(applySectionNonBar.getBufferView_2().reversed());
+      currentPattern.applyTo(applySection.getBufferView_1());
+      if (applySection.getBufferView_2() != null) {
+        currentPattern.applyTo(applySection.getBufferView_2().reversed());
       }
     }
   }
