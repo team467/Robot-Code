@@ -10,7 +10,6 @@ public interface ElevatorIO {
     public double elevatorAppliedVolts = 0.0;
     public double elevatorCurrentAmps = 0.0;
     public double elevatorSetpoint = 0.0;
-    public boolean limitSwitchPressed = false;
     public boolean atSetpoint = false;
     public boolean stowLimitSwitch = false;
   }
