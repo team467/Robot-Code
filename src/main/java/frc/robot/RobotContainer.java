@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIO;
 import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
@@ -26,6 +27,7 @@ import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.coral.CoralEffector;
+import frc.robot.subsystems.coral.CoralEffectorIO;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
@@ -50,7 +52,7 @@ public class RobotContainer {
   private CoralEffector coral;
   private Climber climber;
   private Elevator elevator;
-
+  private FieldAlignment fieldAlignment;
   private Orchestrator orchestrator;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -146,9 +148,13 @@ public class RobotContainer {
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
     }
+    if (coral == null) {
+      coral = new CoralEffector(new CoralEffectorIO() {});
+    }
     if (elevator == null) {
       elevator = new Elevator(new ElevatorIO() {});
     }
+    fieldAlignment = new FieldAlignment(drive);
     orchestrator = new Orchestrator(drive, elevator, algae, coral);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -183,15 +189,10 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    if (coral != null) {
-      coral.setDefaultCommand(coral.stop());
-    }
-
-    // algae.setDefaultCommand(algae.stop());
+    coral.setDefaultCommand(coral.stop());
     algae.setDefaultCommand(algae.stowArm());
     climber.setDefaultCommand(climber.stop());
     elevator.setDefaultCommand(elevator.hold(elevator.getPosition()));
-
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
