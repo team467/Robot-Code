@@ -140,7 +140,7 @@ public class RobotContainer {
     }
     orchestrator = new Orchestrator(drive, elevator, algae, coral);
     fieldAlignment = new FieldAlignment(drive);
-    customTriggers = new CustomTriggers(driverController, operatorController);
+    customTriggers = new CustomTriggers();
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines

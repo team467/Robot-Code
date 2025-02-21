@@ -8,15 +8,7 @@ import java.util.Map;
 import java.util.function.DoubleSupplier;
 
 public class CustomTriggers {
-  private final CommandXboxController driverController;
-  private final CommandXboxController operatorController;
   private Map<Trigger, Boolean> lastTriggerValues = new HashMap<>();
-
-  public CustomTriggers(
-      CommandXboxController driverController, CommandXboxController operatorController) {
-    this.operatorController = operatorController;
-    this.driverController = driverController;
-  }
 
   public Trigger toggleOnTrueCancelableWithJoystick(
       Trigger buttonInput, DoubleSupplier X, DoubleSupplier Y) {
