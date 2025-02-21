@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotState;
+import frc.robot.RobotState.Mode;
 
 public class Leds extends SubsystemBase {
 
@@ -111,6 +112,8 @@ public class Leds extends SubsystemBase {
   private SendableChooser<Sections> testSection;
   private GenericEntry testReverse;
   private GenericEntry testTimer;
+  private GenericEntry enableLedModeTestEntry;
+  private SendableChooser<Mode> testMode;
 
   private LEDPattern currentPattern = LedPatterns.BLACK.colorPatternOnly();
   private Sections applySection = Sections.FULL;
@@ -124,6 +127,7 @@ public class Leds extends SubsystemBase {
     leds.start();
 
     initLedTabInShuffleboard();
+    initLedModeTabInShuffleboard();
   }
 
   @Override
@@ -131,6 +135,8 @@ public class Leds extends SubsystemBase {
 
     if (enableTestEntry.getBoolean(false)) {
       processTestInputs();
+    } else if (enableLedModeTestEntry.getBoolean(false)) {
+      processTestModeInputs();
     } else {
       /* get from robot state  */
       currentPattern = state.getMode().ledPattern;
@@ -171,8 +177,18 @@ public class Leds extends SubsystemBase {
     }
   }
 
+  private void processTestModeInputs() {
+    try {
+      Mode mode = testMode.getSelected();
+      applySection = mode.ledSection;
+      currentPattern = mode.ledPattern;
+    } catch (IllegalArgumentException E) {
+      currentPattern = LedPatterns.RED.blink();
+    }
+  }
+
   private void loadLedPatterns() {
-    // LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
+    LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
     if (isReversed) {
       currentPattern.applyTo(applySection.getBufferView_1().reversed());
       if (applySection.getBufferView_2() != null) {
@@ -255,5 +271,31 @@ public class Leds extends SubsystemBase {
             .withWidget(BuiltInWidgets.kNumberSlider)
             .withPosition(0, 0)
             .getEntry();
+  }
+
+  private void initLedModeTabInShuffleboard() {
+    ShuffleboardTab ledModeTab = Shuffleboard.getTab("LED Modes");
+    ShuffleboardLayout ledModeTestingLayout =
+        ledModeTab
+            .getLayout("LED Mode Testing Options", BuiltInLayouts.kGrid)
+            .withSize(2, 4)
+            .withPosition(0, 0);
+
+    enableLedModeTestEntry =
+        ledModeTestingLayout
+            .add("Enable LED Mode Test", "boolean", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
+            .withPosition(0, 0)
+            .getEntry();
+
+    testMode = new SendableChooser<Mode>();
+    for (Mode mode : Mode.values()) {
+      testMode.addOption(mode.toString(), mode);
+    }
+    testMode.setDefaultOption("OFF", Mode.OFF);
+    ledModeTestingLayout
+        .add("Test Mode", testMode)
+        .withWidget(BuiltInWidgets.kComboBoxChooser)
+        .withPosition(0, 1);
   }
 }
