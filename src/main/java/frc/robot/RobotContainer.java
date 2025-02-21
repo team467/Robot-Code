@@ -228,26 +228,22 @@ public class RobotContainer {
     operatorController
         .x()
         .onTrue(
-            elevator
-                .toSetpoint(ReefHeight.L1.height)
+            orchestrator.moveElevatorToSetpoint(ReefHeight.L1.height)
                 .andThen(elevator.hold(elevator.getPosition())));
     operatorController
         .y()
         .onTrue(
-            elevator
-                .toSetpoint(ReefHeight.L2.height)
+            orchestrator.moveElevatorToSetpoint(ReefHeight.L2.height)
                 .andThen(elevator.hold(elevator.getPosition())));
     operatorController
         .a()
         .onTrue(
-            elevator
-                .toSetpoint(ReefHeight.L3.height)
+            orchestrator.moveElevatorToSetpoint(ReefHeight.L3.height)
                 .andThen(elevator.hold(elevator.getPosition())));
     operatorController
         .b()
         .onTrue(
-            elevator
-                .toSetpoint(ReefHeight.L4.height)
+            orchestrator.moveElevatorToSetpoint(ReefHeight.L4.height)
                 .andThen(elevator.hold(elevator.getPosition())));
     operatorController
         .leftTrigger()
