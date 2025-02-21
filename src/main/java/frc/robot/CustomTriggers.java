@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,8 @@ public class CustomTriggers {
         CommandScheduler.getInstance().getDefaultButtonLoop(),
         () -> {
           boolean joystickEngaged =
-              Math.abs(X.getAsDouble()) > JOYSTICK_THRESHOLD || Math.abs(Y.getAsDouble()) > JOYSTICK_THRESHOLD;
+              Math.abs(X.getAsDouble()) > JOYSTICK_THRESHOLD
+                  || Math.abs(Y.getAsDouble()) > JOYSTICK_THRESHOLD;
           boolean lastValue = lastTriggerValues.getOrDefault(buttonInput, false);
 
           if (!joystickEngaged) {
