@@ -271,18 +271,6 @@ public class RobotContainer {
     driverController.rightBumper().onTrue(fieldAlignment.alignToReef(false));
     driverController.leftTrigger().toggleOnTrue(fieldAlignment.faceCoralStation(driverController::getLeftX, driverController::getLeftY).onlyWhile(() -> !coral.hasCoral()));
     driverController.leftTrigger().toggleOnTrue(fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY).onlyWhile(coral::hasCoral));
-    driverController
-        .rightTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> climber.io.setSpeed(-driverController.getRightTriggerAxis()), climber));
-    driverController
-        .leftTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> climber.io.setSpeed(driverController.getLeftTriggerAxis()), climber));
-    driverController.rightTrigger().onFalse(climber.stop());
-    driverController.leftTrigger().onFalse(climber.stop());
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
     driverController.leftBumper().onTrue(coral.intakeCoral());
