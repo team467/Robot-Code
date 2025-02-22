@@ -71,7 +71,8 @@ public class Orchestrator {
         algae
             ? moveElevatorToSetpoint(getAlgaeHeight(level))
             : moveElevatorToSetpoint(getCoralHeight(level));
-    return Commands.run(
+    return moveElevator.andThen(
+        Commands.run(
             () -> {
               switch (level) {
                 case 1:
@@ -89,8 +90,7 @@ public class Orchestrator {
                   robotState.elevatorPosition = ElevatorPosition.L4;
                   break;
               }
-            })
-        .andThen(moveElevator);
+            }));
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
