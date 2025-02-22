@@ -224,7 +224,7 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    operatorController.x().onTrue(orchestrator.moveElevatorToLevel(false, 1));
+    operatorController.x().onTrue(orchestrator.placeCoral(1));
     operatorController.y().onTrue(orchestrator.moveElevatorToLevel(false, 2));
     operatorController.a().onTrue(orchestrator.moveElevatorToLevel(false, 3));
     operatorController.b().onTrue(orchestrator.moveElevatorToLevel(false, 4));

@@ -53,7 +53,7 @@ public class Orchestrator {
     return moveElevatorToLevel(false, level)
         .andThen(coralEffector.dumpCoral())
         .onlyWhile(() -> !(level == 1))
-        .andThen(Commands.parallel(coralEffector.dumpCoral(), algaeEffector.removeAlgae()))
+        .andThen(scoreL1())
         .onlyWhile(() -> (level == 1));
   }
 
@@ -102,6 +102,9 @@ public class Orchestrator {
             algaeEffector.stowArm().onlyWhile(() -> !algaeEffector.isStowed()))
         .until(elevator::atSetpoint)
         .andThen(elevator.hold(elevator.getPosition()));
+  }
+  public Command scoreL1(){
+    return Commands.parallel(coralEffector.dumpCoral(), algaeEffector.removeAlgae());
   }
   /**
    * Gets the level for the branch that we want.
