@@ -18,13 +18,14 @@ public class Orchestrator {
   private static final double L3_HEIGHT = ReefHeight.L3.height;
   private static final double L2_HEIGHT = ReefHeight.L2.height;
   private static final double L1_HEIGHT = ReefHeight.L1.height;
-  private static final double ALGAE_L2_HEIGHT = 0.55;
-  private static final double ALGAE_L3_HEIGHT = 0.641;
+  private static final double ALGAE_L2_HEIGHT = ReefHeight.ALGAE_LOW.height;
+  private static final double ALGAE_L3_HEIGHT = ReefHeight.ALGAE_HIGH.height;
 
   public Orchestrator(Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
     this.elevator = elevator;
     this.algaeEffector = algaeEffector;
     this.coralEffector = coralEffector;
+    robotState.elevatorPosition = ElevatorPosition.INTAKE;
   }
 
   /**
@@ -90,11 +91,17 @@ public class Orchestrator {
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
-    return Commands.parallel(
-            elevator.toSetpoint(setpoint).onlyWhile(algaeEffector::isStowed),
-            algaeEffector.stowArm().onlyWhile(() -> !algaeEffector.isStowed()))
-        .until(elevator::atSetpoint)
-        .andThen(elevator.hold(elevator.getPosition()));
+    return Commands.either(
+        Commands.parallel(
+                elevator.toSetpoint(setpoint).onlyWhile(algaeEffector::isStowed),
+                algaeEffector.stowArm().onlyWhile(() -> !algaeEffector.isStowed()))
+            .until(elevator::atSetpoint)
+            .andThen(elevator.hold(elevator.getPosition())),
+        elevator.toSetpoint(setpoint),
+        () ->
+            !((setpoint == ALGAE_L2_HEIGHT) || setpoint == ALGAE_L3_HEIGHT)
+                && (robotState.elevatorPosition == ElevatorPosition.ALGAE_L2
+                    || robotState.elevatorPosition == ElevatorPosition.ALGAE_L3));
   }
 
   public Command scoreL1() {
