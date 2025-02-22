@@ -11,8 +11,6 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 
 public class Orchestrator {
-
-  private final Drive drive;
   private final Elevator elevator;
   private final AlgaeEffector algaeEffector;
   private final CoralEffector coralEffector;
@@ -21,11 +19,9 @@ public class Orchestrator {
   private static final double L3_HEIGHT = ReefHeight.L3.height;
   private static final double L2_HEIGHT = ReefHeight.L2.height;
   private static final double L1_HEIGHT = ReefHeight.L1.height;
-  private static final double ALGAE_HEIGHT_OFFSET = 0.0;
-
-  public Orchestrator(
-      Drive drive, Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
-    this.drive = drive;
+  private static final double ALGAE_L2_HEIGHT = 0.55;
+  private static final double ALGAE_L3_HEIGHT = 0.641;
+  public Orchestrator(Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
     this.elevator = elevator;
     this.algaeEffector = algaeEffector;
     this.coralEffector = coralEffector;
@@ -129,8 +125,8 @@ public class Orchestrator {
   public double getAlgaeHeight(int level) {
     // The default branch we want
     return switch (level) {
-      case 2 -> 0.55;
-      case 3 -> 0.641;
+      case 2 -> ALGAE_L2_HEIGHT;
+      case 3 -> ALGAE_L3_HEIGHT;
       default -> 0.0;
     };
   }

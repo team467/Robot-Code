@@ -156,7 +156,7 @@ public class RobotContainer {
       elevator = new Elevator(new ElevatorIO() {});
     }
     fieldAlignment = new FieldAlignment(drive);
-    orchestrator = new Orchestrator(drive, elevator, algae, coral);
+    orchestrator = new Orchestrator(elevator, algae, coral);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
