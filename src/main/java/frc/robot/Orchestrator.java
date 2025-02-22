@@ -50,6 +50,32 @@ public class Orchestrator {
    * @return Command for placing coral.
    */
   public Command placeCoral(int level) {
+    return moveElevatorToLevel(false, level)
+        .andThen(coralEffector.dumpCoral())
+        .onlyWhile(() -> !(level == 1))
+        .andThen(Commands.parallel(coralEffector.dumpCoral(), algaeEffector.removeAlgae()))
+        .onlyWhile(() -> (level == 1));
+  }
+
+  /**
+   * Removes algae piece after getting in position for algae.
+   *
+   * @param level
+   * @return Command to remove algae from reef.
+   */
+  public Command removeAlgae(int level) {
+    return moveElevatorToLevel(true, level)
+        .andThen(algaeEffector.removeAlgae())
+        .finallyDo(algaeEffector::stowArm);
+  }
+
+  public Command moveElevatorToLevel(boolean algae, int level) {
+    Command moveElevator;
+    if (!algae) {
+      moveElevator = moveElevatorToSetpoint(getCoralHeight(level));
+    } else {
+      moveElevator = moveElevatorToSetpoint(getAlgaeHeight(level));
+    }
     return Commands.run(
             () -> {
               switch (level) {
@@ -67,40 +93,7 @@ public class Orchestrator {
                   break;
               }
             })
-        .andThen(moveElevatorToLevel(false, level))
-        .andThen(coralEffector.dumpCoral())
-        .onlyWhile(() -> !(level == 1))
-        .andThen(Commands.parallel(coralEffector.dumpCoral(), algaeEffector.removeAlgae()))
-        .onlyWhile(() -> (level == 1));
-  }
-
-  /**
-   * Removes algae piece after getting in position for algae.
-   *
-   * @param level
-   * @return Command to remove algae from reef.
-   */
-  public Command removeAlgae(int level) {
-    return Commands.run(
-            () -> {
-              switch (level) {
-                case 2:
-                  robotState.elevatorPosition = ElevatorPosition.L2;
-                case 3:
-                  robotState.elevatorPosition = ElevatorPosition.L3;
-              }
-            })
-        .andThen(moveElevatorToLevel(true, level))
-        .andThen(algaeEffector.removeAlgae())
-        .finallyDo(algaeEffector::stowArm);
-  }
-
-  public Command moveElevatorToLevel(boolean algae, int level) {
-    if (!algae) {
-      return moveElevatorToSetpoint(getCoralHeight(level));
-    } else {
-      return moveElevatorToSetpoint(getAlgaeHeight(level));
-    }
+        .andThen(moveElevator);
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
