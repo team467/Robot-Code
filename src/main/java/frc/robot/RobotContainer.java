@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
@@ -225,37 +224,16 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    operatorController
-        .x()
-        .onTrue(
-            orchestrator
-                .moveElevatorToLevel(false, 1));
-    operatorController
-        .y()
-        .onTrue(
-            orchestrator
-                .moveElevatorToLevel(false, 2));
-    operatorController
-        .a()
-        .onTrue(
-            orchestrator
-                .moveElevatorToLevel(false, 3));
-    operatorController
-        .b()
-        .onTrue(
-            orchestrator
-                .moveElevatorToLevel(false, 4));
+    operatorController.x().onTrue(orchestrator.moveElevatorToLevel(false, 1));
+    operatorController.y().onTrue(orchestrator.moveElevatorToLevel(false, 2));
+    operatorController.a().onTrue(orchestrator.moveElevatorToLevel(false, 3));
+    operatorController.b().onTrue(orchestrator.moveElevatorToLevel(false, 4));
     operatorController
         .leftTrigger()
-        .onTrue(
-                  orchestrator.moveElevatorToLevel(true, 2).andThen(
-                  algae.removeAlgae()));
+        .onTrue(orchestrator.moveElevatorToLevel(true, 2).andThen(algae.removeAlgae()));
     operatorController
         .leftBumper()
-        .onTrue(
-                  orchestrator.moveElevatorToLevel(true, 3).andThen(
-                  algae.removeAlgae())
-                );
+        .onTrue(orchestrator.moveElevatorToLevel(true, 3).andThen(algae.removeAlgae()));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
     driverController.leftBumper().onTrue(fieldAlignment.alignToReef(true));
@@ -285,5 +263,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void QuasiPeriodic() {
+    fieldAlignment.periodic();
   }
 }
