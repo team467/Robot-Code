@@ -98,9 +98,9 @@ public class ClimberIOSparkMax implements ClimberIO {
 
   @Override
   public void hold() {
-    if (climberLeaderEncoder.getPosition() > -98) {
+    if (climberLeaderEncoder.getPosition() > ClimberConstants.WINCHED_POSITION) {
       climberLeader.setVoltage(-0.15);
-    } else if (climberLeaderEncoder.getPosition() < -98) {
+    } else if (climberLeaderEncoder.getPosition() < ClimberConstants.WINCHED_POSITION) {
       climberLeader.setVoltage(0.15);
     }
   }

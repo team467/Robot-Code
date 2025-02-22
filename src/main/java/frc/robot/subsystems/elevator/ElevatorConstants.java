@@ -19,7 +19,7 @@ public class ElevatorConstants {
   public static final double maxElevatorExtension = Units.inchesToMeters(22.9);
   public static final double elevatorToGround = Units.inchesToMeters(17 + 6 / 8); // 17 + 6 / 8
 
-  static {
+  static { // CURRENTLY NOT USING
     switch (Constants.getRobot()) {
       case ROBOT_2025_COMP -> {
         KG = new TunableNumber("Elevator/KG", 0.0);

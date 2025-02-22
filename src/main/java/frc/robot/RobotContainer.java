@@ -208,14 +208,6 @@ public class RobotContainer {
             () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
-    driverController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> new Rotation2d()));
 
     driverController
         .start()
@@ -256,22 +248,24 @@ public class RobotContainer {
                 .andThen(elevator.hold(elevator.getPosition())));
     operatorController
         .leftTrigger()
-        .onTrue(
-            Commands.run(
-                () -> {
-                  elevator.toSetpoint(0.55);
-                  algae.removeAlgae();
-                }));
+        .whileTrue(
+            elevator
+                .toSetpoint(ReefHeight.ALGAE_LOW.height)
+                .andThen(elevator.hold(elevator.getPosition()).andThen(algae.removeAlgae())));
+
     operatorController
         .leftBumper()
-        .onTrue(
-            Commands.run(
-                () -> {
-                  elevator.toSetpoint(0.641);
-                  algae.removeAlgae();
-                }));
+        .whileTrue(
+            elevator
+                .toSetpoint(ReefHeight.ALGAE_HIGH.height)
+                .andThen(elevator.hold(elevator.getPosition()))
+                .andThen(algae.removeAlgae()));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
+
+    operatorController.rightBumper().whileTrue(climber.deploy());
+    operatorController.rightTrigger().whileTrue(climber.winch());
+
     driverController
         .rightTrigger()
         .whileTrue(
