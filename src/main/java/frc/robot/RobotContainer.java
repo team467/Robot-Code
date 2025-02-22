@@ -247,11 +247,21 @@ public class RobotContainer {
     operatorController
         .leftBumper()
         .onTrue(
+<<<<<<< Updated upstream
             elevator
                 .toSetpoint(ReefHeight.ALGAE_HIGH.height)
                 .andThen(elevator.hold(elevator.getPosition())));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
+=======
+            Commands.run(
+                () -> {
+                  elevator.toSetpoint(0.641);
+                  algae.removeAlgae();
+                }));
+    operatorController.rightBumper().whileTrue(climber.deploy());
+    operatorController.rightTrigger().whileTrue(climber.winch());
+>>>>>>> Stashed changes
     driverController
         .rightTrigger()
         .whileTrue(
