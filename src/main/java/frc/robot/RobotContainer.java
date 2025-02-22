@@ -76,8 +76,8 @@ public class RobotContainer {
           vision =
               new Vision(
                   drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
-
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
@@ -93,6 +93,7 @@ public class RobotContainer {
           vision =
               new Vision(
                   drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
         }
         case ROBOT_2025_COMP -> {
@@ -110,11 +111,8 @@ public class RobotContainer {
           vision =
               new Vision(
                   drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
-          vision =
-              new Vision(
-                  drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
         }
 
         case ROBOT_SIMBOT -> {
