@@ -50,12 +50,13 @@ public class Elevator extends SubsystemBase {
 
   public Command toSetpoint(double setpointMeters) {
     return Commands.run(
-        () -> {
-          Logger.recordOutput("Elevator/Setpoint", setpointMeters);
-          io.setPosition(setpointMeters);
-          inputs.goalPositionMeters = setpointMeters;
-        },
-        this);
+            () -> {
+              Logger.recordOutput("Elevator/Setpoint", setpointMeters);
+              io.setPosition(setpointMeters);
+              inputs.goalPositionMeters = setpointMeters;
+            },
+            this)
+        .onlyWhile(() -> isCalibrated);
   }
 
   public Command runPercent(double percent) {
