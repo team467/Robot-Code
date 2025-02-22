@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants.ReefHeight;
+import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
@@ -49,7 +50,21 @@ public class Orchestrator {
    * @return Command for placing coral.
    */
   public Command placeCoral(int level) {
-    return moveElevatorToSetpoint(getCoralHeight(level)).andThen(coralEffector.dumpCoral());
+    return Commands.run(
+            () -> {
+              switch (level) {
+                case 1:
+                  robotState.elevatorPosition = ElevatorPosition.L1;
+                case 2:
+                  robotState.elevatorPosition = ElevatorPosition.L2;
+                case 3:
+                  robotState.elevatorPosition = ElevatorPosition.L3;
+                case 4:
+                  robotState.elevatorPosition = ElevatorPosition.L4;
+              }
+            })
+        .andThen(moveElevatorToSetpoint(getCoralHeight(level)))
+        .andThen(coralEffector.dumpCoral());
   }
 
   /**
@@ -59,10 +74,19 @@ public class Orchestrator {
    * @return Command to remove algae from reef.
    */
   public Command removeAlgae(int level) {
-    return Commands.sequence(
-        moveElevatorToSetpoint(getAlgaeHeight(level))
-            .andThen(algaeEffector.removeAlgae())
-            .finallyDo(algaeEffector::stowArm));
+    return Commands.run(
+            () -> {
+              switch (level) {
+                case 2:
+                  robotState.elevatorPosition = ElevatorPosition.L2;
+                case 3:
+                  robotState.elevatorPosition = ElevatorPosition.L3;
+              }
+            })
+        .andThen(
+            moveElevatorToSetpoint(getAlgaeHeight(level))
+                .andThen(algaeEffector.removeAlgae())
+                .finallyDo(algaeEffector::stowArm));
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
