@@ -121,7 +121,7 @@ public class RobotContainer {
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
+                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
         }
 
         case ROBOT_SIMBOT -> {
@@ -189,7 +189,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    AutosAlternate autosAlternate = new AutosAlternate(drive);
+    AutosAlternate autosAlternate = new AutosAlternate(drive, orchestrator, fieldAlignment);
     autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
     autoChooser.addOption("A Score", autosAlternate.AScore());
     autoChooser.addOption("B Score", autosAlternate.BScore());
