@@ -1,6 +1,8 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
@@ -33,5 +35,50 @@ public class AutosAlternate {
     Supplier<Pose2d> R1 = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("R1"));
     return Commands.runOnce(() -> drive.setPose(B.get()))
         .andThen(new StraightDriveToPose(drive, R1));
+  }
+
+  public Command AScore() {
+    Supplier<Pose2d> A =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    ChoreoVariables.getPose("A").getTranslation(),
+                    ChoreoVariables.getPose("A").getRotation().plus(Rotation2d.k180deg)));
+    Supplier<Pose2d> scorePoint =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(5.682666778564453, 5.685015678405762),
+                    new Rotation2d(0.8550528118433292)));
+    return Commands.runOnce(() -> drive.setPose(A.get()))
+        .andThen(new StraightDriveToPose(drive, scorePoint));
+  }
+
+  public Command BScore() {
+    Supplier<Pose2d> B =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    ChoreoVariables.getPose("B").getTranslation(),
+                    ChoreoVariables.getPose("B").getRotation().plus(Rotation2d.k180deg)));
+    return Commands.runOnce(() -> drive.setPose(B.get()))
+        .andThen(new StraightDriveToPose(-1, 0, 0, drive));
+  }
+
+  public Command CScore() {
+    Supplier<Pose2d> C =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    ChoreoVariables.getPose("C").getTranslation(),
+                    ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
+    Supplier<Pose2d> scorePoint =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(5.579622268676758, 2.2639400959014893),
+                    new Rotation2d(-0.982794168198375)));
+    return Commands.runOnce(() -> drive.setPose(C.get()))
+        .andThen(new StraightDriveToPose(drive, scorePoint));
   }
 }

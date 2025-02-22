@@ -181,8 +181,11 @@ public class RobotContainer {
     autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
     autoChooser.addOption("B1L Alt", autosAlternate.B1L());
     autoChooser.addOption("B1R Alt", autosAlternate.B1R());
+    autoChooser.addOption("A Score", autosAlternate.AScore());
+    autoChooser.addOption("B Score", autosAlternate.BScore());
+    autoChooser.addOption("C Score", autosAlternate.CScore());
 
-    registerAutoRoutines();
+    // registerAutoRoutines();
 
     // Configure the button bindings
     configureButtonBindings();
