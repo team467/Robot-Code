@@ -63,7 +63,7 @@ public class Orchestrator {
                   robotState.elevatorPosition = ElevatorPosition.L4;
               }
             })
-        .andThen(moveElevatorToSetpoint(getCoralHeight(level)))
+        .andThen(moveElevatorToLevel(false, level))
         .andThen(coralEffector.dumpCoral());
   }
 
@@ -83,10 +83,17 @@ public class Orchestrator {
                   robotState.elevatorPosition = ElevatorPosition.L3;
               }
             })
-        .andThen(
-            moveElevatorToSetpoint(getAlgaeHeight(level))
-                .andThen(algaeEffector.removeAlgae())
-                .finallyDo(algaeEffector::stowArm));
+        .andThen(moveElevatorToLevel(true, level))
+        .andThen(algaeEffector.removeAlgae())
+        .finallyDo(algaeEffector::stowArm);
+  }
+
+  public Command moveElevatorToLevel(boolean algae, int level) {
+    if (!algae) {
+      return moveElevatorToSetpoint(getCoralHeight(level));
+    } else {
+      return moveElevatorToSetpoint(getAlgaeHeight(level));
+    }
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
