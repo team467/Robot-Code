@@ -125,7 +125,7 @@ public class RobotState {
     ALGAE_LEVEL_3;
   }
 
-  public void updateState() {
+  public void updateLEDState() {
     if (DriverStation.isEStopped()) {
       mode = Mode.ESTOPPED;
     } else if (lowBatteryAlert) {
@@ -140,10 +140,34 @@ public class RobotState {
       } else {
         mode = Mode.DISABLED;
       }
-    } else if (false) {
-      mode = Mode.AUTO_FINISHED;
+    } else if (hasCoral) {
+      mode = Mode.HAS_CORAL;
+    } else if (hopperSeesCoral) {
+      mode = Mode.HOPPER_SEES_CORAL;
+    } else if (intakingCoral) {
+      mode = Mode.INTAKING_CORAL;
+    } else if (algaeEffectorRunning) {
+      mode = Mode.ALGAE_EFFECTOR_RUNNING;
+    } else if (climberWinched) {
+      mode = Mode.CLIMBER_WINCHED;
+    } else if (duck) {
+      mode = Mode.DUCK;
+    } else if (elevatorPosition == ElevatorPosition.CORAL_LEVEL_1) {
+      mode = Mode.ELEVATOR_CORAL_L1;
+    } else if (elevatorPosition == ElevatorPosition.CORAL_LEVEL_2) {
+      mode = Mode.ELEVATOR_CORAL_L2;
+    } else if (elevatorPosition == ElevatorPosition.CORAL_LEVEL_3) {
+      mode = Mode.ELEVATOR_CORAL_L3;
+    } else if (elevatorPosition == ElevatorPosition.CORAL_LEVEL_4) {
+      mode = Mode.ELEVATOR_CORAL_L4;
+    } else if (elevatorPosition == ElevatorPosition.ALGAE_LEVEL_2) {
+      mode = Mode.ELEVATOR_ALGAE_L2;
+    } else if (elevatorPosition == ElevatorPosition.ALGAE_LEVEL_3) {
+      mode = Mode.ELEVATOR_ALGAE_L3;
     } else if (DriverStation.isAutonomous()) {
       mode = Mode.AUTONOMOUS;
+    } else if (false) { // Placeholder for AUTO_FINISHED, adjust when needed
+      mode = Mode.AUTO_FINISHED;
     } else {
       mode = Mode.DEFAULT;
     }
