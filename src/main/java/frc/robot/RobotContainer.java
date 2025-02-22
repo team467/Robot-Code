@@ -229,42 +229,33 @@ public class RobotContainer {
         .x()
         .onTrue(
             orchestrator
-                .moveElevatorToSetpoint(ReefHeight.L1.height)
-                .andThen(elevator.hold(elevator.getPosition())));
+                .moveElevatorToLevel(false, 1));
     operatorController
         .y()
         .onTrue(
             orchestrator
-                .moveElevatorToSetpoint(ReefHeight.L2.height)
-                .andThen(elevator.hold(elevator.getPosition())));
+                .moveElevatorToLevel(false, 2));
     operatorController
         .a()
         .onTrue(
             orchestrator
-                .moveElevatorToSetpoint(ReefHeight.L3.height)
-                .andThen(elevator.hold(elevator.getPosition())));
+                .moveElevatorToLevel(false, 3));
     operatorController
         .b()
         .onTrue(
             orchestrator
-                .moveElevatorToSetpoint(ReefHeight.L4.height)
-                .andThen(elevator.hold(elevator.getPosition())));
+                .moveElevatorToLevel(false, 4));
     operatorController
         .leftTrigger()
         .onTrue(
-            Commands.run(
-                () -> {
-                  orchestrator.moveElevatorToSetpoint(0.55);
-                  algae.removeAlgae();
-                }));
+                  orchestrator.moveElevatorToLevel(true, 2).andThen(
+                  algae.removeAlgae()));
     operatorController
         .leftBumper()
         .onTrue(
-            Commands.run(
-                () -> {
-                  orchestrator.moveElevatorToSetpoint(0.641);
-                  algae.removeAlgae();
-                }));
+                  orchestrator.moveElevatorToLevel(true, 3).andThen(
+                  algae.removeAlgae())
+                );
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
     driverController.leftBumper().onTrue(fieldAlignment.alignToReef(true));

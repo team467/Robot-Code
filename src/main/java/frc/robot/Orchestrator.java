@@ -127,12 +127,10 @@ public class Orchestrator {
    */
   public double getAlgaeHeight(int level) {
     // The default branch we want
-    double height =
-        switch (level) {
-          case 2 -> L2_HEIGHT;
-          case 3 -> L3_HEIGHT;
-          default -> 0.0;
-        };
-    return height + ALGAE_HEIGHT_OFFSET;
+    return switch (level) {
+      case 2 -> 0.55;
+      case 3 -> 0.641;
+      default -> 0.0;
+    };
   }
 }
