@@ -113,6 +113,14 @@ public class RobotContainer {
           climber = new Climber(new ClimberIOSparkMax());
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
           elevator = new Elevator(new ElevatorIOPhysical());
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
         }
 
         case ROBOT_SIMBOT -> {
@@ -157,8 +165,8 @@ public class RobotContainer {
       elevator = new Elevator(new ElevatorIO() {});
     }
     fieldAlignment = new FieldAlignment(drive);
-    orchestrator = new Orchestrator(drive, elevator, algae, coral);
     customTriggers = new CustomTriggers();
+    orchestrator = new Orchestrator(elevator, algae, coral);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -259,14 +267,14 @@ public class RobotContainer {
             driverController::getRightY)
         .whileTrue(
             Commands.either(
-                fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
+                Commands.parallel(
+                    fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
+                    orchestrator.intake()),
                 fieldAlignment.faceCoralStation(
                     driverController::getLeftX, driverController::getLeftY),
                 coral::hasCoral));
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
-    driverController.leftBumper().onTrue(coral.intakeCoral());
-    driverController.rightBumper().onTrue(coral.takeBackCoral());
     driverController
         .a()
         .onTrue(

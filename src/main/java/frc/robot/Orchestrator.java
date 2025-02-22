@@ -6,13 +6,10 @@ import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
-import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 
 public class Orchestrator {
-
-  private final Drive drive;
   private final Elevator elevator;
   private final AlgaeEffector algaeEffector;
   private final CoralEffector coralEffector;
@@ -21,11 +18,10 @@ public class Orchestrator {
   private static final double L3_HEIGHT = ReefHeight.L3.height;
   private static final double L2_HEIGHT = ReefHeight.L2.height;
   private static final double L1_HEIGHT = ReefHeight.L1.height;
-  private static final double ALGAE_HEIGHT_OFFSET = 0.0;
+  private static final double ALGAE_L2_HEIGHT = 0.55;
+  private static final double ALGAE_L3_HEIGHT = 0.641;
 
-  public Orchestrator(
-      Drive drive, Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
-    this.drive = drive;
+  public Orchestrator(Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
     this.elevator = elevator;
     this.algaeEffector = algaeEffector;
     this.coralEffector = coralEffector;
@@ -67,30 +63,30 @@ public class Orchestrator {
   }
 
   public Command moveElevatorToLevel(boolean algae, int level) {
-    Command moveElevator;
-    if (!algae) {
-      moveElevator = moveElevatorToSetpoint(getCoralHeight(level));
-    } else {
-      moveElevator = moveElevatorToSetpoint(getAlgaeHeight(level));
-    }
-    return Commands.run(
+    Command moveElevator =
+        algae
+            ? moveElevatorToSetpoint(getAlgaeHeight(level))
+            : moveElevatorToSetpoint(getCoralHeight(level));
+    return moveElevator.andThen(
+        Commands.run(
             () -> {
               switch (level) {
                 case 1:
                   robotState.elevatorPosition = ElevatorPosition.L1;
                   break;
                 case 2:
-                  robotState.elevatorPosition = ElevatorPosition.L2;
+                  robotState.elevatorPosition =
+                      algae ? ElevatorPosition.ALGAE_L2 : ElevatorPosition.L2;
                   break;
                 case 3:
-                  robotState.elevatorPosition = ElevatorPosition.L3;
+                  robotState.elevatorPosition =
+                      algae ? ElevatorPosition.ALGAE_L3 : ElevatorPosition.L3;
                   break;
                 case 4:
                   robotState.elevatorPosition = ElevatorPosition.L4;
                   break;
               }
-            })
-        .andThen(moveElevator);
+            }));
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
@@ -129,8 +125,8 @@ public class Orchestrator {
   public double getAlgaeHeight(int level) {
     // The default branch we want
     return switch (level) {
-      case 2 -> 0.55;
-      case 3 -> 0.641;
+      case 2 -> ALGAE_L2_HEIGHT;
+      case 3 -> ALGAE_L3_HEIGHT;
       default -> 0.0;
     };
   }
