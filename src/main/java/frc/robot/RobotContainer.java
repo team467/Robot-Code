@@ -240,14 +240,14 @@ public class RobotContainer {
                 .andThen(elevator.hold(elevator.getPosition())));
     operatorController
         .leftTrigger()
-        .onTrue(
+        .whileTrue(
             elevator
                 .toSetpoint(ReefHeight.ALGAE_LOW.height)
                 .andThen(elevator.hold(elevator.getPosition()).andThen(algae.removeAlgae())));
 
     operatorController
         .leftBumper()
-        .onTrue(
+        .whileTrue(
             elevator
                 .toSetpoint(ReefHeight.ALGAE_HIGH.height)
                 .andThen(elevator.hold(elevator.getPosition()))
