@@ -21,8 +21,7 @@ public class CustomTriggers {
         CommandScheduler.getInstance().getDefaultButtonLoop(),
         () -> {
           boolean joystickEngaged =
-              Math.abs(X.getAsDouble()) > JOYSTICK_THRESHOLD
-                  || Math.abs(Y.getAsDouble()) > JOYSTICK_THRESHOLD;
+              Math.hypot(Math.abs(X.getAsDouble()), Math.abs(Y.getAsDouble())) > JOYSTICK_THRESHOLD;
 
           boolean lastValue = lastTriggerValues.getOrDefault(buttonInput, false);
           boolean currentValue = buttonInput.getAsBoolean();
@@ -64,10 +63,10 @@ public class CustomTriggers {
         CommandScheduler.getInstance().getDefaultButtonLoop(),
         () -> {
           boolean joystickEngaged =
-              Math.abs(X1.getAsDouble()) > JOYSTICK_THRESHOLD
-                  || Math.abs(Y1.getAsDouble()) > JOYSTICK_THRESHOLD
-                  || Math.abs(X2.getAsDouble()) > JOYSTICK_THRESHOLD
-                  || Math.abs(Y2.getAsDouble()) > JOYSTICK_THRESHOLD;
+              Math.hypot(Math.abs(X1.getAsDouble()), Math.abs(Y1.getAsDouble()))
+                      > JOYSTICK_THRESHOLD
+                  || Math.hypot(Math.abs(X2.getAsDouble()), Math.abs(Y2.getAsDouble()))
+                      > JOYSTICK_THRESHOLD;
 
           boolean lastValue = lastTriggerValues.getOrDefault(buttonInput, false);
           boolean currentValue = buttonInput.getAsBoolean();
