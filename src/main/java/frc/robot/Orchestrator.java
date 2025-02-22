@@ -58,9 +58,7 @@ public class Orchestrator {
    * @return Command to remove algae from reef.
    */
   public Command removeAlgae(int level) {
-    return moveElevatorToLevel(true, level)
-        .andThen(algaeEffector.removeAlgae())
-        .finallyDo(algaeEffector::stowArm);
+    return moveElevatorToLevel(true, level).andThen(algaeEffector.removeAlgae());
   }
 
   public Command moveElevatorToLevel(boolean algae, int level) {
@@ -92,12 +90,15 @@ public class Orchestrator {
 
   public Command moveElevatorToSetpoint(double setpoint) {
     return Commands.either(
+        // Stow algae if moving the elevator
         Commands.parallel(
                 elevator.toSetpoint(setpoint).onlyWhile(algaeEffector::isStowed),
                 algaeEffector.stowArm().onlyWhile(() -> !algaeEffector.isStowed()))
             .until(elevator::atSetpoint)
             .andThen(elevator.hold(elevator.getPosition())),
         elevator.toSetpoint(setpoint),
+        // If we are moving from one algae position to another, we don't need to make sure the algae
+        // effector is stowed
         () ->
             !((setpoint == ALGAE_L2_HEIGHT) || setpoint == ALGAE_L3_HEIGHT)
                 && (robotState.elevatorPosition == ElevatorPosition.ALGAE_L2
