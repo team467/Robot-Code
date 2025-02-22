@@ -17,7 +17,7 @@ public class RobotState {
     // 2025 Specific
     HAS_CORAL(LedPatterns.PURPLE.colorPatternOnly(), Sections.FULL),
     HOPPER_SEES_CORAL(LedPatterns.PURPLE.colorPatternOnly(), Sections.BASE1),
-    INTAKING_CORAL(LedPatterns.WHITE.colorPatternOnly(), Sections.FULL),
+    INTAKING_CORAL(LedPatterns.YELLOW.blink(0.2), Sections.FULL),
     ALGAE_EFFECTOR_RUNNING(LedPatterns.GREEN.scroll(), Sections.FULL),
     CLIMBER_WINCHED(LedPatterns.RAINBOW.scroll(), Sections.FULL),
     DUCK(LedPatterns.STRIPE_COM.scroll(), Sections.FULL),
@@ -30,12 +30,12 @@ public class RobotState {
 
     // Same every year
     ESTOPPED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
-    AUTO_FINISHED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
-    AUTONOMOUS(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    AUTO_FINISHED(LedPatterns.STRIPE_COM.colorPatternOnly(), Sections.FULL),
+    AUTONOMOUS(LedPatterns.RAINBOW.colorPatternOnly(), Sections.FULL),
     BLUE_ALLIANCE(LedPatterns.BLUE.colorPatternOnly(), Sections.FULL),
     RED_ALLIANCE(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
-    LOW_BATTERY_ALERT(LedPatterns.RED.blink(0.5), Sections.FULL),
-    DISABLED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
+    LOW_BATTERY_ALERT(LedPatterns.RED.blink(0.2), Sections.FULL),
+    DISABLED(LedPatterns.GRAY.colorPatternOnly(), Sections.FULL),
     OFF(LedPatterns.BLACK.colorPatternOnly(), Sections.FULL),
     DEFAULT(LedPatterns.BLACK.colorPatternOnly(), Sections.FULL);
 
