@@ -55,16 +55,23 @@ public class Orchestrator {
               switch (level) {
                 case 1:
                   robotState.elevatorPosition = ElevatorPosition.L1;
+                  break;
                 case 2:
                   robotState.elevatorPosition = ElevatorPosition.L2;
+                  break;
                 case 3:
                   robotState.elevatorPosition = ElevatorPosition.L3;
+                  break;
                 case 4:
                   robotState.elevatorPosition = ElevatorPosition.L4;
+                  break;
               }
             })
         .andThen(moveElevatorToLevel(false, level))
-        .andThen(coralEffector.dumpCoral());
+        .andThen(coralEffector.dumpCoral())
+        .onlyWhile(() -> !(level == 1))
+        .andThen(Commands.parallel(coralEffector.dumpCoral(), algaeEffector.removeAlgae()))
+        .onlyWhile(() -> (level == 1));
   }
 
   /**
