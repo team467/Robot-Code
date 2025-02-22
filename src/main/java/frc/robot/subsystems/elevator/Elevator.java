@@ -49,6 +49,7 @@ public class Elevator extends SubsystemBase {
         () -> {
           Logger.recordOutput("Elevator/Setpoint", setpointMeters);
           io.setPosition(setpointMeters);
+          inputs.goalPositionMeters = setpointMeters;
         },
         this);
   }
