@@ -39,7 +39,6 @@ public class Orchestrator {
   public Command intake() {
     return moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
         .withTimeout(4)
-        .until(() -> elevator.atSetpoint() && robotState.hopperSeesCoral)
         .andThen(coralEffector.intakeCoral());
   }
 
