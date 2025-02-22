@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -21,6 +22,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -53,6 +55,7 @@ public class Drive extends SubsystemBase {
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
   private Rotation2d rawGyroRotation = Rotation2d.kZero;
+  private Rotation3d rotation3d = Rotation3d.kZero;
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
         new SwerveModulePosition(),
@@ -128,8 +131,6 @@ public class Drive extends SubsystemBase {
       module.periodic();
     }
     odometryLock.unlock();
-    checkForImpact();
-    checkForTilt();
     // Stop moving when disabled
     if (DriverStation.isDisabled()) {
       for (var module : modules) {
@@ -165,6 +166,11 @@ public class Drive extends SubsystemBase {
       if (gyroInputs.connected) {
         // Use the real gyro angle
         rawGyroRotation = gyroInputs.odometryYawPositions[i];
+        rotation3d =
+            new Rotation3d(
+                Units.degreesToRadians(gyroInputs.roll),
+                Units.degreesToRadians(gyroInputs.pitch),
+                Units.degreesToRadians(gyroInputs.yawPosition.getDegrees()));
       } else {
         // Use the angle delta from the kinematics and module deltas
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
@@ -174,6 +180,8 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
+    checkForImpact();
+    checkForTilt();
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.getMode() != Mode.SIM);
@@ -355,7 +363,8 @@ public class Drive extends SubsystemBase {
 
   public void checkForTilt() {
     RobotState.getInstance().robotTilted =
-        Math.abs(gyroInputs.pitch) >= pitchThreshold || Math.abs(gyroInputs.roll) >= rollThreshhold;
+        Math.abs(rotation3d.getY()) >= pitchThreshold
+            || Math.abs(rotation3d.getX()) >= rollThreshhold;
     tiltAlert.set(RobotState.getInstance().robotTilted);
   }
 }

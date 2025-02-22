@@ -1,13 +1,13 @@
 package frc.lib.utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.FieldConstants;
-import org.littletonrobotics.junction.Logger;
 
 /**
  * Utility functions for flipping from the blue to red alliance. By default, all translations and
@@ -19,80 +19,46 @@ public class AllianceFlipUtil {
     throw new IllegalStateException("Utility class");
   }
 
-  /** Negates a distance based on current alliance color. */
-  public static double applyRelative(double distance) {
-    if (shouldFlip()) {
-      return -distance;
-    } else {
-      return distance;
-    }
+  public static double applyX(double x) {
+    return shouldFlip() ? FieldConstants.fieldLength - x : x;
   }
 
-  /** Flips an x coordinate to the correct side of the field based on the current alliance color. */
-  public static double apply(double xCoordinate) {
-    if (shouldFlip()) {
-      return FieldConstants.fieldLength - xCoordinate;
-    } else {
-      return xCoordinate;
-    }
+  public static double applyY(double y) {
+    return shouldFlip() ? FieldConstants.fieldWidth - y : y;
   }
 
   /** Flips a translation to the correct side of the field based on the current alliance color. */
   public static Translation2d apply(Translation2d translation) {
-    if (shouldFlip()) {
-      return new Translation2d(FieldConstants.fieldLength - translation.getX(), translation.getY());
-    } else {
-      return translation;
-    }
+    return new Translation2d(applyX(translation.getX()), applyY(translation.getY()));
   }
 
   /** Flips a rotation based on the current alliance color. */
   public static Rotation2d apply(Rotation2d rotation) {
-    if (shouldFlip()) {
-      return new Rotation2d(-rotation.getCos(), rotation.getSin());
-    } else {
-      return rotation;
-    }
+    return shouldFlip() ? rotation.rotateBy(Rotation2d.kPi) : rotation;
   }
 
   /** Flips a pose to the correct side of the field based on the current alliance color. */
   public static Pose2d apply(Pose2d pose) {
-    if (shouldFlip()) {
-      return new Pose2d(
-          FieldConstants.fieldLength - pose.getX(),
-          pose.getY(),
-          new Rotation2d(-pose.getRotation().getCos(), pose.getRotation().getSin()));
-    } else {
-      return pose;
-    }
+    return shouldFlip()
+        ? new Pose2d(apply(pose.getTranslation()), apply(pose.getRotation()))
+        : pose;
   }
 
-  /**
-   * Flips a trajectory state to the correct side of the field based on the current alliance color.
-   */
-  public static Trajectory.State apply(Trajectory.State state) {
-    if (shouldFlip()) {
-      return new Trajectory.State(
-          state.timeSeconds,
-          state.velocityMetersPerSecond,
-          state.accelerationMetersPerSecondSq,
-          new Pose2d(
-              FieldConstants.fieldLength - state.poseMeters.getX(),
-              state.poseMeters.getY(),
-              new Rotation2d(
-                  -state.poseMeters.getRotation().getCos(),
-                  state.poseMeters.getRotation().getSin())),
-          -state.curvatureRadPerMeter);
-    } else {
-      return state;
-    }
+  public static Translation3d apply(Translation3d translation) {
+    return new Translation3d(
+        applyX(translation.getX()), applyY(translation.getY()), translation.getZ());
+  }
+
+  public static Rotation3d apply(Rotation3d rotation) {
+    return shouldFlip() ? rotation.rotateBy(new Rotation3d(0.0, 0.0, Math.PI)) : rotation;
+  }
+
+  public static Pose3d apply(Pose3d pose) {
+    return new Pose3d(apply(pose.getTranslation()), apply(pose.getRotation()));
   }
 
   public static boolean shouldFlip() {
-    boolean shouldFlip =
-        DriverStation.getAlliance().isPresent()
-            && DriverStation.getAlliance().get() == Alliance.Red;
-    Logger.recordOutput("AllianceFlip/ShouldFlip", shouldFlip);
-    return shouldFlip;
+    return DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
   }
 }

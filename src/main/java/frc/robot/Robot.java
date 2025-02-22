@@ -105,6 +105,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    robotContainer.robotPeriodic();
 
     // If robot has low battery, lowbatteryalert will be set to true
     state.lowBatteryAlert =

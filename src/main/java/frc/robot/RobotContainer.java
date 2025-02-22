@@ -8,18 +8,16 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.FieldConstants.ReefHeight;
-import frc.robot.commands.auto.AutoRoutines;
-import frc.robot.commands.auto.AutosAlternate;
+import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIO;
 import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
@@ -27,11 +25,13 @@ import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIO;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.vision.Vision;
@@ -53,6 +53,9 @@ public class RobotContainer {
   private CoralEffector coral;
   private Climber climber;
   private Elevator elevator;
+  private FieldAlignment fieldAlignment;
+  private Orchestrator orchestrator;
+  private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -61,7 +64,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final AutoRoutines autoRoutines;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -80,8 +82,8 @@ public class RobotContainer {
           vision =
               new Vision(
                   drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
-
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
@@ -97,6 +99,7 @@ public class RobotContainer {
           vision =
               new Vision(
                   drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
         }
         case ROBOT_2025_COMP -> {
@@ -108,9 +111,14 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(2),
                   new ModuleIOTalonSpark(3));
           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
-
+          climber = new Climber(new ClimberIOSparkMax());
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
           elevator = new Elevator(new ElevatorIOPhysical());
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
         }
 
         case ROBOT_SIMBOT -> {
@@ -148,15 +156,15 @@ public class RobotContainer {
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
     }
-    if (elevator == null) {
-      elevator = new Elevator(new ElevatorIO() {});
-    }
     if (coral == null) {
       coral = new CoralEffector(new CoralEffectorIO() {});
     }
-
+    if (elevator == null) {
+      elevator = new Elevator(new ElevatorIO() {});
+    }
+    fieldAlignment = new FieldAlignment(drive);
+    orchestrator = new Orchestrator(elevator, algae, coral);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    autoRoutines = new AutoRoutines(drive);
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
@@ -177,16 +185,6 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    AutosAlternate autosAlternate = new AutosAlternate(drive);
-    autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
-    autoChooser.addOption("B1L Alt", autosAlternate.B1L());
-    autoChooser.addOption("B1R Alt", autosAlternate.B1R());
-    autoChooser.addOption("A Score", autosAlternate.AScore());
-    autoChooser.addOption("B Score", autosAlternate.BScore());
-    autoChooser.addOption("C Score", autosAlternate.CScore());
-
-    // registerAutoRoutines();
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -198,15 +196,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
-    if (coral != null) {
-      coral.setDefaultCommand(coral.stop());
-    }
-
-    // algae.setDefaultCommand(algae.stop());
+    coral.setDefaultCommand(coral.stop());
     algae.setDefaultCommand(algae.stowArm());
     elevator.setDefaultCommand(elevator.hold());
-
+    climber.setDefaultCommand(climber.stop());
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -217,14 +210,6 @@ public class RobotContainer {
             () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
-    driverController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> new Rotation2d()));
 
     driverController
         .start()
@@ -239,41 +224,44 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController.b().whileTrue(coral.dumpCoral());
-    driverController.y().whileTrue(coral.intakeCoral());
-    operatorController
-        .y()
-        .onTrue(elevator.toSetpoint(ReefHeight.L1.height - Units.inchesToMeters(17.692)));
-    operatorController.b().onTrue(elevator.toSetpoint(22)); // 28.4
-    operatorController.a().onTrue(elevator.toSetpoint(Units.inchesToMeters(22.3))); // 54.1
-    operatorController
-        .x()
-        .onTrue(
-            elevator.toSetpoint(
-                ReefHeight.L4.height - Units.inchesToMeters(17.692))); // still need L4
-    operatorController.leftBumper().whileTrue(coral.intakeCoral());
-    operatorController.rightBumper().whileTrue(coral.dumpCoral());
-    operatorController.rightTrigger().whileTrue(elevator.runPercent(0.3));
-    operatorController.leftTrigger().whileTrue(elevator.runPercent(-0.3));
-    driverController.a().whileTrue(algae.removeAlgae());
-  }
+    operatorController.x().onTrue(orchestrator.moveElevatorToLevel(false, 1));
+    operatorController.y().onTrue(orchestrator.moveElevatorToLevel(false, 2));
+    operatorController.a().onTrue(orchestrator.moveElevatorToLevel(false, 3));
+    operatorController.b().onTrue(orchestrator.moveElevatorToLevel(false, 4));
+    operatorController.leftTrigger().onTrue(orchestrator.removeAlgae(2));
+    operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
+    operatorController.rightBumper().onTrue(climber.deploy());
+    operatorController.rightTrigger().onTrue(climber.winch());
+    driverController.leftBumper().onTrue(fieldAlignment.alignToReef(true));
+    driverController.rightBumper().onTrue(fieldAlignment.alignToReef(false));
 
-  private void addAutoRoutine(String routineName) {
-    autoChooser.addOption(routineName, autoRoutines.getRoutines().get(routineName).cmd());
-  }
-
-  private void registerAutoRoutines() {
-    addAutoRoutine("A leave");
-    addAutoRoutine("C6L5RL");
-    addAutoRoutine("C5RL4R");
-    addAutoRoutine("B1R2LR");
-    addAutoRoutine("B1L6RL");
-    addAutoRoutine("B1R");
-    addAutoRoutine("B1L");
-    addAutoRoutine("A3LR4L");
-    addAutoRoutine("A2R3LR");
-    addAutoRoutine("C leave");
-    addAutoRoutine("B leave");
+    operatorController.rightBumper().whileTrue(climber.deploy());
+    operatorController.rightTrigger().whileTrue(climber.winch());
+    driverController
+        .leftTrigger()
+        .toggleOnTrue(
+            Commands.either(
+                fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
+                Commands.parallel(
+                        fieldAlignment.faceCoralStation(
+                            driverController::getLeftX, driverController::getLeftY),
+                        orchestrator.intake())
+                    .until(coral::hasCoral),
+                coral::hasCoral));
+    driverController
+        .rightTrigger()
+        .whileTrue(
+            orchestrator
+                .moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
+                .until(elevator::limitSwitchPressed)
+                .andThen(
+                    Commands.runOnce(
+                        () -> {
+                          robotState.elevatorPosition = ElevatorPosition.INTAKE;
+                        })));
+    driverController.b().whileTrue(elevator.runPercent(0.3));
+    driverController.y().whileTrue(elevator.runPercent(-0.3));
+    driverController.a().onTrue(coral.dumpCoral());
   }
 
   /**
@@ -283,5 +271,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void robotPeriodic() {
+    fieldAlignment.periodic();
   }
 }

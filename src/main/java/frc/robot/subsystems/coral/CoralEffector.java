@@ -47,10 +47,18 @@ public class CoralEffector extends SubsystemBase {
   public Command dumpCoral() {
     return Commands.run(
             () -> {
-              io.setSpeed(CoralEffectorConstants.CORAL_EFFECTOR_SPEED_OUT.get());
+              io.setSpeed(CoralEffectorConstants.CORAL_SPEED_OUT.get());
             },
             this)
-        .until(() -> this.hasCoral() == false); // /ITS FALSE
+        .until(() -> !this.hasCoral());
+  }
+
+  public Command takeBackCoral() {
+    return Commands.run(
+        () -> {
+          io.setSpeed(CoralEffectorConstants.CORAL_RETAKE_SPEED.get());
+        },
+        this);
   }
 
   public Command intakeCoral() {
