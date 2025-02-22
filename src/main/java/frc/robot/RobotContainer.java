@@ -253,10 +253,12 @@ public class RobotContainer {
             driverController::getRightY)
         .whileTrue(fieldAlignment.alignToReef(false));
     customTriggers
-        .toggleOnTrueCancelableWithJoystick(
+        .toggleOnTrueCancelableWithJoysticks(
             driverController.leftTrigger(),
             driverController::getRightX,
-            driverController::getRightY)
+            driverController::getRightY,
+            driverController::getLeftX,
+            driverController::getLeftY)
         .whileTrue(fieldAlignment.alignToReef(true));
 
     driverController
