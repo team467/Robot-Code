@@ -8,26 +8,26 @@ import java.util.function.DoubleSupplier;
 
 public class CustomTriggers {
   private static final double JOYSTICK_THRESHOLD = 0.2;
-  private static final Map<Trigger, Boolean> lastTriggerValues = new HashMap<>();
-  private static final Map<Trigger, Boolean> toggledState = new HashMap<>();
+  private static final Map<Trigger, Boolean> mLastTriggerValues = new HashMap<>();
+  private static final Map<Trigger, Boolean> mToggledState = new HashMap<>();
 
-  public Trigger toggleOnTrueCancelableWithJoystick(
+  public static Trigger toggleOnTrueCancelableWithJoystick(
       Trigger buttonInput, DoubleSupplier X, DoubleSupplier Y) {
 
     return new Trigger(
         CommandScheduler.getInstance().getDefaultButtonLoop(),
         () -> {
-          boolean toggledState = this.toggledState.getOrDefault(buttonInput, false);
+          boolean toggledState = mToggledState.getOrDefault(buttonInput, false);
           boolean joystickEngaged =
               Math.hypot(Math.abs(X.getAsDouble()), Math.abs(Y.getAsDouble())) > JOYSTICK_THRESHOLD;
 
-          boolean lastValue = lastTriggerValues.getOrDefault(buttonInput, false);
+          boolean lastValue = mLastTriggerValues.getOrDefault(buttonInput, false);
           boolean currentValue = buttonInput.getAsBoolean();
 
           if (joystickEngaged) {
             toggledState = false;
-            this.toggledState.put(buttonInput, toggledState);
-            lastTriggerValues.put(buttonInput, false);
+            mToggledState.put(buttonInput, toggledState);
+            mLastTriggerValues.put(buttonInput, false);
             return false;
           }
 
@@ -37,8 +37,8 @@ public class CustomTriggers {
             toggledState = !toggledState;
           }
 
-          lastTriggerValues.put(buttonInput, currentValue);
-          this.toggledState.put(buttonInput, toggledState);
+          mLastTriggerValues.put(buttonInput, currentValue);
+          mToggledState.put(buttonInput, toggledState);
           return toggledState;
         });
   }
@@ -53,20 +53,20 @@ public class CustomTriggers {
     return new Trigger(
         CommandScheduler.getInstance().getDefaultButtonLoop(),
         () -> {
-          boolean toggledState = this.toggledState.getOrDefault(buttonInput, false);
+          boolean toggledState = mToggledState.getOrDefault(buttonInput, false);
           boolean joystickEngaged =
               Math.hypot(Math.abs(X1.getAsDouble()), Math.abs(Y1.getAsDouble()))
                       > JOYSTICK_THRESHOLD
                   || Math.hypot(Math.abs(X2.getAsDouble()), Math.abs(Y2.getAsDouble()))
                       > JOYSTICK_THRESHOLD;
 
-          boolean lastValue = lastTriggerValues.getOrDefault(buttonInput, false);
+          boolean lastValue = mLastTriggerValues.getOrDefault(buttonInput, false);
           boolean currentValue = buttonInput.getAsBoolean();
 
           if (joystickEngaged) {
             toggledState = false;
-            this.toggledState.put(buttonInput, toggledState);
-            lastTriggerValues.put(buttonInput, false);
+            mToggledState.put(buttonInput, toggledState);
+            mLastTriggerValues.put(buttonInput, false);
             return false;
           }
 
@@ -76,8 +76,8 @@ public class CustomTriggers {
             toggledState = !toggledState;
           }
 
-          lastTriggerValues.put(buttonInput, currentValue);
-          this.toggledState.put(buttonInput, toggledState);
+          mLastTriggerValues.put(buttonInput, currentValue);
+          mToggledState.put(buttonInput, toggledState);
           return toggledState;
         });
   }
