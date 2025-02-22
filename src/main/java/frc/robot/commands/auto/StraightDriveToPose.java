@@ -73,7 +73,7 @@ public class StraightDriveToPose extends Command {
     this(drive, () -> targetPose);
   }
 
-  private StraightDriveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+  public StraightDriveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
     this.drive = drive;
     this.poseSupplier = targetPoseSupplier;
     addRequirements(drive);

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.commands.auto.AutoRoutines;
+import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.algae.AlgaeEffector;
@@ -175,6 +176,12 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    AutosAlternate autosAlternate = new AutosAlternate(drive);
+    autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
+    autoChooser.addOption("B1L Alt", autosAlternate.B1L());
+    autoChooser.addOption("B1R Alt", autosAlternate.B1R());
+
     registerAutoRoutines();
 
     // Configure the button bindings

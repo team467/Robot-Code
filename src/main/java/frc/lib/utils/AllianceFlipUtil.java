@@ -7,6 +7,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.FieldConstants;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * Utility functions for flipping from the blue to red alliance. By default, all translations and
@@ -88,7 +89,10 @@ public class AllianceFlipUtil {
   }
 
   public static boolean shouldFlip() {
-    return DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == Alliance.Red;
+    boolean shouldFlip =
+        DriverStation.getAlliance().isPresent()
+            && DriverStation.getAlliance().get() == Alliance.Red;
+    Logger.recordOutput("AllianceFlip/ShouldFlip", shouldFlip);
+    return shouldFlip;
   }
 }
