@@ -117,6 +117,8 @@ public class RobotContainer {
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera1Name, robotToCamera1));
+
+          leds = new Leds();
         }
 
         case ROBOT_SIMBOT -> {
