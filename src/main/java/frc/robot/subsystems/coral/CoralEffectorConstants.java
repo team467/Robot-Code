@@ -12,6 +12,8 @@ public class CoralEffectorConstants {
       new TunableNumber("CoralEffector/RetakeSpeed", -0.15);
   public static TunableNumber EFFECTOR_HOLD_PERCENT =
       new TunableNumber("CoralEffector/HoldPercent", 0.1);
+  public static TunableNumber EFFECTOR_PULLBACK_SECONDS =
+      new TunableNumber("CoralEffector/CurrentLimit", 0.1);
   public static int effectorCurrentMotorLimit = 35;
   public static int effectorEncoderPositionFactor = 1;
 }
