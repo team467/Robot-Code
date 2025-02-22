@@ -51,10 +51,8 @@ public class Orchestrator {
    */
   public Command placeCoral(int level) {
     return moveElevatorToLevel(false, level)
-        .andThen(coralEffector.dumpCoral())
-        .onlyWhile(() -> !(level == 1))
-        .andThen(scoreL1())
-        .onlyWhile(() -> (level == 1));
+        .andThen(
+            Commands.either(coralEffector.dumpCoral(), scoreL1(), ()-> !(level == 1)));
   }
 
   /**

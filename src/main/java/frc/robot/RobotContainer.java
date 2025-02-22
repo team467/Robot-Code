@@ -239,13 +239,12 @@ public class RobotContainer {
     driverController
         .leftTrigger()
         .toggleOnTrue(
-            Commands.parallel(
+            Commands.either(
                 fieldAlignment
-                    .faceCoralStation(driverController::getLeftX, driverController::getLeftY)
-                    .onlyWhile(() -> !coral.hasCoral()),
+                    .faceReef(driverController::getLeftX, driverController::getLeftY),
                 fieldAlignment
-                    .faceReef(driverController::getLeftX, driverController::getLeftY)
-                    .onlyWhile(coral::hasCoral)));
+                    .faceCoralStation(driverController::getLeftX, driverController::getLeftY),
+                coral::hasCoral));
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
     driverController.leftBumper().onTrue(coral.intakeCoral());
@@ -253,13 +252,11 @@ public class RobotContainer {
     driverController
         .a()
         .onTrue(
-            Commands.parallel(
+            Commands.either(
                 coral
-                    .dumpCoral()
-                    .onlyWhile(() -> !(robotState.elevatorPosition == ElevatorPosition.L1)),
+                    .dumpCoral(),
                 orchestrator
-                    .scoreL1()
-                    .onlyWhile(() -> robotState.elevatorPosition == ElevatorPosition.L1)));
+                    .scoreL1(), () -> robotState.elevatorPosition != ElevatorPosition.L1));
     driverController.x().whileTrue(algae.removeAlgae());
   }
 
