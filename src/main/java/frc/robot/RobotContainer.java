@@ -240,14 +240,14 @@ public class RobotContainer {
         .leftTrigger()
         .toggleOnTrue(
             Commands.either(
-                fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
+                Commands.parallel(
+                    fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
+                    orchestrator.intake()),
                 fieldAlignment.faceCoralStation(
                     driverController::getLeftX, driverController::getLeftY),
                 coral::hasCoral));
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
-    driverController.leftBumper().onTrue(coral.intakeCoral());
-    driverController.rightBumper().onTrue(coral.takeBackCoral());
     driverController
         .a()
         .onTrue(
