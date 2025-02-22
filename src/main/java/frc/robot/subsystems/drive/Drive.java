@@ -67,9 +67,9 @@ public class Drive extends SubsystemBase {
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   // Choreo PIDs
-  private final PIDController xController = new PIDController(0, 0.0, 0);
-  private final PIDController yController = new PIDController(0, 0.0, 0);
-  private final PIDController headingController = new PIDController(0, 0.0, 0);
+  private final PIDController xController = new PIDController(3.0, 0.0, 0.5);
+  private final PIDController yController = new PIDController(3.0, 0.0, 0.5);
+  private final PIDController headingController = new PIDController(2.5, 0.0, 0);
 
   public Drive(
       GyroIO gyroIO,
@@ -333,11 +333,13 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("Odometry/TrajectoryNextPose", sample.getPose());
     // Generate the next speeds for the robot
     ChassisSpeeds speeds =
-        new ChassisSpeeds(
-            sample.vx + xController.calculate(pose.getX(), sample.x),
-            sample.vy + yController.calculate(pose.getY(), sample.y),
-            sample.omega
-                + headingController.calculate(pose.getRotation().getRadians(), sample.heading));
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            new ChassisSpeeds(
+                sample.vx + xController.calculate(pose.getX(), sample.x),
+                sample.vy + yController.calculate(pose.getY(), sample.y),
+                sample.omega
+                    + headingController.calculate(pose.getRotation().getRadians(), sample.heading)),
+            getRotation());
 
     // Apply the generated speeds
     runVelocity(speeds);
