@@ -240,10 +240,9 @@ public class RobotContainer {
         .leftTrigger()
         .toggleOnTrue(
             Commands.either(
-                fieldAlignment
-                    .faceReef(driverController::getLeftX, driverController::getLeftY),
-                fieldAlignment
-                    .faceCoralStation(driverController::getLeftX, driverController::getLeftY),
+                fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
+                fieldAlignment.faceCoralStation(
+                    driverController::getLeftX, driverController::getLeftY),
                 coral::hasCoral));
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
@@ -253,10 +252,9 @@ public class RobotContainer {
         .a()
         .onTrue(
             Commands.either(
-                coral
-                    .dumpCoral(),
-                orchestrator
-                    .scoreL1(), () -> robotState.elevatorPosition != ElevatorPosition.L1));
+                coral.dumpCoral(),
+                orchestrator.scoreL1(),
+                () -> robotState.elevatorPosition != ElevatorPosition.L1));
     driverController.x().whileTrue(algae.removeAlgae());
   }
 
