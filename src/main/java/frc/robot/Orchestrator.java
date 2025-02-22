@@ -69,7 +69,8 @@ public class Orchestrator {
     return Commands.parallel(
             elevator.toSetpoint(setpoint).onlyWhile(algaeEffector::isStowed),
             algaeEffector.stowArm().onlyWhile(() -> !algaeEffector.isStowed()))
-        .until(elevator::atSetpoint).andThen(elevator.hold(elevator.getPosition())));
+        .until(elevator::atSetpoint)
+        .andThen(elevator.hold(elevator.getPosition()));
   }
   /**
    * Gets the level for the branch that we want.
@@ -97,8 +98,8 @@ public class Orchestrator {
     // The default branch we want
     double height =
         switch (level) {
-          case 1, 2 -> L2_HEIGHT;
-          case 3, 4 -> L3_HEIGHT;
+          case 2 -> L2_HEIGHT;
+          case 3 -> L3_HEIGHT;
           default -> 0.0;
         };
     return height + ALGAE_HEIGHT_OFFSET;
