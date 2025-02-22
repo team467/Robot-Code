@@ -11,6 +11,7 @@ public interface ElevatorIO {
     public double elevatorCurrentAmps = 0.0;
     public boolean stowLimitSwitch = false;
     public double goalPositionMeters = 0.0;
+    public boolean isCalibrated = false;
   }
 
   default void updateInputs(ElevatorIOInputs inputs) {}
