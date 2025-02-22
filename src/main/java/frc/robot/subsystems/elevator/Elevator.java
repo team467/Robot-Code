@@ -51,14 +51,17 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command toSetpoint(double setpointMeters) {
-    return Commands.run(
-            () -> {
-              Logger.recordOutput("Elevator/Setpoint", setpointMeters);
-              io.setPosition(setpointMeters);
-              inputs.goalPositionMeters = setpointMeters;
-            },
-            this)
-        .onlyWhile(() -> isCalibrated);
+    return Commands.either(
+        Commands.run(
+                () -> {
+                  Logger.recordOutput("Elevator/Setpoint", setpointMeters);
+                  io.setPosition(setpointMeters);
+                  inputs.goalPositionMeters = setpointMeters;
+                },
+                this)
+            .onlyWhile(() -> isCalibrated),
+        Commands.none(),
+        () -> isCalibrated);
   }
 
   public Command runPercent(double percent) {

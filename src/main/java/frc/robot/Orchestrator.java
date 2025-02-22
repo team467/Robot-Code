@@ -8,7 +8,6 @@ import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
-import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
   private final Elevator elevator;
@@ -37,7 +36,12 @@ public class Orchestrator {
    */
   public Command intake() {
     return moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-        .withTimeout(4)
+        .until(elevator::limitSwitchPressed)
+        .andThen(
+            Commands.runOnce(
+                () -> {
+                  robotState.elevatorPosition = ElevatorPosition.INTAKE;
+                }))
         .andThen(coralEffector.intakeCoral());
   }
 
@@ -48,10 +52,7 @@ public class Orchestrator {
    * @return Command for placing coral.
    */
   public Command placeCoral(int level) {
-    return moveElevatorToLevel(false, level)
-        .andThen(
-            Commands.either(coralEffector.dumpCoral(), scoreL1(), () -> !(level == 1))
-                .until(() -> !coralEffector.hasCoral()));
+    return moveElevatorToLevel(false, level).withTimeout(1).andThen(coralEffector  .dumpCoral());
   }
 
   /**
@@ -72,7 +73,6 @@ public class Orchestrator {
     return moveElevator.andThen(
         Commands.runOnce(
             () -> {
-              Logger.recordOutput("Here", true);
               switch (level) {
                 case 1:
                   robotState.elevatorPosition = ElevatorPosition.L1;
@@ -109,10 +109,8 @@ public class Orchestrator {
             .withTimeout(0.01)
             .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint))
             .andThen(elevator.setHoldPosition(elevator.getPosition())),
-        // If we are moving from one algae position to another, we don't need to make
-        // sure the
-        // algae
-        // effector is stowed
+        // If we are moving from one algae position to another, we don't need to make sure that the
+        // algae effector is stowed
         () ->
             !((setpoint == ALGAE_L2_HEIGHT || setpoint == ALGAE_L3_HEIGHT)
                 && (robotState.elevatorPosition == ElevatorPosition.ALGAE_L2
