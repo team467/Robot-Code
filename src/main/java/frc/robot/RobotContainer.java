@@ -53,8 +53,9 @@ public class RobotContainer {
   private CoralEffector coral;
   private Climber climber;
   private Elevator elevator;
-  private FieldAlignment fieldAlignment;
-  private Orchestrator orchestrator;
+  private final Orchestrator orchestrator;
+  private final FieldAlignment fieldAlignment;
+  private final CustomTriggers customTriggers;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -163,6 +164,7 @@ public class RobotContainer {
       elevator = new Elevator(new ElevatorIO() {});
     }
     fieldAlignment = new FieldAlignment(drive);
+    customTriggers = new CustomTriggers();
     orchestrator = new Orchestrator(elevator, algae, coral);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -232,14 +234,28 @@ public class RobotContainer {
     operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
-    driverController.leftBumper().onTrue(fieldAlignment.alignToReef(true));
-    driverController.rightBumper().onTrue(fieldAlignment.alignToReef(false));
-
-    operatorController.rightBumper().whileTrue(climber.deploy());
-    operatorController.rightTrigger().whileTrue(climber.winch());
-    driverController
-        .leftTrigger()
-        .toggleOnTrue(
+    customTriggers
+        .toggleOnTrueCancelableWithJoysticks(
+            driverController.leftBumper(),
+            driverController::getLeftX,
+            driverController::getLeftY,
+            driverController::getRightX,
+            driverController::getRightY)
+        .whileTrue(fieldAlignment.alignToReef(true));
+    customTriggers
+        .toggleOnTrueCancelableWithJoysticks(
+            driverController.rightBumper(),
+            driverController::getLeftX,
+            driverController::getLeftY,
+            driverController::getRightX,
+            driverController::getRightY)
+        .whileTrue(fieldAlignment.alignToReef(false));
+    customTriggers
+        .toggleOnTrueCancelableWithJoystick(
+            driverController.leftTrigger(),
+            driverController::getRightX,
+            driverController::getRightY)
+        .whileTrue(
             Commands.either(
                 fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
                 Commands.parallel(
