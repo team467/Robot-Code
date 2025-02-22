@@ -26,6 +26,7 @@ public class CustomTriggers {
 
           if (joystickEngaged) {
             toggledState = false;
+            this.toggledState.put(buttonInput, toggledState);
             lastTriggerValues.put(buttonInput, false);
             return false;
           }
@@ -64,6 +65,7 @@ public class CustomTriggers {
 
           if (joystickEngaged) {
             toggledState = false;
+            this.toggledState.put(buttonInput, toggledState);
             lastTriggerValues.put(buttonInput, false);
             return false;
           }
@@ -75,6 +77,7 @@ public class CustomTriggers {
           }
 
           lastTriggerValues.put(buttonInput, currentValue);
+          this.toggledState.put(buttonInput, toggledState);
           return toggledState;
         });
   }
