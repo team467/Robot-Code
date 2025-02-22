@@ -214,14 +214,6 @@ public class RobotContainer {
             () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
-    driverController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> new Rotation2d()));
 
     driverController
         .start()
@@ -265,7 +257,11 @@ public class RobotContainer {
             driverController.leftTrigger(),
             driverController::getRightX,
             driverController::getRightY)
-        .whileTrue(
+        .whileTrue(fieldAlignment.alignToReef(true));
+
+    driverController
+        .leftTrigger()
+        .toggleOnTrue(
             Commands.either(
                 Commands.parallel(
                     fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),

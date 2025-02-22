@@ -62,6 +62,11 @@ public class ElevatorIOPhysical implements ElevatorIO {
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
+    config
+        .softLimit
+        .forwardSoftLimit(0.79)
+        .forwardSoftLimitEnabled(true)
+        .reverseSoftLimitEnabled(false);
 
     tryUntilOk(
         spark,
@@ -127,9 +132,9 @@ public class ElevatorIOPhysical implements ElevatorIO {
   @Override
   public void hold(double holdPosition) {
     if (encoder.getPosition() < holdPosition) {
-      spark.setVoltage(-0.3);
+      spark.setVoltage(-0.15);
     } else if (encoder.getPosition() > holdPosition) {
-      spark.setVoltage(0.3);
+      spark.setVoltage(0.15);
     }
   }
 }

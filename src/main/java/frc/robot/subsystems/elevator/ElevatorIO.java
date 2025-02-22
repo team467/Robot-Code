@@ -12,6 +12,7 @@ public interface ElevatorIO {
     public double elevatorSetpoint = 0.0;
     public boolean atSetpoint = false;
     public boolean stowLimitSwitch = false;
+    public double goalPositionMeters = 0.0;
   }
 
   default void updateInputs(ElevatorIOInputs inputs) {}
