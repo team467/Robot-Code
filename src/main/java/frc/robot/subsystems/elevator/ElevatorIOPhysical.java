@@ -87,6 +87,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
     inputs.elevatorSetpoint = setpoint;
     inputs.atSetpoint = Math.abs(setpoint - inputs.positionMeters) < TOLERANCE;
     inputs.stowLimitSwitch = !elevatorStowLimitSwitch.get();
+    inputs.isCalibrated = zeroedOnce;
   }
 
   @Override

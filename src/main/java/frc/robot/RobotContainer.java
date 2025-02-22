@@ -31,6 +31,7 @@ import frc.robot.subsystems.coral.CoralEffectorIO;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.vision.Vision;
@@ -199,11 +200,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
     coral.setDefaultCommand(coral.stop());
     algae.setDefaultCommand(algae.stowArm());
+    elevator.setDefaultCommand(elevator.hold());
     climber.setDefaultCommand(climber.stop());
-    elevator.setDefaultCommand(elevator.hold(elevator.getPosition()));
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -259,22 +259,27 @@ public class RobotContainer {
             driverController::getRightY)
         .whileTrue(
             Commands.either(
+                fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
                 Commands.parallel(
-                    fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
-                    orchestrator.intake()),
-                fieldAlignment.faceCoralStation(
-                    driverController::getLeftX, driverController::getLeftY),
+                        fieldAlignment.faceCoralStation(
+                            driverController::getLeftX, driverController::getLeftY),
+                        orchestrator.intake())
+                    .until(coral::hasCoral),
                 coral::hasCoral));
+    driverController
+        .rightTrigger()
+        .whileTrue(
+            orchestrator
+                .moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
+                .until(elevator::limitSwitchPressed)
+                .andThen(
+                    Commands.runOnce(
+                        () -> {
+                          robotState.elevatorPosition = ElevatorPosition.INTAKE;
+                        })));
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
-    driverController
-        .a()
-        .onTrue(
-            Commands.either(
-                coral.dumpCoral(),
-                orchestrator.scoreL1(),
-                () -> robotState.elevatorPosition != ElevatorPosition.L1));
-    driverController.x().whileTrue(algae.removeAlgae());
+    driverController.a().onTrue(coral.dumpCoral());
   }
 
   /**
