@@ -52,7 +52,7 @@ public class Orchestrator {
    * @return Command for placing coral.
    */
   public Command placeCoral(int level) {
-    return moveElevatorToLevel(false, level).withTimeout(1).andThen(coralEffector  .dumpCoral());
+    return moveElevatorToLevel(false, level).withTimeout(1).andThen(coralEffector.dumpCoral());
   }
 
   /**
