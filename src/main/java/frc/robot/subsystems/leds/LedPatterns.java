@@ -30,7 +30,7 @@ public enum LedPatterns {
 
   // FRC
   FRC_BLUE(LEDPattern.solid(Color.kFirstBlue)),
-  SOLID_FRC_RED(LEDPattern.solid(Color.kFirstRed)),
+  FRC_RED(LEDPattern.solid(Color.kFirstRed)),
 
   // Center of Mass
   CENTER_OF_MASS_BLUE(LEDPattern.solid(Color.kDarkBlue)),
@@ -54,7 +54,7 @@ public enum LedPatterns {
   STRIPE_FRC(
       LEDPattern.steps(Map.of(0, Color.kFirstBlue, 0.33, Color.kWhite, 0.66, Color.kFirstRed)));
 
-  private static final double BREATH_TIME = 3.0;
+  private static final double BREATH_TIME = 1.0;
   private static final double STROBE_TIME = 1.0;
   private static final Distance LED_SPACING = Meters.of(1 / 60.0);
 
@@ -69,10 +69,7 @@ public enum LedPatterns {
   }
 
   public LEDPattern blink(double time) {
-    if (time > 0.0) {
-      return colorPattern.blink(Seconds.of(time));
-    }
-    return colorPattern.blink(Seconds.of(STROBE_TIME));
+    return colorPattern.blink(Seconds.of(time > 0.0 ? time : STROBE_TIME));
   }
 
   public LEDPattern breathe() {
@@ -80,10 +77,7 @@ public enum LedPatterns {
   }
 
   public LEDPattern breathe(double time) {
-    if (time > 0.0) {
-      return colorPattern.breathe(Seconds.of(time));
-    }
-    return colorPattern.breathe(Seconds.of(BREATH_TIME));
+    return colorPattern.breathe(Seconds.of(time > 0.0 ? time : BREATH_TIME));
   }
 
   public LEDPattern scroll() {
@@ -91,10 +85,11 @@ public enum LedPatterns {
   }
 
   public LEDPattern scroll(double metersPerSecond) {
-    return colorPattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(metersPerSecond), LED_SPACING);
+    return colorPattern.scrollAtAbsoluteSpeed(
+        MetersPerSecond.of(metersPerSecond > 0.0 ? metersPerSecond : 1), LED_SPACING);
   }
 
-  public LEDPattern overlayon(LEDPattern base) {
+  public LEDPattern overlayOn(LEDPattern base) {
     return colorPattern.overlayOn(base);
   }
 

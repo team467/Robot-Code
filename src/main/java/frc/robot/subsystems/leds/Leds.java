@@ -17,7 +17,7 @@ import frc.robot.RobotState;
 import frc.robot.RobotState.Mode;
 
 public class Leds extends SubsystemBase {
-
+  private static final boolean debug = false;
   private RobotState state = RobotState.getInstance();
   private final AddressableLED leds;
   public static final AddressableLEDBuffer buffer =
@@ -74,24 +74,28 @@ public class Leds extends SubsystemBase {
     private final AddressableLEDBufferView buf_view_2;
 
     private Sections(int start_1, int end_1, int start_2, int end_2) {
-      System.out.println(
-          "create section "
-              + toString()
-              + " start_1: "
-              + start_1
-              + " end_1: "
-              + end_1
-              + " start_2: "
-              + start_2
-              + " end_2:"
-              + end_2);
+      if (debug) {
+        System.out.println(
+            "create section "
+                + toString()
+                + " start_1: "
+                + start_1
+                + " end_1: "
+                + end_1
+                + " start_2: "
+                + start_2
+                + " end_2:"
+                + end_2);
+      }
       this.buf_view_1 = buffer.createView(start_1, end_1);
       this.buf_view_2 = buffer.createView(start_2, end_2);
     }
 
     private Sections(int start_1, int end_1) {
-      System.out.println(
-          "create section " + toString() + " start_1: " + start_1 + " end_1: " + end_1);
+      if (debug) {
+        System.out.println(
+            "create section " + toString() + " start_1: " + start_1 + " end_1: " + end_1);
+      }
       this.buf_view_1 = buffer.createView(start_1, end_1);
       this.buf_view_2 = null;
     }
@@ -134,25 +138,26 @@ public class Leds extends SubsystemBase {
   public void periodic() {
 
     if (enableTestEntry.getBoolean(false)) {
-      processTestInputs();
+      processLedPatternTestInputs();
     } else if (enableLedModeTestEntry.getBoolean(false)) {
-      processTestModeInputs();
+      processLedModeTestInputs();
     } else {
       /* get from robot state  */
-      currentPattern = state.getMode().ledPattern;
-      applySection = state.getMode().ledSection;
+      Mode ledMode = state.getMode();
+      currentPattern = ledMode.ledPattern;
+      applySection = ledMode.ledSection;
     }
 
     // Load the pattern onto the LEDs
     if (!Robot.isSimulation()) {
       loadLedPatterns();
       leds.setData(buffer);
-    } else {
-      // no op for simulation
     }
-  }
+    // else no op for simulation
 
-  private void processTestInputs() {
+  }
+  // tests led patterns from shuffleboard gui
+  private void processLedPatternTestInputs() {
     try {
       LedPatterns pattern = testPattern.getSelected();
       LedPatterns pattern2 = testPattern2.getSelected();
@@ -160,14 +165,13 @@ public class Leds extends SubsystemBase {
       double timer = testTimer.getDouble(0);
       applySection = testSection.getSelected();
       isReversed = testReverse.getBoolean(false);
-      // System.out.println("test timer" + timer);
 
       switch (animation) {
         case BLINK -> currentPattern = pattern.blink(timer);
         case BREATHE -> currentPattern = pattern.breathe(timer);
         case SCROLL -> currentPattern = pattern.scroll(timer);
         case BLEND -> currentPattern = pattern.blend(pattern2.colorPatternOnly());
-        case OVERLAY -> currentPattern = pattern.overlayon(pattern2.colorPatternOnly());
+        case OVERLAY -> currentPattern = pattern.overlayOn(pattern2.colorPatternOnly());
         case BREATHE_BLEND -> currentPattern = pattern.breathe().blend(pattern2.breathe(1.5));
         case BREATHE_OVERLAY -> currentPattern = pattern.breathe().overlayOn(pattern2.breathe());
         default -> currentPattern = pattern.colorPatternOnly();
@@ -177,7 +181,8 @@ public class Leds extends SubsystemBase {
     }
   }
 
-  private void processTestModeInputs() {
+  // process test inputs for led mode based on robot state
+  private void processLedModeTestInputs() {
     try {
       Mode mode = testMode.getSelected();
       applySection = mode.ledSection;
@@ -191,14 +196,11 @@ public class Leds extends SubsystemBase {
     LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
     if (isReversed) {
       currentPattern.applyTo(applySection.getBufferView_1().reversed());
-      if (applySection.getBufferView_2() != null) {
-        currentPattern.applyTo(applySection.getBufferView_2().reversed());
-      }
     } else {
       currentPattern.applyTo(applySection.getBufferView_1());
-      if (applySection.getBufferView_2() != null) {
-        currentPattern.applyTo(applySection.getBufferView_2().reversed());
-      }
+    }
+    if (applySection.getBufferView_2() != null) {
+      currentPattern.applyTo(applySection.getBufferView_2().reversed());
     }
   }
 
