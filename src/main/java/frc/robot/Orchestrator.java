@@ -6,7 +6,6 @@ import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
-import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 
@@ -21,6 +20,7 @@ public class Orchestrator {
   private static final double L1_HEIGHT = ReefHeight.L1.height;
   private static final double ALGAE_L2_HEIGHT = 0.55;
   private static final double ALGAE_L3_HEIGHT = 0.641;
+
   public Orchestrator(Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
     this.elevator = elevator;
     this.algaeEffector = algaeEffector;
