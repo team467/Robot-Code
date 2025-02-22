@@ -103,7 +103,8 @@ public class Orchestrator {
         .until(elevator::atSetpoint)
         .andThen(elevator.hold(elevator.getPosition()));
   }
-  public Command scoreL1(){
+
+  public Command scoreL1() {
     return Commands.parallel(coralEffector.dumpCoral(), algaeEffector.removeAlgae());
   }
   /**

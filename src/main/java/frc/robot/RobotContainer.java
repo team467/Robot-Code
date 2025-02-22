@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
@@ -53,6 +54,7 @@ public class RobotContainer {
   private Elevator elevator;
   private FieldAlignment fieldAlignment;
   private Orchestrator orchestrator;
+  private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -224,16 +226,12 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    operatorController.x().onTrue(orchestrator.placeCoral(1));
+    operatorController.x().onTrue(orchestrator.moveElevatorToLevel(false, 1));
     operatorController.y().onTrue(orchestrator.moveElevatorToLevel(false, 2));
     operatorController.a().onTrue(orchestrator.moveElevatorToLevel(false, 3));
     operatorController.b().onTrue(orchestrator.moveElevatorToLevel(false, 4));
-    operatorController
-        .leftTrigger()
-        .onTrue(orchestrator.moveElevatorToLevel(true, 2).andThen(algae.removeAlgae()));
-    operatorController
-        .leftBumper()
-        .onTrue(orchestrator.moveElevatorToLevel(true, 3).andThen(algae.removeAlgae()));
+    operatorController.leftTrigger().onTrue(orchestrator.removeAlgae(2));
+    operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
     driverController.leftBumper().onTrue(fieldAlignment.alignToReef(true));
@@ -252,7 +250,16 @@ public class RobotContainer {
     driverController.y().whileTrue(elevator.runPercent(-0.3));
     driverController.leftBumper().onTrue(coral.intakeCoral());
     driverController.rightBumper().onTrue(coral.takeBackCoral());
-    driverController.a().onTrue(coral.dumpCoral());
+    driverController
+        .a()
+        .onTrue(
+            Commands.parallel(
+                coral
+                    .dumpCoral()
+                    .onlyWhile(() -> !(robotState.elevatorPosition == ElevatorPosition.L1)),
+                orchestrator
+                    .scoreL1()
+                    .onlyWhile(() -> robotState.elevatorPosition == ElevatorPosition.L1)));
     driverController.x().whileTrue(algae.removeAlgae());
   }
 
