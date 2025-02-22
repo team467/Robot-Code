@@ -17,6 +17,8 @@ public interface GyroIO {
     public double VectorAngle;
     public double previousVectorAngle;
     public double vectorDiff;
+    public double roll;
+    public double pitch;
   }
 
   public default void updateInputs(GyroIOInputs inputs) {}

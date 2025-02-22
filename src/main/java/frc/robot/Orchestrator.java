@@ -1,7 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants.ReefHeight;
+import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
@@ -36,25 +38,20 @@ public class Orchestrator {
    * @return Command for intaking coral.
    */
   public Command intake() {
-    return elevator
-        .toSetpoint(ElevatorConstants.INTAKE_POSITION)
+    return moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
         .withTimeout(4)
-        .until(() -> elevator.atSetpoint() && robotState.hopperSeesCoral)
         .andThen(coralEffector.intakeCoral());
   }
 
   /**
    * Places coral on branch after getting in position.
    *
-   * @param branchLeft
    * @param level
    * @return Command for placing coral.
    */
   public Command placeCoral(int level) {
-    return elevator
-        .toSetpoint(getCoralHeight(level))
-        .until(elevator::atSetpoint)
-        .andThen(coralEffector.dumpCoral());
+    return moveElevatorToLevel(false, level)
+        .andThen(Commands.either(coralEffector.dumpCoral(), scoreL1(), () -> !(level == 1)));
   }
 
   /**
@@ -64,11 +61,48 @@ public class Orchestrator {
    * @return Command to remove algae from reef.
    */
   public Command removeAlgae(int level) {
-    return elevator
-        .toSetpoint(getAlgaeHeight(level))
-        .until(elevator::atSetpoint)
+    return moveElevatorToLevel(true, level)
         .andThen(algaeEffector.removeAlgae())
         .finallyDo(algaeEffector::stowArm);
+  }
+
+  public Command moveElevatorToLevel(boolean algae, int level) {
+    Command moveElevator;
+    if (!algae) {
+      moveElevator = moveElevatorToSetpoint(getCoralHeight(level));
+    } else {
+      moveElevator = moveElevatorToSetpoint(getAlgaeHeight(level));
+    }
+    return Commands.run(
+            () -> {
+              switch (level) {
+                case 1:
+                  robotState.elevatorPosition = ElevatorPosition.L1;
+                  break;
+                case 2:
+                  robotState.elevatorPosition = ElevatorPosition.L2;
+                  break;
+                case 3:
+                  robotState.elevatorPosition = ElevatorPosition.L3;
+                  break;
+                case 4:
+                  robotState.elevatorPosition = ElevatorPosition.L4;
+                  break;
+              }
+            })
+        .andThen(moveElevator);
+  }
+
+  public Command moveElevatorToSetpoint(double setpoint) {
+    return Commands.parallel(
+            elevator.toSetpoint(setpoint).onlyWhile(algaeEffector::isStowed),
+            algaeEffector.stowArm().onlyWhile(() -> !algaeEffector.isStowed()))
+        .until(elevator::atSetpoint)
+        .andThen(elevator.hold(elevator.getPosition()));
+  }
+
+  public Command scoreL1() {
+    return Commands.parallel(coralEffector.dumpCoral(), algaeEffector.removeAlgae());
   }
   /**
    * Gets the level for the branch that we want.
@@ -94,12 +128,10 @@ public class Orchestrator {
    */
   public double getAlgaeHeight(int level) {
     // The default branch we want
-    double height =
-        switch (level) {
-          case 1, 2 -> L2_HEIGHT;
-          case 3, 4 -> L3_HEIGHT;
-          default -> 0.0;
-        };
-    return height + ALGAE_HEIGHT_OFFSET;
+    return switch (level) {
+      case 2 -> 0.55;
+      case 3 -> 0.641;
+      default -> 0.0;
+    };
   }
 }

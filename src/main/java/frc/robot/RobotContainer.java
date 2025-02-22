@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
@@ -24,11 +25,14 @@ import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.coral.CoralEffectorIO;
+import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -51,6 +55,7 @@ public class RobotContainer {
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
   private final CustomTriggers customTriggers;
+  private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -96,6 +101,19 @@ public class RobotContainer {
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0));
         }
+        case ROBOT_2025_COMP -> {
+          drive =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOTalonSpark(0),
+                  new ModuleIOTalonSpark(1),
+                  new ModuleIOTalonSpark(2),
+                  new ModuleIOTalonSpark(3));
+          coral = new CoralEffector(new CoralEffectorIOSparkMAX());
+          climber = new Climber(new ClimberIOSparkMax());
+          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          elevator = new Elevator(new ElevatorIOPhysical());
+        }
 
         case ROBOT_SIMBOT -> {
           drive =
@@ -132,12 +150,13 @@ public class RobotContainer {
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
     }
-    if (elevator == null) {
-      elevator = new Elevator(new ElevatorIO() {});
-    }
     if (coral == null) {
       coral = new CoralEffector(new CoralEffectorIO() {});
     }
+    if (elevator == null) {
+      elevator = new Elevator(new ElevatorIO() {});
+    }
+    fieldAlignment = new FieldAlignment(drive);
     orchestrator = new Orchestrator(drive, elevator, algae, coral);
     fieldAlignment = new FieldAlignment(drive);
     customTriggers = new CustomTriggers();
@@ -174,13 +193,10 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    if (coral != null) {
-      coral.setDefaultCommand(coral.stop());
-    }
-
-    // algae.setDefaultCommand(algae.stop());
+    coral.setDefaultCommand(coral.stop());
     algae.setDefaultCommand(algae.stowArm());
-
+    climber.setDefaultCommand(climber.stop());
+    elevator.setDefaultCommand(elevator.hold(elevator.getPosition()));
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -213,23 +229,36 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    if (coral != null) {
-      operatorController.b().whileTrue(coral.dumpCoral());
-      operatorController.y().whileTrue(coral.intakeCoral());
-    }
-    operatorController.a().whileTrue(algae.removeAlgae());
-    operatorController.x().whileTrue(algae.stowArm());
-
-    operatorController.b().onTrue(climber.winch());
-    customTriggers
-        .toggleOnTrueCancelableWithJoystick(
-            driverController.a(), driverController::getRightX, driverController::getRightY)
-        .whileTrue(fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
+    operatorController.x().onTrue(orchestrator.moveElevatorToLevel(false, 1));
+    operatorController.y().onTrue(orchestrator.moveElevatorToLevel(false, 2));
+    operatorController.a().onTrue(orchestrator.moveElevatorToLevel(false, 3));
+    operatorController.b().onTrue(orchestrator.moveElevatorToLevel(false, 4));
+    operatorController.leftTrigger().onTrue(orchestrator.removeAlgae(2));
+    operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
+    operatorController.rightBumper().onTrue(climber.deploy());
+    operatorController.rightTrigger().onTrue(climber.winch());
+    driverController.leftBumper().onTrue(fieldAlignment.alignToReef(true));
+    driverController.rightBumper().onTrue(fieldAlignment.alignToReef(false));
     driverController
-        .y()
+        .leftTrigger()
         .toggleOnTrue(
-            fieldAlignment.faceCoralStation(
-                driverController::getLeftX, driverController::getLeftY));
+            Commands.either(
+                fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
+                fieldAlignment.faceCoralStation(
+                    driverController::getLeftX, driverController::getLeftY),
+                coral::hasCoral));
+    driverController.b().whileTrue(elevator.runPercent(0.3));
+    driverController.y().whileTrue(elevator.runPercent(-0.3));
+    driverController.leftBumper().onTrue(coral.intakeCoral());
+    driverController.rightBumper().onTrue(coral.takeBackCoral());
+    driverController
+        .a()
+        .onTrue(
+            Commands.either(
+                coral.dumpCoral(),
+                orchestrator.scoreL1(),
+                () -> robotState.elevatorPosition != ElevatorPosition.L1));
+    driverController.x().whileTrue(algae.removeAlgae());
   }
 
   /**
@@ -239,5 +268,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void robotPeriodic() {
+    fieldAlignment.periodic();
   }
 }

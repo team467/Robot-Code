@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.CoralStation;
 import frc.robot.FieldConstants.Reef;
 import frc.robot.FieldConstants.ReefHeight;
@@ -17,14 +18,14 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class FieldAlignment {
-
-  @AutoLogOutput private Pose2d desiredCoralPose;
-  @AutoLogOutput private int branchIndex;
   @AutoLogOutput private int closestReefFace;
   @AutoLogOutput private Pose2d closestReefFacePose;
   @AutoLogOutput private double[] reefFaceDistances = new double[6];
-
+  // How far left/right the robot needs to move to align with the coral effector instead of the
+  // center of the robot
   private static final double CORAL_EFFECTOR_OFFSET = -12;
+  // How far back the robot needs to move to align with the branch in a way that doesn't have the
+  // robot impaling itself
   private static final double BRANCH_TO_ROBOT_BACKUP = -18.375;
   private final Drive drive;
 
@@ -44,13 +45,15 @@ public class FieldAlignment {
         drive,
         leftJoystickX,
         leftJoystickY,
-        () ->
-            Rotation2d.fromDegrees(Reef.centerFaces[closestReefFace()].getRotation().getDegrees()));
+        () -> AllianceFlipUtil.apply(Reef.centerFaces[closestReefFace()]).getRotation());
   }
 
   public Command faceCoralStation(DoubleSupplier leftJoystickX, DoubleSupplier leftJoystickY) {
     return DriveCommands.joystickDriveAtAngle(
-        drive, leftJoystickX, leftJoystickY, () -> getClosestCoralStationPosition().getRotation());
+        drive,
+        leftJoystickX,
+        leftJoystickY,
+        () -> getClosestCoralStationPosition().getRotation().rotateBy(Rotation2d.fromDegrees(180)));
   }
   /**
    * Gets position of the branch we want.
@@ -63,23 +66,20 @@ public class FieldAlignment {
     if (branchLeft) {
       branch++;
     }
-    branchIndex = branch;
-    Pose2d branchPose = branchPositions.get(branch).get(ReefHeight.L1).toPose2d();
-    ;
-    desiredCoralPose =
-        new Pose2d(
-            branchPose.getX()
-                - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
-                    * Math.cos(branchPose.getRotation().getRadians())
-                - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET)
-                    * Math.sin(branchPose.getRotation().getRadians()),
-            branchPose.getY()
-                - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
-                    * Math.sin(branchPose.getRotation().getRadians())
-                + Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
-                    * Math.cos(branchPose.getRotation().getRadians()),
-            branchPose.getRotation());
-    return desiredCoralPose;
+    Pose2d branchPose =
+        AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L1).toPose2d());
+    return new Pose2d(
+        branchPose.getX() // Move backwards robot relative
+            - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
+                * Math.cos(branchPose.getRotation().getRadians())
+            - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET)
+                * Math.sin(branchPose.getRotation().getRadians()),
+        branchPose.getY() // Move left robot relative
+            - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
+                * Math.sin(branchPose.getRotation().getRadians())
+            + Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
+                * Math.cos(branchPose.getRotation().getRadians()),
+        branchPose.getRotation());
   }
 
   /**
@@ -88,18 +88,28 @@ public class FieldAlignment {
    * @return Command for getting the closest coral station.
    */
   public Pose2d getClosestCoralStationPosition() {
-    return closerToLeftCoralStation() ? CoralStation.leftCenterFace : CoralStation.rightCenterFace;
+    return closerToLeftCoralStation()
+        ? AllianceFlipUtil.apply(CoralStation.leftCenterFace)
+        : AllianceFlipUtil.apply(CoralStation.rightCenterFace);
   }
 
   public boolean closerToLeftCoralStation() {
     double distanceToLeftStation =
         Math.hypot(
-            Math.abs(drive.getPose().getX() - (CoralStation.leftCenterFace).getX()),
-            Math.abs(drive.getPose().getY() - (CoralStation.leftCenterFace).getY()));
+            Math.abs(
+                drive.getPose().getX()
+                    - (AllianceFlipUtil.apply(CoralStation.leftCenterFace)).getX()),
+            Math.abs(
+                drive.getPose().getY()
+                    - (AllianceFlipUtil.apply(CoralStation.leftCenterFace)).getY()));
     double distanceToRightStation =
         Math.hypot(
-            Math.abs(drive.getPose().getX() - (CoralStation.rightCenterFace).getX()),
-            Math.abs(drive.getPose().getY() - (CoralStation.rightCenterFace).getY()));
+            Math.abs(
+                drive.getPose().getX()
+                    - (AllianceFlipUtil.apply(CoralStation.rightCenterFace)).getX()),
+            Math.abs(
+                drive.getPose().getY()
+                    - (AllianceFlipUtil.apply(CoralStation.rightCenterFace)).getY()));
     return (distanceToLeftStation < distanceToRightStation);
   }
 
@@ -109,8 +119,10 @@ public class FieldAlignment {
     for (int i = 0; i < 6; i++) {
       reefFaceDistances[i] =
           Math.hypot(
-              Math.abs(drive.getPose().getX() - (Reef.centerFaces[i]).getX()),
-              Math.abs(drive.getPose().getY() - (Reef.centerFaces[i]).getY()));
+              Math.abs(
+                  drive.getPose().getX() - (AllianceFlipUtil.apply(Reef.centerFaces[i])).getX()),
+              Math.abs(
+                  drive.getPose().getY() - (AllianceFlipUtil.apply(Reef.centerFaces[i])).getY()));
       this.reefFaceDistances[i] = reefFaceDistances[i];
     }
     int closestFace = 0;
@@ -121,7 +133,12 @@ public class FieldAlignment {
       }
     }
     closestReefFace = closestFace;
-    closestReefFacePose = Reef.centerFaces[closestFace];
+    closestReefFacePose = AllianceFlipUtil.apply(Reef.centerFaces[closestFace]);
     return closestFace;
+  }
+
+  public void periodic() {
+    closestReefFace = closestReefFace();
+    closestReefFacePose = AllianceFlipUtil.apply(Reef.centerFaces[closestReefFace]);
   }
 }

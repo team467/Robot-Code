@@ -25,6 +25,8 @@ public class Schematic {
   // Coral Effector (Motor IDs)
   public static final int hopperReflectorSensorDioId;
   public static final int coralMotorID;
+  // Elevator
+  public static final int elevatorMotorID;
 
   static {
     switch (Constants.getRobot()) {
@@ -47,11 +49,13 @@ public class Schematic {
         frontRightAbsoluteEncoderCanId = 18;
         backRightAbsoluteEncoderCanId = 19;
 
-        algaePivotCanId = 0;
-        algaeRemovalCanId = 0;
+        algaePivotCanId = 12;
+        algaeRemovalCanId = 13;
 
-        hopperReflectorSensorDioId = 0;
-        coralMotorID = 0;
+        hopperReflectorSensorDioId = 9;
+        coralMotorID = 24;
+
+        elevatorMotorID = 9;
       }
       case ROBOT_2025_COMP -> {
         // Device CAN IDs
@@ -60,26 +64,28 @@ public class Schematic {
         pigeonCanId = 17;
 
         frontLeftDriveCanId = 1;
-        backLeftDriveCanId = 3;
-        frontRightDriveCanId = 5;
-        backRightDriveCanId = 7;
+        backLeftDriveCanId = 7;
+        frontRightDriveCanId = 3;
+        backRightDriveCanId = 5;
 
         frontLeftTurnCanId = 2;
-        backLeftTurnCanId = 4;
-        frontRightTurnCanId = 6;
-        backRightTurnCanId = 8;
+        backLeftTurnCanId = 8;
+        frontRightTurnCanId = 4;
+        backRightTurnCanId = 6;
 
-        frontLeftAbsoluteEncoderCanId = 10;
-        backLeftAbsoluteEncoderCanId = 11;
-        frontRightAbsoluteEncoderCanId = 12;
-        backRightAbsoluteEncoderCanId = 13;
+        frontLeftAbsoluteEncoderCanId = 18;
+        backLeftAbsoluteEncoderCanId = 21;
+        frontRightAbsoluteEncoderCanId = 19;
+        backRightAbsoluteEncoderCanId = 20;
 
         // Algae Effector (Motor IDs)
-        algaePivotCanId = 0;
-        algaeRemovalCanId = 0;
+        algaePivotCanId = 12;
+        algaeRemovalCanId = 13;
 
-        hopperReflectorSensorDioId = 0;
-        coralMotorID = 0;
+        hopperReflectorSensorDioId = 9;
+        coralMotorID = 14;
+
+        elevatorMotorID = 9;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -105,8 +111,10 @@ public class Schematic {
         algaePivotCanId = 2;
         algaeRemovalCanId = 1;
 
-        coralMotorID = 2;
+        coralMotorID = 14;
         hopperReflectorSensorDioId = 9;
+
+        elevatorMotorID = 9;
       }
 
       default -> {
@@ -134,6 +142,8 @@ public class Schematic {
 
         hopperReflectorSensorDioId = 0;
         coralMotorID = 0;
+
+        elevatorMotorID = 0;
       }
     }
   }

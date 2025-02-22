@@ -45,6 +45,5 @@
   },
   "wpilib.deployOffline": true,
   "wpilib.offline": false,
-  "wpilib.skipTests": false,
-  "java.debug.settings.onBuildFailureProceed": true
+  "wpilib.skipTests": false
 }
