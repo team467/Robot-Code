@@ -10,6 +10,7 @@ public interface ElevatorIO {
     public double elevatorAppliedVolts = 0.0;
     public double elevatorCurrentAmps = 0.0;
     public boolean stowLimitSwitch = false;
+    public double goalPositionMeters = 0.0;
   }
 
   default void updateInputs(ElevatorIOInputs inputs) {}
