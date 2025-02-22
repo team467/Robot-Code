@@ -267,7 +267,7 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  public void QuasiPeriodic() {
+  public void robotPeriodic() {
     fieldAlignment.periodic();
   }
 }
