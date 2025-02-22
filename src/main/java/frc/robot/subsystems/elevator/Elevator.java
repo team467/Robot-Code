@@ -15,11 +15,13 @@ public class Elevator extends SubsystemBase {
 
   @AutoLogOutput private boolean isCalibrated = false;
   @AutoLogOutput private boolean holdLock = false;
+  @AutoLogOutput private double holdPosition = INTAKE_POSITION;
 
   public Elevator(ElevatorIO io) {
     this.io = io;
     this.inputs = new ElevatorIOInputsAutoLogged();
     io.updateInputs(inputs);
+    holdPosition = inputs.positionMeters;
   }
 
   @Override
@@ -68,7 +70,15 @@ public class Elevator extends SubsystemBase {
         this);
   }
 
-  public Command hold(double holdPosition) {
+  public Command setHoldPosition(double holdPosition) {
+    return Commands.runOnce(
+        () -> {
+          this.holdPosition = holdPosition;
+        },
+        this);
+  }
+
+  public Command hold() {
     return Commands.run(
         () -> {
           io.hold(holdPosition);

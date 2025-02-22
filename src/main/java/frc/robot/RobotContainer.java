@@ -197,11 +197,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
     coral.setDefaultCommand(coral.stop());
     algae.setDefaultCommand(algae.stowArm());
+    elevator.setDefaultCommand(elevator.hold());
     climber.setDefaultCommand(climber.stop());
-    elevator.setDefaultCommand(elevator.hold(elevator.getPosition()));
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
