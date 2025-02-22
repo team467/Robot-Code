@@ -67,12 +67,10 @@ public class Orchestrator {
   }
 
   public Command moveElevatorToLevel(boolean algae, int level) {
-    Command moveElevator;
-    if (!algae) {
-      moveElevator = moveElevatorToSetpoint(getCoralHeight(level));
-    } else {
-      moveElevator = moveElevatorToSetpoint(getAlgaeHeight(level));
-    }
+    Command moveElevator =
+        algae
+            ? moveElevatorToSetpoint(getAlgaeHeight(level))
+            : moveElevatorToSetpoint(getCoralHeight(level));
     return Commands.run(
             () -> {
               switch (level) {
@@ -80,10 +78,12 @@ public class Orchestrator {
                   robotState.elevatorPosition = ElevatorPosition.L1;
                   break;
                 case 2:
-                  robotState.elevatorPosition = ElevatorPosition.L2;
+                  robotState.elevatorPosition =
+                      algae ? ElevatorPosition.ALGAE_L2 : ElevatorPosition.L2;
                   break;
                 case 3:
-                  robotState.elevatorPosition = ElevatorPosition.L3;
+                  robotState.elevatorPosition =
+                      algae ? ElevatorPosition.ALGAE_L3 : ElevatorPosition.L3;
                   break;
                 case 4:
                   robotState.elevatorPosition = ElevatorPosition.L4;

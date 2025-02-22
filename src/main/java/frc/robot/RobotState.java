@@ -77,6 +77,8 @@ public class RobotState {
     L1,
     L2,
     L3,
-    L4
+    L4,
+    ALGAE_L2,
+    ALGAE_L3
   }
 }
