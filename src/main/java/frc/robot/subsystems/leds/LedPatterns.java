@@ -39,6 +39,9 @@ public enum LedPatterns {
   // Multi-Color Patterns
   RAINBOW(LEDPattern.rainbow(255, 128)),
 
+  // Game Specific
+  STRIPE_ALGAE(LEDPattern.steps(Map.of(0, Color.kGreen, 0.50, Color.kLimeGreen))),
+
   GRADIENT_COM(
       LEDPattern.gradient(
           LEDPattern.GradientType.kContinuous, Color.kDarkBlue, Color.kDarkGoldenrod)),
