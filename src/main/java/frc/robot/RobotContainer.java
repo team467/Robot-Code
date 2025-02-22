@@ -212,14 +212,6 @@ public class RobotContainer {
             () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
-    driverController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> new Rotation2d()));
 
     driverController
         .start()
@@ -244,6 +236,9 @@ public class RobotContainer {
     operatorController.rightTrigger().onTrue(climber.winch());
     driverController.leftBumper().onTrue(fieldAlignment.alignToReef(true));
     driverController.rightBumper().onTrue(fieldAlignment.alignToReef(false));
+
+    operatorController.rightBumper().whileTrue(climber.deploy());
+    operatorController.rightTrigger().whileTrue(climber.winch());
     driverController
         .leftTrigger()
         .toggleOnTrue(

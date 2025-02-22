@@ -51,12 +51,15 @@ public class AlgaeEffector extends SubsystemBase {
   /** When the arm is extended, it starts the algae motor too */
   public Command removeAlgae() {
     return Commands.run(
-            () -> {
-              io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
-              io.setRemovalVolts(AlgaeEffectorConstants.REMOVAL_VOLTAGE);
-            },
-            this)
-        .until(() -> inputs.pivotPosition >= AlgaeEffectorConstants.REMOVAL_ANGLE);
+        () -> {
+          if (!isFullyExtended()) {
+            io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
+          } else {
+            io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
+            io.setRemovalVolts(AlgaeEffectorConstants.REMOVAL_VOLTAGE);
+          }
+        },
+        this);
   }
 
   /** Stops all algae arm actions */
