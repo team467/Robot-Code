@@ -241,19 +241,15 @@ public class RobotContainer {
     operatorController
         .leftTrigger()
         .onTrue(
-            Commands.run(
-                () -> {
-                  elevator.toSetpoint(0.55);
-                  algae.removeAlgae();
-                }));
+            elevator
+                .toSetpoint(ReefHeight.ALGAE_LOW.height)
+                .andThen(elevator.hold(elevator.getPosition())));
     operatorController
         .leftBumper()
         .onTrue(
-            Commands.run(
-                () -> {
-                  elevator.toSetpoint(0.641);
-                  algae.removeAlgae();
-                }));
+            elevator
+                .toSetpoint(ReefHeight.ALGAE_HIGH.height)
+                .andThen(elevator.hold(elevator.getPosition())));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
     driverController

@@ -158,7 +158,9 @@ public class FieldConstants {
     L4(/*Units.inchesToMeters(72)*/ 0.755, -90),
     L3(/*Units.inchesToMeters(47.625)*/ 0.61, -35),
     L2(/*Units.inchesToMeters(31.875)*/ 0.52, -35),
-    L1(Units.inchesToMeters(18), 0);
+    L1(Units.inchesToMeters(18), 0),
+    ALGAE_LOW(/*Units.inchesToMeters(31.875)*/ 0.55, -35),
+    ALGAE_HIGH(/*Units.inchesToMeters(31.875)*/ 0.641, -35);
 
     ReefHeight(double height, double pitch) {
       this.height = height;
