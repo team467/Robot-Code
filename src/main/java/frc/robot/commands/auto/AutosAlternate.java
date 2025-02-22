@@ -7,14 +7,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.ChoreoVariables;
+import frc.robot.Orchestrator;
+import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
 public class AutosAlternate {
   private final Drive drive;
+  private final Orchestrator orchestrator;
+  private final FieldAlignment fieldAlignment;
 
-  public AutosAlternate(Drive drive) {
+  public AutosAlternate(Drive drive, Orchestrator orchestrator, FieldAlignment fieldAlignment) {
     this.drive = drive;
+    this.orchestrator = orchestrator;
+    this.fieldAlignment = fieldAlignment;
   }
 
   public Command zeroPiece() {
@@ -51,7 +57,10 @@ public class AutosAlternate {
                     new Translation2d(5.682666778564453, 5.685015678405762),
                     new Rotation2d(0.8550528118433292)));
     return Commands.runOnce(() -> drive.setPose(A.get()))
-        .andThen(new StraightDriveToPose(drive, scorePoint));
+        .andThen(
+            new StraightDriveToPose(drive, scorePoint)
+                .andThen(fieldAlignment.alignToReef(false))
+                .andThen(orchestrator.placeCoral(4)));
   }
 
   public Command BScore() {
@@ -62,7 +71,7 @@ public class AutosAlternate {
                     ChoreoVariables.getPose("B").getTranslation(),
                     ChoreoVariables.getPose("B").getRotation().plus(Rotation2d.k180deg)));
     return Commands.runOnce(() -> drive.setPose(B.get()))
-        .andThen(new StraightDriveToPose(-1, 0, 0, drive));
+        .andThen(fieldAlignment.alignToReef(true).andThen(orchestrator.placeCoral(4)));
   }
 
   public Command CScore() {
@@ -79,6 +88,9 @@ public class AutosAlternate {
                     new Translation2d(5.579622268676758, 2.2639400959014893),
                     new Rotation2d(-0.982794168198375)));
     return Commands.runOnce(() -> drive.setPose(C.get()))
-        .andThen(new StraightDriveToPose(drive, scorePoint));
+        .andThen(
+            new StraightDriveToPose(drive, scorePoint)
+                .andThen(fieldAlignment.alignToReef(false))
+                .andThen(orchestrator.placeCoral(4)));
   }
 }
