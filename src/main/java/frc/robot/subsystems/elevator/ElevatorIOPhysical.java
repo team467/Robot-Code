@@ -84,6 +84,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
     spark.getAppliedOutput();
     inputs.elevatorCurrentAmps = spark.getOutputCurrent();
     inputs.stowLimitSwitch = !elevatorStowLimitSwitch.get();
+    inputs.isCalibrated = zeroedOnce;
   }
 
   @Override
