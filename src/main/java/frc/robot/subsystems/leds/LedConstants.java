@@ -40,7 +40,7 @@ public class LedConstants {
     switch (Constants.getRobot()) {
       case ROBOT_2025_COMP -> {
         LED_CHANNEL = 0;
-        LED_COUNT = 100;
+        LED_COUNT = FULL_LENGTH;
       }
       case ROBOT_BRIEFCASE -> {
         LED_CHANNEL = 0;
