@@ -17,8 +17,7 @@ public class RobotState {
     // 2025 Specific
     HAS_CORAL(LedPatterns.PURPLE.colorPatternOnly(), Sections.FULL),
     HOPPER_SEES_CORAL(LedPatterns.PURPLE.colorPatternOnly(), Sections.BASE1),
-    INTAKING_CORAL(LedPatterns.YELLOW.blink(0.2), Sections.FULL),
-    ALGAE_EFFECTOR_RUNNING(LedPatterns.STRIPE_ALGAE.scroll(1.0), Sections.FULL),
+    INTAKING_CORAL(LedPatterns.STRIPE_CORAL.scroll(2), Sections.FULL),
     CLIMBER_WINCHED(LedPatterns.RAINBOW.scroll(), Sections.FULL),
     DUCK(LedPatterns.STRIPE_COM.scroll(), Sections.FULL),
     ELEVATOR_CORAL_L1(LedPatterns.PURPLE.colorPatternOnly(), Sections.FIRST_QUARTER),
