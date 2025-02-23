@@ -1,450 +1,303 @@
 package frc.robot.subsystems.leds;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
+import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.RobotState;
-import java.util.List;
-import org.littletonrobotics.junction.AutoLogOutput;
+import frc.robot.RobotState.Mode;
 
 public class Leds extends SubsystemBase {
-
+  private static final boolean debug = false;
   private RobotState state = RobotState.getInstance();
+  private final AddressableLED leds;
+  public static final AddressableLEDBuffer buffer =
+      new AddressableLEDBuffer(LedConstants.FULL_LENGTH);
 
-  public enum LedMode {
-    ESTOPPED,
-    AUTO_FINISHED,
-    AUTONOMOUS,
-    BLUE_ALLIANCE,
-    RED_ALLIANCE,
-    LOW_BATTERY_ALERT,
-    DISABLED,
-    OFF,
-    DEFAULT
+  public enum Animations {
+    NONE,
+    BLINK,
+    BREATHE,
+    SCROLL,
+    BLEND,
+    OVERLAY,
+    BREATHE_BLEND,
+    BREATHE_OVERLAY;
   }
 
-  @AutoLogOutput(key = "LEDs/Mode")
-  LedMode mode = LedMode.OFF;
+  public enum Sections {
+    FULL(
+        0,
+        LedConstants.FULL_LENGTH * 1 / 2 - 1,
+        LedConstants.FULL_LENGTH * 1 / 2,
+        LedConstants.FULL_LENGTH - 1),
+    BASE1(LedConstants.BASE1_START, LedConstants.BASE1_END),
+    BASE2(LedConstants.BASE2_START, LedConstants.BASE2_END),
+    BASE1_BASE2(
+        LedConstants.BASE1_START,
+        LedConstants.BASE1_END,
+        LedConstants.BASE2_START,
+        LedConstants.BASE2_END),
+    BAR(LedConstants.BAR_START, LedConstants.BAR_END),
 
-  // Robot state tracking
-  public int loopCycleCount = 0;
-  public double autoFinishedTime = 0.0;
+    FIRST_QUARTER(
+        LedConstants.BASE1_FIRST_QUARTER_START,
+        LedConstants.BASE1_FIRST_QUARTER_END,
+        LedConstants.BASE2_FIRST_QUARTER_START,
+        LedConstants.BASE2_FIRST_QUARTER_END),
+    SECOND_QUARTER(
+        LedConstants.BASE1_SECOND_QUARTER_START,
+        LedConstants.BASE1_SECOND_QUARTER_END,
+        LedConstants.BASE2_SECOND_QUARTER_START,
+        LedConstants.BASE2_SECOND_QUARTER_END),
+    THIRD_QUARTER(
+        LedConstants.BASE1_THIRD_QUARTER_START,
+        LedConstants.BASE1_THIRD_QUARTER_END,
+        LedConstants.BASE2_THIRD_QUARTER_START,
+        LedConstants.BASE2_THIRD_QUARTER_END),
+    FOURTH_QUARTER(
+        LedConstants.BASE1_FOURTH_QUARTER_START,
+        LedConstants.BASE1_FOURTH_QUARTER_END,
+        LedConstants.BASE2_FOURTH_QUARTER_START,
+        LedConstants.BASE2_FOURTH_QUARTER_END);
 
-  private boolean lastEnabledAuto = false;
-  private double lastEnabledTime = 0.0;
+    private final AddressableLEDBufferView buf_view_1;
+    private final AddressableLEDBufferView buf_view_2;
 
-  // LED IO
-  private final AddressableLED leds;
-  private final AddressableLEDBuffer buffer;
-  private final Notifier loadingNotifier;
+    private Sections(int start_1, int end_1, int start_2, int end_2) {
+      if (debug) {
+        System.out.println(
+            "create section "
+                + toString()
+                + " start_1: "
+                + start_1
+                + " end_1: "
+                + end_1
+                + " start_2: "
+                + start_2
+                + " end_2:"
+                + end_2);
+      }
+      this.buf_view_1 = buffer.createView(start_1, end_1);
+      this.buf_view_2 = buffer.createView(start_2, end_2);
+    }
 
-  // Constants
-  private static final int minLoopCycleCount = 10;
-  private static final int length = 40;
-  private static final double strobeFastDuration = 0.1;
-  private static final double strobeSlowDuration = 0.2;
-  private static final double breathDuration = 1.0;
-  private static final double rainbowCycleLength = 25.0;
-  private static final double rainbowDuration = 0.25;
-  private static final double waveExponent = 0.4;
-  private static final double waveFastCycleLength = 25.0;
-  private static final double waveFastDuration = 0.25;
-  private static final double waveSlowCycleLength = 25.0;
-  private static final double waveSlowDuration = 3.0;
-  private static final double waveAllianceCycleLength = 15.0;
-  private static final double waveAllianceDuration = 2.0;
-  private static final double autoFadeTime = 2.5; // 3s nominal
-  private static final double autoFadeMaxTime = 5.0; // Return to normal
-  private static final double noteAngle = 5.0;
+    private Sections(int start_1, int end_1) {
+      if (debug) {
+        System.out.println(
+            "create section " + toString() + " start_1: " + start_1 + " end_1: " + end_1);
+      }
+      this.buf_view_1 = buffer.createView(start_1, end_1);
+      this.buf_view_2 = null;
+    }
 
-  /** Creates a Network table for testing led modes and colors */
-  private NetworkTable ledTable;
-  /** Sets the mode for led in network table and allows to test led modes */
-  private NetworkTableEntry ledModeEntry;
-  /** Allows testing in leds by enabling testing mode */
-  private NetworkTableEntry ledTestingEntry;
+    public AddressableLEDBufferView getBufferView_1() {
+      return buf_view_1;
+    }
+
+    public AddressableLEDBufferView getBufferView_2() {
+      return buf_view_2;
+    }
+  }
+
+  private GenericEntry enableTestEntry;
+  private SendableChooser<LedPatterns> testPattern;
+  private SendableChooser<LedPatterns> testPattern2;
+  private SendableChooser<Animations> testAnimation;
+  private SendableChooser<Sections> testSection;
+  private GenericEntry testReverse;
+  private GenericEntry testTimer;
+  private GenericEntry enableLedModeTestEntry;
+  private SendableChooser<Mode> testMode;
+
+  private LEDPattern currentPattern = LedPatterns.BLACK.colorPatternOnly();
+  private Sections applySection = Sections.FULL;
+  private Boolean isReversed = false;
 
   public Leds() {
-    ledTable = NetworkTableInstance.getDefault().getTable("Leds");
-    ledModeEntry = ledTable.getEntry("Mode");
-    ledModeEntry.setString("OFF");
-    ledTestingEntry = ledTable.getEntry("Testing");
-    ledTestingEntry.setBoolean(false);
 
-    buffer = new AddressableLEDBuffer(length);
-
-    leds = new AddressableLED(0);
-    leds.setLength(length);
+    leds = new AddressableLED(LedConstants.LED_CHANNEL);
+    leds.setLength(LedConstants.FULL_LENGTH);
     leds.setData(buffer);
     leds.start();
 
-    loadingNotifier =
-        new Notifier(
-            () -> {
-              breath(
-                  Section.FULL,
-                  Color.kWhite,
-                  Color.kBlack,
-                  0.25,
-                  (double) System.currentTimeMillis() / 1000);
-              leds.setData(buffer);
-            });
-    loadingNotifier.startPeriodic(0.02);
-  }
-
-  private void updateState() {
-
-    // Update auto state
-    lastEnabledAuto = DriverStation.isAutonomous();
-    lastEnabledTime = Timer.getFPGATimestamp();
-
-    if (DriverStation.isEStopped()) {
-      mode = LedMode.ESTOPPED;
-    } else if (state.lowBatteryAlert) {
-      mode = LedMode.LOW_BATTERY_ALERT;
-      // low battery mode at top for testing purposes
-    } else if (DriverStation.isDisabled()) {
-      if (DriverStation.getAlliance().isPresent()) {
-        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-          mode = LedMode.BLUE_ALLIANCE;
-        } else {
-          mode = LedMode.RED_ALLIANCE;
-        }
-
-      } else {
-        mode = LedMode.DISABLED;
-      }
-    } else if (false) { // TODO: Test this
-      mode = LedMode.AUTO_FINISHED;
-
-    } else if (DriverStation.isAutonomous()) {
-      mode = LedMode.AUTONOMOUS;
-    } else {
-      mode = LedMode.DEFAULT;
-    }
-  }
-
-  private void updateLeds() {
-    switch (mode) {
-      case ESTOPPED:
-        solid(Section.FULL, Color.kRed);
-        break;
-
-      case AUTO_FINISHED:
-        double fullTime = (double) length / waveFastCycleLength * waveFastDuration;
-        solid((Timer.getFPGATimestamp() - autoFinishedTime) / fullTime, Color.kGreen);
-        break;
-
-      case AUTONOMOUS:
-        wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveFastCycleLength, waveFastDuration);
-        break;
-
-      case BLUE_ALLIANCE:
-        wave(
-            Section.FULL, Color.kBlue, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
-        break;
-
-      case RED_ALLIANCE:
-        wave(Section.FULL, Color.kRed, Color.kBlack, waveAllianceCycleLength, waveAllianceDuration);
-        break;
-
-      case LOW_BATTERY_ALERT:
-        strobe(Section.FULL, Color.kRed, 1);
-        break;
-
-      case DISABLED:
-        if (lastEnabledAuto && Timer.getFPGATimestamp() - lastEnabledTime < autoFadeMaxTime) {
-          // Auto fade
-          solid(1.0 - ((Timer.getFPGATimestamp() - lastEnabledTime) / autoFadeTime), Color.kGreen);
-        } else {
-          wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
-        }
-        break;
-
-      case DEFAULT:
-        wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
-        break;
-
-      case OFF:
-        solid(Section.FULL, Color.kBlack);
-        break;
-
-      default:
-        wave(Section.FULL, Color.kGold, Color.kDarkBlue, waveSlowCycleLength, waveSlowDuration);
-        break;
-    }
-
-    leds.setData(buffer);
+    initLedTabInShuffleboard();
+    initLedModeTabInShuffleboard();
   }
 
   @Override
   public void periodic() {
 
-    // Exit during initial cycles
-    loopCycleCount += 1;
-    if (loopCycleCount < minLoopCycleCount) {
-      return;
-    }
-    // Stop loading notifier if running
-    loadingNotifier.stop();
-
-    if (ledTestingEntry.getBoolean(false)) {
-      mode = LedMode.valueOf(ledModeEntry.getString("OFF"));
+    if (enableTestEntry.getBoolean(false)) {
+      processLedPatternTestInputs();
+    } else if (enableLedModeTestEntry.getBoolean(false)) {
+      processLedModeTestInputs();
     } else {
-      updateState();
-      ledModeEntry.setString(mode.toString());
+      /* get from robot state  */
+      Mode ledMode = state.getMode();
+      currentPattern = ledMode.ledPattern;
+      applySection = ledMode.ledSection;
     }
-    updateLeds();
-  }
 
-  /**
-   * Applies a solid color to a given section of an LED strip. The section is filled with the
-   * specified color.
-   *
-   * @param section The section of the LED strip to apply the solid color to.
-   * @param color The color to be applied.
-   */
-  private void solid(Section section, Color color) {
-    if (color != null) {
-      for (int i = section.start(); i < section.end(); i++) {
-        buffer.setLED(i, color);
+    // Load the pattern onto the LEDs
+    if (!Robot.isSimulation()) {
+      loadLedPatterns();
+      leds.setData(buffer);
+    }
+    // else no op for simulation
+
+  }
+  // tests led patterns from shuffleboard gui
+  private void processLedPatternTestInputs() {
+    try {
+      LedPatterns pattern = testPattern.getSelected();
+      LedPatterns pattern2 = testPattern2.getSelected();
+      Animations animation = testAnimation.getSelected();
+      double timer = testTimer.getDouble(0);
+      applySection = testSection.getSelected();
+      isReversed = testReverse.getBoolean(false);
+
+      switch (animation) {
+        case BLINK -> currentPattern = pattern.blink(timer);
+        case BREATHE -> currentPattern = pattern.breathe(timer);
+        case SCROLL -> currentPattern = pattern.scroll(timer);
+        case BLEND -> currentPattern = pattern.blend(pattern2.colorPatternOnly());
+        case OVERLAY -> currentPattern = pattern.overlayOn(pattern2.colorPatternOnly());
+        case BREATHE_BLEND -> currentPattern = pattern.breathe().blend(pattern2.breathe(1.5));
+        case BREATHE_OVERLAY -> currentPattern = pattern.breathe().overlayOn(pattern2.breathe());
+        default -> currentPattern = pattern.colorPatternOnly();
       }
+    } catch (IllegalArgumentException E) {
+      currentPattern = LedPatterns.RED.blink();
     }
   }
 
-  /**
-   * Applies a solid color to a given section of an LED strip. The section is filled with the
-   * specified color.
-   *
-   * @param percent The percentage of the section to apply the solid color to. Value should be
-   *     between 0.0 and 1.0.
-   * @param color The color to be applied.
-   */
-  private void solid(double percent, Color color) {
-    solid(percent, color, Color.kBlack);
-  }
-
-  /**
-   * Applies a solid color to a side of the two LED strips.
-   *
-   * @param onRight should light up right side
-   * @param color The color to be applied.
-   */
-  private void solidOnSide(boolean onRight, Color color) {
-    if (onRight) {
-      for (int i = 0; i < length / 2; i++) {
-        buffer.setLED(i, Color.kBlack);
-      }
-      for (int i = length / 2; i < length; i++) {
-        buffer.setLED(i, color);
-      }
-    } else { // On the left
-      for (int i = 0; i < length / 2; i++) {
-        buffer.setLED(i, color);
-      }
-      for (int i = length / 2; i < length; i++) {
-        buffer.setLED(i, Color.kBlack);
-      }
+  // process test inputs for led mode based on robot state
+  private void processLedModeTestInputs() {
+    try {
+      Mode mode = testMode.getSelected();
+      applySection = mode.ledSection;
+      currentPattern = mode.ledPattern;
+    } catch (IllegalArgumentException E) {
+      currentPattern = LedPatterns.RED.blink();
     }
   }
 
-  /**
-   * Applies a solid color to a given section of an LED strip. The section is filled with the
-   * specified color.
-   *
-   * @param percent The percentage of the section to apply the solid color to. Value should be
-   *     between 0.0 and 1.0.
-   * @param color1 The color to be applied.
-   */
-  private void solid(double percent, Color color1, Color color2) {
-    int color1Pixels = (int) Math.round(MathUtil.clamp(length * percent, 0, length));
-    for (int i = 0; i < color1Pixels; i++) {
-      buffer.setLED(i, color1);
-    }
-    for (int i = color1Pixels; i < length; i++) {
-      buffer.setLED(i, color2);
-    }
-  }
-
-  private void solidMiddle(double percent, Color color2) {
-    double middlePercent = 1 - percent;
-    int color1Pixels = (int) Math.round(MathUtil.clamp(length * (middlePercent / 2), 0, length));
-    for (int i = 0; i < color1Pixels; i++) {
-      buffer.setLED(i, Color.kBlack);
-    }
-    // middle is only part lighted up
-    for (int i = color1Pixels; i < (length - color1Pixels); i++) {
-      buffer.setLED(i, color2);
-    }
-    for (int i = (length - color1Pixels); i < length; i++) {
-      buffer.setLED(i, Color.kBlack);
-    }
-  }
-
-  /**
-   * Changes the color of a section to create a strobe effect. The section alternates between the
-   * given color and black based on the specified duration.
-   *
-   * @param section The section to apply the strobe effect to.
-   * @param color The color to be displayed during the "on" state.
-   * @param duration The duration of each on-off cycle, in seconds.
-   */
-  private void strobe(Section section, Color color, double duration) {
-    boolean on = ((Timer.getFPGATimestamp() % duration) / duration) > 0.5;
-    solid(section, on ? color : Color.kBlack);
-  }
-
-  /**
-   * Changes the color of a section to create a breathing effect. The color gradually transitions
-   * from c1 to c2 and back to c1 in a sine wave pattern.
-   *
-   * @param section The section to apply the breathing effect to.
-   * @param c1 The initial color of the section.
-   * @param c2 The target color of the section.
-   * @param duration The total duration of the breathing effect, in seconds.
-   */
-  private void breath(Section section, Color c1, Color c2, double duration) {
-    breath(section, c1, c2, duration, Timer.getFPGATimestamp());
-  }
-
-  /**
-   * Changes the color of a section to create a breathing effect. The color gradually transitions
-   * from c1 to c2 and back to c1 in a sine wave pattern.
-   *
-   * @param section The section to apply the breathing effect to.
-   * @param c1 The initial color of the section.
-   * @param c2 The target color of the section.
-   * @param duration The total duration of the breathing effect, in seconds.
-   * @param timestamp The current timestamp in seconds.
-   */
-  private void breath(Section section, Color c1, Color c2, double duration, double timestamp) {
-    double x = ((timestamp % breathDuration) / breathDuration) * 2.0 * Math.PI;
-    double ratio = (Math.sin(x) + 1.0) / 2.0;
-    double red = (c1.red * (1 - ratio)) + (c2.red * ratio);
-    double green = (c1.green * (1 - ratio)) + (c2.green * ratio);
-    double blue = (c1.blue * (1 - ratio)) + (c2.blue * ratio);
-    solid(section, new Color(red, green, blue));
-  }
-
-  /**
-   * Applies a rainbow effect to a given section of an LED strip.
-   *
-   * @param section the section of the LED strip to apply the rainbow effect to
-   * @param cycleLength the length of a complete rainbow cycle in degrees
-   * @param duration the duration of the rainbow effect in seconds
-   */
-  private void rainbow(Section section, double cycleLength, double duration, boolean up) {
-    if (up) {
-      double x = (1 - ((Timer.getFPGATimestamp() / duration) % 1.0)) * 180.0;
-      double xDiffPerLed = 180.0 / cycleLength;
-      for (int i = section.start(); i < section.end(); i++) {
-        x += xDiffPerLed;
-        x %= 180.0;
-        if (i >= section.start()) {
-          buffer.setHSV(i, (int) x, 255, 255);
-        }
-      }
+  private void loadLedPatterns() {
+    LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
+    if (isReversed) {
+      currentPattern.applyTo(applySection.getBufferView_1().reversed());
     } else {
-      double x = ((Timer.getFPGATimestamp() / duration) % 1.0) * 180.0;
-      double xDiffPerLed = 180.0 / cycleLength;
-      for (int i = section.start(); i < section.end(); i++) {
-        x += xDiffPerLed;
-        x %= 180.0;
-        if (i >= section.start()) {
-          buffer.setHSV(i, (int) x, 255, 255);
-        }
-      }
+      currentPattern.applyTo(applySection.getBufferView_1());
+    }
+    if (applySection.getBufferView_2() != null) {
+      currentPattern.applyTo(applySection.getBufferView_2().reversed());
     }
   }
 
-  /**
-   * Wave method applies wave effect to a given section of an LED strip. The wave effect creates a
-   * smooth transition of colors between two given colors over a specified cycle length and
-   * duration.
-   *
-   * @param section the section of the LED strip to apply the wave effect to
-   * @param c1 the starting color of the wave effect
-   * @param c2 the ending color of the wave effect
-   * @param cycleLength the length of a complete wave cycle in radians
-   * @param duration the duration of the wave effect in seconds
-   */
-  private void wave(Section section, Color c1, Color c2, double cycleLength, double duration) {
-    double x = (1 - ((Timer.getFPGATimestamp() % duration) / duration)) * 2.0 * Math.PI;
-    double xDiffPerLed = (2.0 * Math.PI) / cycleLength;
-    for (int i = 0; i < section.end(); i++) {
-      x += xDiffPerLed;
-      if (i >= section.start()) {
-        double ratio = (Math.pow(Math.sin(x), waveExponent) + 1.0) / 2.0;
-        if (Double.isNaN(ratio)) {
-          ratio = (-Math.pow(Math.sin(x + Math.PI), waveExponent) + 1.0) / 2.0;
-        }
-        if (Double.isNaN(ratio)) {
-          ratio = 0.5;
-        }
-        double red = (c1.red * (1 - ratio)) + (c2.red * ratio);
-        double green = (c1.green * (1 - ratio)) + (c2.green * ratio);
-        double blue = (c1.blue * (1 - ratio)) + (c2.blue * ratio);
-        buffer.setLED(i, new Color(red, green, blue));
-      }
+  private void initLedTabInShuffleboard() {
+
+    ShuffleboardTab ledTab = Shuffleboard.getTab("LEDs");
+    ShuffleboardLayout ledTestingLayout =
+        ledTab
+            .getLayout("LED Testing Options", BuiltInLayouts.kGrid)
+            .withSize(2, 4)
+            .withPosition(0, 0);
+
+    enableTestEntry =
+        ledTestingLayout
+            .add("Enable Test", "boolean", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
+            .withPosition(0, 0)
+            .getEntry();
+
+    testPattern = new SendableChooser<LedPatterns>();
+    for (LedPatterns pattern : LedPatterns.values()) {
+      testPattern.addOption(pattern.toString(), pattern);
     }
+    testPattern.setDefaultOption("BLACK", LedPatterns.BLACK);
+    ledTestingLayout
+        .add("Test Pattern", testPattern)
+        .withWidget(BuiltInWidgets.kComboBoxChooser)
+        .withPosition(0, 1);
+
+    testPattern2 = new SendableChooser<LedPatterns>();
+    for (LedPatterns pattern : LedPatterns.values()) {
+      testPattern2.addOption(pattern.toString(), pattern);
+    }
+    testPattern2.setDefaultOption("BLACK", LedPatterns.BLACK);
+    ledTestingLayout
+        .add("Test Pattern2", testPattern2)
+        .withWidget(BuiltInWidgets.kComboBoxChooser)
+        .withPosition(0, 1);
+
+    testAnimation = new SendableChooser<Animations>();
+    for (Animations animation : Animations.values()) {
+      testAnimation.addOption(animation.toString(), animation);
+    }
+    testAnimation.setDefaultOption("None", Animations.NONE);
+    ledTestingLayout
+        .add("Test Animation", testAnimation)
+        .withWidget(BuiltInWidgets.kComboBoxChooser)
+        .withPosition(0, 2);
+
+    testSection = new SendableChooser<Sections>();
+    for (Sections section : Sections.values()) {
+      testSection.addOption(section.toString(), section);
+    }
+    testSection.setDefaultOption("FULL", Sections.FULL);
+    ledTestingLayout
+        .add("Test Section", testSection)
+        .withWidget(BuiltInWidgets.kComboBoxChooser)
+        .withPosition(0, 3);
+
+    testReverse =
+        ledTestingLayout
+            .add("Test Reverse", "boolean", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
+            .withPosition(0, 0)
+            .getEntry();
+
+    testTimer =
+        ledTestingLayout
+            .add("Test Timer", 0)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withPosition(0, 0)
+            .getEntry();
   }
 
-  /**
-   * Applies a stripe effect to a given section of an LED strip. The stripe effect creates a pattern
-   * of stripes with different colors.
-   *
-   * @param section the section of the LED strip to apply the stripe effect to
-   * @param colors the list of colors for the stripes
-   * @param length the number of sequential LEDs to be the same color
-   * @param duration the duration of the stripe effect in seconds
-   */
-  private void stripes(Section section, List<Color> colors, int length, double duration) {
-    int offset = (int) (Timer.getFPGATimestamp() % duration / duration * length * colors.size());
-    for (int i = section.start(); i < section.end(); i++) {
-      int colorIndex =
-          (int) (Math.floor((double) (i - offset) / length) + colors.size()) % colors.size();
-      colorIndex = colors.size() - 1 - colorIndex;
-      buffer.setLED(i, colors.get(colorIndex));
-    }
-  }
+  private void initLedModeTabInShuffleboard() {
+    ShuffleboardTab ledModeTab = Shuffleboard.getTab("LED Modes");
+    ShuffleboardLayout ledModeTestingLayout =
+        ledModeTab
+            .getLayout("LED Mode Testing Options", BuiltInLayouts.kGrid)
+            .withSize(2, 4)
+            .withPosition(0, 0);
 
-  private enum Section {
-    FULL,
-    TOP_HALF,
-    BOTTOM_HALF;
+    enableLedModeTestEntry =
+        ledModeTestingLayout
+            .add("Enable LED Mode Test", "boolean", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
+            .withPosition(0, 0)
+            .getEntry();
 
-    private int start() {
-      switch (this) {
-        case FULL:
-          return 0;
-        case TOP_HALF:
-          return 0;
-        case BOTTOM_HALF:
-          return length / 2;
-        default:
-          return 0;
-      }
+    testMode = new SendableChooser<Mode>();
+    for (Mode mode : Mode.values()) {
+      testMode.addOption(mode.toString(), mode);
     }
-
-    private int end() {
-      switch (this) {
-        case FULL:
-          return length;
-        case TOP_HALF:
-          return length / 2;
-        case BOTTOM_HALF:
-          return length;
-        default:
-          return length;
-      }
-    }
+    testMode.setDefaultOption("OFF", Mode.OFF);
+    ledModeTestingLayout
+        .add("Test Mode", testMode)
+        .withWidget(BuiltInWidgets.kComboBoxChooser)
+        .withPosition(0, 1);
   }
 }

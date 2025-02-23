@@ -36,6 +36,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -55,8 +56,9 @@ public class RobotContainer {
   private CoralEffector coral;
   private Climber climber;
   private Elevator elevator;
-  private FieldAlignment fieldAlignment;
-  private Orchestrator orchestrator;
+  private Leds leds;
+  private final Orchestrator orchestrator;
+  private final FieldAlignment fieldAlignment;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -103,7 +105,7 @@ public class RobotContainer {
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
+                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
         }
         case ROBOT_2025_COMP -> {
           drive =
@@ -122,6 +124,7 @@ public class RobotContainer {
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1));
+          leds = new Leds();
         }
 
         case ROBOT_SIMBOT -> {
@@ -135,8 +138,13 @@ public class RobotContainer {
 
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
           climber = new Climber(new ClimberIOSim());
+
+          leds = new Leds();
         }
+
         case ROBOT_BRIEFCASE -> {
+          leds = new Leds();
+
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
           // coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
@@ -244,14 +252,13 @@ public class RobotContainer {
     operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
-    driverController.leftBumper().onTrue(fieldAlignment.alignToReef(true));
-    driverController.rightBumper().onTrue(fieldAlignment.alignToReef(false));
-
-    operatorController.rightBumper().whileTrue(climber.deploy());
-    operatorController.rightTrigger().whileTrue(climber.winch());
-    driverController
-        .leftTrigger()
-        .toggleOnTrue(
+    driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReef(true));
+    driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReef(false));
+    CustomTriggers.toggleOnTrueCancelableWithJoystick(
+            driverController.leftTrigger(),
+            driverController::getRightX,
+            driverController::getRightY)
+        .whileTrue(
             Commands.either(
                 fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
                 Commands.parallel(
@@ -262,15 +269,13 @@ public class RobotContainer {
                 coral::hasCoral));
     driverController
         .rightTrigger()
-        .whileTrue(
-            orchestrator
-                .moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-                .until(elevator::limitSwitchPressed)
+        .onTrue(
+            coral
+                .dumpCoral()
                 .andThen(
-                    Commands.runOnce(
-                        () -> {
-                          robotState.elevatorPosition = ElevatorPosition.INTAKE;
-                        })));
+                    orchestrator
+                        .moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
+                        .until(elevator::limitSwitchPressed)));
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
     driverController.a().onTrue(coral.dumpCoral());
@@ -305,5 +310,6 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     fieldAlignment.periodic();
+    RobotState.getInstance().updateLEDState();
   }
 }
