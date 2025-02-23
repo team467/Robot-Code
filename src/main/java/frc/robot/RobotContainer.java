@@ -198,9 +198,12 @@ public class RobotContainer {
 
     AutosAlternate autosAlternate = new AutosAlternate(drive, orchestrator, fieldAlignment);
     autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
-    autoChooser.addOption("A Score", autosAlternate.AScore());
-    autoChooser.addOption("B Score", autosAlternate.BScore());
-    autoChooser.addOption("C Score", autosAlternate.CScore());
+    autoChooser.addOption("A Score Left", autosAlternate.AScore(true));
+    autoChooser.addOption("A Score Right", autosAlternate.AScore(false));
+    autoChooser.addOption("B Score Left", autosAlternate.BScore(true));
+    autoChooser.addOption("B Score Right", autosAlternate.BScore(false));
+    autoChooser.addOption("C Score Left", autosAlternate.CScore(true));
+    autoChooser.addOption("C Score Right", autosAlternate.CScore(false));
 
     registerAutoRoutines();
 
