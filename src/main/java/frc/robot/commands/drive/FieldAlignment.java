@@ -46,10 +46,7 @@ public class FieldAlignment {
         drive,
         leftJoystickX,
         leftJoystickY,
-        () ->
-            AllianceFlipUtil.apply(Reef.centerFaces[closestReefFace()])
-                .getRotation()
-                .rotateBy(Rotation2d.fromDegrees(180)));
+        () -> AllianceFlipUtil.apply(Reef.centerFaces[closestReefFace()]).getRotation());
   }
 
   public Command faceCoralStation(DoubleSupplier leftJoystickX, DoubleSupplier leftJoystickY) {
