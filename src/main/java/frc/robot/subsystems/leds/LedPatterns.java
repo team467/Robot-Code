@@ -48,7 +48,14 @@ public enum LedPatterns {
   STRIPE_CORAL(
       LEDPattern.steps(
           Map.of(
-              0, Color.kPurple, 0.25, Color.kMediumPurple, 0.5, Color.kPurple, 0.75, Color.kMediumPurple))),
+              0,
+              Color.kPurple,
+              0.25,
+              Color.kMediumPurple,
+              0.5,
+              Color.kPurple,
+              0.75,
+              Color.kMediumPurple))),
 
   GRADIENT_COM(
       LEDPattern.gradient(
