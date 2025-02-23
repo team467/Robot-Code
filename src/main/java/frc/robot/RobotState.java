@@ -221,7 +221,6 @@ public class RobotState {
     mode = Mode.DEFAULT;
   }
 
-
   public Mode getMode() {
     return mode;
   }
