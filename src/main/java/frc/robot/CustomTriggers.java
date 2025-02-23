@@ -8,10 +8,10 @@ import java.util.function.DoubleSupplier;
 
 public class CustomTriggers {
   private static final double JOYSTICK_THRESHOLD = 0.2;
-  private final Map<Trigger, Boolean> mLastTriggerValues = new HashMap<>();
-  private final Map<Trigger, Boolean> mToggledState = new HashMap<>();
+  private static final Map<Trigger, Boolean> mLastTriggerValues = new HashMap<>();
+  private static final Map<Trigger, Boolean> mToggledState = new HashMap<>();
 
-  public Trigger toggleOnTrueCancelableWithJoystick(
+  public static Trigger toggleOnTrueCancelableWithJoystick(
       Trigger buttonInput, DoubleSupplier X, DoubleSupplier Y) {
 
     return new Trigger(

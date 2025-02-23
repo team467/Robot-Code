@@ -117,7 +117,7 @@ public class RobotContainer {
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
+                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
         }
 
         case ROBOT_SIMBOT -> {
@@ -232,7 +232,7 @@ public class RobotContainer {
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReef(true));
-    driverController.rightTrigger().toggleOnTrue(fieldAlignment.alignToReef(false));
+    driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReef(false));
     CustomTriggers.toggleOnTrueCancelableWithJoystick(
             driverController.leftTrigger(),
             driverController::getRightX,
