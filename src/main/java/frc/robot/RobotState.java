@@ -21,12 +21,12 @@ public class RobotState {
     ALGAE_EFFECTOR_RUNNING(LedPatterns.STRIPE_ALGAE.scroll(2), Sections.FULL),
     CLIMBER_WINCHED(LedPatterns.RAINBOW.scroll(), Sections.FULL),
     DUCK(LedPatterns.STRIPE_COM.scroll(), Sections.FULL),
-    ELEVATOR_CORAL_L1(LedPatterns.PURPLE.colorPatternOnly(), Sections.FIRST_QUARTER),
-    ELEVATOR_CORAL_L2(LedPatterns.PURPLE.colorPatternOnly(), Sections.SECOND_QUARTER),
-    ELEVATOR_CORAL_L3(LedPatterns.PURPLE.colorPatternOnly(), Sections.THIRD_QUARTER),
-    ELEVATOR_CORAL_L4(LedPatterns.PURPLE.colorPatternOnly(), Sections.FOURTH_QUARTER),
-    ELEVATOR_ALGAE_L2(LedPatterns.GREEN.colorPatternOnly(), Sections.SECOND_QUARTER),
-    ELEVATOR_ALGAE_L3(LedPatterns.GREEN.colorPatternOnly(), Sections.THIRD_QUARTER),
+    ELEVATOR_CORAL_L1(LedPatterns.PURPLE.blink(0.2), Sections.FIRST_QUARTER),
+    ELEVATOR_CORAL_L2(LedPatterns.PURPLE.blink(0.2), Sections.SECOND_QUARTER),
+    ELEVATOR_CORAL_L3(LedPatterns.PURPLE.blink(0.2), Sections.THIRD_QUARTER),
+    ELEVATOR_CORAL_L4(LedPatterns.PURPLE.blink(0.2), Sections.FOURTH_QUARTER),
+    ELEVATOR_ALGAE_L2(LedPatterns.GREEN.blink(0.2), Sections.SECOND_QUARTER),
+    ELEVATOR_ALGAE_L3(LedPatterns.GREEN.blink(0.2), Sections.THIRD_QUARTER),
 
     // Same every year
     ESTOPPED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
