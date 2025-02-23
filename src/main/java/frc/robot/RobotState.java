@@ -153,17 +153,17 @@ public class RobotState {
       mode = Mode.CLIMBER_WINCHED;
     } else if (duck) {
       mode = Mode.DUCK;
-    } else if (elevatorPosition == ElevatorPosition.CORAL_LEVEL_1) {
+    } else if (elevatorPosition == ElevatorPosition.L1) {
       mode = Mode.ELEVATOR_CORAL_L1;
-    } else if (elevatorPosition == ElevatorPosition.CORAL_LEVEL_2) {
+    } else if (elevatorPosition == ElevatorPosition.L2) {
       mode = Mode.ELEVATOR_CORAL_L2;
-    } else if (elevatorPosition == ElevatorPosition.CORAL_LEVEL_3) {
+    } else if (elevatorPosition == ElevatorPosition.L3) {
       mode = Mode.ELEVATOR_CORAL_L3;
-    } else if (elevatorPosition == ElevatorPosition.CORAL_LEVEL_4) {
+    } else if (elevatorPosition == ElevatorPosition.L4) {
       mode = Mode.ELEVATOR_CORAL_L4;
-    } else if (elevatorPosition == ElevatorPosition.ALGAE_LEVEL_2) {
+    } else if (elevatorPosition == ElevatorPosition.ALGAE_L2) {
       mode = Mode.ELEVATOR_ALGAE_L2;
-    } else if (elevatorPosition == ElevatorPosition.ALGAE_LEVEL_3) {
+    } else if (elevatorPosition == ElevatorPosition.ALGAE_L3) {
       mode = Mode.ELEVATOR_ALGAE_L3;
     } else if (DriverStation.isAutonomous()) {
       mode = Mode.AUTONOMOUS;
