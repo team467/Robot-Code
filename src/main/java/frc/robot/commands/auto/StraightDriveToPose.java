@@ -41,8 +41,8 @@ public class StraightDriveToPose extends Command {
   private double driveErrorAbs;
   private double thetaErrorAbs;
 
-  private static final double DRIVE_TOLERANCE = 0.01;
-  private static final double THETA_TOLERANCE = Units.degreesToRadians(1.0);
+  private static final double DRIVE_TOLERANCE = 0.04;
+  private static final double THETA_TOLERANCE = Units.degreesToRadians(8.0);
 
   public StraightDriveToPose(
       double deltaXMeters, double deltaYMeters, double deltaThetaRad, Drive drive) {
@@ -70,6 +70,10 @@ public class StraightDriveToPose extends Command {
   }
 
   public StraightDriveToPose(Pose2d targetPose, Drive drive) {
+    this(drive, () -> targetPose);
+  }
+
+  public StraightDriveToPose(Drive drive, Pose2d targetPose) {
     this(drive, () -> targetPose);
   }
 
