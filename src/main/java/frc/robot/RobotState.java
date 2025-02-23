@@ -17,16 +17,16 @@ public class RobotState {
     // 2025 Specific
     HAS_CORAL(LedPatterns.PURPLE.colorPatternOnly(), Sections.FULL),
     HOPPER_SEES_CORAL(LedPatterns.PURPLE.colorPatternOnly(), Sections.BASE1),
-    INTAKING_CORAL(LedPatterns.YELLOW.blink(0.2), Sections.FULL),
-    ALGAE_EFFECTOR_RUNNING(LedPatterns.STRIPE_ALGAE.scroll(1.0), Sections.FULL),
+    INTAKING_CORAL(LedPatterns.STRIPE_CORAL.scroll(2), Sections.FULL),
+    ALGAE_EFFECTOR_RUNNING(LedPatterns.STRIPE_ALGAE.scroll(2), Sections.FULL),
     CLIMBER_WINCHED(LedPatterns.RAINBOW.scroll(), Sections.FULL),
     DUCK(LedPatterns.STRIPE_COM.scroll(), Sections.FULL),
-    ELEVATOR_CORAL_L1(LedPatterns.PURPLE.colorPatternOnly(), Sections.FIRST_QUARTER),
-    ELEVATOR_CORAL_L2(LedPatterns.PURPLE.colorPatternOnly(), Sections.SECOND_QUARTER),
-    ELEVATOR_CORAL_L3(LedPatterns.PURPLE.colorPatternOnly(), Sections.THIRD_QUARTER),
-    ELEVATOR_CORAL_L4(LedPatterns.PURPLE.colorPatternOnly(), Sections.FOURTH_QUARTER),
-    ELEVATOR_ALGAE_L2(LedPatterns.GREEN.colorPatternOnly(), Sections.SECOND_QUARTER),
-    ELEVATOR_ALGAE_L3(LedPatterns.GREEN.colorPatternOnly(), Sections.THIRD_QUARTER),
+    ELEVATOR_CORAL_L1(LedPatterns.PURPLE.blink(0.2), Sections.FIRST_QUARTER),
+    ELEVATOR_CORAL_L2(LedPatterns.PURPLE.blink(0.2), Sections.SECOND_QUARTER),
+    ELEVATOR_CORAL_L3(LedPatterns.PURPLE.blink(0.2), Sections.THIRD_QUARTER),
+    ELEVATOR_CORAL_L4(LedPatterns.PURPLE.blink(0.2), Sections.FOURTH_QUARTER),
+    ELEVATOR_ALGAE_L2(LedPatterns.GREEN.blink(0.2), Sections.SECOND_QUARTER),
+    ELEVATOR_ALGAE_L3(LedPatterns.GREEN.blink(0.2), Sections.THIRD_QUARTER),
 
     // Same every year
     ESTOPPED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
@@ -127,11 +127,18 @@ public class RobotState {
   }
 
   public void updateLEDState() {
+    // Emergency
     if (DriverStation.isEStopped()) {
       mode = Mode.ESTOPPED;
-    } else if (lowBatteryAlert) {
+      return;
+    }
+    if (lowBatteryAlert) {
       mode = Mode.LOW_BATTERY_ALERT;
-    } else if (DriverStation.isDisabled()) {
+      return;
+    }
+
+    // Disabled
+    if (DriverStation.isDisabled()) {
       if (DriverStation.getAlliance().isPresent()) {
         if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
           mode = Mode.BLUE_ALLIANCE;
@@ -141,37 +148,77 @@ public class RobotState {
       } else {
         mode = Mode.DISABLED;
       }
-    } else if (hasCoral) {
-      mode = Mode.HAS_CORAL;
-    } else if (hopperSeesCoral) {
-      mode = Mode.HOPPER_SEES_CORAL;
-    } else if (intakingCoral) {
-      mode = Mode.INTAKING_CORAL;
-    } else if (algaeEffectorRunning) {
-      mode = Mode.ALGAE_EFFECTOR_RUNNING;
-    } else if (climberWinched) {
-      mode = Mode.CLIMBER_WINCHED;
-    } else if (duck) {
-      mode = Mode.DUCK;
-    } else if (elevatorPosition == ElevatorPosition.L1) {
-      mode = Mode.ELEVATOR_CORAL_L1;
-    } else if (elevatorPosition == ElevatorPosition.L2) {
-      mode = Mode.ELEVATOR_CORAL_L2;
-    } else if (elevatorPosition == ElevatorPosition.L3) {
-      mode = Mode.ELEVATOR_CORAL_L3;
-    } else if (elevatorPosition == ElevatorPosition.L4) {
-      mode = Mode.ELEVATOR_CORAL_L4;
-    } else if (elevatorPosition == ElevatorPosition.ALGAE_L2) {
-      mode = Mode.ELEVATOR_ALGAE_L2;
-    } else if (elevatorPosition == ElevatorPosition.ALGAE_L3) {
-      mode = Mode.ELEVATOR_ALGAE_L3;
-    } else if (DriverStation.isAutonomous()) {
-      mode = Mode.AUTONOMOUS;
-    } else if (false) { // Placeholder for AUTO_FINISHED, adjust when needed
-      mode = Mode.AUTO_FINISHED;
-    } else {
-      mode = Mode.DEFAULT;
+      return;
     }
+
+    // Auto
+    if (DriverStation.isAutonomous()) {
+      mode = Mode.AUTONOMOUS;
+      return;
+    }
+
+    // Climber
+    if (climberWinched) {
+      mode = Mode.CLIMBER_WINCHED;
+      return;
+    }
+
+    // Duck
+    if (duck) {
+      mode = Mode.DUCK;
+      return;
+    }
+
+    // Elevator
+    if (elevatorPosition != null) {
+      switch (elevatorPosition) {
+        case L1:
+          mode = Mode.ELEVATOR_CORAL_L1;
+          return;
+        case L2:
+          mode = Mode.ELEVATOR_CORAL_L2;
+          return;
+        case L3:
+          mode = Mode.ELEVATOR_CORAL_L3;
+          return;
+        case L4:
+          mode = Mode.ELEVATOR_CORAL_L4;
+          return;
+        case ALGAE_L2:
+          mode = Mode.ELEVATOR_ALGAE_L2;
+          return;
+        case ALGAE_L3:
+          mode = Mode.ELEVATOR_ALGAE_L3;
+          return;
+        default:
+          break;
+      }
+    }
+
+    // Coral actions
+    if (hopperSeesCoral) {
+      mode = Mode.HOPPER_SEES_CORAL;
+      return;
+    }
+    if (intakingCoral) {
+      mode = Mode.INTAKING_CORAL;
+      return;
+    }
+
+    // Algae
+    if (algaeEffectorRunning) {
+      mode = Mode.ALGAE_EFFECTOR_RUNNING;
+      return;
+    }
+
+    // Has coral (lowest)
+    if (hasCoral) {
+      mode = Mode.HAS_CORAL;
+      return;
+    }
+
+    // Default
+    mode = Mode.DEFAULT;
   }
 
   public Mode getMode() {
