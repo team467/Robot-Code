@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
@@ -232,24 +231,9 @@ public class RobotContainer {
     operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
-    CustomTriggers
-        .toggleOnTrueCancelableWithJoysticks(
-            driverController.leftBumper(),
-            driverController::getLeftX,
-            driverController::getLeftY,
-            driverController::getRightX,
-            driverController::getRightY)
-        .whileTrue(fieldAlignment.alignToReef(true));
-    CustomTriggers
-        .toggleOnTrueCancelableWithJoysticks(
-            driverController.rightBumper(),
-            driverController::getLeftX,
-            driverController::getLeftY,
-            driverController::getRightX,
-            driverController::getRightY)
-        .whileTrue(fieldAlignment.alignToReef(false));
-    CustomTriggers
-        .toggleOnTrueCancelableWithJoystick(
+    driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReef(true));
+    driverController.rightTrigger().toggleOnTrue(fieldAlignment.alignToReef(false));
+    CustomTriggers.toggleOnTrueCancelableWithJoystick(
             driverController.leftTrigger(),
             driverController::getRightX,
             driverController::getRightY)
@@ -264,15 +248,13 @@ public class RobotContainer {
                 coral::hasCoral));
     driverController
         .rightTrigger()
-        .whileTrue(
-            orchestrator
-                .moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-                .until(elevator::limitSwitchPressed)
+        .onTrue(
+            coral
+                .dumpCoral()
                 .andThen(
-                    Commands.runOnce(
-                        () -> {
-                          robotState.elevatorPosition = ElevatorPosition.INTAKE;
-                        })));
+                    orchestrator
+                        .moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
+                        .until(elevator::limitSwitchPressed)));
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
     driverController.a().onTrue(coral.dumpCoral());
