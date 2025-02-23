@@ -33,6 +33,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -52,6 +53,7 @@ public class RobotContainer {
   private CoralEffector coral;
   private Climber climber;
   private Elevator elevator;
+  private Leds leds;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
   private RobotState robotState = RobotState.getInstance();
@@ -118,6 +120,7 @@ public class RobotContainer {
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1));
+          leds = new Leds();
         }
 
         case ROBOT_SIMBOT -> {
@@ -131,8 +134,13 @@ public class RobotContainer {
 
           algae = new AlgaeEffector(new AlgaeEffectorIOSim());
           climber = new Climber(new ClimberIOSim());
+
+          leds = new Leds();
         }
+
         case ROBOT_BRIEFCASE -> {
+          leds = new Leds();
+
           algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
           // coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
@@ -271,5 +279,6 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     fieldAlignment.periodic();
+    RobotState.getInstance().updateLEDState();
   }
 }
