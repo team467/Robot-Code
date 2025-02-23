@@ -10,6 +10,7 @@ import frc.lib.utils.ChoreoVariables;
 import frc.robot.Orchestrator;
 import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import java.util.function.Supplier;
 
 public class AutosAlternate {
@@ -71,7 +72,11 @@ public class AutosAlternate {
                     ChoreoVariables.getPose("B").getTranslation(),
                     ChoreoVariables.getPose("B").getRotation().plus(Rotation2d.k180deg)));
     return Commands.runOnce(() -> drive.setPose(B.get()))
-        .andThen(fieldAlignment.alignToReef(true).andThen(orchestrator.placeCoral(4)));
+        .andThen(
+            fieldAlignment
+                .alignToReef(true)
+                .andThen(orchestrator.placeCoral(4))
+                .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
   }
 
   public Command CScore() {
