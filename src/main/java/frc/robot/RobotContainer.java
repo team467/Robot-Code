@@ -257,7 +257,7 @@ public class RobotContainer {
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReef(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReef(false));
     CustomTriggers.toggleOnTrueCancelableWithJoystick(
-            driverController.leftTrigger(),
+            driverController.leftTrigger(0.3),
             driverController::getRightX,
             driverController::getRightY)
         .whileTrue(
@@ -270,14 +270,9 @@ public class RobotContainer {
                     .until(coral::hasCoral),
                 coral::hasCoral));
     driverController
-        .rightTrigger()
+        .rightTrigger(0.3)
         .onTrue(
-            coral
-                .dumpCoral()
-                .andThen(
-                    orchestrator
-                        .moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-                        .until(elevator::limitSwitchPressed)));
+            orchestrator.dumpCoralAndHome());
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
     driverController.a().onTrue(coral.dumpCoral());
