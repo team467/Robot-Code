@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
@@ -57,7 +56,6 @@ public class RobotContainer {
   private Leds leds;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
-  private final CustomTriggers customTriggers;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -121,7 +119,7 @@ public class RobotContainer {
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
+                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
           leds = new Leds();
         }
 
@@ -172,7 +170,6 @@ public class RobotContainer {
       elevator = new Elevator(new ElevatorIO() {});
     }
     fieldAlignment = new FieldAlignment(drive);
-    customTriggers = new CustomTriggers();
     orchestrator = new Orchestrator(elevator, algae, coral);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -242,24 +239,9 @@ public class RobotContainer {
     operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
-    customTriggers
-        .toggleOnTrueCancelableWithJoysticks(
-            driverController.leftBumper(),
-            driverController::getLeftX,
-            driverController::getLeftY,
-            driverController::getRightX,
-            driverController::getRightY)
-        .whileTrue(fieldAlignment.alignToReef(true));
-    customTriggers
-        .toggleOnTrueCancelableWithJoysticks(
-            driverController.rightBumper(),
-            driverController::getLeftX,
-            driverController::getLeftY,
-            driverController::getRightX,
-            driverController::getRightY)
-        .whileTrue(fieldAlignment.alignToReef(false));
-    customTriggers
-        .toggleOnTrueCancelableWithJoystick(
+    driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReef(true));
+    driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReef(false));
+    CustomTriggers.toggleOnTrueCancelableWithJoystick(
             driverController.leftTrigger(),
             driverController::getRightX,
             driverController::getRightY)
@@ -274,15 +256,13 @@ public class RobotContainer {
                 coral::hasCoral));
     driverController
         .rightTrigger()
-        .whileTrue(
-            orchestrator
-                .moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-                .until(elevator::limitSwitchPressed)
+        .onTrue(
+            coral
+                .dumpCoral()
                 .andThen(
-                    Commands.runOnce(
-                        () -> {
-                          robotState.elevatorPosition = ElevatorPosition.INTAKE;
-                        })));
+                    orchestrator
+                        .moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
+                        .until(elevator::limitSwitchPressed)));
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
     driverController.a().onTrue(coral.dumpCoral());

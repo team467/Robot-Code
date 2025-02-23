@@ -23,10 +23,10 @@ public class FieldAlignment {
   @AutoLogOutput private double[] reefFaceDistances = new double[6];
   // How far left/right the robot needs to move to align with the coral effector instead of the
   // center of the robot
-  private static final double CORAL_EFFECTOR_OFFSET = -2;
+  private static final double CORAL_EFFECTOR_OFFSET = 4;
   // How far back the robot needs to move to align with the branch in a way that doesn't have the
   // robot impaling itself
-  private static final double BRANCH_TO_ROBOT_BACKUP = -32;
+  private static final double BRANCH_TO_ROBOT_BACKUP = -9.5;
   private final Drive drive;
 
   public FieldAlignment(Drive drive) {
@@ -69,15 +69,15 @@ public class FieldAlignment {
     Pose2d branchPose =
         AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L1).toPose2d());
     return new Pose2d(
-        branchPose.getX() // Move backwards robot relative
-            - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET)
+        branchPose.getX() // Move left robot relative
+            - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
                 * Math.cos(branchPose.getRotation().getRadians())
             - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET)
                 * Math.sin(branchPose.getRotation().getRadians()),
-        branchPose.getY() // Move left robot relative
+        branchPose.getY() // Move back robot relative
             - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
                 * Math.sin(branchPose.getRotation().getRadians())
-            + Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
+            + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET)
                 * Math.cos(branchPose.getRotation().getRadians()),
         branchPose.getRotation());
   }
@@ -85,7 +85,7 @@ public class FieldAlignment {
   /**
    * Gets the closest coral station position, either leftCenterFace or rightCenterFace.
    *
-   * @return Command for getting the closest coral station.
+   * @return the pose of the closest coral station.
    */
   public Pose2d getClosestCoralStationPosition() {
     return closerToLeftCoralStation()
