@@ -18,8 +18,8 @@ public class Orchestrator {
   private static final double L3_HEIGHT = ReefHeight.L3.height;
   private static final double L2_HEIGHT = ReefHeight.L2.height;
   private static final double L1_HEIGHT = ReefHeight.L1.height;
-  private static final double ALGAE_L2_HEIGHT = ReefHeight.ALGAE_LOW.height;
-  private static final double ALGAE_L3_HEIGHT = ReefHeight.ALGAE_HIGH.height;
+  private static final double ALGAE_L2_HEIGHT = ReefHeight.ALGAE_L2.height;
+  private static final double ALGAE_L3_HEIGHT = ReefHeight.ALGAE_L3.height;
 
   public Orchestrator(Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
     this.elevator = elevator;
