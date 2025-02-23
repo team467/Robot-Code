@@ -43,7 +43,7 @@ public class CustomTriggers {
         });
   }
 
-  public Trigger toggleOnTrueCancelableWithJoysticks(
+  public static Trigger toggleOnTrueCancelableWithJoysticks(
       Trigger buttonInput,
       DoubleSupplier X1,
       DoubleSupplier Y1,

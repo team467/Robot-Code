@@ -55,7 +55,6 @@ public class RobotContainer {
   private Elevator elevator;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
-  private final CustomTriggers customTriggers;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -164,7 +163,6 @@ public class RobotContainer {
       elevator = new Elevator(new ElevatorIO() {});
     }
     fieldAlignment = new FieldAlignment(drive);
-    customTriggers = new CustomTriggers();
     orchestrator = new Orchestrator(elevator, algae, coral);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -234,7 +232,7 @@ public class RobotContainer {
     operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
     operatorController.rightBumper().onTrue(climber.deploy());
     operatorController.rightTrigger().onTrue(climber.winch());
-    customTriggers
+    CustomTriggers
         .toggleOnTrueCancelableWithJoysticks(
             driverController.leftBumper(),
             driverController::getLeftX,
@@ -242,7 +240,7 @@ public class RobotContainer {
             driverController::getRightX,
             driverController::getRightY)
         .whileTrue(fieldAlignment.alignToReef(true));
-    customTriggers
+    CustomTriggers
         .toggleOnTrueCancelableWithJoysticks(
             driverController.rightBumper(),
             driverController::getLeftX,
@@ -250,7 +248,7 @@ public class RobotContainer {
             driverController::getRightX,
             driverController::getRightY)
         .whileTrue(fieldAlignment.alignToReef(false));
-    customTriggers
+    CustomTriggers
         .toggleOnTrueCancelableWithJoystick(
             driverController.leftTrigger(),
             driverController::getRightX,
