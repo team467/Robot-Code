@@ -24,6 +24,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
   private boolean zeroedOnce = false;
 
   private final SparkClosedLoopController controller;
+  private double setpoint;
 
   public ElevatorIOPhysical() {
     spark = new SparkMax(Schematic.elevatorMotorID, MotorType.kBrushless);
@@ -61,6 +62,11 @@ public class ElevatorIOPhysical implements ElevatorIO {
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
+    config
+        .softLimit
+        .forwardSoftLimit(0.79)
+        .forwardSoftLimitEnabled(true)
+        .reverseSoftLimitEnabled(false);
 
     tryUntilOk(
         spark,
@@ -78,7 +84,10 @@ public class ElevatorIOPhysical implements ElevatorIO {
     inputs.elevatorAppliedVolts = spark.getBusVoltage() * spark.getAppliedOutput();
     spark.getAppliedOutput();
     inputs.elevatorCurrentAmps = spark.getOutputCurrent();
+    inputs.elevatorSetpoint = setpoint;
+    inputs.atSetpoint = Math.abs(setpoint - inputs.positionMeters) < TOLERANCE;
     inputs.stowLimitSwitch = !elevatorStowLimitSwitch.get();
+    inputs.isCalibrated = zeroedOnce;
   }
 
   @Override
@@ -112,6 +121,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
   @Override
   public void setPosition(double position) {
     controller.setReference(position, SparkBase.ControlType.kPosition);
+    setpoint = position;
   }
 
   @Override
@@ -123,9 +133,9 @@ public class ElevatorIOPhysical implements ElevatorIO {
   @Override
   public void hold(double holdPosition) {
     if (encoder.getPosition() < holdPosition) {
-      spark.setVoltage(-0.3);
+      spark.setVoltage(-0.15);
     } else if (encoder.getPosition() > holdPosition) {
-      spark.setVoltage(0.3);
+      spark.setVoltage(0.15);
     }
   }
 }

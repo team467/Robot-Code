@@ -52,12 +52,12 @@ public class AlgaeEffector extends SubsystemBase {
   public Command removeAlgae() {
     return Commands.run(
         () -> {
-          if (isFullyExtended() == false) {
+          if (!isFullyExtended()) {
             io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
           } else {
             io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
+            io.setRemovalVolts(AlgaeEffectorConstants.REMOVAL_VOLTAGE);
           }
-          io.setRemovalVolts(AlgaeEffectorConstants.REMOVAL_VOLTAGE);
         },
         this);
   }

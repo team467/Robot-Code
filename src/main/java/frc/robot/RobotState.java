@@ -83,6 +83,7 @@ public class RobotState {
   public boolean climberWinched = false;
   /** If the climber is down */
   @AutoLogOutput(key = "RobotState/ClimberDeployed")
+  /** If the climber is deployed */
   public boolean climberDeployed = false;
 
   @AutoLogOutput(key = "RobotState/ClimberStowed")
@@ -117,12 +118,12 @@ public class RobotState {
 
   public enum ElevatorPosition {
     INTAKE,
-    CORAL_LEVEL_1,
-    CORAL_LEVEL_2,
-    CORAL_LEVEL_3,
-    CORAL_LEVEL_4,
-    ALGAE_LEVEL_2,
-    ALGAE_LEVEL_3;
+    L1,
+    L2,
+    L3,
+    L4,
+    ALGAE_L2,
+    ALGAE_L3
   }
 
   public void updateLEDState() {
