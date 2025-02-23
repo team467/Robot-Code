@@ -44,7 +44,7 @@ public class AutosAlternate {
         .andThen(new StraightDriveToPose(drive, R1));
   }
 
-  public Command AScore() {
+  public Command AScore(boolean left) {
     Supplier<Pose2d> A =
         () ->
             AllianceFlipUtil.apply(
@@ -60,11 +60,11 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(
             new StraightDriveToPose(drive, scorePoint)
-                .andThen(fieldAlignment.alignToReef(false))
+                .andThen(fieldAlignment.alignToReef(left))
                 .andThen(orchestrator.placeCoral(4)));
   }
 
-  public Command BScore() {
+  public Command BScore(boolean left) {
     Supplier<Pose2d> B =
         () ->
             AllianceFlipUtil.apply(
@@ -74,12 +74,12 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(B.get()))
         .andThen(
             fieldAlignment
-                .alignToReef(true)
+                .alignToReef(left)
                 .andThen(orchestrator.placeCoral(4))
                 .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
   }
 
-  public Command CScore() {
+  public Command CScore(boolean left) {
     Supplier<Pose2d> C =
         () ->
             AllianceFlipUtil.apply(
@@ -95,7 +95,7 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(
             new StraightDriveToPose(drive, scorePoint)
-                .andThen(fieldAlignment.alignToReef(false))
+                .andThen(fieldAlignment.alignToReef(left))
                 .andThen(orchestrator.placeCoral(4)));
   }
 }
