@@ -92,6 +92,15 @@ public class Orchestrator {
             }));
   }
 
+  public Command dumpCoralAndHome() {
+    return coralEffector
+        .dumpCoral()
+        .andThen(Commands.waitSeconds(0.4))
+        .andThen(
+            moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
+                .until(elevator::limitSwitchPressed));
+  }
+
   public Command moveElevatorToSetpoint(double setpoint) {
 
     return (Commands.either(

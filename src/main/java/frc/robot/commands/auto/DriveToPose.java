@@ -7,12 +7,15 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.utils.GeomUtils;
 import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 /**
  * Command to drive the robot to a specified pose in a straight path. This is useful for very simple
@@ -51,6 +54,16 @@ public class DriveToPose extends Command {
     switch (Constants.getRobot()) {
       case ROBOT_2025_TEST:
       case ROBOT_2025_COMP:
+        driveKp.initDefault(2.5);
+        driveKd.initDefault(0.0);
+        thetaKp.initDefault(3.0);
+        thetaKd.initDefault(0.01);
+        driveMaxVelocity.initDefault(Units.inchesToMeters(85));
+        driveMaxAcceleration.initDefault(Units.inchesToMeters(450.0));
+        thetaMaxVelocity.initDefault(Units.degreesToRadians(360.0));
+        thetaMaxAcceleration.initDefault(Units.degreesToRadians(720.0));
+        driveTolerance.initDefault(0.01);
+        thetaTolerance.initDefault(Units.degreesToRadians(1.0));
       case ROBOT_SIMBOT:
         driveKp.initDefault(2.5);
         driveKd.initDefault(0.0);
@@ -77,6 +90,30 @@ public class DriveToPose extends Command {
     this(drive, () -> pose);
   }
 
+  public DriveToPose(Drive drive, double deltaXMeters, double deltaYMeters, double deltaThetaRad) {
+    this(
+        drive,
+        () ->
+            new Pose2d(
+                new Translation2d(
+                    drive.getPose().getTranslation().getX()
+                        + (DriverStation.getAlliance().isEmpty()
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaXMeters
+                            : -deltaXMeters),
+                    drive.getPose().getTranslation().getY()
+                        + (DriverStation.getAlliance().isEmpty()
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaYMeters
+                            : -deltaYMeters)),
+                new Rotation2d(
+                    drive.getPose().getRotation().getRadians()
+                        + (DriverStation.getAlliance().isEmpty()
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaThetaRad
+                            : -deltaThetaRad))));
+  }
+
   /**
    * Constructs a new DriveToPose command that drives the robot to a specified pose.
    *
@@ -93,6 +130,17 @@ public class DriveToPose extends Command {
   @Override
   public void initialize() {
     // Reset all controllers
+    driveController.setP(driveKp.get());
+    driveController.setD(driveKd.get());
+    driveController.setConstraints(
+        new TrapezoidProfile.Constraints(driveMaxVelocity.get(), driveMaxAcceleration.get()));
+    driveController.setTolerance(driveTolerance.get());
+    thetaController.setP(thetaKp.get());
+    thetaController.setD(thetaKd.get());
+    thetaController.setConstraints(
+        new TrapezoidProfile.Constraints(thetaMaxVelocity.get(), thetaMaxAcceleration.get()));
+    thetaController.setTolerance(thetaTolerance.get());
+
     var currentPose = drive.getPose();
     driveController.reset(
         currentPose.getTranslation().getDistance(poseSupplier.get().getTranslation()));
@@ -180,6 +228,7 @@ public class DriveToPose extends Command {
   }
 
   /** Returns whether the command is actively running. */
+  @AutoLogOutput
   public boolean isRunning() {
     return running;
   }

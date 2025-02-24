@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
+import frc.robot.RobotState.ElevatorPosition;
 import org.littletonrobotics.junction.Logger;
 
 public class CoralEffector extends SubsystemBase {
@@ -47,7 +48,11 @@ public class CoralEffector extends SubsystemBase {
   public Command dumpCoral() {
     return Commands.run(
             () -> {
-              io.setSpeed(CoralEffectorConstants.CORAL_SPEED_OUT.get());
+              if (RobotState.getInstance().elevatorPosition == ElevatorPosition.L4) {
+                io.setSpeed(CoralEffectorConstants.CORAL_SPEED_OUT.get() - 0.2);
+              } else {
+                io.setSpeed(CoralEffectorConstants.CORAL_SPEED_OUT.get());
+              }
             },
             this)
         .until(() -> !this.hasCoral());

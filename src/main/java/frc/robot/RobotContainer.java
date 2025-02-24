@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.auto.AutoRoutines;
+import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
@@ -30,7 +32,6 @@ import frc.robot.subsystems.coral.CoralEffectorIO;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.leds.Leds;
@@ -65,6 +66,7 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final AutoRoutines autoRoutines;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -175,6 +177,7 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
+    autoRoutines = new AutoRoutines(drive);
 
     // Drive SysId
     autoChooser.addOption(
@@ -191,6 +194,17 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    AutosAlternate autosAlternate = new AutosAlternate(drive, orchestrator, fieldAlignment);
+    autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
+    autoChooser.addOption("A Score Left", autosAlternate.AScore(true));
+    autoChooser.addOption("A Score Right", autosAlternate.AScore(false));
+    autoChooser.addOption("B Score Left", autosAlternate.BScore(true));
+    autoChooser.addOption("B Score Right", autosAlternate.BScore(false));
+    autoChooser.addOption("C Score Left", autosAlternate.CScore(true));
+    autoChooser.addOption("C Score Right", autosAlternate.CScore(false));
+
+    registerAutoRoutines();
 
     // Configure the button bindings
     configureButtonBindings();
@@ -241,31 +255,41 @@ public class RobotContainer {
     operatorController.rightTrigger().onTrue(climber.winch());
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReef(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReef(false));
-    CustomTriggers.toggleOnTrueCancelableWithJoystick(
-            driverController.leftTrigger(),
-            driverController::getRightX,
-            driverController::getRightY)
-        .whileTrue(
-            Commands.either(
-                fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
-                Commands.parallel(
-                        fieldAlignment.faceCoralStation(
-                            driverController::getLeftX, driverController::getLeftY),
-                        orchestrator.intake())
-                    .until(coral::hasCoral),
-                coral::hasCoral));
     driverController
-        .rightTrigger()
-        .onTrue(
-            coral
-                .dumpCoral()
-                .andThen(
-                    orchestrator
-                        .moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-                        .until(elevator::limitSwitchPressed)));
+        .leftTrigger(0.1)
+        .toggleOnTrue(
+            Commands.parallel(
+                    fieldAlignment.faceCoralStation(
+                        driverController::getLeftX, driverController::getLeftY),
+                    orchestrator.intake())
+                .until(coral::hasCoral));
+    driverController
+        .a()
+        .toggleOnTrue(
+            fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
+    driverController.x().whileTrue(coral.takeBackCoral());
+    driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
     driverController.a().onTrue(coral.dumpCoral());
+  }
+
+  private void addAutoRoutine(String routineName) {
+    autoChooser.addOption(routineName, autoRoutines.getRoutines().get(routineName).cmd());
+  }
+
+  private void registerAutoRoutines() {
+    addAutoRoutine("A leave");
+    addAutoRoutine("C6L5RL");
+    addAutoRoutine("C5RL4R");
+    addAutoRoutine("B1R2LR");
+    addAutoRoutine("B1L6RL");
+    addAutoRoutine("B1R");
+    addAutoRoutine("B1L");
+    addAutoRoutine("A3LR4L");
+    addAutoRoutine("A2R3LR");
+    addAutoRoutine("C leave");
+    addAutoRoutine("B leave");
   }
 
   /**

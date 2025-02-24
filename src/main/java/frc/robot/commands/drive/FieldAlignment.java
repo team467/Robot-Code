@@ -11,7 +11,7 @@ import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.CoralStation;
 import frc.robot.FieldConstants.Reef;
 import frc.robot.FieldConstants.ReefHeight;
-import frc.robot.commands.auto.DriveToPose;
+import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.drive.Drive;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
@@ -36,7 +36,8 @@ public class FieldAlignment {
   public Command alignToReef(boolean branchLeft) {
     return Commands.defer(
         () ->
-            new DriveToPose(drive, getBranchPosition(branchLeft, closestReefFace())).withTimeout(5),
+            new StraightDriveToPose(drive, getBranchPosition(branchLeft, closestReefFace()))
+                .withTimeout(5),
         Set.of(drive));
   }
 
@@ -45,10 +46,7 @@ public class FieldAlignment {
         drive,
         leftJoystickX,
         leftJoystickY,
-        () ->
-            AllianceFlipUtil.apply(Reef.centerFaces[closestReefFace()])
-                .getRotation()
-                .rotateBy(Rotation2d.fromDegrees(180)));
+        () -> AllianceFlipUtil.apply(Reef.centerFaces[closestReefFace()]).getRotation());
   }
 
   public Command faceCoralStation(DoubleSupplier leftJoystickX, DoubleSupplier leftJoystickY) {
