@@ -54,6 +54,16 @@ public class DriveToPose extends Command {
     switch (Constants.getRobot()) {
       case ROBOT_2025_TEST:
       case ROBOT_2025_COMP:
+        driveKp.initDefault(2.5);
+        driveKd.initDefault(0.0);
+        thetaKp.initDefault(3.0);
+        thetaKd.initDefault(0.01);
+        driveMaxVelocity.initDefault(Units.inchesToMeters(85));
+        driveMaxAcceleration.initDefault(Units.inchesToMeters(450.0));
+        thetaMaxVelocity.initDefault(Units.degreesToRadians(360.0));
+        thetaMaxAcceleration.initDefault(Units.degreesToRadians(720.0));
+        driveTolerance.initDefault(0.01);
+        thetaTolerance.initDefault(Units.degreesToRadians(1.0));
       case ROBOT_SIMBOT:
         driveKp.initDefault(2.5);
         driveKd.initDefault(0.0);
