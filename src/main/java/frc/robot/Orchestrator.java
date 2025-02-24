@@ -95,7 +95,7 @@ public class Orchestrator {
   public Command dumpCoralAndHome() {
     return coralEffector
         .dumpCoral()
-        .andThen(Commands.waitSeconds(0.2))
+        .andThen(Commands.waitSeconds(0.4))
         .andThen(
             moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
                 .until(elevator::limitSwitchPressed));
