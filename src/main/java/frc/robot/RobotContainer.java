@@ -32,7 +32,6 @@ import frc.robot.subsystems.coral.CoralEffectorIO;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.leds.Leds;
@@ -256,23 +255,20 @@ public class RobotContainer {
     operatorController.rightTrigger().onTrue(climber.winch());
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReef(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReef(false));
-    CustomTriggers.toggleOnTrueCancelableWithJoystick(
-            driverController.leftTrigger(0.3),
-            driverController::getRightX,
-            driverController::getRightY)
-        .whileTrue(
-            Commands.either(
-                fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY),
-                Commands.parallel(
-                        fieldAlignment.faceCoralStation(
-                            driverController::getLeftX, driverController::getLeftY),
-                        orchestrator.intake())
-                    .until(coral::hasCoral),
-                coral::hasCoral));
     driverController
-        .rightTrigger(0.3)
-        .onTrue(
-            orchestrator.dumpCoralAndHome());
+        .leftTrigger(0.1)
+        .toggleOnTrue(
+            Commands.parallel(
+                    fieldAlignment.faceCoralStation(
+                        driverController::getLeftX, driverController::getLeftY),
+                    orchestrator.intake())
+                .until(coral::hasCoral));
+    driverController
+        .a()
+        .toggleOnTrue(
+            fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
+    driverController.x().whileTrue(coral.takeBackCoral());
+    driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
     driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
     driverController.a().onTrue(coral.dumpCoral());
