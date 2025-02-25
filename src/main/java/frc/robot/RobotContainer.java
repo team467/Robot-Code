@@ -260,8 +260,14 @@ public class RobotContainer {
     operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
     operatorController.rightBumper().whileTrue(climber.deploy());
     operatorController.rightTrigger().whileTrue(climber.winch());
-    driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReef(true));
-    driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReef(false));
+    CustomTriggers.toggleOnTrueCancelableWithJoystick(
+            driverController.leftBumper(), driverController::getRightX, driverController::getRightY)
+        .whileTrue(fieldAlignment.alignToReef(true));
+    CustomTriggers.toggleOnTrueCancelableWithJoystick(
+            driverController.rightBumper(),
+            driverController::getRightX,
+            driverController::getRightY)
+        .whileTrue(fieldAlignment.alignToReef(false));
     CustomTriggers.toggleOnTrueCancelableWithJoystick(
             driverController.leftTrigger(0.1),
             driverController::getRightX,

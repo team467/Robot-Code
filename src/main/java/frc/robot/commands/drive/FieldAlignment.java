@@ -25,11 +25,11 @@ public class FieldAlignment {
   // How far left/right the robot needs to move to align with the coral effector instead of the
   // center of the robot
   private static final TunableNumber CORAL_EFFECTOR_OFFSET =
-      new TunableNumber("FieldAlignment/CoralEffectorOffset", 4);
+      new TunableNumber("FieldAlignment/CoralEffectorOffset", 2);
   // How far back the robot needs to move to align with the branch in a way that doesn't have the
   // robot impaling itself
   private static final TunableNumber BRANCH_TO_ROBOT_BACKUP =
-      new TunableNumber("FieldAlignment/BranchToRobotBackup", -9.5);
+      new TunableNumber("FieldAlignment/BranchToRobotBackup", -8.5);
   private final Drive drive;
 
   public FieldAlignment(Drive drive) {
@@ -41,6 +41,12 @@ public class FieldAlignment {
         () ->
             new StraightDriveToPose(drive, getBranchPosition(branchLeft, closestReefFace()))
                 .withTimeout(5),
+        Set.of(drive));
+  }
+
+  public Command alignToCoralStation() {
+    return Commands.defer(
+        () -> new StraightDriveToPose(drive, getClosestCoralStationPositionForAlign()),
         Set.of(drive));
   }
 
@@ -91,6 +97,16 @@ public class FieldAlignment {
    *
    * @return the pose of the closest coral station.
    */
+  public Pose2d getClosestCoralStationPositionForAlign() {
+    Pose2d targetPose = getClosestCoralStationPosition();
+    return new Pose2d(
+        targetPose.getX() // Move left robot relative
+            - Units.inchesToMeters(-27) * Math.cos(targetPose.getRotation().getRadians()),
+        targetPose.getY() // Move back robot relative
+            - Units.inchesToMeters(-27) * Math.sin(targetPose.getRotation().getRadians()),
+        targetPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
+  }
+
   public Pose2d getClosestCoralStationPosition() {
     return closerToLeftCoralStation()
         ? AllianceFlipUtil.apply(CoralStation.leftCenterFace)
