@@ -248,10 +248,14 @@ public class RobotContainer {
     operatorController.x().onTrue(orchestrator.moveElevatorToLevel(false, 1));
     operatorController.y().onTrue(orchestrator.moveElevatorToLevel(false, 2));
     operatorController.a().onTrue(orchestrator.moveElevatorToLevel(false, 3));
-    CustomTriggers.manualModeInput(operatorController.a(), operatorController.back()).whileTrue(elevator.runPercent(-0.3));
-    CustomTriggers.autoModeInput(operatorController.a(), operatorController.back()).onTrue(orchestrator.moveElevatorToLevel(false, 3));
-    CustomTriggers.manualModeInput(operatorController.b(), operatorController.back()).whileTrue(elevator.runPercent(0.3));
-    CustomTriggers.autoModeInput(operatorController.b(), operatorController.back()).onTrue(orchestrator.moveElevatorToLevel(false, 4));
+    CustomTriggers.manualModeInput(operatorController.a(), operatorController.back())
+        .whileTrue(elevator.runPercent(-0.3));
+    CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
+        .onTrue(orchestrator.moveElevatorToLevel(false, 3));
+    CustomTriggers.manualModeInput(operatorController.b(), operatorController.back())
+        .whileTrue(elevator.runPercent(0.3));
+    CustomTriggers.autoModeInput(operatorController.b(), operatorController.back())
+        .onTrue(orchestrator.moveElevatorToLevel(false, 4));
     operatorController.leftTrigger().onTrue(orchestrator.removeAlgae(2));
     operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
     operatorController.rightBumper().whileTrue(climber.deploy());
@@ -259,16 +263,18 @@ public class RobotContainer {
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReef(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReef(false));
     CustomTriggers.toggleOnTrueCancelableWithJoystick(
-        driverController.leftTrigger(0.1), driverController::getRightX, driverController::getRightY)
+            driverController.leftTrigger(0.1),
+            driverController::getRightX,
+            driverController::getRightY)
         .whileTrue(
             Commands.parallel(
                     fieldAlignment.faceCoralStation(
                         driverController::getLeftX, driverController::getLeftY),
                     orchestrator.intake())
                 .until(coral::hasCoral));
-    CustomTriggers.toggleOnTrueCancelableWithJoystick(driverController.a(), driverController::getRightX, driverController::getRightY)
-        .whileTrue(
-            fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
+    CustomTriggers.toggleOnTrueCancelableWithJoystick(
+            driverController.a(), driverController::getRightX, driverController::getRightY)
+        .whileTrue(fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController.x().whileTrue(coral.takeBackCoral());
     driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
   }
