@@ -8,6 +8,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
+import frc.lib.utils.TunableNumber;
 import frc.robot.FieldConstants.CoralStation;
 import frc.robot.FieldConstants.Reef;
 import frc.robot.FieldConstants.ReefHeight;
@@ -23,10 +24,10 @@ public class FieldAlignment {
   @AutoLogOutput private double[] reefFaceDistances = new double[6];
   // How far left/right the robot needs to move to align with the coral effector instead of the
   // center of the robot
-  private static final double CORAL_EFFECTOR_OFFSET = 4;
+  private static final TunableNumber CORAL_EFFECTOR_OFFSET = new TunableNumber("FieldAlignment/CoralEffectorOffset", 4);
   // How far back the robot needs to move to align with the branch in a way that doesn't have the
   // robot impaling itself
-  private static final double BRANCH_TO_ROBOT_BACKUP = -9.5;
+  private static final TunableNumber BRANCH_TO_ROBOT_BACKUP = new TunableNumber("FieldAlignment/BranchToRobotBackup", -9.5);
   private final Drive drive;
 
   public FieldAlignment(Drive drive) {
@@ -71,14 +72,14 @@ public class FieldAlignment {
         AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L1).toPose2d());
     return new Pose2d(
         branchPose.getX() // Move left robot relative
-            - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
+            - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
                 * Math.cos(branchPose.getRotation().getRadians())
-            - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET)
+            - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
                 * Math.sin(branchPose.getRotation().getRadians()),
         branchPose.getY() // Move back robot relative
-            - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP)
+            - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
                 * Math.sin(branchPose.getRotation().getRadians())
-            + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET)
+            + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
                 * Math.cos(branchPose.getRotation().getRadians()),
         branchPose.getRotation());
   }
