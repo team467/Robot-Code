@@ -81,4 +81,12 @@ public class CustomTriggers {
           return toggledState;
         });
   }
+  public Trigger manualModeInput(Trigger inputButton, Trigger correctMode){
+    return new Trigger(CommandScheduler.getInstance().getDefaultButtonLoop(),
+        () ->
+        {
+          return inputButton.getAsBoolean() && correctMode.getAsBoolean();
+        }
+        );
+  }
 }
