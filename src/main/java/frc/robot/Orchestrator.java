@@ -47,10 +47,6 @@ public class Orchestrator {
         .andThen(coralEffector.intakeCoral());
   }
 
-  public Command stopIntake() {
-    return coralEffector.stop();
-  }
-
   /**
    * Places coral on branch after getting in position.
    *

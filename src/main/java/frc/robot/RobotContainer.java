@@ -203,7 +203,6 @@ public class RobotContainer {
     autoChooser.addOption("B Score Right", autosAlternate.BScore(false));
     autoChooser.addOption("C Score Left", autosAlternate.CScore(true));
     autoChooser.addOption("C Score Right", autosAlternate.CScore(false));
-    autoChooser.addOption("Two B Score Left", autosAlternate.TwoNoteB(true));
 
     registerAutoRoutines();
 

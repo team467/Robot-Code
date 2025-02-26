@@ -71,7 +71,7 @@ public class AutosAlternate {
                 new Pose2d(
                     ChoreoVariables.getPose("B").getTranslation(),
                     ChoreoVariables.getPose("B").getRotation().plus(Rotation2d.k180deg)));
-    return Commands.none() // Commands.runOnce(() -> drive.setPose(B.get()))
+    return Commands.runOnce(() -> drive.setPose(B.get()))
         .andThen(
             fieldAlignment
                 .alignToReef(left)
@@ -95,24 +95,6 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(
             new StraightDriveToPose(drive, scorePoint, 0.04)
-                .andThen(fieldAlignment.alignToReef(left))
-                .andThen(orchestrator.placeCoral(4)));
-  }
-
-  public Command TwoNoteB(boolean left) {
-    Supplier<Pose2d> scorePoint2 =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    new Translation2d(2.1585464477539062, 6.550589084625244),
-                    new Rotation2d(2.1257919271148387)));
-    return BScore(left)
-        .andThen(new StraightDriveToPose(0.5, 2.3, 0, drive, 0.04))
-        .andThen(fieldAlignment.alignToCoralStation())
-        .andThen(orchestrator.intake())
-        .andThen(orchestrator.stopIntake().withTimeout(0.1))
-        .andThen(
-            new StraightDriveToPose(drive, scorePoint2, 0.04)
                 .andThen(fieldAlignment.alignToReef(left))
                 .andThen(orchestrator.placeCoral(4)));
   }
