@@ -22,10 +22,10 @@ public class DriveWithDpad extends Command {
     int pov = povSupplier.get();
 
     switch (pov) {
-      case 0 -> drive.runVelocity(new ChassisSpeeds(SLOW_SPEED, 0, 0));
-      case 90 -> drive.runVelocity(new ChassisSpeeds(0, -SLOW_SPEED, 0));
-      case 180 -> drive.runVelocity(new ChassisSpeeds(-SLOW_SPEED, 0, 0));
-      case 270 -> drive.runVelocity(new ChassisSpeeds(0, SLOW_SPEED, 0));
+      case 0 -> drive.runVelocity(new ChassisSpeeds(-SLOW_SPEED, 0, 0));
+      case 90 -> drive.runVelocity(new ChassisSpeeds(0, SLOW_SPEED, 0));
+      case 180 -> drive.runVelocity(new ChassisSpeeds(SLOW_SPEED, 0, 0));
+      case 270 -> drive.runVelocity(new ChassisSpeeds(0, -SLOW_SPEED, 0));
       default -> drive.stop();
     }
   }
