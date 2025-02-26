@@ -27,21 +27,21 @@ public class AutosAlternate {
   public Command zeroPiece() {
     Supplier<Pose2d> B = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("B"));
     return Commands.runOnce(() -> drive.setPose(B.get()))
-        .andThen(new StraightDriveToPose(-1, 0, 0, drive));
+        .andThen(new StraightDriveToPose(-1, 0, 0, drive, 0.04));
   }
 
   public Command B1L() {
     Supplier<Pose2d> B = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("B"));
     Supplier<Pose2d> L1 = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("L1"));
     return Commands.runOnce(() -> drive.setPose(B.get()))
-        .andThen(new StraightDriveToPose(drive, L1));
+        .andThen(new StraightDriveToPose(drive, L1, 0.04));
   }
 
   public Command B1R() {
     Supplier<Pose2d> B = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("B"));
     Supplier<Pose2d> R1 = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("R1"));
     return Commands.runOnce(() -> drive.setPose(B.get()))
-        .andThen(new StraightDriveToPose(drive, R1));
+        .andThen(new StraightDriveToPose(drive, R1, 0.04));
   }
 
   public Command AScore(boolean left) {
@@ -59,7 +59,7 @@ public class AutosAlternate {
                     new Rotation2d(0.8550528118433292)));
     return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(
-            new StraightDriveToPose(drive, scorePoint)
+            new StraightDriveToPose(drive, scorePoint, 0.04)
                 .andThen(fieldAlignment.alignToReef(left))
                 .andThen(orchestrator.placeCoral(4)));
   }
@@ -94,7 +94,7 @@ public class AutosAlternate {
                     new Rotation2d(-0.982794168198375)));
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(
-            new StraightDriveToPose(drive, scorePoint)
+            new StraightDriveToPose(drive, scorePoint, 0.04)
                 .andThen(fieldAlignment.alignToReef(left))
                 .andThen(orchestrator.placeCoral(4)));
   }
