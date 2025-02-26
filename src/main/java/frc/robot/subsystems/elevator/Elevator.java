@@ -89,6 +89,15 @@ public class Elevator extends SubsystemBase {
         this);
   }
 
+  public Command calibrate() {
+    return Commands.run(
+            () -> {
+              io.setPercent(-0.15);
+            },
+            this)
+        .until(this::limitSwitchPressed);
+  }
+
   public double getPosition() {
     return inputs.positionMeters;
   }
