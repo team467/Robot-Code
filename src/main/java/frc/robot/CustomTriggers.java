@@ -81,12 +81,20 @@ public class CustomTriggers {
           return toggledState;
         });
   }
-  public Trigger manualModeInput(Trigger inputButton, Trigger correctMode){
-    return new Trigger(CommandScheduler.getInstance().getDefaultButtonLoop(),
-        () ->
-        {
-          return inputButton.getAsBoolean() && correctMode.getAsBoolean();
-        }
-        );
+
+  public static Trigger manualModeInput(Trigger inputButton, Trigger manualMode) {
+    return new Trigger(
+        CommandScheduler.getInstance().getDefaultButtonLoop(),
+        () -> {
+          return inputButton.getAsBoolean() && manualMode.getAsBoolean();
+        });
+  }
+
+  public static Trigger autoModeInput(Trigger inputButton, Trigger manualMode) {
+    return new Trigger(
+        CommandScheduler.getInstance().getDefaultButtonLoop(),
+        () -> {
+          return inputButton.getAsBoolean() && !manualMode.getAsBoolean();
+        });
   }
 }
