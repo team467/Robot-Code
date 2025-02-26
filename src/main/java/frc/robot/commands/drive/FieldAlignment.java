@@ -101,9 +101,9 @@ public class FieldAlignment {
     Pose2d targetPose = getClosestCoralStationPosition();
     return new Pose2d(
         targetPose.getX() // Move left robot relative
-            - Units.inchesToMeters(-15) * Math.cos(targetPose.getRotation().getRadians()),
+            - Units.inchesToMeters(-27) * Math.cos(targetPose.getRotation().getRadians()),
         targetPose.getY() // Move back robot relative
-            - Units.inchesToMeters(-15) * Math.sin(targetPose.getRotation().getRadians()),
+            - Units.inchesToMeters(-27) * Math.sin(targetPose.getRotation().getRadians()),
         targetPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
   }
 
