@@ -37,6 +37,8 @@ public class Orchestrator {
   public Command intake() {
     return moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
         .until(elevator::limitSwitchPressed)
+        .andThen(elevator.runPercent(-0.1))
+        .withTimeout(1.0)
         .andThen(
             Commands.runOnce(
                 () -> {
