@@ -35,16 +35,18 @@ public class Orchestrator {
    * @return Command for intaking coral.
    */
   public Command intake() {
-    return moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-        .until(elevator::limitSwitchPressed)
-        .andThen(elevator.runPercent(-0.1))
-        .withTimeout(1.0)
-        .andThen(
-            Commands.runOnce(
-                () -> {
-                  robotState.elevatorPosition = ElevatorPosition.INTAKE;
-                }))
-        .andThen(coralEffector.intakeCoral());
+    return Commands.parallel(
+        moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
+            .until(elevator::limitSwitchPressed)
+        //        .andThen(elevator.runPercent(-0.1))
+        //        .withTimeout(1.0)
+        //        .andThen(
+        //            Commands.runOnce(
+        //                () -> {
+        //                  robotState.elevatorPosition = ElevatorPosition.INTAKE;
+        //                }))
+        ,
+        coralEffector.intakeCoral());
   }
 
   /**
@@ -106,26 +108,28 @@ public class Orchestrator {
   public Command moveElevatorToSetpoint(double setpoint) {
 
     return (Commands.either(
-        algaeEffector
-            .stowArm()
-            .until(algaeEffector::isStowed)
-            .andThen( // Stow algae if moving the elevator
-                elevator
-                    .toSetpoint(setpoint)
-                    .withTimeout(0.01)
-                    .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint)))
-            .andThen(elevator.setHoldPosition(elevator.getPosition())),
-        elevator
-            .toSetpoint(setpoint)
-            .withTimeout(0.01)
-            .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint))
-            .andThen(elevator.setHoldPosition(elevator.getPosition())),
-        // If we are moving from one algae position to another, we don't need to make sure that the
-        // algae effector is stowed
-        () ->
-            !((setpoint == ALGAE_L2_HEIGHT || setpoint == ALGAE_L3_HEIGHT)
-                && (robotState.elevatorPosition == ElevatorPosition.ALGAE_L2
-                    || robotState.elevatorPosition == ElevatorPosition.ALGAE_L3))));
+            algaeEffector
+                .stowArm()
+                .until(algaeEffector::isStowed)
+                .andThen( // Stow algae if moving the elevator
+                    elevator
+                        .toSetpoint(setpoint)
+                        .withTimeout(0.01)
+                        .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint)))
+                .andThen(elevator.setHoldPosition(elevator.getPosition())),
+            elevator
+                .toSetpoint(setpoint)
+                .withTimeout(0.01)
+                .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint))
+                .andThen(elevator.setHoldPosition(elevator.getPosition())),
+            // If we are moving from one algae position to another, we don't need to make sure that
+            // the
+            // algae effector is stowed
+            () ->
+                !((setpoint == ALGAE_L2_HEIGHT || setpoint == ALGAE_L3_HEIGHT)
+                    && (robotState.elevatorPosition == ElevatorPosition.ALGAE_L2
+                        || robotState.elevatorPosition == ElevatorPosition.ALGAE_L3))))
+        .withTimeout(1);
   }
 
   public Command scoreL1() {
