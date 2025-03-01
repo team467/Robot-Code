@@ -285,13 +285,14 @@ public class RobotContainer {
                     orchestrator.intake())
                 .until(coral::hasCoral));
     CustomTriggers.manualModeInput(driverController.leftTrigger(), operatorController.pov(270))
-        .whileTrue(orchestrator.intake());
+        .toggleOnTrue(orchestrator.intake());
     driverController
         .a()
         .toggleOnTrue(
             fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController.x().whileTrue(coral.takeBackCoral());
     driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
+    driverController.y().whileTrue(elevator.runPercent(-0.3));
   }
 
   private void addAutoRoutine(String routineName) {
