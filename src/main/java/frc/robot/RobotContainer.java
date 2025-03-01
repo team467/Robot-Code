@@ -243,7 +243,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
     driverController
         .pov(-1)
-        .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+        .whileFalse(fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
 
     CustomTriggers.autoModeInput(operatorController.x(), operatorController.back())
         .onTrue(orchestrator.moveElevatorToLevel(false, 1));
