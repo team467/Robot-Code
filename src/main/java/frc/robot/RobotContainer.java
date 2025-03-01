@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIO;
