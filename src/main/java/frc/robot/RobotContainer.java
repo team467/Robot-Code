@@ -245,9 +245,12 @@ public class RobotContainer {
         .pov(-1)
         .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    operatorController.x().onTrue(orchestrator.moveElevatorToLevel(false, 1));
-    operatorController.y().onTrue(orchestrator.moveElevatorToLevel(false, 2));
-    operatorController.a().onTrue(orchestrator.moveElevatorToLevel(false, 3));
+    CustomTriggers.autoModeInput(operatorController.x(), operatorController.back())
+        .onTrue(orchestrator.moveElevatorToLevel(false, 1));
+    CustomTriggers.autoModeInput(operatorController.y(), operatorController.back())
+        .onTrue(orchestrator.moveElevatorToLevel(false, 2));
+    CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
+        .onTrue(orchestrator.moveElevatorToLevel(false, 3));
     CustomTriggers.manualModeInput(operatorController.a(), operatorController.back())
         .whileTrue(elevator.runPercent(-0.3));
     CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
@@ -256,10 +259,18 @@ public class RobotContainer {
         .whileTrue(elevator.runPercent(0.3));
     CustomTriggers.autoModeInput(operatorController.b(), operatorController.back())
         .onTrue(orchestrator.moveElevatorToLevel(false, 4));
-    operatorController.leftTrigger().onTrue(orchestrator.removeAlgae(2));
-    operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
-    operatorController.rightBumper().whileTrue(climber.deploy());
-    operatorController.rightTrigger().whileTrue(climber.winch());
+    CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.back())
+        .onTrue(orchestrator.removeAlgae(2));
+    CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.back())
+        .onTrue(orchestrator.removeAlgae(3));
+    CustomTriggers.autoModeInput(operatorController.rightBumper(), operatorController.back())
+        .whileTrue(climber.deploy());
+    CustomTriggers.autoModeInput(operatorController.rightTrigger(), operatorController.back())
+        .whileTrue(climber.winch());
+    CustomTriggers.manualModeInput(operatorController.rightBumper(), operatorController.back())
+        .whileTrue(climber.runPercent(0.15));
+    CustomTriggers.manualModeInput(operatorController.rightTrigger(), operatorController.back())
+        .whileTrue(climber.runPercent(-0.15));
     CustomTriggers.toggleOnTrueCancelableWithJoystick(
             driverController.leftBumper(), driverController::getRightX, driverController::getRightY)
         .whileTrue(fieldAlignment.alignToReef(true));

@@ -47,6 +47,10 @@ public class Climber extends SubsystemBase {
         this);
   }
 
+  public Command runPercent(double speed) {
+    return Commands.run(() -> io.setSpeed(speed), this);
+  }
+
   public Command stop() {
     return Commands.run(() -> io.setSpeed(0), this);
   }

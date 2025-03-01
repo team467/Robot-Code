@@ -17,7 +17,6 @@ import frc.robot.subsystems.drive.Drive;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class FieldAlignment {
@@ -65,7 +64,11 @@ public class FieldAlignment {
         drive,
         leftJoystickX,
         leftJoystickY,
-        () -> getClosestCoralStationPosition().get().getRotation().rotateBy(Rotation2d.fromDegrees(180)));
+        () ->
+            getClosestCoralStationPosition()
+                .get()
+                .getRotation()
+                .rotateBy(Rotation2d.fromDegrees(180)));
   }
   /**
    * Gets position of the branch we want.
@@ -80,18 +83,19 @@ public class FieldAlignment {
     }
     Pose2d branchPose =
         AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L1).toPose2d());
-    return () -> new Pose2d(
-        branchPose.getX() // Move left robot relative
-            - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                * Math.cos(branchPose.getRotation().getRadians())
-            - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                * Math.sin(branchPose.getRotation().getRadians()),
-        branchPose.getY() // Move back robot relative
-            - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                * Math.sin(branchPose.getRotation().getRadians())
-            + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                * Math.cos(branchPose.getRotation().getRadians()),
-        branchPose.getRotation());
+    return () ->
+        new Pose2d(
+            branchPose.getX() // Move left robot relative
+                - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                    * Math.cos(branchPose.getRotation().getRadians())
+                - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                    * Math.sin(branchPose.getRotation().getRadians()),
+            branchPose.getY() // Move back robot relative
+                - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                    * Math.sin(branchPose.getRotation().getRadians())
+                + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                    * Math.cos(branchPose.getRotation().getRadians()),
+            branchPose.getRotation());
   }
 
   /**
@@ -103,18 +107,19 @@ public class FieldAlignment {
     return () -> {
       Pose2d targetPose = getClosestCoralStationPosition().get();
       return new Pose2d(
-        targetPose.getX() // Move left robot relative
-            - Units.inchesToMeters(-27) * Math.cos(targetPose.getRotation().getRadians()),
-        targetPose.getY() // Move back robot relative
-            - Units.inchesToMeters(-27) * Math.sin(targetPose.getRotation().getRadians()),
-        targetPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
+          targetPose.getX() // Move left robot relative
+              - Units.inchesToMeters(-27) * Math.cos(targetPose.getRotation().getRadians()),
+          targetPose.getY() // Move back robot relative
+              - Units.inchesToMeters(-27) * Math.sin(targetPose.getRotation().getRadians()),
+          targetPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
     };
   }
 
   public Supplier<Pose2d> getClosestCoralStationPosition() {
-    return () -> closerToLeftCoralStation()
-        ? AllianceFlipUtil.apply(CoralStation.leftCenterFace)
-        : AllianceFlipUtil.apply(CoralStation.rightCenterFace);
+    return () ->
+        closerToLeftCoralStation()
+            ? AllianceFlipUtil.apply(CoralStation.leftCenterFace)
+            : AllianceFlipUtil.apply(CoralStation.rightCenterFace);
   }
 
   public boolean closerToLeftCoralStation() {
