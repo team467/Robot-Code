@@ -4,7 +4,6 @@ import static frc.robot.FieldConstants.Reef.branchPositions;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -32,7 +31,7 @@ public class FieldAlignment {
   // robot impaling itself
   private static final TunableNumber BRANCH_TO_ROBOT_BACKUP =
       new TunableNumber("FieldAlignment/BranchToRobotBackup", -9.5);
-  //you can change these values
+  // you can change these values
   @AutoLogOutput public double CORAL_EFFECTOR_OFFSET_TUNING = 4;
   @AutoLogOutput private double BRANCH_TO_ROBOT_BACKUP_TUNING = -9.5;
   private final Drive drive;
@@ -87,18 +86,19 @@ public class FieldAlignment {
     }
     Pose2d branchPose =
         AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L1).toPose2d());
-    return () -> new Pose2d(
-        branchPose.getX() // Move left robot relative
-            - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING)
-                * Math.cos(branchPose.getRotation().getRadians())
-            - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
-                * Math.sin(branchPose.getRotation().getRadians()),
-        branchPose.getY() // Move back robot relative
-            - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING)
-                * Math.sin(branchPose.getRotation().getRadians())
-            + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
-                * Math.cos(branchPose.getRotation().getRadians()),
-        branchPose.getRotation());
+    return () ->
+        new Pose2d(
+            branchPose.getX() // Move left robot relative
+                - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING)
+                    * Math.cos(branchPose.getRotation().getRadians())
+                - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
+                    * Math.sin(branchPose.getRotation().getRadians()),
+            branchPose.getY() // Move back robot relative
+                - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING)
+                    * Math.sin(branchPose.getRotation().getRadians())
+                + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
+                    * Math.cos(branchPose.getRotation().getRadians()),
+            branchPose.getRotation());
   }
 
   /**
@@ -173,15 +173,16 @@ public class FieldAlignment {
     closestReefFace = closestReefFace();
     closestReefFacePose = AllianceFlipUtil.apply(Reef.centerFaces[closestReefFace]);
   }
-  public Command updateMidMatchTunableOffsets(Supplier<Integer> pov){
-    return Commands.run(() -> {
-      switch (pov.get()) {
-        case 0 -> CORAL_EFFECTOR_OFFSET_TUNING += -0.1;
-        case 90 -> BRANCH_TO_ROBOT_BACKUP_TUNING += 0.1;
-        case 180 -> CORAL_EFFECTOR_OFFSET_TUNING += 0.1;
-        case 270 -> BRANCH_TO_ROBOT_BACKUP_TUNING += -0.1;
-      }
-    }
-    );
+
+  public Command updateMidMatchTunableOffsets(Supplier<Integer> pov) {
+    return Commands.run(
+        () -> {
+          switch (pov.get()) {
+            case 0 -> CORAL_EFFECTOR_OFFSET_TUNING += -0.1;
+            case 90 -> BRANCH_TO_ROBOT_BACKUP_TUNING += 0.1;
+            case 180 -> CORAL_EFFECTOR_OFFSET_TUNING += 0.1;
+            case 270 -> BRANCH_TO_ROBOT_BACKUP_TUNING += -0.1;
+          }
+        });
   }
 }

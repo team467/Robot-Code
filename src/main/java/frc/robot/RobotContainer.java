@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffectorIO;
@@ -243,7 +242,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
     driverController
         .pov(-1)
-        .whileFalse(fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
+        .whileFalse(
+            fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
 
     CustomTriggers.autoModeInput(operatorController.x(), operatorController.back())
         .onTrue(orchestrator.moveElevatorToLevel(false, 1));
