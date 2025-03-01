@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutosAlternate;
@@ -241,10 +242,13 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-    driverController
-        .pov(-1)
-        .whileFalse(fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
-
+    CustomTriggers.autoModeInput(
+            new Trigger(() -> driverController.getHID().getPOV() != -1), operatorController.pov(0))
+        .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    CustomTriggers.manualModeInput(
+            new Trigger(() -> driverController.getHID().getPOV() != -1), operatorController.pov(0))
+        .whileTrue(
+            fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
     CustomTriggers.autoModeInput(operatorController.x(), operatorController.back())
         .onTrue(orchestrator.moveElevatorToLevel(false, 1));
     CustomTriggers.autoModeInput(operatorController.y(), operatorController.back())
@@ -271,27 +275,20 @@ public class RobotContainer {
         .whileTrue(climber.runPercent(0.15));
     CustomTriggers.manualModeInput(operatorController.rightTrigger(), operatorController.back())
         .whileTrue(climber.runPercent(-0.15));
-    CustomTriggers.toggleOnTrueCancelableWithJoystick(
-            driverController.leftBumper(), driverController::getRightX, driverController::getRightY)
-        .whileTrue(fieldAlignment.alignToReef(true));
-    CustomTriggers.toggleOnTrueCancelableWithJoystick(
-            driverController.rightBumper(),
-            driverController::getRightX,
-            driverController::getRightY)
-        .whileTrue(fieldAlignment.alignToReef(false));
-    CustomTriggers.toggleOnTrueCancelableWithJoystick(
-            driverController.leftTrigger(0.1),
-            driverController::getRightX,
-            driverController::getRightY)
-        .whileTrue(
+    driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReef(true));
+    driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReef(false));
+    CustomTriggers.autoModeInput(driverController.leftTrigger(), operatorController.pov(270))
+        .toggleOnTrue(
             Commands.parallel(
                     fieldAlignment.faceCoralStation(
                         driverController::getLeftX, driverController::getLeftY),
                     orchestrator.intake())
                 .until(coral::hasCoral));
-    CustomTriggers.toggleOnTrueCancelableWithJoystick(
-            driverController.a(), driverController::getRightX, driverController::getRightY)
-        .whileTrue(fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
+    CustomTriggers.manualModeInput(driverController.leftTrigger(), operatorController.pov(270));
+    driverController
+        .a()
+        .toggleOnTrue(
+            fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController.x().whileTrue(coral.takeBackCoral());
     driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
   }
