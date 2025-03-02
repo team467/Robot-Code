@@ -37,10 +37,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
         .idleMode(IdleMode.kBrake)
         .inverted(false)
         .smartCurrentLimit(elevatorCurrentLimit)
-        .voltageCompensation(12.0)
-        .softLimit
-        .forwardSoftLimit(0.762)
-        .forwardSoftLimitEnabled(true);
+        .voltageCompensation(12.0);
     config
         .alternateEncoder
         .positionConversionFactor(ENCODER_CONVERSION_FACTOR)
