@@ -3,11 +3,14 @@ package frc.robot.commands.auto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.ChoreoVariables;
 import frc.robot.Orchestrator;
+import frc.robot.RobotState;
 import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.ElevatorConstants;
@@ -22,6 +25,13 @@ public class AutosAlternate {
     this.drive = drive;
     this.orchestrator = orchestrator;
     this.fieldAlignment = fieldAlignment;
+  }
+  public Command BScoreHopeAndPray() {
+    return Commands.run(() -> {
+      drive.runVelocity(new ChassisSpeeds(0, Units.inchesToMeters(100
+      ), 0));
+    }
+    ).until(RobotState.getInstance().collisionDetected::get).withTimeout(5).andThen(orchestrator.placeCoral(4)).andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
   public Command zeroPiece() {
@@ -75,7 +85,8 @@ public class AutosAlternate {
         .andThen(
             fieldAlignment
                 .alignToReef(left)
-                .andThen(orchestrator.placeCoral(4))
+                .withTimeout(3)
+                .andThen(orchestrator.placeCoral(5))
                 .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
   }
 
