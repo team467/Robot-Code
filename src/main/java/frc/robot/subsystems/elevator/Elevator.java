@@ -2,7 +2,6 @@ package frc.robot.subsystems.elevator;
 
 import static frc.robot.subsystems.elevator.ElevatorConstants.*;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,9 +28,9 @@ public class Elevator extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
 
-    if (DriverStation.isDisabled()) {
-      io.setPosition(inputs.positionMeters);
-    }
+    //    if (DriverStation.isDisabled()) {
+    //      io.setPosition(inputs.positionMeters);
+    //    }
 
     if (inputs.stowLimitSwitch) {
       io.resetPosition(elevatorToGround);
@@ -62,6 +61,10 @@ public class Elevator extends SubsystemBase {
             .onlyWhile(() -> isCalibrated),
         Commands.none(),
         () -> isCalibrated);
+  }
+
+  public Command setSetpoint(double setpoint) {
+    return Commands.run(() -> inputs.elevatorSetpoint = setpoint);
   }
 
   public Command runPercent(double percent) {
