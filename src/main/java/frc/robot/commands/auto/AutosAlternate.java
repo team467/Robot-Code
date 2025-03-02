@@ -26,12 +26,16 @@ public class AutosAlternate {
     this.orchestrator = orchestrator;
     this.fieldAlignment = fieldAlignment;
   }
+
   public Command BScoreHopeAndPray() {
-    return Commands.run(() -> {
-      drive.runVelocity(new ChassisSpeeds(0, Units.inchesToMeters(100
-      ), 0));
-    }
-    ).until(RobotState.getInstance().collisionDetected::get).withTimeout(5).andThen(orchestrator.placeCoral(4)).andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
+    return Commands.run(
+            () -> {
+              drive.runVelocity(new ChassisSpeeds(0, Units.inchesToMeters(100), 0));
+            })
+        .until(() -> RobotState.getInstance().collisionDetected)
+        .withTimeout(5)
+        .andThen(orchestrator.placeCoral(4))
+        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
   public Command zeroPiece() {
