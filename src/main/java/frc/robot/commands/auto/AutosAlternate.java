@@ -104,6 +104,6 @@ public class AutosAlternate {
                 .andThen(fieldAlignment.alignToReef(left).withTimeout(5))
                 .andThen(orchestrator.placeCoral(4))
                 .andThen(Commands.waitSeconds(1.2)))
-          .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));;
+                .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 }
