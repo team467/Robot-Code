@@ -196,7 +196,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    AutosAlternate autosAlternate = new AutosAlternate(drive, orchestrator, fieldAlignment);
+    AutosAlternate autosAlternate = new AutosAlternate(drive, orchestrator, fieldAlignment, coral);
     autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
     autoChooser.addOption("A Score Left", autosAlternate.AScore(true));
     autoChooser.addOption("A Score Right", autosAlternate.AScore(false));
