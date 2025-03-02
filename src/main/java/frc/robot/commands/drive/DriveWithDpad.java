@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 public class DriveWithDpad extends Command {
   private final Drive drive;
   private final Supplier<Integer> povSupplier;
-  private static final double SLOW_SPEED = Units.inchesToMeters(20);
+  public static final double SLOW_SPEED = Units.inchesToMeters(20);
 
   public DriveWithDpad(Drive drive, Supplier<Integer> povSupplier) {
     this.drive = drive;

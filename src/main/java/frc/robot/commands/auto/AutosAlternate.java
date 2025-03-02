@@ -11,11 +11,11 @@ import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.ChoreoVariables;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.Orchestrator;
-import frc.robot.RobotState;
 import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class AutosAlternate {
@@ -33,13 +33,15 @@ public class AutosAlternate {
   }
 
   public Command BScoreHopeAndPray() {
-    return Commands.run(
+    return Commands.defer(
             () -> {
-              drive.runVelocity(new ChassisSpeeds(0, Units.inchesToMeters(100), 0));
-            })
-        .until(() -> RobotState.getInstance().collisionDetected)
-        .withTimeout(5)
+              drive.runVelocity(new ChassisSpeeds(-Units.inchesToMeters(30), 0, 0));
+              return null;
+            },
+            Set.of(drive))
+        .andThen(Commands.waitSeconds(5))
         .andThen(orchestrator.placeCoral(4))
+        .andThen(Commands.waitSeconds(2))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
