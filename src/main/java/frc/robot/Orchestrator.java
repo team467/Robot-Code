@@ -100,9 +100,7 @@ public class Orchestrator {
     return coralEffector
         .dumpCoral()
         .andThen(Commands.waitSeconds(0.4))
-        .andThen(
-            moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-                .until(elevator::limitSwitchPressed));
+        .andThen(moveElevatorToLevel(false, 1).until(elevator::limitSwitchPressed));
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
