@@ -18,6 +18,9 @@ public class AutosAlternate {
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
 
+  private double DRIVE_TIMEOUT = 5.0;
+  private double ALIGN_TIMEOUT = 2.0;
+
   public AutosAlternate(Drive drive, Orchestrator orchestrator, FieldAlignment fieldAlignment) {
     this.drive = drive;
     this.orchestrator = orchestrator;
@@ -60,7 +63,8 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(
             new StraightDriveToPose(drive, scorePoint)
-                .andThen(fieldAlignment.alignToReef(left))
+                .withTimeout(DRIVE_TIMEOUT)
+                .andThen(fieldAlignment.alignToReef(left).withTimeout(ALIGN_TIMEOUT))
                 .andThen(orchestrator.placeCoral(4)));
   }
 
@@ -75,6 +79,7 @@ public class AutosAlternate {
         .andThen(
             fieldAlignment
                 .alignToReef(left)
+                .withTimeout(DRIVE_TIMEOUT)
                 .andThen(orchestrator.placeCoral(4))
                 .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
   }
@@ -95,7 +100,8 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(
             new StraightDriveToPose(drive, scorePoint)
-                .andThen(fieldAlignment.alignToReef(left))
+                .withTimeout(DRIVE_TIMEOUT)
+                .andThen(fieldAlignment.alignToReef(left).withTimeout(ALIGN_TIMEOUT))
                 .andThen(orchestrator.placeCoral(4)));
   }
 }
