@@ -60,8 +60,11 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(
             new StraightDriveToPose(drive, scorePoint, 0.04)
-                .andThen(fieldAlignment.alignToReef(left))
-                .andThen(orchestrator.placeCoral(4)));
+                .withTimeout(4)
+                .andThen(fieldAlignment.alignToReef(left).withTimeout(5))
+                .andThen(orchestrator.placeCoral(4))
+                .andThen(Commands.waitSeconds(1.2))
+                .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
   }
 
   public Command BScore(boolean left) {
@@ -75,7 +78,9 @@ public class AutosAlternate {
         .andThen(
             fieldAlignment
                 .alignToReef(left)
+                .withTimeout(5)
                 .andThen(orchestrator.placeCoral(4))
+                .andThen(Commands.waitSeconds(1.2))
                 .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
   }
 
@@ -95,7 +100,10 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(
             new StraightDriveToPose(drive, scorePoint, 0.04)
-                .andThen(fieldAlignment.alignToReef(left))
-                .andThen(orchestrator.placeCoral(4)));
+                .withTimeout(4)
+                .andThen(fieldAlignment.alignToReef(left).withTimeout(5))
+                .andThen(orchestrator.placeCoral(4))
+                .andThen(Commands.waitSeconds(1.2)))
+          .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));;
   }
 }
