@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutosAlternate;
@@ -195,7 +196,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    AutosAlternate autosAlternate = new AutosAlternate(drive, orchestrator, fieldAlignment);
+    AutosAlternate autosAlternate = new AutosAlternate(drive, orchestrator, fieldAlignment, coral);
     autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
     autoChooser.addOption("A Score Left", autosAlternate.AScore(true));
     autoChooser.addOption("A Score Right", autosAlternate.AScore(false));
@@ -203,6 +204,7 @@ public class RobotContainer {
     autoChooser.addOption("B Score Right", autosAlternate.BScore(false));
     autoChooser.addOption("C Score Left", autosAlternate.CScore(true));
     autoChooser.addOption("C Score Right", autosAlternate.CScore(false));
+    autoChooser.addOption("B Score Hope and Pray", autosAlternate.BScoreHopeAndPray());
 
     registerAutoRoutines();
 
@@ -241,37 +243,57 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-    driverController
-        .pov(-1)
-        .whileFalse(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
-    operatorController.x().onTrue(orchestrator.moveElevatorToLevel(false, 1));
-    operatorController.y().onTrue(orchestrator.moveElevatorToLevel(false, 2));
-    operatorController.a().onTrue(orchestrator.moveElevatorToLevel(false, 3));
-    operatorController.b().onTrue(orchestrator.moveElevatorToLevel(false, 4));
-    operatorController.leftTrigger().onTrue(orchestrator.removeAlgae(2));
-    operatorController.leftBumper().onTrue(orchestrator.removeAlgae(3));
-    operatorController.rightBumper().onTrue(climber.deploy());
-    operatorController.rightTrigger().onTrue(climber.winch());
-    driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReef(true));
-    driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReef(false));
-    driverController
-        .leftTrigger(0.1)
+    CustomTriggers.autoModeInput(
+            new Trigger(() -> driverController.getHID().getPOV() != -1), operatorController.pov(0))
+        .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    CustomTriggers.manualModeInput(
+            new Trigger(() -> driverController.getHID().getPOV() != -1), operatorController.pov(0))
+        .whileTrue(
+            fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
+    CustomTriggers.autoModeInput(operatorController.x(), operatorController.back())
+        .onTrue(orchestrator.moveElevatorToLevel(false, 1));
+    CustomTriggers.autoModeInput(operatorController.y(), operatorController.back())
+        .onTrue(orchestrator.moveElevatorToLevel(false, 2));
+    CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
+        .onTrue(orchestrator.moveElevatorToLevel(false, 3));
+    CustomTriggers.manualModeInput(operatorController.a(), operatorController.back())
+        .whileTrue(elevator.runPercent(-0.3));
+    CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
+        .onTrue(orchestrator.moveElevatorToLevel(false, 3));
+    CustomTriggers.manualModeInput(operatorController.b(), operatorController.back())
+        .whileTrue(elevator.runPercent(0.3));
+    CustomTriggers.autoModeInput(operatorController.b(), operatorController.back())
+        .onTrue(orchestrator.moveElevatorToLevel(false, 4));
+    CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.back())
+        .onTrue(orchestrator.removeAlgae(2));
+    CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.back())
+        .onTrue(orchestrator.removeAlgae(3));
+    CustomTriggers.autoModeInput(operatorController.rightBumper(), operatorController.back())
+        .whileTrue(climber.deploy());
+    CustomTriggers.autoModeInput(operatorController.rightTrigger(), operatorController.back())
+        .whileTrue(climber.winch());
+    CustomTriggers.manualModeInput(operatorController.rightBumper(), operatorController.back())
+        .whileTrue(climber.runPercent(0.15));
+    CustomTriggers.manualModeInput(operatorController.rightTrigger(), operatorController.back())
+        .whileTrue(climber.runPercent(-0.15));
+    driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
+    driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
+    CustomTriggers.autoModeInput(driverController.leftTrigger(), operatorController.pov(270))
         .toggleOnTrue(
             Commands.parallel(
                     fieldAlignment.faceCoralStation(
                         driverController::getLeftX, driverController::getLeftY),
                     orchestrator.intake())
                 .until(coral::hasCoral));
+    CustomTriggers.manualModeInput(driverController.leftTrigger(), operatorController.pov(270))
+        .toggleOnTrue(orchestrator.intake());
     driverController
         .a()
         .toggleOnTrue(
             fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController.x().whileTrue(coral.takeBackCoral());
     driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
-    driverController.b().whileTrue(elevator.runPercent(0.3));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
-    driverController.a().onTrue(coral.dumpCoral());
   }
 
   private void addAutoRoutine(String routineName) {

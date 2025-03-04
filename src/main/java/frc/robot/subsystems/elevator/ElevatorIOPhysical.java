@@ -11,7 +11,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.Schematic;
@@ -38,10 +37,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
         .idleMode(IdleMode.kBrake)
         .inverted(false)
         .smartCurrentLimit(elevatorCurrentLimit)
-        .voltageCompensation(12.0)
-        .softLimit
-        .forwardSoftLimit(Units.inchesToMeters(73))
-        .forwardSoftLimitEnabled(true);
+        .voltageCompensation(12.0);
     config
         .alternateEncoder
         .positionConversionFactor(ENCODER_CONVERSION_FACTOR)
@@ -133,9 +129,9 @@ public class ElevatorIOPhysical implements ElevatorIO {
   @Override
   public void hold(double holdPosition) {
     if (encoder.getPosition() < holdPosition) {
-      spark.setVoltage(-0.15);
+      spark.setVoltage(-0.27);
     } else if (encoder.getPosition() > holdPosition) {
-      spark.setVoltage(0.15);
+      spark.setVoltage(0.27);
     }
   }
 }

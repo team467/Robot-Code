@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Percent;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import frc.robot.subsystems.leds.LedPatterns;
@@ -15,29 +17,40 @@ public class RobotState {
   public enum Mode {
 
     // 2025 Specific
-    HAS_CORAL(LedPatterns.PURPLE.colorPatternOnly(), Sections.FULL),
-    HOPPER_SEES_CORAL(LedPatterns.PURPLE.colorPatternOnly(), Sections.BASE1),
-    INTAKING_CORAL(LedPatterns.STRIPE_CORAL.scroll(2), Sections.FULL),
-    ALGAE_EFFECTOR_RUNNING(LedPatterns.STRIPE_ALGAE.scroll(2), Sections.FULL),
-    CLIMBER_WINCHED(LedPatterns.RAINBOW.scroll(), Sections.FULL),
-    DUCK(LedPatterns.STRIPE_COM.scroll(), Sections.FULL),
-    ELEVATOR_CORAL_L1(LedPatterns.PURPLE.blink(0.2), Sections.FIRST_QUARTER),
-    ELEVATOR_CORAL_L2(LedPatterns.PURPLE.blink(0.2), Sections.SECOND_QUARTER),
-    ELEVATOR_CORAL_L3(LedPatterns.PURPLE.blink(0.2), Sections.THIRD_QUARTER),
-    ELEVATOR_CORAL_L4(LedPatterns.PURPLE.blink(0.2), Sections.FOURTH_QUARTER),
-    ELEVATOR_ALGAE_L2(LedPatterns.GREEN.blink(0.2), Sections.SECOND_QUARTER),
-    ELEVATOR_ALGAE_L3(LedPatterns.GREEN.blink(0.2), Sections.THIRD_QUARTER),
+    HAS_CORAL(LedPatterns.PURPLE.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    HOPPER_SEES_CORAL(
+        LedPatterns.PURPLE.colorPatternOnly().atBrightness(Percent.of(50)), Sections.BASE1),
+    INTAKING_CORAL(LedPatterns.STRIPE_CORAL.scroll(2).atBrightness(Percent.of(50)), Sections.FULL),
+    ALGAE_EFFECTOR_RUNNING(
+        LedPatterns.STRIPE_ALGAE.scroll(2).atBrightness(Percent.of(50)), Sections.FULL),
+    CLIMBER_WINCHED(LedPatterns.RAINBOW.scroll().atBrightness(Percent.of(50)), Sections.FULL),
+    DUCK(LedPatterns.STRIPE_COM.scroll().atBrightness(Percent.of(50)), Sections.FULL),
+    ELEVATOR_CORAL_L1(
+        LedPatterns.PURPLE.blink(0.2).atBrightness(Percent.of(50)), Sections.FIRST_QUARTER),
+    ELEVATOR_CORAL_L2(
+        LedPatterns.PURPLE.blink(0.2).atBrightness(Percent.of(50)), Sections.SECOND_QUARTER),
+    ELEVATOR_CORAL_L3(
+        LedPatterns.PURPLE.blink(0.2).atBrightness(Percent.of(50)), Sections.THIRD_QUARTER),
+    ELEVATOR_CORAL_L4(
+        LedPatterns.PURPLE.blink(0.2).atBrightness(Percent.of(50)), Sections.FOURTH_QUARTER),
+    ELEVATOR_ALGAE_L2(
+        LedPatterns.GREEN.blink(0.2).atBrightness(Percent.of(50)), Sections.SECOND_QUARTER),
+    ELEVATOR_ALGAE_L3(
+        LedPatterns.GREEN.blink(0.2).atBrightness(Percent.of(50)), Sections.THIRD_QUARTER),
 
     // Same every year
-    ESTOPPED(LedPatterns.RED.colorPatternOnly(), Sections.FULL),
-    AUTO_FINISHED(LedPatterns.STRIPE_COM.colorPatternOnly(), Sections.FULL),
-    AUTONOMOUS(LedPatterns.RAINBOW.colorPatternOnly(), Sections.FULL),
-    BLUE_ALLIANCE(LedPatterns.FRC_BLUE.colorPatternOnly(), Sections.FULL),
-    RED_ALLIANCE(LedPatterns.FRC_RED.colorPatternOnly(), Sections.FULL),
-    LOW_BATTERY_ALERT(LedPatterns.RED.blink(0.2), Sections.FULL),
-    DISABLED(LedPatterns.GRAY.colorPatternOnly(), Sections.FULL),
-    OFF(LedPatterns.BLACK.colorPatternOnly(), Sections.FULL),
-    DEFAULT(LedPatterns.BLACK.colorPatternOnly(), Sections.FULL);
+    ESTOPPED(LedPatterns.RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    AUTO_FINISHED(
+        LedPatterns.STRIPE_COM.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    AUTONOMOUS(LedPatterns.RAINBOW.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    BLUE_ALLIANCE(
+        LedPatterns.FRC_BLUE.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    RED_ALLIANCE(
+        LedPatterns.FRC_RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    LOW_BATTERY_ALERT(LedPatterns.RED.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+    DISABLED(LedPatterns.GRAY.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    OFF(LedPatterns.BLACK.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    DEFAULT(LedPatterns.BLACK.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL);
 
     public final LEDPattern ledPattern;
     public final Sections ledSection;

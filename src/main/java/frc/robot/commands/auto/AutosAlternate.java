@@ -3,45 +3,66 @@ package frc.robot.commands.auto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.ChoreoVariables;
+import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.Orchestrator;
 import frc.robot.commands.drive.FieldAlignment;
+import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class AutosAlternate {
   private final Drive drive;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
+  private final CoralEffector coral;
 
-  public AutosAlternate(Drive drive, Orchestrator orchestrator, FieldAlignment fieldAlignment) {
+  public AutosAlternate(
+      Drive drive, Orchestrator orchestrator, FieldAlignment fieldAlignment, CoralEffector coral) {
     this.drive = drive;
     this.orchestrator = orchestrator;
     this.fieldAlignment = fieldAlignment;
+    this.coral = coral;
+  }
+
+  public Command BScoreHopeAndPray() {
+    return Commands.defer(
+            () -> {
+              drive.runVelocity(new ChassisSpeeds(-Units.inchesToMeters(30), 0, 0));
+              return null;
+            },
+            Set.of(drive))
+        .andThen(Commands.waitSeconds(5))
+        .andThen(orchestrator.placeCoral(4))
+        .andThen(Commands.waitSeconds(2))
+        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
   public Command zeroPiece() {
     Supplier<Pose2d> B = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("B"));
     return Commands.runOnce(() -> drive.setPose(B.get()))
-        .andThen(new StraightDriveToPose(-1, 0, 0, drive));
+        .andThen(new StraightDriveToPose(-1, 0, 0, drive, 0.04));
   }
 
   public Command B1L() {
     Supplier<Pose2d> B = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("B"));
     Supplier<Pose2d> L1 = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("L1"));
     return Commands.runOnce(() -> drive.setPose(B.get()))
-        .andThen(new StraightDriveToPose(drive, L1));
+        .andThen(new StraightDriveToPose(drive, L1, 0.04));
   }
 
   public Command B1R() {
     Supplier<Pose2d> B = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("B"));
     Supplier<Pose2d> R1 = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("R1"));
     return Commands.runOnce(() -> drive.setPose(B.get()))
-        .andThen(new StraightDriveToPose(drive, R1));
+        .andThen(new StraightDriveToPose(drive, R1, 0.04));
   }
 
   public Command AScore(boolean left) {
@@ -59,9 +80,14 @@ public class AutosAlternate {
                     new Rotation2d(0.8550528118433292)));
     return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(
-            new StraightDriveToPose(drive, scorePoint)
-                .andThen(fieldAlignment.alignToReef(left))
-                .andThen(orchestrator.placeCoral(4)));
+            new StraightDriveToPose(drive, scorePoint, 0.04)
+                .withTimeout(4)
+                .andThen(fieldAlignment.alignToReef(left).withTimeout(5))
+                .andThen(orchestrator.moveElevatorToLevel(false, 4).withTimeout(3))
+                .andThen()
+                // .andThen(orchestrator.placeCoral(4))
+                .andThen(Commands.waitSeconds(1.2))
+                .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
   }
 
   public Command BScore(boolean left) {
@@ -75,8 +101,12 @@ public class AutosAlternate {
         .andThen(
             fieldAlignment
                 .alignToReef(left)
-                .andThen(orchestrator.placeCoral(4))
-                .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
+                .withTimeout(3)
+                .andThen(orchestrator.moveElevatorToLevel(false, 4).withTimeout(3))
+                .andThen(coral.dumpCoral().withTimeout(4))
+                // .andThen(orchestrator.placeCoral(4))
+                .andThen(Commands.waitSeconds(1.2))
+                .andThen(orchestrator.moveElevatorToSetpoint(ReefHeight.L1.height)));
   }
 
   public Command CScore(boolean left) {
@@ -94,8 +124,12 @@ public class AutosAlternate {
                     new Rotation2d(-0.982794168198375)));
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(
-            new StraightDriveToPose(drive, scorePoint)
+            new StraightDriveToPose(drive, scorePoint, 0.04)
+                .withTimeout(4)
                 .andThen(fieldAlignment.alignToReef(left))
-                .andThen(orchestrator.placeCoral(4)));
+                .withTimeout(5)
+                .andThen(orchestrator.placeCoral(4))
+                .andThen(Commands.waitSeconds(1.2))
+                .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
   }
 }

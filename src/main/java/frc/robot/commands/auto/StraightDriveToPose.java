@@ -41,8 +41,8 @@ public class StraightDriveToPose extends Command {
   private double driveErrorAbs;
   private double thetaErrorAbs;
 
-  private static final double DRIVE_TOLERANCE = 0.04;
-  private static final double THETA_TOLERANCE = Units.degreesToRadians(8.0);
+  private static final double DRIVE_TOLERANCE = 0.005;
+  private static final double THETA_TOLERANCE = Units.degreesToRadians(1.0);
 
   public StraightDriveToPose(
       double deltaXMeters, double deltaYMeters, double deltaThetaRad, Drive drive) {
@@ -66,22 +66,59 @@ public class StraightDriveToPose extends Command {
                         + (DriverStation.getAlliance().isEmpty()
                                 || DriverStation.getAlliance().get() == Alliance.Blue
                             ? deltaThetaRad
-                            : -deltaThetaRad))));
+                            : -deltaThetaRad))),
+        DRIVE_TOLERANCE);
+  }
+
+  public StraightDriveToPose(
+      double deltaXMeters,
+      double deltaYMeters,
+      double deltaThetaRad,
+      Drive drive,
+      double driveTolerance) {
+    this(
+        drive,
+        () ->
+            new Pose2d(
+                new Translation2d(
+                    drive.getPose().getTranslation().getX()
+                        + (DriverStation.getAlliance().isEmpty()
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaXMeters
+                            : -deltaXMeters),
+                    drive.getPose().getTranslation().getY()
+                        + (DriverStation.getAlliance().isEmpty()
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaYMeters
+                            : -deltaYMeters)),
+                new Rotation2d(
+                    drive.getPose().getRotation().getRadians()
+                        + (DriverStation.getAlliance().isEmpty()
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaThetaRad
+                            : -deltaThetaRad))),
+        driveTolerance);
   }
 
   public StraightDriveToPose(Pose2d targetPose, Drive drive) {
-    this(drive, () -> targetPose);
+    this(drive, () -> targetPose, DRIVE_TOLERANCE);
   }
 
   public StraightDriveToPose(Drive drive, Pose2d targetPose) {
-    this(drive, () -> targetPose);
+    this(drive, () -> targetPose, DRIVE_TOLERANCE);
   }
 
   public StraightDriveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+    this(drive, targetPoseSupplier, DRIVE_TOLERANCE);
+  }
+
+  public StraightDriveToPose(
+      Drive drive, Supplier<Pose2d> targetPoseSupplier, double driveTolerance) {
     this.drive = drive;
     this.poseSupplier = targetPoseSupplier;
     addRequirements(drive);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    driveController.setTolerance(driveTolerance);
   }
 
   @Override

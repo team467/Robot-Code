@@ -72,8 +72,8 @@ public class CoralEffector extends SubsystemBase {
               io.setSpeed(CoralEffectorConstants.CORAL_INTAKE_SPEED.get());
             },
             this)
-        .until(this::hasCoral)
-        .finallyDo(this::takeBackCoral)
-        .withTimeout(CoralEffectorConstants.EFFECTOR_PULLBACK_SECONDS.get());
+        .until(this::hasCoral);
+    //        .finallyDo(this::takeBackCoral)
+    //        .withTimeout(CoralEffectorConstants.EFFECTOR_PULLBACK_SECONDS.get());
   }
 }
