@@ -1,7 +1,6 @@
 package frc.robot.subsystems.algae;
 
 public class AlgaeEffectorConstants {
-  public static final double STOW_ANGLE = 0.0;
   public static final double REMOVAL_ANGLE = 370.0;
 
   public static final double REMOVAL_VOLTAGE = -8;
