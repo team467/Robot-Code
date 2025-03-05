@@ -36,6 +36,15 @@ public class AlgaeEffector extends SubsystemBase {
     return inputs.isSpinning;
   }
 
+  /**
+   * Stows the algae effector arm by retracting it and setting the removal voltage to zero.
+   *
+   * This method sets the pivot voltage to retract the arm and ensures the removal voltage is off.
+   * The command will continue until the arm is stowed or a timeout of 3 seconds is reached,
+   * after which it will call the stop method.
+   *
+   * @return A Command that executes the stowing operation.
+   */
   public Command stowArm() {
     return Commands.run(
             () -> {
@@ -48,7 +57,14 @@ public class AlgaeEffector extends SubsystemBase {
         .andThen(stop());
   }
 
-  /** When the arm is extended, it starts the algae motor too */
+  /**
+   * Initiates the algae removal process by adjusting the pivot and removal voltages.
+   *
+   * If the effector is not fully extended, it sets the pivot voltage to extend it.
+   * If it is fully extended, it sets the pivot voltage to zero and activates the removal voltage.
+   *
+   * @return A Command that executes the algae removal operation.
+   */
   public Command removeAlgae() {
     return Commands.run(
         () -> {
@@ -62,7 +78,11 @@ public class AlgaeEffector extends SubsystemBase {
         this);
   }
 
-  /** Stops all algae arm actions */
+  /**
+   * Stops the algae effector by setting the pivot and removal voltages to zero.
+   *
+   * @return A Command that executes the stop operation.
+   */
   public Command stop() {
     return Commands.run(
         () -> {
