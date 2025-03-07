@@ -44,6 +44,40 @@ public class AutosAlternate {
         .andThen(Commands.waitSeconds(2))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
+//
+//  public Command BScoreHopeAndPrayIntake() {
+//    return Commands.sequence(
+//        Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-Units.inchesToMeters(60), 0, 0)))
+//            .withTimeout(1.95),
+//
+//        //            .andThen(orchestrator.placeCoral(4))
+//        //            .andThen(Commands.waitSeconds(3))
+//        //
+//        // .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)),
+//        Commands.run(
+//                () -> {
+//                  drive.runVelocity(
+//                      new ChassisSpeeds(Units.inchesToMeters(5), Units.inchesToMeters(40), 0));
+//                })
+//            .withTimeout(2.3),
+//        //
+//        Commands.run(
+//                () ->
+//                    fieldAlignment
+//                        .getClosestCoralStationPosition()
+//                        .get()
+//                        .getRotation()
+//                        .rotateBy(Rotation2d.fromDegrees(180)))
+//            .withTimeout(1.2),
+//        Commands.run(
+//                () -> {
+//                  drive.runVelocity(
+//                      new ChassisSpeeds(Units.inchesToMeters(0), Units.inchesToMeters(45), 0));
+//                })
+//            .withTimeout(4)
+//            .andThen(orchestrator.intake())
+//            .withTimeout(5));
+//  }
 
   public Command zeroPiece() {
     Supplier<Pose2d> B = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("B"));
