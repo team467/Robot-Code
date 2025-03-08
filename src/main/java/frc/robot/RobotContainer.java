@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutosAlternate;
+import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
@@ -231,6 +232,8 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
+
+    driverController.rightStick().whileTrue(new StraightDriveToPose(1, 0, 0, drive));
 
     // Lock to 0° when A button is held
 
