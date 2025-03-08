@@ -8,6 +8,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutosAlternate;
+import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
@@ -197,6 +199,10 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     AutosAlternate autosAlternate = new AutosAlternate(drive, orchestrator, fieldAlignment, coral);
+    autoChooser.addOption("DriveTune", new StraightDriveToPose(drive, drive.getPose().transformBy(new Transform2d(0.0,
+        Units.inchesToMeters(100), new Rotation2d()))));
+    autoChooser.addOption("DriveTuneFlipped90", new StraightDriveToPose(drive, drive.getPose().transformBy(new Transform2d(0.0,
+        Units.inchesToMeters(100), new Rotation2d()))));
     autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
     autoChooser.addOption("A Score Left", autosAlternate.AScore(true));
     autoChooser.addOption("A Score Right", autosAlternate.AScore(false));
