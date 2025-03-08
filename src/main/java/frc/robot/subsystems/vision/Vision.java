@@ -7,23 +7,29 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
+  private final Supplier<ChassisSpeeds> speedsSupplier;
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
 
-  public Vision(VisionConsumer consumer, VisionIO... io) {
+  public Vision(VisionConsumer consumer, Supplier<ChassisSpeeds> driveSpeeds, VisionIO... io) {
     this.consumer = consumer;
+    this.speedsSupplier = driveSpeeds;
     this.io = io;
 
     // Initialize inputs
@@ -85,6 +91,7 @@ public class Vision extends SubsystemBase {
       // Loop over pose observations
       for (var observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
+        ChassisSpeeds currentSpeed = speedsSupplier.get();
         boolean rejectPose =
             observation.tagCount() == 0 // Must have at least one tag
                 || (observation.tagCount() == 1
@@ -96,7 +103,10 @@ public class Vision extends SubsystemBase {
                 || observation.pose().getX() < 0.0
                 || observation.pose().getX() > aprilTagLayout.getFieldLength()
                 || observation.pose().getY() < 0.0
-                || observation.pose().getY() > aprilTagLayout.getFieldWidth();
+                || observation.pose().getY() > aprilTagLayout.getFieldWidth()
+                || (currentSpeed.vxMetersPerSecond >= Units.inchesToMeters(5))
+                || (currentSpeed.vyMetersPerSecond >= Units.inchesToMeters(5))
+                || (currentSpeed.omegaRadiansPerSecond >= Units.degreesToRadians(5));
 
         // Add pose to log
         robotPoses.add(observation.pose());
@@ -107,7 +117,7 @@ public class Vision extends SubsystemBase {
         }
 
         // Skip if rejected
-        if (rejectPose) {
+        if (rejectPose || !RobotState.visionEnabled) {
           continue;
         }
 

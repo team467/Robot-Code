@@ -114,6 +114,9 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/ElevatorPosition")
   public ElevatorPosition elevatorPosition = null;
 
+  @AutoLogOutput(key = "RobotState/VisionEnabled")
+  public static boolean visionEnabled = true;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 

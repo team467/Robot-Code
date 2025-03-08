@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.utils.GeomUtils;
 import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -29,10 +30,13 @@ public class StraightDriveToPose extends Command {
           3.0,
           0,
           0.0,
-          new Constraints(Units.inchesToMeters(85), Units.inchesToMeters(450.0))); // 90
+          new Constraints(Units.inchesToMeters(85), Units.inchesToMeters(450.0 / 2))); // 90
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(
-          5.0, 0, 0.0, new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(720.0)));
+          5.0,
+          0,
+          0.0,
+          new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(720.0 / 2)));
 
   private double driveErrorAbs;
   private double thetaErrorAbs;
@@ -152,6 +156,7 @@ public class StraightDriveToPose extends Command {
 
   @Override
   public void initialize() {
+    RobotState.visionEnabled = false;
     Pose2d currentPose = drive.getPose();
     Pose2d targetPose = poseSupplier.get();
 
@@ -232,6 +237,7 @@ public class StraightDriveToPose extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    RobotState.visionEnabled = true;
     running = false;
     drive.stop();
   }

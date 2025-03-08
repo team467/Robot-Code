@@ -35,7 +35,7 @@ public class FieldAlignment {
       new TunableNumber("FieldAlignment/BranchToRobotBackup", -9.8);
   // you can change these values
   @AutoLogOutput public double CORAL_EFFECTOR_OFFSET_TUNING = 2.9;
-  @AutoLogOutput private double BRANCH_TO_ROBOT_BACKUP_TUNING = -9.8;
+  @AutoLogOutput private double BRANCH_TO_ROBOT_BACKUP_TUNING = -10.2;
   private final Drive drive;
 
   public FieldAlignment(Drive drive) {
@@ -58,11 +58,19 @@ public class FieldAlignment {
 
   public Command alignToReefMatchTunable(boolean branchLeft) {
     return Commands.defer(
-        () ->
-            new StraightDriveToPose(
-                    drive, getBranchPositionMatchTunable(branchLeft, closestReefFace()))
-                .withTimeout(10),
-        Set.of(drive));
+            () ->
+                new StraightDriveToPose(
+                        drive, getPreBranchPositionMatchTunable(branchLeft, closestReefFace()))
+                    .withTimeout(1),
+            Set.of(drive))
+        .andThen(Commands.waitSeconds(2))
+        .andThen(
+            Commands.defer(
+                () ->
+                    new StraightDriveToPose(
+                            drive, getBranchPositionMatchTunable(branchLeft, closestReefFace()))
+                        .withTimeout(10),
+                Set.of(drive)));
   }
 
   public Command faceReef(DoubleSupplier leftJoystickX, DoubleSupplier leftJoystickY) {
@@ -108,6 +116,49 @@ public class FieldAlignment {
                       * Math.sin(branchPose.getRotation().getRadians()),
               branchPose.getY() // Move back robot relative
                   - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING)
+                      * Math.sin(branchPose.getRotation().getRadians())
+                  + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
+                      * Math.cos(branchPose.getRotation().getRadians()),
+              branchPose.getRotation());
+      Logger.recordOutput("FieldAlignment/DesiredPose", desiredPose);
+      Pose3d desiredPose3d =
+          new Pose3d(
+              branchPose3d.getX() // Move left robot relative
+                  - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING)
+                      * Math.cos(branchPose3d.getRotation().toRotation2d().getRadians())
+                  - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
+                      * Math.sin(branchPose3d.getRotation().toRotation2d().getRadians()),
+              branchPose3d.getY() // Move back robot relative
+                  - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING)
+                      * Math.sin(branchPose3d.getRotation().toRotation2d().getRadians())
+                  + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
+                      * Math.cos(branchPose3d.getRotation().toRotation2d().getRadians()),
+              branchPose3d.getZ(),
+              branchPose3d.getRotation());
+      Logger.recordOutput("FieldAlignment/DesiredPose3d", branchPose3d);
+      return desiredPose;
+    };
+  }
+
+  public Supplier<Pose2d> getPreBranchPositionMatchTunable(
+      boolean branchLeft, int closestReefFace) {
+    int branch = closestReefFace * 2;
+    if (branchLeft) {
+      branch++;
+    }
+    Pose3d branchPose3d = AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L3));
+    Pose2d branchPose =
+        AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L1).toPose2d());
+    return () -> {
+      Pose2d desiredPose =
+          new Pose2d(
+              branchPose.getX() // Move left robot relative
+                  - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING - 24)
+                      * Math.cos(branchPose.getRotation().getRadians())
+                  - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
+                      * Math.sin(branchPose.getRotation().getRadians()),
+              branchPose.getY() // Move back robot relative
+                  - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING - 24)
                       * Math.sin(branchPose.getRotation().getRadians())
                   + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
                       * Math.cos(branchPose.getRotation().getRadians()),
