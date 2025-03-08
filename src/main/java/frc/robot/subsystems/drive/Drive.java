@@ -35,6 +35,7 @@ import frc.lib.utils.LocalADStarAK;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.RobotState;
+import frc.robot.subsystems.vision.VisionConstants;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -161,8 +162,22 @@ public class Drive extends SubsystemBase {
                     - lastModulePositions[moduleIndex].distanceMeters,
                 modulePositions[moduleIndex].angle);
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
-        Logger.recordOutput("Drive/Camera0Pose", new Pose3d(getPose().getX(), getPose().getY(), 0, new Rotation3d(0, 0, getRotation().getDegrees())).transformBy(VisionConstants.robotToCamera0));
-        Logger.recordOutput("Drive/Camera1Pose", new Pose3d(getPose().getX(), getPose().getY(), 0, new Rotation3d(0, 0, getRotation().getDegrees())).transformBy(VisionConstants.robotToCamera1));
+        Logger.recordOutput(
+            "Drive/Camera0Pose",
+            new Pose3d(
+                    getPose().getX(),
+                    getPose().getY(),
+                    0,
+                    new Rotation3d(0, 0, getRotation().getRadians()))
+                .transformBy(VisionConstants.robotToCamera0));
+        Logger.recordOutput(
+            "Drive/Camera1Pose",
+            new Pose3d(
+                    getPose().getX(),
+                    getPose().getY(),
+                    0,
+                    new Rotation3d(0, 0, getRotation().getRadians()))
+                .transformBy(VisionConstants.robotToCamera1));
       }
 
       // Update gyro angle
