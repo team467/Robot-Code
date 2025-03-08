@@ -2,6 +2,7 @@ package frc.robot.commands.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -63,6 +64,46 @@ public class AutosAlternate {
     Supplier<Pose2d> R1 = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("R1"));
     return Commands.runOnce(() -> drive.setPose(B.get()))
         .andThen(new StraightDriveToPose(drive, R1, 0.04));
+  }
+
+  public Command Move20() {
+    Supplier<Pose2d> newPose =
+        () ->
+            drive
+                .getPose()
+                .transformBy(
+                    new Transform2d(Units.feetToMeters(-20), 0, Rotation2d.fromRadians(0)));
+    return new StraightDriveToPose(drive, newPose, 0.005);
+  }
+
+  public Command Move10() {
+    Supplier<Pose2d> newPose =
+        () ->
+            drive
+                .getPose()
+                .transformBy(
+                    new Transform2d(Units.feetToMeters(-10), 0, Rotation2d.fromRadians(0)));
+    return new StraightDriveToPose(drive, newPose, 0.005);
+  }
+
+  public Command Move12in() {
+    Supplier<Pose2d> newPose =
+        () ->
+            drive
+                .getPose()
+                .transformBy(
+                    new Transform2d(Units.inchesToMeters(-12), 0, Rotation2d.fromRadians(0)));
+    return new StraightDriveToPose(drive, newPose, 0.005);
+  }
+
+  public Command Move6in() {
+    Supplier<Pose2d> newPose =
+        () ->
+            drive
+                .getPose()
+                .transformBy(
+                    new Transform2d(Units.inchesToMeters(-6), 0, Rotation2d.fromRadians(0)));
+    return new StraightDriveToPose(drive, newPose, 0.005);
   }
 
   public Command AScore(boolean left) {

@@ -205,6 +205,10 @@ public class RobotContainer {
     autoChooser.addOption("C Score Left", autosAlternate.CScore(true));
     autoChooser.addOption("C Score Right", autosAlternate.CScore(false));
     autoChooser.addOption("B Score Hope and Pray", autosAlternate.BScoreHopeAndPray());
+    autoChooser.addOption("Move 20ft", autosAlternate.Move20());
+    autoChooser.addOption("Move 6in", autosAlternate.Move6in());
+    autoChooser.addOption("Move 10ft", autosAlternate.Move10());
+    autoChooser.addOption("Move 12in", autosAlternate.Move12in());
 
     registerAutoRoutines();
 
