@@ -223,16 +223,17 @@ public class AutosAlternate {
                 .andThen(Commands.waitSeconds(1.2))
                 .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(new StraightDriveToPose(drive, scorePoint2, 0.04))
-        .withTimeout(4)
+        // .andThen(Commands.waitSeconds(1.2))
         .andThen(fieldAlignment.alignToCoralStation())
-        .withTimeout(4)
-        .andThen(orchestrator.intake())
+        .andThen(Commands.waitSeconds(1))
+        .andThen(orchestrator.intake().withTimeout(0.3))
+        .andThen(coral.stop())
         .andThen(new StraightDriveToPose(drive, scorePoint3, 0.04))
-        .withTimeout(4)
+        .andThen(Commands.waitSeconds(1.2))
         .andThen(
             fieldAlignment
                 .alignToReef(left)
-                .withTimeout(4)
+                .andThen(Commands.waitSeconds(1.2))
                 .andThen(orchestrator.placeCoral(4))
                 .andThen(Commands.waitSeconds(1.2))
                 .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));

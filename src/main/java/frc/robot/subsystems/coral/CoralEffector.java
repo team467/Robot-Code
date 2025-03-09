@@ -38,7 +38,7 @@ public class CoralEffector extends SubsystemBase {
   }
 
   public Command stop() {
-    return Commands.run(
+    return Commands.runOnce(
         () -> {
           io.setSpeed(0);
         },
