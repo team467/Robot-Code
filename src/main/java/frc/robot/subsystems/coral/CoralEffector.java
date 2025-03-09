@@ -68,12 +68,26 @@ public class CoralEffector extends SubsystemBase {
 
   public Command intakeCoral() {
     return Commands.run(
-            () -> {
-              io.setSpeed(CoralEffectorConstants.CORAL_INTAKE_SPEED.get());
-            },
-            this)
-        .until(this::hasCoral);
+        () -> {
+          io.setSpeed(CoralEffectorConstants.CORAL_INTAKE_SPEED.get());
+        },
+        this);
+
     //        .finallyDo(this::takeBackCoral)
     //        .withTimeout(CoralEffectorConstants.EFFECTOR_PULLBACK_SECONDS.get());
+  }
+
+  public Command intakeCoralRevised() {
+    return Commands.sequence(
+        Commands.waitUntil(() -> RobotState.getInstance().hopperSeesCoral),
+        Commands.run(
+                () -> {
+                  io.setSpeed(CoralEffectorConstants.CORAL_INTAKE_SPEED.get());
+                })
+            .onlyWhile(() -> RobotState.getInstance().hopperSeesCoral),
+        Commands.run(
+            () -> {
+              io.setSpeed(0);
+            }));
   }
 }
