@@ -15,7 +15,6 @@ import frc.robot.Orchestrator;
 import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -25,19 +24,13 @@ public class AutosAlternate {
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
   private final CoralEffector coral;
-  private final Elevator elevator;
 
   public AutosAlternate(
-      Drive drive,
-      Orchestrator orchestrator,
-      FieldAlignment fieldAlignment,
-      CoralEffector coral,
-      Elevator elevator) {
+      Drive drive, Orchestrator orchestrator, FieldAlignment fieldAlignment, CoralEffector coral) {
     this.drive = drive;
     this.orchestrator = orchestrator;
     this.fieldAlignment = fieldAlignment;
     this.coral = coral;
-    this.elevator = elevator;
   }
 
   public Command BScoreHopeAndPray() {
@@ -222,25 +215,20 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(Commands.waitSeconds(1))
         .andThen(
-            new StraightDriveToPose(drive, scorePoint1, 0.5)
+            new StraightDriveToPose(drive, scorePoint1, 0.04)
                 .withTimeout(4)
                 .andThen(fieldAlignment.alignToReef(left))
                 .withTimeout(5)
                 .andThen(orchestrator.placeCoral(4))
                 .andThen(Commands.waitSeconds(1.2))
                 .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
-        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.3))
+        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.04))
         // .andThen(Commands.waitSeconds(1.2))
-        // .andThen(Commands.waitUntil(()->RobotState.getInstance().PoseConfidence))
-        .andThen(
-            Commands.parallel(
-                fieldAlignment.alignToCoralStation(),
-                elevator.toSetpoint(ElevatorConstants.INTAKE_POSITION)))
+        .andThen(fieldAlignment.alignToCoralStation())
         .andThen(Commands.waitSeconds(1))
-        .andThen(coral.intakeCoral().withTimeout(0.2))
-        // .andThen(orchestrator.intake().withTimeout(0.3))
-        // .andThen(coral.stop())
-        .andThen(new StraightDriveToPose(drive, scorePoint3, 0.3))
+        .andThen(orchestrator.intake().withTimeout(0.3))
+        .andThen(coral.stop())
+        .andThen(new StraightDriveToPose(drive, scorePoint3, 0.04))
         .andThen(Commands.waitSeconds(1.2))
         .andThen(
             fieldAlignment
