@@ -213,29 +213,29 @@ public class AutosAlternate {
                     new Translation2d(2.899836778640747, 1.7935127019882202),
                     new Rotation2d(-2.1375256093137067)));
     return Commands.runOnce(() -> drive.setPose(C.get()))
-        .andThen(Commands.waitSeconds(1))
-        .andThen(
-            new StraightDriveToPose(drive, scorePoint1, 0.3)
-                .withTimeout(4)
-                .andThen(fieldAlignment.alignToReef(left))
-                .withTimeout(5)
-                .andThen(orchestrator.placeCoral(4))
-                .andThen(Commands.waitSeconds(1.2))
-                .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
-        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.3))
+        .andThen(new StraightDriveToPose(drive, scorePoint1, 0.8))
+        .withTimeout(2.5)
+        .andThen(fieldAlignment.alignToReef(left))
+        .withTimeout(5)
+        .andThen(orchestrator.placeCoral(4))
+        .andThen(Commands.waitSeconds(/* 1.2 */ 0.3))
+        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
+        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.8).withTimeout(2.5))
         // .andThen(Commands.waitSeconds(1.2))
-        .andThen(fieldAlignment.alignToCoralStation())
-        .andThen(Commands.waitSeconds(1))
-        .andThen(orchestrator.intake().withTimeout(0.3))
+        .andThen(fieldAlignment.alignToCoralStation().withTimeout(1))
+        .andThen(orchestrator.intake().until(coral::hasCoral))
         .andThen(
             Commands.race(
-                    new StraightDriveToPose(drive, scorePoint3, 0.3)
-                        .andThen(Commands.waitSeconds(1.2))
-                        .andThen(
-                            fieldAlignment.alignToReef(left).andThen(Commands.waitSeconds(1.2))),
-                    coral.stop())
-                .andThen(orchestrator.placeCoral(4))
-                .andThen(Commands.waitSeconds(1.2))
-                .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
+                new StraightDriveToPose(drive, scorePoint3, 0.8)
+                    .andThen(Commands.waitSeconds(0.5))
+                    .andThen(
+                        fieldAlignment
+                            .alignToReef(left)
+                            .withTimeout(2)
+                            .andThen(Commands.waitSeconds(0.3 /*1.2 */))),
+                coral.stop()))
+        .andThen(orchestrator.placeCoral(4))
+        .andThen(Commands.waitSeconds(1.2))
+        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 }
