@@ -12,7 +12,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotState;
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -105,11 +104,6 @@ public class Vision extends SubsystemBase {
           robotPosesRejected.add(observation.pose());
         } else {
           robotPosesAccepted.add(observation.pose());
-          if (robotPosesAccepted.size() > 1) {
-            RobotState.getInstance().PoseConfidence = true;
-          } else if (robotPosesAccepted.isEmpty()) {
-            RobotState.getInstance().PoseConfidence = false;
-          }
         }
 
         // Skip if rejected
