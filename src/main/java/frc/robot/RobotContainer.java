@@ -206,8 +206,10 @@ public class RobotContainer {
     autoChooser.addOption("C Score Left", autosAlternate.CScore(true));
     autoChooser.addOption("C Score Right", autosAlternate.CScore(false));
     autoChooser.addOption("B Score Hope and Pray", autosAlternate.BScoreHopeAndPray());
-    autoChooser.addOption("Sigma Two Score", autosAlternate.sigmaCTwoScore(true));
-    autoChooser.addOption("Alpha Three Score", autosAlternate.alphaCThreeScore(true));
+    autoChooser.addOption("A Sigma Two Score", autosAlternate.sigmaATwoScore(true));
+    autoChooser.addOption("A Alpha Three Score", autosAlternate.alphaAThreeScore(true));
+    autoChooser.addOption("C Sigma Two Score", autosAlternate.sigmaCTwoScore(true));
+    autoChooser.addOption("C Alpha Three Score", autosAlternate.alphaCThreeScore(true));
 
     registerAutoRoutines();
 
