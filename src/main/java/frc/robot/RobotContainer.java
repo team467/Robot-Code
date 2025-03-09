@@ -196,7 +196,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    AutosAlternate autosAlternate = new AutosAlternate(drive, orchestrator, fieldAlignment, coral);
+    AutosAlternate autosAlternate =
+        new AutosAlternate(drive, orchestrator, fieldAlignment, coral, elevator);
     autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
     autoChooser.addOption("A Score Left", autosAlternate.AScore(true));
     autoChooser.addOption("A Score Right", autosAlternate.AScore(false));
@@ -204,9 +205,9 @@ public class RobotContainer {
     autoChooser.addOption("B Score Right", autosAlternate.BScore(false));
     autoChooser.addOption("C Score Left", autosAlternate.CScore(true));
     autoChooser.addOption("C Score Right", autosAlternate.CScore(false));
-    autoChooser.addOption("Two Coral", autosAlternate.TwoCoralCScore(false));
     autoChooser.addOption("B Score Hope and Pray", autosAlternate.BScoreHopeAndPray());
     autoChooser.addOption("Sigma Two Score", autosAlternate.sigmaTwoScore(true));
+    autoChooser.addOption("Alpha Three Score", autosAlternate.sigmaTwoScore(true));
 
     registerAutoRoutines();
 
