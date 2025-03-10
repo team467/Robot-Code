@@ -119,7 +119,7 @@ public class AutosAlternate {
         .andThen(Commands.waitSeconds(/* 1.2 */ 0.3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
         .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(1.2))
-        .andThen(fieldAlignment.alignToCoralStation().withTimeout(2))
+        .andThen(fieldAlignment.alignToCoralStation())
         .andThen(orchestrator.intake().until(coral::hasCoral))
         .andThen(
             Commands.race(
@@ -166,7 +166,7 @@ public class AutosAlternate {
         .andThen(Commands.waitSeconds(/* 1.2 */ 0.3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
         .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
-        .andThen(fieldAlignment.alignToCoralStation().withTimeout(2))
+        .andThen(fieldAlignment.alignToCoralStation())
         .andThen(orchestrator.intake().until(coral::hasCoral))
         .andThen(
             Commands.race(
@@ -275,7 +275,7 @@ public class AutosAlternate {
         .andThen(Commands.waitSeconds(/* 1.2 */ 0.3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
         .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
-        .andThen(fieldAlignment.alignToCoralStation().withTimeout(2))
+        .andThen(fieldAlignment.alignToCoralStation())
         .andThen(orchestrator.intake().until(coral::hasCoral))
         .andThen(
             Commands.race(
@@ -324,7 +324,7 @@ public class AutosAlternate {
         .andThen(Commands.waitSeconds(/* 1.2 */ 0.3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
         .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
-        .andThen(fieldAlignment.alignToCoralStation().withTimeout(2))
+        .andThen(fieldAlignment.alignToCoralStation())
         .andThen(orchestrator.intake().until(coral::hasCoral))
         .andThen(
             Commands.race(
