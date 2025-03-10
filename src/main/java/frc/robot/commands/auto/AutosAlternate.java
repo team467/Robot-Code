@@ -161,25 +161,21 @@ public class AutosAlternate {
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))
-        .withTimeout(3)
+        .withTimeout(2.5)
         .andThen(orchestrator.placeCoral(4))
         .andThen(Commands.waitSeconds(/* 1.2 */ 0.3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
-        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
+        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(1.2))
         .andThen(fieldAlignment.alignToCoralStation())
         .andThen(orchestrator.intake().until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(2)
-                    .andThen(
-                        fieldAlignment
-                            .alignToReef(left)
-                            .withTimeout(2)
-                            .andThen(Commands.waitSeconds(0.3 /*1.2 */))),
+                    .andThen(fieldAlignment.alignToReef(left).withTimeout(2)),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(1.2))
+        .andThen(Commands.waitSeconds(0.5))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
         .andThen(fieldAlignment.alignToCoralStation())
         .andThen(orchestrator.intake().until(coral::hasCoral))
@@ -187,7 +183,7 @@ public class AutosAlternate {
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(2)
-                    .andThen(fieldAlignment.alignToReef(false).withTimeout(2)),
+                    .andThen(fieldAlignment.alignToReef(left).withTimeout(2)),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
         .andThen(Commands.waitSeconds(0.5))
@@ -319,11 +315,11 @@ public class AutosAlternate {
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))
-        .withTimeout(3)
+        .withTimeout(2.5)
         .andThen(orchestrator.placeCoral(4))
         .andThen(Commands.waitSeconds(/* 1.2 */ 0.3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
-        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
+        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(1.2))
         .andThen(fieldAlignment.alignToCoralStation())
         .andThen(orchestrator.intake().until(coral::hasCoral))
         .andThen(
@@ -341,7 +337,7 @@ public class AutosAlternate {
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(2)
-                    .andThen(fieldAlignment.alignToReef(false).withTimeout(2)),
+                    .andThen(fieldAlignment.alignToReef(left).withTimeout(2)),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
         .andThen(Commands.waitSeconds(0.5))
