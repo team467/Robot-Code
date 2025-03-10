@@ -283,6 +283,7 @@ public class RobotContainer {
         .whileTrue(climber.runPercent(-0.15));
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
+    driverController.leftStick().toggleOnTrue(fieldAlignment.alignToCoralStation());
     CustomTriggers.autoModeInput(driverController.leftTrigger(), operatorController.pov(270))
         .toggleOnTrue(
             Commands.parallel(
