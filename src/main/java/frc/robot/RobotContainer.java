@@ -210,6 +210,8 @@ public class RobotContainer {
     autoChooser.addOption("A Alpha Three Score", autosAlternate.alphaAThreeScore(false));
     autoChooser.addOption("C Sigma Two Score", autosAlternate.sigmaCTwoScore(true));
     autoChooser.addOption("C Alpha Three Score", autosAlternate.alphaCThreeScore(true));
+    autoChooser.addOption("Bezier", autosAlternate.BeziereCurveTest(true));
+    autoChooser.addOption("Gyat Bezier", autosAlternate.GyatBezier());
 
     registerAutoRoutines();
 
