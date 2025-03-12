@@ -2,7 +2,6 @@ package frc.robot.commands.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -17,13 +16,11 @@ import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class AutosAlternate {
-
   private final Drive drive;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
@@ -346,5 +343,4 @@ public class AutosAlternate {
         .andThen(Commands.waitSeconds(0.5))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
-
 }
