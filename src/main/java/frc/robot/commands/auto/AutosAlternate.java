@@ -15,6 +15,7 @@ import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -131,5 +132,30 @@ public class AutosAlternate {
                 .andThen(orchestrator.placeCoral(4))
                 .andThen(Commands.waitSeconds(1.2))
                 .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
+  }
+
+  public Command splineTest(boolean left) {
+    Supplier<Pose2d> C =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    ChoreoVariables.getPose("C").getTranslation(),
+                    ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
+    Supplier<Pose2d> scorePoint =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(3.39, 1.54), new Rotation2d(Units.degreesToRadians(-112.6))));
+    ArrayList<Translation2d> wayPoint = new ArrayList<Translation2d>();
+    wayPoint.add(scorePoint.get().getTranslation());
+
+    return Commands.runOnce(() -> drive.setPose(AllianceFlipUtil.apply(C.get())))
+        .andThen(
+            new SplineDriveToPose(
+                drive,
+                fieldAlignment.getBranchPosition(left, fieldAlignment.closestReefFace()),
+                C,
+                wayPoint,
+                0.005));
   }
 }

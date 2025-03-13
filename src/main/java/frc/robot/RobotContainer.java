@@ -205,7 +205,7 @@ public class RobotContainer {
     autoChooser.addOption("C Score Left", autosAlternate.CScore(true));
     autoChooser.addOption("C Score Right", autosAlternate.CScore(false));
     autoChooser.addOption("B Score Hope and Pray", autosAlternate.BScoreHopeAndPray());
-
+    autoChooser.addOption("Spline", autosAlternate.splineTest(true));
     registerAutoRoutines();
 
     // Configure the button bindings

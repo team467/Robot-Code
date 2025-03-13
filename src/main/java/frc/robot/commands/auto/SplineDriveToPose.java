@@ -93,6 +93,7 @@ public class SplineDriveToPose extends Command {
 
   @Override
   public void execute() {
+
     Pose2d currentPose = drive.getPose();
     // gets the next pose in the trajectory based off the time
     var nextPose = trajectory.sample(timeTracker);
@@ -116,9 +117,14 @@ public class SplineDriveToPose extends Command {
                 currentPose.getTranslation().minus(nextPose.poseMeters.getTranslation()).getAngle())
             .transformBy(GeomUtils.transformFromTranslation(driveVelocityScalar, 0.0))
             .getTranslation();
-    drive.runVelocity(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            driveVelocity.getX(), driveVelocity.getY(), thetaVelocity, currentPose.getRotation()));
+    if (timeTracker != 0) {
+      drive.runVelocity(
+          ChassisSpeeds.fromFieldRelativeSpeeds(
+              driveVelocity.getX(),
+              driveVelocity.getY(),
+              thetaVelocity,
+              currentPose.getRotation()));
+    }
     timeTracker += 0.02;
   }
 
