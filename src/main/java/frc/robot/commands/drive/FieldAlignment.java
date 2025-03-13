@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 public class FieldAlignment {
   @AutoLogOutput private int closestReefFace;
@@ -26,14 +27,14 @@ public class FieldAlignment {
   // How far left/right the robot needs to move to align with the coral effector instead of the
   // center of the robot
   private static final TunableNumber CORAL_EFFECTOR_OFFSET =
-      new TunableNumber("FieldAlignment/CoralEffectorOffset", 2.9);
+      new TunableNumber("FieldAlignment/CoralEffectorOffset", -10.9);
   // How far back the robot needs to move to align with the branch in a way that doesn't have the
   // robot impaling itself
   private static final TunableNumber BRANCH_TO_ROBOT_BACKUP =
-      new TunableNumber("FieldAlignment/BranchToRobotBackup", -9.8);
+      new TunableNumber("FieldAlignment/BranchToRobotBackup", -25.1);
   // you can change these values
-  @AutoLogOutput public double CORAL_EFFECTOR_OFFSET_TUNING = 2.9;
-  @AutoLogOutput private double BRANCH_TO_ROBOT_BACKUP_TUNING = -9.8;
+  @AutoLogOutput public double CORAL_EFFECTOR_OFFSET_TUNING = -10.9;
+  @AutoLogOutput private double BRANCH_TO_ROBOT_BACKUP_TUNING = -25.1;
   private final Drive drive;
 
   public FieldAlignment(Drive drive) {
@@ -95,19 +96,23 @@ public class FieldAlignment {
     }
     Pose2d branchPose =
         AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L1).toPose2d());
-    return () ->
-        new Pose2d(
-            branchPose.getX() // Move left robot relative
-                - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING)
-                    * Math.cos(branchPose.getRotation().getRadians())
-                - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
-                    * Math.sin(branchPose.getRotation().getRadians()),
-            branchPose.getY() // Move back robot relative
-                - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING)
-                    * Math.sin(branchPose.getRotation().getRadians())
-                + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
-                    * Math.cos(branchPose.getRotation().getRadians()),
-            branchPose.getRotation());
+    return () -> {
+      Pose2d targetPose =
+          new Pose2d(
+              branchPose.getX() // Move left robot relative
+                  - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING)
+                      * Math.cos(branchPose.getRotation().getRadians())
+                  - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
+                      * Math.sin(branchPose.getRotation().getRadians()),
+              branchPose.getY() // Move back robot relative
+                  - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING)
+                      * Math.sin(branchPose.getRotation().getRadians())
+                  + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
+                      * Math.cos(branchPose.getRotation().getRadians()),
+              branchPose.getRotation());
+      Logger.recordOutput("FieldAlignment/TargetPose", targetPose);
+      return targetPose;
+    };
   }
 
   public Supplier<Pose2d> getBranchPosition(boolean branchLeft, int closestReefFace) {
@@ -142,9 +147,9 @@ public class FieldAlignment {
       Pose2d targetPose = getClosestCoralStationPosition().get();
       return new Pose2d(
           targetPose.getX() // Move left robot relative
-              - Units.inchesToMeters(-27) * Math.cos(targetPose.getRotation().getRadians()),
+              - Units.inchesToMeters(-8) * Math.cos(targetPose.getRotation().getRadians()),
           targetPose.getY() // Move back robot relative
-              - Units.inchesToMeters(-27) * Math.sin(targetPose.getRotation().getRadians()),
+              - Units.inchesToMeters(-8) * Math.sin(targetPose.getRotation().getRadians()),
           targetPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
     };
   }

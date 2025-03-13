@@ -115,6 +115,9 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/ElevatorPosition")
   public ElevatorPosition elevatorPosition = null;
 
+  @AutoLogOutput(key = "RobotState/PoseConfidence")
+  public boolean PoseConfidence = false;
+
   @AutoLogOutput(key = "RobotState/TrajectoryPose2d")
   public Pose2d pose2d = null;
 
