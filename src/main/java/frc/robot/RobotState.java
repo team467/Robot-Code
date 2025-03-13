@@ -2,6 +2,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Percent;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import frc.robot.subsystems.leds.LedPatterns;
@@ -113,6 +114,9 @@ public class RobotState {
   /** the position that the elevator is at */
   @AutoLogOutput(key = "RobotState/ElevatorPosition")
   public ElevatorPosition elevatorPosition = null;
+
+  @AutoLogOutput(key = "RobotState/TrajectoryPose2d")
+  public Pose2d pose2d = null;
 
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
