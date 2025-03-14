@@ -119,7 +119,7 @@ public class RobotState {
   public boolean PoseConfidence = false;
 
   @AutoLogOutput(key = "RobotState/TrajectoryPose2d")
-  public Pose2d pose2d = null;
+  public Pose2d Trajectorypose2d = null;
 
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;

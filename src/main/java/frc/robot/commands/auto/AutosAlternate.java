@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class AutosAlternate {
+
   private final Drive drive;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
@@ -247,18 +248,14 @@ public class AutosAlternate {
         () ->
             AllianceFlipUtil.apply(
                 new Pose2d(
-                    new Translation2d(3.39, 1.54), new Rotation2d(Units.degreesToRadians(-112.6))));
+                    new Translation2d(6.47, 1.97), new Rotation2d(Units.degreesToRadians(0))));
     ArrayList<Translation2d> wayPoint = new ArrayList<Translation2d>();
     wayPoint.add(scorePoint.get().getTranslation());
 
     return Commands.runOnce(() -> drive.setPose(AllianceFlipUtil.apply(C.get())))
         .andThen(
             new SplineDriveToPose(
-                drive,
-                fieldAlignment.getBranchPosition(left, fieldAlignment.closestReefFace()),
-                C,
-                wayPoint,
-                0.005));
+                drive, fieldAlignment.getBranchPosition(left, 4), C, wayPoint, 0.005));
   }
 
   public Command sigmaCTwoScore(boolean left) {

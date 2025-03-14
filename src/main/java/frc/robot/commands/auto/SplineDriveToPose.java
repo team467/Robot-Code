@@ -1,5 +1,7 @@
 package frc.robot.commands.auto;
 
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -10,7 +12,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.lib.utils.GeomUtils;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.Drive;
 import java.util.ArrayList;
@@ -26,13 +27,19 @@ public class SplineDriveToPose extends Command {
       new ProfiledPIDController(
           //          2.0, 0, 0.0, new Constraints(Units.inchesToMeters(150),
           // Units.inchesToMeters(450.0)));
-          3.0,
-          0,
-          0.0,
-          new Constraints(Units.inchesToMeters(85), Units.inchesToMeters(450.0))); // 90
+          3.0, 0, 0, new Constraints(Units.inchesToMeters(85), Units.inchesToMeters(450.0))); // 90
+  HolonomicDriveController Holonomiccontroller =
+      new HolonomicDriveController(
+          new PIDController(3, 0, 0),
+          new PIDController(3, 0, 0),
+          new ProfiledPIDController( // TODO: Tune this
+              3.0,
+              0,
+              .01,
+              new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(720.0))));
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController( // TODO: Tune this
-          3.0, 0, .01, new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(720.0)));
+          9.0, 0, .01, new Constraints(Units.degreesToRadians(720), Units.degreesToRadians(900.0)));
   // Stores Target Pose
   private Pose2d targetPose;
   // Stores the initial Pose
@@ -93,37 +100,37 @@ public class SplineDriveToPose extends Command {
 
   @Override
   public void execute() {
-
     Pose2d currentPose = drive.getPose();
     // gets the next pose in the trajectory based off the time
     var nextPose = trajectory.sample(timeTracker);
     // track trajectory in AdvantageKit
-    RobotState.getInstance().pose2d = nextPose.poseMeters;
+    RobotState.getInstance().Trajectorypose2d = nextPose.poseMeters;
+
+    //    driveErrorAbs =
+    // currentPose.getTranslation().getDistance(nextPose.poseMeters.getTranslation());
+    //    double driveVelocityScalar = driveController.calculate(driveErrorAbs, 0.0);
+
     double thetaVelocity =
         thetaController.calculate(
             currentPose.getRotation().getRadians(), nextPose.poseMeters.getRotation().getRadians());
     thetaErrorAbs =
         Math.abs(currentPose.getRotation().minus(nextPose.poseMeters.getRotation()).getRadians());
-    if (thetaController.atGoal()) thetaVelocity = 0.0;
+    //
+    //    Translation2d driveVelocity =
+    //        new Pose2d(
+    //                new Translation2d(),
+    //
+    // currentPose.getTranslation().minus(nextPose.poseMeters.getTranslation()).getAngle())
+    //            .transformBy(GeomUtils.transformFromTranslation(driveVelocityScalar, 0.0))
+    //            .getTranslation();
+    ChassisSpeeds calculatedSpeeds =
+        Holonomiccontroller.calculate(currentPose, nextPose, currentPose.getRotation());
 
-    double currentDistance =
-        currentPose.getTranslation().getDistance(nextPose.poseMeters.getTranslation());
-    driveErrorAbs = currentDistance;
-    double driveVelocityScalar = driveController.calculate(driveErrorAbs, 0.0);
-    if (driveController.atGoal()) driveVelocityScalar = 0.0;
-    Translation2d driveVelocity =
-        new Pose2d(
-                new Translation2d(),
-                currentPose.getTranslation().minus(nextPose.poseMeters.getTranslation()).getAngle())
-            .transformBy(GeomUtils.transformFromTranslation(driveVelocityScalar, 0.0))
-            .getTranslation();
-    if (timeTracker != 0) {
-      drive.runVelocity(
-          ChassisSpeeds.fromFieldRelativeSpeeds(
-              driveVelocity.getX(),
-              driveVelocity.getY(),
-              thetaVelocity,
-              currentPose.getRotation()));
+    drive.runVelocity(
+        new ChassisSpeeds(
+            calculatedSpeeds.vxMetersPerSecond, calculatedSpeeds.vyMetersPerSecond, thetaVelocity));
+    if (timeTracker == trajectoryTime) {
+      end(true);
     }
     timeTracker += 0.02;
   }
