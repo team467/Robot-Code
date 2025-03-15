@@ -33,7 +33,7 @@ public class FieldAlignment {
   private static final TunableNumber BRANCH_TO_ROBOT_BACKUP =
       new TunableNumber("FieldAlignment/BranchToRobotBackup", -24.0);
   // you can change these values
-  @AutoLogOutput public double CORAL_EFFECTOR_OFFSET_TUNING = -10.9;
+  @AutoLogOutput public double CORAL_EFFECTOR_OFFSET_TUNING = -10.8;
   @AutoLogOutput private double BRANCH_TO_ROBOT_BACKUP_TUNING = -24.0;
   private final Drive drive;
 
