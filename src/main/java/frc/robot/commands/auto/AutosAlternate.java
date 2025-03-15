@@ -117,7 +117,8 @@ public class AutosAlternate {
         .withTimeout(3)
         .andThen(orchestrator.placeCoral(4))
         .andThen(Commands.waitSeconds(0.3))
-        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
+        .andThen(
+            orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(1))
         .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
         .andThen(
             Commands.parallel(
@@ -282,7 +283,8 @@ public class AutosAlternate {
         .withTimeout(3)
         .andThen(orchestrator.placeCoral(4))
         .andThen(Commands.waitSeconds(0.3))
-        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
+        .andThen(
+            orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(1))
         .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
         .andThen(
             Commands.parallel(
