@@ -38,7 +38,8 @@ public interface ModuleIO {
   public default void setDriveVelocity(double velocityRadPerSec) {}
 
   /** Run the drive motor at the specified velocity. */
-  public default void setPathPlannerVelocity(double velocityRadPerSec, double accelerationRadPerSec2, double torqueCurrentAmps) {}
+  public default void setPathPlannerVelocity(
+      double velocityRadPerSec, double accelerationRadPerSec2, double torqueCurrentAmps) {}
 
   /** Run the turn motor to the specified rotation. */
   public default void setTurnPosition(Rotation2d rotation) {}

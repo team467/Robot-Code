@@ -288,8 +288,8 @@ public class ModuleIOTalonSpark implements ModuleIO {
   }
 
   @Override
-  public void setPathPlannerVelocity(double velocityRadPerSec, double accelerationRadPerSec2,
-      double torqueCurrentAmps) {
+  public void setPathPlannerVelocity(
+      double velocityRadPerSec, double accelerationRadPerSec2, double torqueCurrentAmps) {
     double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
     double accelerationRotPerSec2 = Units.radiansToRotations(accelerationRadPerSec2);
     switch (driveClosedLoopOutput) {
