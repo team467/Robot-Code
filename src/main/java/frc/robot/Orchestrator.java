@@ -23,12 +23,13 @@ public class Orchestrator {
   private static final double ALGAE_L2_HEIGHT = ReefHeight.ALGAE_LOW.height;
   private static final double ALGAE_L3_HEIGHT = ReefHeight.ALGAE_HIGH.height;
 
-  public Orchestrator(Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector, Drive drive) {
+  public Orchestrator(
+      Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector, Drive drive) {
     this.elevator = elevator;
     this.algaeEffector = algaeEffector;
     this.coralEffector = coralEffector;
-      this.drive = drive;
-      robotState.elevatorPosition = ElevatorPosition.INTAKE;
+    this.drive = drive;
+    robotState.elevatorPosition = ElevatorPosition.INTAKE;
   }
 
   /**
@@ -102,7 +103,8 @@ public class Orchestrator {
 
   public Command dumpCoralAndHome() {
     return coralEffector
-        .dumpCoral().andThen(Commands.runOnce(() -> drive.run(Commands::none)))
+        .dumpCoral()
+        .andThen(Commands.runOnce(() -> drive.run(Commands::none)))
         .andThen(Commands.waitSeconds(0.4))
         .andThen(moveElevatorToLevel(false, 1).until(elevator::limitSwitchPressed));
   }
