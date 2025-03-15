@@ -27,6 +27,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
+    io.goToSetpoint(inputs.elevatorSetpoint);
 
     //    if (DriverStation.isDisabled()) {
     //      io.setPosition(inputs.positionMeters);
@@ -85,11 +86,13 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command hold() {
-    return Commands.run(
-        () -> {
-          io.hold(holdPosition);
-        },
-        this);
+    return Commands.runOnce(() -> holdPosition = inputs.positionMeters, this)
+        .alongWith(
+            Commands.run(
+                () -> {
+                  io.hold(holdPosition);
+                },
+                this));
   }
 
   public Command calibrate() {
