@@ -255,7 +255,74 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(AllianceFlipUtil.apply(C.get())))
         .andThen(
             new SplineDriveToPose(
-                drive, fieldAlignment.getBranchPosition(left, 4), C, wayPoint, 0.005));
+                drive, fieldAlignment.getBranchPosition(false, 5), C, wayPoint, 0.005));
+  }
+
+  public Command sigmaCTwoScoreSpline(boolean left) {
+    Supplier<Pose2d> C =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    ChoreoVariables.getPose("C").getTranslation(),
+                    ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
+    Supplier<Pose2d> scorePoint =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(6.47, 1.97), new Rotation2d(Units.degreesToRadians(0))));
+    ArrayList<Translation2d> movement1 = new ArrayList<Translation2d>();
+    movement1.add(scorePoint.get().getTranslation());
+    Supplier<Pose2d> scorePoint2 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(4.02, 1.2703604817390442),
+                    new Rotation2d(Units.degreesToRadians(54))));
+    ArrayList<Translation2d> movement2 = new ArrayList<Translation2d>();
+    movement2.add(scorePoint2.get().getTranslation());
+    movement2.add(AllianceFlipUtil.apply(new Translation2d(5.19, 2.36)));
+    movement2.add(AllianceFlipUtil.apply(new Translation2d(4.45, 1.87)));
+    movement2.add(AllianceFlipUtil.apply(new Translation2d(2.14, 1.87)));
+    Supplier<Pose2d> scorePoint3 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(2.899836778640747, 1.7935127019882202),
+                    new Rotation2d(-2.1375256093137067)));
+    ArrayList<Translation2d> movement3 = new ArrayList<Translation2d>();
+    movement3.add(scorePoint3.get().getTranslation());
+    return elevator
+        .setHoldPosition(elevator.getPosition())
+        .andThen(Commands.runOnce(() -> drive.setPose(AllianceFlipUtil.apply(C.get()))))
+        //        .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
+        //        .withTimeout(1.5)
+        //        .andThen(fieldAlignment.alignToReef(left))
+        .andThen(
+            new SplineDriveToPose(
+                drive, fieldAlignment.getBranchPosition(left, 4), C, movement1, 0.005))
+        .withTimeout(3)
+        .andThen(
+            new SplineDriveToPose(
+                drive,
+                fieldAlignment.getClosestCoralStationPositionForAlign(),
+                fieldAlignment.getBranchPosition(left, 4),
+                movement2,
+                0.005));
+    //        .andThen(orchestrator.placeCoral(4))
+    //        .andThen(Commands.waitSeconds(/* 1.2 */ 0.3))
+    //        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
+    //        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
+    //        .andThen(fieldAlignment.alignToCoralStation())
+    //        .andThen(orchestrator.intake().until(coral::hasCoral))
+    //        .andThen(
+    //            Commands.race(
+    //                new StraightDriveToPose(drive, scorePoint3, 1)
+    //                    .withTimeout(2)
+    //                    .andThen(fieldAlignment.alignToReef(true).withTimeout(2)),
+    //                coral.stop()))
+    //        .andThen(orchestrator.placeCoral(4))
+    //        .andThen(Commands.waitSeconds(0.5))
+    //        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
   public Command sigmaCTwoScore(boolean left) {

@@ -210,6 +210,7 @@ public class RobotContainer {
     autoChooser.addOption("A Alpha Three Score", autosAlternate.alphaAThreeScore(false));
     autoChooser.addOption("C Sigma Two Score", autosAlternate.sigmaCTwoScore(true));
     autoChooser.addOption("C Alpha Three Score", autosAlternate.alphaCThreeScore(true));
+    autoChooser.addOption("Spline 2 coralc c", autosAlternate.sigmaCTwoScoreSpline(true));
 
     autoChooser.addOption("Spline", autosAlternate.splineTest(true));
     registerAutoRoutines();

@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,18 +29,13 @@ public class SplineDriveToPose extends Command {
           //          2.0, 0, 0.0, new Constraints(Units.inchesToMeters(150),
           // Units.inchesToMeters(450.0)));
           3.0, 0, 0, new Constraints(Units.inchesToMeters(85), Units.inchesToMeters(450.0))); // 90
-  HolonomicDriveController Holonomiccontroller =
-      new HolonomicDriveController(
-          new PIDController(3, 0, 0),
-          new PIDController(3, 0, 0),
-          new ProfiledPIDController( // TODO: Tune this
-              3.0,
-              0,
-              .01,
-              new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(720.0))));
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController( // TODO: Tune this
-          9.0, 0, .01, new Constraints(Units.degreesToRadians(720), Units.degreesToRadians(900.0)));
+          9.0, 0, .01, new TrapezoidProfile.Constraints(50, 50));
+  HolonomicDriveController Holonomiccontroller =
+      new HolonomicDriveController(
+          new PIDController(3, 0, 0), new PIDController(3, 0, 0), thetaController);
+
   // Stores Target Pose
   private Pose2d targetPose;
   // Stores the initial Pose
@@ -80,6 +76,8 @@ public class SplineDriveToPose extends Command {
             initialPoseSupplier.get(), WayPoints, targetPoseSupplier.get(), config);
     addRequirements(drive);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    Holonomiccontroller.getThetaController().enableContinuousInput(-Math.PI, Math.PI);
+    Holonomiccontroller.getThetaController().setTolerance(Units.degreesToRadians(1));
     driveController.setTolerance(DRIVE_TOLERANCE);
   }
 
@@ -89,10 +87,13 @@ public class SplineDriveToPose extends Command {
     targetPose = targetPoseSupplier.get();
     initialPose = initialPoseSupplier.get();
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    Holonomiccontroller.getThetaController().enableContinuousInput(-Math.PI, Math.PI);
+    Holonomiccontroller.getThetaController().setTolerance(Units.degreesToRadians(2));
     driveController.setTolerance(DRIVE_TOLERANCE);
     thetaController.setTolerance(THETA_TOLERANCE);
     driveController.reset(currentPose.getTranslation().getDistance(targetPose.getTranslation()));
     thetaController.reset(currentPose.getRotation().getRadians());
+    Holonomiccontroller.getThetaController().reset(currentPose.getRotation().getRadians());
     trajectoryTime = trajectory.getTotalTimeSeconds();
     // set time tracker to zero since trajectory has not started
     timeTracker = 0;
@@ -112,9 +113,10 @@ public class SplineDriveToPose extends Command {
 
     double thetaVelocity =
         thetaController.calculate(
-            currentPose.getRotation().getRadians(), nextPose.poseMeters.getRotation().getRadians());
+            currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
     thetaErrorAbs =
-        Math.abs(currentPose.getRotation().minus(nextPose.poseMeters.getRotation()).getRadians());
+        Math.abs(currentPose.getRotation().minus(targetPose.getRotation()).getRadians());
+    if (thetaController.atGoal()) {}
     //
     //    Translation2d driveVelocity =
     //        new Pose2d(
@@ -126,9 +128,9 @@ public class SplineDriveToPose extends Command {
     ChassisSpeeds calculatedSpeeds =
         Holonomiccontroller.calculate(currentPose, nextPose, currentPose.getRotation());
 
-    drive.runVelocity(
-        new ChassisSpeeds(
-            calculatedSpeeds.vxMetersPerSecond, calculatedSpeeds.vyMetersPerSecond, thetaVelocity));
+    drive.runVelocity(calculatedSpeeds);
+    // new ChassisSpeeds(
+    // calculatedSpeeds.vxMetersPerSecond, calculatedSpeeds.vyMetersPerSecond, thetaVelocity));
     if (timeTracker == trajectoryTime) {
       end(true);
     }
