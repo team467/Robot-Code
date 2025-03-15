@@ -23,6 +23,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
   private boolean zeroedOnce = false;
 
   private final SparkClosedLoopController controller;
+  private final SparkClosedLoopController holdController;
   private double setpoint;
 
   public ElevatorIOPhysical() {
@@ -31,6 +32,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
     elevatorStowLimitSwitch = new DigitalInput(3);
 
     controller = spark.getClosedLoopController();
+    holdController = spark.getClosedLoopController();
 
     var config = new SparkMaxConfig();
     config
@@ -63,6 +65,37 @@ public class ElevatorIOPhysical implements ElevatorIO {
         .forwardSoftLimit(0.79)
         .forwardSoftLimitEnabled(true)
         .reverseSoftLimitEnabled(false);
+    var holdConfig = new SparkMaxConfig();
+    holdConfig
+        .idleMode(IdleMode.kBrake)
+        .inverted(false)
+        .smartCurrentLimit(elevatorCurrentLimit)
+        .voltageCompensation(12.0);
+    holdConfig
+        .alternateEncoder
+        .positionConversionFactor(ENCODER_CONVERSION_FACTOR)
+        .velocityConversionFactor(ENCODER_CONVERSION_FACTOR / 60)
+        .inverted(true)
+        .averageDepth(2);
+    holdConfig
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
+        .positionWrappingEnabled(false)
+        .pidf(0.5, 0.0, 12.0, 0.0); // Different PIDF values for the hold controller
+    holdConfig
+        .signals
+        .externalOrAltEncoderPositionAlwaysOn(true)
+        .externalOrAltEncoderPosition(20)
+        .externalOrAltEncoderVelocityAlwaysOn(true)
+        .externalOrAltEncoderVelocity(20)
+        .appliedOutputPeriodMs(20)
+        .busVoltagePeriodMs(20)
+        .outputCurrentPeriodMs(20);
+    holdConfig
+        .softLimit
+        .forwardSoftLimit(0.79)
+        .forwardSoftLimitEnabled(true)
+        .reverseSoftLimitEnabled(false);
 
     tryUntilOk(
         spark,
@@ -70,6 +103,13 @@ public class ElevatorIOPhysical implements ElevatorIO {
         () ->
             spark.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    tryUntilOk(spark, 5, () -> encoder.setPosition(0.0));
+    tryUntilOk(
+        spark,
+        5,
+        () ->
+            spark.configure(
+                holdConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
     tryUntilOk(spark, 5, () -> encoder.setPosition(0.0));
   }
 
@@ -128,10 +168,11 @@ public class ElevatorIOPhysical implements ElevatorIO {
 
   @Override
   public void hold(double holdPosition) {
-    if (encoder.getPosition() < holdPosition) {
-      spark.setVoltage(-0.27);
-    } else if (encoder.getPosition() > holdPosition) {
-      spark.setVoltage(0.27);
-    }
+    holdController.setReference(holdPosition, SparkBase.ControlType.kPosition);
+  }
+
+  @Override
+  public void goToSetpoint(double setpoint) {
+    controller.setReference(setpoint, SparkBase.ControlType.kPosition);
   }
 }
