@@ -104,7 +104,6 @@ public class Orchestrator {
   public Command dumpCoralAndHome() {
     return coralEffector
         .dumpCoral()
-        .andThen(Commands.runOnce(() -> drive.run(Commands::none)))
         .andThen(Commands.waitSeconds(0.4))
         .andThen(moveElevatorToLevel(false, 1).until(elevator::limitSwitchPressed));
   }

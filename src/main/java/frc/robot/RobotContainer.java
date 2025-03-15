@@ -299,7 +299,7 @@ public class RobotContainer {
     driverController.x().whileTrue(coral.takeBackCoral());
     driverController
         .rightTrigger(0.1)
-        .onTrue(orchestrator.dumpCoralAndHome().andThen(drive.runOnce(Commands::none)));
+        .onTrue(drive.runOnce(Commands::none).andThen(orchestrator.dumpCoralAndHome()));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
   }
 
