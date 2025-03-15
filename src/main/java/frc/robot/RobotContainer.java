@@ -173,7 +173,7 @@ public class RobotContainer {
       elevator = new Elevator(new ElevatorIO() {});
     }
     fieldAlignment = new FieldAlignment(drive);
-    orchestrator = new Orchestrator(elevator, algae, coral);
+    orchestrator = new Orchestrator(elevator, algae, coral, drive);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -297,7 +297,7 @@ public class RobotContainer {
         .toggleOnTrue(
             fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController.x().whileTrue(coral.takeBackCoral());
-    driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
+    driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome().andThen(drive.runOnce(Commands::none)));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
   }
 
