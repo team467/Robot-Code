@@ -27,4 +27,6 @@ public interface ElevatorIO {
   default void resetPosition(double positionMeters) {}
 
   default void hold(double holdPosition) {}
+
+  default void goToSetpoint(double setpoint) {}
 }
