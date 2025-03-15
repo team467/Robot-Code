@@ -298,7 +298,7 @@ public class RobotContainer {
             fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController.x().whileTrue(coral.takeBackCoral());
     driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
-    driverController.rightTrigger(0.1).onTrue(Commands.runOnce(() -> drive.run(Commands::none)));1
+    driverController.rightTrigger(0.1).onTrue(Commands.runOnce(() -> drive.run(Commands::none)));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
   }
 
