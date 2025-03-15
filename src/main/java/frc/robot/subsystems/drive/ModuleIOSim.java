@@ -98,6 +98,12 @@ public class ModuleIOSim implements ModuleIO {
   }
 
   @Override
+  public void setPathPlannerVelocity(
+      double velocityRadPerSec, double accelerationRadPerSec2, double torqueCurrentAmps) {
+    setDriveVelocity(velocityRadPerSec);
+  }
+
+  @Override
   public void setTurnPosition(Rotation2d rotation) {
     turnClosedLoop = true;
     turnController.setSetpoint(rotation.getRadians());
