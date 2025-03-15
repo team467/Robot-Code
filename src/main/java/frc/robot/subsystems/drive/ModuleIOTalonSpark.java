@@ -288,6 +288,28 @@ public class ModuleIOTalonSpark implements ModuleIO {
   }
 
   @Override
+  public void setPathPlannerVelocity(double velocityRadPerSec, double accelerationRadPerSec2,
+      double torqueCurrentAmps) {
+    double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
+    double accelerationRotPerSec2 = Units.radiansToRotations(accelerationRadPerSec2);
+    switch (driveClosedLoopOutput) {
+      case Voltage -> {
+        velocityVoltageRequest
+            .withVelocity(velocityRotPerSec)
+            .withAcceleration(accelerationRotPerSec2);
+        driveTalon.setControl(velocityVoltageRequest);
+      }
+      case TorqueCurrentFOC -> {
+        velocityTorqueCurrentRequest
+            .withVelocity(velocityRotPerSec)
+            .withAcceleration(accelerationRotPerSec2)
+            .withFeedForward(torqueCurrentAmps);
+        driveTalon.setControl(velocityTorqueCurrentRequest);
+      }
+    }
+  }
+
+  @Override
   public void setTurnPosition(Rotation2d rotation) {
     double setpoint =
         MathUtil.inputModulus(

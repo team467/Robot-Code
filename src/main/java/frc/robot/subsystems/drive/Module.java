@@ -2,8 +2,10 @@ package frc.robot.subsystems.drive;
 
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
+import com.pathplanner.lib.util.DriveFeedforwards;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Alert;
@@ -52,12 +54,25 @@ public class Module {
   /** Runs the module with the specified setpoint state. Mutates the state to optimize it. */
   public void runSetpoint(SwerveModuleState state) {
     // Optimize velocity setpoint
-
     optimize(state, getAngle());
     state.cosineScale(state.angle);
 
     // Apply setpoints
     io.setDriveVelocity(state.speedMetersPerSecond / wheelRadiusMeters);
+    io.setTurnPosition(state.angle);
+  }
+
+  public void pathplannerRunSetpoint(SwerveModuleState state, DriveFeedforwards feedforwards) {
+    if (optimize(state, getAngle())) {
+      feedforwards = new DriveFeedforwards(
+          negateFF(feedforwards.accelerationsMPSSq()),
+          negateFF(feedforwards.linearForcesNewtons()),
+          negateFF(feedforwards.torqueCurrentsAmps()),
+          negateFF(feedforwards.robotRelativeForcesXNewtons()),
+          negateFF(feedforwards.robotRelativeForcesYNewtons())
+      );
+    }
+    io.setPathPlannerVelocity(state.speedMetersPerSecond / wheelRadiusMeters, feedforwards.accelerationsMPSSq()[index] / wheelRadiusMeters, feedforwards.torqueCurrentsAmps()[index]);
     io.setTurnPosition(state.angle);
   }
 
@@ -118,11 +133,23 @@ public class Module {
     return inputs.driveVelocityRadPerSec;
   }
 
-  private static void optimize(SwerveModuleState state, Rotation2d currentAngle) {
+  private static boolean optimize(SwerveModuleState state, Rotation2d currentAngle) {
     var delta = state.angle.minus(currentAngle);
     if (Math.abs(MathUtil.inputModulus(delta.getDegrees(), -180, 180)) > 90) {
       state.speedMetersPerSecond *= -1;
       state.angle = state.angle.rotateBy(Rotation2d.kPi);
+      return true;
+    } else {
+      return false;
     }
   }
+
+  private static double[] negateFF(double[] feedforwards) {
+    double[] negated = new double[feedforwards.length];
+    for (int i = 0; i < feedforwards.length; i++) {
+      negated[i] = -feedforwards[i];
+    }
+    return negated;
+  }
+
 }
