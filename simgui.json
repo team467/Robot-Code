@@ -1,0 +1,28 @@
+{
+  "NTProvider": {
+    "types": {
+      "/AdvantageKit/RealOutputs/Alerts": "Alerts",
+      "/AdvantageKit/RealOutputs/Choreo Alerts": "Alerts",
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/LED Modes/LED Mode Testing Options/Test Mode": "String Chooser",
+      "/Shuffleboard/LEDs/LED Testing Options/Test Animation": "String Chooser",
+      "/Shuffleboard/LEDs/LED Testing Options/Test Pattern": "String Chooser",
+      "/Shuffleboard/LEDs/LED Testing Options/Test Pattern2": "String Chooser",
+      "/Shuffleboard/LEDs/LED Testing Options/Test Section": "String Chooser",
+      "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/Auto Choices": "String Chooser",
+      "/SmartDashboard/Choreo Alerts": "Alerts",
+      "/SmartDashboard/Climber Sim": "Mechanism2d"
+    },
+    "windows": {
+      "/SmartDashboard/Auto Choices": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}
