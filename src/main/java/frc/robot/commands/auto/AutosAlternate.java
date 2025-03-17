@@ -16,6 +16,7 @@ import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -342,5 +343,28 @@ public class AutosAlternate {
         .andThen(orchestrator.placeCoral(4))
         .andThen(Commands.waitSeconds(0.5))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
+  }
+
+  public Command TrajectoryTracer(boolean left) {
+    Supplier<Pose2d> C =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    ChoreoVariables.getPose("C").getTranslation(),
+                    ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
+    Supplier<Pose2d> scorePoint1 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(5.579622268676758, 2.2639400959014893),
+                    new Rotation2d(-0.982794168198375)));
+    ArrayList<WayPoints> waypoints = new ArrayList<WayPoints>();
+    waypoints.add(new WayPoints(scorePoint1.get()));
+    return Commands.runOnce(() -> drive.setPose(C.get()))
+        .andThen(
+            Commands.run(
+                () ->
+                    new TrajectoryTracer(
+                        drive, C, fieldAlignment.getBranchPosition(left, 4), waypoints)));
   }
 }
