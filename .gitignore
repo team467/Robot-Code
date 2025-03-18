@@ -342,3 +342,6 @@ bin/
 
 # All .wpilog files
 *.wpilog
+
+# Simgui
+simgui.json
