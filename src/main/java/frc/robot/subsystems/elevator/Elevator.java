@@ -46,6 +46,11 @@ public class Elevator extends SubsystemBase {
     //    }
   }
 
+  /**
+   * Checks if the elevator has reached its setpoint.
+   *
+   * @return true if the elevator is at the target setpoint, false otherwise.
+   */
   public boolean atSetpoint() {
     return inputs.atSetpoint;
   }
