@@ -82,12 +82,6 @@ public class RobotContainer {
                   new ModuleIOSpark(1),
                   new ModuleIOSpark(2),
                   new ModuleIOSpark(3));
-
-          vision =
-              new Vision(
-                  drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
@@ -173,7 +167,7 @@ public class RobotContainer {
       elevator = new Elevator(new ElevatorIO() {});
     }
     fieldAlignment = new FieldAlignment(drive);
-    orchestrator = new Orchestrator(elevator, algae, coral);
+    orchestrator = new Orchestrator(elevator, algae, coral, drive);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -298,6 +292,7 @@ public class RobotContainer {
             fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController.x().whileTrue(coral.takeBackCoral());
     driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
+    driverController.rightTrigger(0.1).onTrue(drive.runOnce(Commands::none));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
   }
 
