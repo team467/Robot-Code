@@ -6,6 +6,7 @@ import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 
@@ -13,6 +14,7 @@ public class Orchestrator {
   private final Elevator elevator;
   private final AlgaeEffector algaeEffector;
   private final CoralEffector coralEffector;
+  private final Drive drive;
   private final RobotState robotState = RobotState.getInstance();
   private static final double L4_HEIGHT = ReefHeight.L4.height;
   private static final double L3_HEIGHT = ReefHeight.L3.height;
@@ -21,10 +23,12 @@ public class Orchestrator {
   private static final double ALGAE_L2_HEIGHT = ReefHeight.ALGAE_LOW.height;
   private static final double ALGAE_L3_HEIGHT = ReefHeight.ALGAE_HIGH.height;
 
-  public Orchestrator(Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
+  public Orchestrator(
+      Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector, Drive drive) {
     this.elevator = elevator;
     this.algaeEffector = algaeEffector;
     this.coralEffector = coralEffector;
+    this.drive = drive;
     robotState.elevatorPosition = ElevatorPosition.INTAKE;
   }
 
@@ -128,7 +132,7 @@ public class Orchestrator {
                 !((setpoint == ALGAE_L2_HEIGHT || setpoint == ALGAE_L3_HEIGHT)
                     && (robotState.elevatorPosition == ElevatorPosition.ALGAE_L2
                         || robotState.elevatorPosition == ElevatorPosition.ALGAE_L3))))
-        .withTimeout(1);
+        .withTimeout(7);
   }
 
   public Command scoreL1() {

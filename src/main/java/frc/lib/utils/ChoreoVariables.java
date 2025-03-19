@@ -26,6 +26,7 @@ import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Torque;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,13 +48,13 @@ public class ChoreoVariables {
   }
 
   private static void initialize() {
-    if (INITIALIZED == true) return;
+    if (INITIALIZED) return;
     File choreoFile = new File(Filesystem.getDeployDirectory(), "choreo/AutoPaths.chor");
     try {
       var reader = new BufferedReader(new FileReader(choreoFile));
       String str = reader.lines().reduce("", (a, b) -> a + b);
       reader.close();
-      JsonObject wholeChor = new JsonParser().parse(str).getAsJsonObject();
+      JsonObject wholeChor = JsonParser.parseString(str).getAsJsonObject();
       JsonObject variables = wholeChor.get("variables").getAsJsonObject();
       JsonObject expressions = variables.get("expressions").getAsJsonObject();
       for (var entry : expressions.entrySet()) {
@@ -70,7 +71,7 @@ public class ChoreoVariables {
                 Rotation2d.fromRadians(getVal(val.get("heading")))));
       }
     } catch (Exception e) {
-      System.err.println(e);
+      DriverStation.reportError("Choreo Variable util fail!", e.getStackTrace());
       return;
     }
     INITIALIZED = true;
