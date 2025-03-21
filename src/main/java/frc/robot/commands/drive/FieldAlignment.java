@@ -12,6 +12,7 @@ import frc.lib.utils.TunableNumber;
 import frc.robot.FieldConstants.CoralStation;
 import frc.robot.FieldConstants.Reef;
 import frc.robot.FieldConstants.ReefHeight;
+import frc.robot.RobotState;
 import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.drive.Drive;
 import java.util.Set;
@@ -207,6 +208,7 @@ public class FieldAlignment {
 
   public void periodic() {
     closestReefFace = closestReefFace();
+    RobotState.getInstance().ClosestReefFace = closestReefFace;
     closestReefFacePose = AllianceFlipUtil.apply(Reef.centerFaces[closestReefFace]);
   }
 
