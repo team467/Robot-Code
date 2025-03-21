@@ -1,7 +1,9 @@
 package frc.robot.subsystems.fast_algae;
 
-public interface FastAlgaeEffectorIO {
+import org.littletonrobotics.junction.AutoLog;
 
+public interface FastAlgaeEffectorIO {
+  @AutoLog
   class FastAlgaeEffectorIOInputs {
     // pivot
     public double pivotVelocity;
@@ -9,12 +11,12 @@ public interface FastAlgaeEffectorIO {
     public double pivotVolts;
     public double pivotPosition;
     public double pivotMotorTemp;
+    public boolean isHighPostion;
+    public boolean isLowPostion;
+    public boolean isStowed;
 
-    // limit switches
-    public boolean isStowed = false;
   }
 
   default void updateInputs(FastAlgaeEffectorIOInputs inputs) {}
-
   default void setPivotVolts(double volts) {}
 }
