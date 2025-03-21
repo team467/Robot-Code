@@ -6,7 +6,6 @@ import static frc.robot.Schematic.algaePivotCanId;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
@@ -19,18 +18,14 @@ public class FastAlgaeEffectorIOPhysical implements FastAlgaeEffectorIO {
   private final SparkMax pivotMotor;
   private final RelativeEncoder pivotMotorEncoder;
 
-  private final SparkLimitSwitch stowLimitSwitch;
-
   public FastAlgaeEffectorIOPhysical() {
     pivotMotor = new SparkMax(algaePivotCanId, MotorType.kBrushless);
 
     pivotMotorEncoder = pivotMotor.getEncoder();
 
-    stowLimitSwitch = pivotMotor.getReverseLimitSwitch();
-
     SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
     pivotMotorConfig.idleMode(IdleMode.kBrake);
-    pivotMotorConfig.inverted(FastAlgaeEffectorConstants.PIVOT_INVERTED);
+    // pivotMotorConfig.inverted(FastAlgaeEffectorConstants.PIVOT_INVERTED);
     pivotMotorConfig.voltageCompensation(12);
 
     EncoderConfig pivotEncoderConfig = new EncoderConfig();
@@ -59,10 +54,10 @@ public class FastAlgaeEffectorIOPhysical implements FastAlgaeEffectorIO {
     inputs.pivotVelocity = pivotMotorEncoder.getVelocity();
     inputs.pivotAmps = pivotMotor.getOutputCurrent();
     inputs.pivotPosition = pivotMotorEncoder.getPosition();
-    // inputs.isFullyExtended =
-    //     pivotMotorEncoder.getPosition() > FastAlgaeEffectorConstants.REMOVAL_ANGLE;
+    inputs.isHighPostion =
+        pivotMotorEncoder.getPosition() > FastAlgaeEffectorConstants.HIGH_ANGLE;
 
-    inputs.isStowed = stowLimitSwitch.isPressed();
+    inputs.isStowed = pivotMotorEncoder.getVelocity() == FastAlgaeEffectorConstants.ZERO_VOLTAGE;
     inputs.pivotMotorTemp = pivotMotor.getMotorTemperature();
     if (inputs.isStowed) {
       pivotMotorEncoder.setPosition(0.0);
