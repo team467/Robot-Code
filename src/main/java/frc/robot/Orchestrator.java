@@ -18,11 +18,10 @@ public class Orchestrator {
   private static final double L3_HEIGHT = ReefHeight.L3.height;
   private static final double L2_HEIGHT = ReefHeight.L2.height;
   private static final double L1_HEIGHT = ReefHeight.L1.height;
-  private static final double ALGAE_L2_ANGLE=0;
+  private static final double ALGAE_L2_ANGLE = 0;
   private static final double ALGAE_L3_ANGLE = 0;
 
-  public Orchestrator(
-      Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
+  public Orchestrator(Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
     this.elevator = elevator;
     this.algaeEffector = algaeEffector;
     this.coralEffector = coralEffector;
@@ -65,31 +64,31 @@ public class Orchestrator {
       return algaeEffector.removeAlgae(); // remove algae high/low
     }
   }
-  public Command removeAlgae(int level){
-    return algaeEffector.removeAlgae(/*level*/);
+
+  public Command removeAlgae(int level) {
+    return algaeEffector.removeAlgae(/*level*/ );
   }
 
   public Command moveElevatorToLevel(boolean algae, int level) {
-    return moveElevatorToSetpoint(getCoralHeight(level)).andThen(
-        Commands.runOnce(
-            () -> {
-              switch (level) {
-                case 1:
-                  robotState.elevatorPosition = ElevatorPosition.L1;
-                  break;
-                case 2:
-                  robotState.elevatorPosition =
-                      ElevatorPosition.L2;
-                  break;
-                case 3:
-                  robotState.elevatorPosition =
-                      ElevatorPosition.L3;
-                  break;
-                case 4:
-                  robotState.elevatorPosition = ElevatorPosition.L4;
-                  break;
-              }
-            }));
+    return moveElevatorToSetpoint(getCoralHeight(level))
+        .andThen(
+            Commands.runOnce(
+                () -> {
+                  switch (level) {
+                    case 1:
+                      robotState.elevatorPosition = ElevatorPosition.L1;
+                      break;
+                    case 2:
+                      robotState.elevatorPosition = ElevatorPosition.L2;
+                      break;
+                    case 3:
+                      robotState.elevatorPosition = ElevatorPosition.L3;
+                      break;
+                    case 4:
+                      robotState.elevatorPosition = ElevatorPosition.L4;
+                      break;
+                  }
+                }));
   }
 
   public Command dumpCoralAndHome() {
