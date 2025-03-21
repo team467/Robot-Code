@@ -249,6 +249,15 @@ public class AutosAlternate {
                 .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)));
   }
 
+  public Command elevatorRelativeToPose() {
+    double targetPosition;
+    Supplier<Pose2d> targetPose =
+        fieldAlignment.getBranchPosition(true, fieldAlignment.closestReefFace());
+    return Commands.parallel(
+        new StraightDriveToPose(drive, targetPose),
+        new ElevatorRelativeToPose(elevator, targetPosition = 0.7605, targetPose.get(), drive));
+  }
+
   public Command sigmaCTwoScore(boolean left) {
     Supplier<Pose2d> C =
         () ->
