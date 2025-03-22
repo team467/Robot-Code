@@ -1,5 +1,9 @@
 package frc.robot.commands.auto;
 
+import static frc.robot.FieldConstants.Reef.branchPositions;
+import static frc.robot.commands.drive.FieldAlignment.BRANCH_TO_ROBOT_BACKUP;
+import static frc.robot.commands.drive.FieldAlignment.CORAL_EFFECTOR_OFFSET;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,10 +23,6 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
-
-import static frc.robot.FieldConstants.Reef.branchPositions;
-import static frc.robot.commands.drive.FieldAlignment.BRANCH_TO_ROBOT_BACKUP;
-import static frc.robot.commands.drive.FieldAlignment.CORAL_EFFECTOR_OFFSET;
 
 public class AutosAlternate {
 
@@ -64,8 +64,7 @@ public class AutosAlternate {
         .andThen(new StraightDriveToPose(-1, 0, 0, drive, 0.04));
   }
 
-  public Command elevatorRelativeToPose(boolean branchLeft, int closestReefFace) {
-    double targetPosition = ReefHeight.L4.height;
+  public Command elevatorRelativeToPose(int closestReefFace) {
     int branch = closestReefFace * 2;
     Pose2d branchPose =
         AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L1).toPose2d());
@@ -75,14 +74,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose.getRotation().getRadians())
+                            * Math.cos(branchPose.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose.getRotation().getRadians()),
+                            * Math.sin(branchPose.getRotation().getRadians()),
                     branchPose.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose.getRotation().getRadians())
+                            * Math.sin(branchPose.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose.getRotation().getRadians()),
+                            * Math.cos(branchPose.getRotation().getRadians()),
                     branchPose.getRotation()));
     Supplier<Pose2d> C =
         () ->
@@ -126,6 +125,40 @@ public class AutosAlternate {
   }
 
   public Command sigmaATwoScore() {
+    Pose2d branchPose1 =
+        AllianceFlipUtil.apply(branchPositions.get(5).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose1 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose1.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.cos(branchPose1.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.sin(branchPose1.getRotation().getRadians()),
+                    branchPose1.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.sin(branchPose1.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.cos(branchPose1.getRotation().getRadians()),
+                    branchPose1.getRotation()));
+    Pose2d branchPose2 =
+        AllianceFlipUtil.apply(branchPositions.get(2).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose2 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose2.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.cos(branchPose2.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.sin(branchPose2.getRotation().getRadians()),
+                    branchPose2.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.sin(branchPose2.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.cos(branchPose2.getRotation().getRadians()),
+                    branchPose2.getRotation()));
     Supplier<Pose2d> A =
         () ->
             AllianceFlipUtil.apply(
@@ -153,30 +186,89 @@ public class AutosAlternate {
         .andThen(Commands.runOnce(() -> drive.setPose(A.get())))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
-        .andThen(fieldAlignment.alignToReef(false))
-        .withTimeout(3)
-        .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(
-            orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(1))
-        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
         .andThen(
             Commands.parallel(
-                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                    orchestrator.intake())
-                .until(coral::hasCoral))
+                orchestrator.moveElevatorBasedOnDistance(targetPose1),
+                new StraightDriveToPose(drive, targetPose1)))
+        .withTimeout(3)
+        .andThen(orchestrator.placeCoral(4))
+        .andThen(Commands.waitSeconds(0.1))
+        .andThen(
+            Commands.parallel(
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                orchestrator.intake().withTimeout(0.5)))
+        // .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(1.5)
-                    .andThen(fieldAlignment.alignToReef(true).withTimeout(2)),
+                    .andThen(
+                        Commands.parallel(
+                            orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                            new StraightDriveToPose(drive, targetPose2)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
   public Command alphaAThreeScore() {
+    Pose2d branchPose1 =
+        AllianceFlipUtil.apply(branchPositions.get(5).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose1 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose1.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.cos(branchPose1.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.sin(branchPose1.getRotation().getRadians()),
+                    branchPose1.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.sin(branchPose1.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.cos(branchPose1.getRotation().getRadians()),
+                    branchPose1.getRotation()));
+    Pose2d branchPose2 =
+        AllianceFlipUtil.apply(branchPositions.get(2).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose2 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose2.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.cos(branchPose2.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.sin(branchPose2.getRotation().getRadians()),
+                    branchPose2.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.sin(branchPose2.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.cos(branchPose2.getRotation().getRadians()),
+                    branchPose2.getRotation()));
+    Pose2d branchPose3 =
+        AllianceFlipUtil.apply(branchPositions.get(3).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose3 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose3.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.cos(branchPose3.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.sin(branchPose3.getRotation().getRadians()),
+                    branchPose3.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.sin(branchPose3.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.cos(branchPose3.getRotation().getRadians()),
+                    branchPose3.getRotation()));
     Supplier<Pose2d> A =
         () ->
             AllianceFlipUtil.apply(
@@ -206,50 +298,126 @@ public class AutosAlternate {
         .withTimeout(1.5)
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToReef(false).withTimeout(3),
-                orchestrator.moveElevatorToLevel(false, 3)))
+                orchestrator.moveElevatorBasedOnDistance(targetPose1),
+                new StraightDriveToPose(drive, targetPose1)))
+        .withTimeout(3)
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(
-            orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(1))
-        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(
             Commands.parallel(
-                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                    orchestrator.intake())
-                .until(coral::hasCoral))
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                orchestrator.intake().withTimeout(0.5)))
+        // .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(1.5)
                     .andThen(
                         Commands.parallel(
-                            fieldAlignment.alignToReef(true).withTimeout(2),
-                            orchestrator.moveElevatorToLevel(false, 3))),
+                            orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                            new StraightDriveToPose(drive, targetPose2)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(
             Commands.parallel(
-                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                    orchestrator.intake())
-                .until(coral::hasCoral))
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(
+                    drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                orchestrator.intake().withTimeout(0.5)))
+        // .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(1.5)
                     .andThen(
                         Commands.parallel(
-                            fieldAlignment.alignToReef(false).withTimeout(2),
-                            orchestrator.moveElevatorToLevel(false, 3))),
+                            orchestrator.moveElevatorBasedOnDistance(targetPose3),
+                            new StraightDriveToPose(drive, targetPose3)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
   public Command skibidiAFourScore() {
+    Pose2d branchPose1 =
+        AllianceFlipUtil.apply(branchPositions.get(5).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose1 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose1.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.cos(branchPose1.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.sin(branchPose1.getRotation().getRadians()),
+                    branchPose1.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.sin(branchPose1.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.cos(branchPose1.getRotation().getRadians()),
+                    branchPose1.getRotation()));
+    Pose2d branchPose2 =
+        AllianceFlipUtil.apply(branchPositions.get(2).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose2 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose2.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.cos(branchPose2.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.sin(branchPose2.getRotation().getRadians()),
+                    branchPose2.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.sin(branchPose2.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.cos(branchPose2.getRotation().getRadians()),
+                    branchPose2.getRotation()));
+    Pose2d branchPose3 =
+        AllianceFlipUtil.apply(branchPositions.get(3).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose3 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose3.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.cos(branchPose3.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.sin(branchPose3.getRotation().getRadians()),
+                    branchPose3.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.sin(branchPose3.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.cos(branchPose3.getRotation().getRadians()),
+                    branchPose3.getRotation()));
+    Pose2d branchPose4 =
+        AllianceFlipUtil.apply(branchPositions.get(6).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose4 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose4.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.cos(branchPose4.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.sin(branchPose4.getRotation().getRadians()),
+                    branchPose4.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                            * Math.sin(branchPose4.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                            * Math.cos(branchPose4.getRotation().getRadians()),
+                    branchPose4.getRotation()));
     Supplier<Pose2d> A =
         () ->
             AllianceFlipUtil.apply(
@@ -279,47 +447,59 @@ public class AutosAlternate {
         .withTimeout(1.5)
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToReef(false).withTimeout(3),
-                orchestrator.moveElevatorToLevel(false, 3)))
+                orchestrator.moveElevatorBasedOnDistance(targetPose1),
+                new StraightDriveToPose(drive, targetPose1)))
+        .withTimeout(3)
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(
-            orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(1))
-        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(
             Commands.parallel(
-                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                    orchestrator.intake())
-                .withTimeout(1))
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                orchestrator.intake().withTimeout(0.5)))
+        // .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(1.5)
                     .andThen(
                         Commands.parallel(
-                            fieldAlignment.alignToReef(false).withTimeout(2),
-                            orchestrator.moveElevatorToLevel(false, 3))),
+                            orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                            new StraightDriveToPose(drive, targetPose2)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(
             Commands.parallel(
-                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                    orchestrator.intake())
-                .withTimeout(1))
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(
+                    drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                orchestrator.intake().withTimeout(0.5)))
+        // .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(1.5)
                     .andThen(
                         Commands.parallel(
-                            fieldAlignment.alignToReef(true).withTimeout(2),
-                            orchestrator.moveElevatorToLevel(false, 3))),
+                            orchestrator.moveElevatorBasedOnDistance(targetPose3),
+                            new StraightDriveToPose(drive, targetPose3)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
+        .andThen(Commands.waitSeconds(0.1))
+        .andThen(
+            Commands.parallel(
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(
+                    drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
         .andThen(
             Commands.parallel(
                     fieldAlignment.alignToCoralStation().andThen(Commands.none()),
@@ -331,11 +511,12 @@ public class AutosAlternate {
                     .withTimeout(3)
                     .andThen(
                         Commands.parallel(
-                            fieldAlignment.alignToReef(true).withTimeout(2),
-                            orchestrator.moveElevatorToLevel(false, 3))),
+                            orchestrator.moveElevatorBasedOnDistance(targetPose4),
+                            new StraightDriveToPose(drive, targetPose4)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
@@ -383,6 +564,40 @@ public class AutosAlternate {
   }
 
   public Command sigmaCTwoScore() {
+    Pose2d branchPose1 =
+        AllianceFlipUtil.apply(branchPositions.get(9).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose1 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose1.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.cos(branchPose1.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.sin(branchPose1.getRotation().getRadians()),
+                    branchPose1.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.sin(branchPose1.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.cos(branchPose1.getRotation().getRadians()),
+                    branchPose1.getRotation()));
+    Pose2d branchPose2 =
+        AllianceFlipUtil.apply(branchPositions.get(6).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose2 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose2.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.cos(branchPose2.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.sin(branchPose2.getRotation().getRadians()),
+                    branchPose2.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.sin(branchPose2.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.cos(branchPose2.getRotation().getRadians()),
+                    branchPose2.getRotation()));
     Supplier<Pose2d> C =
         () ->
             AllianceFlipUtil.apply(
@@ -415,30 +630,89 @@ public class AutosAlternate {
         .andThen(Commands.runOnce(() -> drive.setPose(C.get())))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
-        .andThen(fieldAlignment.alignToReef(true))
-        .withTimeout(3)
-        .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(
-            orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(1))
-        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
         .andThen(
             Commands.parallel(
-                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                    orchestrator.intake())
-                .until(coral::hasCoral))
+                orchestrator.moveElevatorBasedOnDistance(targetPose1),
+                new StraightDriveToPose(drive, targetPose1)))
+        .withTimeout(3)
+        .andThen(orchestrator.placeCoral(4))
+        .andThen(Commands.waitSeconds(0.1))
+        .andThen(
+            Commands.parallel(
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                orchestrator.intake().withTimeout(0.5)))
+        // .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(1.5)
-                    .andThen(fieldAlignment.alignToReef(true).withTimeout(2)),
+                    .andThen(
+                        Commands.parallel(
+                            orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                            new StraightDriveToPose(drive, targetPose2)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
   public Command alphaCThreeScore() {
+    Pose2d branchPose1 =
+        AllianceFlipUtil.apply(branchPositions.get(9).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose1 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose1.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.cos(branchPose1.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.sin(branchPose1.getRotation().getRadians()),
+                    branchPose1.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.sin(branchPose1.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.cos(branchPose1.getRotation().getRadians()),
+                    branchPose1.getRotation()));
+    Pose2d branchPose2 =
+        AllianceFlipUtil.apply(branchPositions.get(6).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose2 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose2.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.cos(branchPose2.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.sin(branchPose2.getRotation().getRadians()),
+                    branchPose2.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.sin(branchPose2.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.cos(branchPose2.getRotation().getRadians()),
+                    branchPose2.getRotation()));
+    Pose2d branchPose3 =
+        AllianceFlipUtil.apply(branchPositions.get(7).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose3 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose3.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.cos(branchPose3.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.sin(branchPose3.getRotation().getRadians()),
+                    branchPose3.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.sin(branchPose3.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.cos(branchPose3.getRotation().getRadians()),
+                    branchPose3.getRotation()));
     Supplier<Pose2d> C =
         () ->
             AllianceFlipUtil.apply(
@@ -473,50 +747,126 @@ public class AutosAlternate {
         .withTimeout(1.5)
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToReef(true).withTimeout(3),
-                orchestrator.moveElevatorToLevel(false, 3)))
+                orchestrator.moveElevatorBasedOnDistance(targetPose1),
+                new StraightDriveToPose(drive, targetPose1)))
+        .withTimeout(3)
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(
-            orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(1))
-        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(
             Commands.parallel(
-                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                    orchestrator.intake())
-                .until(coral::hasCoral))
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                orchestrator.intake().withTimeout(0.5)))
+        // .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(1.5)
                     .andThen(
                         Commands.parallel(
-                            fieldAlignment.alignToReef(true).withTimeout(2),
-                            orchestrator.moveElevatorToLevel(false, 3))),
+                            orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                            new StraightDriveToPose(drive, targetPose2)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(
             Commands.parallel(
-                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                    orchestrator.intake())
-                .until(coral::hasCoral))
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(
+                    drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                orchestrator.intake().withTimeout(0.5)))
+        // .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(1.5)
                     .andThen(
                         Commands.parallel(
-                            fieldAlignment.alignToReef(false).withTimeout(2),
-                            orchestrator.moveElevatorToLevel(false, 3))),
+                            orchestrator.moveElevatorBasedOnDistance(targetPose3),
+                            new StraightDriveToPose(drive, targetPose3)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
   public Command skibidiCFourScore() {
+    Pose2d branchPose1 =
+        AllianceFlipUtil.apply(branchPositions.get(9).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose1 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose1.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.cos(branchPose1.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.sin(branchPose1.getRotation().getRadians()),
+                    branchPose1.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.sin(branchPose1.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.cos(branchPose1.getRotation().getRadians()),
+                    branchPose1.getRotation()));
+    Pose2d branchPose2 =
+        AllianceFlipUtil.apply(branchPositions.get(6).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose2 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose2.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.cos(branchPose2.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.sin(branchPose2.getRotation().getRadians()),
+                    branchPose2.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.sin(branchPose2.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.cos(branchPose2.getRotation().getRadians()),
+                    branchPose2.getRotation()));
+    Pose2d branchPose3 =
+        AllianceFlipUtil.apply(branchPositions.get(7).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose3 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose3.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.cos(branchPose3.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.sin(branchPose3.getRotation().getRadians()),
+                    branchPose3.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.sin(branchPose3.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.cos(branchPose3.getRotation().getRadians()),
+                    branchPose3.getRotation()));
+    Pose2d branchPose4 =
+        AllianceFlipUtil.apply(branchPositions.get(10).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose4 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose4.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.cos(branchPose4.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.sin(branchPose4.getRotation().getRadians()),
+                    branchPose4.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.sin(branchPose4.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.cos(branchPose4.getRotation().getRadians()),
+                    branchPose4.getRotation()));
     Supplier<Pose2d> C =
         () ->
             AllianceFlipUtil.apply(
@@ -551,47 +901,59 @@ public class AutosAlternate {
         .withTimeout(1.5)
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToReef(true).withTimeout(3),
-                orchestrator.moveElevatorToLevel(false, 3)))
+                orchestrator.moveElevatorBasedOnDistance(targetPose1),
+                new StraightDriveToPose(drive, targetPose1)))
+        .withTimeout(3)
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(
-            orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(1))
-        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(
             Commands.parallel(
-                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                    orchestrator.intake())
-                .withTimeout(1))
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                orchestrator.intake().withTimeout(0.5)))
+        // .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(1.5)
                     .andThen(
                         Commands.parallel(
-                            fieldAlignment.alignToReef(true).withTimeout(2),
-                            orchestrator.moveElevatorToLevel(false, 3))),
+                            orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                            new StraightDriveToPose(drive, targetPose2)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(
             Commands.parallel(
-                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                    orchestrator.intake())
-                .withTimeout(1))
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(
+                    drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                orchestrator.intake().withTimeout(0.5)))
+        // .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
                     .withTimeout(1.5)
                     .andThen(
                         Commands.parallel(
-                            fieldAlignment.alignToReef(false).withTimeout(2),
-                            orchestrator.moveElevatorToLevel(false, 3))),
+                            orchestrator.moveElevatorBasedOnDistance(targetPose3),
+                            new StraightDriveToPose(drive, targetPose3)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION))
+        .andThen(Commands.waitSeconds(0.1))
+        .andThen(
+            Commands.parallel(
+                orchestrator.moveElevatorBasedOnDistance(targetPose2),
+                new StraightDriveToPose(
+                    drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
         .andThen(
             Commands.parallel(
                     fieldAlignment.alignToCoralStation().andThen(Commands.none()),
@@ -603,11 +965,12 @@ public class AutosAlternate {
                     .withTimeout(3)
                     .andThen(
                         Commands.parallel(
-                            fieldAlignment.alignToReef(false).withTimeout(2),
-                            orchestrator.moveElevatorToLevel(false, 3))),
+                            orchestrator.moveElevatorBasedOnDistance(targetPose4),
+                            new StraightDriveToPose(drive, targetPose4)))
+                    .withTimeout(5),
                 coral.stop()))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
+        .andThen(Commands.waitSeconds(0.1))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 }
