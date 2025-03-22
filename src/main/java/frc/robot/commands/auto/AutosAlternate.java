@@ -1,5 +1,9 @@
 package frc.robot.commands.auto;
 
+import static frc.robot.FieldConstants.Reef.branchPositions;
+import static frc.robot.commands.drive.FieldAlignment.BRANCH_TO_ROBOT_BACKUP;
+import static frc.robot.commands.drive.FieldAlignment.CORAL_EFFECTOR_OFFSET;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
