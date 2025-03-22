@@ -74,7 +74,6 @@ public class ElevatorIOPhysical implements ElevatorIO {
   }
 
   public void updateInputs(ElevatorIOInputs inputs) {
-
     inputs.positionMeters = encoder.getPosition();
     inputs.velocityMetersPerSec = encoder.getVelocity();
     inputs.elevatorAppliedVolts = spark.getBusVoltage() * spark.getAppliedOutput();
