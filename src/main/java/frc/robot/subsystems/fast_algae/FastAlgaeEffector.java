@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
-
 import org.littletonrobotics.junction.Logger;
 
 public class FastAlgaeEffector extends SubsystemBase {
@@ -13,7 +12,7 @@ public class FastAlgaeEffector extends SubsystemBase {
   private final FastAlgaeEffectorIO io;
   private final FastAlgaeEffectorIOInputsAutoLogged inputs =
       new FastAlgaeEffectorIOInputsAutoLogged();
-  private final RobotState robotState = RobotState.getInstance(); 
+  private final RobotState robotState = RobotState.getInstance();
 
   public FastAlgaeEffector(FastAlgaeEffectorIO io) {
     this.io = io;
@@ -39,21 +38,20 @@ public class FastAlgaeEffector extends SubsystemBase {
     return inputs.isLowPostion;
   }
 
-  /** Stow Position */ 
+  /** Stow Position */
   public Command stowArm() {
     return Commands.startEnd(
-       () -> {
-          stowTimer.start();
-          io.setPivotVolts(FastAlgaeEffectorConstants.RETRACT_VOLTAGE);
-        }, 
-       () -> {
-          stowTimer.reset();
-          io.setPivotVolts(FastAlgaeEffectorConstants.ZERO);
-        },
-        this)
+            () -> {
+              stowTimer.start();
+              io.setPivotVolts(FastAlgaeEffectorConstants.RETRACT_VOLTAGE);
+            },
+            () -> {
+              stowTimer.reset();
+              io.setPivotVolts(FastAlgaeEffectorConstants.ZERO);
+            },
+            this)
         .until(() -> inputs.isStowed)
         .andThen(() -> io.resetPivotPosition(FastAlgaeEffectorConstants.ZERO));
-       
   }
 
   /** High Position */
@@ -87,7 +85,7 @@ public class FastAlgaeEffector extends SubsystemBase {
 
   // stow position (hard stop)
   // if motor is in reverse but arm is not moving
-  // if motor is in reverse but arm is not moving 
+  // if motor is in reverse but arm is not moving
   // high position (hard stop)
   // low position (specific psotion)
   // no removal motor, only pivot
