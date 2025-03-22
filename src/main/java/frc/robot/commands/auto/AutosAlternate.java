@@ -79,14 +79,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose.getRotation().getRadians())
+                            * Math.cos(branchPose.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose.getRotation().getRadians()),
+                            * Math.sin(branchPose.getRotation().getRadians()),
                     branchPose.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose.getRotation().getRadians())
+                            * Math.sin(branchPose.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose.getRotation().getRadians()),
+                            * Math.cos(branchPose.getRotation().getRadians()),
                     branchPose.getRotation()));
     Supplier<Pose2d> C =
         () ->
