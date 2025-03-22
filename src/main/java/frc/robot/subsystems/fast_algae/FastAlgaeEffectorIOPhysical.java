@@ -64,7 +64,7 @@ public class FastAlgaeEffectorIOPhysical implements FastAlgaeEffectorIO {
     inputs.isHighPostion =
         (pivotMotorEncoder.getPosition() > FastAlgaeEffectorConstants.HIGH_ANGLE) || (inputs.pivotVolts > 0) &&  Math.abs(inputs.pivotVelocity) >= 0.1  ;
     inputs.isStowed = 
-      (inputs.pivotVolts < 0) &&  Math.abs(inputs.pivotVelocity) <= 0.1; 
+      (inputs.pivotVolts < 0) &&  Math.abs(inputs.pivotVelocity) <= 0.1 && (FastAlgaeEffector.stowTimer.get() > 0.2); 
     inputs.pivotMotorTemp = pivotMotor.getMotorTemperature();
   }
 }
