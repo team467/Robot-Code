@@ -42,19 +42,13 @@ public class Orchestrator {
    * @return Command for intaking coral.
    */
   public Command intake() {
-    return Commands.parallel(
-            moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-                .until(elevator::limitSwitchPressed)
-            //        .andThen(elevator.runPercent(-0.1))
-            //        .withTimeout(1.0)
-            //        .andThen(
-            //            Commands.runOnce(
-            //                () -> {
-            //                  robotState.elevatorPosition = ElevatorPosition.INTAKE;
-            //                }))
-            ,
-            coralEffector.intakeCoral())
-        .until(coralEffector::hasCoral);
+    return Commands.run(
+            () ->
+                moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
+                    .until(elevator::limitSwitchPressed))
+        .andThen(Commands.waitUntil(coralEffector::hopperSeesCoral))
+        .andThen(coralEffector.intakeCoral());
+    // ).andThen();
   }
 
   /**
