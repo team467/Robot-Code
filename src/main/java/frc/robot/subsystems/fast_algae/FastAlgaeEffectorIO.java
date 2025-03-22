@@ -18,5 +18,10 @@ public interface FastAlgaeEffectorIO {
   }
 
   default void updateInputs(FastAlgaeEffectorIOInputs inputs) {}
-  default void setPivotVolts(double volts) {}
+
+  default void setPivotVolts(double volts) {
+  }
+
+  default void resetPivotPosition(double pivotPosition) {
+  }
 }

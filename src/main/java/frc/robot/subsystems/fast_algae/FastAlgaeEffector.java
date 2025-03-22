@@ -43,7 +43,8 @@ public class FastAlgaeEffector extends SubsystemBase {
               io.setPivotVolts(FastAlgaeEffectorConstants.RETRACT_VOLTAGE);
             },
             this)
-        .until(() -> inputs.isStowed);
+        .until(() -> inputs.isStowed)
+        .andThen(() -> io.resetPivotPosition(inputs.pivotPosition));
   }
 
   /** High Position */
@@ -71,7 +72,7 @@ public class FastAlgaeEffector extends SubsystemBase {
   public Command stop() {
     return Commands.run(
         () -> {
-          io.setPivotVolts(FastAlgaeEffectorConstants.ZERO_VOLTAGE);
+          io.setPivotVolts(FastAlgaeEffectorConstants.ZERO);
         },
         this);
   }
@@ -81,4 +82,7 @@ public class FastAlgaeEffector extends SubsystemBase {
   // high position (hard stop)
   // low position (specific psotion)
   // no removal motor, only pivot
+
+  // jsut create stowing mech, postions for the other ones, when the velocty is zero and volts are negative, 
+      //reset motor postion and set to homed (stowed)
 }
