@@ -283,8 +283,10 @@ public class AutosAlternate {
     return elevator
         .setHoldPosition(elevator.getPosition())
         .andThen(Commands.runOnce(() -> drive.setPose(C.get())))
-        .andThen(Commands.parallel(new StraightDriveToPose(drive, targetPose), Commands.none()));
-    // new ElevatorRelativeToPose(elevator, targetPosition, targetPose.get(), drive)));
+        .andThen(
+            Commands.parallel(
+                orchestrator.moveElevatorBasedOnDistance(targetPose),
+                new StraightDriveToPose(drive, targetPose)));
   }
 
   public Command sigmaCTwoScore(boolean left) {
