@@ -127,13 +127,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
 
   @Override
   public void setPercent(double percent) {
-    if (percent > 0.7) {
-      spark.set(0.7);
-    } else if (percent < -0.7) {
-      spark.set(-0.7);
-    } else {
-      spark.set(percent);
-    }
+    spark.set(percent);
   }
 
   @Override
