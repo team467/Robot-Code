@@ -11,7 +11,7 @@ public class FastAlgaeEffectorConstants {
   public static final double LOW_EXTEND_VOLTAGE = 6;
 
   public static final double RETRACT_VOLTAGE = -6;
-  public static final double ZERO_VOLTAGE = 0;
+  public static final double ZERO = 0.0;
 
   // public static boolean PIVOT_INVERTED = true;
 
