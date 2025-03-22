@@ -10,9 +10,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
-import frc.robot.subsystems.algae.AlgaeEffectorConstants;
-
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class FastAlgaeEffectorIOPhysical implements FastAlgaeEffectorIO {
@@ -62,9 +59,9 @@ public class FastAlgaeEffectorIOPhysical implements FastAlgaeEffectorIO {
     inputs.pivotAmps = pivotMotor.getOutputCurrent();
     inputs.pivotPosition = pivotMotorEncoder.getPosition();
     inputs.isHighPostion =
-        (pivotMotorEncoder.getPosition() > FastAlgaeEffectorConstants.HIGH_ANGLE) || (inputs.pivotVolts > 0) &&  Math.abs(inputs.pivotVelocity) >= 0.1  ;
-    inputs.isStowed = 
-      (inputs.pivotVolts < 0) &&  Math.abs(inputs.pivotVelocity) <= 0.1; 
+        (pivotMotorEncoder.getPosition() > FastAlgaeEffectorConstants.HIGH_ANGLE)
+            || (inputs.pivotVolts > 0) && Math.abs(inputs.pivotVelocity) >= 0.1;
+    inputs.isStowed = (inputs.pivotVolts < 0) && Math.abs(inputs.pivotVelocity) <= 0.1;
     inputs.pivotMotorTemp = pivotMotor.getMotorTemperature();
   }
 }

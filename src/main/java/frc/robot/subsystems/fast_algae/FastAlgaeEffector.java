@@ -1,6 +1,5 @@
 package frc.robot.subsystems.fast_algae;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -10,7 +9,8 @@ import org.littletonrobotics.junction.Logger;
 public class FastAlgaeEffector extends SubsystemBase {
 
   private final FastAlgaeEffectorIO io;
-  private final FastAlgaeEffectorIOInputsAutoLogged inputs = new FastAlgaeEffectorIOInputsAutoLogged();
+  private final FastAlgaeEffectorIOInputsAutoLogged inputs =
+      new FastAlgaeEffectorIOInputsAutoLogged();
   private final RobotState robotState = RobotState.getInstance(); // TODO: Add to robot state
 
   public FastAlgaeEffector(FastAlgaeEffectorIO io) {
@@ -47,30 +47,29 @@ public class FastAlgaeEffector extends SubsystemBase {
   //       .until(() -> inputs.isStowed)
   //       .andThen(() -> io.resetPivotPosition(inputs.pivotPosition));
   // }
-  
+
   public Command stowArm() {
     return Commands.startEnd(null, null, null);
   }
 
   /** High Position */
   public Command removeAlgaeHigh() {
-   return Commands.run(
+    return Commands.run(
             () -> {
               io.setPivotVolts(FastAlgaeEffectorConstants.HIGH_EXTEND_VOLTAGE);
             },
             this)
-       .until(() -> inputs.isHighPostion);
-    
+        .until(() -> inputs.isHighPostion);
   }
 
   /** Low position */
   public Command removeAlgaeLow() {
     return Commands.run(
-        () -> {
-          io.setPivotVolts(FastAlgaeEffectorConstants.LOW_EXTEND_VOLTAGE);
-        },
-        this)
-      .until(() -> inputs.isLowPostion);
+            () -> {
+              io.setPivotVolts(FastAlgaeEffectorConstants.LOW_EXTEND_VOLTAGE);
+            },
+            this)
+        .until(() -> inputs.isLowPostion);
   }
 
   /** Stops all algae arm actions */
@@ -83,13 +82,14 @@ public class FastAlgaeEffector extends SubsystemBase {
   }
 
   // stow position (hard stop)
-    // if motor is in reverse but arm is not moving 
+  // if motor is in reverse but arm is not moving
   // high position (hard stop)
   // low position (specific psotion)
   // no removal motor, only pivot
 
-  // jsut create stowing mech, postions for the other ones, when the velocty is zero and volts are negative, 
-  //reset motor postion and set to homed (stowed)
-  //  start timer when stow starts stop half a second at the end to check for volts 
-      //  
+  // jsut create stowing mech, postions for the other ones, when the velocty is zero and volts are
+  // negative,
+  // reset motor postion and set to homed (stowed)
+  //  start timer when stow starts stop half a second at the end to check for volts
+  //
 }
