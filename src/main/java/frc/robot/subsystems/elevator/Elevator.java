@@ -5,6 +5,7 @@ import static frc.robot.subsystems.elevator.ElevatorConstants.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -56,6 +57,20 @@ public class Elevator extends SubsystemBase {
                   Logger.recordOutput("Elevator/Setpoint", setpointMeters);
                   io.setPosition(setpointMeters);
                   inputs.goalPositionMeters = setpointMeters;
+                },
+                this)
+            .onlyWhile(() -> isCalibrated),
+        Commands.none(),
+        () -> isCalibrated);
+  }
+
+  public Command toSetpoint(DoubleSupplier setpointMeters) {
+    return Commands.either(
+        Commands.run(
+                () -> {
+                  Logger.recordOutput("Elevator/Setpoint", setpointMeters.getAsDouble());
+                  io.setPosition(setpointMeters.getAsDouble());
+                  inputs.goalPositionMeters = setpointMeters.getAsDouble();
                 },
                 this)
             .onlyWhile(() -> isCalibrated),
