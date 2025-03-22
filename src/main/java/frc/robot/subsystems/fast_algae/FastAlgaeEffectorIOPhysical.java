@@ -10,9 +10,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
-import frc.robot.subsystems.algae.AlgaeEffectorConstants;
-
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class FastAlgaeEffectorIOPhysical implements FastAlgaeEffectorIO {

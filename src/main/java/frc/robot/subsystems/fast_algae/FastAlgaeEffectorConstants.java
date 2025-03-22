@@ -6,7 +6,6 @@ public class FastAlgaeEffectorConstants {
   public static final double HIGH_ANGLE = 0.0; // TODO: change angle
   public static final double LOW_ANGLE = 0.0; // TODO: change angle
 
-
   public static final double HIGH_EXTEND_VOLTAGE = 6.0;
   public static final double LOW_EXTEND_VOLTAGE = 6.0;
 

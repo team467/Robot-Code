@@ -14,14 +14,11 @@ public interface FastAlgaeEffectorIO {
     public boolean isHighPostion;
     public boolean isLowPostion;
     public boolean isStowed;
-
   }
 
   default void updateInputs(FastAlgaeEffectorIOInputs inputs) {}
 
-  default void setPivotVolts(double volts) {
-  }
+  default void setPivotVolts(double volts) {}
 
-  default void resetPivotPosition(double pivotPosition) {
-  }
+  default void resetPivotPosition(double pivotPosition) {}
 }
