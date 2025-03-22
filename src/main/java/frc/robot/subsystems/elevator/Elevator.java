@@ -49,9 +49,12 @@ public class Elevator extends SubsystemBase {
 
   /**
    * Creates a command to move the elevator to the specified position.
+   * If the elevator is not calibrated, it will first run the calibration routine
+   * before moving to the setpoint.
    *
    * @param setpointMeters The desired position in meters.
-   * @return A command that moves the elevator to the setpoint if it is calibrated.
+   * @return A command that moves the elevator to the setpoint. If the elevator is not calibrated,
+   *         it will first calibrate and then move to the setpoint.
    */
   public Command toSetpoint(double setpointMeters) {
     return Commands.either(
