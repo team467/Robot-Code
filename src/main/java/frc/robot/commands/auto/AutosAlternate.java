@@ -402,7 +402,7 @@ public class AutosAlternate {
                             * Math.cos(branchPose3.getRotation().getRadians()),
                     branchPose3.getRotation()));
     Pose2d branchPose4 =
-        AllianceFlipUtil.apply(branchPositions.get(6).get(ReefHeight.L1).toPose2d());
+        AllianceFlipUtil.apply(branchPositions.get(4).get(ReefHeight.L1).toPose2d());
     Supplier<Pose2d> targetPose4 =
         () ->
             AllianceFlipUtil.apply(
@@ -565,7 +565,7 @@ public class AutosAlternate {
 
   public Command sigmaCTwoScore() {
     Pose2d branchPose1 =
-        AllianceFlipUtil.apply(branchPositions.get(9).get(ReefHeight.L1).toPose2d());
+        AllianceFlipUtil.apply(branchPositions.get(8).get(ReefHeight.L1).toPose2d());
     Supplier<Pose2d> targetPose1 =
         () ->
             AllianceFlipUtil.apply(
@@ -582,7 +582,7 @@ public class AutosAlternate {
                             * Math.cos(branchPose1.getRotation().getRadians()),
                     branchPose1.getRotation()));
     Pose2d branchPose2 =
-        AllianceFlipUtil.apply(branchPositions.get(6).get(ReefHeight.L1).toPose2d());
+        AllianceFlipUtil.apply(branchPositions.get(10).get(ReefHeight.L1).toPose2d());
     Supplier<Pose2d> targetPose2 =
         () ->
             AllianceFlipUtil.apply(
@@ -663,7 +663,7 @@ public class AutosAlternate {
 
   public Command alphaCThreeScore() {
     Pose2d branchPose1 =
-        AllianceFlipUtil.apply(branchPositions.get(9).get(ReefHeight.L1).toPose2d());
+        AllianceFlipUtil.apply(branchPositions.get(8).get(ReefHeight.L1).toPose2d());
     Supplier<Pose2d> targetPose1 =
         () ->
             AllianceFlipUtil.apply(
@@ -680,7 +680,7 @@ public class AutosAlternate {
                             * Math.cos(branchPose1.getRotation().getRadians()),
                     branchPose1.getRotation()));
     Pose2d branchPose2 =
-        AllianceFlipUtil.apply(branchPositions.get(6).get(ReefHeight.L1).toPose2d());
+        AllianceFlipUtil.apply(branchPositions.get(10).get(ReefHeight.L1).toPose2d());
     Supplier<Pose2d> targetPose2 =
         () ->
             AllianceFlipUtil.apply(
@@ -697,7 +697,7 @@ public class AutosAlternate {
                             * Math.cos(branchPose2.getRotation().getRadians()),
                     branchPose2.getRotation()));
     Pose2d branchPose3 =
-        AllianceFlipUtil.apply(branchPositions.get(7).get(ReefHeight.L1).toPose2d());
+        AllianceFlipUtil.apply(branchPositions.get(11).get(ReefHeight.L1).toPose2d());
     Supplier<Pose2d> targetPose3 =
         () ->
             AllianceFlipUtil.apply(
@@ -800,7 +800,7 @@ public class AutosAlternate {
 
   public Command skibidiCFourScore() {
     Pose2d branchPose1 =
-        AllianceFlipUtil.apply(branchPositions.get(9).get(ReefHeight.L1).toPose2d());
+        AllianceFlipUtil.apply(branchPositions.get(8).get(ReefHeight.L1).toPose2d());
     Supplier<Pose2d> targetPose1 =
         () ->
             AllianceFlipUtil.apply(
@@ -817,7 +817,7 @@ public class AutosAlternate {
                             * Math.cos(branchPose1.getRotation().getRadians()),
                     branchPose1.getRotation()));
     Pose2d branchPose2 =
-        AllianceFlipUtil.apply(branchPositions.get(6).get(ReefHeight.L1).toPose2d());
+        AllianceFlipUtil.apply(branchPositions.get(10).get(ReefHeight.L1).toPose2d());
     Supplier<Pose2d> targetPose2 =
         () ->
             AllianceFlipUtil.apply(
@@ -834,7 +834,7 @@ public class AutosAlternate {
                             * Math.cos(branchPose2.getRotation().getRadians()),
                     branchPose2.getRotation()));
     Pose2d branchPose3 =
-        AllianceFlipUtil.apply(branchPositions.get(7).get(ReefHeight.L1).toPose2d());
+        AllianceFlipUtil.apply(branchPositions.get(11).get(ReefHeight.L1).toPose2d());
     Supplier<Pose2d> targetPose3 =
         () ->
             AllianceFlipUtil.apply(
@@ -851,7 +851,7 @@ public class AutosAlternate {
                             * Math.cos(branchPose3.getRotation().getRadians()),
                     branchPose3.getRotation()));
     Pose2d branchPose4 =
-        AllianceFlipUtil.apply(branchPositions.get(10).get(ReefHeight.L1).toPose2d());
+        AllianceFlipUtil.apply(branchPositions.get(9).get(ReefHeight.L1).toPose2d());
     Supplier<Pose2d> targetPose4 =
         () ->
             AllianceFlipUtil.apply(
