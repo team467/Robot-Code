@@ -199,8 +199,9 @@ public class AutosAlternate {
                 new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
@@ -308,8 +309,9 @@ public class AutosAlternate {
                 new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
@@ -329,8 +331,9 @@ public class AutosAlternate {
                     drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
@@ -455,8 +458,9 @@ public class AutosAlternate {
                 new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
@@ -476,8 +480,9 @@ public class AutosAlternate {
                     drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
@@ -497,8 +502,9 @@ public class AutosAlternate {
                     drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint1, 1)
@@ -637,8 +643,9 @@ public class AutosAlternate {
                 new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
@@ -751,8 +758,9 @@ public class AutosAlternate {
                 new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
@@ -772,8 +780,9 @@ public class AutosAlternate {
                     drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
@@ -903,8 +912,9 @@ public class AutosAlternate {
                 new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8)))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
@@ -924,8 +934,9 @@ public class AutosAlternate {
                     drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint3, 1)
@@ -945,8 +956,9 @@ public class AutosAlternate {
                     drive, fieldAlignment.getClosestCoralStationPositionForAlign())))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                orchestrator.intake()).until(coral::hasCoral))
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .until(coral::hasCoral))
         .andThen(
             Commands.race(
                 new StraightDriveToPose(drive, scorePoint1, 1)
