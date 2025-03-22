@@ -29,10 +29,6 @@ public class Elevator extends SubsystemBase {
     Logger.processInputs("Elevator", inputs);
     io.goToSetpoint(inputs.elevatorSetpoint);
 
-    //    if (DriverStation.isDisabled()) {
-    //      io.setPosition(inputs.positionMeters);
-    //    }
-
     if (inputs.stowLimitSwitch) {
       io.resetPosition(elevatorToGround);
       if (!isCalibrated) {
@@ -40,10 +36,6 @@ public class Elevator extends SubsystemBase {
         isCalibrated = true;
       }
     }
-
-    //    if (inputs.positionMeters > maxElevatorExtension && inputs.velocityMetersPerSec > 0) {
-    //      io.setPosition(maxElevatorExtension);
-    //    }
   }
 
   /**
