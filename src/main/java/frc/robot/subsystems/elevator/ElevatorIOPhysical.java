@@ -72,6 +72,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
     tryUntilOk(spark, 5, () -> encoder.setPosition(0.0));
   }
+
   public void updateInputs(ElevatorIOInputs inputs) {
     inputs.positionMeters = encoder.getPosition();
     inputs.velocityMetersPerSec = encoder.getVelocity();
