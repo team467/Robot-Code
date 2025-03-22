@@ -6,10 +6,12 @@ import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 
 public class Orchestrator {
+  private final Drive drive;
   private final Elevator elevator;
   private final AlgaeEffector algaeEffector;
   private final CoralEffector coralEffector;
@@ -21,11 +23,12 @@ public class Orchestrator {
   private static final double ALGAE_L2_ANGLE = 0;
   private static final double ALGAE_L3_ANGLE = 0;
 
-  public Orchestrator(Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector) {
+  public Orchestrator(Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector, Drive drive) {
     this.elevator = elevator;
     this.algaeEffector = algaeEffector;
     this.coralEffector = coralEffector;
-    robotState.elevatorPosition = ElevatorPosition.INTAKE;
+      this.drive = drive;
+      robotState.elevatorPosition = ElevatorPosition.INTAKE;
   }
 
   /**
@@ -93,7 +96,7 @@ public class Orchestrator {
 
   public Command dumpCoralAndHome() {
     return coralEffector
-        .dumpCoral()
+        .dumpCoral().andThen(Commands.runOnce(() -> drive.run(Commands::none)))
         .andThen(Commands.waitSeconds(0.4))
         .andThen(moveElevatorToLevel(false, 1).until(elevator::limitSwitchPressed));
   }
