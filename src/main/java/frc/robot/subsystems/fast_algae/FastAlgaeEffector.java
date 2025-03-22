@@ -1,19 +1,19 @@
 package frc.robot.subsystems.fast_algae;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
-import frc.robot.subsystems.algae.AlgaeEffectorConstants;
 
 import org.littletonrobotics.junction.Logger;
 
 public class FastAlgaeEffector extends SubsystemBase {
-
+  public static Timer stowTimer = new Timer();
   private final FastAlgaeEffectorIO io;
   private final FastAlgaeEffectorIOInputsAutoLogged inputs =
       new FastAlgaeEffectorIOInputsAutoLogged();
-  private final RobotState robotState = RobotState.getInstance(); // TODO: Add to robot state
+  private final RobotState robotState = RobotState.getInstance(); 
 
   public FastAlgaeEffector(FastAlgaeEffectorIO io) {
     this.io = io;
@@ -38,17 +38,6 @@ public class FastAlgaeEffector extends SubsystemBase {
   public boolean isLowPostion() {
     return inputs.isLowPostion;
   }
-
-  /** Stow Position */
-  // public Command stowArm() {
-  //   return Commands.run(
-  //       () -> {
-  //         io.setPivotVolts(FastAlgaeEffectorConstants.RETRACT_VOLTAGE);
-  //       },
-  //       this)
-  //       .until(() -> inputs.isStowed)
-  //       .andThen(() -> io.resetPivotPosition(inputs.pivotPosition));
-  // }
 
   /** Stow Position */ 
   public Command stowArm() {
