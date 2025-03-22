@@ -20,6 +20,10 @@ import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
+import static frc.robot.FieldConstants.Reef.branchPositions;
+import static frc.robot.commands.drive.FieldAlignment.BRANCH_TO_ROBOT_BACKUP;
+import static frc.robot.commands.drive.FieldAlignment.CORAL_EFFECTOR_OFFSET;
+
 public class AutosAlternate {
 
   private final Drive drive;
@@ -58,6 +62,42 @@ public class AutosAlternate {
     Supplier<Pose2d> B = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("B"));
     return Commands.runOnce(() -> drive.setPose(B.get()))
         .andThen(new StraightDriveToPose(-1, 0, 0, drive, 0.04));
+  }
+
+  public Command elevatorRelativeToPose(boolean branchLeft, int closestReefFace) {
+    double targetPosition = ReefHeight.L4.height;
+    int branch = closestReefFace * 2;
+    Pose2d branchPose =
+        AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L1).toPose2d());
+    Supplier<Pose2d> targetPose =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    branchPose.getX() // Move left robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.cos(branchPose.getRotation().getRadians())
+                        - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.sin(branchPose.getRotation().getRadians()),
+                    branchPose.getY() // Move back robot relative
+                        - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
+                        * Math.sin(branchPose.getRotation().getRadians())
+                        + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
+                        * Math.cos(branchPose.getRotation().getRadians()),
+                    branchPose.getRotation()));
+    Supplier<Pose2d> C =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    ChoreoVariables.getPose("C").getTranslation(),
+                    ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
+    Logger.recordOutput("C", AllianceFlipUtil.apply(C.get()));
+    return elevator
+        .setHoldPosition(elevator.getPosition())
+        .andThen(Commands.runOnce(() -> drive.setPose(C.get())))
+        .andThen(
+            Commands.parallel(
+                orchestrator.moveElevatorBasedOnDistance(targetPose),
+                new StraightDriveToPose(drive, targetPose)));
   }
 
   public Command AScore(boolean left) {
