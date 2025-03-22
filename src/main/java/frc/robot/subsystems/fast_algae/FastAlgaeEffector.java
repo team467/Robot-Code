@@ -1,5 +1,6 @@
 package frc.robot.subsystems.fast_algae;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,14 +38,18 @@ public class FastAlgaeEffector extends SubsystemBase {
   }
 
   /** Stow Position */
+  // public Command stowArm() {
+  //   return Commands.run(
+  //       () -> {
+  //         io.setPivotVolts(FastAlgaeEffectorConstants.RETRACT_VOLTAGE);
+  //       },
+  //       this)
+  //       .until(() -> inputs.isStowed)
+  //       .andThen(() -> io.resetPivotPosition(inputs.pivotPosition));
+  // }
+  
   public Command stowArm() {
-    return Commands.run(
-            () -> {
-              io.setPivotVolts(FastAlgaeEffectorConstants.RETRACT_VOLTAGE);
-            },
-            this)
-        .until(() -> inputs.isStowed)
-        .andThen(() -> io.resetPivotPosition(inputs.pivotPosition));
+    return Commands.startEnd(null, null, null);
   }
 
   /** High Position */
@@ -84,5 +89,7 @@ public class FastAlgaeEffector extends SubsystemBase {
   // no removal motor, only pivot
 
   // jsut create stowing mech, postions for the other ones, when the velocty is zero and volts are negative, 
-      //reset motor postion and set to homed (stowed)
+  //reset motor postion and set to homed (stowed)
+  //  start timer when stow starts stop half a second at the end to check for volts 
+      //  
 }
