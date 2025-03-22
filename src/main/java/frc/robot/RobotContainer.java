@@ -206,7 +206,7 @@ public class RobotContainer {
     autoChooser.addOption("C Sigma Two Score", autosAlternate.sigmaCTwoScore());
     autoChooser.addOption("C Alpha Three Score", autosAlternate.alphaCThreeScore());
     autoChooser.addOption("C Skibidi Four Score", autosAlternate.skibidiCFourScore());
-    autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(true, 4));
+    autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(4));
     registerAutoRoutines();
 
     // Configure the button bindings
