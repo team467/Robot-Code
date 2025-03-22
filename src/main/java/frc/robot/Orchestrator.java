@@ -23,12 +23,13 @@ public class Orchestrator {
   private static final double ALGAE_L2_ANGLE = 0;
   private static final double ALGAE_L3_ANGLE = 0;
 
-  public Orchestrator(Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector, Drive drive) {
+  public Orchestrator(
+      Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector, Drive drive) {
     this.elevator = elevator;
     this.algaeEffector = algaeEffector;
     this.coralEffector = coralEffector;
-      this.drive = drive;
-      robotState.elevatorPosition = ElevatorPosition.INTAKE;
+    this.drive = drive;
+    robotState.elevatorPosition = ElevatorPosition.INTAKE;
   }
 
   /**
@@ -54,12 +55,10 @@ public class Orchestrator {
   public Command placeCoral(int level) {
     return moveElevatorToLevel(false, level).withTimeout(1).andThen(coralEffector.dumpCoral());
   }
-public Command removeAlgaeAndPlaceCoral(int level){
-    return Commands.deadline(
-        placeCoral(level),
-        removeAlgaeAuto()
-    );
-}
+
+  public Command removeAlgaeAndPlaceCoral(int level) {
+    return Commands.deadline(placeCoral(level), removeAlgaeAuto());
+  }
   /**
    * Removes algae piece after getting in position for algae.
    *
@@ -101,7 +100,8 @@ public Command removeAlgaeAndPlaceCoral(int level){
 
   public Command dumpCoralAndHome() {
     return coralEffector
-        .dumpCoral().andThen(Commands.runOnce(() -> drive.run(Commands::none)))
+        .dumpCoral()
+        .andThen(Commands.runOnce(() -> drive.run(Commands::none)))
         .andThen(Commands.waitSeconds(0.4))
         .andThen(moveElevatorToLevel(false, 1).until(elevator::limitSwitchPressed));
   }
