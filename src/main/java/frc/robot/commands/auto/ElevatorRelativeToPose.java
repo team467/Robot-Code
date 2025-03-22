@@ -28,11 +28,8 @@ public class ElevatorRelativeToPose extends Command {
     this.initialPosition = elevator.getPosition();
   }
 
-  private final PIDController elevatorController = new PIDController(8, 0, .01);
-
   @Override
   public void initialize() {
-    elevatorController.reset();
     initialPose = drive.getPose();
     distanceScaler = initialPose.getTranslation().getDistance(targetPose.getTranslation());
     elevatorScaler = targetPosition - initialPosition;
@@ -41,18 +38,27 @@ public class ElevatorRelativeToPose extends Command {
 
   @Override
   public void execute() {
-    Pose2d currentPose = drive.getPose();
-    double distance = targetPose.getTranslation().getDistance(currentPose.getTranslation());
-    if (elevatorController.atSetpoint()) {
-      end(true);
-      distance = 0;
-    }
-    double output = elevatorController.calculate(distance);
-    elevator.toSetpoint(targetPosition + output * scaler);
-  }
 
+    if(elevator.getPosition() >= 0.7605){
+      end(false);
+    }
+    else {
+
+      Pose2d currentPose = drive.getPose();
+      double distance = targetPose.getTranslation().getDistance(currentPose.getTranslation());
+      double targetPosition = setpoint(distance);
+      elevator.toSetpoint(targetPosition);
+    }
+  }
   @Override
   public void end(boolean interrupted) {
-    drive.stop();
+    elevator.toSetpoint(0.7605);
+  }
+  public double setpoint(double distance){
+    double setpoint = (0.368) * Math.pow(0.1, distance);
+    if(setpoint >= 0.7605){
+      setpoint = 0.7605;
+    }
+    return setpoint;
   }
 }
