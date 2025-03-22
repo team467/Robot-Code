@@ -62,8 +62,17 @@ public class Elevator extends SubsystemBase {
                   inputs.goalPositionMeters = setpointMeters;
                 },
                 this)
-            .onlyWhile(() -> isCalibrated),
-        Commands.none(),
+            .until(this::atSetpoint),
+        Commands.sequence(
+            calibrate(),
+            Commands.run(
+                    () -> {
+                      Logger.recordOutput("Elevator/Setpoint", setpointMeters);
+                      io.setPosition(setpointMeters);
+                      inputs.goalPositionMeters = setpointMeters;
+                    },
+                    this)
+                .until(this::atSetpoint)),
         () -> isCalibrated);
   }
 
