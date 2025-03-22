@@ -78,10 +78,6 @@ public class Elevator extends SubsystemBase {
         () -> isCalibrated);
   }
 
-  public Command setSetpoint(double setpoint) {
-    return Commands.run(() -> inputs.elevatorSetpoint = setpoint);
-  }
-
   public Command runPercent(double percent) {
     return Commands.run(
         () -> {
