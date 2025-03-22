@@ -12,7 +12,8 @@ public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs;
 
-  @AutoLogOutput private boolean isCalibrated = false;
+  @AutoLogOutput private boolean isManual = false;
+  private double manualPercent = 0.0;
   @AutoLogOutput private boolean holdLock = false;
   @AutoLogOutput private double holdPosition = INTAKE_POSITION;
 
@@ -27,79 +28,65 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
-
-    //    if (DriverStation.isDisabled()) {
-    //      io.setPosition(inputs.positionMeters);
-    //    }
-
-    if (inputs.stowLimitSwitch) {
-      io.resetPosition(elevatorToGround);
-      if (!isCalibrated) {
-        io.setPosition(STOW);
-        isCalibrated = true;
-      }
+    if (isManual) {
+      io.setPercent(manualPercent);
+    } else {
+      io.goToSetpoint();
     }
-
-    //    if (inputs.positionMeters > maxElevatorExtension && inputs.velocityMetersPerSec > 0) {
-    //      io.setPosition(maxElevatorExtension);
-    //    }
   }
 
+  /**
+   * Checks if the elevator has reached its setpoint.
+   *
+   * @return true if the elevator is at the target setpoint, false otherwise.
+   */
   public boolean atSetpoint() {
     return inputs.atSetpoint;
   }
 
+  /**
+   * Creates a command to move the elevator to the specified position. If the elevator is not
+   * calibrated, it will first run the calibration routine before moving to the setpoint.
+   *
+   * @param setpointMeters The desired position in meters.
+   * @return A command that moves the elevator to the setpoint. If the elevator is not calibrated,
+   *     it will first calibrate and then move to the setpoint.
+   */
   public Command toSetpoint(double setpointMeters) {
-    return Commands.either(
-        Commands.run(
-                () -> {
-                  Logger.recordOutput("Elevator/Setpoint", setpointMeters);
-                  io.setPosition(setpointMeters);
-                  inputs.goalPositionMeters = setpointMeters;
-                },
-                this)
-            .onlyWhile(() -> isCalibrated),
-        Commands.none(),
-        () -> isCalibrated);
-  }
-
-  public Command setSetpoint(double setpoint) {
-    return Commands.run(() -> inputs.elevatorSetpoint = setpoint);
+    return Commands.run(
+        () -> {
+          this.isManual = false;
+          io.setPosition(setpointMeters);
+        },
+        this);
   }
 
   public Command runPercent(double percent) {
     return Commands.run(
         () -> {
-          Logger.recordOutput("Elevator/DesiredVolts", percent * 12);
-          io.setPercent(percent);
+          this.isManual = true;
+          this.manualPercent = percent;
         },
         this);
   }
 
-  public Command setHoldPosition(double holdPosition) {
-    return Commands.runOnce(
-        () -> {
-          this.holdPosition = holdPosition;
-        },
-        this);
-  }
+  /*   public Command setHoldPosition(double holdPosition) {
+      return Commands.runOnce(
+          () -> {
+            this.holdPosition = holdPosition;
+          },
+          this);
+    }
 
-  public Command hold() {
-    return Commands.run(
-        () -> {
-          io.hold(holdPosition);
-        },
-        this);
-  }
-
-  public Command calibrate() {
-    return Commands.run(
-            () -> {
-              io.setPercent(-0.15);
-            },
-            this)
-        .until(this::limitSwitchPressed);
-  }
+  /*   public Command hold() {
+      return Commands.runOnce(() -> holdPosition = inputs.positionMeters, this)
+          .alongWith(
+              Commands.run(
+                  () -> {
+                    io.hold(holdPosition);
+                  },
+                  this));
+    } */
 
   public double getPosition() {
     return inputs.positionMeters;
