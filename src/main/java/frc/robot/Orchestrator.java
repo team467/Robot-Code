@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.RobotState.ElevatorPosition;
+import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
@@ -12,6 +13,7 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 
 public class Orchestrator {
   private final Elevator elevator;
+  private final FastAlgaeEffector fastAlgaeEffector;
   private final AlgaeEffector algaeEffector;
   private final CoralEffector coralEffector;
   private final Drive drive;
@@ -24,8 +26,9 @@ public class Orchestrator {
   private static final double ALGAE_L3_HEIGHT = ReefHeight.ALGAE_HIGH.height;
 
   public Orchestrator(
-      Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector, Drive drive) {
+      Elevator elevator, FastAlgaeEffector fastAlgaeEffector, AlgaeEffector algaeEffector, CoralEffector coralEffector, Drive drive) {
     this.elevator = elevator;
+    this.fastAlgaeEffector = fastAlgaeEffector;
     this.algaeEffector = algaeEffector;
     this.coralEffector = coralEffector;
     this.drive = drive;
@@ -71,7 +74,14 @@ public class Orchestrator {
    * @return Command to remove algae from reef.
    */
   public Command removeAlgae(int level) {
-    return moveElevatorToLevel(true, level).andThen(algaeEffector.removeAlgae());
+    // return moveElevatorToLevel(true, level).andThen(algaeEffector.removeAlgae());
+    if (level == ALGAE_L2_HEIGHT) {
+      return fastAlgaeEffector.removeAlgaeLow();
+    } else if (level == ALGAE_L3_HEIGHT) {
+      return fastAlgaeEffector.removeAlgaeHigh();
+    } else {
+      return null;
+    }
   }
 
   public Command moveElevatorToLevel(boolean algae, int level) {
