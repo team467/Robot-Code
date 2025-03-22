@@ -220,7 +220,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     coral.setDefaultCommand(coral.stop());
     algae.setDefaultCommand(algae.stowArm());
-    elevator.setDefaultCommand(elevator.hold());
+    elevator.setDefaultCommand(elevator.runPercent(0.0));
     climber.setDefaultCommand(climber.stop());
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
