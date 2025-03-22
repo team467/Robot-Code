@@ -24,10 +24,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
-import static frc.robot.FieldConstants.Reef.branchPositions;
-import static frc.robot.commands.drive.FieldAlignment.BRANCH_TO_ROBOT_BACKUP;
-import static frc.robot.commands.drive.FieldAlignment.CORAL_EFFECTOR_OFFSET;
-
 public class AutosAlternate {
 
   private final Drive drive;
