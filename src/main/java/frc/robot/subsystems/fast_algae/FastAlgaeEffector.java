@@ -94,5 +94,4 @@ public class FastAlgaeEffector extends SubsystemBase {
   // negative,
   // reset motor postion and set to homed (stowed)
   //  start timer when stow starts stop half a second at the end to check for volts
-  //
 }
