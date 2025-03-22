@@ -40,7 +40,7 @@ public class AlgaeEffector extends SubsystemBase {
     return Commands.run(
             () -> {
               io.setPivotVolts(AlgaeEffectorConstants.RETRACT_VOLTAGE);
-              io.setRemovalVolts(AlgaeEffectorConstants.ZERO);
+              io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
             },
             this)
         .until(() -> inputs.isStowed)
@@ -55,7 +55,7 @@ public class AlgaeEffector extends SubsystemBase {
           if (!isFullyExtended()) {
             io.setPivotVolts(AlgaeEffectorConstants.EXTEND_VOLTAGE);
           } else {
-            io.setPivotVolts(AlgaeEffectorConstants.ZERO);
+            io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
             io.setRemovalVolts(AlgaeEffectorConstants.REMOVAL_VOLTAGE);
           }
         },
@@ -66,8 +66,8 @@ public class AlgaeEffector extends SubsystemBase {
   public Command stop() {
     return Commands.run(
         () -> {
-          io.setPivotVolts(AlgaeEffectorConstants.ZERO);
-          io.setRemovalVolts(AlgaeEffectorConstants.ZERO);
+          io.setPivotVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
+          io.setRemovalVolts(AlgaeEffectorConstants.ZERO_VOLTAGE);
         },
         this);
   }
