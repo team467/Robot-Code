@@ -35,6 +35,8 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
+import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
+import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIO;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -52,6 +54,7 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private AlgaeEffector algae;
+  private FastAlgaeEffector fastalgae;
   private CoralEffector coral;
   private Climber climber;
   private Elevator elevator;
@@ -166,8 +169,11 @@ public class RobotContainer {
     if (elevator == null) {
       elevator = new Elevator(new ElevatorIO() {});
     }
+    if (fastalgae == null) {
+      fastalgae = new FastAlgaeEffector(new FastAlgaeEffectorIO() {});
+    }
     fieldAlignment = new FieldAlignment(drive);
-    orchestrator = new Orchestrator(elevator, algae, coral, drive);
+    orchestrator = new Orchestrator(elevator, fastalgae, algae, coral, drive);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -220,6 +226,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     coral.setDefaultCommand(coral.stop());
     algae.setDefaultCommand(algae.stowArm());
+    fastalgae.setDefaultCommand(fastalgae.stop());
     elevator.setDefaultCommand(elevator.hold());
     climber.setDefaultCommand(climber.stop());
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
