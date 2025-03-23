@@ -78,7 +78,7 @@ public class AutosAlternate {
             new StraightDriveToPose(drive, scorePoint, 0.04)
                 .withTimeout(4)
                 .andThen(fieldAlignment.alignToReef(left).withTimeout(5))
-                .andThen(orchestrator.moveElevatorToLevel(false, 4).withTimeout(3))
+                .andThen(orchestrator.moveElevatorToLevel(4).withTimeout(3))
                 .andThen()
                 // .andThen(orchestrator.placeCoral(4))
                 .andThen(Commands.waitSeconds(1.2))
@@ -213,7 +213,7 @@ public class AutosAlternate {
             fieldAlignment
                 .alignToReef(left)
                 .withTimeout(3)
-                .andThen(orchestrator.moveElevatorToLevel(false, 4).withTimeout(3))
+                .andThen(orchestrator.moveElevatorToLevel(4).withTimeout(3))
                 .andThen(coral.dumpCoral().withTimeout(4))
                 // .andThen(orchestrator.placeCoral(4))
                 .andThen(Commands.waitSeconds(1.2))
