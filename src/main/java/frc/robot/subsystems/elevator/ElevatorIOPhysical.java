@@ -48,7 +48,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
         .closedLoop
         .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
         .positionWrappingEnabled(false)
-        .pidf(8.0, 0.0, 5, 0.0); // p:4.6 d: 24
+        .pidf(15, 0.0, 7, 0.0); // p:4.6 d: 24
     config
         .signals
         .externalOrAltEncoderPositionAlwaysOn(true)

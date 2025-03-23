@@ -117,6 +117,9 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/PoseConfidence")
   public boolean PoseConfidence = false;
 
+  @AutoLogOutput(key = "RobotState/ClosestReefFace")
+  public int ClosestReefFace = 0;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
