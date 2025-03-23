@@ -115,7 +115,10 @@ public class Orchestrator {
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
-    return elevator.toSetpoint(setpoint).until(elevator::atSetpoint);
+    return elevator
+        .toSetpoint(setpoint)
+        .withTimeout(0.001)
+        .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint));
   }
 
   public Command scoreL1() {

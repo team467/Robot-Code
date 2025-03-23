@@ -256,19 +256,19 @@ public class RobotContainer {
         .whileTrue(
             fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
     CustomTriggers.autoModeInput(operatorController.x(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 1));
+        .onTrue(orchestrator.moveElevatorToLevel(1));
     CustomTriggers.autoModeInput(operatorController.y(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 2));
+        .onTrue(orchestrator.moveElevatorToLevel(2));
     CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 3));
+        .onTrue(orchestrator.moveElevatorToLevel(3));
     CustomTriggers.manualModeInput(operatorController.a(), operatorController.back())
         .whileTrue(elevator.runPercent(-0.3));
     CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 3));
+        .onTrue(orchestrator.moveElevatorToLevel(3));
     CustomTriggers.manualModeInput(operatorController.b(), operatorController.back())
         .whileTrue(elevator.runPercent(0.3));
     CustomTriggers.autoModeInput(operatorController.b(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 4));
+        .onTrue(orchestrator.moveElevatorToLevel(4));
     CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.back())
         .onTrue(orchestrator.removeAlgae(2));
     CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.back())
