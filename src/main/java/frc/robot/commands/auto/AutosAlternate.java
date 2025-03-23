@@ -108,9 +108,7 @@ public class AutosAlternate {
             AllianceFlipUtil.apply(
                 new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
     Logger.recordOutput("scorePoint3", AllianceFlipUtil.apply(scorePoint3.get()));
-    return elevator
-        .setHoldPosition(elevator.getPosition())
-        .andThen(Commands.runOnce(() -> drive.setPose(A.get())))
+    return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))
@@ -161,9 +159,7 @@ public class AutosAlternate {
             AllianceFlipUtil.apply(
                 new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
     Logger.recordOutput("scorePoint3", AllianceFlipUtil.apply(scorePoint3.get()));
-    return elevator
-        .setHoldPosition(elevator.getPosition())
-        .andThen(Commands.runOnce(() -> drive.setPose(A.get())))
+    return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))
@@ -274,9 +270,7 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(2.899836778640747, 1.7935127019882202),
                     new Rotation2d(-2.1375256093137067)));
-    return elevator
-        .setHoldPosition(elevator.getPosition())
-        .andThen(Commands.runOnce(() -> drive.setPose(C.get())))
+    return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))
@@ -329,9 +323,7 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(2.899836778640747, 1.7935127019882202),
                     new Rotation2d(-2.1375256093137067)));
-    return elevator
-        .setHoldPosition(elevator.getPosition())
-        .andThen(Commands.runOnce(() -> drive.setPose(C.get())))
+    return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))

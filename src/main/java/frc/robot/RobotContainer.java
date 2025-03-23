@@ -121,7 +121,7 @@ public class RobotContainer {
           vision =
               new Vision(
                   drive::addVisionMeasurement,
-                  // new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1));
           leds = new Leds();
         }
@@ -226,7 +226,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     coral.setDefaultCommand(coral.stop());
     algae.setDefaultCommand(algae.stowArm());
-    elevator.setDefaultCommand(elevator.hold());
+    elevator.setDefaultCommand(elevator.runPercent(0.0));
     climber.setDefaultCommand(climber.stop());
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
@@ -297,9 +297,7 @@ public class RobotContainer {
         .toggleOnTrue(
             fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController.x().whileTrue(coral.takeBackCoral());
-    driverController
-        .rightTrigger(0.1)
-        .onTrue(orchestrator.dumpCoralAndHome().andThen(drive.runOnce(Commands::none)));
+    driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
     driverController.rightTrigger(0.1).onTrue(drive.runOnce(Commands::none));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
   }

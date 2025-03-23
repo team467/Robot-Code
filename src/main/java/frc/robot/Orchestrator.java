@@ -15,6 +15,7 @@ public class Orchestrator {
   private final Elevator elevator;
   private final AlgaeEffector algaeEffector;
   private final CoralEffector coralEffector;
+  private final Drive drive;
   private final RobotState robotState = RobotState.getInstance();
   private static final double L4_HEIGHT = ReefHeight.L4.height;
   private static final double L3_HEIGHT = ReefHeight.L3.height;
@@ -41,7 +42,15 @@ public class Orchestrator {
   public Command intake() {
     return Commands.parallel(
             moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-                .until(() -> elevator.limitSwitchPressed() || elevator.atSetpoint()),
+                .until(elevator::limitSwitchPressed)
+            //        .andThen(elevator.runPercent(-0.1))
+            //        .withTimeout(1.0)
+            //        .andThen(
+            //            Commands.runOnce(
+            //                () -> {
+            //                  robotState.elevatorPosition = ElevatorPosition.INTAKE;
+            //                }))
+            ,
             coralEffector.intakeCoral())
         .until(coralEffector::hasCoral);
   }
