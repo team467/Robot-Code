@@ -4,12 +4,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.RobotState.ElevatorPosition;
-import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
 import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
 
 public class Orchestrator {
   private final Elevator elevator;
@@ -26,7 +26,11 @@ public class Orchestrator {
   private static final double ALGAE_L3_HEIGHT = ReefHeight.ALGAE_HIGH.height;
 
   public Orchestrator(
-      Elevator elevator, FastAlgaeEffector fastAlgaeEffector, AlgaeEffector algaeEffector, CoralEffector coralEffector, Drive drive) {
+      Elevator elevator,
+      FastAlgaeEffector fastAlgaeEffector,
+      AlgaeEffector algaeEffector,
+      CoralEffector coralEffector,
+      Drive drive) {
     this.elevator = elevator;
     this.fastAlgaeEffector = fastAlgaeEffector;
     this.algaeEffector = algaeEffector;
