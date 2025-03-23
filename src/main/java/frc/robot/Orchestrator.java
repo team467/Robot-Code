@@ -15,7 +15,6 @@ public class Orchestrator {
   private final Elevator elevator;
   private final AlgaeEffector algaeEffector;
   private final CoralEffector coralEffector;
-  private final Drive drive;
   private final RobotState robotState = RobotState.getInstance();
   private static final double L4_HEIGHT = ReefHeight.L4.height;
   private static final double L3_HEIGHT = ReefHeight.L3.height;
