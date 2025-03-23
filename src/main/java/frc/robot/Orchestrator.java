@@ -110,21 +110,7 @@ public class Orchestrator {
 
   public Command moveElevatorToSetpoint(double setpoint) {
 
-    return (Commands.either(
-            algaeEffector
-                .stowArm()
-                .until(algaeEffector::isStowed)
-                .andThen( // Stow algae if moving the elevator
-                    elevator.toSetpoint(setpoint).until(elevator::atSetpoint)),
-            elevator.toSetpoint(setpoint).until(elevator::atSetpoint),
-            // If we are moving from one algae position to another, we don't need to make sure that
-            // the
-            // algae effector is stowed
-            () ->
-                !((setpoint == ALGAE_L2_HEIGHT || setpoint == ALGAE_L3_HEIGHT)
-                    && (robotState.elevatorPosition == ElevatorPosition.ALGAE_L2
-                        || robotState.elevatorPosition == ElevatorPosition.ALGAE_L3))))
-        .withTimeout(7);
+    return elevator.toSetpoint(setpoint).until(elevator::atSetpoint);
   }
 
   public Command scoreL1() {
