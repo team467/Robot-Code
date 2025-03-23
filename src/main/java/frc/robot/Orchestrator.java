@@ -115,16 +115,8 @@ public class Orchestrator {
                 .stowArm()
                 .until(algaeEffector::isStowed)
                 .andThen( // Stow algae if moving the elevator
-                    elevator
-                        .toSetpoint(setpoint)
-                        .withTimeout(0.01)
-                        .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint)))
-                .andThen(elevator.setHoldPosition(elevator.getPosition())),
-            elevator
-                .toSetpoint(setpoint)
-                .withTimeout(0.01)
-                .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint))
-                .andThen(elevator.setHoldPosition(elevator.getPosition())),
+                    elevator.toSetpoint(setpoint).until(elevator::atSetpoint)),
+            elevator.toSetpoint(setpoint).until(elevator::atSetpoint),
             // If we are moving from one algae position to another, we don't need to make sure that
             // the
             // algae effector is stowed
