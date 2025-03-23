@@ -74,14 +74,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose.getRotation().getRadians())
+                            * Math.cos(branchPose.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose.getRotation().getRadians()),
+                            * Math.sin(branchPose.getRotation().getRadians()),
                     branchPose.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose.getRotation().getRadians())
+                            * Math.sin(branchPose.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose.getRotation().getRadians()),
+                            * Math.cos(branchPose.getRotation().getRadians()),
                     branchPose.getRotation()));
     Supplier<Pose2d> C =
         () ->
@@ -91,7 +91,8 @@ public class AutosAlternate {
                     ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
     Logger.recordOutput("C", AllianceFlipUtil.apply(C.get()));
     return elevator
-        .runPercent(0.0000001).withTimeout(0.00000001)
+        .runPercent(0.0000001)
+        .withTimeout(0.00000001)
         .andThen(Commands.runOnce(() -> drive.setPose(C.get())))
         .andThen(
             Commands.parallel(
@@ -147,9 +148,7 @@ public class AutosAlternate {
             AllianceFlipUtil.apply(
                 new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
     Logger.recordOutput("scorePoint3", AllianceFlipUtil.apply(scorePoint3.get()));
-    return elevator
-        .runPercent(0.000001).withTimeout(0.00000001)
-        .andThen(Commands.runOnce(() -> drive.setPose(A.get())))
+    return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))
@@ -186,14 +185,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose1.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose1.getRotation().getRadians())
+                            * Math.cos(branchPose1.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose1.getRotation().getRadians()),
+                            * Math.sin(branchPose1.getRotation().getRadians()),
                     branchPose1.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose1.getRotation().getRadians())
+                            * Math.sin(branchPose1.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose1.getRotation().getRadians()),
+                            * Math.cos(branchPose1.getRotation().getRadians()),
                     branchPose1.getRotation()));
     Pose2d branchPose2 =
         AllianceFlipUtil.apply(branchPositions.get(2).get(ReefHeight.L1).toPose2d());
@@ -203,14 +202,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose2.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose2.getRotation().getRadians())
+                            * Math.cos(branchPose2.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose2.getRotation().getRadians()),
+                            * Math.sin(branchPose2.getRotation().getRadians()),
                     branchPose2.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose2.getRotation().getRadians())
+                            * Math.sin(branchPose2.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose2.getRotation().getRadians()),
+                            * Math.cos(branchPose2.getRotation().getRadians()),
                     branchPose2.getRotation()));
     Pose2d branchPose3 =
         AllianceFlipUtil.apply(branchPositions.get(3).get(ReefHeight.L1).toPose2d());
@@ -220,14 +219,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose3.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose3.getRotation().getRadians())
+                            * Math.cos(branchPose3.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose3.getRotation().getRadians()),
+                            * Math.sin(branchPose3.getRotation().getRadians()),
                     branchPose3.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose3.getRotation().getRadians())
+                            * Math.sin(branchPose3.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose3.getRotation().getRadians()),
+                            * Math.cos(branchPose3.getRotation().getRadians()),
                     branchPose3.getRotation()));
     Supplier<Pose2d> A =
         () ->
@@ -251,9 +250,7 @@ public class AutosAlternate {
             AllianceFlipUtil.apply(
                 new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
     Logger.recordOutput("scorePoint3A", AllianceFlipUtil.apply(scorePoint3.get()));
-    return elevator
-        .runPercent(0.0000001).withTimeout(0.00000001)
-        .andThen(Commands.runOnce(() -> drive.setPose(A.get())))
+    return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(
@@ -318,14 +315,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose1.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose1.getRotation().getRadians())
+                            * Math.cos(branchPose1.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose1.getRotation().getRadians()),
+                            * Math.sin(branchPose1.getRotation().getRadians()),
                     branchPose1.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose1.getRotation().getRadians())
+                            * Math.sin(branchPose1.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose1.getRotation().getRadians()),
+                            * Math.cos(branchPose1.getRotation().getRadians()),
                     branchPose1.getRotation()));
     Pose2d branchPose2 =
         AllianceFlipUtil.apply(branchPositions.get(2).get(ReefHeight.L1).toPose2d());
@@ -335,14 +332,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose2.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose2.getRotation().getRadians())
+                            * Math.cos(branchPose2.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose2.getRotation().getRadians()),
+                            * Math.sin(branchPose2.getRotation().getRadians()),
                     branchPose2.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose2.getRotation().getRadians())
+                            * Math.sin(branchPose2.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose2.getRotation().getRadians()),
+                            * Math.cos(branchPose2.getRotation().getRadians()),
                     branchPose2.getRotation()));
     Pose2d branchPose3 =
         AllianceFlipUtil.apply(branchPositions.get(3).get(ReefHeight.L1).toPose2d());
@@ -352,14 +349,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose3.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose3.getRotation().getRadians())
+                            * Math.cos(branchPose3.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose3.getRotation().getRadians()),
+                            * Math.sin(branchPose3.getRotation().getRadians()),
                     branchPose3.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose3.getRotation().getRadians())
+                            * Math.sin(branchPose3.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose3.getRotation().getRadians()),
+                            * Math.cos(branchPose3.getRotation().getRadians()),
                     branchPose3.getRotation()));
     Pose2d branchPose4 =
         AllianceFlipUtil.apply(branchPositions.get(4).get(ReefHeight.L1).toPose2d());
@@ -369,14 +366,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose4.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose4.getRotation().getRadians())
+                            * Math.cos(branchPose4.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose4.getRotation().getRadians()),
+                            * Math.sin(branchPose4.getRotation().getRadians()),
                     branchPose4.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose4.getRotation().getRadians())
+                            * Math.sin(branchPose4.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose4.getRotation().getRadians()),
+                            * Math.cos(branchPose4.getRotation().getRadians()),
                     branchPose4.getRotation()));
     Supplier<Pose2d> A =
         () ->
@@ -400,9 +397,7 @@ public class AutosAlternate {
             AllianceFlipUtil.apply(
                 new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
     Logger.recordOutput("scorePoint3A", AllianceFlipUtil.apply(scorePoint3.get()));
-    return elevator
-        .runPercent(0.0000001).withTimeout(0.00000001)
-        .andThen(Commands.runOnce(() -> drive.setPose(A.get())))
+    return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(
@@ -548,9 +543,7 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(2.899836778640747, 1.7935127019882202),
                     new Rotation2d(-2.1375256093137067)));
-    return elevator
-        .runPercent(0.0000001).withTimeout(0.00000001)
-        .andThen(Commands.runOnce(() -> drive.setPose(C.get())))
+    return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))
@@ -587,14 +580,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose1.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose1.getRotation().getRadians())
+                            * Math.cos(branchPose1.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose1.getRotation().getRadians()),
+                            * Math.sin(branchPose1.getRotation().getRadians()),
                     branchPose1.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose1.getRotation().getRadians())
+                            * Math.sin(branchPose1.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose1.getRotation().getRadians()),
+                            * Math.cos(branchPose1.getRotation().getRadians()),
                     branchPose1.getRotation()));
     Pose2d branchPose2 =
         AllianceFlipUtil.apply(branchPositions.get(10).get(ReefHeight.L1).toPose2d());
@@ -604,14 +597,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose2.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose2.getRotation().getRadians())
+                            * Math.cos(branchPose2.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose2.getRotation().getRadians()),
+                            * Math.sin(branchPose2.getRotation().getRadians()),
                     branchPose2.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose2.getRotation().getRadians())
+                            * Math.sin(branchPose2.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose2.getRotation().getRadians()),
+                            * Math.cos(branchPose2.getRotation().getRadians()),
                     branchPose2.getRotation()));
     Pose2d branchPose3 =
         AllianceFlipUtil.apply(branchPositions.get(11).get(ReefHeight.L1).toPose2d());
@@ -621,14 +614,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose3.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose3.getRotation().getRadians())
+                            * Math.cos(branchPose3.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose3.getRotation().getRadians()),
+                            * Math.sin(branchPose3.getRotation().getRadians()),
                     branchPose3.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose3.getRotation().getRadians())
+                            * Math.sin(branchPose3.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose3.getRotation().getRadians()),
+                            * Math.cos(branchPose3.getRotation().getRadians()),
                     branchPose3.getRotation()));
     Supplier<Pose2d> C =
         () ->
@@ -657,9 +650,7 @@ public class AutosAlternate {
                     new Translation2d(2.899836778640747, 1.7935127019882202),
                     new Rotation2d(-2.1375256093137067)));
     Logger.recordOutput("scorePoint3C", AllianceFlipUtil.apply(scorePoint3.get()));
-    return elevator
-        .runPercent(0.0000001).withTimeout(0.00000001)
-        .andThen(Commands.runOnce(() -> drive.setPose(C.get())))
+    return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(
@@ -724,14 +715,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose1.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose1.getRotation().getRadians())
+                            * Math.cos(branchPose1.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose1.getRotation().getRadians()),
+                            * Math.sin(branchPose1.getRotation().getRadians()),
                     branchPose1.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose1.getRotation().getRadians())
+                            * Math.sin(branchPose1.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose1.getRotation().getRadians()),
+                            * Math.cos(branchPose1.getRotation().getRadians()),
                     branchPose1.getRotation()));
     Pose2d branchPose2 =
         AllianceFlipUtil.apply(branchPositions.get(10).get(ReefHeight.L1).toPose2d());
@@ -741,14 +732,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose2.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose2.getRotation().getRadians())
+                            * Math.cos(branchPose2.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose2.getRotation().getRadians()),
+                            * Math.sin(branchPose2.getRotation().getRadians()),
                     branchPose2.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose2.getRotation().getRadians())
+                            * Math.sin(branchPose2.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose2.getRotation().getRadians()),
+                            * Math.cos(branchPose2.getRotation().getRadians()),
                     branchPose2.getRotation()));
     Pose2d branchPose3 =
         AllianceFlipUtil.apply(branchPositions.get(11).get(ReefHeight.L1).toPose2d());
@@ -758,14 +749,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose3.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose3.getRotation().getRadians())
+                            * Math.cos(branchPose3.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose3.getRotation().getRadians()),
+                            * Math.sin(branchPose3.getRotation().getRadians()),
                     branchPose3.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose3.getRotation().getRadians())
+                            * Math.sin(branchPose3.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose3.getRotation().getRadians()),
+                            * Math.cos(branchPose3.getRotation().getRadians()),
                     branchPose3.getRotation()));
     Pose2d branchPose4 =
         AllianceFlipUtil.apply(branchPositions.get(9).get(ReefHeight.L1).toPose2d());
@@ -775,14 +766,14 @@ public class AutosAlternate {
                 new Pose2d(
                     branchPose4.getX() // Move left robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.cos(branchPose4.getRotation().getRadians())
+                            * Math.cos(branchPose4.getRotation().getRadians())
                         - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.sin(branchPose4.getRotation().getRadians()),
+                            * Math.sin(branchPose4.getRotation().getRadians()),
                     branchPose4.getY() // Move back robot relative
                         - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP.get())
-                        * Math.sin(branchPose4.getRotation().getRadians())
+                            * Math.sin(branchPose4.getRotation().getRadians())
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
-                        * Math.cos(branchPose4.getRotation().getRadians()),
+                            * Math.cos(branchPose4.getRotation().getRadians()),
                     branchPose4.getRotation()));
     Supplier<Pose2d> C =
         () ->
@@ -811,8 +802,7 @@ public class AutosAlternate {
                     new Translation2d(2.899836778640747, 1.7935127019882202),
                     new Rotation2d(-2.1375256093137067)));
     Logger.recordOutput("scorePoint3C", AllianceFlipUtil.apply(scorePoint3.get()));
-    return elevator
-        .runPercent(0.0000001).withTimeout(0.00000001)
+    return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(Commands.runOnce(() -> drive.setPose(C.get())))
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
