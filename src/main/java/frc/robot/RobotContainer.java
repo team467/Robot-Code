@@ -193,20 +193,20 @@ public class RobotContainer {
     AutosAlternate autosAlternate =
         new AutosAlternate(drive, orchestrator, fieldAlignment, coral, elevator);
     autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
+    autoChooser.addOption("B Score Hope and Pray", autosAlternate.BScoreHopeAndPray());
     autoChooser.addOption("A Score Left", autosAlternate.AScore(true));
     autoChooser.addOption("A Score Right", autosAlternate.AScore(false));
     autoChooser.addOption("B Score Left", autosAlternate.BScore(true));
     autoChooser.addOption("B Score Right", autosAlternate.BScore(false));
     autoChooser.addOption("C Score Left", autosAlternate.CScore(true));
     autoChooser.addOption("C Score Right", autosAlternate.CScore(false));
-    autoChooser.addOption("B Score Hope and Pray", autosAlternate.BScoreHopeAndPray());
     autoChooser.addOption("A Sigma Two Score", autosAlternate.sigmaATwoScore(false));
     autoChooser.addOption("A Alpha Three Score", autosAlternate.alphaAThreeScore());
     autoChooser.addOption("A Skibidi Four Score", autosAlternate.skibidiAFourScore());
     autoChooser.addOption("C Sigma Two Score", autosAlternate.sigmaCTwoScore(true));
     autoChooser.addOption("C Alpha Three Score", autosAlternate.alphaCThreeScore());
     autoChooser.addOption("C Skibidi Four Score", autosAlternate.skibidiCFourScore());
-    autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(4));
+    autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(fieldAlignment.closestReefFace()));
     registerAutoRoutines();
 
     // Configure the button bindings
