@@ -61,7 +61,7 @@ public class Orchestrator {
    * @return Command for placing coral.
    */
   public Command placeCoral(int level) {
-    return moveElevatorToLevel(false, level).withTimeout(1).andThen(coralEffector.dumpCoral());
+    return moveElevatorToLevel(level).withTimeout(1).andThen(coralEffector.dumpCoral());
   }
 
   public Command removeAlgaeAndPlaceCoral(int level) {
@@ -84,7 +84,7 @@ public class Orchestrator {
     return algaeEffector.removeAlgae(/*level*/ );
   }
 
-  public Command moveElevatorToLevel(boolean algae, int level) {
+  public Command moveElevatorToLevel(int level) {
     return moveElevatorToSetpoint(getCoralHeight(level))
         .andThen(
             Commands.runOnce(
@@ -111,7 +111,7 @@ public class Orchestrator {
         .dumpCoral()
         .andThen(Commands.runOnce(() -> drive.run(Commands::none)))
         .andThen(Commands.waitSeconds(0.4))
-        .andThen(moveElevatorToLevel(false, 1).until(elevator::limitSwitchPressed));
+        .andThen(moveElevatorToLevel(1).until(elevator::limitSwitchPressed));
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
