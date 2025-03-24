@@ -79,8 +79,8 @@ public class DriveConstants {
 
   // PathPlanner configuration
   public static final double robotMassKg = 74.088;
-  public static final double robotMOI = 6.883;
-  public static final double wheelCOF = 1.2;
+  public static final double robotMOI = 7.34;
+  public static final double wheelCOF = 1.4;
   public static final RobotConfig ppConfig =
       new RobotConfig(
           robotMassKg,
