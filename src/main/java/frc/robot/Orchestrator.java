@@ -106,7 +106,6 @@ public class Orchestrator {
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
-
     return (Commands.either(
             algaeEffector
                 .stowArm()
