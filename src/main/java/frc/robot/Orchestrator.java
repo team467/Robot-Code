@@ -124,9 +124,6 @@ public class Orchestrator {
         .withTimeout(7);
   }
 
-  public Command scoreL1() {
-    return Commands.parallel(coralEffector.dumpCoral(), algaeEffector.removeAlgae());
-  }
   /**
    * Gets the level for the branch that we want.
    *
