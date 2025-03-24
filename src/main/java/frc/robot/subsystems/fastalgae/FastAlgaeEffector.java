@@ -62,7 +62,7 @@ public class FastAlgaeEffector extends SubsystemBase {
             },
             this)
         .until(() -> inputs.isHighPostion)
-        .andThen(() -> io.setPivotVolts(FastAlgaeEffectorConstants.RETRACT_VOLTAGE));
+        .andThen(() -> stowArm());
   }
 
   /** Low position */
@@ -73,7 +73,7 @@ public class FastAlgaeEffector extends SubsystemBase {
             },
             this)
         .until(() -> inputs.isLowPostion)
-        .andThen(() -> io.setPivotVolts(FastAlgaeEffectorConstants.RETRACT_VOLTAGE));
+        .andThen(() -> stowArm());
   }
 
   /** Stops all algae arm actions */
