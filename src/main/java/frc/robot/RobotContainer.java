@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
@@ -67,7 +66,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final AutoRoutines autoRoutines;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -178,7 +176,6 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
-    autoRoutines = new AutoRoutines(drive);
 
     // Drive SysId
     autoChooser.addOption(
@@ -210,8 +207,6 @@ public class RobotContainer {
     autoChooser.addOption("A Alpha Three Score", autosAlternate.alphaAThreeScore(false));
     autoChooser.addOption("C Sigma Two Score", autosAlternate.sigmaCTwoScore(true));
     autoChooser.addOption("C Alpha Three Score", autosAlternate.alphaCThreeScore(true));
-
-    registerAutoRoutines();
 
     // Configure the button bindings
     configureButtonBindings();
@@ -299,24 +294,6 @@ public class RobotContainer {
     driverController.x().whileTrue(coral.takeBackCoral());
     driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
     driverController.y().whileTrue(elevator.runPercent(-0.3));
-  }
-
-  private void addAutoRoutine(String routineName) {
-    autoChooser.addOption(routineName, autoRoutines.getRoutines().get(routineName).cmd());
-  }
-
-  private void registerAutoRoutines() {
-    addAutoRoutine("A leave");
-    addAutoRoutine("C6L5RL");
-    addAutoRoutine("C5RL4R");
-    addAutoRoutine("B1R2LR");
-    addAutoRoutine("B1L6RL");
-    addAutoRoutine("B1R");
-    addAutoRoutine("B1L");
-    addAutoRoutine("A3LR4L");
-    addAutoRoutine("A2R3LR");
-    addAutoRoutine("C leave");
-    addAutoRoutine("B leave");
   }
 
   /**
