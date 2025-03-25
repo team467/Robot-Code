@@ -37,6 +37,7 @@ import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
 import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIO;
+import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIOPhysical;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -113,7 +114,7 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(3));
           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
           climber = new Climber(new ClimberIOSparkMax());
-          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          fastalgae = new FastAlgaeEffector(new FastAlgaeEffectorIOPhysical());
           elevator = new Elevator(new ElevatorIOPhysical());
           vision =
               new Vision(
@@ -226,10 +227,11 @@ public class RobotContainer {
   private void configureButtonBindings() {
     coral.setDefaultCommand(coral.stop());
     algae.setDefaultCommand(algae.stowArm());
-    fastalgae.setDefaultCommand(fastalgae.stop());
+    fastalgae.setDefaultCommand(fastalgae.stowArm());
     elevator.setDefaultCommand(elevator.hold());
     climber.setDefaultCommand(climber.stop());
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
+
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -271,9 +273,9 @@ public class RobotContainer {
     CustomTriggers.autoModeInput(operatorController.b(), operatorController.back())
         .onTrue(orchestrator.moveElevatorToLevel(false, 4));
     CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.back())
-        .onTrue(orchestrator.removeAlgae(2));
+        .whileTrue(orchestrator.removeAlgae(2));
     CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.back())
-        .onTrue(orchestrator.removeAlgae(3));
+        .whileTrue(orchestrator.removeAlgae(3));
     CustomTriggers.autoModeInput(operatorController.rightBumper(), operatorController.back())
         .whileTrue(climber.deploy());
     CustomTriggers.autoModeInput(operatorController.rightTrigger(), operatorController.back())
