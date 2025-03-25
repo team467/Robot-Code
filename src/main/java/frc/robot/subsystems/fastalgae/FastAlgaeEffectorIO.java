@@ -17,7 +17,7 @@ public interface FastAlgaeEffectorIO {
     public boolean isStowed;
   }
 
-  default void updateInputs(FastAlgaeEffectorIOInputsAutoLogged inputs) {}
+  default void updateInputs(FastAlgaeEffectorIOInputs inputs) {}
 
   default void setPivotVolts(double volts) {}
 
