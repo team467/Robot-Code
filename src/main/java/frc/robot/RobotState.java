@@ -126,6 +126,9 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/PoseConfidence")
   public boolean PoseConfidence = false;
 
+  @AutoLogOutput(key = "RobotState/FastAlgaeStowed")
+  public boolean fastAlgaeStowed = false;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
