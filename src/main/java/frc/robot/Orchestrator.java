@@ -79,9 +79,9 @@ public class Orchestrator {
    */
   public Command removeAlgae(int level) {
     // return moveElevatorToLevel(true, level).andThen(algaeEffector.removeAlgae());
-    if (level == ALGAE_L2_HEIGHT) {
+    if (level == 2) {
       return fastAlgaeEffector.removeAlgaeLow();
-    } else if (level == ALGAE_L3_HEIGHT) {
+    } else if (level == 3) {
       return fastAlgaeEffector.removeAlgaeHigh();
     } else {
       return null;
