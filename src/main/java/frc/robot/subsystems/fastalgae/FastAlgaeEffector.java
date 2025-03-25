@@ -40,18 +40,19 @@ public class FastAlgaeEffector extends SubsystemBase {
 
   /** Stow Position */
   public Command stowArm() {
-    return Commands.startEnd(
+    return Commands.runOnce(
             () -> {
               stowTimer.start();
               io.setPivotVolts(FastAlgaeEffectorConstants.RETRACT_VOLTAGE);
             },
-            () -> {
-              stowTimer.reset();
-              io.setPivotVolts(FastAlgaeEffectorConstants.ZERO);
-            },
             this)
         .until(() -> inputs.isStowed)
-        .andThen(() -> io.resetPivotPosition(FastAlgaeEffectorConstants.ZERO));
+        .andThen(() -> {
+          stowTimer.stop();
+              stowTimer.reset();
+              io.setPivotVolts(FastAlgaeEffectorConstants.ZERO);
+          io.resetPivotPosition(FastAlgaeEffectorConstants.ZERO);
+        });
   }
 
   /** High Position */
@@ -62,7 +63,7 @@ public class FastAlgaeEffector extends SubsystemBase {
             },
             this)
         .until(() -> inputs.isHighPostion)
-        .andThen(() -> stowArm());
+        .andThen(stowArm());
   }
 
   /** Low position */
@@ -73,7 +74,7 @@ public class FastAlgaeEffector extends SubsystemBase {
             },
             this)
         .until(() -> inputs.isLowPostion)
-        .andThen(() -> stowArm());
+        .andThen(stowArm());
   }
 
   /** Stops all algae arm actions */
