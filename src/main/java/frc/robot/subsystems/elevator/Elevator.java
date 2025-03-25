@@ -70,24 +70,6 @@ public class Elevator extends SubsystemBase {
         this);
   }
 
-  /*   public Command setHoldPosition(double holdPosition) {
-      return Commands.runOnce(
-          () -> {
-            this.holdPosition = holdPosition;
-          },
-          this);
-    }
-
-  /*   public Command hold() {
-      return Commands.runOnce(() -> holdPosition = inputs.positionMeters, this)
-          .alongWith(
-              Commands.run(
-                  () -> {
-                    io.hold(holdPosition);
-                  },
-                  this));
-    } */
-
   public double getPosition() {
     return inputs.positionMeters;
   }
