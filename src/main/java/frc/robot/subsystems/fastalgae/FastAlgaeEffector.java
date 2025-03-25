@@ -38,7 +38,7 @@ public class FastAlgaeEffector extends SubsystemBase {
       stowTimer.reset();
     }
 
-    if (stowTimer.get() > 0.2) {
+    if (stowTimer.get() > 0.05) {
       stowed = true;
       io.resetPivotPosition(FastAlgaeEffectorConstants.STOW_ANGLE);
       stowTimer.stop();
