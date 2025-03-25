@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class FastAlgaeEffector extends SubsystemBase {
   public static Timer stowTimer = new Timer();
+  private boolean stowed = false;
   private final FastAlgaeEffectorIO io;
   private final FastAlgaeEffectorIOInputsAutoLogged inputs =
       new FastAlgaeEffectorIOInputsAutoLogged();
@@ -18,12 +19,34 @@ public class FastAlgaeEffector extends SubsystemBase {
     this.io = io;
   }
 
+  @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(getName(), inputs);
-    robotState.fastAlgaeEffectorStowed = inputs.isStowed;
     robotState.fastAlgaeEffectorHigh = inputs.isHighPostion;
     robotState.fastAlgaeEffectorLow = inputs.isLowPostion;
+    robotState.fastAlgaeStowed = stowed;
+
+    if (inputs.pivotVolts > 0.1 && stowed) {
+      stowed = false;
+    }
+
+    if (isSlipping()) {
+      stowTimer.start();
+    } else {
+      stowTimer.stop();
+      stowTimer.reset();
+    }
+
+    if (stowTimer.get() > 0.2) {
+      stowed = true;
+      io.resetPivotPosition(FastAlgaeEffectorConstants.STOW_ANGLE);
+      stowTimer.stop();
+      stowTimer.reset();
+    }
+
+    inputs.isStowed = stowed;
+    robotState.fastAlgaeEffectorStowed = inputs.isStowed;
   }
 
   public boolean isStowed() {
@@ -40,19 +63,9 @@ public class FastAlgaeEffector extends SubsystemBase {
 
   /** Stow Position */
   public Command stowArm() {
-    return Commands.runOnce(
-            () -> {
-              stowTimer.start();
-              io.setPivotVolts(FastAlgaeEffectorConstants.RETRACT_VOLTAGE);
-            },
-            this)
-        .until(() -> inputs.isStowed)
-        .andThen(() -> {
-          stowTimer.stop();
-              stowTimer.reset();
-              io.setPivotVolts(FastAlgaeEffectorConstants.ZERO);
-          io.resetPivotPosition(FastAlgaeEffectorConstants.ZERO);
-        });
+    return Commands.run(() -> io.setPivotVolts(FastAlgaeEffectorConstants.RETRACT_VOLTAGE), this)
+        .until(() -> stowed)
+        .andThen(stop());
   }
 
   /** High Position */
@@ -86,6 +99,9 @@ public class FastAlgaeEffector extends SubsystemBase {
         this);
   }
 
+  public boolean isSlipping() {
+    return Math.abs(inputs.pivotVelocity) < 0.1 && inputs.pivotVolts < -0.1;
+  }
   // stow position (hard stop)
   // if motor is in reverse but arm is not moving
   // if motor is in reverse but arm is not moving
