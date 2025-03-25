@@ -290,7 +290,8 @@ public class RobotContainer {
                         driverController::getLeftX, driverController::getLeftY),
                     orchestrator.intake())
                 .until(coral::hasCoral));
-    CustomTriggers.manualModeInput(driverController.leftTrigger(), operatorController.rightTrigger())
+    CustomTriggers.manualModeInput(
+            driverController.leftTrigger(), operatorController.rightTrigger())
         .toggleOnTrue(orchestrator.intake());
     driverController
         .a()
