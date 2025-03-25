@@ -49,8 +49,8 @@ public class FastAlgaeEffectorIOPhysical implements FastAlgaeEffectorIO {
     pivotMotor.setVoltage(volts);
   }
 
-  public void resetPivotPosition() {
-    pivotMotorEncoder.setPosition(FastAlgaeEffectorConstants.ZERO);
+  public void resetPivotPosition(double pivotPosition) {
+    pivotMotorEncoder.setPosition(pivotPosition);
   }
 
   public void updateInputs(FastAlgaeEffectorIOInputs inputs) {
