@@ -44,6 +44,9 @@ public class FastAlgaeEffector extends SubsystemBase {
       stowTimer.stop();
       stowTimer.reset();
     }
+    if (stowed) {
+      io.resetPivotPosition(FastAlgaeEffectorConstants.STOW_ANGLE);
+    }
 
     inputs.isStowed = stowed;
     robotState.fastAlgaeEffectorStowed = inputs.isStowed;
