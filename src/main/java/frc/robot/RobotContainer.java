@@ -279,9 +279,9 @@ public class RobotContainer {
     CustomTriggers.autoModeInput(operatorController.b(), operatorController.back())
         .onTrue(orchestrator.moveElevatorToLevel(4));
     CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.back())
-        .whileTrue(orchestrator.removeAlgae(2));
+        .toggleOnTrue(orchestrator.removeAlgae(2));
     CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.back())
-        .whileTrue(orchestrator.removeAlgae(3));
+        .toggleOnTrue(orchestrator.removeAlgae(3));
     CustomTriggers.autoModeInput(operatorController.rightBumper(), operatorController.back())
         .whileTrue(climber.deploy());
     CustomTriggers.autoModeInput(operatorController.rightTrigger(), operatorController.back())
