@@ -258,10 +258,10 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     CustomTriggers.autoModeInput(
-            new Trigger(() -> driverController.getHID().getPOV() != -1), operatorController.pov(0))
+            new Trigger(() -> driverController.getHID().getPOV() != -1), new Trigger(() -> false))
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
     CustomTriggers.manualModeInput(
-            new Trigger(() -> driverController.getHID().getPOV() != -1), operatorController.pov(0))
+            new Trigger(() -> driverController.getHID().getPOV() != -1), new Trigger(() -> false))
         .whileTrue(
             fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
     CustomTriggers.autoModeInput(operatorController.x(), operatorController.back())
@@ -282,9 +282,9 @@ public class RobotContainer {
         .toggleOnTrue(orchestrator.removeAlgae(2));
     CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.back())
         .toggleOnTrue(orchestrator.removeAlgae(3));
-    CustomTriggers.autoModeInput(operatorController.rightBumper(), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.pov(0), operatorController.back())
         .whileTrue(climber.deploy());
-    CustomTriggers.autoModeInput(operatorController.rightTrigger(), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.pov(180), operatorController.back())
         .whileTrue(climber.winch());
     CustomTriggers.manualModeInput(operatorController.rightBumper(), operatorController.back())
         .whileTrue(climber.runPercent(0.15));
@@ -292,14 +292,14 @@ public class RobotContainer {
         .whileTrue(climber.runPercent(-0.15));
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
-    CustomTriggers.autoModeInput(driverController.leftTrigger(), operatorController.pov(270))
+    CustomTriggers.autoModeInput(driverController.leftTrigger(), new Trigger(() -> false))
         .toggleOnTrue(
             Commands.parallel(
                     fieldAlignment.faceCoralStation(
                         driverController::getLeftX, driverController::getLeftY),
                     orchestrator.intake())
                 .until(coral::hasCoral));
-    CustomTriggers.manualModeInput(driverController.leftTrigger(), operatorController.pov(270))
+    CustomTriggers.manualModeInput(driverController.leftTrigger(), new Trigger(() -> false))
         .toggleOnTrue(orchestrator.intake());
     driverController
         .a()
