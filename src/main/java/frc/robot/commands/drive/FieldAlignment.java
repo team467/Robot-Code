@@ -12,6 +12,7 @@ import frc.lib.utils.TunableNumber;
 import frc.robot.FieldConstants.CoralStation;
 import frc.robot.FieldConstants.Reef;
 import frc.robot.FieldConstants.ReefHeight;
+import frc.robot.RobotState;
 import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.drive.Drive;
 import java.util.Set;
@@ -27,14 +28,14 @@ public class FieldAlignment {
   // How far left/right the robot needs to move to align with the coral effector instead of the
   // center of the robot
   private static final TunableNumber CORAL_EFFECTOR_OFFSET =
-      new TunableNumber("FieldAlignment/CoralEffectorOffset", -10.9);
+      new TunableNumber("FieldAlignment/CoralEffectorOffset", -10.8);
   // How far back the robot needs to move to align with the branch in a way that doesn't have the
   // robot impaling itself
   private static final TunableNumber BRANCH_TO_ROBOT_BACKUP =
-      new TunableNumber("FieldAlignment/BranchToRobotBackup", -25.1);
+      new TunableNumber("FieldAlignment/BranchToRobotBackup", -24.0);
   // you can change these values
-  @AutoLogOutput public double CORAL_EFFECTOR_OFFSET_TUNING = -10.9;
-  @AutoLogOutput private double BRANCH_TO_ROBOT_BACKUP_TUNING = -25.1;
+  @AutoLogOutput public double CORAL_EFFECTOR_OFFSET_TUNING = -10.8;
+  @AutoLogOutput private double BRANCH_TO_ROBOT_BACKUP_TUNING = -24.0;
   private final Drive drive;
 
   public FieldAlignment(Drive drive) {
@@ -207,6 +208,7 @@ public class FieldAlignment {
 
   public void periodic() {
     closestReefFace = closestReefFace();
+    RobotState.getInstance().ClosestReefFace = closestReefFace;
     closestReefFacePose = AllianceFlipUtil.apply(Reef.centerFaces[closestReefFace]);
   }
 

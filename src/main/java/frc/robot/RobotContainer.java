@@ -19,10 +19,6 @@ import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
-import frc.robot.subsystems.algae.AlgaeEffector;
-import frc.robot.subsystems.algae.AlgaeEffectorIO;
-import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
-import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -34,6 +30,9 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
+import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
+import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIO;
+import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIOPhysical;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -50,7 +49,7 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
-  private AlgaeEffector algae;
+  private FastAlgaeEffector fastalgae;
   private CoralEffector coral;
   private Climber climber;
   private Elevator elevator;
@@ -114,7 +113,7 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(3));
           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
           climber = new Climber(new ClimberIOSparkMax());
-          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
+          fastalgae = new FastAlgaeEffector(new FastAlgaeEffectorIOPhysical());
           elevator = new Elevator(new ElevatorIOPhysical());
           vision =
               new Vision(
@@ -132,8 +131,6 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim());
-
-          algae = new AlgaeEffector(new AlgaeEffectorIOSim());
           climber = new Climber(new ClimberIOSim());
 
           leds = new Leds();
@@ -142,8 +139,7 @@ public class RobotContainer {
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
 
-          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-          // coral = new CoralEffector(new CoralEffectorIOSparkMAX());
+          //           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
       }
     }
@@ -158,9 +154,6 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
-    if (algae == null) {
-      algae = new AlgaeEffector(new AlgaeEffectorIO() {});
-    }
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
     }
@@ -170,8 +163,11 @@ public class RobotContainer {
     if (elevator == null) {
       elevator = new Elevator(new ElevatorIO() {});
     }
+    if (fastalgae == null) {
+      fastalgae = new FastAlgaeEffector(new FastAlgaeEffectorIO() {});
+    }
     fieldAlignment = new FieldAlignment(drive);
-    orchestrator = new Orchestrator(elevator, algae, coral);
+    orchestrator = new Orchestrator(elevator, fastalgae, coral, drive);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -220,10 +216,11 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     coral.setDefaultCommand(coral.stop());
-    algae.setDefaultCommand(algae.stowArm());
-    elevator.setDefaultCommand(elevator.hold());
+    fastalgae.setDefaultCommand(fastalgae.stowArm());
+    elevator.setDefaultCommand(elevator.runPercent(0.0));
     climber.setDefaultCommand(climber.stop());
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
+
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -244,33 +241,33 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     CustomTriggers.autoModeInput(
-            new Trigger(() -> driverController.getHID().getPOV() != -1), operatorController.pov(0))
+            new Trigger(() -> driverController.getHID().getPOV() != -1), new Trigger(() -> false))
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
     CustomTriggers.manualModeInput(
-            new Trigger(() -> driverController.getHID().getPOV() != -1), operatorController.pov(0))
+            new Trigger(() -> driverController.getHID().getPOV() != -1), new Trigger(() -> false))
         .whileTrue(
             fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
     CustomTriggers.autoModeInput(operatorController.x(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 1));
+        .onTrue(orchestrator.moveElevatorToLevel(1));
     CustomTriggers.autoModeInput(operatorController.y(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 2));
+        .onTrue(orchestrator.moveElevatorToLevel(2));
     CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 3));
+        .onTrue(orchestrator.moveElevatorToLevel(3));
     CustomTriggers.manualModeInput(operatorController.a(), operatorController.back())
         .whileTrue(elevator.runPercent(-0.3));
     CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 3));
+        .onTrue(orchestrator.moveElevatorToLevel(3));
     CustomTriggers.manualModeInput(operatorController.b(), operatorController.back())
         .whileTrue(elevator.runPercent(0.3));
     CustomTriggers.autoModeInput(operatorController.b(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 4));
+        .onTrue(orchestrator.moveElevatorToLevel(4));
     CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.back())
-        .onTrue(orchestrator.removeAlgae(2));
+        .toggleOnTrue(orchestrator.removeAlgae(2));
     CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.back())
-        .onTrue(orchestrator.removeAlgae(3));
-    CustomTriggers.autoModeInput(operatorController.rightBumper(), operatorController.back())
+        .toggleOnTrue(orchestrator.removeAlgae(3));
+    CustomTriggers.autoModeInput(operatorController.pov(0), operatorController.back())
         .whileTrue(climber.deploy());
-    CustomTriggers.autoModeInput(operatorController.rightTrigger(), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.pov(180), operatorController.back())
         .whileTrue(climber.winch());
     CustomTriggers.manualModeInput(operatorController.rightBumper(), operatorController.back())
         .whileTrue(climber.runPercent(0.15));
@@ -278,14 +275,14 @@ public class RobotContainer {
         .whileTrue(climber.runPercent(-0.15));
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
-    CustomTriggers.autoModeInput(driverController.leftTrigger(), operatorController.pov(270))
+    CustomTriggers.autoModeInput(driverController.leftTrigger(), new Trigger(() -> false))
         .toggleOnTrue(
             Commands.parallel(
                     fieldAlignment.faceCoralStation(
                         driverController::getLeftX, driverController::getLeftY),
                     orchestrator.intake())
                 .until(coral::hasCoral));
-    CustomTriggers.manualModeInput(driverController.leftTrigger(), operatorController.pov(270))
+    CustomTriggers.manualModeInput(driverController.leftTrigger(), new Trigger(() -> false))
         .toggleOnTrue(orchestrator.intake());
     driverController
         .a()
@@ -293,6 +290,7 @@ public class RobotContainer {
             fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     driverController.x().whileTrue(coral.takeBackCoral());
     driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
+    driverController.rightTrigger(0.1).onTrue(drive.runOnce(Commands::none));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
   }
 

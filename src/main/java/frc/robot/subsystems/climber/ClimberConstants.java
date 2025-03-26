@@ -33,7 +33,7 @@ public class ClimberConstants {
         // Real variables
         LOWER_WINCHED_POSITION = -86.5;
         UPPER_WINCHED_POSITION = -89.5;
-        WINCHED_POSITION = -88;
+        WINCHED_POSITION = -77;
         WINCH_SPEED = -0.75;
         DEPLOY_SPEED = 0.75;
         CLIMBER_LEADER_ID = 10;

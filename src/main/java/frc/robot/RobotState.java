@@ -91,6 +91,15 @@ public class RobotState {
   /** If the algae effector is running */
   @AutoLogOutput(key = "RobotState/AlgaeEffectorRunning")
   public boolean algaeEffectorRunning = false;
+  /** If the fast algae effector is stowed */
+  @AutoLogOutput(key = "RobotState/FastAlgaeEffectorStowed")
+  public boolean fastAlgaeEffectorStowed = false;
+  /** If the fast algae effector is high */
+  @AutoLogOutput(key = "RobotState/FastAlgaeEffectorHigh")
+  public boolean fastAlgaeEffectorHigh = false;
+  /** If the fast algae effector is low */
+  @AutoLogOutput(key = "RobotState/FastAlgaeEffectorLow")
+  public boolean fastAlgaeEffectorLow = false;
   /** If the climber is up */
   @AutoLogOutput(key = "RobotState/ClimberWinched")
   public boolean climberWinched = false;
@@ -116,6 +125,12 @@ public class RobotState {
 
   @AutoLogOutput(key = "RobotState/PoseConfidence")
   public boolean PoseConfidence = false;
+
+  @AutoLogOutput(key = "RobotState/FastAlgaeStowed")
+  public boolean fastAlgaeStowed = false;
+
+  @AutoLogOutput(key = "RobotState/ClosestReefFace")
+  public int ClosestReefFace = 0;
 
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
