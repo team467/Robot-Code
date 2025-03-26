@@ -79,7 +79,7 @@ public class FastAlgaeEffector extends SubsystemBase {
             },
             this)
         .until(() -> inputs.isHighPostion)
-        .andThen(stowArm());
+        .andThen(stop());
   }
 
   /** Low position */
@@ -90,7 +90,7 @@ public class FastAlgaeEffector extends SubsystemBase {
             },
             this)
         .until(() -> inputs.isLowPostion)
-        .andThen(stowArm());
+        .andThen(stop());
   }
 
   /** Stops all algae arm actions */
