@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.RobotState.ElevatorPosition;
-import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
@@ -15,7 +14,6 @@ public class Orchestrator {
   private final Drive drive;
   private final Elevator elevator;
   private final FastAlgaeEffector fastAlgaeEffector;
-  private final AlgaeEffector algaeEffector;
   private final CoralEffector coralEffector;
   private final RobotState robotState = RobotState.getInstance();
   private static final double L4_HEIGHT = ReefHeight.L4.height;
@@ -28,12 +26,10 @@ public class Orchestrator {
   public Orchestrator(
       Elevator elevator,
       FastAlgaeEffector fastAlgaeEffector,
-      AlgaeEffector algaeEffector,
       CoralEffector coralEffector,
       Drive drive) {
     this.elevator = elevator;
     this.fastAlgaeEffector = fastAlgaeEffector;
-    this.algaeEffector = algaeEffector;
     this.coralEffector = coralEffector;
     this.drive = drive;
     robotState.elevatorPosition = ElevatorPosition.INTAKE;
@@ -81,9 +77,9 @@ public class Orchestrator {
    */
   public Command removeAlgaeAuto() {
     if (RobotState.getInstance().ClosestReefFace % 2 == 0) {
-      return algaeEffector.removeAlgae(); // remove algae high/low
+      return fastAlgaeEffector.removeAlgaeHigh(); // remove algae high/low
     } else {
-      return algaeEffector.removeAlgae(); // remove algae high/low
+      return fastAlgaeEffector.removeAlgaeLow(); // remove algae high/low
     }
   }
 
@@ -133,10 +129,6 @@ public class Orchestrator {
         .toSetpoint(setpoint)
         .withTimeout(0.001)
         .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint));
-  }
-
-  public Command scoreL1() {
-    return Commands.parallel(coralEffector.dumpCoral(), algaeEffector.removeAlgae());
   }
   /**
    * Gets the level for the branch that we want.

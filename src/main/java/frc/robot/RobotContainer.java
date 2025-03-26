@@ -20,10 +20,6 @@ import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
-import frc.robot.subsystems.algae.AlgaeEffector;
-import frc.robot.subsystems.algae.AlgaeEffectorIO;
-import frc.robot.subsystems.algae.AlgaeEffectorIOPhysical;
-import frc.robot.subsystems.algae.AlgaeEffectorIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -54,7 +50,6 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
-  private AlgaeEffector algae;
   private FastAlgaeEffector fastalgae;
   private CoralEffector coral;
   private Climber climber;
@@ -138,8 +133,6 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim());
-
-          algae = new AlgaeEffector(new AlgaeEffectorIOSim());
           climber = new Climber(new ClimberIOSim());
 
           leds = new Leds();
@@ -148,8 +141,7 @@ public class RobotContainer {
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
 
-          algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-          // coral = new CoralEffector(new CoralEffectorIOSparkMAX());
+          //           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
       }
     }
@@ -164,9 +156,6 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
-    if (algae == null) {
-      algae = new AlgaeEffector(new AlgaeEffectorIO() {});
-    }
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
     }
@@ -180,7 +169,7 @@ public class RobotContainer {
       fastalgae = new FastAlgaeEffector(new FastAlgaeEffectorIO() {});
     }
     fieldAlignment = new FieldAlignment(drive);
-    orchestrator = new Orchestrator(elevator, fastalgae, algae, coral, drive);
+    orchestrator = new Orchestrator(elevator, fastalgae, coral, drive);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -232,7 +221,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     coral.setDefaultCommand(coral.stop());
-    algae.setDefaultCommand(algae.stowArm());
     fastalgae.setDefaultCommand(fastalgae.stowArm());
     elevator.setDefaultCommand(elevator.runPercent(0.0));
     climber.setDefaultCommand(climber.stop());
