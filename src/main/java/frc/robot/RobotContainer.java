@@ -86,6 +86,12 @@ public class RobotContainer {
                   new ModuleIOSpark(1),
                   new ModuleIOSpark(2),
                   new ModuleIOSpark(3));
+
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
           // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
         }
 
@@ -228,7 +234,7 @@ public class RobotContainer {
     coral.setDefaultCommand(coral.stop());
     algae.setDefaultCommand(algae.stowArm());
     fastalgae.setDefaultCommand(fastalgae.stowArm());
-    elevator.setDefaultCommand(elevator.hold());
+    elevator.setDefaultCommand(elevator.runPercent(0.0));
     climber.setDefaultCommand(climber.stop());
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
 
@@ -259,19 +265,19 @@ public class RobotContainer {
         .whileTrue(
             fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
     CustomTriggers.autoModeInput(operatorController.x(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 1));
+        .onTrue(orchestrator.moveElevatorToLevel(1));
     CustomTriggers.autoModeInput(operatorController.y(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 2));
+        .onTrue(orchestrator.moveElevatorToLevel(2));
     CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 3));
+        .onTrue(orchestrator.moveElevatorToLevel(3));
     CustomTriggers.manualModeInput(operatorController.a(), operatorController.back())
         .whileTrue(elevator.runPercent(-0.3));
     CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 3));
+        .onTrue(orchestrator.moveElevatorToLevel(3));
     CustomTriggers.manualModeInput(operatorController.b(), operatorController.back())
         .whileTrue(elevator.runPercent(0.3));
     CustomTriggers.autoModeInput(operatorController.b(), operatorController.back())
-        .onTrue(orchestrator.moveElevatorToLevel(false, 4));
+        .onTrue(orchestrator.moveElevatorToLevel(4));
     CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.back())
         .whileTrue(orchestrator.removeAlgae(2));
     CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.back())

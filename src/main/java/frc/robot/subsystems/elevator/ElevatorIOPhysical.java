@@ -12,7 +12,6 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.Schematic;
 
 public class ElevatorIOPhysical implements ElevatorIO {
@@ -20,9 +19,10 @@ public class ElevatorIOPhysical implements ElevatorIO {
   private final RelativeEncoder encoder;
   private final DigitalInput elevatorStowLimitSwitch;
 
-  private boolean zeroedOnce = false;
+  private boolean isCalibrated = false;
 
   private final SparkClosedLoopController controller;
+
   private double setpoint;
 
   public ElevatorIOPhysical() {
@@ -48,7 +48,7 @@ public class ElevatorIOPhysical implements ElevatorIO {
         .closedLoop
         .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
         .positionWrappingEnabled(false)
-        .pidf(8.0, 0.0, 5, 0.0); // p:4.6 d: 24
+        .pidf(15, 0.0, 7, 0.0); // p:4.6 d: 24
     config
         .signals
         .externalOrAltEncoderPositionAlwaysOn(true)
@@ -74,64 +74,38 @@ public class ElevatorIOPhysical implements ElevatorIO {
   }
 
   public void updateInputs(ElevatorIOInputs inputs) {
-
     inputs.positionMeters = encoder.getPosition();
     inputs.velocityMetersPerSec = encoder.getVelocity();
-    inputs.elevatorAppliedVolts = spark.getBusVoltage() * spark.getAppliedOutput();
+    inputs.appliedVolts = spark.getBusVoltage() * spark.getAppliedOutput();
     spark.getAppliedOutput();
-    inputs.elevatorCurrentAmps = spark.getOutputCurrent();
-    inputs.elevatorSetpoint = setpoint;
+    inputs.currentAmps = spark.getOutputCurrent();
+    inputs.setpoint = setpoint;
     inputs.atSetpoint = Math.abs(setpoint - inputs.positionMeters) < TOLERANCE;
     inputs.stowLimitSwitch = !elevatorStowLimitSwitch.get();
-    inputs.isCalibrated = zeroedOnce;
+
+    if (inputs.stowLimitSwitch) {
+      this.isCalibrated = true;
+      encoder.setPosition(elevatorToGround);
+    }
+    inputs.isCalibrated = this.isCalibrated;
   }
 
   @Override
   public void setPercent(double percent) {
-    if (percent > 0.7) {
-      spark.set(0.7);
-    } else if (percent < -0.7) {
-      spark.set(-0.7);
+    spark.set(percent);
+  }
+
+  @Override
+  public void setPosition(double setpoint) {
+    this.setpoint = setpoint;
+  }
+
+  @Override
+  public void goToSetpoint() {
+    if (!isCalibrated) {
+      setPercent(-0.15);
     } else {
-      spark.set(percent);
-    }
-  }
-
-  @Override
-  public void setVoltage(double volts) {
-    if (!zeroedOnce && volts < 0) {
-      spark.setVoltage(-2.0);
-    } else if (volts > 8.0) {
-      spark.setVoltage(8.0);
-    } else if (volts < -6.0) {
-      spark.setVoltage(-6.0);
-    } else if (encoder.getPosition() < ReefHeight.L2.height && volts < -2.0) {
-      spark.setVoltage(-2.0);
-    } else {
-      spark.setVoltage(volts);
-    }
-  }
-  // 0.9
-  // 1.44
-
-  @Override
-  public void setPosition(double position) {
-    controller.setReference(position, SparkBase.ControlType.kPosition);
-    setpoint = position;
-  }
-
-  @Override
-  public void resetPosition(double positionMeters) {
-    zeroedOnce = true;
-    encoder.setPosition(positionMeters);
-  }
-
-  @Override
-  public void hold(double holdPosition) {
-    if (encoder.getPosition() < holdPosition) {
-      spark.setVoltage(-0.27);
-    } else if (encoder.getPosition() > holdPosition) {
-      spark.setVoltage(0.27);
+      controller.setReference(this.setpoint, SparkBase.ControlType.kPosition);
     }
   }
 }

@@ -129,6 +129,9 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/FastAlgaeStowed")
   public boolean fastAlgaeStowed = false;
 
+  @AutoLogOutput(key = "RobotState/ClosestReefFace")
+  public int ClosestReefFace = 0;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
