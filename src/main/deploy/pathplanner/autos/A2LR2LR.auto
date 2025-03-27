@@ -5,22 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "deadline",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "A2L"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "MoveElevatorBasedOnDistance"
-                }
-              }
-            ]
+            "pathName": "A2L"
           }
         },
         {
@@ -49,22 +36,9 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "S2R"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "MoveElevatorBasedOnDistance"
-                }
-              }
-            ]
+            "pathName": "S2R"
           }
         },
         {
@@ -93,28 +67,65 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "S1L"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "MoveElevatorBasedOnDistance"
-                }
-              }
-            ]
+            "pathName": "S2L"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Score"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2LS"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S2R"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2RS"
+                }
+              }
+            ]
           }
         }
       ]

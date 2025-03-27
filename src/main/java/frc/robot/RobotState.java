@@ -2,6 +2,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Percent;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import frc.robot.subsystems.leds.LedPatterns;
@@ -128,6 +129,9 @@ public class RobotState {
 
   @AutoLogOutput(key = "RobotState/FastAlgaeStowed")
   public boolean fastAlgaeStowed = false;
+
+  @AutoLogOutput(key = "RobotState/targetPose")
+  public Pose2d targetPose = new Pose2d();
 
   @AutoLogOutput(key = "RobotState/ClosestReefFace")
   public int ClosestReefFace = 0;

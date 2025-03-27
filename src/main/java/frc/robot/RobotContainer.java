@@ -7,6 +7,7 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -168,10 +169,19 @@ public class RobotContainer {
     }
     fieldAlignment = new FieldAlignment(drive);
     orchestrator = new Orchestrator(elevator, fastalgae, coral, drive);
+
+    NamedCommands.registerCommand(
+        "MoveElevatorBasedOnDistance",
+        orchestrator.moveElevatorBasedOnDistance(() -> RobotState.getInstance().targetPose));
+    NamedCommands.registerCommand(
+        "Score", orchestrator.placeCoral(4).andThen(Commands.waitSeconds(0.5)));
+    NamedCommands.registerCommand("Intake", orchestrator.intake().andThen(coral.stop()).withTimeout(0.02));
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
+
+    autoChooser.addOption("SUPER 12v SPEED (DEATH)", Commands.run(() -> drive.tuneVolts(12)));
 
     // Drive SysId
     autoChooser.addOption(
@@ -204,8 +214,6 @@ public class RobotContainer {
     autoChooser.addOption("C Sigma Two Score", autosAlternate.sigmaCTwoScore(true));
     autoChooser.addOption("C Alpha Three Score", autosAlternate.alphaCThreeScore(true));
     autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(true, 4));
-    registerAutoRoutines();
-
 
     // Configure the button bindings
     configureButtonBindings();

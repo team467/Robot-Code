@@ -9,9 +9,9 @@ import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
 
 public class Orchestrator {
   private final Drive drive;

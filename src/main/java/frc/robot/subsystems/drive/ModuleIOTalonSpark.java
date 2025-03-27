@@ -273,6 +273,11 @@ public class ModuleIOTalonSpark implements ModuleIO {
   }
 
   @Override
+  public void setDriveOpenLoopVolts(double volts) {
+    driveTalon.setControl(voltageRequest.withOutput(volts).withEnableFOC(true));
+  }
+
+  @Override
   public void setTurnOpenLoop(double output) {
     turnSpark.setVoltage(output);
   }

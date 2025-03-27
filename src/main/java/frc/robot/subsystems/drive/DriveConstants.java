@@ -12,7 +12,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
-  public static final double maxSpeedMetersPerSec = Units.feetToMeters(15.0);
+  public static final double maxSpeedMetersPerSec = Units.feetToMeters(13.6);
   public static final double odometryFrequency = 100.0; // Hz
   public static final double trackWidth = Units.inchesToMeters(23);
   public static final double wheelBase = Units.inchesToMeters(23.5);
@@ -34,7 +34,7 @@ public class DriveConstants {
   // Drive motor configuration
   public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
       ClosedLoopOutputType.TorqueCurrentFOC;
-  public static final int driveMotorCurrentLimit = 70;
+  public static final int driveMotorCurrentLimit = 85;
   public static final double wheelRadiusMeters = Units.inchesToMeters(1.905);
   public static final double driveMotorReduction = 6.75;
   public static final DCMotor driveGearbox = DCMotor.getKrakenX60Foc(1);
@@ -46,8 +46,8 @@ public class DriveConstants {
       (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
 
   // Drive PID configuration
-  public static final double driveKp = 21;
-  public static final double driveKd = 0.0;
+  public static final double driveKp = 65;
+  public static final double driveKd = 0.2;
   public static final double driveKs = 2.23;
   public static final double driveKv = 0.0;
   public static final double driveKa = 0.0;
@@ -71,7 +71,7 @@ public class DriveConstants {
 
   // Turn PID configuration
   public static final double turnKp = 3.5;
-  public static final double turnKd = 0.0;
+  public static final double turnKd = 1.0;
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
   public static final double turnPIDMinInput = -Math.PI; // Radians

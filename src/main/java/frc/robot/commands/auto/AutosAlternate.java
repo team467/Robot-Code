@@ -276,9 +276,7 @@ public class AutosAlternate {
                     ChoreoVariables.getPose("C").getTranslation(),
                     ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
     Logger.recordOutput("C", AllianceFlipUtil.apply(C.get()));
-    return elevator
-        .setHoldPosition(elevator.getPosition())
-        .andThen(Commands.runOnce(() -> drive.setPose(C.get())))
+    return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(
             Commands.parallel(
                 orchestrator.moveElevatorBasedOnDistance(targetPose),

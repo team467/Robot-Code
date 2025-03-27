@@ -89,7 +89,7 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::pathplannerRunVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+            new PIDConstants(5.0, 0.0, 0.1), new PIDConstants(5.0, 0.0, 0.0)),
         ppConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -102,6 +102,7 @@ public class Drive extends SubsystemBase {
     PathPlannerLogging.setLogTargetPoseCallback(
         (targetPose) -> {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+          RobotState.getInstance().targetPose = targetPose;
         });
 
     // Configure SysId
@@ -244,6 +245,12 @@ public class Drive extends SubsystemBase {
   public void runCharacterization(double output) {
     for (int i = 0; i < 4; i++) {
       modules[i].runCharacterization(output);
+    }
+  }
+
+  public void tuneVolts(double volts) {
+    for (int i = 0; i < 4; i++) {
+      modules[i].tuneVolts(volts);
     }
   }
 
