@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants.ReefHeight;
@@ -9,6 +10,8 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class Orchestrator {
   private final Drive drive;
@@ -130,6 +133,11 @@ public class Orchestrator {
         .withTimeout(0.001)
         .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint));
   }
+  public Command moveElevatorToSetpoint(DoubleSupplier setpoint) {
+
+    return elevator.toSetpoint(setpoint)
+        .withTimeout(0.001)
+        .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint)):
   /**
    * Gets the level for the branch that we want.
    *
@@ -158,6 +166,25 @@ public class Orchestrator {
       case 2 -> ALGAE_L2_ANGLE;
       case 3 -> ALGAE_L3_ANGLE;
       default -> 0.0;
+    };
+  }
+
+  public Command moveElevatorBasedOnDistance(Supplier<Pose2d> targetPose) {
+    return elevator.toSetpoint(
+        setpointFromDistance(distanceToSetpoint(targetPose, drive::getPose)));
+  }
+
+  public DoubleSupplier distanceToSetpoint(Supplier<Pose2d> targetPose, Supplier<Pose2d> pose) {
+    return () -> targetPose.get().getTranslation().getDistance(pose.get().getTranslation());
+  }
+
+  public DoubleSupplier setpointFromDistance(DoubleSupplier distance) {
+    return () -> {
+      double setpoint = (0.368) * Math.pow(0.1, distance.getAsDouble()) + 0.432;
+      if (setpoint >= 0.7605) {
+        setpoint = 0.7605;
+      }
+      return setpoint;
     };
   }
 }
