@@ -173,12 +173,13 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "MoveElevatorBasedOnDistance",
         orchestrator.moveElevatorBasedOnDistance(() -> RobotState.getInstance().targetPose));
-    NamedCommands.registerCommand(
-        "MoveElevatorToL4",
-        orchestrator.moveElevatorToLevel(4));
+    NamedCommands.registerCommand("MoveElevatorToL4", orchestrator.moveElevatorToLevel(4));
+    NamedCommands.registerCommand("MoveElevatorToL3", orchestrator.moveElevatorToLevel(3));
+    NamedCommands.registerCommand("MoveElevatorToL2", orchestrator.moveElevatorToLevel(2));
     NamedCommands.registerCommand(
         "Score", orchestrator.placeCoral(4).andThen(Commands.waitSeconds(0.5)));
-    NamedCommands.registerCommand("Intake", orchestrator.intake().andThen(coral.stop()).withTimeout(0.02));
+    NamedCommands.registerCommand(
+        "Intake", orchestrator.intake().andThen(coral.stop()).withTimeout(0.02));
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
