@@ -273,6 +273,11 @@ public class ModuleIOTalonSpark implements ModuleIO {
   }
 
   @Override
+  public void setDriveOpenLoopVolts(double volts) {
+    driveTalon.setControl(voltageRequest.withOutput(volts).withEnableFOC(true));
+  }
+
+  @Override
   public void setTurnOpenLoop(double output) {
     turnSpark.setVoltage(output);
   }
@@ -285,6 +290,28 @@ public class ModuleIOTalonSpark implements ModuleIO {
           case Voltage -> velocityVoltageRequest.withVelocity(velocityRotPerSec);
           case TorqueCurrentFOC -> velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
         });
+  }
+
+  @Override
+  public void setPathPlannerVelocity(
+      double velocityRadPerSec, double accelerationRadPerSec2, double torqueCurrentAmps) {
+    double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
+    double accelerationRotPerSec2 = Units.radiansToRotations(accelerationRadPerSec2);
+    switch (driveClosedLoopOutput) {
+      case Voltage -> {
+        velocityVoltageRequest
+            .withVelocity(velocityRotPerSec)
+            .withAcceleration(accelerationRotPerSec2);
+        driveTalon.setControl(velocityVoltageRequest);
+      }
+      case TorqueCurrentFOC -> {
+        velocityTorqueCurrentRequest
+            .withVelocity(velocityRotPerSec)
+            .withAcceleration(accelerationRotPerSec2)
+            .withFeedForward(torqueCurrentAmps);
+        driveTalon.setControl(velocityTorqueCurrentRequest);
+      }
+    }
   }
 
   @Override

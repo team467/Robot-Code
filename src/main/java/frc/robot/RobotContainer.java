@@ -7,6 +7,7 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -15,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
@@ -66,7 +66,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final AutoRoutines autoRoutines;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -170,11 +169,23 @@ public class RobotContainer {
     }
     fieldAlignment = new FieldAlignment(drive);
     orchestrator = new Orchestrator(elevator, fastalgae, coral, drive);
+
+    NamedCommands.registerCommand(
+        "MoveElevatorBasedOnDistance",
+        orchestrator.moveElevatorBasedOnDistance(() -> RobotState.getInstance().targetPose));
+    NamedCommands.registerCommand("MoveElevatorToL4", orchestrator.moveElevatorToLevel(4));
+    NamedCommands.registerCommand("MoveElevatorToL3", orchestrator.moveElevatorToLevel(3));
+    NamedCommands.registerCommand("MoveElevatorToL2", orchestrator.moveElevatorToLevel(2));
+    NamedCommands.registerCommand(
+        "Score", orchestrator.placeCoral(4).andThen(Commands.waitSeconds(0.5)));
+    NamedCommands.registerCommand(
+        "Intake", orchestrator.intake().andThen(coral.stop()).withTimeout(0.02));
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
-    autoRoutines = new AutoRoutines(drive);
+
+    autoChooser.addOption("SUPER 12v SPEED (DEATH)", Commands.run(() -> drive.tuneVolts(12)));
 
     // Drive SysId
     autoChooser.addOption(
@@ -206,8 +217,7 @@ public class RobotContainer {
     autoChooser.addOption("A Alpha Three Score", autosAlternate.alphaAThreeScore(false));
     autoChooser.addOption("C Sigma Two Score", autosAlternate.sigmaCTwoScore(true));
     autoChooser.addOption("C Alpha Three Score", autosAlternate.alphaCThreeScore(true));
-
-    registerAutoRoutines();
+    autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(true, 4));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -297,24 +307,6 @@ public class RobotContainer {
     driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
     driverController.rightTrigger(0.1).onTrue(drive.runOnce(Commands::none));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
-  }
-
-  private void addAutoRoutine(String routineName) {
-    autoChooser.addOption(routineName, autoRoutines.getRoutines().get(routineName).cmd());
-  }
-
-  private void registerAutoRoutines() {
-    addAutoRoutine("A leave");
-    addAutoRoutine("C6L5RL");
-    addAutoRoutine("C5RL4R");
-    addAutoRoutine("B1R2LR");
-    addAutoRoutine("B1L6RL");
-    addAutoRoutine("B1R");
-    addAutoRoutine("B1L");
-    addAutoRoutine("A3LR4L");
-    addAutoRoutine("A2R3LR");
-    addAutoRoutine("C leave");
-    addAutoRoutine("B leave");
   }
 
   /**

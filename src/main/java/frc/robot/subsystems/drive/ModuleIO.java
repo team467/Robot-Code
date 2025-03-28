@@ -31,11 +31,17 @@ public interface ModuleIO {
   /** Run the drive motor at the specified open loop value. */
   public default void setDriveOpenLoop(double output) {}
 
+  public default void setDriveOpenLoopVolts(double volts) {}
+
   /** Run the turn motor at the specified open loop value. */
   public default void setTurnOpenLoop(double output) {}
 
   /** Run the drive motor at the specified velocity. */
   public default void setDriveVelocity(double velocityRadPerSec) {}
+
+  /** Run the drive motor at the specified velocity. */
+  public default void setPathPlannerVelocity(
+      double velocityRadPerSec, double accelerationRadPerSec2, double torqueCurrentAmps) {}
 
   /** Run the turn motor to the specified rotation. */
   public default void setTurnPosition(Rotation2d rotation) {}
