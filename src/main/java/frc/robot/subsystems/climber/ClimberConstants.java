@@ -31,11 +31,11 @@ public class ClimberConstants {
     switch (Constants.getRobot()) {
       case ROBOT_2025_COMP -> {
         // Real variables
-        LOWER_WINCHED_POSITION = -86.5;
-        UPPER_WINCHED_POSITION = -89.5;
-        WINCHED_POSITION = -77;
-        WINCH_SPEED = -0.75;
-        DEPLOY_SPEED = 0.75;
+        LOWER_WINCHED_POSITION = -138;
+        UPPER_WINCHED_POSITION = -151;
+        WINCHED_POSITION = -146;
+        WINCH_SPEED = -1;
+        DEPLOY_SPEED = 1;
         CLIMBER_LEADER_ID = 10;
         CLIMBER_FOLLOWER_ID = 11;
         CLIMBER_GEAR_RATIO = 36;
