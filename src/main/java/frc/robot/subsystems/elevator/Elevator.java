@@ -62,6 +62,15 @@ public class Elevator extends SubsystemBase {
         this);
   }
 
+  public Command toSetpoint(DoubleSupplier setpointMeters) {
+    return Commands.run(
+        () -> {
+          this.isManual = false;
+          io.setPosition(setpointMeters.getAsDouble());
+        },
+        this);
+  }
+
   public Command runPercent(double percent) {
     return Commands.run(
         () -> {
