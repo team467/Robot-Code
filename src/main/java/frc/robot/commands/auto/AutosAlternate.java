@@ -113,12 +113,13 @@ public class AutosAlternate {
                 new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
     Logger.recordOutput("scorePoint3", AllianceFlipUtil.apply(scorePoint3.get()));
     return Commands.runOnce(() -> drive.setPose(A.get()))
-        .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
-        .withTimeout(1.5)
-        .andThen(fieldAlignment.alignToReef(left))
-        .withTimeout(3)
+        .andThen(
+            Commands.deadline(
+                fieldAlignment.alignToReef(left).withTimeout(5),
+                orchestrator.moveElevatorBasedOnDistance(
+                    fieldAlignment.getBranchPosition(left, fieldAlignment::closestReefFace))))
         .andThen(orchestrator.placeCoral(4))
-        .andThen(Commands.waitSeconds(0.3))
+        //        .andThen(Commands.waitSeconds(0.3))
         .andThen(
             orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(1))
         .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
@@ -130,11 +131,10 @@ public class AutosAlternate {
         // .andThen(fieldAlignment.alignToCoralStation().withTimeout(2))
         // .andThen(orchestrator.intake().until(coral::hasCoral))
         .andThen(
-            Commands.race(
-                new StraightDriveToPose(drive, scorePoint3, 1)
-                    .withTimeout(1.5)
-                    .andThen(fieldAlignment.alignToReef(true).withTimeout(2)),
-                coral.stop()))
+            Commands.deadline(
+                Commands.race(fieldAlignment.alignToReef(true).withTimeout(5)), coral.stop()),
+            orchestrator.moveElevatorBasedOnDistance(
+                fieldAlignment.getBranchPosition(left, fieldAlignment::closestReefFace)))
         .andThen(orchestrator.placeCoral(4))
         .andThen(Commands.waitSeconds(0.3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
@@ -276,9 +276,7 @@ public class AutosAlternate {
                     ChoreoVariables.getPose("C").getTranslation(),
                     ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
     Logger.recordOutput("C", AllianceFlipUtil.apply(C.get()));
-    return elevator
-        .setHoldPosition(elevator.getPosition())
-        .andThen(Commands.runOnce(() -> drive.setPose(C.get())))
+    return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(
             Commands.parallel(
                 orchestrator.moveElevatorBasedOnDistance(targetPose),
