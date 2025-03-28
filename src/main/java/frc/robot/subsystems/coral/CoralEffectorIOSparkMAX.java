@@ -30,7 +30,7 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
     effectorConfig
         .idleMode(IdleMode.kBrake)
         .inverted(false)
-        .smartCurrentLimit(effectorCurrentMotorLimit)
+        .smartCurrentLimit(EFFECTOR_CURRENT_MOTOR_LIMIT)
         .voltageCompensation(12.0);
 
     effectorConfig.limitSwitch.reverseLimitSwitchEnabled(false);
@@ -39,7 +39,7 @@ public class CoralEffectorIOSparkMAX implements CoralEffectorIO {
 
     effectorConfig
         .encoder
-        .positionConversionFactor(effectorEncoderPositionFactor)
+        .positionConversionFactor(EFFECTOR_ENCODER_POSITION_FACTOR)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
 

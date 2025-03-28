@@ -49,7 +49,9 @@ public class CoralEffector extends SubsystemBase {
     return Commands.run(
             () -> {
               if (RobotState.getInstance().elevatorPosition == ElevatorPosition.L4) {
-                io.setSpeed(CoralEffectorConstants.CORAL_SPEED_OUT.get() - 0.2);
+                io.setSpeed(CoralEffectorConstants.L4_CORAL_SPEED_OUT.get());
+              } else if (RobotState.getInstance().elevatorPosition == ElevatorPosition.L1) {
+                io.setSpeed(CoralEffectorConstants.L1_CORAL_SPEED_OUT.get());
               } else {
                 io.setSpeed(CoralEffectorConstants.CORAL_SPEED_OUT.get());
               }
