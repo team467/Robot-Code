@@ -133,11 +133,14 @@ public class Orchestrator {
         .withTimeout(0.001)
         .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint));
   }
+
   public Command moveElevatorToSetpoint(DoubleSupplier setpoint) {
 
-    return elevator.toSetpoint(setpoint)
+    return elevator
+        .toSetpoint(setpoint)
         .withTimeout(0.001)
-        .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint)):
+        .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint));
+  }
   /**
    * Gets the level for the branch that we want.
    *
