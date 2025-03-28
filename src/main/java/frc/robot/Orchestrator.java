@@ -7,7 +7,6 @@ import frc.robot.RobotState.ElevatorPosition;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
 
 public class Orchestrator {
@@ -20,6 +19,7 @@ public class Orchestrator {
   private static final double L3_HEIGHT = ReefHeight.L3.height;
   private static final double L2_HEIGHT = ReefHeight.L2.height;
   private static final double L1_HEIGHT = ReefHeight.L1.height;
+  private static final double HOME_HEIGHT = ReefHeight.HOME.height;
   private static final double ALGAE_L2_ANGLE = 0;
   private static final double ALGAE_L3_ANGLE = 0;
 
@@ -43,8 +43,7 @@ public class Orchestrator {
    */
   public Command intake() {
     return Commands.parallel(
-            moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-                .until(elevator::limitSwitchPressed)
+            moveElevatorToLevel(0).until(elevator::limitSwitchPressed)
             //        .andThen(elevator.runPercent(-0.1))
             //        .withTimeout(1.0)
             //        .andThen(
@@ -100,6 +99,8 @@ public class Orchestrator {
             Commands.runOnce(
                 () -> {
                   switch (level) {
+                    case 0:
+                      robotState.elevatorPosition = ElevatorPosition.HOME;
                     case 1:
                       robotState.elevatorPosition = ElevatorPosition.L1;
                       break;
@@ -121,7 +122,7 @@ public class Orchestrator {
         .dumpCoral()
         .andThen(Commands.runOnce(() -> drive.run(Commands::none)))
         .andThen(Commands.waitSeconds(0.4))
-        .andThen(moveElevatorToLevel(1).until(elevator::limitSwitchPressed));
+        .andThen(moveElevatorToLevel(0).until(elevator::limitSwitchPressed));
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
@@ -139,6 +140,7 @@ public class Orchestrator {
   public double getCoralHeight(int level) {
     // The default branch we want
     return switch (level) {
+      case 0 -> HOME_HEIGHT;
       case 1 -> L1_HEIGHT;
       case 2 -> L2_HEIGHT;
       case 3 -> L3_HEIGHT;
