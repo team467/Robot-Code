@@ -419,6 +419,12 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(2.899836778640747, 1.7935127019882202),
                     new Rotation2d(-2.1375256093137067)));
+    Supplier<Pose2d> intakeInBetween =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(2.818031072616577, 1.6353687047958374),
+                    new Rotation2d(-2.2531126230746197)));
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(new StraightDriveToPose(drive, scorePointC, 1))
         .withTimeout(2)
