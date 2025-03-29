@@ -225,7 +225,7 @@ public class RobotContainer {
     elevator.setDefaultCommand(elevator.runPercent(0.0));
     climber.setDefaultCommand(climber.stop());
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-
+    System.out.println("I am gay - Aaarano");
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -246,48 +246,48 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     CustomTriggers.autoModeInput(
-            new Trigger(() -> driverController.getHID().getPOV() != -1), new Trigger(() -> false))
+            new Trigger(() -> driverController.getHID().getPOV() != -1), operatorController.leftStick())
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
     CustomTriggers.manualModeInput(
-            new Trigger(() -> driverController.getHID().getPOV() != -1), new Trigger(() -> false))
+            new Trigger(() -> driverController.getHID().getPOV() != -1), operatorController.leftStick())
         .whileTrue(
             fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
-    CustomTriggers.autoModeInput(operatorController.x(), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.x(), operatorController.leftBumper())
         .onTrue(orchestrator.moveElevatorToLevel(1));
-    CustomTriggers.autoModeInput(operatorController.y(), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.y(), operatorController.leftBumper())
         .onTrue(orchestrator.moveElevatorToLevel(2));
-    CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.a(), operatorController.leftBumper())
         .onTrue(orchestrator.moveElevatorToLevel(3));
-    CustomTriggers.manualModeInput(operatorController.a(), operatorController.back())
+    CustomTriggers.manualModeInput(operatorController.a(), operatorController.leftBumper())
         .whileTrue(elevator.runPercent(-0.3));
-    CustomTriggers.autoModeInput(operatorController.a(), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.a(), operatorController.leftBumper())
         .onTrue(orchestrator.moveElevatorToLevel(3));
-    CustomTriggers.manualModeInput(operatorController.b(), operatorController.back())
+    CustomTriggers.manualModeInput(operatorController.b(), operatorController.leftBumper())
         .whileTrue(elevator.runPercent(0.3));
-    CustomTriggers.autoModeInput(operatorController.b(), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.b(), operatorController.leftBumper())
         .onTrue(orchestrator.moveElevatorToLevel(4));
-    CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.leftBumper())
         .toggleOnTrue(orchestrator.removeAlgae(2));
-    CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.leftBumper())
         .toggleOnTrue(orchestrator.removeAlgae(3));
-    CustomTriggers.autoModeInput(operatorController.pov(0), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.pov(0), operatorController.leftBumper())
         .whileTrue(climber.deploy());
-    CustomTriggers.autoModeInput(operatorController.pov(180), operatorController.back())
+    CustomTriggers.autoModeInput(operatorController.pov(180), operatorController.leftBumper())
         .whileTrue(climber.winch());
-    CustomTriggers.manualModeInput(operatorController.rightBumper(), operatorController.back())
+    CustomTriggers.manualModeInput(operatorController.rightBumper(), operatorController.leftBumper())
         .whileTrue(climber.runPercent(0.15));
-    CustomTriggers.manualModeInput(operatorController.rightTrigger(), operatorController.back())
+    CustomTriggers.manualModeInput(operatorController.rightTrigger(), operatorController.leftBumper())
         .whileTrue(climber.runPercent(-0.15));
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
-    CustomTriggers.autoModeInput(driverController.leftTrigger(), new Trigger(() -> false))
+    CustomTriggers.autoModeInput(driverController.leftTrigger(), operatorController.rightTrigger())
         .toggleOnTrue(
             Commands.parallel(
                     fieldAlignment.faceCoralStation(
                         driverController::getLeftX, driverController::getLeftY),
                     orchestrator.intake())
                 .until(coral::hasCoral));
-    CustomTriggers.manualModeInput(driverController.leftTrigger(), new Trigger(() -> false))
+    CustomTriggers.manualModeInput(driverController.leftTrigger(), operatorController.rightTrigger())
         .toggleOnTrue(orchestrator.intake());
     driverController
         .a()
