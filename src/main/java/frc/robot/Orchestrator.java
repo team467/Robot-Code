@@ -4,29 +4,32 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.RobotState.ElevatorPosition;
-import frc.robot.subsystems.algae.AlgaeEffector;
 import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
 
 public class Orchestrator {
   private final Drive drive;
   private final Elevator elevator;
-  private final AlgaeEffector algaeEffector;
+  private final FastAlgaeEffector fastAlgaeEffector;
   private final CoralEffector coralEffector;
   private final RobotState robotState = RobotState.getInstance();
   private static final double L4_HEIGHT = ReefHeight.L4.height;
   private static final double L3_HEIGHT = ReefHeight.L3.height;
   private static final double L2_HEIGHT = ReefHeight.L2.height;
   private static final double L1_HEIGHT = ReefHeight.L1.height;
+  private static final double HOME_HEIGHT = ReefHeight.HOME.height;
   private static final double ALGAE_L2_ANGLE = 0;
   private static final double ALGAE_L3_ANGLE = 0;
 
   public Orchestrator(
-      Elevator elevator, AlgaeEffector algaeEffector, CoralEffector coralEffector, Drive drive) {
+      Elevator elevator,
+      FastAlgaeEffector fastAlgaeEffector,
+      CoralEffector coralEffector,
+      Drive drive) {
     this.elevator = elevator;
-    this.algaeEffector = algaeEffector;
+    this.fastAlgaeEffector = fastAlgaeEffector;
     this.coralEffector = coralEffector;
     this.drive = drive;
     robotState.elevatorPosition = ElevatorPosition.INTAKE;
@@ -40,8 +43,7 @@ public class Orchestrator {
    */
   public Command intake() {
     return Commands.parallel(
-            moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)
-                .until(elevator::limitSwitchPressed)
+            moveElevatorToLevel(0).until(elevator::limitSwitchPressed)
             //        .andThen(elevator.runPercent(-0.1))
             //        .withTimeout(1.0)
             //        .andThen(
@@ -74,14 +76,21 @@ public class Orchestrator {
    */
   public Command removeAlgaeAuto() {
     if (RobotState.getInstance().ClosestReefFace % 2 == 0) {
-      return algaeEffector.removeAlgae(); // remove algae high/low
+      return fastAlgaeEffector.removeAlgaeHigh(); // remove algae high/low
     } else {
-      return algaeEffector.removeAlgae(); // remove algae high/low
+      return fastAlgaeEffector.removeAlgaeLow(); // remove algae high/low
     }
   }
 
   public Command removeAlgae(int level) {
-    return algaeEffector.removeAlgae(/*level*/ );
+    // return moveElevatorToLevel(true, level).andThen(algaeEffector.removeAlgae());
+    if (level == 2) {
+      return fastAlgaeEffector.removeAlgaeLow();
+    } else if (level == 3) {
+      return fastAlgaeEffector.removeAlgaeHigh();
+    } else {
+      return null;
+    }
   }
 
   public Command moveElevatorToLevel(int level) {
@@ -90,6 +99,8 @@ public class Orchestrator {
             Commands.runOnce(
                 () -> {
                   switch (level) {
+                    case 0:
+                      robotState.elevatorPosition = ElevatorPosition.HOME;
                     case 1:
                       robotState.elevatorPosition = ElevatorPosition.L1;
                       break;
@@ -111,7 +122,7 @@ public class Orchestrator {
         .dumpCoral()
         .andThen(Commands.runOnce(() -> drive.run(Commands::none)))
         .andThen(Commands.waitSeconds(0.4))
-        .andThen(moveElevatorToLevel(1).until(elevator::limitSwitchPressed));
+        .andThen(moveElevatorToLevel(0).until(elevator::limitSwitchPressed));
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
@@ -119,10 +130,6 @@ public class Orchestrator {
         .toSetpoint(setpoint)
         .withTimeout(0.001)
         .andThen(elevator.toSetpoint(setpoint).until(elevator::atSetpoint));
-  }
-
-  public Command scoreL1() {
-    return Commands.parallel(coralEffector.dumpCoral(), algaeEffector.removeAlgae());
   }
   /**
    * Gets the level for the branch that we want.
@@ -133,6 +140,7 @@ public class Orchestrator {
   public double getCoralHeight(int level) {
     // The default branch we want
     return switch (level) {
+      case 0 -> HOME_HEIGHT;
       case 1 -> L1_HEIGHT;
       case 2 -> L2_HEIGHT;
       case 3 -> L3_HEIGHT;
