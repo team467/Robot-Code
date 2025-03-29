@@ -64,18 +64,11 @@ public class AutosAlternate {
   }
 
   public Command zeroPiece() {
-    Supplier<Pose2d> B = () -> AllianceFlipUtil.apply(ChoreoVariables.getPose("B"));
     return Commands.runOnce(() -> drive.setPose(B.get()))
         .andThen(new StraightDriveToPose(-1, 0, 0, drive, 0.04));
   }
 
   public Command AScore(boolean left) {
-    Supplier<Pose2d> A =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    ChoreoVariables.getPose("A").getTranslation(),
-                    ChoreoVariables.getPose("A").getRotation().plus(Rotation2d.k180deg)));
     Supplier<Pose2d> scorePoint =
         () ->
             AllianceFlipUtil.apply(
@@ -437,7 +430,7 @@ public class AutosAlternate {
             Commands.deadline(
                     Commands.deadline(fieldAlignment.alignToReef(true), coral.stop()),
                     orchestrator.moveElevatorBasedOnDistance(
-                        fieldAlignment.getBranchPosition(left, 1)))
+                        fieldAlignment.getBranchPosition(left, 5)))
                 .withTimeout(3))
         .andThen(orchestrator.placeCoral(4).withTimeout(1))
         .andThen(
@@ -450,7 +443,7 @@ public class AutosAlternate {
             Commands.deadline(
                     Commands.deadline(fieldAlignment.alignToReef(true), coral.stop()),
                     orchestrator.moveElevatorBasedOnDistance(
-                        fieldAlignment.getBranchPosition(left, 1)))
+                        fieldAlignment.getBranchPosition(left, 5)))
                 .withTimeout(3))
         .andThen(orchestrator.placeCoral(3).withTimeout(1))
         .andThen(
@@ -463,7 +456,7 @@ public class AutosAlternate {
             Commands.deadline(
                     Commands.deadline(fieldAlignment.alignToReef(false), coral.stop()),
                     orchestrator.moveElevatorBasedOnDistance(
-                        fieldAlignment.getBranchPosition(left, 1)))
+                        fieldAlignment.getBranchPosition(left, 5)))
                 .withTimeout(3))
         .andThen(orchestrator.placeCoral(3).withTimeout(1))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
