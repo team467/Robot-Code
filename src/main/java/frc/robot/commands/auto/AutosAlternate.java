@@ -241,6 +241,10 @@ public class AutosAlternate {
         .andThen(orchestrator.placeCoral(3).withTimeout(1))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
+  // use the command below to get the pathplanner implementation
+  public Command BombadilloCrocadillo() {
+    return drive.getAutonomousCommand("C6M");
+  }
 
   public Command BScore(boolean left) {
     return Commands.runOnce(() -> drive.setPose(B.get()))
