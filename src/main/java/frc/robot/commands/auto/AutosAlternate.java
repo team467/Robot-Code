@@ -30,6 +30,12 @@ public class AutosAlternate {
   private final FieldAlignment fieldAlignment;
   private final CoralEffector coral;
   private final Elevator elevator;
+  private static final Supplier<Pose2d> A =
+      () -> AllianceFlipUtil.apply(new Pose2d(new Translation2d(7.30, 6.14), new Rotation2d(3.14)));
+  private static final Supplier<Pose2d> B =
+      () -> AllianceFlipUtil.apply(new Pose2d(new Translation2d(7.30, 3.99), new Rotation2d(3.14)));
+  private static final Supplier<Pose2d> C =
+      () -> AllianceFlipUtil.apply(new Pose2d(new Translation2d(7.30, 1.89), new Rotation2d(3.14)));
 
   public AutosAlternate(
       Drive drive,
@@ -90,12 +96,6 @@ public class AutosAlternate {
   }
 
   public Command sigmaATwoScore(boolean left) {
-    Supplier<Pose2d> A =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    ChoreoVariables.getPose("A").getTranslation(),
-                    ChoreoVariables.getPose("A").getRotation().plus(Rotation2d.k180deg)));
     Supplier<Pose2d> scorePoint1 =
         () ->
             AllianceFlipUtil.apply(
@@ -141,12 +141,6 @@ public class AutosAlternate {
   }
 
   public Command alphaAThreeScore(boolean left) {
-    Supplier<Pose2d> A =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    ChoreoVariables.getPose("A").getTranslation(),
-                    ChoreoVariables.getPose("A").getRotation().plus(Rotation2d.k180deg)));
     Supplier<Pose2d> scorePoint1 =
         () ->
             AllianceFlipUtil.apply(
@@ -205,30 +199,12 @@ public class AutosAlternate {
   }
 
   public Command skibidiAFourScore(boolean left) {
-    Supplier<Pose2d> A =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    ChoreoVariables.getPose("A").getTranslation(),
-                    ChoreoVariables.getPose("A").getRotation().plus(Rotation2d.k180deg)));
-    Supplier<Pose2d> scorePoint1 =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    new Translation2d(5.17947006225, 5.5338854789), new Rotation2d(1.10714825504)));
-    Logger.recordOutput("scorePoint1", AllianceFlipUtil.apply(scorePoint1.get()));
-    Supplier<Pose2d> scorePoint2 =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(new Translation2d(3.8055463, 6.839114), new Rotation2d(2.356194)));
-    Logger.recordOutput("scorePoint2", AllianceFlipUtil.apply(scorePoint2.get()));
-    Supplier<Pose2d> scorePoint3 =
+    Supplier<Pose2d> scorePointA =
         () ->
             AllianceFlipUtil.apply(
                 new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
-    Logger.recordOutput("scorePoint3", AllianceFlipUtil.apply(scorePoint3.get()));
     return Commands.runOnce(() -> drive.setPose(A.get()))
-        .andThen(new StraightDriveToPose(drive, scorePoint3, 1))
+        .andThen(new StraightDriveToPose(drive, scorePointA, 1))
         .withTimeout(2)
         .andThen(fieldAlignment.alignToReef(false).withTimeout(1))
         .andThen(orchestrator.placeCoral(4).withTimeout(1))
@@ -274,12 +250,6 @@ public class AutosAlternate {
   }
 
   public Command BScore(boolean left) {
-    Supplier<Pose2d> B =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    ChoreoVariables.getPose("B").getTranslation(),
-                    ChoreoVariables.getPose("B").getRotation().plus(Rotation2d.k180deg)));
     return Commands.runOnce(() -> drive.setPose(B.get()))
         .andThen(Commands.waitSeconds(1))
         .andThen(
@@ -294,12 +264,6 @@ public class AutosAlternate {
   }
 
   public Command CScore(boolean left) {
-    Supplier<Pose2d> C =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    ChoreoVariables.getPose("C").getTranslation(),
-                    ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
     Supplier<Pose2d> scorePoint =
         () ->
             AllianceFlipUtil.apply(
@@ -338,13 +302,6 @@ public class AutosAlternate {
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
                             * Math.cos(branchPose.getRotation().getRadians()),
                     branchPose.getRotation()));
-    Supplier<Pose2d> C =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    ChoreoVariables.getPose("C").getTranslation(),
-                    ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
-    Logger.recordOutput("C", AllianceFlipUtil.apply(C.get()));
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(
             Commands.parallel(
@@ -353,12 +310,6 @@ public class AutosAlternate {
   }
 
   public Command sigmaCTwoScore(boolean left) {
-    Supplier<Pose2d> C =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    ChoreoVariables.getPose("C").getTranslation(),
-                    ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
     Supplier<Pose2d> scorePoint1 =
         () ->
             AllianceFlipUtil.apply(
@@ -406,12 +357,6 @@ public class AutosAlternate {
   }
 
   public Command alphaCThreeScore(boolean left) {
-    Supplier<Pose2d> C =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    ChoreoVariables.getPose("C").getTranslation(),
-                    ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
     Supplier<Pose2d> scorePoint1 =
         () ->
             AllianceFlipUtil.apply(
@@ -472,32 +417,14 @@ public class AutosAlternate {
   }
 
   public Command skibidiCFourScore(boolean left) {
-    Supplier<Pose2d> C =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    ChoreoVariables.getPose("C").getTranslation(),
-                    ChoreoVariables.getPose("C").getRotation().plus(Rotation2d.k180deg)));
-    Supplier<Pose2d> scorePoint1 =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    new Translation2d(5.579622268676758, 2.2639400959014893),
-                    new Rotation2d(-0.982794168198375)));
-    Supplier<Pose2d> scorePoint2 =
-        () ->
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    new Translation2d(1.6411257982254028, 1.703604817390442),
-                    new Rotation2d(-2.2218729245897753)));
-    Supplier<Pose2d> scorePoint3 =
+    Supplier<Pose2d> scorePointC =
         () ->
             AllianceFlipUtil.apply(
                 new Pose2d(
                     new Translation2d(2.899836778640747, 1.7935127019882202),
                     new Rotation2d(-2.1375256093137067)));
     return Commands.runOnce(() -> drive.setPose(C.get()))
-        .andThen(new StraightDriveToPose(drive, scorePoint3, 1))
+        .andThen(new StraightDriveToPose(drive, scorePointC, 1))
         .withTimeout(2)
         .andThen(fieldAlignment.alignToReef(false).withTimeout(1))
         .andThen(orchestrator.placeCoral(4).withTimeout(1))
