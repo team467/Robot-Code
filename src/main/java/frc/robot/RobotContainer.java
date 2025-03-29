@@ -225,7 +225,6 @@ public class RobotContainer {
     elevator.setDefaultCommand(elevator.runPercent(0.0));
     climber.setDefaultCommand(climber.stop());
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    System.out.println("I am gay - Aaarano");
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
