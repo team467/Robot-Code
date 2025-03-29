@@ -241,13 +241,21 @@ public class AutosAlternate {
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
   // use the command below to get the pathplanner implementation
-  public Command PathPlanner2Coral() {
+  public Command C6Mpath2Coral() {
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(drive.getAutonomousCommand("C6M Optimized").withTimeout(3))
-        .andThen(fieldAlignment.alignToReef(true))
-        .andThen(fieldAlignment.alignToCoralStation())
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToReef(true), orchestrator.moveElevatorToSetpoint(4)))
+        .andThen(
+            Commands.parallel(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake().until(coral::hasCoral))
+                .withTimeout(2.5))
         .andThen(drive.getAutonomousCommand("6LI"))
-        .andThen(fieldAlignment.alignToReef(false));
+        .andThen(fieldAlignment.alignToReef(false))
+        .andThen( Commands.parallel(
+            fieldAlignment.alignToReef(true), orchestrator.moveElevatorToSetpoint(4)));
   }
 
   public Command BScore(boolean left) {
