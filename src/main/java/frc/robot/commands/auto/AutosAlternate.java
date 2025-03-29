@@ -12,7 +12,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
-import frc.lib.utils.ChoreoVariables;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.Orchestrator;
 import frc.robot.commands.drive.FieldAlignment;
@@ -198,7 +197,7 @@ public class AutosAlternate {
                 new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
     return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(new StraightDriveToPose(drive, scorePointA, 1))
-        .withTimeout(2)
+        .withTimeout(2.5)
         .andThen(fieldAlignment.alignToReef(false).withTimeout(1))
         .andThen(orchestrator.placeCoral(4).withTimeout(1))
         .andThen(
@@ -418,7 +417,7 @@ public class AutosAlternate {
                     new Rotation2d(-2.1375256093137067)));
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(new StraightDriveToPose(drive, scorePointC, 1))
-        .withTimeout(2)
+        .withTimeout(2.5)
         .andThen(fieldAlignment.alignToReef(false).withTimeout(1))
         .andThen(orchestrator.placeCoral(4).withTimeout(1))
         .andThen(
