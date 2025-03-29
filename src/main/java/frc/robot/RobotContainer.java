@@ -209,7 +209,8 @@ public class RobotContainer {
     autoChooser.addOption("C Alpha Three Score", autosAlternate.alphaCThreeScore(true));
     autoChooser.addOption("C Skibidi Four Score", autosAlternate.skibidiCFourScore(false));
     autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(true, 4));
-    autoChooser.addOption("Test Pathplanner", autosAlternate.BombadilloCrocadillo());
+    autoChooser.addOption("C6-2 Coral", autosAlternate.C6Mpath2Coral());
+    autoChooser.addOption("A2-2 Coral", autosAlternate.A2Mpath2Coral());
     registerAutoRoutines();
 
     // Configure the button bindings

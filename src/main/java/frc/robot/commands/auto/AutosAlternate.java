@@ -273,9 +273,42 @@ public class AutosAlternate {
   //        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   //  }
   // use the command below to get the pathplanner implementation
-  public Command BombadilloCrocadillo() {
+  public Command C6Mpath2Coral() {
+    return Commands.runOnce(() -> drive.setPose(C.get()))
+        .andThen(drive.getAutonomousCommand("C6M Optimized").withTimeout(3))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToReef(true), orchestrator.moveElevatorToSetpoint(4)))
+        .andThen(drive.getAutonomousCommand("6LI"))
+        .andThen(
+            Commands.parallel(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake().until(coral::hasCoral))
+                .withTimeout(2.5))
+        .andThen(drive.getAutonomousCommand("I6M"))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToReef(false), orchestrator.moveElevatorToSetpoint(4)));
+  }
+
+  public Command A2Mpath2Coral() {
     return Commands.runOnce(() -> drive.setPose(A.get()))
-        .andThen(drive.getAutonomousCommand("C6M"));
+        .andThen(drive.getAutonomousCommand("A2M Optimized").withTimeout(3))
+        .andThen(
+            Commands.parallel(
+                    fieldAlignment.alignToReef(true), orchestrator.moveElevatorToSetpoint(4))
+                .withTimeout(3))
+        .andThen(orchestrator.placeCoral(4))
+        .andThen(
+            Commands.parallel(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake().until(coral::hasCoral))
+                .withTimeout(3))
+        .andThen(drive.getAutonomousCommand("2LI"))
+        .andThen(
+            Commands.parallel(
+                fieldAlignment.alignToReef(false), orchestrator.moveElevatorToSetpoint(4)))
+        .andThen(orchestrator.placeCoral(4));
   }
 
   public Command BScore(boolean left) {
