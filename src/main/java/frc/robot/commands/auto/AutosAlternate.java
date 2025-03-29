@@ -113,17 +113,15 @@ public class AutosAlternate {
                 new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
     Logger.recordOutput("scorePoint3", AllianceFlipUtil.apply(scorePoint3.get()));
     return Commands.runOnce(() -> drive.setPose(A.get()))
-        .andThen(
-            Commands.deadline(
-                    fieldAlignment.alignToReef(false), // .withTimeout(2),
-                    orchestrator.moveElevatorBasedOnDistance(
-                        fieldAlignment.getBranchPosition(false, 2)))
-                .withTimeout(1.7))
+        .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
+        .withTimeout(1.5)
+        .andThen(fieldAlignment.alignToReef(left))
+        .withTimeout(3)
         .andThen(orchestrator.placeCoral(4))
-        //        .andThen(Commands.waitSeconds(0.3))
+        .andThen(Commands.waitSeconds(0.3))
         .andThen(
             orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(1))
-        .andThen(new StraightDriveToPose(drive, scorePoint2, 1).withTimeout(0.5))
+        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
         .andThen(
             Commands.parallel(
                     fieldAlignment.alignToCoralStation().andThen(Commands.none()),
@@ -132,11 +130,11 @@ public class AutosAlternate {
         // .andThen(fieldAlignment.alignToCoralStation().withTimeout(2))
         // .andThen(orchestrator.intake().until(coral::hasCoral))
         .andThen(
-            Commands.deadline(
-                    Commands.deadline(fieldAlignment.alignToReef(true), coral.stop()),
-                    orchestrator.moveElevatorBasedOnDistance(
-                        fieldAlignment.getBranchPosition(left, 1)))
-                .withTimeout(2))
+            Commands.race(
+                new StraightDriveToPose(drive, scorePoint3, 1)
+                    .withTimeout(1.5)
+                    .andThen(fieldAlignment.alignToReef(true).withTimeout(2)),
+                coral.stop()))
         .andThen(orchestrator.placeCoral(4))
         .andThen(Commands.waitSeconds(0.3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
@@ -232,30 +230,26 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(new StraightDriveToPose(drive, scorePoint3, 1))
         .withTimeout(2)
-        .andThen(fieldAlignment.alignToReef(false).withTimeout(3))
+        .andThen(fieldAlignment.alignToReef(false).withTimeout(1))
         .andThen(orchestrator.placeCoral(4).withTimeout(1))
         .andThen(
+            Commands.parallel(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake().until(coral::hasCoral))
+                .withTimeout(2.5))
+        .andThen(
             Commands.deadline(
-                    Commands.parallel(
-                        fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                        orchestrator.intake().withTimeout(0.5)),
+                    Commands.deadline(fieldAlignment.alignToReef(true), coral.stop()),
                     orchestrator.moveElevatorBasedOnDistance(
-                        fieldAlignment.getClosestCoralStationPositionForAlign()))
-                .andThen(
-                    Commands.deadline(
-                            Commands.deadline(fieldAlignment.alignToReef(true), coral.stop()),
-                            orchestrator.moveElevatorBasedOnDistance(
-                                fieldAlignment.getBranchPosition(left, 1)))
-                        .withTimeout(3))
-                .andThen(orchestrator.placeCoral(4).withTimeout(1))
-                .andThen(
-                    Commands.deadline(
-                        Commands.parallel(
-                                fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                                orchestrator.intake())
-                            .withTimeout(0.5))),
-            orchestrator.moveElevatorBasedOnDistance(
-                fieldAlignment.getClosestCoralStationPositionForAlign()))
+                        fieldAlignment.getBranchPosition(left, 1)))
+                .withTimeout(3))
+        .andThen(orchestrator.placeCoral(4).withTimeout(1))
+        .andThen(
+            Commands.parallel(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .withTimeout(2.5)
+                .until(coral::hasCoral))
         .andThen(
             Commands.deadline(
                     Commands.deadline(fieldAlignment.alignToReef(true), coral.stop()),
@@ -264,20 +258,19 @@ public class AutosAlternate {
                 .withTimeout(3))
         .andThen(orchestrator.placeCoral(3).withTimeout(1))
         .andThen(
-            Commands.deadline(
-                Commands.parallel(
-                        fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                        orchestrator.intake())
-                    .withTimeout(0.5)),
-            orchestrator.moveElevatorBasedOnDistance(
-                fieldAlignment.getClosestCoralStationPositionForAlign()))
+            Commands.parallel(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .withTimeout(2.5)
+                .until(coral::hasCoral))
         .andThen(
             Commands.deadline(
                     Commands.deadline(fieldAlignment.alignToReef(false), coral.stop()),
                     orchestrator.moveElevatorBasedOnDistance(
                         fieldAlignment.getBranchPosition(left, 1)))
                 .withTimeout(3))
-        .andThen(orchestrator.placeCoral(3).withTimeout(1));
+        .andThen(orchestrator.placeCoral(3).withTimeout(1))
+        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
   public Command BScore(boolean left) {
@@ -385,18 +378,15 @@ public class AutosAlternate {
                     new Translation2d(2.899836778640747, 1.7935127019882202),
                     new Rotation2d(-2.1375256093137067)));
     return Commands.runOnce(() -> drive.setPose(C.get()))
-        .andThen(
-            Commands.deadline(
-                fieldAlignment.alignToReef(left),
-                orchestrator.moveElevatorBasedOnDistance(
-                    fieldAlignment.getBranchPosition(left, 4))))
+        .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
+        .andThen(fieldAlignment.alignToReef(left))
+        .withTimeout(3)
         .andThen(orchestrator.placeCoral(4))
-        //        .andThen(Commands.waitSeconds(0.3))
+        .andThen(Commands.waitSeconds(0.3))
         .andThen(
             orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION).withTimeout(1))
-        // .andThen(new StraightDriveToPose(drive, scorePoint2, 1).withTimeout(0.5))
-        .andThen(fieldAlignment.alignToCoralStation().withTimeout(1))
+        .andThen(new StraightDriveToPose(drive, scorePoint2, 0.9).withTimeout(0.8))
         .andThen(
             Commands.parallel(
                     fieldAlignment.alignToCoralStation().andThen(Commands.none()),
@@ -405,9 +395,11 @@ public class AutosAlternate {
         // .andThen(fieldAlignment.alignToCoralStation().withTimeout(2))
         // .andThen(orchestrator.intake().until(coral::hasCoral))
         .andThen(
-            Commands.deadline(Commands.race(fieldAlignment.alignToReef(true)), coral.stop()),
-            orchestrator.moveElevatorBasedOnDistance(fieldAlignment.getBranchPosition(left, 5)))
-        .withTimeout(1.5)
+            Commands.race(
+                new StraightDriveToPose(drive, scorePoint3, 1)
+                    .withTimeout(1.5)
+                    .andThen(fieldAlignment.alignToReef(true).withTimeout(2)),
+                coral.stop()))
         .andThen(orchestrator.placeCoral(4))
         .andThen(Commands.waitSeconds(0.3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
@@ -507,52 +499,46 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(new StraightDriveToPose(drive, scorePoint3, 1))
         .withTimeout(2)
-        .andThen(fieldAlignment.alignToReef(false).withTimeout(3))
+        .andThen(fieldAlignment.alignToReef(false).withTimeout(1))
         .andThen(orchestrator.placeCoral(4).withTimeout(1))
         .andThen(
-            Commands.deadline(
-                Commands.parallel(
-                        fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                        orchestrator.intake())
-                    .withTimeout(0.5)),
-            orchestrator.moveElevatorBasedOnDistance(
-                fieldAlignment.getClosestCoralStationPositionForAlign()))
+            Commands.parallel(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake().until(coral::hasCoral))
+                .withTimeout(2.5))
         .andThen(
             Commands.deadline(
                     Commands.deadline(fieldAlignment.alignToReef(true), coral.stop()),
                     orchestrator.moveElevatorBasedOnDistance(
-                        fieldAlignment.getBranchPosition(left, 5)))
+                        fieldAlignment.getBranchPosition(left, 1)))
                 .withTimeout(3))
         .andThen(orchestrator.placeCoral(4).withTimeout(1))
         .andThen(
-            Commands.deadline(
-                Commands.parallel(
-                        fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                        orchestrator.intake())
-                    .withTimeout(0.5)),
-            orchestrator.moveElevatorBasedOnDistance(
-                fieldAlignment.getClosestCoralStationPositionForAlign()))
+            Commands.parallel(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .withTimeout(2.5)
+                .until(coral::hasCoral))
         .andThen(
             Commands.deadline(
                     Commands.deadline(fieldAlignment.alignToReef(true), coral.stop()),
                     orchestrator.moveElevatorBasedOnDistance(
-                        fieldAlignment.getBranchPosition(left, 5)))
+                        fieldAlignment.getBranchPosition(left, 1)))
                 .withTimeout(3))
         .andThen(orchestrator.placeCoral(3).withTimeout(1))
         .andThen(
-            Commands.deadline(
-                Commands.parallel(
-                        fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                        orchestrator.intake())
-                    .withTimeout(0.5)),
-            orchestrator.moveElevatorBasedOnDistance(
-                fieldAlignment.getClosestCoralStationPositionForAlign()))
+            Commands.parallel(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
+                    orchestrator.intake())
+                .withTimeout(2.5)
+                .until(coral::hasCoral))
         .andThen(
             Commands.deadline(
                     Commands.deadline(fieldAlignment.alignToReef(false), coral.stop()),
                     orchestrator.moveElevatorBasedOnDistance(
-                        fieldAlignment.getBranchPosition(left, 5)))
+                        fieldAlignment.getBranchPosition(left, 1)))
                 .withTimeout(3))
-        .andThen(orchestrator.placeCoral(3).withTimeout(1));
+        .andThen(orchestrator.placeCoral(3).withTimeout(1))
+        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 }
