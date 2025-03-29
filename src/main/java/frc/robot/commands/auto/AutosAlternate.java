@@ -242,7 +242,8 @@ public class AutosAlternate {
   }
   // use the command below to get the pathplanner implementation
   public Command BombadilloCrocadillo() {
-    return drive.getAutonomousCommand("C6M");
+    return Commands.runOnce(() -> drive.setPose(C.get()))
+        .andThen(drive.getAutonomousCommand("C6M"));
   }
 
   public Command BScore(boolean left) {
