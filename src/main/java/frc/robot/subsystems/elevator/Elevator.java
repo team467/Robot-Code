@@ -33,7 +33,6 @@ public class Elevator extends SubsystemBase {
     } else {
       io.goToSetpoint();
     }
-    System.out.println("I love men - pranav");
   }
 
   /**
