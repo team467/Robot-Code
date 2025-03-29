@@ -97,6 +97,10 @@ public class Orchestrator {
     }
   }
 
+  public Command stowAlgae() {
+    return fastAlgaeEffector.stowArm();
+  }
+
   public Command moveElevatorToLevel(int level) {
     return moveElevatorToSetpoint(getCoralHeight(level))
         .andThen(
