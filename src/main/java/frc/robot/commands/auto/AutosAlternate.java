@@ -12,7 +12,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
-import frc.lib.utils.ChoreoVariables;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.Orchestrator;
 import frc.robot.commands.drive.FieldAlignment;
