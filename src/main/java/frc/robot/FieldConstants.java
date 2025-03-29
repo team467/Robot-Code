@@ -159,7 +159,7 @@ public class FieldConstants {
     L3(/*Units.inchesToMeters(47.625)*/ 0.625, -35),
     L2(/*Units.inchesToMeters(31.875)*/ 0.535, -35),
     L1(0.47, 0),
-    HOME(/*Units.inchesToMeters(17 + 6 / 8)*/ 0.42, 0),
+    HOME(/*Units.inchesToMeters(17 + 6 / 8)*/ 0.41, 0),
     ALGAE_LOW(/*Units.inchesToMeters(31.875)*/ 0.555, -35),
     ALGAE_HIGH(/*Units.inchesToMeters(31.875)*/ 0.641, -35);
 
