@@ -241,8 +241,7 @@ public class Drive extends SubsystemBase {
   public Command getAutonomousCommand(String Path) {
     try {
       // Load the path you want to follow using its name in the GUI
-      PathPlannerPath path =
-          PathPlannerPath.fromPathFile("deploy/pathplanner/paths/" + Path + ".path");
+      PathPlannerPath path = PathPlannerPath.fromPathFile(Path);
 
       // Create a path following command using AutoBuilder. This will also trigger event markers.
       return AutoBuilder.followPath(path);
