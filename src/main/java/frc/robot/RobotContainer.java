@@ -253,33 +253,31 @@ public class RobotContainer {
             operatorController.leftStick())
         .whileTrue(
             fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
-    CustomTriggers.autoModeInput(operatorController.x(), operatorController.leftBumper())
+    CustomTriggers.autoModeInput(operatorController.x(), operatorController.rightBumper())
         .onTrue(orchestrator.moveElevatorToLevel(1));
-    CustomTriggers.autoModeInput(operatorController.y(), operatorController.leftBumper())
+    CustomTriggers.autoModeInput(operatorController.y(), operatorController.rightBumper())
         .onTrue(orchestrator.moveElevatorToLevel(2));
-    CustomTriggers.autoModeInput(operatorController.a(), operatorController.leftBumper())
+    CustomTriggers.autoModeInput(operatorController.a(), operatorController.rightBumper())
         .onTrue(orchestrator.moveElevatorToLevel(3));
-    CustomTriggers.manualModeInput(operatorController.a(), operatorController.leftBumper())
+    CustomTriggers.manualModeInput(operatorController.a(), operatorController.rightBumper())
         .whileTrue(elevator.runPercent(-0.3));
-    CustomTriggers.autoModeInput(operatorController.a(), operatorController.leftBumper())
-        .onTrue(orchestrator.moveElevatorToLevel(3));
-    CustomTriggers.manualModeInput(operatorController.b(), operatorController.leftBumper())
+    CustomTriggers.manualModeInput(operatorController.b(), operatorController.rightBumper())
         .whileTrue(elevator.runPercent(0.3));
-    CustomTriggers.autoModeInput(operatorController.b(), operatorController.leftBumper())
+    CustomTriggers.autoModeInput(operatorController.b(), operatorController.rightBumper())
         .onTrue(orchestrator.moveElevatorToLevel(4));
-    CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.leftBumper())
+    CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.rightBumper())
         .toggleOnTrue(orchestrator.removeAlgae(2));
-    CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.leftBumper())
+    CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.rightBumper())
         .toggleOnTrue(orchestrator.removeAlgae(3));
-    CustomTriggers.autoModeInput(operatorController.pov(0), operatorController.leftBumper())
+    CustomTriggers.autoModeInput(operatorController.pov(0), operatorController.rightBumper())
         .whileTrue(climber.deploy());
-    CustomTriggers.autoModeInput(operatorController.pov(180), operatorController.leftBumper())
+    CustomTriggers.autoModeInput(operatorController.pov(180), operatorController.rightBumper())
         .whileTrue(climber.winch());
     CustomTriggers.manualModeInput(
-            operatorController.rightBumper(), operatorController.leftBumper())
+            operatorController.pov(0), operatorController.rightBumper())
         .whileTrue(climber.runPercent(0.15));
     CustomTriggers.manualModeInput(
-            operatorController.rightTrigger(), operatorController.leftBumper())
+            operatorController.pov(180), operatorController.rightBumper())
         .whileTrue(climber.runPercent(-0.15));
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
