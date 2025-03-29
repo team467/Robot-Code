@@ -156,7 +156,7 @@ public class FieldConstants {
 
   public enum ReefHeight {
     L4(/*Units.inchesToMeters(72)*/ 0.762, -90),
-    L3(/*Units.inchesToMeters(47.625)*/ 0.625, -35),
+    L3(/*Units.inchesToMeters(47.625)*/ 0.630, -35),
     L2(/*Units.inchesToMeters(31.875)*/ 0.535, -35),
     L1(Units.inchesToMeters(17 + 6 / 8), 0),
     ALGAE_LOW(/*Units.inchesToMeters(31.875)*/ 0.555, -35),
