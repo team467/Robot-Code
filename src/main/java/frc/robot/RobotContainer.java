@@ -273,11 +273,9 @@ public class RobotContainer {
         .whileTrue(climber.deploy());
     CustomTriggers.autoModeInput(operatorController.pov(180), operatorController.rightBumper())
         .whileTrue(climber.winch());
-    CustomTriggers.manualModeInput(
-            operatorController.pov(0), operatorController.rightBumper())
+    CustomTriggers.manualModeInput(operatorController.pov(0), operatorController.rightBumper())
         .whileTrue(climber.runPercent(0.15));
-    CustomTriggers.manualModeInput(
-            operatorController.pov(180), operatorController.rightBumper())
+    CustomTriggers.manualModeInput(operatorController.pov(180), operatorController.rightBumper())
         .whileTrue(climber.runPercent(-0.15));
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
