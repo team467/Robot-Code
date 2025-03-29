@@ -265,6 +265,7 @@ public class AutosAlternate {
             Commands.parallel(
                     fieldAlignment.alignToReef(true), orchestrator.moveElevatorToSetpoint(4))
                 .withTimeout(3))
+        .andThen(orchestrator.placeCoral(4))
         .andThen(
             Commands.parallel(
                     fieldAlignment.alignToCoralStation().andThen(Commands.none()),
@@ -273,7 +274,8 @@ public class AutosAlternate {
         .andThen(drive.getAutonomousCommand("2LI"))
         .andThen(
             Commands.parallel(
-                fieldAlignment.alignToReef(false), orchestrator.moveElevatorToSetpoint(4)));
+                fieldAlignment.alignToReef(false), orchestrator.moveElevatorToSetpoint(4)))
+        .andThen(orchestrator.placeCoral(4));
   }
 
   public Command BScore(boolean left) {
