@@ -311,9 +311,10 @@ public class AutosAlternate {
     return Commands.runOnce(() -> drive.setPose(C.get()))
         .andThen(
             Commands.deadline(
-                fieldAlignment.alignToReef(left).withTimeout(5),
+                fieldAlignment.alignToReef(left),
                 orchestrator.moveElevatorBasedOnDistance(
                     fieldAlignment.getBranchPosition(left, fieldAlignment::closestReefFace))))
+        .withTimeout(1)
         .andThen(orchestrator.placeCoral(4))
         //        .andThen(Commands.waitSeconds(0.3))
         .andThen(
@@ -327,10 +328,10 @@ public class AutosAlternate {
         // .andThen(fieldAlignment.alignToCoralStation().withTimeout(2))
         // .andThen(orchestrator.intake().until(coral::hasCoral))
         .andThen(
-            Commands.deadline(
-                Commands.race(fieldAlignment.alignToReef(true).withTimeout(5)), coral.stop()),
+            Commands.deadline(Commands.race(fieldAlignment.alignToReef(true)), coral.stop()),
             orchestrator.moveElevatorBasedOnDistance(
                 fieldAlignment.getBranchPosition(left, fieldAlignment::closestReefFace)))
+        .withTimeout(1)
         .andThen(orchestrator.placeCoral(4))
         .andThen(Commands.waitSeconds(0.3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
