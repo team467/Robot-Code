@@ -247,12 +247,13 @@ public class AutosAlternate {
         .andThen(
             Commands.parallel(
                 fieldAlignment.alignToReef(true), orchestrator.moveElevatorToSetpoint(4)))
+        .andThen(drive.getAutonomousCommand("6LI"))
         .andThen(
             Commands.parallel(
                     fieldAlignment.alignToCoralStation().andThen(Commands.none()),
                     orchestrator.intake().until(coral::hasCoral))
                 .withTimeout(2.5))
-        .andThen(drive.getAutonomousCommand("6LI"))
+        .andThen(drive.getAutonomousCommand("I6M"))
         .andThen(
             Commands.parallel(
                 fieldAlignment.alignToReef(false), orchestrator.moveElevatorToSetpoint(4)));
