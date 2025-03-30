@@ -179,21 +179,26 @@ public class RobotContainer {
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
     autoRoutines = new AutoRoutines(drive);
     // set up commands and triggers in auto
-    NamedCommands.registerCommand("AlignToReef Right",fieldAlignment.alignToReef(false).withTimeout(1.5));
-    NamedCommands.registerCommand("AlignToReef Left",fieldAlignment.alignToReef(true).withTimeout(1.5));
+    NamedCommands.registerCommand(
+        "AlignToReef Right", fieldAlignment.alignToReef(false).withTimeout(1.5));
+    NamedCommands.registerCommand(
+        "AlignToReef Left", fieldAlignment.alignToReef(true).withTimeout(1.5));
     NamedCommands.registerCommand("Dump Coral", orchestrator.dumpCoralAndHome());
     NamedCommands.registerCommand("Elevator L4", orchestrator.moveElevatorToLevel(4));
     NamedCommands.registerCommand("Elevator L2", orchestrator.moveElevatorToLevel(2));
-    NamedCommands.registerCommand("Intake",Commands.deadline(
-        fieldAlignment
-            .alignToCoralStation()
-            .andThen(Commands.none())
-            .withTimeout(2.3)
-            .until(coral::hopperSeesCoral),
-        Commands.parallel(
-            orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION),
-            Commands.waitSeconds(1).andThen(orchestrator.stowAlgae()))));
-    NamedCommands.registerCommand("run intake", orchestrator.intake().until(coral::hasCoral).withTimeout(1.4));
+    NamedCommands.registerCommand(
+        "Intake",
+        Commands.deadline(
+            fieldAlignment
+                .alignToCoralStation()
+                .andThen(Commands.none())
+                .withTimeout(2.3)
+                .until(coral::hopperSeesCoral),
+            Commands.parallel(
+                orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION),
+                Commands.waitSeconds(1).andThen(orchestrator.stowAlgae()))));
+    NamedCommands.registerCommand(
+        "run intake", orchestrator.intake().until(coral::hasCoral).withTimeout(1.4));
     new EventTrigger("run intake");
     new EventTrigger("Elevator L2");
     // Drive SysId
@@ -239,7 +244,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-
   }
 
   /**
