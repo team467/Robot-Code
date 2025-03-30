@@ -204,9 +204,11 @@ public class RobotContainer {
     autoChooser.addOption("B Score Hope and Pray", autosAlternate.BScoreHopeAndPray());
     autoChooser.addOption("A Sigma Two Score", autosAlternate.sigmaATwoScore(false));
     autoChooser.addOption("A Alpha Three Score", autosAlternate.alphaAThreeScore(false));
-    //    autoChooser.addOption("A Skibidi Four Score", autosAlternate.skibidiAFourScore(false));
+    autoChooser.addOption("A Omega Three Point Five Score", autosAlternate.omegaAThreePointFiveScore(false));
+    autoChooser.addOption("A Skibidi Four Score", autosAlternate.skibidiAFourScore(false));
     autoChooser.addOption("C Sigma Two Score", autosAlternate.sigmaCTwoScore(true));
     autoChooser.addOption("C Alpha Three Score", autosAlternate.alphaCThreeScore(true));
+    autoChooser.addOption("C Omega Three Point Five Score", autosAlternate.omegaCThreePointFiveScore(false));
     autoChooser.addOption("C Skibidi Four Score", autosAlternate.skibidiCFourScore(false));
     autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(true, 4));
     autoChooser.addOption("C6-2 Coral", autosAlternate.C6Mpath2Coral());
