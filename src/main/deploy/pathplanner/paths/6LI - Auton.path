@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.42,
+        "y": 3.04
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.3613920818274488,
+        "y": 2.0667073220693593
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.97,
+        "y": 0.82
+      },
+      "prevControl": {
+        "x": 0.7831785227768626,
+        "y": 0.6538743377796049
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Intake Right"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator Intake",
+      "waypointRelativePos": 0.18279266572637493,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 12.7,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -126.95612264879881
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -119.68712470183495
+  },
+  "useDefaultConstraints": true
+}
