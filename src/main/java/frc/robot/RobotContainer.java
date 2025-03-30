@@ -185,9 +185,9 @@ public class RobotContainer {
         "AlignToReef Left", fieldAlignment.alignToReef(true).withTimeout(1.15));
     NamedCommands.registerCommand("Dump Coral", coral.dumpCoral().withTimeout(0.5));
     NamedCommands.registerCommand(
-        "Elevator L4", orchestrator.moveElevatorToLevel(4).withTimeout(1.15));
+        "Elevator L4", orchestrator.moveElevatorToLevel(4).withTimeout(0.8));
     NamedCommands.registerCommand(
-        "Elevator L2", orchestrator.moveElevatorToLevel(2).withTimeout(1.15));
+        "Elevator L2", orchestrator.moveElevatorToLevel(2).withTimeout(0.45));
     NamedCommands.registerCommand(
         "Elevator Intake", orchestrator.moveElevatorToLevel(0).until(elevator::limitSwitchPressed));
     NamedCommands.registerCommand(
