@@ -180,14 +180,14 @@ public class RobotContainer {
     autoRoutines = new AutoRoutines(drive);
     // set up commands and triggers in auto
     NamedCommands.registerCommand(
-        "AlignToReef Right", fieldAlignment.alignToReef(false).withTimeout(1.5));
+        "AlignToReef Right", fieldAlignment.alignToReef(false).withTimeout(1.15));
     NamedCommands.registerCommand(
-        "AlignToReef Left", fieldAlignment.alignToReef(true).withTimeout(1.5));
+        "AlignToReef Left", fieldAlignment.alignToReef(true).withTimeout(1.15));
     NamedCommands.registerCommand("Dump Coral", coral.dumpCoral().withTimeout(0.5));
     NamedCommands.registerCommand(
-        "Elevator L4", orchestrator.moveElevatorToLevel(4).withTimeout(0.5));
+        "Elevator L4", orchestrator.moveElevatorToLevel(4).withTimeout(1.15));
     NamedCommands.registerCommand(
-        "Elevator L2", orchestrator.moveElevatorToLevel(2).withTimeout(0.5));
+        "Elevator L2", orchestrator.moveElevatorToLevel(2).withTimeout(1.15));
     NamedCommands.registerCommand(
         "Elevator Intake", orchestrator.moveElevatorToLevel(0).until(elevator::limitSwitchPressed));
     NamedCommands.registerCommand(
