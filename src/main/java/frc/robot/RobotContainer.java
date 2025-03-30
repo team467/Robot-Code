@@ -9,7 +9,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -189,7 +188,8 @@ public class RobotContainer {
         "Elevator L4", orchestrator.moveElevatorToLevel(4).withTimeout(0.5));
     NamedCommands.registerCommand(
         "Elevator L2", orchestrator.moveElevatorToLevel(2).withTimeout(0.5));
-    NamedCommands.registerCommand("Elevator Intake",orchestrator.moveElevatorToLevel(0).until(elevator::limitSwitchPressed));
+    NamedCommands.registerCommand(
+        "Elevator Intake", orchestrator.moveElevatorToLevel(0).until(elevator::limitSwitchPressed));
     NamedCommands.registerCommand(
         "Intake",
         Commands.deadline(
