@@ -241,7 +241,7 @@ public class RobotContainer {
     autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(true, 4));
     autoChooser.addOption("C6-2 Coral", autosAlternate.C6Mpath2Coral());
     autoChooser.addOption("A2-2 Coral", autosAlternate.A2Mpath2Coral());
-    autoChooser.addOption("C6M 3 Coral", runAutonomousAuto("C6M-3Coral"));
+    autoChooser.addOption("C6M 3 Coral", runAutonomousAuto("C6M-3coral"));
     registerAutoRoutines();
 
     // Configure the button bindings
