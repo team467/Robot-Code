@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.97,
-        "y": 0.82
+        "x": 3.42,
+        "y": 3.04
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5883786625994296,
-        "y": 1.2215199212835919
+        "x": 2.3613920818274488,
+        "y": 2.0667073220693593
       },
       "isLocked": false,
-      "linkedName": "Intake Right"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.6202868852459016,
-        "y": 2.5924692622950816
+        "x": 0.97,
+        "y": 0.82
       },
       "prevControl": {
-        "x": 2.8363116059761153,
-        "y": 2.0896077615899564
+        "x": 0.7831785227768626,
+        "y": 0.6538743377796049
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "6M"
+      "linkedName": "Intake Right"
     }
   ],
   "rotationTargets": [],
@@ -33,14 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "run Intake",
-      "waypointRelativePos": 0.2959537572254356,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "Elevator L2",
-      "waypointRelativePos": 0.7492242595204485,
+      "name": "Elevator Intake",
+      "waypointRelativePos": 0.18279266572637493,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -55,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.24882633654708
+    "rotation": -126.95612264879881
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -126.95612264879881
+    "rotation": -119.68712470183495
   },
   "useDefaultConstraints": true
 }

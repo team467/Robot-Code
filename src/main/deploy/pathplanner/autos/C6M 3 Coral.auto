@@ -42,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": " 6RI"
+                  "pathName": "6RI - Auton"
                 }
               },
               {
@@ -58,9 +58,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "parallel",
                 "data": {
-                  "name": "AlignToReef Left"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignToReef Left"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Elevator L4"
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -72,7 +85,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "6LI"
+                  "pathName": "6LI - Auton"
                 }
               },
               {
@@ -85,6 +98,31 @@
                 "type": "path",
                 "data": {
                   "pathName": "I6M - Auton"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignToReef Left"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Elevator L4"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Dump Coral"
                 }
               }
             ]
