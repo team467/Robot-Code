@@ -190,100 +190,99 @@ public class AutosAlternate {
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
-    public Command omegaAThreePointFiveScore(boolean left) {
-      Supplier<Pose2d> scorePointA =
-          () ->
-              AllianceFlipUtil.apply(
-                  new Pose2d(new Translation2d(3.32467007637, 5.877366), new
-   Rotation2d(2.22919)));
-      Supplier<Pose2d> intakeInBetween =
-          () ->
-              AllianceFlipUtil.apply(
-                  new Pose2d(
-                      new Translation2d(3.4687795639038086, 5.667267322540283),
-                      new Rotation2d(2.077894778811894)));
+  public Command omegaAThreePointFiveScore(boolean left) {
+    Supplier<Pose2d> scorePointA =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
+    Supplier<Pose2d> intakeInBetween =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(3.4687795639038086, 5.667267322540283),
+                    new Rotation2d(2.077894778811894)));
 
-      return Commands.runOnce(() -> drive.setPose(C.get()))
-          .andThen(new StraightDriveToPose(drive, scorePointA, 1))
-          .withTimeout(2.3)
-          .andThen(
-              Commands.deadline(
-                      Commands.parallel(
-                              fieldAlignment.alignToReef(false).withTimeout(1.15),
-                              orchestrator.moveElevatorToLevel(4).withTimeout(0.8).withTimeout(1.15))
-                          .andThen(coral.dumpCoral().withTimeout(1)),
-                      Commands.waitSeconds(0.9).andThen(orchestrator.removeAlgae(2)))
-                  .withTimeout(2.25))
-          .andThen(
-              Commands.deadline(
-                  fieldAlignment
-                      .alignToCoralStation()
-                      .andThen(Commands.none())
-                      .withTimeout(2.3)
-                      .until(coral::hopperSeesCoral),
-                  Commands.parallel(
-                      orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION),
-                      Commands.waitSeconds(1).andThen(orchestrator.stowAlgae()))))
-          .andThen(
-              Commands.parallel(
-                      new StraightDriveToPose(drive, intakeInBetween, 1),
-                      orchestrator.intake().until(coral::hasCoral))
-                  .withTimeout(1.5)
-                  .andThen(
-                      Commands.parallel(
-                              fieldAlignment.alignToReef(true).withTimeout(1),
-                              orchestrator.moveElevatorToLevel(4).withTimeout(0.8),
-                              coral.stop())
-                          .withTimeout(1)))
-          .andThen(coral.dumpCoral().withTimeout(1))
-          .andThen(
-              Commands.deadline(
-                  fieldAlignment
-                      .alignToCoralStation()
-                      .andThen(Commands.none())
-                      .withTimeout(2.3)
-                      .until(coral::hopperSeesCoral),
-                  orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
-          .andThen(
-              Commands.parallel(
-                      new StraightDriveToPose(drive, intakeInBetween, 1),
-                      orchestrator.intake().until(coral::hasCoral))
-                  .withTimeout(1.5)
-                  .andThen(
-                      Commands.parallel(
-                              fieldAlignment.alignToReef(true).withTimeout(1),
-                              orchestrator.moveElevatorToLevel(3).withTimeout(0.75),
-                              coral.stop())
-                          .withTimeout(1)))
-          .andThen(coral.dumpCoral().withTimeout(0.75))
-          .andThen(
-              Commands.deadline(
-                  fieldAlignment
-                      .alignToCoralStation()
-                      .andThen(Commands.none())
-                      .withTimeout(2.3)
-                      .until(coral::hopperSeesCoral),
-                  orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
-          .andThen(
-              Commands.parallel(
-                      new StraightDriveToPose(drive, intakeInBetween, 1),
-                      orchestrator.intake().until(coral::hasCoral))
-                  .withTimeout(1.5)
-                  .andThen(
-                      Commands.parallel(
-                              fieldAlignment.alignToReef(false).withTimeout(1),
-                              orchestrator.moveElevatorToLevel(3).withTimeout(0.75),
-                              coral.stop())
-                          .withTimeout(1)))
-          .andThen(coral.dumpCoral().withTimeout(1))
-          .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
-    }
+    return Commands.runOnce(() -> drive.setPose(C.get()))
+        .andThen(new StraightDriveToPose(drive, scorePointA, 1))
+        .withTimeout(2.3)
+        .andThen(
+            Commands.deadline(
+                    Commands.parallel(
+                            fieldAlignment.alignToReef(false).withTimeout(1.15),
+                            orchestrator.moveElevatorToLevel(4).withTimeout(0.8).withTimeout(1.15))
+                        .andThen(coral.dumpCoral().withTimeout(1)),
+                    Commands.waitSeconds(0.9).andThen(orchestrator.removeAlgae(2)))
+                .withTimeout(2.25))
+        .andThen(
+            Commands.deadline(
+                fieldAlignment
+                    .alignToCoralStation()
+                    .andThen(Commands.none())
+                    .withTimeout(2.3)
+                    .until(coral::hopperSeesCoral),
+                Commands.parallel(
+                    orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION),
+                    Commands.waitSeconds(1).andThen(orchestrator.stowAlgae()))))
+        .andThen(
+            Commands.parallel(
+                    new StraightDriveToPose(drive, intakeInBetween, 1),
+                    orchestrator.intake().until(coral::hasCoral))
+                .withTimeout(1.5)
+                .andThen(
+                    Commands.parallel(
+                            fieldAlignment.alignToReef(true).withTimeout(1),
+                            orchestrator.moveElevatorToLevel(4).withTimeout(0.8),
+                            coral.stop())
+                        .withTimeout(1)))
+        .andThen(coral.dumpCoral().withTimeout(1))
+        .andThen(
+            Commands.deadline(
+                fieldAlignment
+                    .alignToCoralStation()
+                    .andThen(Commands.none())
+                    .withTimeout(2.3)
+                    .until(coral::hopperSeesCoral),
+                orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
+        .andThen(
+            Commands.parallel(
+                    new StraightDriveToPose(drive, intakeInBetween, 1),
+                    orchestrator.intake().until(coral::hasCoral))
+                .withTimeout(1.5)
+                .andThen(
+                    Commands.parallel(
+                            fieldAlignment.alignToReef(true).withTimeout(1),
+                            orchestrator.moveElevatorToLevel(3).withTimeout(0.75),
+                            coral.stop())
+                        .withTimeout(1)))
+        .andThen(coral.dumpCoral().withTimeout(0.75))
+        .andThen(
+            Commands.deadline(
+                fieldAlignment
+                    .alignToCoralStation()
+                    .andThen(Commands.none())
+                    .withTimeout(2.3)
+                    .until(coral::hopperSeesCoral),
+                orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
+        .andThen(
+            Commands.parallel(
+                    new StraightDriveToPose(drive, intakeInBetween, 1),
+                    orchestrator.intake().until(coral::hasCoral))
+                .withTimeout(1.5)
+                .andThen(
+                    Commands.parallel(
+                            fieldAlignment.alignToReef(false).withTimeout(1),
+                            orchestrator.moveElevatorToLevel(3).withTimeout(0.75),
+                            coral.stop())
+                        .withTimeout(1)))
+        .andThen(coral.dumpCoral().withTimeout(1))
+        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
+  }
+
   public Command skibidiAFourScore(boolean left) {
     Supplier<Pose2d> scorePointA =
         () ->
             AllianceFlipUtil.apply(
-                new Pose2d(new Translation2d(3.32467007637, 5.877366), new
-                    Rotation2d(2.22919)));
+                new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
     Supplier<Pose2d> intakeInBetween =
         () ->
             AllianceFlipUtil.apply(
