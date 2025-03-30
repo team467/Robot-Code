@@ -41,6 +41,7 @@ import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIOPhysical;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -184,9 +185,11 @@ public class RobotContainer {
         "AlignToReef Right", fieldAlignment.alignToReef(false).withTimeout(1.5));
     NamedCommands.registerCommand(
         "AlignToReef Left", fieldAlignment.alignToReef(true).withTimeout(1.5));
-    NamedCommands.registerCommand("Dump Coral", orchestrator.dumpCoralAndHome());
-    NamedCommands.registerCommand("Elevator L4", orchestrator.moveElevatorToLevel(4));
-    NamedCommands.registerCommand("Elevator L2", orchestrator.moveElevatorToLevel(2));
+    NamedCommands.registerCommand("Dump Coral", orchestrator.dumpCoralAndHome().withTimeout(0.5));
+    NamedCommands.registerCommand(
+        "Elevator L4", orchestrator.moveElevatorToLevel(4).withTimeout(0.5));
+    NamedCommands.registerCommand(
+        "Elevator L2", orchestrator.moveElevatorToLevel(2).withTimeout(0.5));
     NamedCommands.registerCommand(
         "Intake",
         Commands.deadline(
@@ -241,7 +244,7 @@ public class RobotContainer {
     autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(true, 4));
     autoChooser.addOption("C6-2 Coral", autosAlternate.C6Mpath2Coral());
     autoChooser.addOption("A2-2 Coral", autosAlternate.A2Mpath2Coral());
-    autoChooser.addOption("C6M 3 Coral", runAutonomousAuto("C6M-3coral"));
+    autoChooser.addOption("C6M 3 Coral", runAutonomousAuto("C6M 3 Coral"));
     registerAutoRoutines();
 
     // Configure the button bindings
@@ -249,7 +252,7 @@ public class RobotContainer {
   }
 
   public Command runAutonomousAuto(String auto) {
-    return new PathPlannerAuto("deploy/pathplanner/autos" + "/" + auto + ".auto");
+    return new PathPlannerAuto(auto);
   }
 
   /**
