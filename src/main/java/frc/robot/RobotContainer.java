@@ -184,11 +184,12 @@ public class RobotContainer {
         "AlignToReef Right", fieldAlignment.alignToReef(false).withTimeout(1.5));
     NamedCommands.registerCommand(
         "AlignToReef Left", fieldAlignment.alignToReef(true).withTimeout(1.5));
-    NamedCommands.registerCommand("Dump Coral", orchestrator.dumpCoralAndHome().withTimeout(0.5));
+    NamedCommands.registerCommand("Dump Coral", coral.dumpCoral().withTimeout(0.5));
     NamedCommands.registerCommand(
         "Elevator L4", orchestrator.moveElevatorToLevel(4).withTimeout(0.5));
     NamedCommands.registerCommand(
         "Elevator L2", orchestrator.moveElevatorToLevel(2).withTimeout(0.5));
+    NamedCommands.registerCommand("Elevator Intake",orchestrator.moveElevatorToLevel(0).until(elevator::limitSwitchPressed));
     NamedCommands.registerCommand(
         "Intake",
         Commands.deadline(
@@ -202,8 +203,6 @@ public class RobotContainer {
                 Commands.waitSeconds(1).andThen(orchestrator.stowAlgae()))));
     NamedCommands.registerCommand(
         "run intake", orchestrator.intake().until(coral::hasCoral).withTimeout(1.4));
-    new EventTrigger("run intake");
-    new EventTrigger("Elevator L2");
     // Drive SysId
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
