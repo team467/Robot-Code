@@ -7,6 +7,8 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -29,6 +31,7 @@ import frc.robot.subsystems.coral.CoralEffectorIO;
 import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
 import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
@@ -175,7 +178,24 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
     autoRoutines = new AutoRoutines(drive);
-
+    // set up commands and triggers in auto
+    NamedCommands.registerCommand("AlignToReef Right",fieldAlignment.alignToReef(false).withTimeout(1.5));
+    NamedCommands.registerCommand("AlignToReef Left",fieldAlignment.alignToReef(true).withTimeout(1.5));
+    NamedCommands.registerCommand("Dump Coral", orchestrator.dumpCoralAndHome());
+    NamedCommands.registerCommand("Elevator L4", orchestrator.moveElevatorToLevel(4));
+    NamedCommands.registerCommand("Elevator L2", orchestrator.moveElevatorToLevel(2));
+    NamedCommands.registerCommand("Intake",Commands.deadline(
+        fieldAlignment
+            .alignToCoralStation()
+            .andThen(Commands.none())
+            .withTimeout(2.3)
+            .until(coral::hopperSeesCoral),
+        Commands.parallel(
+            orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION),
+            Commands.waitSeconds(1).andThen(orchestrator.stowAlgae()))));
+    NamedCommands.registerCommand("run intake", orchestrator.intake().until(coral::hasCoral).withTimeout(1.4));
+    new EventTrigger("run intake");
+    new EventTrigger("Elevator L2");
     // Drive SysId
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -219,6 +239,7 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
   }
 
   /**
