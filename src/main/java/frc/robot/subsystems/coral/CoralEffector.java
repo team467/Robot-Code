@@ -61,6 +61,16 @@ public class CoralEffector extends SubsystemBase {
         .onlyIf(this::hasCoral);
   }
 
+  public Command dumpCoral(double speed) {
+    return Commands.run(
+            () -> {
+              io.setSpeed(speed);
+            },
+            this)
+        .onlyWhile(this::hasCoral)
+        .onlyIf(this::hasCoral);
+  }
+
   public Command takeBackCoral() {
     return Commands.run(
         () -> {
