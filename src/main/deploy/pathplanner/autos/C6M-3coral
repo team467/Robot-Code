@@ -1,0 +1,99 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "C6M Optimized"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignToReef Right"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Elevator L4"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Dump Coral"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": " 6RI"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "I6M - Auton"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlignToReef Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Dump Coral"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "6LI"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "I6M - Auton"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -8,6 +8,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -240,10 +241,15 @@ public class RobotContainer {
     autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(true, 4));
     autoChooser.addOption("C6-2 Coral", autosAlternate.C6Mpath2Coral());
     autoChooser.addOption("A2-2 Coral", autosAlternate.A2Mpath2Coral());
+    autoChooser.addOption("C6M 3 Coral", runAutonomousAuto("C6M-3Coral"));
     registerAutoRoutines();
 
     // Configure the button bindings
     configureButtonBindings();
+  }
+
+  public Command runAutonomousAuto(String auto) {
+    return new PathPlannerAuto("deploy/pathplanner/autos" + "/" + auto + ".auto");
   }
 
   /**
