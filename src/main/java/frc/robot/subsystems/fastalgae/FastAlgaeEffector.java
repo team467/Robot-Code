@@ -9,7 +9,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class FastAlgaeEffector extends SubsystemBase {
   public static Timer stowTimer = new Timer();
-  private boolean stowed = false;
+  private boolean stowed = true;
   private final FastAlgaeEffectorIO io;
   private final FastAlgaeEffectorIOInputsAutoLogged inputs =
       new FastAlgaeEffectorIOInputsAutoLogged();
@@ -17,6 +17,8 @@ public class FastAlgaeEffector extends SubsystemBase {
 
   public FastAlgaeEffector(FastAlgaeEffectorIO io) {
     this.io = io;
+    inputs.pivotPosition = 0.0;
+    inputs.isStowed = true;
   }
 
   @Override
