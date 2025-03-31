@@ -671,7 +671,7 @@ public class AutosAlternate {
         () ->
             AllianceFlipUtil.apply(
                 new Pose2d(
-                    new Translation2d(3.6836042404174805, 2.665813276263428),
+                    new Translation2d(3.614253044128418, 2.5348258018493652),
                     new Rotation2d(-2.100386022965448)));
     return new StraightDriveToPose(drive, scorePointC, 1)
         .withTimeout(1.54)
@@ -715,7 +715,7 @@ public class AutosAlternate {
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
             Commands.deadline(
-                fieldAlignment.alignToReef(true).withTimeout(1.85),
+                fieldAlignment.alignToReefFar(true).withTimeout(1.85),
                 Commands.waitUntil(coral::hasCoral)
                     .andThen(orchestrator.moveElevatorToSetpoint(0.62).withTimeout(0.5)),
                 coral.intakeCoral().until(coral::hasCoral).andThen(coral.stop())))
@@ -730,7 +730,7 @@ public class AutosAlternate {
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
             Commands.deadline(
-                fieldAlignment.alignToReef(false).withTimeout(1.85),
+                fieldAlignment.alignToReefFar(false).withTimeout(1.85),
                 Commands.waitUntil(coral::hasCoral)
                     .andThen(orchestrator.moveElevatorToSetpoint(0.625).withTimeout(0.5)),
                 coral.intakeCoral().until(coral::hasCoral).andThen(coral.stop())))

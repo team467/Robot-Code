@@ -66,6 +66,15 @@ public class FieldAlignment {
         Set.of(drive));
   }
 
+  public Command alignToReefFar(boolean branchLeft) {
+    return Commands.defer(
+        () ->
+            new StraightDriveToPose(
+                    drive, getFarBranchPositionMatchTunable(branchLeft, closestReefFace()))
+                .withTimeout(10),
+        Set.of(drive));
+  }
+
   public Command faceReef(DoubleSupplier leftJoystickX, DoubleSupplier leftJoystickY) {
     return DriveCommands.joystickDriveAtAngle(
         drive,
@@ -137,6 +146,34 @@ public class FieldAlignment {
                 + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
                     * Math.cos(branchPose.getRotation().getRadians()),
             branchPose.getRotation());
+  }
+
+  public Supplier<Pose2d> getFarBranchPositionMatchTunable(
+      boolean branchLeft, int closestReefFace) {
+    double extraOffset = 0.1;
+    int branch = closestReefFace * 2;
+    if (branchLeft) {
+      branch++;
+    }
+    Pose2d branchPose =
+        AllianceFlipUtil.apply(branchPositions.get(branch).get(ReefHeight.L1).toPose2d());
+    return () -> {
+      Pose2d targetPose =
+          new Pose2d(
+              branchPose.getX() // Move left robot relative
+                  - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING + extraOffset)
+                      * Math.cos(branchPose.getRotation().getRadians())
+                  - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING + extraOffset)
+                      * Math.sin(branchPose.getRotation().getRadians()),
+              branchPose.getY() // Move back robot relative
+                  - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING + extraOffset)
+                      * Math.sin(branchPose.getRotation().getRadians())
+                  + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING + extraOffset)
+                      * Math.cos(branchPose.getRotation().getRadians()),
+              branchPose.getRotation());
+      Logger.recordOutput("FieldAlignment/TargetPose", targetPose);
+      return targetPose;
+    };
   }
 
   public Supplier<Pose2d> getBranchPosition(boolean branchLeft, IntSupplier closestReefFace) {
