@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Elevator Intake",
-      "waypointRelativePos": 0.10155148095909877,
+      "waypointRelativePos": 0.018590704647675822,
       "endWaypointRelativePos": null,
       "command": null
     }
