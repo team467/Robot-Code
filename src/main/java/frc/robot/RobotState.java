@@ -149,6 +149,7 @@ public class RobotState {
 
   public enum ElevatorPosition {
     INTAKE,
+    HOME,
     L1,
     L2,
     L3,
