@@ -677,7 +677,7 @@ public class AutosAlternate {
         () ->
             AllianceFlipUtil.apply(
                 new Pose2d(
-                    new Translation2d(3.4546327590942383 , 2.5837225914001465 ),
+                    new Translation2d(3.4546327590942383, 2.5837225914001465),
                     new Rotation2d(-2.100386022965448)));
     return new StraightDriveToPose(drive, scorePointC, 1)
         .withTimeout(1.54)
