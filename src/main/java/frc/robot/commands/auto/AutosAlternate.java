@@ -667,11 +667,17 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(3.951519661254883, 2.48033308982491),
                     new Rotation2d(-2.100386022965448)));
-    Supplier<Pose2d> intakeInBetween =
+    Supplier<Pose2d> intakeInBetweenR =
         () ->
             AllianceFlipUtil.apply(
                 new Pose2d(
                     new Translation2d(3.614253044128418, 2.5348258018493652),
+                    new Rotation2d(-2.100386022965448)));
+    Supplier<Pose2d> intakeInBetweenL =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(3.4546327590942383 , 2.5837225914001465 ),
                     new Rotation2d(-2.100386022965448)));
     return new StraightDriveToPose(drive, scorePointC, 1)
         .withTimeout(1.54)
@@ -695,7 +701,7 @@ public class AutosAlternate {
                     Commands.waitSeconds(1).andThen(orchestrator.stowAlgae()))))
         .andThen(
             Commands.parallel(
-                    new StraightDriveToPose(drive, intakeInBetween, 1),
+                    new StraightDriveToPose(drive, intakeInBetweenR, 1),
                     orchestrator.intake().until(coral::hasCoral))
                 .withTimeout(1.4)
                 .andThen(
