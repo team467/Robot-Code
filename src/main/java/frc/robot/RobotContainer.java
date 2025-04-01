@@ -289,17 +289,17 @@ public class RobotContainer {
         .whileTrue(climber.runPercent(-0.15));
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
-    CustomTriggers.autoModeInput(driverController.leftTrigger(), new Trigger(() -> false))
+    CustomTriggers.autoModeInput(driverController.leftTrigger(), operatorController.rightTrigger())
         .toggleOnTrue(
             Commands.parallel(
-                    fieldAlignment.faceCoralStation(
-                        driverController::getLeftX, driverController::getLeftY),
-                    orchestrator.intake(),
-                    Commands.startEnd(
-                        () -> driverController.setRumble(RumbleType.kLeftRumble, 1.0),
-                        () -> driverController.setRumble(RumbleType.kLeftRumble, 0.0)))
-                .until(coral::hasCoral));
-
+                fieldAlignment.faceCoralStation(driverController::getLeftX, driverController::getLeftY),
+                orchestrator.intake(),
+                Commands.startEnd(
+                    () -> driverController.setRumble(RumbleType.kBothRumble, 0.5),
+                    () -> driverController.setRumble(RumbleType.kBothRumble, 0.0)
+                )
+            ).until(coral::hasCoral)
+        );
     CustomTriggers.manualModeInput(driverController.leftTrigger(), new Trigger(() -> false))
         .toggleOnTrue(orchestrator.intake());
     driverController
