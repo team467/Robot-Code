@@ -251,6 +251,10 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  public Command runPath(PathPlannerPath path) {
+    return AutoBuilder.followPath(path);
+  }
+
   /** Stops the drive. */
   public void stop() {
     runVelocity(new ChassisSpeeds());
