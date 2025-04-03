@@ -298,8 +298,12 @@ public class RobotContainer {
     CustomTriggers.manualModeInput(
             driverController.leftTrigger(), operatorController.rightTrigger())
         .toggleOnTrue(orchestrator.intake());
-    driverController.leftTrigger().onTrue(Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.3)));
-    driverController.leftTrigger().onFalse(Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
+    driverController
+        .leftTrigger()
+        .onTrue(Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.3)));
+    driverController
+        .leftTrigger()
+        .onFalse(Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
     driverController
         .a()
         .toggleOnTrue(
