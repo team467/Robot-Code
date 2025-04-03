@@ -736,7 +736,8 @@ public class AutosAlternate {
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
             Commands.deadline(
-                fieldAlignment.alignToReef(false).withTimeout(1.85),
+                Commands.run(()->new StraightDriveToPose(drive, rightL3.get())).withTimeout(0.2).andThen(fieldAlignment.alignToReef(false)),
+//                fieldAlignment.alignToReef(false).withTimeout(1.85),
                 Commands.waitUntil(coral::hasCoral)
                     .andThen(orchestrator.moveElevatorToSetpoint(0.625).withTimeout(0.5)),
                 coral.intakeCoral().until(coral::hasCoral).andThen(coral.stop())))
