@@ -32,7 +32,7 @@ public class FastStraightDriveToPose extends Command {
           4.0,
           0,
           0.3,
-          new Constraints(Units.inchesToMeters(175), Units.inchesToMeters(700.0))); // 90
+          new Constraints(Units.inchesToMeters(175), Units.inchesToMeters(600.0))); // 90
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController( // TODO: Tune this
           2.8, 0, .01, new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(720.0)));
