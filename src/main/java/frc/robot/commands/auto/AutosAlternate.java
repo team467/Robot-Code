@@ -202,7 +202,7 @@ public class AutosAlternate {
                     new Translation2d(3.4687795639038086, 5.667267322540283),
                     new Rotation2d(2.077894778811894)));
 
-    return Commands.runOnce(() -> drive.setPose(C.get()))
+    return Commands.runOnce(() -> drive.setPose(A.get()))
         .andThen(new StraightDriveToPose(drive, scorePointA, 1))
         .withTimeout(2.3)
         .andThen(
