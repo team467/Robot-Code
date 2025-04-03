@@ -680,7 +680,7 @@ public class AutosAlternate {
                     Commands.parallel(
                             fieldAlignment.alignToReef(false).withTimeout(1.15),
                             orchestrator.moveElevatorToLevel(4).withTimeout(0.725))
-                        .andThen(coral.dumpCoral().withTimeout(1)),
+                        .andThen(coral.dumpCoral().withTimeout(0.8)),
                     Commands.waitSeconds(0.9).andThen(orchestrator.removeAlgae(2)))
                 .withTimeout(2.25))
         .andThen(
@@ -704,7 +704,7 @@ public class AutosAlternate {
                             orchestrator.moveElevatorToLevel(4).withTimeout(0.8),
                             coral.stop())
                         .withTimeout(1)))
-        .andThen(coral.dumpCoral().withTimeout(1))
+        .andThen(coral.dumpCoral().withTimeout(0.9))
         .andThen(
             Commands.deadline(
                 fieldAlignment
