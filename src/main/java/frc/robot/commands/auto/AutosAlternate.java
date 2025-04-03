@@ -588,7 +588,7 @@ public class AutosAlternate {
                 fieldAlignment
                     .alignToCoralStation()
                     .andThen(Commands.none())
-                    .withTimeout(2.3)
+                    .withTimeout(2.75)
                     .until(coral::hopperSeesCoral),
                 Commands.parallel(
                     orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION),
@@ -610,7 +610,7 @@ public class AutosAlternate {
                 fieldAlignment
                     .alignToCoralStation()
                     .andThen(Commands.none())
-                    .withTimeout(2.3)
+                    .withTimeout(2.75)
                     .until(coral::hopperSeesCoral),
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
@@ -630,7 +630,7 @@ public class AutosAlternate {
                 fieldAlignment
                     .alignToCoralStation()
                     .andThen(Commands.none())
-                    .withTimeout(2.3)
+                    .withTimeout(2.75)
                     .until(coral::hopperSeesCoral),
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
