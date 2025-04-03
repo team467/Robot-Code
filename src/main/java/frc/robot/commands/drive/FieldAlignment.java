@@ -150,7 +150,7 @@ public class FieldAlignment {
 
   public Supplier<Pose2d> getFarBranchPositionMatchTunable(
       boolean branchLeft, int closestReefFace) {
-    double extraOffset = 0.1;
+    double extraOffsetLeft = 0.1;
     int branch = closestReefFace * 2;
     if (branchLeft) {
       branch++;
@@ -161,14 +161,14 @@ public class FieldAlignment {
       Pose2d targetPose =
           new Pose2d(
               branchPose.getX() // Move left robot relative
-                  - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING + extraOffset)
+                  - (Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING) - 0.25)
                       * Math.cos(branchPose.getRotation().getRadians())
-                  - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING + extraOffset)
+                  - Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
                       * Math.sin(branchPose.getRotation().getRadians()),
               branchPose.getY() // Move back robot relative
-                  - Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING + extraOffset)
+                  - (Units.inchesToMeters(BRANCH_TO_ROBOT_BACKUP_TUNING) - 0.25)
                       * Math.sin(branchPose.getRotation().getRadians())
-                  + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING + extraOffset)
+                  + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET_TUNING)
                       * Math.cos(branchPose.getRotation().getRadians()),
               branchPose.getRotation());
       Logger.recordOutput("FieldAlignment/TargetPose", targetPose);
