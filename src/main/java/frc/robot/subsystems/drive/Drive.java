@@ -257,7 +257,7 @@ public class Drive extends SubsystemBase {
 
       // Create a path following command using AutoBuilder. This will also trigger event markers.
       return AutoBuilder.followPath(path);
-    }catch (Exception e) {
+    } catch (Exception e) {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
       return Commands.none();
     }
