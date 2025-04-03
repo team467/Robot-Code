@@ -300,10 +300,10 @@ public class RobotContainer {
         .toggleOnTrue(orchestrator.intake());
     driverController
         .leftTrigger()
-        .onTrue(Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.3)));
+        .toggleOnTrue(Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.3)));
     driverController
         .leftTrigger()
-        .onFalse(Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
+        .toggleOnFalse(Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
     driverController
         .a()
         .toggleOnTrue(
