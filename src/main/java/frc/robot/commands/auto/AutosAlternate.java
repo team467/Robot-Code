@@ -217,7 +217,9 @@ public class AutosAlternate {
             Commands.deadline(
                 Commands.race(
                     fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
-                    Commands.waitSeconds(1.0).andThen(Commands.waitUntil(coral::hopperSeesCoral)).andThen(Commands.waitSeconds(1))),
+                    Commands.waitSeconds(1.0)
+                        .andThen(Commands.waitUntil(coral::hopperSeesCoral))
+                        .andThen(Commands.waitSeconds(1))),
                 Commands.parallel(
                     orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION),
                     Commands.waitSeconds(1).andThen(orchestrator.stowAlgae()))))
@@ -237,7 +239,9 @@ public class AutosAlternate {
             Commands.deadline(
                 Commands.race(
                     fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
-                    Commands.waitSeconds(1.0).andThen(Commands.waitUntil(coral::hopperSeesCoral)).andThen(Commands.waitSeconds(1))),
+                    Commands.waitSeconds(1.0)
+                        .andThen(Commands.waitUntil(coral::hopperSeesCoral))
+                        .andThen(Commands.waitSeconds(1))),
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
             Commands.parallel(
@@ -255,7 +259,9 @@ public class AutosAlternate {
             Commands.deadline(
                 Commands.race(
                     fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
-                    Commands.waitSeconds(1.0).andThen(Commands.waitUntil(coral::hopperSeesCoral)).andThen(Commands.waitSeconds(1))),
+                    Commands.waitSeconds(1.0)
+                        .andThen(Commands.waitUntil(coral::hopperSeesCoral))
+                        .andThen(Commands.waitSeconds(1))),
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
             Commands.parallel(
@@ -581,7 +587,9 @@ public class AutosAlternate {
             Commands.deadline(
                 Commands.race(
                     fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
-                    Commands.waitSeconds(1.0).andThen(Commands.waitUntil(coral::hopperSeesCoral)).andThen(Commands.waitSeconds(1))),
+                    Commands.waitSeconds(1.0)
+                        .andThen(Commands.waitUntil(coral::hopperSeesCoral))
+                        .andThen(Commands.waitSeconds(1))),
                 Commands.parallel(
                     orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION),
                     Commands.waitSeconds(1).andThen(orchestrator.stowAlgae()))))
@@ -601,7 +609,9 @@ public class AutosAlternate {
             Commands.deadline(
                 Commands.race(
                     fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
-                    Commands.waitSeconds(1.0).andThen(Commands.waitUntil(coral::hopperSeesCoral)).andThen(Commands.waitSeconds(1))),
+                    Commands.waitSeconds(1.0)
+                        .andThen(Commands.waitUntil(coral::hopperSeesCoral))
+                        .andThen(Commands.waitSeconds(1))),
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
             Commands.parallel(
@@ -619,7 +629,9 @@ public class AutosAlternate {
             Commands.deadline(
                 Commands.race(
                     fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
-                    Commands.waitSeconds(1.0).andThen(Commands.waitUntil(coral::hopperSeesCoral)).andThen(Commands.waitSeconds(1))),
+                    Commands.waitSeconds(1.0)
+                        .andThen(Commands.waitUntil(coral::hopperSeesCoral))
+                        .andThen(Commands.waitSeconds(1))),
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
             Commands.parallel(
