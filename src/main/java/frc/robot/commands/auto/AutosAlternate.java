@@ -673,6 +673,12 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(3.6836042404174805, 2.665813276263428),
                     new Rotation2d(-2.100386022965448)));
+    Supplier<Pose2d> rightL3 =
+        () ->
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    new Translation2d(3.7042133808135986, 2.4597246646881104),
+                    new Rotation2d(-2.111216167322091)));
     return new StraightDriveToPose(drive, scorePointC, 1)
         .withTimeout(1.54)
         .andThen(

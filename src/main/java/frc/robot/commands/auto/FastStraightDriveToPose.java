@@ -53,20 +53,20 @@ public class FastStraightDriveToPose extends Command {
                 new Translation2d(
                     drive.getPose().getTranslation().getX()
                         + (DriverStation.getAlliance().isEmpty()
-                        || DriverStation.getAlliance().get() == Alliance.Blue
-                        ? deltaXMeters
-                        : -deltaXMeters),
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaXMeters
+                            : -deltaXMeters),
                     drive.getPose().getTranslation().getY()
                         + (DriverStation.getAlliance().isEmpty()
-                        || DriverStation.getAlliance().get() == Alliance.Blue
-                        ? deltaYMeters
-                        : -deltaYMeters)),
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaYMeters
+                            : -deltaYMeters)),
                 new Rotation2d(
                     drive.getPose().getRotation().getRadians()
                         + (DriverStation.getAlliance().isEmpty()
-                        || DriverStation.getAlliance().get() == Alliance.Blue
-                        ? deltaThetaRad
-                        : -deltaThetaRad))),
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaThetaRad
+                            : -deltaThetaRad))),
         DRIVE_TOLERANCE);
   }
 
@@ -83,20 +83,20 @@ public class FastStraightDriveToPose extends Command {
                 new Translation2d(
                     drive.getPose().getTranslation().getX()
                         + (DriverStation.getAlliance().isEmpty()
-                        || DriverStation.getAlliance().get() == Alliance.Blue
-                        ? deltaXMeters
-                        : -deltaXMeters),
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaXMeters
+                            : -deltaXMeters),
                     drive.getPose().getTranslation().getY()
                         + (DriverStation.getAlliance().isEmpty()
-                        || DriverStation.getAlliance().get() == Alliance.Blue
-                        ? deltaYMeters
-                        : -deltaYMeters)),
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaYMeters
+                            : -deltaYMeters)),
                 new Rotation2d(
                     drive.getPose().getRotation().getRadians()
                         + (DriverStation.getAlliance().isEmpty()
-                        || DriverStation.getAlliance().get() == Alliance.Blue
-                        ? deltaThetaRad
-                        : -deltaThetaRad))),
+                                || DriverStation.getAlliance().get() == Alliance.Blue
+                            ? deltaThetaRad
+                            : -deltaThetaRad))),
         driveTolerance);
   }
 
@@ -153,8 +153,8 @@ public class FastStraightDriveToPose extends Command {
     // Command speeds
     Translation2d driveVelocity =
         new Pose2d(
-            new Translation2d(),
-            currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
+                new Translation2d(),
+                currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
             .transformBy(GeomUtils.transformFromTranslation(driveVelocityScalar, 0.0))
             .getTranslation();
     drive.runVelocity(
