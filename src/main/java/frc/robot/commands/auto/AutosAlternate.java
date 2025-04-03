@@ -737,4 +737,10 @@ public class AutosAlternate {
         .andThen(coral.dumpCoral(1.00).withTimeout(0.75))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
+
+  public Command alignToReef() {
+    return drive.runPath(
+        drive.createPath(
+            fieldAlignment.getBranchPosition(false, fieldAlignment.closestReefFace()).get()));
+  }
 }
