@@ -293,17 +293,21 @@ public class RobotContainer {
             Commands.parallel(
                     fieldAlignment.faceCoralStation(
                         driverController::getLeftX, driverController::getLeftY),
-                    orchestrator.intake())
+                    orchestrator
+                        .intake()
+                        .alongWith(
+                            Commands.run(
+                                () -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
+                        .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)))
                 .until(coral::hasCoral));
     CustomTriggers.manualModeInput(
             driverController.leftTrigger(), operatorController.rightTrigger())
-        .toggleOnTrue(orchestrator.intake());
-    driverController
-        .leftTrigger()
-        .toggleOnTrue(Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.3)));
-    driverController
-        .leftTrigger()
-        .toggleOnFalse(Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
+        .toggleOnTrue(
+            orchestrator
+                .intake()
+                .alongWith(
+                    Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
+                .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
     driverController
         .a()
         .toggleOnTrue(
