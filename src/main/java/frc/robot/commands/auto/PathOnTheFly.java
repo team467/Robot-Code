@@ -11,7 +11,7 @@ import frc.robot.subsystems.drive.Drive;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class PathOnTheFly extends Command {
+public class PathOnTheFly{
   private Supplier<Pose2d> currentPose;
   private Supplier<Pose2d> targetPose;
   private final boolean preventFlipping = true;
@@ -46,8 +46,7 @@ public class PathOnTheFly extends Command {
     this.thetaTolerance = thetaTolerance;
   }
 
-  @Override
-  public void initialize() {
+  public PathPlannerPath createPath() {
     currentPose = drive::getPose;
     List<Waypoint> waypoints =
         PathPlannerPath.waypointsFromPoses(currentPose.get(), targetPose.get());
@@ -55,23 +54,8 @@ public class PathOnTheFly extends Command {
         new PathPlannerPath(
             waypoints, constraints, null, new GoalEndState(0, targetPose.get().getRotation()));
     path.preventFlipping = preventFlipping;
-    drive.runPath(path);
+    return path;
   }
 
-  @Override
-  public void execute() {
-    var currentPose = drive.getPose();
-    double deltaDistance =
-        currentPose.getTranslation().getDistance(targetPose.get().getTranslation());
-    double deltaTheta =
-        Math.abs(
-            currentPose.getRotation().getDegrees() - targetPose.get().getRotation().getDegrees());
-    if (deltaDistance < driveTolerance) {
-      end(true);
-    }
   }
 
-  public void end(boolean interrupted) {
-    drive.stop();
-  }
-}

@@ -252,7 +252,15 @@ public class Drive extends SubsystemBase {
   }
 
   public Command runPath(PathPlannerPath path) {
-    return AutoBuilder.followPath(path);
+    try {
+      // Load the path you want to follow using its name in the GUI
+
+      // Create a path following command using AutoBuilder. This will also trigger event markers.
+      return AutoBuilder.followPath(path);
+    }catch (Exception e) {
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return Commands.none();
+    }
   }
 
   /** Stops the drive. */
