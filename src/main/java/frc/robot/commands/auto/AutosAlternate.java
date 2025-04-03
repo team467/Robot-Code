@@ -74,7 +74,7 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(5.682666778564453, 5.685015678405762),
                     new Rotation2d(0.8550528118433292)));
-    return Commands.runOnce(() -> drive.setPose(A.get()))
+    return Commands.runOnce(() -> {})
         .andThen(Commands.waitSeconds(1))
         .andThen(
             new StraightDriveToPose(drive, scorePoint, 0.04)
@@ -104,7 +104,7 @@ public class AutosAlternate {
             AllianceFlipUtil.apply(
                 new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
     Logger.recordOutput("scorePoint3", AllianceFlipUtil.apply(scorePoint3.get()));
-    return Commands.runOnce(() -> drive.setPose(A.get()))
+    return Commands.runOnce(() -> {})
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))
@@ -149,7 +149,7 @@ public class AutosAlternate {
             AllianceFlipUtil.apply(
                 new Pose2d(new Translation2d(3.32467007637, 5.877366), new Rotation2d(2.22919)));
     Logger.recordOutput("scorePoint3", AllianceFlipUtil.apply(scorePoint3.get()));
-    return Commands.runOnce(() -> drive.setPose(A.get()))
+    return Commands.runOnce(() -> {})
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))
@@ -202,7 +202,7 @@ public class AutosAlternate {
                     new Translation2d(3.4687795639038086, 5.667267322540283),
                     new Rotation2d(2.077894778811894)));
 
-    return Commands.runOnce(() -> drive.setPose(C.get()))
+    return Commands.runOnce(() -> {})
         .andThen(new StraightDriveToPose(drive, scorePointA, 1))
         .withTimeout(2.3)
         .andThen(
@@ -445,7 +445,7 @@ public class AutosAlternate {
                         + Units.inchesToMeters(CORAL_EFFECTOR_OFFSET.get())
                             * Math.cos(branchPose.getRotation().getRadians()),
                     branchPose.getRotation()));
-    return Commands.runOnce(() -> drive.setPose(C.get()))
+    return Commands.runOnce(() -> {})
         .andThen(
             Commands.parallel(
                 orchestrator.moveElevatorBasedOnDistance(targetPose),
@@ -471,7 +471,7 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(2.899836778640747, 1.7935127019882202),
                     new Rotation2d(-2.1375256093137067)));
-    return Commands.runOnce(() -> drive.setPose(C.get()))
+    return Commands.runOnce(() -> {})
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))
@@ -518,7 +518,7 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(2.899836778640747, 1.7935127019882202),
                     new Rotation2d(-2.1375256093137067)));
-    return Commands.runOnce(() -> drive.setPose(C.get()))
+    return Commands.runOnce(() -> {})
         .andThen(new StraightDriveToPose(drive, scorePoint1, 0.62))
         .withTimeout(1.5)
         .andThen(fieldAlignment.alignToReef(left))
@@ -572,7 +572,7 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(3.3614182472229004, 2.4034883975982666),
                     new Rotation2d(-2.100386022965448)));
-    return Commands.runOnce(() -> drive.setPose(C.get()))
+    return Commands.runOnce(() -> {})
         .andThen(new StraightDriveToPose(drive, scorePointC, 1))
         .withTimeout(2.3)
         .andThen(
