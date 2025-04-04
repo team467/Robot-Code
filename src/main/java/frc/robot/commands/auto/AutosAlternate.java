@@ -202,8 +202,7 @@ public class AutosAlternate {
                     new Translation2d(3.4687795639038086, 5.667267322540283),
                     new Rotation2d(2.077894778811894)));
 
-    return Commands.runOnce(() -> drive.setPose(A.get()))
-        .andThen(new StraightDriveToPose(drive, scorePointA, 1))
+    return new StraightDriveToPose(drive, scorePointA, 1)
         .withTimeout(2.3)
         .andThen(
             Commands.deadline(
@@ -569,8 +568,7 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(3.3614182472229004, 2.4034883975982666),
                     new Rotation2d(-2.100386022965448)));
-    return Commands.runOnce(() -> drive.setPose(C.get()))
-        .andThen(new StraightDriveToPose(drive, scorePointC, 1))
+    return new StraightDriveToPose(drive, scorePointC, 1)
         .withTimeout(2.3)
         .andThen(
             Commands.deadline(
