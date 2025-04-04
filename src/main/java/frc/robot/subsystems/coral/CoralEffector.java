@@ -87,7 +87,5 @@ public class CoralEffector extends SubsystemBase {
             },
             this)
         .until(this::hasCoral);
-    //        .finallyDo(this::takeBackCoral)
-    //        .withTimeout(CoralEffectorConstants.EFFECTOR_PULLBACK_SECONDS.get());
   }
 }
