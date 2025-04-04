@@ -59,7 +59,6 @@ public class Drive extends SubsystemBase {
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
   private Rotation2d rawGyroRotation = Rotation2d.kZero;
-  private Rotation3d rotation3d = Rotation3d.kZero;
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
         new SwerveModulePosition(),
@@ -170,11 +169,6 @@ public class Drive extends SubsystemBase {
       if (gyroInputs.connected) {
         // Use the real gyro angle
         rawGyroRotation = gyroInputs.odometryYawPositions[i];
-        rotation3d =
-            new Rotation3d(
-                Units.degreesToRadians(gyroInputs.roll),
-                Units.degreesToRadians(gyroInputs.pitch),
-                Units.degreesToRadians(gyroInputs.yawPosition.getDegrees()));
       } else {
         // Use the angle delta from the kinematics and module deltas
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
@@ -358,30 +352,5 @@ public class Drive extends SubsystemBase {
 
     // Apply the generated speeds
     runVelocity(speeds);
-  }
-
-  public void checkForImpact() {
-    /*double mDifference = Math.abs(gyroInputs.VectorM - gyroInputs.pVectorM);
-    double aDifference = Math.abs(gyroInputs.VectorA - gyroInputs.pVectorA);
-    Checks if the difference between velocity in previous periodic cycle and current periodic cycle.
-    Considers it significant if the difference is higher than 4.5.
-    Then checks if vectorDiff is greater than 0.7 than the previous velocity*/
-    RobotState.getInstance().collisionDetected =
-        gyroInputs.vectorDiff < 0
-            & Math.abs(gyroInputs.vectorDiff) > 4.5
-            & Math.abs(gyroInputs.vectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5);
-    impactAlert.set(
-        gyroInputs.vectorDiff < 0
-            & Math.abs(gyroInputs.vectorDiff) > 4.5
-            & Math.abs(gyroInputs.vectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5));
-  }
-  /* Method checks for tilt higher than 10º on either on the roll or pitch axis
-  Raises alert once threshold is reached. Threshold can be changed in Driver Constants */
-
-  public void checkForTilt() {
-    RobotState.getInstance().robotTilted =
-        Math.abs(rotation3d.getY()) >= pitchThreshold
-            || Math.abs(rotation3d.getX()) >= rollThreshhold;
-    tiltAlert.set(RobotState.getInstance().robotTilted);
   }
 }
