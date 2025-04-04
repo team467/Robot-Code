@@ -5,11 +5,17 @@
 package frc.robot;
 
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -27,11 +33,32 @@ import org.littletonrobotics.urcl.URCL;
 public class Robot extends LoggedRobot {
 
   private Command autonomousCommand;
+  private double autoStart;
+  private boolean autoMessagePrinted;
   private RobotContainer robotContainer;
   private RobotState state = RobotState.getInstance();
   private LinearFilter batteryFilter = LinearFilter.movingAverage(15);
 
   private static final int LOW_VOLTAGE = 9;
+
+  private final Timer canInitialErrorTimer = new Timer();
+  private final Timer canErrorTimer = new Timer();
+  private final Timer disabledTimer = new Timer();
+
+  private static final double loopOverrunWarningTimeout = 0.2;
+  private static final double canErrorTimeThreshold = 0.5; // Seconds to disable alert
+  private static final double lowBatteryVoltage = 11.8;
+  private static final double lowBatteryDisabledTime = 1.5;
+  private static final double lowBatteryMinCycleCount = 10;
+  private static int lowBatteryCycleCount = 0;
+
+  private final Alert canErrorAlert =
+      new Alert("CAN errors detected, robot may not be controllable.", AlertType.kError);
+  private final Alert lowBatteryAlert =
+      new Alert(
+          "Battery voltage is very low, consider turning off the robot or replacing the battery.",
+          AlertType.kWarning);
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -50,6 +77,8 @@ public class Robot extends LoggedRobot {
     }
 
     // Record metadata
+    Logger.recordMetadata("Robot", Constants.getRobot().toString());
+    Logger.recordMetadata("TuningMode", Boolean.toString(Constants.tuningMode));
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
@@ -95,6 +124,29 @@ public class Robot extends LoggedRobot {
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
+    // Log active commands
+    Map<String, Integer> commandCounts = new HashMap<>();
+    BiConsumer<Command, Boolean> logCommandFunction =
+        (Command command, Boolean active) -> {
+          String name = command.getName();
+          int count = commandCounts.getOrDefault(name, 0) + (active ? 1 : -1);
+          commandCounts.put(name, count);
+          Logger.recordOutput(
+              "CommandsUnique/" + name + "_" + Integer.toHexString(command.hashCode()), active);
+          Logger.recordOutput("CommandsAll/" + name, count > 0);
+        };
+    CommandScheduler.getInstance()
+        .onCommandInitialize((Command command) -> logCommandFunction.accept(command, true));
+    CommandScheduler.getInstance()
+        .onCommandFinish((Command command) -> logCommandFunction.accept(command, false));
+    CommandScheduler.getInstance()
+        .onCommandInterrupt((Command command) -> logCommandFunction.accept(command, false));
+
+    // Reset alert timers
+    canInitialErrorTimer.restart();
+    canErrorTimer.restart();
+    disabledTimer.restart();
+
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
@@ -105,6 +157,41 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     robotContainer.robotPeriodic();
+
+    // Print auto duration
+    if (autonomousCommand != null) {
+      if (!autonomousCommand.isScheduled() && !autoMessagePrinted) {
+        if (DriverStation.isAutonomousEnabled()) {
+          System.out.printf(
+              "*** Auto finished in %.2f secs ***%n", Timer.getTimestamp() - autoStart);
+        } else {
+          System.out.printf(
+              "*** Auto cancelled in %.2f secs ***%n", Timer.getTimestamp() - autoStart);
+        }
+        autoMessagePrinted = true;
+      }
+    }
+    // Check CAN status
+    var canStatus = RobotController.getCANStatus();
+    if (canStatus.transmitErrorCount > 0 || canStatus.receiveErrorCount > 0) {
+      canErrorTimer.restart();
+    }
+    canErrorAlert.set(
+        !canErrorTimer.hasElapsed(canErrorTimeThreshold)
+            && !canInitialErrorTimer.hasElapsed(canErrorTimeThreshold));
+
+    // Low battery alert
+    lowBatteryCycleCount += 1;
+    if (DriverStation.isEnabled()) {
+      disabledTimer.reset();
+    }
+    if (RobotController.getBatteryVoltage() <= lowBatteryVoltage
+        && disabledTimer.hasElapsed(lowBatteryDisabledTime)
+        && lowBatteryCycleCount >= lowBatteryMinCycleCount) {
+      lowBatteryAlert.set(true);
+    }
+
+
 
     // If robot has low battery, lowbatteryalert will be set to true
     state.lowBatteryAlert =
