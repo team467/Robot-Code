@@ -164,22 +164,6 @@ public class Drive extends SubsystemBase {
                     - lastModulePositions[moduleIndex].distanceMeters,
                 modulePositions[moduleIndex].angle);
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
-        Logger.recordOutput(
-            "Drive/Camera0Pose",
-            new Pose3d(
-                    getPose().getX(),
-                    getPose().getY(),
-                    0,
-                    new Rotation3d(0, 0, getRotation().getRadians()))
-                .transformBy(VisionConstants.robotToCamera0));
-        Logger.recordOutput(
-            "Drive/Camera1Pose",
-            new Pose3d(
-                    getPose().getX(),
-                    getPose().getY(),
-                    0,
-                    new Rotation3d(0, 0, getRotation().getRadians()))
-                .transformBy(VisionConstants.robotToCamera1));
       }
 
       // Update gyro angle
@@ -200,8 +184,6 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
-    checkForImpact();
-    checkForTilt();
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.getMode() != Mode.SIM);
