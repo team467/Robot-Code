@@ -76,9 +76,8 @@ public class Robot extends LoggedRobot {
         URCL.start();
       }
 
-        // Running a physics simulator, log to local folder
+        // Running a physics simulator, log to NT
       case SIM -> {
-        Logger.addDataReceiver(new WPILOGWriter(""));
         Logger.addDataReceiver(new NT4Publisher());
       }
 
