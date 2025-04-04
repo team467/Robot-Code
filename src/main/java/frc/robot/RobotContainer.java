@@ -289,6 +289,7 @@ public class RobotContainer {
     driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
     driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
     CustomTriggers.autoModeInput(driverController.leftTrigger(), operatorController.rightTrigger())
+        .and(() -> !coral.hasCoral())
         .toggleOnTrue(
             Commands.parallel(
                     fieldAlignment.faceCoralStation(
@@ -300,6 +301,10 @@ public class RobotContainer {
                                 () -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
                         .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)))
                 .until(coral::hasCoral));
+    CustomTriggers.autoModeInput(driverController.leftTrigger(), operatorController.rightTrigger())
+        .and(coral::hasCoral)
+        .toggleOnTrue(
+            fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
     CustomTriggers.manualModeInput(
             driverController.leftTrigger(), operatorController.rightTrigger())
         .toggleOnTrue(
