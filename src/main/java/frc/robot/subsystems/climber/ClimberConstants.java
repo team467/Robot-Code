@@ -32,7 +32,7 @@ public class ClimberConstants {
       case ROBOT_2025_COMP -> {
         // Real variables
         LOWER_WINCHED_POSITION = -138;
-        UPPER_WINCHED_POSITION = -151;
+        UPPER_WINCHED_POSITION = -157;
         WINCHED_POSITION = -146;
         WINCH_SPEED = -1;
         DEPLOY_SPEED = 1;
