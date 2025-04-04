@@ -244,6 +244,7 @@ public class RobotContainer {
     autoChooser.addOption("A2-2 Coral", autosAlternate.A2Mpath2Coral());
     autoChooser.addOption("C6M 3 Coral", runAutonomousAuto("C6M 3 Coral"));
     autoChooser.addOption("A2M 3 Coral", runAutonomousAuto("A2M 3 Coral"));
+    autoChooser.addOption("Path on the Fly", autosAlternate.alignToReef());
     registerAutoRoutines();
 
     // Configure the button bindings
