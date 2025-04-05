@@ -34,7 +34,7 @@ public class DriveConstants {
   // Drive motor configuration
   public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
       ClosedLoopOutputType.TorqueCurrentFOC;
-  public static final int driveMotorCurrentLimit = 45;
+  public static final int driveMotorCurrentLimit = 50;
   public static final double wheelRadiusMeters = Units.inchesToMeters(1.905);
   public static final double driveMotorReduction = 6.75;
   public static final DCMotor driveGearbox = DCMotor.getKrakenX60Foc(1);
