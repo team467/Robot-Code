@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.utils.GeomUtils;
 import frc.robot.subsystems.drive.Drive;
+import org.littletonrobotics.junction.Logger;
 import java.util.function.Supplier;
 
 public class StraightDriveToPose extends Command {
@@ -125,6 +126,7 @@ public class StraightDriveToPose extends Command {
   public void initialize() {
     Pose2d currentPose = drive.getPose();
     targetPose = poseSupplier.get();
+    Logger.recordOutput("StraightDriveToPose/TargetPose", targetPose);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     driveController.setTolerance(DRIVE_TOLERANCE);
     thetaController.setTolerance(THETA_TOLERANCE);
