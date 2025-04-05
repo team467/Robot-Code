@@ -149,7 +149,7 @@ public class OdometryThread extends Thread {
           }
         }
 
-        // Read Talon values
+        // Get phoenix timestamp
         double totalLatency = 0.0;
         for (BaseStatusSignal signal : phoenixSignals) {
           totalLatency += signal.getTimestamp().getLatency();
