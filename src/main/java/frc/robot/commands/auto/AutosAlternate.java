@@ -569,7 +569,7 @@ public class AutosAlternate {
                     new Translation2d(3.3614182472229004, 2.4034883975982666),
                     new Rotation2d(-2.100386022965448)));
     return new StraightDriveToPose(drive, scorePointC, 1)
-        .withTimeout(2.3)
+        .withTimeout(3)
         .andThen(
             Commands.deadline(
                     Commands.parallel(
