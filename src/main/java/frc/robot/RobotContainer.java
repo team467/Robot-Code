@@ -299,7 +299,7 @@ public class RobotContainer {
                     orchestrator
                         .intake()
                         .alongWith(
-                            Commands.run(
+                            Commands.runOnce(
                                 () -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
                         .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)))
                 .until(coral::hasCoral));
@@ -313,7 +313,7 @@ public class RobotContainer {
             orchestrator
                 .intake()
                 .alongWith(
-                    Commands.run(() -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
+                    Commands.runOnce(() -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
                 .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
     driverController
         .a()
