@@ -155,7 +155,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    robotContainer.robotPeriodic();
+    // robotContainer.robotPeriodic();
 
     // Print auto duration
     if (autonomousCommand != null) {

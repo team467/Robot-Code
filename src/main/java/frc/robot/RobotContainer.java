@@ -335,7 +335,6 @@ public class RobotContainer {
   }
 
   public void robotPeriodic() {
-    fieldAlignment.periodic();
     RobotState.getInstance().updateLEDState();
   }
 }
