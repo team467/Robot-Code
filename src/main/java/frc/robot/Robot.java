@@ -59,7 +59,6 @@ public class Robot extends LoggedRobot {
           "Battery voltage is very low, consider turning off the robot or replacing the battery.",
           AlertType.kWarning);
 
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -191,8 +190,6 @@ public class Robot extends LoggedRobot {
       lowBatteryAlert.set(true);
     }
 
-
-
     // If robot has low battery, lowbatteryalert will be set to true
     state.lowBatteryAlert =
         batteryFilter.calculate(RobotController.getBatteryVoltage()) < LOW_VOLTAGE;
@@ -209,6 +206,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    autoStart = Timer.getTimestamp();
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
