@@ -202,8 +202,7 @@ public class AutosAlternate {
                     new Translation2d(3.4687795639038086, 5.667267322540283),
                     new Rotation2d(2.077894778811894)));
 
-    return Commands.runOnce(() -> drive.setPose(C.get()))
-        .andThen(new StraightDriveToPose(drive, scorePointA, 1))
+    return new StraightDriveToPose(drive, scorePointA, 1)
         .withTimeout(2.3)
         .andThen(
             Commands.deadline(
@@ -215,11 +214,10 @@ public class AutosAlternate {
                 .withTimeout(2.25))
         .andThen(
             Commands.deadline(
-                fieldAlignment
-                    .alignToCoralStation()
-                    .andThen(Commands.none())
-                    .withTimeout(2.3)
-                    .until(coral::hopperSeesCoral),
+                Commands.race(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
+                    Commands.waitUntil(coral::hopperSeesCoral).andThen(Commands.waitSeconds(0.5)),
+                    Commands.waitUntil(coral::hasCoral)),
                 Commands.parallel(
                     orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION),
                     Commands.waitSeconds(1).andThen(orchestrator.stowAlgae()))))
@@ -237,11 +235,10 @@ public class AutosAlternate {
         .andThen(coral.dumpCoral().withTimeout(1))
         .andThen(
             Commands.deadline(
-                fieldAlignment
-                    .alignToCoralStation()
-                    .andThen(Commands.none())
-                    .withTimeout(2.3)
-                    .until(coral::hopperSeesCoral),
+                Commands.race(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
+                    Commands.waitUntil(coral::hopperSeesCoral).andThen(Commands.waitSeconds(0.5)),
+                    Commands.waitUntil(coral::hasCoral)),
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
             Commands.parallel(
@@ -257,11 +254,10 @@ public class AutosAlternate {
         .andThen(coral.dumpCoral().withTimeout(0.75))
         .andThen(
             Commands.deadline(
-                fieldAlignment
-                    .alignToCoralStation()
-                    .andThen(Commands.none())
-                    .withTimeout(2.3)
-                    .until(coral::hopperSeesCoral),
+                Commands.race(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
+                    Commands.waitUntil(coral::hopperSeesCoral).andThen(Commands.waitSeconds(0.5)),
+                    Commands.waitUntil(coral::hasCoral)),
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
             Commands.parallel(
@@ -572,9 +568,8 @@ public class AutosAlternate {
                 new Pose2d(
                     new Translation2d(3.3614182472229004, 2.4034883975982666),
                     new Rotation2d(-2.100386022965448)));
-    return Commands.runOnce(() -> drive.setPose(C.get()))
-        .andThen(new StraightDriveToPose(drive, scorePointC, 1))
-        .withTimeout(2.3)
+    return new StraightDriveToPose(drive, scorePointC, 1)
+        .withTimeout(3)
         .andThen(
             Commands.deadline(
                     Commands.parallel(
@@ -585,11 +580,10 @@ public class AutosAlternate {
                 .withTimeout(2.25))
         .andThen(
             Commands.deadline(
-                fieldAlignment
-                    .alignToCoralStation()
-                    .andThen(Commands.none())
-                    .withTimeout(2.3)
-                    .until(coral::hopperSeesCoral),
+                Commands.race(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
+                    Commands.waitUntil(coral::hopperSeesCoral).andThen(Commands.waitSeconds(0.5)),
+                    Commands.waitUntil(coral::hasCoral)),
                 Commands.parallel(
                     orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION),
                     Commands.waitSeconds(1).andThen(orchestrator.stowAlgae()))))
@@ -607,11 +601,10 @@ public class AutosAlternate {
         .andThen(coral.dumpCoral().withTimeout(1))
         .andThen(
             Commands.deadline(
-                fieldAlignment
-                    .alignToCoralStation()
-                    .andThen(Commands.none())
-                    .withTimeout(2.3)
-                    .until(coral::hopperSeesCoral),
+                Commands.race(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
+                    Commands.waitUntil(coral::hopperSeesCoral).andThen(Commands.waitSeconds(0.5)),
+                    Commands.waitUntil(coral::hasCoral)),
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
             Commands.parallel(
@@ -627,11 +620,10 @@ public class AutosAlternate {
         .andThen(coral.dumpCoral().withTimeout(0.75))
         .andThen(
             Commands.deadline(
-                fieldAlignment
-                    .alignToCoralStation()
-                    .andThen(Commands.none())
-                    .withTimeout(2.3)
-                    .until(coral::hopperSeesCoral),
+                Commands.race(
+                    fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
+                    Commands.waitUntil(coral::hopperSeesCoral).andThen(Commands.waitSeconds(0.5)),
+                    Commands.waitUntil(coral::hasCoral)),
                 orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION)))
         .andThen(
             Commands.parallel(

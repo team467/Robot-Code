@@ -3,7 +3,6 @@ package frc.robot.subsystems.elevator;
 import edu.wpi.first.math.util.Units;
 import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
-import frc.robot.FieldConstants.ReefHeight;
 
 public class ElevatorConstants {
   public static final TunableNumber KG;
@@ -33,7 +32,7 @@ public class ElevatorConstants {
         MAX_ACCELERATION = new TunableNumber("Elevator/MaxAcceleration", Double.POSITIVE_INFINITY);
         STOW = 0.0;
         TOLERANCE = 0.000001;
-        INTAKE_POSITION = ReefHeight.L1.height - Units.inchesToMeters(1);
+        INTAKE_POSITION = 0.42;
         ENCODER_CONVERSION_FACTOR =
             Units.inchesToMeters((76.0 + 13.0 / 16.0) - (17.0 + 6.0 / 8.0))
                 / 49.97; // 9 reduction, 27 teeth per rotation, 5 mm per tooth

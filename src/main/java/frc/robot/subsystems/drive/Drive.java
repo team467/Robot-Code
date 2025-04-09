@@ -3,7 +3,6 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
-import choreo.trajectory.SwerveSample;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -14,9 +13,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -24,7 +21,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -36,8 +32,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.RobotState;
-import frc.robot.subsystems.vision.VisionConstants;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -59,7 +53,6 @@ public class Drive extends SubsystemBase {
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
   private Rotation2d rawGyroRotation = Rotation2d.kZero;
-  private Rotation3d rotation3d = Rotation3d.kZero;
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
         new SwerveModulePosition(),
@@ -164,33 +157,12 @@ public class Drive extends SubsystemBase {
                     - lastModulePositions[moduleIndex].distanceMeters,
                 modulePositions[moduleIndex].angle);
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
-        Logger.recordOutput(
-            "Drive/Camera0Pose",
-            new Pose3d(
-                    getPose().getX(),
-                    getPose().getY(),
-                    0,
-                    new Rotation3d(0, 0, getRotation().getRadians()))
-                .transformBy(VisionConstants.robotToCamera0));
-        Logger.recordOutput(
-            "Drive/Camera1Pose",
-            new Pose3d(
-                    getPose().getX(),
-                    getPose().getY(),
-                    0,
-                    new Rotation3d(0, 0, getRotation().getRadians()))
-                .transformBy(VisionConstants.robotToCamera1));
       }
 
       // Update gyro angle
       if (gyroInputs.connected) {
         // Use the real gyro angle
         rawGyroRotation = gyroInputs.odometryYawPositions[i];
-        rotation3d =
-            new Rotation3d(
-                Units.degreesToRadians(gyroInputs.roll),
-                Units.degreesToRadians(gyroInputs.pitch),
-                Units.degreesToRadians(gyroInputs.yawPosition.getDegrees()));
       } else {
         // Use the angle delta from the kinematics and module deltas
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
@@ -200,8 +172,6 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
-    checkForImpact();
-    checkForTilt();
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.getMode() != Mode.SIM);
@@ -357,49 +327,5 @@ public class Drive extends SubsystemBase {
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
     return maxSpeedMetersPerSec / driveBaseRadius;
-  }
-
-  public void followTrajectory(SwerveSample sample) {
-    // Get the current pose of the robot
-    Pose2d pose = getPose();
-
-    Logger.recordOutput("Odometry/TrajectoryNextPose", sample.getPose());
-    // Generate the next speeds for the robot
-    ChassisSpeeds speeds =
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            new ChassisSpeeds(
-                sample.vx + xController.calculate(pose.getX(), sample.x),
-                sample.vy + yController.calculate(pose.getY(), sample.y),
-                sample.omega
-                    + headingController.calculate(pose.getRotation().getRadians(), sample.heading)),
-            getRotation());
-
-    // Apply the generated speeds
-    runVelocity(speeds);
-  }
-
-  public void checkForImpact() {
-    /*double mDifference = Math.abs(gyroInputs.VectorM - gyroInputs.pVectorM);
-    double aDifference = Math.abs(gyroInputs.VectorA - gyroInputs.pVectorA);
-    Checks if the difference between velocity in previous periodic cycle and current periodic cycle.
-    Considers it significant if the difference is higher than 4.5.
-    Then checks if vectorDiff is greater than 0.7 than the previous velocity*/
-    RobotState.getInstance().collisionDetected =
-        gyroInputs.vectorDiff < 0
-            & Math.abs(gyroInputs.vectorDiff) > 4.5
-            & Math.abs(gyroInputs.vectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5);
-    impactAlert.set(
-        gyroInputs.vectorDiff < 0
-            & Math.abs(gyroInputs.vectorDiff) > 4.5
-            & Math.abs(gyroInputs.vectorDiff) > (gyroInputs.previousVectorMagnitude * 0.5));
-  }
-  /* Method checks for tilt higher than 10º on either on the roll or pitch axis
-  Raises alert once threshold is reached. Threshold can be changed in Driver Constants */
-
-  public void checkForTilt() {
-    RobotState.getInstance().robotTilted =
-        Math.abs(rotation3d.getY()) >= pitchThreshold
-            || Math.abs(rotation3d.getX()) >= rollThreshhold;
-    tiltAlert.set(RobotState.getInstance().robotTilted);
   }
 }

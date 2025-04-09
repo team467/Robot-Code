@@ -9,13 +9,13 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
@@ -66,7 +66,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final AutoRoutines autoRoutines;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -120,7 +119,7 @@ public class RobotContainer {
           vision =
               new Vision(
                   drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                  // new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1));
           leds = new Leds();
         }
@@ -174,7 +173,6 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
-    autoRoutines = new AutoRoutines(drive);
 
     // Drive SysId
     autoChooser.addOption(
@@ -215,7 +213,6 @@ public class RobotContainer {
     autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(true, 4));
     autoChooser.addOption("C6-2 Coral", autosAlternate.C6Mpath2Coral());
     autoChooser.addOption("A2-2 Coral", autosAlternate.A2Mpath2Coral());
-    registerAutoRoutines();
 
     // Configure the button bindings
     configureButtonBindings();
@@ -277,6 +274,12 @@ public class RobotContainer {
         .toggleOnTrue(orchestrator.removeAlgae(2));
     CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.rightBumper())
         .toggleOnTrue(orchestrator.removeAlgae(3));
+    CustomTriggers.manualModeInput(
+            operatorController.leftTrigger(), operatorController.rightBumper())
+        .toggleOnTrue(orchestrator.removeAlgae(2));
+    CustomTriggers.manualModeInput(
+            operatorController.leftBumper(), operatorController.rightBumper())
+        .toggleOnTrue(orchestrator.removeAlgae(3));
     CustomTriggers.autoModeInput(operatorController.pov(0), operatorController.rightBumper())
         .whileTrue(climber.deploy());
     CustomTriggers.autoModeInput(operatorController.pov(180), operatorController.rightBumper())
@@ -292,11 +295,21 @@ public class RobotContainer {
             Commands.parallel(
                     fieldAlignment.faceCoralStation(
                         driverController::getLeftX, driverController::getLeftY),
-                    orchestrator.intake())
+                    orchestrator
+                        .intake()
+                        .alongWith(
+                            Commands.runOnce(
+                                () -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
+                        .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)))
                 .until(coral::hasCoral));
     CustomTriggers.manualModeInput(
             driverController.leftTrigger(), operatorController.rightTrigger())
-        .toggleOnTrue(orchestrator.intake());
+        .toggleOnTrue(
+            orchestrator
+                .intake()
+                .alongWith(
+                    Commands.runOnce(() -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
+                .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
     driverController
         .a()
         .toggleOnTrue(
@@ -305,24 +318,6 @@ public class RobotContainer {
     driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
     driverController.rightTrigger(0.1).onTrue(drive.runOnce(Commands::none));
     driverController.y().whileTrue(elevator.runPercent(-0.3));
-  }
-
-  private void addAutoRoutine(String routineName) {
-    autoChooser.addOption(routineName, autoRoutines.getRoutines().get(routineName).cmd());
-  }
-
-  private void registerAutoRoutines() {
-    addAutoRoutine("A leave");
-    addAutoRoutine("C6L5RL");
-    addAutoRoutine("C5RL4R");
-    addAutoRoutine("B1R2LR");
-    addAutoRoutine("B1L6RL");
-    addAutoRoutine("B1R");
-    addAutoRoutine("B1L");
-    addAutoRoutine("A3LR4L");
-    addAutoRoutine("A2R3LR");
-    addAutoRoutine("C leave");
-    addAutoRoutine("B leave");
   }
 
   /**

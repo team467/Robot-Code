@@ -29,14 +29,14 @@ public class FieldAlignment {
   // How far left/right the robot needs to move to align with the coral effector instead of the
   // center of the robot
   public static final TunableNumber CORAL_EFFECTOR_OFFSET =
-      new TunableNumber("FieldAlignment/CoralEffectorOffset", -10.8);
+      new TunableNumber("FieldAlignment/CoralEffectorOffset", -12.5);
   // How far back the robot needs to move to align with the branch in a way that doesn't have the
   // robot impaling itself
   public static final TunableNumber BRANCH_TO_ROBOT_BACKUP =
-      new TunableNumber("FieldAlignment/BranchToRobotBackup", -24.0);
+      new TunableNumber("FieldAlignment/BranchToRobotBackup", -24.4);
   // you can change these values
-  @AutoLogOutput public double CORAL_EFFECTOR_OFFSET_TUNING = -10.8;
-  @AutoLogOutput private double BRANCH_TO_ROBOT_BACKUP_TUNING = -24.0;
+  @AutoLogOutput public double CORAL_EFFECTOR_OFFSET_TUNING = -12.5;
+  @AutoLogOutput private double BRANCH_TO_ROBOT_BACKUP_TUNING = -24.4;
   private final Drive drive;
 
   public FieldAlignment(Drive drive) {

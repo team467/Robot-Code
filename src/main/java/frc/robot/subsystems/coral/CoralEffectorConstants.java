@@ -8,7 +8,7 @@ public class CoralEffectorConstants {
   public static final TunableNumber L4_CORAL_SPEED_OUT =
       new TunableNumber("CoralEffector/SpeedOutL4", 0.3);
   public static final TunableNumber L1_CORAL_SPEED_OUT =
-      new TunableNumber("CoralEffector/SpeedOutL1", 0.15);
+      new TunableNumber("CoralEffector/SpeedOutL1", 0.05);
 
   public static final TunableNumber CORAL_INTAKE_SPEED =
       new TunableNumber("CoralEffector/SpeedIn", 1.0);
