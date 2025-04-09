@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.utils.GeomUtils;
 import frc.robot.subsystems.drive.Drive;
-import org.littletonrobotics.junction.Logger;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class StraightDriveToPose extends Command {
   private final Drive drive;
