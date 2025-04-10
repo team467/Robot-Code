@@ -739,8 +739,7 @@ public class AutosAlternate {
   }
 
   public Command alignToReef() {
-    return drive.runPath(
-        drive.createPath(
-            fieldAlignment.getBranchPosition(false, fieldAlignment.closestReefFace()).get()));
+    return Commands.runOnce(() -> drive.setPose(A.get()))
+        .andThen(drive.runPath(drive.createPath(fieldAlignment.getBranchPosition(false, 2).get())));
   }
 }
