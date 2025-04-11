@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants.ReefHeight;
@@ -129,7 +130,10 @@ public class Orchestrator {
         .dumpCoral()
         .andThen(Commands.runOnce(() -> drive.run(Commands::none)))
         .andThen(Commands.waitSeconds(0.4))
-        .andThen(moveElevatorToLevel(0).until(elevator::limitSwitchPressed).withTimeout(1));
+        .andThen(
+            moveElevatorToSetpoint(getCoralHeight(0) + Units.inchesToMeters(1.0))
+                .until(elevator::limitSwitchPressed)
+                .withTimeout(1));
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
