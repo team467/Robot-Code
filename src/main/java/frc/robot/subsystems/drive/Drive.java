@@ -180,11 +180,11 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.getMode() != Mode.SIM);
     Logger.recordOutput(
         "Drive/Camera1Pose",
-        new Pose3d(getPose().getX(), getPose().getY(), 0.0, new Rotation3d())
+        new Pose3d(getPose().getX(), getPose().getY(), 0.0, new Rotation3d(getPose().getRotation()))
             .transformBy(VisionConstants.robotToCamera1));
     Logger.recordOutput(
         "Drive/Camera0Pose",
-        new Pose3d(getPose().getX(), getPose().getY(), 0.0, new Rotation3d())
+        new Pose3d(getPose().getX(), getPose().getY(), 0.0, new Rotation3d(getPose().getRotation()))
             .transformBy(VisionConstants.robotToCamera0));
   }
 
