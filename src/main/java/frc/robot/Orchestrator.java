@@ -130,7 +130,10 @@ public class Orchestrator {
         .dumpCoral()
         .andThen(Commands.runOnce(() -> drive.run(Commands::none)))
         .andThen(Commands.waitSeconds(0.4))
-        .andThen(moveElevatorToSetpoint(getCoralHeight(0) + Units.inchesToMeters(1.0)).until(elevator::limitSwitchPressed).withTimeout(1));
+        .andThen(
+            moveElevatorToSetpoint(getCoralHeight(0) + Units.inchesToMeters(1.0))
+                .until(elevator::limitSwitchPressed)
+                .withTimeout(1));
   }
 
   public Command moveElevatorToSetpoint(double setpoint) {
