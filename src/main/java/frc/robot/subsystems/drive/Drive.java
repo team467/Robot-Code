@@ -13,7 +13,9 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -32,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.subsystems.vision.VisionConstants;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -175,6 +178,14 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.getMode() != Mode.SIM);
+    Logger.recordOutput(
+        "Drive/Camera1Pose",
+        new Pose3d(getPose().getX(), getPose().getY(), 0.0, new Rotation3d())
+            .transformBy(VisionConstants.robotToCamera1));
+    Logger.recordOutput(
+        "Drive/Camera0Pose",
+        new Pose3d(getPose().getX(), getPose().getY(), 0.0, new Rotation3d())
+            .transformBy(VisionConstants.robotToCamera0));
   }
 
   /**
