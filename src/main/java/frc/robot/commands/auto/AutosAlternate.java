@@ -19,6 +19,7 @@ import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -29,6 +30,7 @@ public class AutosAlternate {
   private final FieldAlignment fieldAlignment;
   private final CoralEffector coral;
   private final Elevator elevator;
+  private final FastAlgaeEffector algae;
   private static final Supplier<Pose2d> A =
       () -> AllianceFlipUtil.apply(new Pose2d(new Translation2d(7.30, 6.14), new Rotation2d(3.14)));
   private static final Supplier<Pose2d> B =
@@ -41,12 +43,14 @@ public class AutosAlternate {
       Orchestrator orchestrator,
       FieldAlignment fieldAlignment,
       CoralEffector coral,
-      Elevator elevator) {
+      Elevator elevator,
+      FastAlgaeEffector algae) {
     this.drive = drive;
     this.orchestrator = orchestrator;
     this.fieldAlignment = fieldAlignment;
     this.coral = coral;
     this.elevator = elevator;
+    this.algae = algae;
   }
 
   public Command BScoreHopeAndPray() {
@@ -203,7 +207,7 @@ public class AutosAlternate {
                     new Rotation2d(2.077894778811894)));
 
     return new StraightDriveToPose(drive, scorePointA, 1)
-        .withTimeout(2.3)
+        .withTimeout(2)
         .andThen(
             Commands.deadline(
                     Commands.parallel(
@@ -212,6 +216,7 @@ public class AutosAlternate {
                         .andThen(coral.dumpCoral().withTimeout(1)),
                     Commands.waitSeconds(0.9).andThen(orchestrator.removeAlgae(2)))
                 .withTimeout(2.25))
+        .andThen(Commands.parallel(algae.stop().withTimeout(0.01), coral.stop().withTimeout(0.01)))
         .andThen(
             Commands.deadline(
                 Commands.race(
@@ -224,7 +229,7 @@ public class AutosAlternate {
         .andThen(
             Commands.parallel(
                     new StraightDriveToPose(drive, intakeInBetween, 1),
-                    orchestrator.intake().until(coral::hasCoral))
+                    orchestrator.intake().until(coral::hasCoral).andThen(coral.stop()))
                 .withTimeout(1.5)
                 .andThen(
                     Commands.parallel(
@@ -243,7 +248,7 @@ public class AutosAlternate {
         .andThen(
             Commands.parallel(
                     new StraightDriveToPose(drive, intakeInBetween, 1),
-                    orchestrator.intake().until(coral::hasCoral))
+                    orchestrator.intake().until(coral::hasCoral).andThen(coral.stop()))
                 .withTimeout(1.5)
                 .andThen(
                     Commands.parallel(
@@ -262,7 +267,7 @@ public class AutosAlternate {
         .andThen(
             Commands.parallel(
                     new StraightDriveToPose(drive, intakeInBetween, 1),
-                    orchestrator.intake().until(coral::hasCoral))
+                    orchestrator.intake().until(coral::hasCoral).andThen(coral.stop()))
                 .withTimeout(1.5)
                 .andThen(
                     Commands.parallel(
@@ -569,7 +574,7 @@ public class AutosAlternate {
                     new Translation2d(3.3614182472229004, 2.4034883975982666),
                     new Rotation2d(-2.100386022965448)));
     return new StraightDriveToPose(drive, scorePointC, 1)
-        .withTimeout(3)
+        .withTimeout(2)
         .andThen(
             Commands.deadline(
                     Commands.parallel(
@@ -578,6 +583,7 @@ public class AutosAlternate {
                         .andThen(coral.dumpCoral().withTimeout(1)),
                     Commands.waitSeconds(0.9).andThen(orchestrator.removeAlgae(2)))
                 .withTimeout(2.25))
+        .andThen(Commands.parallel(algae.stop().withTimeout(0.01), coral.stop().withTimeout(0.01)))
         .andThen(
             Commands.deadline(
                 Commands.race(
@@ -590,7 +596,7 @@ public class AutosAlternate {
         .andThen(
             Commands.parallel(
                     new StraightDriveToPose(drive, intakeInBetween, 1),
-                    orchestrator.intake().until(coral::hasCoral))
+                    orchestrator.intake().until(coral::hasCoral).andThen(coral.stop()))
                 .withTimeout(1.5)
                 .andThen(
                     Commands.parallel(
@@ -609,7 +615,7 @@ public class AutosAlternate {
         .andThen(
             Commands.parallel(
                     new StraightDriveToPose(drive, intakeInBetween, 1),
-                    orchestrator.intake().until(coral::hasCoral))
+                    orchestrator.intake().until(coral::hasCoral).andThen(coral.stop()))
                 .withTimeout(1.5)
                 .andThen(
                     Commands.parallel(
@@ -628,7 +634,7 @@ public class AutosAlternate {
         .andThen(
             Commands.parallel(
                     new StraightDriveToPose(drive, intakeInBetween, 1),
-                    orchestrator.intake().until(coral::hasCoral))
+                    orchestrator.intake().until(coral::hasCoral).andThen(coral.stop()))
                 .withTimeout(1.5)
                 .andThen(
                     Commands.parallel(
