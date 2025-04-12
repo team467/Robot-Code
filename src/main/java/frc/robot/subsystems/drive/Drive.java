@@ -263,7 +263,7 @@ public class Drive extends SubsystemBase {
     PathPlannerPath path =
         new PathPlannerPath(
             waypoints, constraints, null, new GoalEndState(0, targetPose.getRotation()));
-    path.preventFlipping = false;
+    path.preventFlipping = true;
     return path;
   }
 
