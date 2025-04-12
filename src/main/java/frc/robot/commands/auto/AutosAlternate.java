@@ -740,6 +740,6 @@ public class AutosAlternate {
 
   public Command alignToReef() {
     return Commands.runOnce(() -> drive.setPose(A.get()))
-        .andThen(drive.runPath(drive.createPath(AllianceFlipUtil.apply(fieldAlignment.getBranchPosition(false, 2).get()))));
+        .andThen(drive.runPath(drive.createPath(AllianceFlipUtil.apply(fieldAlignment.getBranchPosition(false, 6).get()))));
   }
 }
