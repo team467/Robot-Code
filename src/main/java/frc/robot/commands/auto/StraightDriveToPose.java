@@ -42,7 +42,7 @@ public class StraightDriveToPose extends Command {
   private double driveErrorAbs;
   private double thetaErrorAbs;
 
-  private static final double DRIVE_TOLERANCE = 0.005;
+  private static final double DRIVE_TOLERANCE = 0.01;
   private static final double THETA_TOLERANCE = Units.degreesToRadians(1.0);
 
   public StraightDriveToPose(
