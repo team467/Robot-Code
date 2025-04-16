@@ -106,11 +106,7 @@ public class Vision extends SubsystemBase {
         } else {
           robotPosesAccepted.add(observation.pose());
         }
-        if (!robotPosesAccepted.isEmpty()) {
-          RobotState.getInstance().PoseConfidence = true;
-        } else if (robotPosesAccepted.isEmpty()) {
-          RobotState.getInstance().PoseConfidence = false;
-        }
+        RobotState.getInstance().PoseConfidence = !robotPosesAccepted.isEmpty();
 
         // Skip if rejected
         if (rejectPose) {
