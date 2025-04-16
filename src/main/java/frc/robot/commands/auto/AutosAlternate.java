@@ -306,25 +306,6 @@ public class AutosAlternate {
         .andThen(coral.dumpCoral(1.00).withTimeout(0.75))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
-  public Command A2Mpath2Coral() {
-    return Commands.runOnce(() -> drive.setPose(A.get()))
-        .andThen(drive.getAutonomousCommand("A2M Optimized").withTimeout(3))
-        .andThen(
-            Commands.parallel(
-                    fieldAlignment.alignToReef(true), orchestrator.moveElevatorToSetpoint(4))
-                .withTimeout(3))
-        .andThen(orchestrator.placeCoral(4))
-        .andThen(
-            Commands.parallel(
-                    fieldAlignment.alignToCoralStation().andThen(Commands.none()),
-                    orchestrator.intake().until(coral::hasCoral))
-                .withTimeout(3))
-        .andThen(drive.getAutonomousCommand("2LI"))
-        .andThen(
-            Commands.parallel(
-                fieldAlignment.alignToReef(false), orchestrator.moveElevatorToSetpoint(4)))
-        .andThen(orchestrator.placeCoral(4));
-  }
 
   public Command BScore(boolean left) {
     return Commands.runOnce(() -> drive.setPose(B.get()))
