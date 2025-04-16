@@ -38,6 +38,7 @@ public class AutosAlternate {
       () -> AllianceFlipUtil.apply(new Pose2d(new Translation2d(7.30, 3.99), new Rotation2d(3.14)));
   private static final Supplier<Pose2d> C =
       () -> AllianceFlipUtil.apply(new Pose2d(new Translation2d(7.30, 1.89), new Rotation2d(3.14)));
+
   public AutosAlternate(
       Drive drive,
       Orchestrator orchestrator,
@@ -210,23 +211,16 @@ public class AutosAlternate {
         .withTimeout(2)
         .andThen(scoreAndRemoveAlgae(4, 2))
         .andThen(alignToIntakeAndStowAlgae())
-        .andThen(driveAwayAndFinishIntaking(intakeInBetween)
-            .withTimeout(1.5))
-        .andThen(
-            alignToReefFinishIntakingAndScore(4)
-                .withTimeout(3))
+        .andThen(driveAwayAndFinishIntaking(intakeInBetween).withTimeout(1.5))
+        .andThen(alignToReefFinishIntakingAndScore(4).withTimeout(3))
         .andThen(alignToIntake())
-        .andThen(
-            driveAwayAndFinishIntaking(intakeInBetween)
-                .withTimeout(1.5))
-        .andThen(alignToReefFinishIntakingAndScore(3)).andThen(alignToIntake())
-        .andThen(
-            driveAwayAndFinishIntaking(intakeInBetween)
-                .withTimeout(1.5))
-        .andThen(alignToReefFinishIntakingAndScore(3)).andThen(alignToIntake())
-        .andThen(
-            driveAwayAndFinishIntaking(intakeInBetween)
-                .withTimeout(1.5))
+        .andThen(driveAwayAndFinishIntaking(intakeInBetween).withTimeout(1.5))
+        .andThen(alignToReefFinishIntakingAndScore(3))
+        .andThen(alignToIntake())
+        .andThen(driveAwayAndFinishIntaking(intakeInBetween).withTimeout(1.5))
+        .andThen(alignToReefFinishIntakingAndScore(3))
+        .andThen(alignToIntake())
+        .andThen(driveAwayAndFinishIntaking(intakeInBetween).withTimeout(1.5))
         .andThen(alignToReefFinishIntakingAndScore(3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
@@ -491,24 +485,17 @@ public class AutosAlternate {
         .withTimeout(2)
         .andThen(scoreAndRemoveAlgae(4, 2))
         .andThen(alignToIntakeAndStowAlgae())
-        .andThen(driveAwayAndFinishIntaking(intakeInBetween)
-                .withTimeout(1.5))
-                .andThen(
-                    alignToReefFinishIntakingAndScore(4)
-                        .withTimeout(3))
+        .andThen(driveAwayAndFinishIntaking(intakeInBetween).withTimeout(1.5))
+        .andThen(alignToReefFinishIntakingAndScore(4).withTimeout(3))
         .andThen(alignToIntake())
-        .andThen(
-                    driveAwayAndFinishIntaking(intakeInBetween)
-                .withTimeout(1.5))
-                .andThen(alignToReefFinishIntakingAndScore(3)).andThen(alignToIntake())
-            .andThen(
-                driveAwayAndFinishIntaking(intakeInBetween)
-                    .withTimeout(1.5))
-            .andThen(alignToReefFinishIntakingAndScore(3)).andThen(alignToIntake())
-            .andThen(
-                driveAwayAndFinishIntaking(intakeInBetween)
-                    .withTimeout(1.5))
-            .andThen(alignToReefFinishIntakingAndScore(3))
+        .andThen(driveAwayAndFinishIntaking(intakeInBetween).withTimeout(1.5))
+        .andThen(alignToReefFinishIntakingAndScore(3))
+        .andThen(alignToIntake())
+        .andThen(driveAwayAndFinishIntaking(intakeInBetween).withTimeout(1.5))
+        .andThen(alignToReefFinishIntakingAndScore(3))
+        .andThen(alignToIntake())
+        .andThen(driveAwayAndFinishIntaking(intakeInBetween).withTimeout(1.5))
+        .andThen(alignToReefFinishIntakingAndScore(3))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
@@ -601,33 +588,34 @@ public class AutosAlternate {
         .andThen(coral.dumpCoral(1.00).withTimeout(0.75))
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
-  private Command alignToIntake(){
-    return
-        Commands.deadline(
-            fieldAlignment
-                .alignToCoralStation()
-                .andThen(Commands.none())
-                .withTimeout(2.3)
-                .until(hopperSeesCoral),
-            orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
+
+  private Command alignToIntake() {
+    return Commands.deadline(
+        fieldAlignment
+            .alignToCoralStation()
+            .andThen(Commands.none())
+            .withTimeout(2.3)
+            .until(hopperSeesCoral),
+        orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
+
   private Command driveAwayAndFinishIntaking(Supplier<Pose2d> targetPose) {
     return Commands.parallel(
-            new StraightDriveToPose(drive, targetPose, 1),
-            orchestrator.intake().until(coral::hasCoral));
+        new StraightDriveToPose(drive, targetPose, 1),
+        orchestrator.intake().until(coral::hasCoral));
   }
-  private Command alignToReefFinishIntakingAndScore(int level) {
-          return Commands.deadline(
-                fieldAlignment.alignToReef(false).withTimeout(3),
-                Commands.waitUntil(coral::hasCoral)
-                    .andThen(orchestrator.moveElevatorToLevel(level).withTimeout(0.5)),
-                coral.intakeCoral().until(coral::hasCoral).andThen(coral.stop()))
-            .andThen(
-                orchestrator.placeCoral(level).withTimeout(0.75))
-            .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
 
+  private Command alignToReefFinishIntakingAndScore(int level) {
+    return Commands.deadline(
+            fieldAlignment.alignToReef(false).withTimeout(3),
+            Commands.waitUntil(coral::hasCoral)
+                .andThen(orchestrator.moveElevatorToLevel(level).withTimeout(0.5)),
+            coral.intakeCoral().until(coral::hasCoral).andThen(coral.stop()))
+        .andThen(orchestrator.placeCoral(level).withTimeout(0.75))
+        .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
-  private Command scoreAndRemoveAlgae(int coralLevel, int algaeLevel){
+
+  private Command scoreAndRemoveAlgae(int coralLevel, int algaeLevel) {
     return Commands.deadline(
             Commands.parallel(
                     fieldAlignment.alignToReef(false).withTimeout(3),
@@ -637,15 +625,15 @@ public class AutosAlternate {
         .withTimeout(2.25)
         .andThen(Commands.parallel(algae.stop().withTimeout(0.01), coral.stop().withTimeout(0.01)));
   }
-  private Command alignToIntakeAndStowAlgae(){
+
+  private Command alignToIntakeAndStowAlgae() {
     return Commands.deadline(
         Commands.race(
             fieldAlignment.alignToCoralStation().andThen(Commands.waitSeconds(2.75)),
-            Commands.waitUntil(hopperSeesCoral)
-                .andThen(Commands.waitSeconds(0.5)),
+            Commands.waitUntil(hopperSeesCoral).andThen(Commands.waitSeconds(0.5)),
             Commands.waitUntil(coral::hasCoral)),
         Commands.parallel(
             orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION),
             Commands.waitSeconds(1).andThen(orchestrator.stowAlgae())));
   }
-    }
+}
