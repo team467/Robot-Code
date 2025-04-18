@@ -156,7 +156,7 @@ public class FieldConstants {
 
   public enum ReefHeight {
     L4(/*Units.inchesToMeters(72)*/ 0.768, -90),
-    L3(/*Units.inchesToMeters(47.625)*/ 0.635, -35),
+    L3(/*Units.inchesToMeters(47.625)*/ 0.631, -35),
     L2(/*Units.inchesToMeters(31.875)*/ 0.542, -35),
     L1(0.467, 0),
     HOME(/*Units.inchesToMeters(17 + 6 / 8)*/ 0.41, 0),
