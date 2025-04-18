@@ -36,6 +36,9 @@ public class ClimberIOSparkMax implements ClimberIO {
 
     climberFollower = new SparkMax(ClimberConstants.CLIMBER_FOLLOWER_ID, MotorType.kBrushless);
     var ClimberFollowerConfig = new SparkMaxConfig();
+    ClimberLeaderConfig.idleMode(IdleMode.kBrake)
+        .voltageCompensation(12)
+        .smartCurrentLimit(40);
     ClimberFollowerConfig.follow(ClimberConstants.CLIMBER_LEADER_ID, true);
 
     // Configure the leader motor using the configuration object and retry up to 5 times if it fails
