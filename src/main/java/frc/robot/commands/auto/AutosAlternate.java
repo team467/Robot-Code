@@ -738,8 +738,11 @@ public class AutosAlternate {
         .andThen(orchestrator.moveElevatorToSetpoint(ElevatorConstants.INTAKE_POSITION));
   }
 
-  public Command alignToReef() {
-    return Commands.runOnce(() -> drive.setPose(A.get()))
-        .andThen(drive.runPath(drive.createPath(AllianceFlipUtil.apply(fieldAlignment.getBranchPosition(false, 6).get()))));
-  }
+  //  public Command alignToReef() {
+  //    return Commands.runOnce(() -> drive.setPose(A.get()))
+  //        .andThen(
+  //            drive.runPath(
+  //                drive.createPath(
+  //                    AllianceFlipUtil.apply(fieldAlignment.getBranchPosition(false, 6).get()))));
+  //  }
 }

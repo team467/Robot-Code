@@ -7,10 +7,7 @@ import choreo.trajectory.SwerveSample;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.Matrix;
@@ -41,7 +38,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.RobotState;
 import frc.robot.subsystems.vision.VisionConstants;
-import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -255,17 +251,18 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public PathPlannerPath createPath(Pose2d targetPose) {
-    Pose2d currentPose = this.getPose();
-    PathConstraints constraints =
-        new PathConstraints(4.0, 12.7, Units.degreesToRadians(540), Units.degreesToRadians(720));
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(currentPose, targetPose);
-    PathPlannerPath path =
-        new PathPlannerPath(
-            waypoints, constraints, null, new GoalEndState(0, targetPose.getRotation()));
-    path.preventFlipping = true;
-    return path;
-  }
+  //  public PathPlannerPath createPath(Pose2d targetPose) {
+  //    Pose2d currentPose = this.getPose();
+  //    PathConstraints constraints =
+  //        new PathConstraints(4.0, 12.7, Units.degreesToRadians(540),
+  // Units.degreesToRadians(720));
+  //    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(currentPose, targetPose);
+  //    PathPlannerPath path =
+  //        new PathPlannerPath(
+  //            waypoints, constraints, null, new GoalEndState(0, targetPose.getRotation()));
+  //    path.preventFlipping = true;
+  //    return path;
+  //  }
 
   public Command runPath(PathPlannerPath path) {
     try {
