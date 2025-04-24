@@ -22,5 +22,23 @@
     }
   ],
   "jniDependencies": [],
-  "cppDependencies": []
+  "cppDependencies": [
+    {
+      "groupId": "org.ironmaple",
+      "artifactId": "maplesim-cpp",
+      "version": "0.3.11prev",
+      "libName": "maplesim",
+      "headerClassifier": "headers",
+      "sharedLibrary": false,
+      "skipInvalidPlatforms": true,
+      "binaryPlatforms": [
+        "windowsx86-64",
+        "linuxx86-64",
+        "osxuniversal",
+        "linuxathena",
+        "linuxarm32",
+        "linuxarm64"
+      ]
+    }
+  ]
 }
