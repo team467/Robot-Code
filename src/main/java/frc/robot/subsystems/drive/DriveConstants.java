@@ -1,15 +1,21 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Kilogram;
+import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.Schematic.*;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 
 public class DriveConstants {
   public static final double maxSpeedMetersPerSec = Units.feetToMeters(15.0);
@@ -94,6 +100,21 @@ public class DriveConstants {
               driveMotorCurrentLimit,
               1),
           moduleTranslations);
+  public static final DriveTrainSimulationConfig DRIVE_TRAIN_SIMULATION_CONFIG =
+      DriveTrainSimulationConfig.Default()
+          .withGyro(COTS.ofPigeon2())
+          .withRobotMass(Kilogram.of(60.78))
+          .withSwerveModule(
+              COTS.ofMark4(
+                  DCMotor.getKrakenX60(1),
+                  DCMotor.getNEO(1),
+                  COTS.WHEELS.DEFAULT_NEOPRENE_TREAD.cof,
+                  2 // Gear ratio (l3 gear ratio)
+                  ))
+          .withTrackLengthTrackWidth(Meters.of(0.3), Meters.of(0.29))
+          .withBumperSize(Meters.of(0.95), Meters.of(0.95));
+  public static final SwerveDriveSimulation swerveDriveSimulation =
+      new SwerveDriveSimulation(DRIVE_TRAIN_SIMULATION_CONFIG, new Pose2d(3, 3, new Rotation2d()));
   // Requirements for RobotTilt to trigger
   public static final double rollThreshhold = 10.0;
   public static final double pitchThreshold = 10.0;

@@ -34,6 +34,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -74,6 +75,7 @@ public class Drive extends SubsystemBase {
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
+    SimulatedArena.getInstance().addDriveTrainSimulation(swerveDriveSimulation);
     this.gyroIO = gyroIO;
     modules[0] = new Module(flModuleIO, 0);
     modules[1] = new Module(frModuleIO, 1);
