@@ -37,6 +37,7 @@ import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIOPhysical;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -135,6 +136,7 @@ public class RobotContainer {
           climber = new Climber(new ClimberIOSim());
 
           leds = new Leds();
+          SimulatedArena.getInstance().addDriveTrainSimulation(drive.getSwerveDriveSimulation());
         }
 
         case ROBOT_BRIEFCASE -> {

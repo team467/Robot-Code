@@ -35,6 +35,7 @@ import frc.robot.Constants.Mode;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -307,6 +308,9 @@ public class Drive extends SubsystemBase {
     return getPose().getRotation();
   }
 
+  public SwerveDriveSimulation getSwerveDriveSimulation() {
+    return swerveDriveSimulation;
+  }
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
