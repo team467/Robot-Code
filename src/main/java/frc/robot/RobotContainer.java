@@ -38,6 +38,7 @@ import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -58,6 +59,7 @@ public class RobotContainer {
   private Leds leds;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
+  private FieldSImulation fieldSImulation;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -136,7 +138,9 @@ public class RobotContainer {
           climber = new Climber(new ClimberIOSim());
 
           leds = new Leds();
+          fieldSImulation = new FieldSImulation(drive.getSwerveDriveSimulation());
           SimulatedArena.getInstance().addDriveTrainSimulation(drive.getSwerveDriveSimulation());
+
         }
 
         case ROBOT_BRIEFCASE -> {
