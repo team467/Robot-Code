@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.Schematic.*;
@@ -111,8 +112,9 @@ public class DriveConstants {
                   COTS.WHEELS.DEFAULT_NEOPRENE_TREAD.cof,
                   2 // Gear ratio (l3 gear ratio)
                   ))
-          .withTrackLengthTrackWidth(Meters.of(0.3), Meters.of(0.29))
-          .withBumperSize(Meters.of(0.95), Meters.of(0.95));
+          .withTrackLengthTrackWidth(Meters.of(0.546), Meters.of(0.546))
+          .withBumperSize(
+              Inches.of(Units.metersToInches(0.95)), Inches.of(Units.metersToInches(0.95)));
   public static final SwerveDriveSimulation swerveDriveSimulation =
       new SwerveDriveSimulation(DRIVE_TRAIN_SIMULATION_CONFIG, new Pose2d(3, 3, new Rotation2d()));
   // Requirements for RobotTilt to trigger
