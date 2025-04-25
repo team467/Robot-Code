@@ -4,21 +4,22 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.RobotType;
 import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -38,6 +39,9 @@ import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -58,8 +62,8 @@ public class RobotContainer {
   private Leds leds;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
-  private FieldSImulation fieldSImulation;
   private RobotState robotState = RobotState.getInstance();
+  private SwerveDriveSimulation driveSimulation = null;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -81,7 +85,8 @@ public class RobotContainer {
                   new ModuleIOSpark(0),
                   new ModuleIOSpark(1),
                   new ModuleIOSpark(2),
-                  new ModuleIOSpark(3));
+                  new ModuleIOSpark(3),
+                  (pose) -> {});
 
           vision =
               new Vision(
@@ -98,7 +103,8 @@ public class RobotContainer {
                   new ModuleIOSpark(0),
                   new ModuleIOSpark(1),
                   new ModuleIOSpark(2),
-                  new ModuleIOSpark(3));
+                  new ModuleIOSpark(3),
+                  (pose) -> {});
 
           vision =
               new Vision(
@@ -113,7 +119,8 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(0),
                   new ModuleIOTalonSpark(1),
                   new ModuleIOTalonSpark(2),
-                  new ModuleIOTalonSpark(3));
+                  new ModuleIOTalonSpark(3),
+                  (pose) -> {});
           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
           climber = new Climber(new ClimberIOSparkMax());
           fastalgae = new FastAlgaeEffector(new FastAlgaeEffectorIOPhysical());
@@ -127,18 +134,20 @@ public class RobotContainer {
         }
 
         case ROBOT_SIMBOT -> {
+          this.driveSimulation =
+              new SwerveDriveSimulation(
+                  DriveConstants.DRIVE_TRAIN_SIMULATION_CONFIG, new Pose2d(3, 3, new Rotation2d()));
+          SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
           drive =
               new Drive(
-                  new GyroIOSim() {},
-                  new ModuleIOSim(DriveConstants.swerveDriveSimulation.getModules()[0]),
-                  new ModuleIOSim(DriveConstants.swerveDriveSimulation.getModules()[1]),
-                  new ModuleIOSim(DriveConstants.swerveDriveSimulation.getModules()[2]),
-                  new ModuleIOSim(DriveConstants.swerveDriveSimulation.getModules()[3]));
+                  new GyroIOSim(driveSimulation.getGyroSimulation()),
+                  new ModuleIOSim(driveSimulation.getModules()[0]),
+                  new ModuleIOSim(driveSimulation.getModules()[1]),
+                  new ModuleIOSim(driveSimulation.getModules()[2]),
+                  new ModuleIOSim(driveSimulation.getModules()[3]),
+                  driveSimulation::setSimulationWorldPose);
           climber = new Climber(new ClimberIOSim());
           leds = new Leds();
-          fieldSImulation = new FieldSImulation(drive.getSwerveDriveSimulation());
-          fieldSImulation.setUpField();
-          SimulatedArena.getInstance().addDriveTrainSimulation(drive.getSwerveDriveSimulation());
         }
 
         case ROBOT_BRIEFCASE -> {
@@ -157,7 +166,8 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {},
               new ModuleIO() {},
-              new ModuleIO() {});
+              new ModuleIO() {},
+              (pose) -> {});
     }
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
@@ -243,85 +253,111 @@ public class RobotContainer {
             () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
-
     driverController
-        .start()
+        .y()
         .onTrue(
             Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-                    drive)
-                .ignoringDisable(true));
-    CustomTriggers.autoModeInput(
-            new Trigger(() -> driverController.getHID().getPOV() != -1),
-            operatorController.leftStick())
-        .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    CustomTriggers.manualModeInput(
-            new Trigger(() -> driverController.getHID().getPOV() != -1),
-            operatorController.leftStick())
-        .whileTrue(
-            fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
-    CustomTriggers.autoModeInput(operatorController.x(), operatorController.rightBumper())
-        .onTrue(orchestrator.moveElevatorToLevel(1));
-    CustomTriggers.autoModeInput(operatorController.y(), operatorController.rightBumper())
-        .onTrue(orchestrator.moveElevatorToLevel(2));
-    CustomTriggers.autoModeInput(operatorController.a(), operatorController.rightBumper())
-        .onTrue(orchestrator.moveElevatorToLevel(3));
-    CustomTriggers.manualModeInput(operatorController.a(), operatorController.rightBumper())
-        .whileTrue(elevator.runPercent(-0.3));
-    CustomTriggers.manualModeInput(operatorController.b(), operatorController.rightBumper())
-        .whileTrue(elevator.runPercent(0.3));
-    CustomTriggers.autoModeInput(operatorController.b(), operatorController.rightBumper())
-        .onTrue(orchestrator.moveElevatorToLevel(4));
-    CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.rightBumper())
-        .toggleOnTrue(orchestrator.removeAlgae(2));
-    CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.rightBumper())
-        .toggleOnTrue(orchestrator.removeAlgae(3));
-    CustomTriggers.manualModeInput(
-            operatorController.leftTrigger(), operatorController.rightBumper())
-        .toggleOnTrue(orchestrator.removeAlgae(2));
-    CustomTriggers.manualModeInput(
-            operatorController.leftBumper(), operatorController.rightBumper())
-        .toggleOnTrue(orchestrator.removeAlgae(3));
-    CustomTriggers.autoModeInput(operatorController.pov(0), operatorController.rightBumper())
-        .whileTrue(climber.deploy());
-    CustomTriggers.autoModeInput(operatorController.pov(180), operatorController.rightBumper())
-        .whileTrue(climber.winch());
-    CustomTriggers.manualModeInput(operatorController.pov(0), operatorController.rightBumper())
-        .whileTrue(climber.runPercent(0.15));
-    CustomTriggers.manualModeInput(operatorController.pov(180), operatorController.rightBumper())
-        .whileTrue(climber.runPercent(-0.15));
-    driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
-    driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
-    CustomTriggers.autoModeInput(driverController.leftTrigger(), operatorController.rightTrigger())
-        .toggleOnTrue(
-            Commands.parallel(
-                    fieldAlignment.faceCoralStation(
-                        driverController::getLeftX, driverController::getLeftY),
-                    orchestrator
-                        .intake()
-                        .alongWith(
-                            Commands.runOnce(
-                                () -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
-                        .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)))
-                .until(coral::hasCoral));
-    CustomTriggers.manualModeInput(
-            driverController.leftTrigger(), operatorController.rightTrigger())
-        .toggleOnTrue(
-            orchestrator
-                .intake()
-                .alongWith(
-                    Commands.runOnce(() -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
-                .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
-    driverController
-        .a()
-        .toggleOnTrue(
-            fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
-    driverController.x().whileTrue(coral.takeBackCoral());
-    driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
-    driverController.rightTrigger(0.1).onTrue(drive.runOnce(Commands::none));
-    driverController.y().whileTrue(elevator.runPercent(-0.3));
+                () ->
+                    SimulatedArena.getInstance()
+                        .addGamePieceProjectile(
+                            new ReefscapeCoralOnFly(
+                                driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
+                                new Translation2d(0.4, 0),
+                                driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                                driveSimulation.getSimulatedDriveTrainPose().getRotation(),
+                                Meters.of(2),
+                                MetersPerSecond.of(1.5),
+                                Degrees.of(-80)))));
+
+    //    driverController
+    //        .start()
+    //        .onTrue(
+    //            Commands.runOnce(
+    //                    () ->
+    //                        drive.setPose(
+    //                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+    //                    drive)
+    //                .ignoringDisable(true));
+    //    CustomTriggers.autoModeInput(
+    //            new Trigger(() -> driverController.getHID().getPOV() != -1),
+    //            operatorController.leftStick())
+    //        .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    //    CustomTriggers.manualModeInput(
+    //            new Trigger(() -> driverController.getHID().getPOV() != -1),
+    //            operatorController.leftStick())
+    //        .whileTrue(
+    //            fieldAlignment.updateMidMatchTunableOffsets(() ->
+    // driverController.getHID().getPOV()));
+    //    CustomTriggers.autoModeInput(operatorController.x(), operatorController.rightBumper())
+    //        .onTrue(orchestrator.moveElevatorToLevel(1));
+    //    CustomTriggers.autoModeInput(operatorController.y(), operatorController.rightBumper())
+    //        .onTrue(orchestrator.moveElevatorToLevel(2));
+    //    CustomTriggers.autoModeInput(operatorController.a(), operatorController.rightBumper())
+    //        .onTrue(orchestrator.moveElevatorToLevel(3));
+    //    CustomTriggers.manualModeInput(operatorController.a(), operatorController.rightBumper())
+    //        .whileTrue(elevator.runPercent(-0.3));
+    //    CustomTriggers.manualModeInput(operatorController.b(), operatorController.rightBumper())
+    //        .whileTrue(elevator.runPercent(0.3));
+    //    CustomTriggers.autoModeInput(operatorController.b(), operatorController.rightBumper())
+    //        .onTrue(orchestrator.moveElevatorToLevel(4));
+    //    CustomTriggers.autoModeInput(operatorController.leftTrigger(),
+    // operatorController.rightBumper())
+    //        .toggleOnTrue(orchestrator.removeAlgae(2));
+    //    CustomTriggers.autoModeInput(operatorController.leftBumper(),
+    // operatorController.rightBumper())
+    //        .toggleOnTrue(orchestrator.removeAlgae(3));
+    //    CustomTriggers.manualModeInput(
+    //            operatorController.leftTrigger(), operatorController.rightBumper())
+    //        .toggleOnTrue(orchestrator.removeAlgae(2));
+    //    CustomTriggers.manualModeInput(
+    //            operatorController.leftBumper(), operatorController.rightBumper())
+    //        .toggleOnTrue(orchestrator.removeAlgae(3));
+    //    CustomTriggers.autoModeInput(operatorController.pov(0), operatorController.rightBumper())
+    //        .whileTrue(climber.deploy());
+    //    CustomTriggers.autoModeInput(operatorController.pov(180),
+    // operatorController.rightBumper())
+    //        .whileTrue(climber.winch());
+    //    CustomTriggers.manualModeInput(operatorController.pov(0),
+    // operatorController.rightBumper())
+    //        .whileTrue(climber.runPercent(0.15));
+    //    CustomTriggers.manualModeInput(operatorController.pov(180),
+    // operatorController.rightBumper())
+    //        .whileTrue(climber.runPercent(-0.15));
+    //    driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
+    //
+    // driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
+    //    CustomTriggers.autoModeInput(driverController.leftTrigger(),
+    // operatorController.rightTrigger())
+    //        .toggleOnTrue(
+    //            Commands.parallel(
+    //                    fieldAlignment.faceCoralStation(
+    //                        driverController::getLeftX, driverController::getLeftY),
+    //                    orchestrator
+    //                        .intake()
+    //                        .alongWith(
+    //                            Commands.runOnce(
+    //                                () -> driverController.setRumble(RumbleType.kBothRumble,
+    // 0.3)))
+    //                        .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble,
+    // 0.0)))
+    //                .until(coral::hasCoral));
+    //    CustomTriggers.manualModeInput(
+    //            driverController.leftTrigger(), operatorController.rightTrigger())
+    //        .toggleOnTrue(
+    //            orchestrator
+    //                .intake()
+    //                .alongWith(
+    //                    Commands.runOnce(() -> driverController.setRumble(RumbleType.kBothRumble,
+    // 0.3)))
+    //                .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
+    //    driverController
+    //        .a()
+    //        .toggleOnTrue(
+    //            fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
+    //    driverController.x().whileTrue(coral.takeBackCoral());
+    //    driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
+    //    driverController.rightTrigger(0.1).onTrue(drive.runOnce(Commands::none));
+    //    driverController.y().whileTrue(elevator.runPercent(-0.3));
   }
 
   /**
@@ -336,5 +372,24 @@ public class RobotContainer {
   public void robotPeriodic() {
     fieldAlignment.periodic();
     RobotState.getInstance().updateLEDState();
+  }
+
+  public void resetSimulationField() {
+    if (Constants.getRobot() != RobotType.ROBOT_SIMBOT) return;
+
+    drive.setPose(new Pose2d(3, 3, new Rotation2d()));
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
+
+  public void updateSimulation() {
+    if (Constants.getRobot() != RobotType.ROBOT_SIMBOT) return;
+
+    SimulatedArena.getInstance().simulationPeriodic();
+    Logger.recordOutput(
+        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+    Logger.recordOutput(
+        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+    Logger.recordOutput(
+        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
   }
 }

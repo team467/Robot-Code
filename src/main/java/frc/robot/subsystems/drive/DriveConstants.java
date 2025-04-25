@@ -9,13 +9,11 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import org.ironmaple.simulation.drivesims.COTS;
-import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 
 public class DriveConstants {
@@ -115,8 +113,6 @@ public class DriveConstants {
           .withTrackLengthTrackWidth(Meters.of(0.546), Meters.of(0.546))
           .withBumperSize(
               Inches.of(Units.metersToInches(0.95)), Inches.of(Units.metersToInches(0.95)));
-  public static final SwerveDriveSimulation swerveDriveSimulation =
-      new SwerveDriveSimulation(DRIVE_TRAIN_SIMULATION_CONFIG, new Pose2d(3, 3, new Rotation2d()));
   // Requirements for RobotTilt to trigger
   public static final double rollThreshhold = 10.0;
   public static final double pitchThreshold = 10.0;
