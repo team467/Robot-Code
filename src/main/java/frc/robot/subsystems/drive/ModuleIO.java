@@ -1,6 +1,8 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ModuleIO {
@@ -39,4 +41,23 @@ public interface ModuleIO {
 
   /** Run the turn motor to the specified rotation. */
   public default void setTurnPosition(Rotation2d rotation) {}
+  // specified by ModuleIO interface
+  public default void setDriveOutputVoltage(Voltage voltage) {}
+
+  // specified by ModuleIO interface
+  public default void setSteerOutputVoltage(Voltage voltage) {}
+
+  // specified by ModuleIO interface
+  public default Rotation2d getSteerFacing() {
+    return null;
+  }
+
+  // specified by ModuleIO interface
+  public default Angle getSteerRelativePosition() {
+    return null;
+  }
+  // specified by ModuleIO interface
+  public default Angle getDriveWheelPositioned() {
+    return null;
+  }
 }

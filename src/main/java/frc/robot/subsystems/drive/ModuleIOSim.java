@@ -1,18 +1,31 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Amps;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.COTS.WHEELS;
+import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+import org.ironmaple.simulation.motorsims.SimulatedMotorController;
 
 /** Physics sim implementation of module IO. */
 public class ModuleIOSim implements ModuleIO {
   private final DCMotorSim driveSim;
   private final DCMotorSim turnSim;
+  private final SwerveModuleSimulation moduleSimulation;
+  // reference to the simulated drive motor
+  private final SimulatedMotorController.GenericMotorController driveMotor;
+  // reference to the simulated turn motor
+  private final SimulatedMotorController.GenericMotorController turnMotor;
 
   private boolean driveClosedLoop = false;
   private boolean turnClosedLoop = false;
@@ -22,7 +35,19 @@ public class ModuleIOSim implements ModuleIO {
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
 
-  public ModuleIOSim() {
+  public ModuleIOSim(SwerveModuleSimulation moduleSimulation) {
+    this.moduleSimulation = moduleSimulation;
+
+    // configures a generic motor controller for drive motor
+    // set a current limit of 60 amps
+    this.driveMotor =
+        moduleSimulation
+            .useGenericMotorControllerForDrive()
+            .withCurrentLimit(Amps.of(driveMotorCurrentLimit));
+    this.turnMotor =
+        moduleSimulation
+            .useGenericControllerForSteer()
+            .withCurrentLimit(Amps.of(turnMotorCurrentLimit));
     // Create drive and turn sim models
     driveSim =
         new DCMotorSim(
@@ -101,5 +126,43 @@ public class ModuleIOSim implements ModuleIO {
   public void setTurnPosition(Rotation2d rotation) {
     turnClosedLoop = true;
     turnController.setSetpoint(rotation.getRadians());
+  }
+  // specified by ModuleIO interface
+  @Override
+  public void setDriveOutputVoltage(Voltage voltage) {
+    this.driveMotor.requestVoltage(voltage);
+  }
+
+  @Override
+  // specified by ModuleIO interface
+  public void setSteerOutputVoltage(Voltage voltage) {
+    this.turnMotor.requestVoltage(voltage);
+  }
+
+  @Override
+  // specified by ModuleIO interface
+  public Rotation2d getSteerFacing() {
+    return this.moduleSimulation.getSteerAbsoluteFacing();
+  }
+
+  @Override
+  // specified by ModuleIO interface
+  public Angle getSteerRelativePosition() {
+    return moduleSimulation
+        .getSteerRelativeEncoderPosition()
+        .divide(
+            COTS.ofMark4(
+                    DCMotor.getKrakenX60(1),
+                    DCMotor.getNEO(1),
+                    WHEELS.DEFAULT_NEOPRENE_TREAD.cof,
+                    2 // Gear ratio (l3 gear ratio)
+                    )
+                .STEER_GEAR_RATIO);
+  }
+
+  @Override
+  // specified by ModuleIO interface
+  public Angle getDriveWheelPositioned() {
+    return moduleSimulation.getDriveWheelFinalPosition();
   }
 }

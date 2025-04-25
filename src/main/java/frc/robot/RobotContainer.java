@@ -38,7 +38,6 @@ import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -130,17 +129,16 @@ public class RobotContainer {
         case ROBOT_SIMBOT -> {
           drive =
               new Drive(
-                  new GyroIO() {},
-                  new ModuleIOSim(),
-                  new ModuleIOSim(),
-                  new ModuleIOSim(),
-                  new ModuleIOSim());
+                  new GyroIOSim() {},
+                  new ModuleIOSim(DriveConstants.swerveDriveSimulation.getModules()[0]),
+                  new ModuleIOSim(DriveConstants.swerveDriveSimulation.getModules()[1]),
+                  new ModuleIOSim(DriveConstants.swerveDriveSimulation.getModules()[2]),
+                  new ModuleIOSim(DriveConstants.swerveDriveSimulation.getModules()[3]));
           climber = new Climber(new ClimberIOSim());
-
           leds = new Leds();
           fieldSImulation = new FieldSImulation(drive.getSwerveDriveSimulation());
+          fieldSImulation.setUpField();
           SimulatedArena.getInstance().addDriveTrainSimulation(drive.getSwerveDriveSimulation());
-
         }
 
         case ROBOT_BRIEFCASE -> {

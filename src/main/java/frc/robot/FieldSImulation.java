@@ -9,16 +9,26 @@ import org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNoteOnFiel
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class FieldSImulation {
-  @AutoLogOutput private Pose2d simPose;
+  private SwerveDriveSimulation swerveDriveSimulation;
+  @AutoLogOutput private Pose2d simPose = swerveDriveSimulation.getSimulatedDriveTrainPose();
+  ;
   @AutoLogOutput private Pose3d[] gamePieces;
 
   public FieldSImulation(SwerveDriveSimulation swerveDriveSimulation) {
-    this.simPose = swerveDriveSimulation.getSimulatedDriveTrainPose();
+    this.swerveDriveSimulation = swerveDriveSimulation;
     this.gamePieces = SimulatedArena.getInstance().getGamePiecesArrayByType("Coral");
   }
 
   public void addCoral() {
     SimulatedArena.getInstance().addGamePiece(new CrescendoNoteOnField(new Translation2d(2, 2)));
     this.gamePieces = SimulatedArena.getInstance().getGamePiecesArrayByType("Note");
+  }
+
+  public void setUpField() {
+    SimulatedArena.getInstance().placeGamePiecesOnField();
+  }
+
+  public SwerveDriveSimulation getSwerveDriveSimulation() {
+    return this.swerveDriveSimulation;
   }
 }
