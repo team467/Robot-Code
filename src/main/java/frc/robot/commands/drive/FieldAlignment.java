@@ -13,6 +13,7 @@ import frc.robot.FieldConstants.CoralStation;
 import frc.robot.FieldConstants.Reef;
 import frc.robot.FieldConstants.ReefHeight;
 import frc.robot.RobotState;
+import frc.robot.commands.auto.Event;
 import frc.robot.commands.auto.StraightDriveToPose;
 import frc.robot.subsystems.drive.Drive;
 import java.util.Set;
@@ -47,6 +48,14 @@ public class FieldAlignment {
     return Commands.defer(
         () ->
             new StraightDriveToPose(drive, getBranchPosition(branchLeft, closestReefFace()))
+                .withTimeout(10),
+        Set.of(drive));
+  }
+
+  public Command alignToReefwithEvent(boolean branchLeft, Event event) {
+    return Commands.defer(
+        () ->
+            new StraightDriveToPose(drive, getBranchPosition(branchLeft, closestReefFace()), event)
                 .withTimeout(10),
         Set.of(drive));
   }

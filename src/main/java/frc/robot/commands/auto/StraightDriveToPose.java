@@ -121,17 +121,17 @@ public class StraightDriveToPose extends Command {
     addRequirements(drive);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     driveController.setTolerance(driveTolerance);
-    this.event = new Event(0,0, null);
+    this.event = new Event(0, null);
     this.event.nullType();
   }
-  public StraightDriveToPose(
-      Drive drive, Supplier<Pose2d> targetPoseSupplier, double driveTolerance, Event event) {
+
+  public StraightDriveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier, Event event) {
     this.drive = drive;
     this.poseSupplier = targetPoseSupplier;
     this.event = event;
     addRequirements(drive);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    driveController.setTolerance(driveTolerance);
+    driveController.setTolerance(DRIVE_TOLERANCE);
   }
 
   @Override
@@ -144,6 +144,9 @@ public class StraightDriveToPose extends Command {
     thetaController.setTolerance(THETA_TOLERANCE);
     driveController.reset(currentPose.getTranslation().getDistance(targetPose.getTranslation()));
     thetaController.reset(currentPose.getRotation().getRadians());
+    if (event.getCondition() < 0) {
+      event.Trigger();
+    }
   }
 
   @Override
@@ -153,7 +156,7 @@ public class StraightDriveToPose extends Command {
     // Calculate drive speed
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     driveErrorAbs = currentDistance;
-    if (!event.getState()){
+    if (!event.getState()) {
       event.checkTrigger(currentDistance);
     }
     double driveVelocityScalar = driveController.calculate(driveErrorAbs, 0.0);
@@ -177,6 +180,10 @@ public class StraightDriveToPose extends Command {
     drive.runVelocity(
         ChassisSpeeds.fromFieldRelativeSpeeds(
             driveVelocity.getX(), driveVelocity.getY(), thetaVelocity, currentPose.getRotation()));
+  }
+
+  public void addCondition(Event event) {
+    this.event = event;
   }
 
   @Override

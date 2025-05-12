@@ -9,16 +9,15 @@ public class Event {
   private double distance;
   private Command executable;
 
-  public Event(double condition, double distance, Command executable) {
+  public Event(double condition, Command executable) {
     this.condition = condition;
-    this.distance = distance;
     this.executable = executable;
   }
 
   public void setState(boolean state) {
     this.state = state;
   }
-
+  /*If condition is set to -1  it will trigger at start of the straightDriveToPose command*/
   public void setCondition(double condition) {
     this.condition = condition;
   }
@@ -26,13 +25,24 @@ public class Event {
   public void checkTrigger(double distance) {
     if (distance <= condition && !state) {
       state = true;
-      executable.schedule();
+      executable.execute();
     }
   }
-  public boolean getState(){
+
+  public void Trigger() {
+    state = true;
+    executable.schedule();
+  }
+
+  public boolean getState() {
     return state;
   }
-  public void nullType(){
+
+  public double getCondition() {
+    return condition;
+  }
+
+  public void nullType() {
     state = true;
   }
 }
