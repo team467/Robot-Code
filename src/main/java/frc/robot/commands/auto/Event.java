@@ -29,4 +29,10 @@ public class Event {
       executable.schedule();
     }
   }
+  public boolean getState(){
+    return state;
+  }
+  public void nullType(){
+    state = true;
+  }
 }

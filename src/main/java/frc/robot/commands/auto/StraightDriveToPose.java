@@ -44,6 +44,7 @@ public class StraightDriveToPose extends Command {
 
   private static final double DRIVE_TOLERANCE = 0.005;
   private static final double THETA_TOLERANCE = Units.degreesToRadians(1.0);
+  private Event event;
 
   public StraightDriveToPose(
       double deltaXMeters, double deltaYMeters, double deltaThetaRad, Drive drive) {
@@ -120,6 +121,17 @@ public class StraightDriveToPose extends Command {
     addRequirements(drive);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     driveController.setTolerance(driveTolerance);
+    this.event = new Event(0,0, null);
+    this.event.nullType();
+  }
+  public StraightDriveToPose(
+      Drive drive, Supplier<Pose2d> targetPoseSupplier, double driveTolerance, Event event) {
+    this.drive = drive;
+    this.poseSupplier = targetPoseSupplier;
+    this.event = event;
+    addRequirements(drive);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    driveController.setTolerance(driveTolerance);
   }
 
   @Override
@@ -141,6 +153,9 @@ public class StraightDriveToPose extends Command {
     // Calculate drive speed
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     driveErrorAbs = currentDistance;
+    if (!event.getState()){
+      event.checkTrigger(currentDistance);
+    }
     double driveVelocityScalar = driveController.calculate(driveErrorAbs, 0.0);
     if (driveController.atGoal()) driveVelocityScalar = 0.0;
 
