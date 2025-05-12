@@ -10,6 +10,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.utils.GeomUtils;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
@@ -121,7 +122,7 @@ public class StraightDriveToPose extends Command {
     addRequirements(drive);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     driveController.setTolerance(driveTolerance);
-    this.event = new Event(0, null);
+    this.event = new Event(new Trigger(() -> false), null);
     this.event.nullType();
   }
 
@@ -144,7 +145,7 @@ public class StraightDriveToPose extends Command {
     thetaController.setTolerance(THETA_TOLERANCE);
     driveController.reset(currentPose.getTranslation().getDistance(targetPose.getTranslation()));
     thetaController.reset(currentPose.getRotation().getRadians());
-    if (event.getCondition() < 0) {
+    if (event.getCondition().getAsBoolean()) {
       event.Trigger();
     }
   }
@@ -157,7 +158,7 @@ public class StraightDriveToPose extends Command {
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     driveErrorAbs = currentDistance;
     if (!event.getState()) {
-      event.checkTrigger(currentDistance);
+      event.checkTrigger();
     }
     double driveVelocityScalar = driveController.calculate(driveErrorAbs, 0.0);
     if (driveController.atGoal()) driveVelocityScalar = 0.0;

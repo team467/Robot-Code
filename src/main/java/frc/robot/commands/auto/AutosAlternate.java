@@ -799,7 +799,7 @@ public class AutosAlternate {
                     .alignToReefwithEvent(
                         true,
                         new Event(
-                            0.2,
+                            new Trigger(() -> Math.abs(drive)),
                             Commands.parallel(
                                 orchestrator.moveElevatorToLevel(4).withTimeout(0.8),
                                 coral.stop())))

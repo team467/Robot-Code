@@ -1,15 +1,16 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.awt.*;
 
 public class Event {
   private boolean state = false;
-  private double condition;
+  private Trigger condition;
   private double distance;
-  private Command executable;
+  private final Command executable;
 
-  public Event(double condition, Command executable) {
+  public Event(Trigger condition, Command executable) {
     this.condition = condition;
     this.executable = executable;
   }
@@ -18,27 +19,24 @@ public class Event {
     this.state = state;
   }
   /*If condition is set to -1  it will trigger at start of the straightDriveToPose command*/
-  public void setCondition(double condition) {
-    this.condition = condition;
+  public void setCondition(boolean condition) {
+    this.condition = new Trigger(() -> condition);
   }
 
-  public void checkTrigger(double distance) {
-    if (distance <= condition && !state) {
-      state = true;
-      executable.execute();
-    }
+  public void checkTrigger() {
+    condition.getAsBoolean();
   }
 
   public void Trigger() {
     state = true;
-    executable.schedule();
+    executable.execute();
   }
 
   public boolean getState() {
     return state;
   }
 
-  public double getCondition() {
+  public Trigger getCondition() {
     return condition;
   }
 
