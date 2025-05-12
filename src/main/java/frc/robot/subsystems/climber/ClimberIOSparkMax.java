@@ -28,7 +28,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     ClimberLeaderConfig.inverted(false)
         .idleMode(IdleMode.kBrake)
         .voltageCompensation(12)
-        .smartCurrentLimit(40);
+        .smartCurrentLimit(60);
     ClimberLeaderConfig.encoder.positionConversionFactor(
         ClimberConstants.CLIMBER_CONVERSION_FACTOR);
 
@@ -36,6 +36,9 @@ public class ClimberIOSparkMax implements ClimberIO {
 
     climberFollower = new SparkMax(ClimberConstants.CLIMBER_FOLLOWER_ID, MotorType.kBrushless);
     var ClimberFollowerConfig = new SparkMaxConfig();
+    ClimberFollowerConfig.idleMode(IdleMode.kBrake).voltageCompensation(12).smartCurrentLimit(60);
+    ClimberFollowerConfig.encoder.positionConversionFactor(
+        ClimberConstants.CLIMBER_CONVERSION_FACTOR);
     ClimberFollowerConfig.follow(ClimberConstants.CLIMBER_LEADER_ID, true);
 
     // Configure the leader motor using the configuration object and retry up to 5 times if it fails
