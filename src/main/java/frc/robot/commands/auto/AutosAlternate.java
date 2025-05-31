@@ -51,7 +51,7 @@ public class AutosAlternate {
     this.fieldAlignment = fieldAlignment;
     this.coral = coral;
     this.algae = algae;
-    hopperSeesCoral = new Trigger(coral::hopperSeesCoral).debounce(0.2);
+    hopperSeesCoral = new Trigger(coral::hopperSeesCoral).debounce(1);
   }
 
   public Command BScoreHopeAndPray() {
