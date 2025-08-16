@@ -62,6 +62,14 @@ public class PathPlannerAutos {
   }
 
   public Command C4Coral() {
-    return Commands.sequence(fieldAlignment.alignToReef(false), runPath("1LB-INT"));
+    return Commands.sequence(
+        fieldAlignment.alignToReef(false),
+        runPath("1LB-INT"),
+        fieldAlignment.alignToReef(true),
+        fieldAlignment.alignToCoralStation(),
+        fieldAlignment.alignToReef(false),
+        fieldAlignment.alignToCoralStation(),
+        runPath("INT-3"),
+        fieldAlignment.alignToReef(false));
   }
 }
