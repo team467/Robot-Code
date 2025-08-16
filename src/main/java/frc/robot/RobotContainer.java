@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.auto.AutosAlternate;
+import frc.robot.commands.auto.PathPlannerAutos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
@@ -192,6 +193,8 @@ public class RobotContainer {
 
     AutosAlternate autosAlternate =
         new AutosAlternate(drive, orchestrator, fieldAlignment, coral, elevator, fastalgae);
+    PathPlannerAutos pathPlannerAutos =
+        new PathPlannerAutos(drive, orchestrator, fieldAlignment, coral, fastalgae);
     autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
     autoChooser.addOption("A Score Left", autosAlternate.AScore(true));
     autoChooser.addOption("A Score Right", autosAlternate.AScore(false));
@@ -211,8 +214,7 @@ public class RobotContainer {
         "C Omega Three Point Five Score", autosAlternate.omegaCThreePointFiveScore(false));
     autoChooser.addOption("C Skibidi Four Score", autosAlternate.skibidiCFourScore(false));
     autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(true, 4));
-    autoChooser.addOption("C6-2 Coral", autosAlternate.C6Mpath2Coral());
-    autoChooser.addOption("A2-2 Coral", autosAlternate.A2Mpath2Coral());
+    autoChooser.addOption("PathPLanner", pathPlannerAutos.C4Coral());
 
     // Configure the button bindings
     configureButtonBindings();

@@ -30,9 +30,9 @@ public class StraightDriveToPose extends Command {
       new ProfiledPIDController(
           //          2.0, 0, 0.0, new Constraints(Units.inchesToMeters(150),
           // Units.inchesToMeters(450.0)));
-          3.0,
-          0,
-          0.1,
+          4.0,
+          0.09,
+          0.03,
           new Constraints(Units.inchesToMeters(125), Units.inchesToMeters(500.00))); // 90
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController( // TODO: Tune this
