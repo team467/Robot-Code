@@ -32,6 +32,7 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOPhysical;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
 import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIO;
 import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIOPhysical;
@@ -134,7 +135,7 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim());
           climber = new Climber(new ClimberIOSim());
-
+          elevator = new Elevator(new ElevatorIOSim());
           leds = new Leds();
         }
 
