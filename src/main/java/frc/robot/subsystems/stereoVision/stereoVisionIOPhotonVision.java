@@ -24,7 +24,7 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
   }
 
   @Override
-  public void updateInputs(stereoVisionIOInputs inputs) {
+  public void updateInputs(stereoVisionInputs inputs) {
     inputs.connected[0] = camera1.isConnected();
     inputs.connected[1] = camera2.isConnected();
     List<PoseObservation> poseObservations = new LinkedList<>();
