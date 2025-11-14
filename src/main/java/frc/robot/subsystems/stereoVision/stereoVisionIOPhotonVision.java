@@ -32,11 +32,11 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
         var target1 = results1.get(i).getBestTarget();
         var target2 = results2.get(i).getBestTarget();
         Pair<Double, Double> center1 =
-            new Pair(
+            new Pair<>(
                 (target1.detectedCorners.get(0).y - target1.detectedCorners.get(3).y) / 2,
                 (target1.detectedCorners.get(2).x - target1.detectedCorners.get(3).x) / 2);
         Pair<Double, Double> center2 =
-            new Pair(
+            new Pair<>(
                 (target2.detectedCorners.get(0).y - target2.detectedCorners.get(3).y) / 2,
                 (target2.detectedCorners.get(2).x - target2.detectedCorners.get(3).x) / 2);
         var finalType = gamePieceType.NULL;
@@ -45,24 +45,30 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
         } else {
           finalType = gamePieceType.ALGAE;
         }
-        double disparity = (Math.abs(center1.getSecond() - center2.getSecond()));
-        double depth =
-            (stereoVisionConstants.focalLength * stereoVisionConstants.baseLength) / disparity;
-        double x =
-            (((center1.getSecond() + center2.getSecond()) / 2 - 320) * depth)
-                / stereoVisionConstants.focalLength;
-        double y =
-            Math.sqrt(
-                (depth * depth)
-                    - (stereoVisionConstants.cameraHeight * stereoVisionConstants.cameraHeight)
-                    - (x * x));
-        double theta = Math.atan2(y, x);
-        Transform2d tranformation = new Transform2d(new Translation2d(x, y), new Rotation2d(theta));
+        Transform2d tranformation = getTransform2d(center1, center2);
         poseObservations.add(new PoseObservation(tranformation, finalType));
       }
     } else {
       inputs.seesGamePiece = false;
       inputs.poseObservations = new PoseObservation[] {};
     }
+  }
+
+  private static Transform2d getTransform2d(
+      Pair<Double, Double> center1, Pair<Double, Double> center2) {
+    double disparity = (Math.abs(center1.getSecond() - center2.getSecond()));
+    double depth =
+        (stereoVisionConstants.focalLength * stereoVisionConstants.baseLength) / disparity;
+    double x =
+        (((center1.getSecond() + center2.getSecond()) / 2 - 320) * depth)
+            / stereoVisionConstants.focalLength;
+    double y =
+        Math.sqrt(
+            (depth * depth)
+                - (stereoVisionConstants.cameraHeight * stereoVisionConstants.cameraHeight)
+                - (x * x));
+    double theta = Math.atan2(y, x);
+    Transform2d tranformation = new Transform2d(new Translation2d(x, y), new Rotation2d(theta));
+    return tranformation;
   }
 }
