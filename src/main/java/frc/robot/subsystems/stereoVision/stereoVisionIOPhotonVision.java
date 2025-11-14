@@ -45,24 +45,29 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
         } else {
           finalType = gamePieceType.ALGAE;
         }
-        double disparity = (Math.abs(center1.getSecond() - center2.getSecond()));
-        double depth =
-            (stereoVisionConstants.focalLength * stereoVisionConstants.baseLength) / disparity;
-        double x =
-            (((center1.getSecond() + center2.getSecond()) / 2 - 320) * depth)
-                / stereoVisionConstants.focalLength;
-        double y =
-            Math.sqrt(
-                (depth * depth)
-                    - (stereoVisionConstants.cameraHeight * stereoVisionConstants.cameraHeight)
-                    - (x * x));
-        double theta = Math.atan2(y, x);
-        Transform2d tranformation = new Transform2d(new Translation2d(x, y), new Rotation2d(theta));
-        poseObservations.add(new PoseObservation(tranformation, finalType));
+        Transform2d transformation = getTransform2d(center1, center2);
+        poseObservations.add(new PoseObservation(transformation, finalType));
       }
     } else {
       inputs.seesGamePiece = false;
       inputs.poseObservations = new PoseObservation[] {};
     }
+  }
+
+  private static Transform2d getTransform2d(
+      Pair<Double, Double> center1, Pair<Double, Double> center2) {
+    double disparity = (Math.abs(center1.getSecond() - center2.getSecond()));
+    double depth =
+        (stereoVisionConstants.focalLength * stereoVisionConstants.baseLength) / disparity;
+    double x =
+        (((center1.getSecond() + center2.getSecond()) / 2 - 320) * depth)
+            / stereoVisionConstants.focalLength;
+    double y =
+        Math.sqrt(
+            (depth * depth)
+                - (stereoVisionConstants.cameraHeight * stereoVisionConstants.cameraHeight)
+                - (x * x));
+    double theta = Math.atan2(y, x);
+      return new Transform2d(new Translation2d(x, y), new Rotation2d(theta));
   }
 }
