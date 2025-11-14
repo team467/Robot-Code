@@ -20,7 +20,7 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
   }
 
   @Override
-  public void updateInputs(stereoVisionIOInputs inputs) {
+  public void updateInputs(stereoVisionInputs inputs) {
     inputs.connected[0] = camera1.isConnected();
     inputs.connected[1] = camera2.isConnected();
     List<PoseObservation> poseObservations = new LinkedList<>();
@@ -31,10 +31,15 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
       while (results1.get(i).hasTargets() && results2.get(i).hasTargets()) {
         var target1 = results1.get(i).getBestTarget();
         var target2 = results2.get(i).getBestTarget();
-        double center1 = new Pair((target1.detectedCorners.get(0).y - target1.detectedCorners.get(3).y)/2, (target1.detectedCorners.get(2).x - target1.detectedCorners.get(3).x)/2);
-        double center2 = new Pair((target2.detectedCorners.get(0).y - target2.detectedCorners.get(3).y)/2, (target2.detectedCorners.get(2).x - targe2.detectedCorners.get(3).x)/2);
-        var type = target1.getDetectedObjectClassID()
-
+        double center1 =
+            new Pair(
+                (target1.detectedCorners.get(0).y - target1.detectedCorners.get(3).y) / 2,
+                (target1.detectedCorners.get(2).x - target1.detectedCorners.get(3).x) / 2);
+        double center2 =
+            new Pair(
+                (target2.detectedCorners.get(0).y - target2.detectedCorners.get(3).y) / 2,
+                (target2.detectedCorners.get(2).x - targe2.detectedCorners.get(3).x) / 2);
+        var type = target1.getDetectedObjectClassID();
       }
     } else {
       inputs.seesGamePiece = false;

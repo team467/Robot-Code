@@ -4,7 +4,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface stereoVisionIO {
   @AutoLog
-  public static class stereoVisionIOInputs {
+  public static class stereoVisionInputs {
     public boolean[] connected = new boolean[] {false, false};
     public PoseObservation[] poseObservations = new PoseObservation[] {};
     public boolean seesGamePiece = false;
@@ -18,5 +18,5 @@ public interface stereoVisionIO {
     ALGAE
   }
 
-  public default void updateInputs(stereoVisionIOInputs inputs) {}
+  public default void updateInputs(stereoVisionInputs inputs) {}
 }
