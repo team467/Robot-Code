@@ -1,8 +1,6 @@
 package frc.robot.subsystems.stereoVision;
 
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface stereoVisionIO {
@@ -13,8 +11,7 @@ public interface stereoVisionIO {
     public boolean seesGamePiece = false;
   }
 
-  public static record PoseObservation(
-      Transform2d pose, gamePieceType type) {}
+  public static record PoseObservation(Transform2d pose, gamePieceType type) {}
 
   public static enum gamePieceType {
     CORAL,
