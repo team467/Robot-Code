@@ -1,5 +1,6 @@
 package frc.robot.subsystems.stereoVision;
 
+import java.awt.geom.Point2D;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface stereoVisionIO {
@@ -11,7 +12,7 @@ public interface stereoVisionIO {
   }
 
   public static record PoseObservation(
-      double camera1Center, double camera2Center, double distance, gamePieceType type) {}
+      Point2D camera1Center, Point2D camera2Center, double distance, gamePieceType type) {}
 
   public static enum gamePieceType {
     CORAL,
