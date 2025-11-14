@@ -57,6 +57,7 @@ public class RobotContainer {
   private Leds leds;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
+
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
