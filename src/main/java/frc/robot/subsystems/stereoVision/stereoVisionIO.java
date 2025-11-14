@@ -1,5 +1,8 @@
 package frc.robot.subsystems.stereoVision;
 
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface stereoVisionIO {
@@ -11,11 +14,12 @@ public interface stereoVisionIO {
   }
 
   public static record PoseObservation(
-      double camera1Center, double camera2Center, double distance, gamePieceType type) {}
+      Transform2d pose, gamePieceType type) {}
 
   public static enum gamePieceType {
     CORAL,
-    ALGAE
+    ALGAE,
+    NULL
   }
 
   public default void updateInputs(stereoVisionIOInputs inputs) {}
