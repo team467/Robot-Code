@@ -68,7 +68,6 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
                 - (stereoVisionConstants.cameraHeight * stereoVisionConstants.cameraHeight)
                 - (x * x));
     double theta = Math.atan2(y, x);
-    Transform2d tranformation = new Transform2d(new Translation2d(x, y), new Rotation2d(theta));
-    return tranformation;
+      return new Transform2d(new Translation2d(x, y), new Rotation2d(theta));
   }
 }
