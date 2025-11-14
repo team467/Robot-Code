@@ -32,11 +32,11 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
         var target1 = results1.get(i).getBestTarget();
         var target2 = results2.get(i).getBestTarget();
         Pair<Double, Double> center1 =
-            new Pair(
+            new Pair<>(
                 (target1.detectedCorners.get(0).y - target1.detectedCorners.get(3).y) / 2,
                 (target1.detectedCorners.get(2).x - target1.detectedCorners.get(3).x) / 2);
         Pair<Double, Double> center2 =
-            new Pair(
+            new Pair<>(
                 (target2.detectedCorners.get(0).y - target2.detectedCorners.get(3).y) / 2,
                 (target2.detectedCorners.get(2).x - target2.detectedCorners.get(3).x) / 2);
         var finalType = gamePieceType.NULL;
