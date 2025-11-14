@@ -47,6 +47,7 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
         }
         Transform2d transformation = getTransform2d(center1, center2);
         poseObservations.add(new PoseObservation(transformation, finalType));
+        i++;
       }
     } else {
       inputs.seesGamePiece = false;
