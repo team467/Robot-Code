@@ -45,8 +45,8 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
         } else {
           finalType = gamePieceType.ALGAE;
         }
-        Transform2d tranformation = getTransform2d(center1, center2);
-        poseObservations.add(new PoseObservation(tranformation, finalType));
+        Transform2d transformation = getTransform2d(center1, center2);
+        poseObservations.add(new PoseObservation(transformation, finalType));
       }
     } else {
       inputs.seesGamePiece = false;
