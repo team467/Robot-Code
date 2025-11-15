@@ -66,9 +66,10 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
             / stereoVisionConstants.focalLength;
     double y =
         Math.sqrt(
-            (depth * depth)
-                - (stereoVisionConstants.cameraHeight * stereoVisionConstants.cameraHeight)
-                - (x * x));
+                (depth * depth)
+                    - (stereoVisionConstants.cameraHeight * stereoVisionConstants.cameraHeight)
+                    - (x * x))
+            + stereoVisionConstants.toRobotCenter;
     double theta = Math.atan2(y, x);
     return new Transform2d(new Translation2d(x, y), new Rotation2d(theta));
   }
