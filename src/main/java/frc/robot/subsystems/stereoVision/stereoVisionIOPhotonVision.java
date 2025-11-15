@@ -81,7 +81,7 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
     for (var target1 : unreadResults.getFirst()) {
       PhotonTrackedTarget lowestDisparity = null;
       double lowestDisparityValue = Double.MAX_VALUE;
-      if (i <= sortedTargets2.size()) {
+      if (i <= unreadResults.getSecond().size()) {
         for (var target2 : unreadResults.getSecond()) {
           double disparity =
               ((target1.detectedCorners.get(2).x + target1.detectedCorners.get(3).x) / 2)
