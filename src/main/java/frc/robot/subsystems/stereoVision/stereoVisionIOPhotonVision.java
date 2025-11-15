@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import java.util.LinkedList;
 import java.util.List;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class stereoVisionIOPhotonVision implements stereoVisionIO {
 
@@ -33,12 +34,12 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
         var target2 = results2.get(i).getBestTarget();
         Pair<Double, Double> center1 =
             new Pair<>(
-                (target1.detectedCorners.get(0).y - target1.detectedCorners.get(3).y) / 2,
-                (target1.detectedCorners.get(2).x - target1.detectedCorners.get(3).x) / 2);
+                (target1.detectedCorners.get(0).y + target1.detectedCorners.get(3).y) / 2,
+                (target1.detectedCorners.get(2).x + target1.detectedCorners.get(3).x) / 2);
         Pair<Double, Double> center2 =
             new Pair<>(
-                (target2.detectedCorners.get(0).y - target2.detectedCorners.get(3).y) / 2,
-                (target2.detectedCorners.get(2).x - target2.detectedCorners.get(3).x) / 2);
+                (target2.detectedCorners.get(0).y + target2.detectedCorners.get(3).y) / 2,
+                (target2.detectedCorners.get(2).x + target2.detectedCorners.get(3).x) / 2);
         var finalType = gamePieceType.NULL;
         if (target1.getDetectedObjectClassID() == 1) {
           finalType = gamePieceType.CORAL;
@@ -70,5 +71,34 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
                 - (x * x));
     double theta = Math.atan2(y, x);
     return new Transform2d(new Translation2d(x, y), new Rotation2d(theta));
+  }
+  // TODO: Test this when detecting multiple coral
+  private static Pair<List<PhotonTrackedTarget>, List<PhotonTrackedTarget>> sortUnreadResults(
+      Pair<List<PhotonTrackedTarget>, List<PhotonTrackedTarget>> unreadResults) {
+    List<PhotonTrackedTarget> sortedTargets1 = new LinkedList<>();
+    List<PhotonTrackedTarget> sortedTargets2 = new LinkedList<>();
+    int i = 1;
+    for (var target1 : unreadResults.getFirst()) {
+      PhotonTrackedTarget lowestDisparity = null;
+      double lowestDisparityValue = Double.MAX_VALUE;
+      if (i <= sortedTargets2.size()) {
+        for (var target2 : unreadResults.getSecond()) {
+          double disparity =
+              ((target1.detectedCorners.get(2).x + target1.detectedCorners.get(3).x) / 2)
+                  - ((target2.detectedCorners.get(2).x + target2.detectedCorners.get(3).x) / 2);
+          if (disparity < lowestDisparityValue) {
+            lowestDisparityValue = disparity;
+            lowestDisparity = target2;
+          }
+        }
+      } else {
+        return new Pair<>(sortedTargets1, sortedTargets2);
+      }
+
+      sortedTargets1.add(target1);
+      sortedTargets2.add(lowestDisparity);
+      i++;
+    }
+    return new Pair<>(sortedTargets1, sortedTargets2);
   }
 }
