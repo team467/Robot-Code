@@ -2,11 +2,10 @@ package frc.robot.subsystems.stereoVision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotState;
 import frc.robot.subsystems.drive.Drive;
-import org.littletonrobotics.junction.Logger;
 import java.util.LinkedList;
 import java.util.List;
+import org.littletonrobotics.junction.Logger;
 
 public class stereoVision extends SubsystemBase {
   private final stereoVisionIO io;
@@ -23,11 +22,10 @@ public class stereoVision extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("StereoVision",inputs);
+    Logger.processInputs("StereoVision", inputs);
     detectedObjects.clear();
-    for (var tranformations: inputs.poseObservations) {
+    for (var tranformations : inputs.poseObservations) {
       detectedObjects.add(drive.getPose().transformBy(tranformations.pose()));
     }
-
   }
 }
