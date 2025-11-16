@@ -35,6 +35,8 @@ import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
 import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIO;
 import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIOPhysical;
 import frc.robot.subsystems.leds.Leds;
+import frc.robot.subsystems.stereoVision.stereoVision;
+import frc.robot.subsystems.stereoVision.stereoVisionIOPhotonVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -57,6 +59,7 @@ public class RobotContainer {
   private Leds leds;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
+  private stereoVision stereoVision;
 
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
@@ -123,6 +126,8 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1));
           leds = new Leds();
+          stereoVision =
+              new stereoVision(new stereoVisionIOPhotonVision(camera0Name, camera1Name), drive);
         }
 
         case ROBOT_SIMBOT -> {
@@ -169,7 +174,7 @@ public class RobotContainer {
       fastalgae = new FastAlgaeEffector(new FastAlgaeEffectorIO() {});
     }
     fieldAlignment = new FieldAlignment(drive);
-    orchestrator = new Orchestrator(elevator, fastalgae, coral, drive);
+    orchestrator = new Orchestrator(elevator, fastalgae, coral, drive, stereoVision);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
