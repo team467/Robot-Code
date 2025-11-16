@@ -23,7 +23,7 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
   public void updateInputs(stereoVisionInputs inputs) {
     inputs.connected[0] = camera1.isConnected();
     inputs.connected[1] = camera2.isConnected();
-    List<PoseObservation> poseObservations = new LinkedList<>();
+    List<objectObservation> objectObservations = new LinkedList<>();
     var results1 = camera1.getAllUnreadResults();
     var results2 = camera2.getAllUnreadResults();
     if (!results1.isEmpty() && !results2.isEmpty()) {
@@ -47,12 +47,12 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
           finalType = gamePieceType.ALGAE;
         }
         Transform2d transformation = getTransform2d(center1, center2);
-        poseObservations.add(new PoseObservation(transformation, finalType));
+        objectObservations.add(new objectObservation(transformation, finalType));
         i++;
       }
     } else {
       inputs.seesGamePiece = false;
-      inputs.poseObservations = new PoseObservation[] {};
+      inputs.objectObservations = new objectObservation[] {};
     }
   }
 
@@ -66,10 +66,9 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
             / stereoVisionConstants.focalLength;
     double y =
         Math.sqrt(
-                (depth * depth)
-                    - (stereoVisionConstants.cameraHeight * stereoVisionConstants.cameraHeight)
-                    - (x * x))
-            + stereoVisionConstants.toRobotCenter;
+            (depth * depth)
+                - (stereoVisionConstants.cameraHeight * stereoVisionConstants.cameraHeight)
+                - (x * x));
     double theta = Math.atan2(y, x);
     return new Transform2d(new Translation2d(x, y), new Rotation2d(theta));
   }

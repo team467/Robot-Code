@@ -31,11 +31,13 @@ public class Orchestrator {
       Elevator elevator,
       FastAlgaeEffector fastAlgaeEffector,
       CoralEffector coralEffector,
-      Drive drive) {
+      Drive drive,
+      stereoVision stereoVision) {
     this.elevator = elevator;
     this.fastAlgaeEffector = fastAlgaeEffector;
     this.coralEffector = coralEffector;
     this.drive = drive;
+    this.stereoVision = stereoVision;
     robotState.elevatorPosition = ElevatorPosition.INTAKE;
   }
 
