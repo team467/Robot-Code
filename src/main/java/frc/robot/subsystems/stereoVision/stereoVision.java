@@ -35,12 +35,10 @@ public class stereoVision extends SubsystemBase {
     Logger.processInputs("StereoVision", inputs);
     detectedObjects.clear();
     for (var transformations : inputs.objectObservations) {
-      objectPoses.add(
-          (drive.getPose().transformBy(transformations.pose())));
+      objectPoses.add((drive.getPose().transformBy(transformations.pose())));
       detectedObjects.add(
           new poseObservation(
-              (drive.getPose().transformBy(transformations.pose())),
-              transformations.type()));
+              (drive.getPose().transformBy(transformations.pose())), transformations.type()));
     }
     coralObservations =
         Stream.of(inputs.objectObservations)
