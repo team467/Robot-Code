@@ -1,6 +1,7 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -25,9 +26,21 @@ public class gamePieceAlignment {
     this.stereoVision = stereoVision;
   }
 
+  public Command searchForGamePiece() {
+    return Commands.run(
+        () ->
+            new StraightDriveToPose(drive.getPose().rotateBy(Rotation2d.k180deg), drive)
+                .until(stereoVision::seesGamePiece));
+  }
+
   public Command alignToNearestCoralPiece() {
     return Commands.defer(
         () -> new StraightDriveToPose(getClosestCoral().get(), drive), Set.of(drive));
+  }
+
+  public Command alignToNearestAlgaePiece() {
+    return Commands.defer(
+        () -> new StraightDriveToPose(getClosestAlgae().get(), drive), Set.of(drive));
   }
 
   public void findClosestCoral() {
@@ -65,5 +78,12 @@ public class gamePieceAlignment {
       closestGamepiece = closestAlgae;
       gamePiecePose = drive.getPose().plus(closestAlgae.pose().inverse());
     }
+  }
+
+  public Supplier<Pose2d> getClosestAlgae() {
+    return () -> {
+      findClosestAlgae();
+      return gamePiecePose;
+    };
   }
 }

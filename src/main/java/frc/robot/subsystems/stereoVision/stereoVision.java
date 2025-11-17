@@ -20,8 +20,8 @@ public class stereoVision extends SubsystemBase {
   private final List<poseObservation> detectedObjects = new LinkedList<>();
   private final List<objectObservation> detectedObjectObservations = new LinkedList<>();
   @AutoLogOutput private final List<Pose2d> objectPoses = new LinkedList<>();
-  private List<objectObservation> coralObservations = new LinkedList<>();
-  private List<objectObservation> algaeObservations = new LinkedList<>();
+  @AutoLogOutput private List<objectObservation> coralObservations = new LinkedList<>();
+  @AutoLogOutput private List<objectObservation> algaeObservations = new LinkedList<>();
 
   public stereoVision(stereoVisionIO io, Drive drive) {
     this.io = io;
@@ -72,5 +72,9 @@ public class stereoVision extends SubsystemBase {
 
   public List<objectObservation> getAlgaeObservations() {
     return algaeObservations;
+  }
+
+  public boolean seesGamePiece() {
+    return inputs.seesGamePiece;
   }
 }
