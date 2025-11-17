@@ -36,12 +36,10 @@ public class stereoVision extends SubsystemBase {
     detectedObjects.clear();
     for (var transformations : inputs.objectObservations) {
       objectPoses.add(
-          (drive.getPose().transformBy(transformations.pose()))
-              .plus(stereoVisionConstants.toRobotCenter.inverse()));
+          (drive.getPose().transformBy(transformations.pose())));
       detectedObjects.add(
           new poseObservation(
-              (drive.getPose().transformBy(transformations.pose()))
-                  .plus(stereoVisionConstants.toRobotCenter.inverse()),
+              (drive.getPose().transformBy(transformations.pose())),
               transformations.type()));
     }
     coralObservations =

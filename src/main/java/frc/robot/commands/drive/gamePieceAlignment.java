@@ -54,7 +54,7 @@ public class gamePieceAlignment {
         }
       }
       closestGamepiece = closestCoral;
-      gamePiecePose = drive.getPose().plus(closestCoral.pose().inverse());
+      gamePiecePose = drive.getPose().plus(closestCoral.pose());
     }
   }
 
@@ -76,7 +76,7 @@ public class gamePieceAlignment {
         }
       }
       closestGamepiece = closestAlgae;
-      gamePiecePose = drive.getPose().plus(closestAlgae.pose().inverse());
+      gamePiecePose = drive.getPose().plus(closestAlgae.pose());
     }
   }
 

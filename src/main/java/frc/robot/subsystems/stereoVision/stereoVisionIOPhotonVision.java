@@ -4,6 +4,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.List;
 import org.photonvision.PhotonCamera;
@@ -46,10 +47,11 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
         } else {
           finalType = gamePieceType.ALGAE;
         }
-        Transform2d transformation = getTransform2d(center1, center2);
+        Transform2d transformation = getTransform2d(center1, center2).plus(stereoVisionConstants.toRobotCenter.inverse());
         objectObservations.add(new objectObservation(transformation, finalType));
         i++;
       }
+      inputs.objectObservations = objectObservations.toArray(new objectObservation[0]);
     } else {
       inputs.seesGamePiece = false;
       inputs.objectObservations = new objectObservation[] {};
