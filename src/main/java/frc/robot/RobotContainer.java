@@ -20,6 +20,7 @@ import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.commands.drive.FieldAlignment;
+import frc.robot.commands.drive.gamePieceAlignment;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -59,6 +60,7 @@ public class RobotContainer {
   private Leds leds;
   private final Orchestrator orchestrator;
   private final FieldAlignment fieldAlignment;
+  private final gamePieceAlignment gamePieceAlignment;
   private stereoVision stereoVision;
 
   private RobotState robotState = RobotState.getInstance();
@@ -173,6 +175,7 @@ public class RobotContainer {
     if (fastalgae == null) {
       fastalgae = new FastAlgaeEffector(new FastAlgaeEffectorIO() {});
     }
+    gamePieceAlignment = new gamePieceAlignment(drive, stereoVision);
     fieldAlignment = new FieldAlignment(drive);
     orchestrator = new Orchestrator(elevator, fastalgae, coral, drive, stereoVision);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
