@@ -96,9 +96,13 @@ public class stereoVisionIOPhotonVision implements stereoVisionIO {
       } else {
         return new Pair<>(sortedTargets1, sortedTargets2);
       }
+      if (lowestDisparity.objDetectConf < 0.5 || target1.objDetectConf < 0.5) {
+        continue;
+      } else {
+        sortedTargets1.add(target1);
+        sortedTargets2.add(lowestDisparity);
+      }
 
-      sortedTargets1.add(target1);
-      sortedTargets2.add(lowestDisparity);
       i++;
     }
     return new Pair<>(sortedTargets1, sortedTargets2);
