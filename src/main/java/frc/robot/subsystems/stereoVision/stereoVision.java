@@ -24,8 +24,8 @@ public class stereoVision extends SubsystemBase {
   private final List<Pose2d> objectPoses = new LinkedList<>();
   private List<objectObservation> coralObservations = new LinkedList<>();
   private List<objectObservation> algaeObservations = new LinkedList<>();
-  private Pose2d closestCoral = new Pose2d();
-  private Pose2d closestAlgae = new Pose2d();
+  @AutoLogOutput private Pose2d closestCoral = new Pose2d();
+  @AutoLogOutput private Pose2d closestAlgae = new Pose2d();
 
   public stereoVision(stereoVisionIO io, Drive drive) {
     this.io = io;
