@@ -17,7 +17,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 public class gamePieceAlignment {
 
   private objectObservation closestGamepiece;
-  @AutoLogOutput private Pose2d gamePiecePose;
+
   private final Drive drive;
   private final stereoVision stereoVision;
 
