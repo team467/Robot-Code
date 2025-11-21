@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.stereoVision.stereoVisionIO.gamePieceType;
 import frc.robot.subsystems.stereoVision.stereoVisionIO.objectObservation;
-import frc.robot.subsystems.stereoVision.stereoVisionIO.poseObservation;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,7 +59,6 @@ public class stereoVision extends SubsystemBase {
     }
     closestAlgae = drive.getPose().plus(Algae.pose());
   }
-
 
   public List<objectObservation> getDetectedObjects() {
     return List.of(inputs.objectObservations);
