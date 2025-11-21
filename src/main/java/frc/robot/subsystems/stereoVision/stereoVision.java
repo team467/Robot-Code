@@ -1,6 +1,8 @@
 package frc.robot.subsystems.stereoVision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.stereoVision.stereoVisionIO.gamePieceType;
@@ -19,9 +21,11 @@ public class stereoVision extends SubsystemBase {
   private final stereoVisionInputsAutoLogged inputs;
   private final List<poseObservation> detectedObjects = new LinkedList<>();
   private final List<objectObservation> detectedObjectObservations = new LinkedList<>();
-  @AutoLogOutput private final List<Pose2d> objectPoses = new LinkedList<>();
-  @AutoLogOutput private List<objectObservation> coralObservations = new LinkedList<>();
-  @AutoLogOutput private List<objectObservation> algaeObservations = new LinkedList<>();
+  private final List<Pose2d> objectPoses = new LinkedList<>();
+  private List<objectObservation> coralObservations = new LinkedList<>();
+  private List<objectObservation> algaeObservations = new LinkedList<>();
+  private Pose2d closestCoral = new Pose2d();
+  private Pose2d closestAlgae = new Pose2d();
 
   public stereoVision(stereoVisionIO io, Drive drive) {
     this.io = io;
@@ -48,6 +52,23 @@ public class stereoVision extends SubsystemBase {
         Stream.of(inputs.objectObservations)
             .filter(objectObservation -> objectObservation.type() == gamePieceType.ALGAE)
             .collect(Collectors.toList());
+    objectObservation Coral = new objectObservation(new Transform2d(0,0,new Rotation2d()), gamePieceType.ALGAE);
+    for (var poseObs : coralObservations) {
+      if (poseObs.pose().getTranslation().getNorm()
+          < Coral.pose().getTranslation().getNorm()) {
+      Coral = poseObs;
+      }
+    }
+    closestCoral = drive.getPose().plus(Coral.pose());
+    objectObservation Algae = new objectObservation(new Transform2d(0,0,new Rotation2d()), gamePieceType.ALGAE);
+    for (var poseObs : algaeObservations) {
+      if (poseObs.pose().getTranslation().getNorm()
+          < Algae.pose().getTranslation().getNorm()) {
+        Algae = poseObs;
+      }
+    }
+    closestAlgae = drive.getPose().plus(Algae.pose());
+
   }
 
   public List<poseObservation> getDetectedObjectsPoseObservations() {
@@ -62,12 +83,12 @@ public class stereoVision extends SubsystemBase {
     return List.of(inputs.objectObservations);
   }
 
-  public List<objectObservation> getCoralObservations() {
-    return coralObservations;
+  public Pose2d getClosestCoral() {
+    return closestCoral;
   }
 
-  public List<objectObservation> getAlgaeObservations() {
-    return algaeObservations;
+  public Pose2d getClosestAlgae() {
+    return closestAlgae;
   }
 
   public boolean seesGamePiece() {

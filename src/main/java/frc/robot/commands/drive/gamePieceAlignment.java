@@ -43,47 +43,15 @@ public class gamePieceAlignment {
         () -> new StraightDriveToPose(getClosestAlgae().get(), drive), Set.of(drive));
   }
 
-  public void findClosestCoral() {
-    var coralDetected = stereoVision.getCoralObservations();
-    if (!coralDetected.isEmpty()) {
-      objectObservation closestCoral = new objectObservation(new Transform2d(), gamePieceType.NULL);
-      for (var poseObs : coralDetected) {
-        if (poseObs.pose().getTranslation().getNorm()
-            < closestCoral.pose().getTranslation().getNorm()) {
-          closestCoral = poseObs;
-        }
-      }
-      closestGamepiece = closestCoral;
-      gamePiecePose = drive.getPose().plus(closestCoral.pose());
-    }
-  }
+
 
   public Supplier<Pose2d> getClosestCoral() {
-    return () -> {
-      findClosestCoral();
-      return gamePiecePose;
-    };
+    return stereoVision::getClosestCoral;
   }
 
-  public void findClosestAlgae() {
-    var algaeDetected = stereoVision.getAlgaeObservations();
-    if (!algaeDetected.isEmpty()) {
-      objectObservation closestAlgae = new objectObservation(new Transform2d(), gamePieceType.NULL);
-      for (var poseObs : algaeDetected) {
-        if (poseObs.pose().getTranslation().getNorm()
-            < closestAlgae.pose().getTranslation().getNorm()) {
-          closestAlgae = poseObs;
-        }
-      }
-      closestGamepiece = closestAlgae;
-      gamePiecePose = drive.getPose().plus(closestAlgae.pose());
-    }
-  }
+
 
   public Supplier<Pose2d> getClosestAlgae() {
-    return () -> {
-      findClosestAlgae();
-      return gamePiecePose;
-    };
+    return stereoVision::getClosestAlgae;
   }
 }
