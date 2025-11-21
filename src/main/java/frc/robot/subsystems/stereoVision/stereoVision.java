@@ -19,8 +19,6 @@ public class stereoVision extends SubsystemBase {
   private final stereoVisionIO io;
   private final Drive drive;
   private final stereoVisionInputsAutoLogged inputs;
-  private final List<poseObservation> detectedObjects = new LinkedList<>();
-  private final List<objectObservation> detectedObjectObservations = new LinkedList<>();
   private final List<Pose2d> objectPoses = new LinkedList<>();
   private List<objectObservation> coralObservations = new LinkedList<>();
   private List<objectObservation> algaeObservations = new LinkedList<>();
@@ -37,13 +35,6 @@ public class stereoVision extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("StereoVision", inputs);
-    detectedObjects.clear();
-    for (var transformations : inputs.objectObservations) {
-      objectPoses.add((drive.getPose().transformBy(transformations.pose())));
-      detectedObjects.add(
-          new poseObservation(
-              (drive.getPose().transformBy(transformations.pose())), transformations.type()));
-    }
     coralObservations =
         Stream.of(inputs.objectObservations)
             .filter(objectObservation -> objectObservation.type() == gamePieceType.CORAL)
@@ -70,13 +61,6 @@ public class stereoVision extends SubsystemBase {
     closestAlgae = drive.getPose().plus(Algae.pose());
   }
 
-  public List<poseObservation> getDetectedObjectsPoseObservations() {
-    return detectedObjects;
-  }
-
-  public List<Pose2d> getDetectedObjectsPoses() {
-    return objectPoses;
-  }
 
   public List<objectObservation> getDetectedObjects() {
     return List.of(inputs.objectObservations);
