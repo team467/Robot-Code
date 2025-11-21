@@ -10,6 +10,7 @@ import frc.robot.subsystems.coral.CoralEffector;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
+import frc.robot.subsystems.stereoVision.stereoVision;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -18,6 +19,7 @@ public class Orchestrator {
   private final Elevator elevator;
   private final FastAlgaeEffector fastAlgaeEffector;
   private final CoralEffector coralEffector;
+  private final stereoVision stereoVision;
   private final RobotState robotState = RobotState.getInstance();
   private static final double L4_HEIGHT = ReefHeight.L4.height;
   private static final double L3_HEIGHT = ReefHeight.L3.height;
@@ -31,11 +33,13 @@ public class Orchestrator {
       Elevator elevator,
       FastAlgaeEffector fastAlgaeEffector,
       CoralEffector coralEffector,
-      Drive drive) {
+      Drive drive,
+      stereoVision stereoVision) {
     this.elevator = elevator;
     this.fastAlgaeEffector = fastAlgaeEffector;
     this.coralEffector = coralEffector;
     this.drive = drive;
+    this.stereoVision = stereoVision;
     robotState.elevatorPosition = ElevatorPosition.INTAKE;
   }
 
