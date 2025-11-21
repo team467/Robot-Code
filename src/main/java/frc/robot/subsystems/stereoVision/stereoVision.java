@@ -52,23 +52,22 @@ public class stereoVision extends SubsystemBase {
         Stream.of(inputs.objectObservations)
             .filter(objectObservation -> objectObservation.type() == gamePieceType.ALGAE)
             .collect(Collectors.toList());
-    objectObservation Coral = new objectObservation(new Transform2d(0,0,new Rotation2d()), gamePieceType.ALGAE);
+    objectObservation Coral =
+        new objectObservation(new Transform2d(0, 0, new Rotation2d()), gamePieceType.ALGAE);
     for (var poseObs : coralObservations) {
-      if (poseObs.pose().getTranslation().getNorm()
-          < Coral.pose().getTranslation().getNorm()) {
-      Coral = poseObs;
+      if (poseObs.pose().getTranslation().getNorm() < Coral.pose().getTranslation().getNorm()) {
+        Coral = poseObs;
       }
     }
     closestCoral = drive.getPose().plus(Coral.pose());
-    objectObservation Algae = new objectObservation(new Transform2d(0,0,new Rotation2d()), gamePieceType.ALGAE);
+    objectObservation Algae =
+        new objectObservation(new Transform2d(0, 0, new Rotation2d()), gamePieceType.ALGAE);
     for (var poseObs : algaeObservations) {
-      if (poseObs.pose().getTranslation().getNorm()
-          < Algae.pose().getTranslation().getNorm()) {
+      if (poseObs.pose().getTranslation().getNorm() < Algae.pose().getTranslation().getNorm()) {
         Algae = poseObs;
       }
     }
     closestAlgae = drive.getPose().plus(Algae.pose());
-
   }
 
   public List<poseObservation> getDetectedObjectsPoseObservations() {
