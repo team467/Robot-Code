@@ -19,44 +19,8 @@ public class Schematic {
   public static final int frontRightAbsoluteEncoderCanId;
   public static final int backRightAbsoluteEncoderCanId;
 
-  // Algae Effector (Motor IDs)
-  public static final int algaePivotCanId;
-  public static final int algaeRemovalCanId;
-  // Coral Effector (Motor IDs)
-  public static final int hopperReflectorSensorDioId;
-  public static final int coralMotorID;
-  // Elevator
-  public static final int elevatorMotorID;
-
   static {
     switch (Constants.getRobot()) {
-      case ROBOT_2025_TEST -> {
-        // Drive (CAN IDs)
-        pigeonCanId = 17;
-
-        frontLeftDriveCanId = 1;
-        backLeftDriveCanId = 5;
-        frontRightDriveCanId = 3;
-        backRightDriveCanId = 7;
-
-        frontLeftTurnCanId = 2;
-        backLeftTurnCanId = 6;
-        frontRightTurnCanId = 4;
-        backRightTurnCanId = 8;
-
-        frontLeftAbsoluteEncoderCanId = 21;
-        backLeftAbsoluteEncoderCanId = 20;
-        frontRightAbsoluteEncoderCanId = 18;
-        backRightAbsoluteEncoderCanId = 19;
-
-        algaePivotCanId = 12;
-        algaeRemovalCanId = 13;
-
-        hopperReflectorSensorDioId = 9;
-        coralMotorID = 24;
-
-        elevatorMotorID = 9;
-      }
       case ROBOT_2025_COMP -> {
         // Device CAN IDs
         // TODO: Change for 2025 as needed
@@ -77,15 +41,6 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 21;
         frontRightAbsoluteEncoderCanId = 19;
         backRightAbsoluteEncoderCanId = 20;
-
-        // Algae Effector (Motor IDs)
-        algaePivotCanId = 12;
-        algaeRemovalCanId = 13;
-
-        hopperReflectorSensorDioId = 9;
-        coralMotorID = 14;
-
-        elevatorMotorID = 9;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -106,15 +61,6 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 0;
         frontRightAbsoluteEncoderCanId = 0;
         backRightAbsoluteEncoderCanId = 0;
-
-        // Algae Effector (Motor IDs)
-        algaePivotCanId = 2;
-        algaeRemovalCanId = 1;
-
-        coralMotorID = 14;
-        hopperReflectorSensorDioId = 9;
-
-        elevatorMotorID = 9;
       }
 
       default -> {
@@ -135,15 +81,6 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 0;
         frontRightAbsoluteEncoderCanId = 0;
         backRightAbsoluteEncoderCanId = 0;
-
-        // Algae Effector (Motor IDs)
-        algaePivotCanId = 0;
-        algaeRemovalCanId = 0;
-
-        hopperReflectorSensorDioId = 0;
-        coralMotorID = 0;
-
-        elevatorMotorID = 0;
       }
     }
   }
