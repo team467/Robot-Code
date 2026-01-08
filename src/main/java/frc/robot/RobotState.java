@@ -15,7 +15,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 public class RobotState {
 
   public enum Mode {
-    //2026 Specific
+    // 2026 Specific
 
     // Same every year
     ESTOPPED(LedPatterns.RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
