@@ -15,28 +15,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 public class RobotState {
 
   public enum Mode {
-
-    // 2025 Specific
-    HAS_CORAL(LedPatterns.PURPLE.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
-    HOPPER_SEES_CORAL(
-        LedPatterns.PURPLE.colorPatternOnly().atBrightness(Percent.of(50)), Sections.BASE1),
-    INTAKING_CORAL(LedPatterns.STRIPE_CORAL.scroll(2).atBrightness(Percent.of(50)), Sections.FULL),
-    ALGAE_EFFECTOR_RUNNING(
-        LedPatterns.STRIPE_ALGAE.scroll(2).atBrightness(Percent.of(50)), Sections.FULL),
-    CLIMBER_WINCHED(LedPatterns.RAINBOW.scroll().atBrightness(Percent.of(50)), Sections.FULL),
-    DUCK(LedPatterns.STRIPE_COM.scroll().atBrightness(Percent.of(50)), Sections.FULL),
-    ELEVATOR_CORAL_L1(
-        LedPatterns.PURPLE.blink(0.2).atBrightness(Percent.of(50)), Sections.FIRST_QUARTER),
-    ELEVATOR_CORAL_L2(
-        LedPatterns.PURPLE.blink(0.2).atBrightness(Percent.of(50)), Sections.SECOND_QUARTER),
-    ELEVATOR_CORAL_L3(
-        LedPatterns.PURPLE.blink(0.2).atBrightness(Percent.of(50)), Sections.THIRD_QUARTER),
-    ELEVATOR_CORAL_L4(
-        LedPatterns.PURPLE.blink(0.2).atBrightness(Percent.of(50)), Sections.FOURTH_QUARTER),
-    ELEVATOR_ALGAE_L2(
-        LedPatterns.GREEN.blink(0.2).atBrightness(Percent.of(50)), Sections.SECOND_QUARTER),
-    ELEVATOR_ALGAE_L3(
-        LedPatterns.GREEN.blink(0.2).atBrightness(Percent.of(50)), Sections.THIRD_QUARTER),
+    //2026 Specific
 
     // Same every year
     ESTOPPED(LedPatterns.RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
@@ -67,70 +46,9 @@ public class RobotState {
   /** Set by the robot if the batter is less than 9V */
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
   public boolean lowBatteryAlert = false;
-  /** If the coral effector limit switch is pressed */
-  @AutoLogOutput(key = "RobotState/HasCoral")
-  public boolean hasCoral = false;
-  /** If the hopper optical sensor is triggered */
-  @AutoLogOutput(key = "RobotState/HopperSeesCoral")
-  public boolean hopperSeesCoral = false;
-
-  @AutoLogOutput(key = "RobotState/IntakingCoral")
-  public boolean intakingCoral = false;
-  /** Robot dumping coral */
-  @AutoLogOutput(key = "RobotState/SendCoral")
-  public boolean dumpingCoral = false;
-  /** If the robot is aligned to the reef */
-  @AutoLogOutput(key = "RobotState/AlignedToReef")
-  public boolean alignedToReef = false;
-  /** If the algae effector is extended */
-  @AutoLogOutput(key = "RobotState/AlgaeEffectorExtended")
-  public boolean algaeEffectorExtended = false;
-  /** If the algae effector is stowed */
-  @AutoLogOutput(key = "RobotState/AlgaeEffectorStowed")
-  public boolean algaeEffectorStowed = false;
-  /** If the algae effector is running */
-  @AutoLogOutput(key = "RobotState/AlgaeEffectorRunning")
-  public boolean algaeEffectorRunning = false;
-  /** If the fast algae effector is stowed */
-  @AutoLogOutput(key = "RobotState/FastAlgaeEffectorStowed")
-  public boolean fastAlgaeEffectorStowed = false;
-  /** If the fast algae effector is high */
-  @AutoLogOutput(key = "RobotState/FastAlgaeEffectorHigh")
-  public boolean fastAlgaeEffectorHigh = false;
-  /** If the fast algae effector is low */
-  @AutoLogOutput(key = "RobotState/FastAlgaeEffectorLow")
-  public boolean fastAlgaeEffectorLow = false;
-  /** If the climber is up */
-  @AutoLogOutput(key = "RobotState/ClimberWinched")
-  public boolean climberWinched = false;
-  /** If the climber is down */
-  @AutoLogOutput(key = "RobotState/ClimberDeployed")
-  /** If the climber is deployed */
-  public boolean climberDeployed = false;
-
-  @AutoLogOutput(key = "RobotState/ClimberStowed")
-  public boolean climberStowed = false;
-  /** If the robot is in currently ducking */
-  @AutoLogOutput(key = "RobotState/Duck")
-  public boolean duck = false;
-  /** If the robot has detected a collision */
-  @AutoLogOutput(key = "RobotState/CollisionDetected")
-  public boolean collisionDetected = false;
-  /** If the robot is tilting */
-  @AutoLogOutput(key = "RobotState/RobotTilted")
-  public boolean robotTilted = false;
-  /** the position that the elevator is at */
-  @AutoLogOutput(key = "RobotState/ElevatorPosition")
-  public ElevatorPosition elevatorPosition = null;
 
   @AutoLogOutput(key = "RobotState/PoseConfidence")
   public boolean PoseConfidence = false;
-
-  @AutoLogOutput(key = "RobotState/FastAlgaeStowed")
-  public boolean fastAlgaeStowed = false;
-
-  @AutoLogOutput(key = "RobotState/ClosestReefFace")
-  public int ClosestReefFace = 0;
 
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
