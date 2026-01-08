@@ -1,11 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Contains various field dimensions and useful reference points. Dimensions are in meters, and sets
@@ -18,4 +13,6 @@ import java.util.Map;
  */
 public class FieldConstants {
 
+  public static double fieldLength;
+  public static double fieldWidth;
 }
