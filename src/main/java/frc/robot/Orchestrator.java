@@ -17,6 +17,5 @@ public class Orchestrator {
   public Orchestrator(
       Drive drive) {
     this.drive = drive;
-    robotState.elevatorPosition = ElevatorPosition.INTAKE;
   }
 }
