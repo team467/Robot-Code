@@ -9,31 +9,15 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.auto.AutosAlternate;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
-import frc.robot.commands.drive.FieldAlignment;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOSim;
-import frc.robot.subsystems.climber.ClimberIOSparkMax;
-import frc.robot.subsystems.coral.CoralEffector;
-import frc.robot.subsystems.coral.CoralEffectorIO;
-import frc.robot.subsystems.coral.CoralEffectorIOSparkMAX;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorIO;
-import frc.robot.subsystems.elevator.ElevatorIOPhysical;
-import frc.robot.subsystems.fastalgae.FastAlgaeEffector;
-import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIO;
-import frc.robot.subsystems.fastalgae.FastAlgaeEffectorIOPhysical;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -50,13 +34,8 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
-  private FastAlgaeEffector fastalgae;
-  private CoralEffector coral;
-  private Climber climber;
-  private Elevator elevator;
   private Leds leds;
   private final Orchestrator orchestrator;
-  private final FieldAlignment fieldAlignment;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -72,38 +51,6 @@ public class RobotContainer {
     // Instantiate active subsystems
     if (Constants.getMode() != Constants.Mode.REPLAY) {
       switch (Constants.getRobot()) {
-        case ROBOT_2024_COMP -> {
-          drive =
-              new Drive(
-                  new GyroIOPigeon2(),
-                  new ModuleIOSpark(0),
-                  new ModuleIOSpark(1),
-                  new ModuleIOSpark(2),
-                  new ModuleIOSpark(3));
-
-          vision =
-              new Vision(
-                  drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0));
-          // algae = new AlgaeEffector(new AlgaeEffectorIOPhysical());
-        }
-
-        case ROBOT_2025_TEST -> {
-          drive =
-              new Drive(
-                  new GyroIOPigeon2(),
-                  new ModuleIOSpark(0),
-                  new ModuleIOSpark(1),
-                  new ModuleIOSpark(2),
-                  new ModuleIOSpark(3));
-
-          vision =
-              new Vision(
-                  drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
-        }
         case ROBOT_2025_COMP -> {
           drive =
               new Drive(
@@ -112,10 +59,6 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(1),
                   new ModuleIOTalonSpark(2),
                   new ModuleIOTalonSpark(3));
-          coral = new CoralEffector(new CoralEffectorIOSparkMAX());
-          climber = new Climber(new ClimberIOSparkMax());
-          fastalgae = new FastAlgaeEffector(new FastAlgaeEffectorIOPhysical());
-          elevator = new Elevator(new ElevatorIOPhysical());
           vision =
               new Vision(
                   drive::addVisionMeasurement,
@@ -132,7 +75,6 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim());
-          climber = new Climber(new ClimberIOSim());
 
           leds = new Leds();
         }
@@ -155,20 +97,8 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
-    if (climber == null) {
-      climber = new Climber(new ClimberIO() {});
-    }
-    if (coral == null) {
-      coral = new CoralEffector(new CoralEffectorIO() {});
-    }
-    if (elevator == null) {
-      elevator = new Elevator(new ElevatorIO() {});
-    }
-    if (fastalgae == null) {
-      fastalgae = new FastAlgaeEffector(new FastAlgaeEffectorIO() {});
-    }
-    fieldAlignment = new FieldAlignment(drive);
-    orchestrator = new Orchestrator(elevator, fastalgae, coral, drive);
+
+    orchestrator = new Orchestrator(drive);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
@@ -190,30 +120,6 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    AutosAlternate autosAlternate =
-        new AutosAlternate(drive, orchestrator, fieldAlignment, coral, elevator, fastalgae);
-    autoChooser.addOption("Zero Piece", autosAlternate.zeroPiece());
-    autoChooser.addOption("A Score Left", autosAlternate.AScore(true));
-    autoChooser.addOption("A Score Right", autosAlternate.AScore(false));
-    autoChooser.addOption("B Score Left", autosAlternate.BScore(true));
-    autoChooser.addOption("B Score Right", autosAlternate.BScore(false));
-    autoChooser.addOption("C Score Left", autosAlternate.CScore(true));
-    autoChooser.addOption("C Score Right", autosAlternate.CScore(false));
-    autoChooser.addOption("B Score Hope and Pray", autosAlternate.BScoreHopeAndPray());
-    autoChooser.addOption("A Sigma Two Score", autosAlternate.sigmaATwoScore(false));
-    autoChooser.addOption("A Alpha Three Score", autosAlternate.alphaAThreeScore(false));
-    autoChooser.addOption(
-        "A Omega Three Point Five Score", autosAlternate.omegaAThreePointFiveScore(false));
-    autoChooser.addOption("A Skibidi Four Score", autosAlternate.skibidiAFourScore(false));
-    autoChooser.addOption("C Sigma Two Score", autosAlternate.sigmaCTwoScore(true));
-    autoChooser.addOption("C Alpha Three Score", autosAlternate.alphaCThreeScore(true));
-    autoChooser.addOption(
-        "C Omega Three Point Five Score", autosAlternate.omegaCThreePointFiveScore(false));
-    autoChooser.addOption("C Skibidi Four Score", autosAlternate.skibidiCFourScore(false));
-    autoChooser.addOption("Elevator Test", autosAlternate.elevatorRelativeToPose(true, 4));
-    autoChooser.addOption("C6-2 Coral", autosAlternate.C6Mpath2Coral());
-    autoChooser.addOption("A2-2 Coral", autosAlternate.A2Mpath2Coral());
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -225,10 +131,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    coral.setDefaultCommand(coral.stop());
-    fastalgae.setDefaultCommand(fastalgae.stowArm());
-    elevator.setDefaultCommand(elevator.runPercent(0.0));
-    climber.setDefaultCommand(climber.stop());
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -249,75 +151,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-    CustomTriggers.autoModeInput(
-            new Trigger(() -> driverController.getHID().getPOV() != -1),
-            operatorController.leftStick())
+    new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    CustomTriggers.manualModeInput(
-            new Trigger(() -> driverController.getHID().getPOV() != -1),
-            operatorController.leftStick())
-        .whileTrue(
-            fieldAlignment.updateMidMatchTunableOffsets(() -> driverController.getHID().getPOV()));
-    CustomTriggers.autoModeInput(operatorController.x(), operatorController.rightBumper())
-        .onTrue(orchestrator.moveElevatorToLevel(1));
-    CustomTriggers.autoModeInput(operatorController.y(), operatorController.rightBumper())
-        .onTrue(orchestrator.moveElevatorToLevel(2));
-    CustomTriggers.autoModeInput(operatorController.a(), operatorController.rightBumper())
-        .onTrue(orchestrator.moveElevatorToLevel(3));
-    CustomTriggers.manualModeInput(operatorController.a(), operatorController.rightBumper())
-        .whileTrue(elevator.runPercent(-0.3));
-    CustomTriggers.manualModeInput(operatorController.b(), operatorController.rightBumper())
-        .whileTrue(elevator.runPercent(0.3));
-    CustomTriggers.autoModeInput(operatorController.b(), operatorController.rightBumper())
-        .onTrue(orchestrator.moveElevatorToLevel(4));
-    CustomTriggers.autoModeInput(operatorController.leftTrigger(), operatorController.rightBumper())
-        .toggleOnTrue(orchestrator.removeAlgae(2));
-    CustomTriggers.autoModeInput(operatorController.leftBumper(), operatorController.rightBumper())
-        .toggleOnTrue(orchestrator.removeAlgae(3));
-    CustomTriggers.manualModeInput(
-            operatorController.leftTrigger(), operatorController.rightBumper())
-        .toggleOnTrue(orchestrator.removeAlgae(2));
-    CustomTriggers.manualModeInput(
-            operatorController.leftBumper(), operatorController.rightBumper())
-        .toggleOnTrue(orchestrator.removeAlgae(3));
-    CustomTriggers.autoModeInput(operatorController.pov(0), operatorController.rightBumper())
-        .whileTrue(climber.deploy());
-    CustomTriggers.autoModeInput(operatorController.pov(180), operatorController.rightBumper())
-        .whileTrue(climber.winch());
-    CustomTriggers.manualModeInput(operatorController.pov(0), operatorController.rightBumper())
-        .whileTrue(climber.runPercent(0.15));
-    CustomTriggers.manualModeInput(operatorController.pov(180), operatorController.rightBumper())
-        .whileTrue(climber.runPercent(-0.15));
-    driverController.leftBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(true));
-    driverController.rightBumper().toggleOnTrue(fieldAlignment.alignToReefMatchTunable(false));
-    CustomTriggers.autoModeInput(driverController.leftTrigger(), operatorController.rightTrigger())
-        .toggleOnTrue(
-            Commands.parallel(
-                    fieldAlignment.faceCoralStation(
-                        driverController::getLeftX, driverController::getLeftY),
-                    orchestrator
-                        .intake()
-                        .alongWith(
-                            Commands.runOnce(
-                                () -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
-                        .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)))
-                .until(coral::hasCoral));
-    CustomTriggers.manualModeInput(
-            driverController.leftTrigger(), operatorController.rightTrigger())
-        .toggleOnTrue(
-            orchestrator
-                .intake()
-                .alongWith(
-                    Commands.runOnce(() -> driverController.setRumble(RumbleType.kBothRumble, 0.3)))
-                .finallyDo(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
-    driverController
-        .a()
-        .toggleOnTrue(
-            fieldAlignment.faceReef(driverController::getLeftX, driverController::getLeftY));
-    driverController.x().whileTrue(coral.takeBackCoral());
-    driverController.rightTrigger(0.1).onTrue(orchestrator.dumpCoralAndHome());
-    driverController.rightTrigger(0.1).onTrue(drive.runOnce(Commands::none));
-    driverController.y().whileTrue(elevator.runPercent(-0.3));
   }
 
   /**
@@ -330,7 +165,6 @@ public class RobotContainer {
   }
 
   public void robotPeriodic() {
-    fieldAlignment.periodic();
     RobotState.getInstance().updateLEDState();
   }
 }

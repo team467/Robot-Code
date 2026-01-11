@@ -36,26 +36,10 @@ public enum LedPatterns {
   CENTER_OF_MASS_BLUE(LEDPattern.solid(Color.kDarkBlue)),
   CENTER_OF_MASS_GOLD(LEDPattern.solid(Color.kDarkGoldenrod)),
 
+  // 2026 Game Specific
+
   // Multi-Color Patterns
   RAINBOW(LEDPattern.rainbow(255, 128)),
-
-  // Game Specific
-  STRIPE_ALGAE(
-      LEDPattern.steps(
-          Map.of(
-              0, Color.kGreen, 0.25, Color.kLimeGreen, 0.5, Color.kGreen, 0.75, Color.kLimeGreen))),
-
-  STRIPE_CORAL(
-      LEDPattern.steps(
-          Map.of(
-              0,
-              Color.kPurple,
-              0.25,
-              Color.kMediumPurple,
-              0.5,
-              Color.kPurple,
-              0.75,
-              Color.kMediumPurple))),
 
   GRADIENT_COM(
       LEDPattern.gradient(
