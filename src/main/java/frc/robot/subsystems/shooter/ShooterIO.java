@@ -1,13 +1,13 @@
 public interface ShooterIO {
   @AutoLog
   class ShooterIOInputs {
-    public double shooterLeftVelocityRadPerSec;
-    public double shooterLeftAppliedVolts;
-    public double shooterLeftCurrentAmps;
-    public double shooterRightVelocityRadPerSec;
-    public double shooterRightAppliedVolts;
-    public double shooterRightCurrentAmps;
-    public double distanceFromSpeaker;
+    public double shooterLeaderVelocityRadPerSec;
+    public double shooterLeaderAppliedVolts;
+    public double shooterLeaderCurrentAmps;
+    public double shooterFollowerVelocityRadPerSec;
+    public double shooterFollowerAppliedVolts;
+    public double shooterFollowerCurrentAmps;
+    public double distanceFromHub;
     public double ShootingAngle;
   }
 
