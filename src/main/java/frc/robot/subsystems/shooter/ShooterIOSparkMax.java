@@ -17,7 +17,7 @@ public class ShooterIOPhysical implements ShooterIO {
     shooterLeft = new CANSparkMax(Schematic.SHOOTER_LEFT_ID, MotorType.kBrushless);
     shooterRight = new CANSparkMax(Schematic.SHOOTER_RIGHT_ID, MotorType.kBrushless);
     shooterLeftEncoder = shooterLeft.getEncoder();
-    shooterRightEncoder = shooterLeft.getEncoder();
+    shooterRightEncoder = shooterRight.getEncoder();
     shooterLeft.setInverted(true);
     shooterRight.setInverted(false);
     shooterLeft.setIdleMode(IdleMode.kBrake);
@@ -33,9 +33,9 @@ public class ShooterIOPhysical implements ShooterIO {
 
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeftVelocityRadPerSec = shooterLeftEncoder.getVelocity();
-    inputs.shooterRightVelocityRadPerSec = shooterLeftEncoder.getVelocity();
+    inputs.shooterRightVelocityRadPerSec = shooterRightEncoder.getVelocity();
     inputs.shooterLeftAppliedVolts = shooterLeft.getBusVoltage() * shooterLeft.getAppliedOutput();
-    inputs.shooterLeftCurrentAmps = shooterLeft.getOutputCurrent();
+    inputs.shooterLeftCurrentAmps = shooterRight.getOutputCurrent();
     inputs.shooterRightAppliedVolts =
         shooterRight.getAppliedOutput() * shooterRight.getBusVoltage();
     inputs.shooterRightCurrentAmps = shooterRight.getOutputCurrent();
