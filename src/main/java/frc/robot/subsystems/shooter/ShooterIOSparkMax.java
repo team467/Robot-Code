@@ -25,7 +25,7 @@ public class ShooterIOSparkMax implements ShooterIO {
                 .idleMode(IdleMode.kBrake)
                 .voltageCompensation(12)
                 .smartCurrentLimit(30);
-        config.follow(leader.getDeviceId());
+        config.follow(leader.getDeviceId(), true);
 
         EncoderConfig enc = new EncoderConfig();
         enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
@@ -33,15 +33,6 @@ public class ShooterIOSparkMax implements ShooterIO {
         config.apply(enc);
 
         leader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-        follower.configure(
-            new SparkMaxConfig()
-                .inverted(true)
-                .idleMode(IdleMode.kBrake)
-                .voltageCompensation(12)
-                .smartCurrentLimit(30),
-            ResetMode.kResetSafeParameters,
-            PersistMode.kPersistParameters);
 
         leaderEncoder = leader.getEncoder();
         followerEncoder = follower.getEncoder();
