@@ -1,59 +1,67 @@
 package frc.robot.subsystems.shooter;
 
-import com.revrobotics.spark.*;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
+import static frc.robot.subsystems.shooter.ShooterConstants.*;
+
 import com.revrobotics.RelativeEncoder;
-import edu.wpi.first.math.util.Units;
-import frc.robot.Schematic;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLimitSwitch;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.EncoderConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
-public class
-ShooterIOPhysical implements ShooterIO {
-  private final CANSparkMax shooterLeader;
-  private final CANSparkMax shooterFollower;
+public class ShooterIOSparkMax implements ShooterIO {
 
-  private final RelativeEncoder shooterLeaderEncoder;
-  private final RelativeEncoder shooterFollowerEncoder;
-  double rotsToRads = Units.rotationsToRadians(1);
+    private final SparkMax leader;
+    private final SparkMax follower;
+    private final RelativeEncoder leaderEncoder;
+    private final RelativeEncoder followerEncoder;
 
-  public ShooterIOPhysical() {
-    shooterLeader = new CANSparkMax(Schematic.SHOOTER_LEFT_ID, MotorType.kBrushless);
-    shooterFollower = new CANSparkMax(Schematic.SHOOTER_RIGHT_ID, MotorType.kBrushless);
-    shooterLeader = shooterLeft.getEncoder();
-    shooterFollower = shooterRight.getEncoder();
-    shooterLeader.setInverted(true);
-    shooterFollower.setInverted(false);
-    shooterLeader.setIdleMode(IdleMode.kBrake);
-    shooterFollower.setIdleMode(IdleMode.kBrake);
-    shooterLeaderEncoder.setVelocityConversionFactor(rotsToRads / 60);
-    shooterFollowerEncoder.setVelocityConversionFactor(rotsToRads / 60);
-    shooterLeaderEncoder.setPositionConversionFactor(rotsToRads);
-    shooterFollowerEncoder.setPositionConversionFactor(rotsToRads);
+    public ShooterIOSparkMax() {
+        leader = new SparkMax(LEADER_MOTOR_ID, MotorType.kBrushless);
+        follower = new SparkMax(FOLLOWER_MOTOR_ID, MotorType.kBrushless);
 
-    shooterLeader.setSmartCurrentLimit(35);
-    shooterFollower.setSmartCurrentLimit(35);
+        var config = new SparkMaxConfig();
+        config.inverted(false)
+                .idleMode(IdleMode.kBrake)
+                .voltageCompensation(12)
+                .smartCurrentLimit(30);
+        config.follow(leader.getDeviceId());
 
-    shooterLeader.addFollower(shooterFollower);
-  }
+        EncoderConfig enc = new EncoderConfig();
+        enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
+        enc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
+        config.apply(enc);
 
-  public void updateInputs(ShooterIOInputs inputs) {
-    inputs.shooterLeaderVelocityRadPerSec = shooterLeaderEncoder.getVelocity();
-    inputs.shooterFollowerVelocityRadPerSec = shooterFollowerEncoder.getVelocity();
-    inputs.shooterLeaderAppliedVolts =
-        shooterLeader.getBusVoltage() * shooterLeader.getAppliedOutput();
-    inputs.shooterLeaderCurrentAmps = shooterLeader.getOutputCurrent();
-    inputs.shooterFollowerAppliedVolts =
-        shooterFollower.getAppliedOutput() * shooterFollower.getBusVoltage();
-    inputs.shooterFollowerCurrentAmps = shooterFollower.getOutputCurrent();
-  }
+        leader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-  public void setShooterVoltage(double volts) {
-    shooterLeader.setVoltage(volts);
-  }
+        leaderEncoder = leader.getEncoder();
+        followerEncoder = follower.getEncoder();
+    }
 
-  public void setShooterVelocity(double velocity) {
-    shooterLeader.set(velocity);
-    shooterFollower.set(velocity);
-  }
+    @Override
+    public void updateInputs(ShooterIOInputs inputs) {
+        inputs.shooterLeaderCurrentAmps = leader.getOutputCurrent();
+        inputs.shooterLeaderAppliedVolts = leader.getBusVoltage() * leader.getAppliedOutput();
+        inputs.shooterLeaderVelocityRadPerSec = leaderEncoder.getVelocity();
+        inputs.shooterFollowerCurrentAmps = follower.getOutputCurrent();
+        inputs.shooterFollowerAppliedVolts = follower.getBusVoltage() * follower.getAppliedOutput();
+        inputs.shooterFollowerVelocityRadPerSec = followerEncoder.getVelocity();
+    }
+
+    public void setPercent(double percent) {
+        leader.set(percent);
+        follower.set(percent);
+    }
+
+    public void setVoltage(double volts) {
+        leader.setVoltage(volts);
+    }
+
+    public void stop() {
+        leader.set(0);
+        follower.set(0);
+    }
 }
