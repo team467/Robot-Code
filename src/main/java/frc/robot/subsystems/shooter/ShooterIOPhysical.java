@@ -1,3 +1,6 @@
+package frc.robot.subsystems.shooter;
+
+import com.revrobotics.spark.*;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -5,7 +8,8 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Schematic;
 
-public class ShooterIOPhysical implements ShooterIO {
+public class
+ShooterIOPhysical implements ShooterIO {
   private final CANSparkMax shooterLeader;
   private final CANSparkMax shooterFollower;
 
@@ -14,7 +18,7 @@ public class ShooterIOPhysical implements ShooterIO {
   double rotsToRads = Units.rotationsToRadians(1);
 
   public ShooterIOPhysical() {
-    shooterLeader= new CANSparkMax(Schematic.SHOOTER_LEFT_ID, MotorType.kBrushless);
+    shooterLeader = new CANSparkMax(Schematic.SHOOTER_LEFT_ID, MotorType.kBrushless);
     shooterFollower = new CANSparkMax(Schematic.SHOOTER_RIGHT_ID, MotorType.kBrushless);
     shooterLeader = shooterLeft.getEncoder();
     shooterFollower = shooterRight.getEncoder();
@@ -29,12 +33,15 @@ public class ShooterIOPhysical implements ShooterIO {
 
     shooterLeader.setSmartCurrentLimit(35);
     shooterFollower.setSmartCurrentLimit(35);
+
+    shooterLeader.addFollower(shooterFollower);
   }
 
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeaderVelocityRadPerSec = shooterLeaderEncoder.getVelocity();
     inputs.shooterFollowerVelocityRadPerSec = shooterFollowerEncoder.getVelocity();
-    inputs.shooterLeaderAppliedVolts = shooterLeader.getBusVoltage() * shooterLeader.getAppliedOutput();
+    inputs.shooterLeaderAppliedVolts =
+        shooterLeader.getBusVoltage() * shooterLeader.getAppliedOutput();
     inputs.shooterLeaderCurrentAmps = shooterLeader.getOutputCurrent();
     inputs.shooterFollowerAppliedVolts =
         shooterFollower.getAppliedOutput() * shooterFollower.getBusVoltage();
@@ -42,12 +49,11 @@ public class ShooterIOPhysical implements ShooterIO {
   }
 
   public void setShooterVoltage(double volts) {
-    shooterLeft.setVoltage(volts);
-    shooterRight.setVoltage(volts);
+    shooterLeader.setVoltage(volts);
   }
 
   public void setShooterVelocity(double velocity) {
-    shooterLeft.set(velocity);
-    shooterRight.set(velocity);
+    shooterLeader.set(velocity);
+    shooterFollower.set(velocity);
   }
 }

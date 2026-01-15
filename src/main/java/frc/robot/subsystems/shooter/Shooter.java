@@ -51,7 +51,7 @@ public class Shooter extends SubsystemBase {
       io.setShooterVoltage(
           shooterFeedforward.calculate(currentVelocitySetpoint)
               + shooterFeedback.calculate(
-                  inputs.shooterLeftVelocityRadPerSec, currentVelocitySetpoint));
+                  inputs.shooterLeaderVelocityRadPerSec, currentVelocitySetpoint));
     }
     Logger.recordOutput("Shooter/setPointVelocity", shooterFeedback.getSetpoint());
     Logger.recordOutput("Shooter/error", shooterFeedback.getVelocityError());
