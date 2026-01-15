@@ -34,6 +34,15 @@ public class ShooterIOSparkMax implements ShooterIO {
 
         leader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+        follower.configure(
+            new SparkMaxConfig()
+                .inverted(true)
+                .idleMode(IdleMode.kBrake)
+                .voltageCompensation(12)
+                .smartCurrentLimit(30),
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters);
+
         leaderEncoder = leader.getEncoder();
         followerEncoder = follower.getEncoder();
     }
