@@ -10,13 +10,16 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.controller.PIDController;
 
 public class ShooterIOSparkMax implements ShooterIO {
 
   private final SparkMax leader;
   private final SparkMax follower;
+  private final PIDController pidController = new PIDController(PID_P, PID_I, PID_D);
   private final RelativeEncoder leaderEncoder;
   private final RelativeEncoder followerEncoder;
+  private double setpointRPM = 0;
 
   public ShooterIOSparkMax() {
     leader = new SparkMax(LEADER_MOTOR_ID, MotorType.kBrushless);
@@ -59,5 +62,13 @@ public class ShooterIOSparkMax implements ShooterIO {
   public void stop() {
     leader.set(0);
     follower.set(0);
+  }
+
+  public void setTargetVelocity(double setpoint) {
+    this.setpointRPM = setpoint;
+  }
+
+  public void goToSetpoint() {
+    leader.set(pidController.calculate(leaderEncoder.getVelocity(), setpointRPM));
   }
 }
