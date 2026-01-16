@@ -50,24 +50,27 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.shooterFollowerVelocityRadPerSec = followerEncoder.getVelocity();
   }
 
+  @Override
   public void setPercent(double percent) {
     leader.set(percent);
-    follower.set(percent);
   }
 
+  @Override
   public void setVoltage(double volts) {
     leader.setVoltage(volts);
   }
 
+  @Override
   public void stop() {
     leader.set(0);
-    follower.set(0);
   }
 
+  @Override
   public void setTargetVelocity(double setpoint) {
     this.setpointRPM = setpoint;
   }
 
+  @Override
   public void goToSetpoint() {
     leader.set(pidController.calculate(leaderEncoder.getVelocity(), setpointRPM));
   }
