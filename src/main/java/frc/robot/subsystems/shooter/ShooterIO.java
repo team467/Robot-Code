@@ -15,15 +15,11 @@ public interface ShooterIO {
     public double shooterFollowerCurrentAmps;
   }
 
-  default void updateInputs(ShooterIOInputs inputs) {
-  }
+  default void updateInputs(ShooterIOInputs inputs) {}
 
-  default void setPercent(double percent) {
-  }
+  default void setPercent(double percent) {}
 
-  default void setVoltage(double volts) {
-  }
+  default void setVoltage(double volts) {}
 
-  default void stop() {
-  }
+  default void stop() {}
 }
