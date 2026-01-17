@@ -103,7 +103,8 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
-
+    autoChooser.addOption("test path", drive.getAutonomousCommand("test path"));
+    autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     // Drive SysId
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
