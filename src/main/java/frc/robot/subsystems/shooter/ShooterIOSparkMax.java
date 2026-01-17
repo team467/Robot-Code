@@ -28,8 +28,12 @@ public class ShooterIOSparkMax implements ShooterIO {
     follower = new SparkMax(FOLLOWER_MOTOR_ID, MotorType.kBrushless);
     follower2 = new SparkMax(FOLLOWER_MOTOR_ID, MotorType.kBrushless);
 
-    var config = new SparkMaxConfig();
-    config.inverted(false).idleMode(IdleMode.kBrake).voltageCompensation(12).smartCurrentLimit(30);
+    var leaderConfig = new SparkMaxConfig();
+      leaderConfig
+          .inverted(false)
+          .idleMode(IdleMode.kBrake)
+          .voltageCompensation(12)
+          .smartCurrentLimit(30);
 
     var followerConfig = new SparkMaxConfig();
     followerConfig
@@ -51,9 +55,9 @@ public class ShooterIOSparkMax implements ShooterIO {
     EncoderConfig enc = new EncoderConfig();
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
     enc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
-    config.apply(enc);
+    leaderConfig.apply(enc);
 
-    leader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    leader.configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     leaderEncoder = leader.getEncoder();
     followerEncoder = follower.getEncoder();
