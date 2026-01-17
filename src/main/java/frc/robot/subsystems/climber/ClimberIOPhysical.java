@@ -69,7 +69,7 @@ public class ClimberIOPhysical implements ClimberIO {
     inputs.appliedVolts = spark.getBusVoltage() * spark.getAppliedOutput();
     inputs.currentAmps = spark.getOutputCurrent();
     inputs.targetRotation = targetRotation;
-    inputs.atTargetRotation = Math.abs(targetRotation - inputs.positionDegrees) < TOLERANCE;
+    inputs.atTargetRotation = isCalibrated && Math.abs(targetRotation - inputs.positionDegrees) < TOLERANCE;
     inputs.limitSwitch = !limitSwitch.get();
 
     if (inputs.limitSwitch) {
