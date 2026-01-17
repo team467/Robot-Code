@@ -10,6 +10,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.GeomUtils;
 import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
@@ -24,6 +25,11 @@ import org.littletonrobotics.junction.AutoLogOutput;
 public class AlignToHub extends Command {
   private final Drive drive;
   private final Supplier<Pose2d> poseSupplier;
+  private final Supplier<Double> leftXSupplier;
+  private final Supplier<Double> leftYSupplier;
+  private final Supplier<Pose2d> robotOrientation;
+  private final Translation2d targetPosition;
+  private final Supplier<Boolean> robotRelativeOverride;
 
   private boolean running = false;
   private final ProfiledPIDController driveController =
@@ -91,6 +97,7 @@ public class AlignToHub extends Command {
   }
 
   public AlignToHub(Drive drive, double deltaXMeters, double deltaYMeters, double deltaThetaRad) {
+    
     this(
         drive,
         () ->
@@ -176,7 +183,10 @@ public class AlignToHub extends Command {
 
     // Get current and target pose
     var currentPose = drive.getPose();
-    var targetPose = new Pose2d(currentPose.getTranslation(), poseSupplier.get().getRotation()); //Changed to disregard distance to Hub
+    var targetPose =
+        new Pose2d(
+            currentPose.getTranslation(),
+            poseSupplier.get().getRotation()); // Changed to disregard distance to Hub
 
     // Calculate drive speed
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
@@ -201,7 +211,19 @@ public class AlignToHub extends Command {
             .getTranslation();
     drive.runVelocity(
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            driveVelocity.getX(), driveVelocity.getY(), thetaVelocity, currentPose.getRotation()));
+            0,
+            0,
+            thetaVelocity,
+            currentPose
+                .getRotation())); // Changed drive controller to value 0 so robot only rotates
+    Rotation2d targetAngle =
+        new Pose2d(
+                robotOrientation.get().getTranslation(),
+                AllianceFlipUtil.apply(targetPosition)
+                    .minus(robotOrientation.get().getTranslation())
+                    .getAngle()
+                    .minus(Rotation2d.fromDegrees(180)))
+            .getRotation();
   }
 
   @Override
