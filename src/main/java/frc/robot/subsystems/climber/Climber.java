@@ -10,6 +10,7 @@ public class Climber extends SubsystemBase {
 
   public final ClimberIO io;
   private final ClimberIOInputsAutoLogged inputs;
+  private boolean rotateToTarget = false;
 
   public Climber(ClimberIO io) {
     this.io = io;
@@ -20,7 +21,9 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
-    io.goToRotation();
+    if (rotateToTarget) {
+      io.goToRotation();
+    }
   }
 
   public boolean atTargetRotation() {
@@ -30,6 +33,7 @@ public class Climber extends SubsystemBase {
   public Command toRotation(double degrees) {
     return Commands.run(
         () -> {
+          rotateToTarget = true;
           io.setRotation(degrees);
         },
         this);
@@ -38,6 +42,7 @@ public class Climber extends SubsystemBase {
   public Command toRotation(DoubleSupplier degrees) {
     return Commands.run(
         () -> {
+          rotateToTarget = true;
           io.setRotation(degrees.getAsDouble());
         },
         this);
@@ -46,6 +51,7 @@ public class Climber extends SubsystemBase {
   public Command runPercent(double percent) {
     return Commands.run(
         () -> {
+          rotateToTarget = false;
           io.setPercent(percent);
         },
         this);
