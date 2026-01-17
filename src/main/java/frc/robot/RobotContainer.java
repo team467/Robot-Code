@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
@@ -139,6 +140,19 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
+    driverController
+        .leftBumper()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> driverController.getLeftX(),
+                () -> driverController.getLeftY(),
+                () ->
+                    AllianceFlipUtil.apply(
+                            aprilTagLayout.getTagPose(9).get().toPose2d().getTranslation())
+                        .minus(drive.getPose().getTranslation())
+                        .getAngle()
+                        .minus(Rotation2d.fromDegrees(180))));
 
     // Lock to 0° when A button is held
 
