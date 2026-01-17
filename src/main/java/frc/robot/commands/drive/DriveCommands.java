@@ -21,8 +21,10 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import edu.wpi.first.wpilibj.Timer;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -34,6 +36,7 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.75; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+  //private static final String gameData;
 
   private DriveCommands() {}
 
@@ -57,6 +60,53 @@ public class DriveCommands {
         .transformBy(new Transform2d(linearMagnitude, 0.0, Rotation2d.kZero))
         .getTranslation();
   }
+
+//  public static Command startFlywheelAllianceShift(String gameData){
+//     Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+//     boolean received = false;
+//     Timer timer = new Timer();
+//     timer.start();
+//     while(received == false) {
+//        gameData = DriverStation.getGameSpecificMessage();
+//        if(gameData.length() != 0) {
+//          received = true;
+//        }
+//     }
+//     switch (gameData.charAt(0))
+//   {
+//     case 'B':
+//       if (alliance.get() == DriverStation.Alliance.Blue) {
+//         if(timer.hasElapsed(50) || timer.hasElapsed(100)) {
+//           //Need flywheel starter
+//       }
+//     }
+//     else if (alliance.get() == DriverStation.Alliance.Red) {
+//       if (timer.hasElapsed(75) || timer.hasElapsed(125)) {
+//         //Need flywheel starter
+//       }
+//       break;
+//     }
+      
+      
+//     case 'R':
+//       if (alliance.get() == DriverStation.Alliance.Red) {
+//         if(timer.hasElapsed(50) || timer.hasElapsed(100)) {
+//           //Need flywheel starter 
+//         }
+//       }
+//       else if(alliance.get() == DriverStation.Alliance.Blue){
+//         if (timer.hasElapsed(50) || timer.hasElapsed(100)) {
+//            //Need flywheel starter
+//         }
+//       }
+//       break;
+//     default :
+//       //This is corrupt data
+//       break;
+//   }
+// }
+
+
 
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
