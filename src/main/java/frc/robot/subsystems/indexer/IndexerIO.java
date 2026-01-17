@@ -10,7 +10,7 @@ public interface IndexerIO {
     public double percentOutput = 0.0;
     public double volts = 0.0;
     public double amps = 0.0;
-    // public boolean ballAtSwitch = false;
+    public boolean ballAtSwitch = false;
     // public boolean ballAtSwitch2 = false;
   }
 
@@ -22,8 +22,7 @@ public interface IndexerIO {
 
   default void stop() {}
 
-  /*default boolean isSwitchPressed() {
+  default boolean isSwitchPressed() {
     return false;
-  }*/
-
+  }
 }

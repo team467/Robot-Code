@@ -12,12 +12,13 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IndexerIOSparkMax implements IndexerIO {
 
   private final SparkMax intakeMotor;
   private final SparkMax feedUpMotor;
-  // private final DigitalInput limitSwitch;
+  private final DigitalInput limitSwitch;
   // private final DigitalInput limitSwitch2;
 
   public IndexerIOSparkMax() {
@@ -34,7 +35,7 @@ public class IndexerIOSparkMax implements IndexerIO {
 
     intakeMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    // limitSwitch = new DigitalInput(0);
+    limitSwitch = new DigitalInput(0);
     // limitSwitch2 = new DigitalInput(0);
 
   }
@@ -47,7 +48,7 @@ public class IndexerIOSparkMax implements IndexerIO {
     inputs.volts = feedUpMotor.getBusVoltage() * feedUpMotor.getAppliedOutput();
     inputs.amps = intakeMotor.getOutputCurrent();
     inputs.amps = feedUpMotor.getOutputCurrent();
-    // inputs.ballAtSwitch = isSwitchPressed();
+    inputs.ballAtSwitch = isSwitchPressed();
     // inputs.ballAtSwitch2 = isSwitchPressed();
   }
 
@@ -68,7 +69,8 @@ public class IndexerIOSparkMax implements IndexerIO {
     feedUpMotor.set(0);
   }
 
-  /*public boolean isSwitchPressed() {
+  @Override
+  public boolean isSwitchPressed() {
     return limitSwitch.get();
-  }*/
+  }
 }
