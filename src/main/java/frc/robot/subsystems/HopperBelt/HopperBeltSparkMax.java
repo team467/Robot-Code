@@ -47,7 +47,6 @@ public class HopperBeltSparkMax implements HopperBeltIO {
     motor.set(MathUtil.clamp(speed, 0.0, 1.0)); // so the is between 0 and 1, 1==100%
   }
 
-  
   /**
    * implements the stop method from interface, and sets the speed to 0, meaning it immidately stops
    */
