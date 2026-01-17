@@ -25,11 +25,11 @@ import org.littletonrobotics.junction.AutoLogOutput;
 public class AlignToHub extends Command {
   private final Drive drive;
   private final Supplier<Pose2d> poseSupplier;
-  private final Supplier<Double> leftXSupplier;
-  private final Supplier<Double> leftYSupplier;
+  // private static Supplier<Double> leftXSupplier;
+  // private static Supplier<Double> leftYSupplier;
   private final Supplier<Pose2d> robotOrientation;
   private final Translation2d targetPosition;
-  private final Supplier<Boolean> robotRelativeOverride;
+  //private static Supplier<Boolean> robotRelativeOverride;
 
   private boolean running = false;
   private final ProfiledPIDController driveController =
