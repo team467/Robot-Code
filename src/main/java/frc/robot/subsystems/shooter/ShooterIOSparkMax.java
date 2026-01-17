@@ -16,18 +16,38 @@ public class ShooterIOSparkMax implements ShooterIO {
 
   private final SparkMax leader;
   private final SparkMax follower;
+  private final SparkMax follower2;
   private final PIDController pidController = new PIDController(PID_P, PID_I, PID_D);
   private final RelativeEncoder leaderEncoder;
   private final RelativeEncoder followerEncoder;
+  private final RelativeEncoder follower2Encoder;
   private double setpointRPM = 0;
 
   public ShooterIOSparkMax() {
     leader = new SparkMax(LEADER_MOTOR_ID, MotorType.kBrushless);
     follower = new SparkMax(FOLLOWER_MOTOR_ID, MotorType.kBrushless);
+    follower2 = new SparkMax(FOLLOWER_MOTOR_ID, MotorType.kBrushless);
 
     var config = new SparkMaxConfig();
-    config.inverted(false).idleMode(IdleMode.kBrake).voltageCompensation(12).smartCurrentLimit(30);
-    config.follow(leader.getDeviceId(), true);
+      config.inverted(false)
+          .idleMode(IdleMode.kBrake)
+          .voltageCompensation(12)
+          .smartCurrentLimit(30);
+
+      var followerConfig = new SparkMaxConfig();
+      followerConfig.inverted(true)
+          .idleMode(IdleMode.kBrake)
+          .voltageCompensation(12)
+          .smartCurrentLimit(30);
+
+    var follower2Config = new SparkMaxConfig();
+    follower2Config.inverted(true)
+        .idleMode(IdleMode.kBrake)
+        .voltageCompensation(12)
+        .smartCurrentLimit(30);
+
+    followerConfig.follow(leader.getDeviceId(), true);
+    follower2Config.follow(leader.getDeviceId(), true);
 
     EncoderConfig enc = new EncoderConfig();
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
@@ -38,6 +58,7 @@ public class ShooterIOSparkMax implements ShooterIO {
 
     leaderEncoder = leader.getEncoder();
     followerEncoder = follower.getEncoder();
+    follower2Encoder = follower2.getEncoder();
   }
 
   @Override
