@@ -24,16 +24,24 @@ public class IntakeIOSparkMax implements IntakeIO {
     intakeMotor = new SparkMax(INTAKE_MOTOR_ID, MotorType.kBrushed);
     extendMotor = new SparkMax(INTAKE_EXTEND_ID, MotorType.kBrushed);
 
-    var config = new SparkMaxConfig();
-    config.inverted(false).idleMode(IdleMode.kBrake).voltageCompensation(12).smartCurrentLimit(30);
+    var intakeConfig = new SparkMaxConfig();
+    intakeConfig.inverted(false).idleMode(IdleMode.kBrake).voltageCompensation(12).smartCurrentLimit(30);
+    var extendConfig = new SparkMaxConfig();
+    extendConfig.inverted(false).idleMode(IdleMode.kBrake).voltageCompensation(12).smartCurrentLimit(30);
 
-    EncoderConfig enc = new EncoderConfig();
-    enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
-    enc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
-    config.apply(enc);
 
-    intakeMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    extendMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    EncoderConfig intakeEnc = new EncoderConfig();
+    intakeEnc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
+    intakeEnc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
+    intakeConfig.apply(intakeEnc);
+
+    EncoderConfig extendEnc = new EncoderConfig();
+    extendEnc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
+    extendEnc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
+    extendConfig.apply(extendEnc);
+
+    intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    extendMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     extendedInput = new DigitalInput(0);
   }
 
