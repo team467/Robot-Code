@@ -10,24 +10,20 @@ public interface IndexerIO {
     public double percentOutput = 0.0;
     public double volts = 0.0;
     public double amps = 0.0;
-    public boolean ballAtSwitch = false;
-    public boolean ballAtSwitch2 = false;
+    // public boolean ballAtSwitch = false;
+    // public boolean ballAtSwitch2 = false;
   }
 
-  default void updateInputs(IndexerIOInputs inputs) {
-  }
+  default void updateInputs(IndexerIOInputs inputs) {}
 
-  default void setPercent(double percent) {
-  }
+  default void setPercent(double percent) {}
 
-  default void setVoltage(double volts) {
-  }
+  default void setVoltage(double volts) {}
 
-  default void stop() {
-  }
+  default void stop() {}
 
-  default boolean isSwitchPressed() {
+  /*default boolean isSwitchPressed() {
     return false;
-  }
+  }*/
 
 }

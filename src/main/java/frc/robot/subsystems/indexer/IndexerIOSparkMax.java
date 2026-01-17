@@ -1,78 +1,74 @@
 package frc.robot.subsystems.indexer;
 
-import static frc.robot.subsystems.indexer.IndexerConstants.*;
+import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_POSITION_CONVERSION;
+import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_VELOCITY_CONVERSION;
+import static frc.robot.subsystems.indexer.IndexConstants.INDEXER_FEEDUP_ID;
+import static frc.robot.subsystems.indexer.IndexConstants.INDEXER_INTAKEMOTOR_ID;
 
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj.AnalogTrigger;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IndexerIOSparkMax implements IndexerIO {
 
-  private final SparkMax leader;
-  private final SparkMax follower;
-  private final DigitalInput limitSwitch;
-  private final DigitalInput limitSwitch2;
+  private final SparkMax intakeMotor;
+  private final SparkMax feedUpMotor;
+  // private final DigitalInput limitSwitch;
+  // private final DigitalInput limitSwitch2;
 
   public IndexerIOSparkMax() {
-    leader = new SparkMax(INDEXER_LEADER_ID, MotorType.kBrushed);
-    follower = new SparkMax(INDEXER_FOLLOWER_ID, MotorType.kBrushed);
+    intakeMotor = new SparkMax(INDEXER_INTAKEMOTOR_ID, MotorType.kBrushed);
+    feedUpMotor = new SparkMax(INDEXER_FEEDUP_ID, MotorType.kBrushed);
 
     var config = new SparkMaxConfig();
-    config.inverted(true)
-        .idleMode(IdleMode.kBrake)
-        .voltageCompensation(12)
-        .smartCurrentLimit(30);
+    config.inverted(true).idleMode(IdleMode.kBrake).voltageCompensation(12).smartCurrentLimit(30);
 
     EncoderConfig enc = new EncoderConfig();
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
     enc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
     config.apply(enc);
 
+    intakeMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    leader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    limitSwitch = new DigitalInput(0);
-    limitSwitch2 = new DigitalInput(0);
+    // limitSwitch = new DigitalInput(0);
+    // limitSwitch2 = new DigitalInput(0);
 
   }
 
   @Override
   public void updateInputs(IndexerIOInputs inputs) {
-    inputs.percentOutput = leader.get();
-    inputs.percentOutput = follower.get();
-    inputs.volts = leader.getBusVoltage() * leader.getAppliedOutput();
-    inputs.volts = follower.getBusVoltage() * follower.getAppliedOutput();
-    inputs.amps = leader.getOutputCurrent();
-    inputs.amps = follower.getOutputCurrent();
-    inputs.ballAtSwitch = isSwitchPressed();
-    inputs.ballAtSwitch2 = isSwitchPressed();
+    inputs.percentOutput = intakeMotor.get();
+    inputs.percentOutput = feedUpMotor.get();
+    inputs.volts = intakeMotor.getBusVoltage() * intakeMotor.getAppliedOutput();
+    inputs.volts = feedUpMotor.getBusVoltage() * feedUpMotor.getAppliedOutput();
+    inputs.amps = intakeMotor.getOutputCurrent();
+    inputs.amps = feedUpMotor.getOutputCurrent();
+    // inputs.ballAtSwitch = isSwitchPressed();
+    // inputs.ballAtSwitch2 = isSwitchPressed();
   }
 
   @Override
   public void setPercent(double percent) {
-    leader.set(percent);
-    //follower.set(percent);
+    intakeMotor.set(percent);
+    feedUpMotor.set(percent);
   }
 
   public void setVoltage(double volts) {
-    leader.setVoltage(volts);
-    //follower.setVoltage(volts);
-  }
-  @Override
-  public void stop() {
-    leader.set(0);
-    //follower.set(0);
+    intakeMotor.setVoltage(volts);
+    feedUpMotor.setVoltage(volts);
   }
 
-  public boolean isSwitchPressed() {
-    return limitSwitch.get();
+  @Override
+  public void stop() {
+    intakeMotor.set(0);
+    feedUpMotor.set(0);
   }
+
+  /*public boolean isSwitchPressed() {
+    return limitSwitch.get();
+  }*/
 }
