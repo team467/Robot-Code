@@ -2,14 +2,17 @@ package frc.robot.subsystems.indexer;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface IndexerIO {
+public interface  IndexerIO {
 
   @AutoLog
   class IndexerIOInputs {
 
-    public double percentOutput = 0.0;
-    public double volts = 0.0;
-    public double amps = 0.0;
+    public double indexPercentOutput = 0.0;
+    public double feedUpPercentOutput=0.0;
+    public double indexVolts = 0.0;
+    public double feedUpVolts = 0.0;
+    public double indexAmps = 0.0;
+    public double feedUpAmps = 0.0;
     public boolean ballAtSwitch = false;
     // public boolean ballAtSwitch2 = false;
   }

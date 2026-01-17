@@ -65,12 +65,12 @@ public class IndexerIOSparkMax implements IndexerIO {
 
   @Override
   public void updateInputs(IndexerIOInputs inputs) {
-    inputs.percentOutput = indexerMotor.get();
-    inputs.percentOutput = feedUpMotor.get();
-    inputs.volts = indexerMotor.getBusVoltage() * indexerMotor.getAppliedOutput();
-    inputs.volts = feedUpMotor.getBusVoltage() * feedUpMotor.getAppliedOutput();
-    inputs.amps = indexerMotor.getOutputCurrent();
-    inputs.amps = feedUpMotor.getOutputCurrent();
+    inputs.indexPercentOutput = indexerMotor.get();
+    inputs.feedUpPercentOutput = feedUpMotor.get();
+    inputs.indexVolts = indexerMotor.getBusVoltage() * indexerMotor.getAppliedOutput();
+    inputs.feedUpVolts = feedUpMotor.getBusVoltage() * feedUpMotor.getAppliedOutput();
+    inputs.indexAmps = indexerMotor.getOutputCurrent();
+    inputs.feedUpAmps = feedUpMotor.getOutputCurrent();
     inputs.ballAtSwitch = isSwitchPressed();
     // inputs.ballAtSwitch2 = isSwitchPressed();
   }
