@@ -49,8 +49,12 @@ public class Shooter extends SubsystemBase {
         this);
   }
 
-  public void setTargetVelocity(double setpoint) {
-    io.setTargetVelocity(setpoint);
+  public Command setTargetVelocity(double setpoint) {
     setpointEnabled = true;
+    return Commands.run(
+        () -> {
+          io.setTargetVelocity(setpoint);
+        },
+        this);
   }
 }
