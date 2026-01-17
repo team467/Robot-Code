@@ -13,5 +13,5 @@ public class ClimberConstants {
   public static final double CLIMBER_KI = 0.0;
   public static final double CLIMBER_KD = 0.0;
 
-  public static final double TOLERANCE = 1.0;
+  public static final double TOLERANCE = 1.0; // measured in meters
 }
