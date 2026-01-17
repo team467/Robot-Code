@@ -29,11 +29,11 @@ public class ShooterIOSparkMax implements ShooterIO {
     follower2 = new SparkMax(FOLLOWER_MOTOR_ID, MotorType.kBrushless);
 
     var leaderConfig = new SparkMaxConfig();
-      leaderConfig
-          .inverted(false)
-          .idleMode(IdleMode.kBrake)
-          .voltageCompensation(12)
-          .smartCurrentLimit(30);
+    leaderConfig
+        .inverted(false)
+        .idleMode(IdleMode.kBrake)
+        .voltageCompensation(12)
+        .smartCurrentLimit(30);
 
     var followerConfig = new SparkMaxConfig();
     followerConfig
