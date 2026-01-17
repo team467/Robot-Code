@@ -39,15 +39,6 @@ public class Climber extends SubsystemBase {
         this);
   }
 
-  public Command toRotation(DoubleSupplier degrees) {
-    return Commands.run(
-        () -> {
-          rotateToTarget = true;
-          io.setRotation(degrees.getAsDouble());
-        },
-        this);
-  }
-
   public Command runPercent(double percent) {
     return Commands.run(
         () -> {
