@@ -12,14 +12,12 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 
-
-public class HopperBeltSparkMax
-    implements HopperBeltIO { 
+public class HopperBeltSparkMax implements HopperBeltIO {
 
   private final SparkMax motor; // object controllin motor
   private final RelativeEncoder encoder; // reads motor speed
 
-  public HopperBeltSparkMax() { 
+  public HopperBeltSparkMax() {
     // Create Spark MAX for NEO 1.1 (brushless)
     motor =
         new SparkMax(
@@ -29,12 +27,12 @@ public class HopperBeltSparkMax
     // Configuration object, so we wont have to call many settlers and apply all at once
     SparkMaxConfig config = new SparkMaxConfig();
     config
-        .inverted(
-            HopperBeltConstants
-                .MOTOR_INVERTED) /** to make sure that a positive speed makes the belt move forward
-        physically. Since it’s set to true right now, the motor output
-        is flipped so that forward code still results in forward belt
-        motion. **/
+        .inverted(HopperBeltConstants.MOTOR_INVERTED)
+        /**
+         * to make sure that a positive speed makes the belt move forward physically. Since it’s set
+         * to true right now, the motor output is flipped so that forward code still results in
+         * forward belt motion. *
+         */
         .idleMode(IdleMode.kBrake) // stops motor quickly when set to 0
         .smartCurrentLimit(HopperBeltConstants.CURRENT_LIMIT); // sets maximum current amps
 
@@ -45,7 +43,7 @@ public class HopperBeltSparkMax
     encoder = motor.getEncoder();
   }
 
-  @Override 
+  @Override
   public void updateInputs(HopperBeltIOInputs inputs) {
     // Called every 20 ms by subsystem periodic
     inputs.appliedOutput = motor.getAppliedOutput(); // 0.0 -> 1.0
@@ -59,7 +57,8 @@ public class HopperBeltSparkMax
     motor.set(MathUtil.clamp(speed, 0.0, 1.0)); // so the is between 0 and 1, 1==100%
   }
 
-  @Override // implements the stop method from interface, and sets the speed to 0, meaning it immidately stops
+  @Override // implements the stop method from interface, and sets the speed to 0, meaning it
+  // immidately stops
   public void stop() {
     motor.set(0.0);
   }

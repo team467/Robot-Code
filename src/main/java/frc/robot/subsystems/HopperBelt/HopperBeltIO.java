@@ -9,12 +9,9 @@ public interface HopperBeltIO {
   // Set motor speed from 0.0 to 1.0
   void setSpeed(double speed);
 
-  /**
-   * Stop the motor
-   */
+  /** Stop the motor */
   void stop();
 
- 
   @AutoLog
   class HopperBeltIOInputs {
     public double appliedOutput = 0.0;
