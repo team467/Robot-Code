@@ -8,7 +8,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.PIDController;
 
@@ -58,8 +57,10 @@ public class ShooterIOSparkMax implements ShooterIO {
     leaderConfig.apply(enc);
 
     leader.configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    follower.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    follower2.configure(follower2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    follower.configure(
+        followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    follower2.configure(
+        follower2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     leaderEncoder = leader.getEncoder();
     followerEncoder = follower.getEncoder();
