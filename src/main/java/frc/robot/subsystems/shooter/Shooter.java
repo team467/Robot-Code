@@ -15,11 +15,11 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    
+
     if (setpointEnabled) {
       io.goToSetpoint();
     }
-    
+
     Logger.processInputs("Shooter", inputs);
   }
 
@@ -42,6 +42,4 @@ public class Shooter extends SubsystemBase {
     io.setTargetVelocity(setpoint);
     setpointEnabled = true;
   }
-
-  
 }
