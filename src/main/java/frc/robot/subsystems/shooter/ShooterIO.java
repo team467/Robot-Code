@@ -10,9 +10,14 @@ public interface ShooterIO {
     public double shooterLeaderVelocityRadPerSec;
     public double shooterLeaderAppliedVolts;
     public double shooterLeaderCurrentAmps;
+
     public double shooterFollowerVelocityRadPerSec;
     public double shooterFollowerAppliedVolts;
     public double shooterFollowerCurrentAmps;
+
+    public double shooterFollower2VelocityRadPerSec;
+    public double shooterFollower2AppliedVolts;
+    public double shooterFollower2CurrentAmps;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {}
