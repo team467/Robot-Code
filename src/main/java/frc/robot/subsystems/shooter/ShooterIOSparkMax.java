@@ -29,19 +29,18 @@ public class ShooterIOSparkMax implements ShooterIO {
     follower2 = new SparkMax(FOLLOWER_MOTOR_ID, MotorType.kBrushless);
 
     var config = new SparkMaxConfig();
-      config.inverted(false)
-          .idleMode(IdleMode.kBrake)
-          .voltageCompensation(12)
-          .smartCurrentLimit(30);
+    config.inverted(false).idleMode(IdleMode.kBrake).voltageCompensation(12).smartCurrentLimit(30);
 
-      var followerConfig = new SparkMaxConfig();
-      followerConfig.inverted(true)
-          .idleMode(IdleMode.kBrake)
-          .voltageCompensation(12)
-          .smartCurrentLimit(30);
+    var followerConfig = new SparkMaxConfig();
+    followerConfig
+        .inverted(true)
+        .idleMode(IdleMode.kBrake)
+        .voltageCompensation(12)
+        .smartCurrentLimit(30);
 
     var follower2Config = new SparkMaxConfig();
-    follower2Config.inverted(true)
+    follower2Config
+        .inverted(true)
         .idleMode(IdleMode.kBrake)
         .voltageCompensation(12)
         .smartCurrentLimit(30);
@@ -66,9 +65,14 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.shooterLeaderCurrentAmps = leader.getOutputCurrent();
     inputs.shooterLeaderAppliedVolts = leader.getBusVoltage() * leader.getAppliedOutput();
     inputs.shooterLeaderVelocityRadPerSec = leaderEncoder.getVelocity();
+
     inputs.shooterFollowerCurrentAmps = follower.getOutputCurrent();
     inputs.shooterFollowerAppliedVolts = follower.getBusVoltage() * follower.getAppliedOutput();
     inputs.shooterFollowerVelocityRadPerSec = followerEncoder.getVelocity();
+
+    inputs.shooterFollower2CurrentAmps = follower2.getOutputCurrent();
+    inputs.shooterFollower2AppliedVolts = follower2.getBusVoltage() * follower2.getAppliedOutput();
+    inputs.shooterFollower2VelocityRadPerSec = follower2Encoder.getVelocity();
   }
 
   @Override
