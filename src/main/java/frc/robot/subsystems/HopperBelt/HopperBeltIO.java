@@ -4,16 +4,17 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface HopperBeltIO {
 
-  // Update motor/sensor inputs (called every 20 ms)
   void updateInputs(HopperBeltIOInputs inputs);
 
   // Set motor speed from 0.0 to 1.0
   void setSpeed(double speed);
 
-  // Stop the motor
+  /**
+   * Stop the motor
+   */
   void stop();
 
-  // motor data
+ 
   @AutoLog
   class HopperBeltIOInputs {
     public double appliedOutput = 0.0;
