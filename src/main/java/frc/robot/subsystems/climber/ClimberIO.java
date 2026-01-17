@@ -1,3 +1,14 @@
 package frc.robot.subsystems.climber;
 
-public class ClimberIO {}
+import org.littletonrobotics.junction.AutoLog;
+
+public interface ClimberIO {
+  @AutoLog
+  class ClimberIOInputs {
+    public double volts = 0.0;
+  }
+
+  default void updateInputs(ClimberIOInputs inputs) {}
+
+  default void setVoltage(double volts) {}
+}
