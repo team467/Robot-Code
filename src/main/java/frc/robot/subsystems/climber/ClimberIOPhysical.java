@@ -11,18 +11,22 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class ClimberIOPhysical implements ClimberIO {
   private final SparkMax spark;
   private final RelativeEncoder encoder;
   private final SparkClosedLoopController controller;
+  private final DigitalInput limitSwitch;
 
+  private boolean isCalibrated = false;
   private double targetRotation;
 
   public ClimberIOPhysical() {
     spark = new SparkMax(CLIMBER_MOTOR_ID, MotorType.kBrushless);
     encoder = spark.getEncoder();
     controller = spark.getClosedLoopController();
+    limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
 
     var config = new SparkMaxConfig();
     config
@@ -66,6 +70,13 @@ public class ClimberIOPhysical implements ClimberIO {
     inputs.currentAmps = spark.getOutputCurrent();
     inputs.targetRotation = targetRotation;
     inputs.atTargetRotation = Math.abs(targetRotation - inputs.positionDegrees) < TOLERANCE;
+    inputs.limitSwitch = !limitSwitch.get();
+
+    if (inputs.limitSwitch) {
+      this.isCalibrated = true;
+      encoder.setPosition(CALIBRATION_POSITION_DEGREES);
+    }
+    inputs.isCalibrated = this.isCalibrated;
   }
 
   @Override
@@ -80,6 +91,10 @@ public class ClimberIOPhysical implements ClimberIO {
 
   @Override
   public void goToRotation() {
-    controller.setReference(this.targetRotation, SparkBase.ControlType.kPosition);
+    if (!isCalibrated) {
+      setPercent(CALIBRATION_PERCENT);
+    } else {
+      controller.setReference(this.targetRotation, SparkBase.ControlType.kPosition);
+    }
   }
 }

@@ -11,6 +11,8 @@ public interface ClimberIO {
     public double currentAmps = 0.0;
     public double targetRotation = 0.0;
     public boolean atTargetRotation = false;
+    public boolean limitSwitch = false;
+    public boolean isCalibrated = false;
   }
 
   default void updateInputs(ClimberIOInputs inputs) {}

@@ -13,5 +13,10 @@ public class ClimberConstants {
   public static final double CLIMBER_KI = 0.0;
   public static final double CLIMBER_KD = 0.0;
 
-  public static final double TOLERANCE = 1.0; // measured in meters
+  public static final double TOLERANCE = 1.0; // measured in degrees
+
+  // Calibration constants
+  public static final int LIMIT_SWITCH_ID = 0;
+  public static final double CALIBRATION_POSITION_DEGREES = 0.0; // position when limit switch is hit
+  public static final double CALIBRATION_PERCENT = -0.15; // slow speed to find limit switch
 }

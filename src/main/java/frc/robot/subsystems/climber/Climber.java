@@ -60,4 +60,12 @@ public class Climber extends SubsystemBase {
   public double getPositionDegrees() {
     return inputs.positionDegrees;
   }
+
+  public boolean isCalibrated() {
+    return inputs.isCalibrated;
+  }
+
+  public boolean limitSwitchPressed() {
+    return inputs.limitSwitch;
+  }
 }
