@@ -5,10 +5,19 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ClimberIO {
   @AutoLog
   class ClimberIOInputs {
-    public double volts = 0.0;
+    public double positionDegrees = 0.0;
+    public double velocityDegreesPerSec = 0.0;
+    public double appliedVolts = 0.0;
+    public double currentAmps = 0.0;
+    public double targetRotation = 0.0;
+    public boolean atTargetRotation = false;
   }
 
   default void updateInputs(ClimberIOInputs inputs) {}
 
-  default void setVoltage(double volts) {}
+  default void setPercent(double percent) {}
+
+  default void setRotation(double degrees) {}
+
+  default void goToRotation() {}
 }
