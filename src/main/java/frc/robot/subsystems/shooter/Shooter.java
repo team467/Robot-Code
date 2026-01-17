@@ -29,6 +29,7 @@ public class Shooter extends SubsystemBase {
     return Commands.runOnce(
         () -> {
           io.stop();
+          setpointEnabled = false;
         },
         this);
   }
