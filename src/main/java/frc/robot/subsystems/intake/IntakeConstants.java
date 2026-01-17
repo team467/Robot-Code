@@ -1,36 +1,16 @@
 package frc.robot.subsystems.intake;
 
-import frc.robot.Constants;
-
 public class IntakeConstants {
 
-  public static final double ENCODER_POSITION_CONVERSION;
-  public static final double ENCODER_VELOCITY_CONVERSION;
+  public static final double INTAKE_POSITION_CONVERSION = 1;
+  public static final double INTAKE_VELOCITY_CONVERSION = 1;
 
-  public static final int INTAKE_MOTOR_ID;
-  public static final int INTAKE_EXTEND_ID;
+  public static final double EXTEND_POSITION_CONVERSION = 1;
+  public static final double EXTEND_VELOCITY_CONVERSION = 1;
 
-  static {
-    switch (Constants.getRobot()) {
-      case ROBOT_2025_COMP -> {
-        ENCODER_POSITION_CONVERSION = 0;
-        ENCODER_VELOCITY_CONVERSION = 0;
+  public static final double INTAKE_VOLTS = 3;
+  public static final double EXTEND_VOLTS = 3;
 
-        INTAKE_MOTOR_ID = 0;
-        INTAKE_EXTEND_ID = 0;
-      }
-      case ROBOT_BRIEFCASE -> {
-        ENCODER_POSITION_CONVERSION = 0;
-        ENCODER_VELOCITY_CONVERSION = 0;
-        INTAKE_MOTOR_ID = 0;
-        INTAKE_EXTEND_ID = 0;
-      }
-      default -> {
-        ENCODER_POSITION_CONVERSION = 0;
-        ENCODER_VELOCITY_CONVERSION = 0;
-        INTAKE_MOTOR_ID = 0;
-        INTAKE_EXTEND_ID = 0;
-      }
-    }
-  }
+  public static final int INTAKE_MOTOR_ID = 0;
+  public static final int INTAKE_EXTEND_ID = 1;
 }
