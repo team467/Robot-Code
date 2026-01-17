@@ -1,9 +1,12 @@
 package frc.robot.subsystems.indexer;
 
-import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_POSITION_CONVERSION;
-import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_VELOCITY_CONVERSION;
+import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_POSITION_CONVERSION;
+import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_VELOCITY_CONVERSION;
+import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_INDEX_POSITION_CONVERSION;
+import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_INDEX_VELOCITY_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.INDEXER_FEEDUP_ID;
-import static frc.robot.subsystems.indexer.IndexConstants.INDEXER_INDEXERMOTOR_ID;
+import static frc.robot.subsystems.indexer.IndexConstants.INDEXER_INDEX_MOTOR_ID;
+import static frc.robot.subsystems.indexer.IndexConstants.LIMIT_SWITCH_CHANNEL;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -22,20 +25,40 @@ public class IndexerIOSparkMax implements IndexerIO {
   // private final DigitalInput limitSwitch2;
 
   public IndexerIOSparkMax() {
-    indexerMotor = new SparkMax(INDEXER_INDEXERMOTOR_ID, MotorType.kBrushed);
+    indexerMotor = new SparkMax(INDEXER_INDEX_MOTOR_ID, MotorType.kBrushed);
     feedUpMotor = new SparkMax(INDEXER_FEEDUP_ID, MotorType.kBrushed);
 
-    var config = new SparkMaxConfig();
-    config.inverted(true).idleMode(IdleMode.kBrake).voltageCompensation(12).smartCurrentLimit(30);
+    var indexerConfig = new SparkMaxConfig();
+    var feedUpConfig = new SparkMaxConfig();
+    indexerConfig
+        .inverted(true)
+        .idleMode(IdleMode.kBrake)
+        .voltageCompensation(12)
+        .smartCurrentLimit(30);
+    feedUpConfig
+        .inverted(true)
+        .idleMode(IdleMode.kBrake)
+        .voltageCompensation(12)
+        .smartCurrentLimit(30);
 
-    EncoderConfig enc = new EncoderConfig();
-    enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
-    enc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
-    config.apply(enc);
+    EncoderConfig indexerEnc = new EncoderConfig();
+    EncoderConfig feederUpEnc = new EncoderConfig();
 
-    indexerMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    indexerEnc.positionConversionFactor(ENCODER_INDEX_POSITION_CONVERSION);
+    feederUpEnc.positionConversionFactor(ENCODER_FEEDUP_POSITION_CONVERSION);
 
-    limitSwitch = new DigitalInput(0);
+    indexerEnc.velocityConversionFactor(ENCODER_INDEX_VELOCITY_CONVERSION);
+    feederUpEnc.velocityConversionFactor(ENCODER_FEEDUP_VELOCITY_CONVERSION);
+
+    indexerConfig.apply(indexerEnc);
+    feedUpConfig.apply(feederUpEnc);
+
+    indexerMotor.configure(
+        indexerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    feedUpMotor.configure(
+        feedUpConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    limitSwitch = new DigitalInput(LIMIT_SWITCH_CHANNEL);
     // limitSwitch2 = new DigitalInput(0);
 
   }

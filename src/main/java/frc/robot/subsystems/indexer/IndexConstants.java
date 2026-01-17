@@ -1,58 +1,17 @@
 package frc.robot.subsystems.indexer;
 
-import frc.robot.Constants;
-
 public class IndexConstants {
-  public static final double ENCODER_POSITION_CONVERSION;
-  public static final double ENCODER_VELOCITY_CONVERSION;
+  public static final double ENCODER_INDEX_POSITION_CONVERSION = 1;
+  public static final double ENCODER_INDEX_VELOCITY_CONVERSION = 1;
+  public static final double ENCODER_FEEDUP_POSITION_CONVERSION = 1;
+  public static final double ENCODER_FEEDUP_VELOCITY_CONVERSION = 1;
 
-  public static final int INDEXER_INDEXERMOTOR_ID;
-  public static final int INDEXER_FEEDUP_ID;
+  public static final int INDEXER_INDEX_MOTOR_ID = 0;
+  public static final int INDEXER_FEEDUP_ID = 1;
+  public static final int LIMIT_SWITCH_CHANNEL = 3;
 
-  public static final int INDEX_PERCENT;
-  public static final int FEEDUP_PERCENT;
-  public static final int INDEX_VOLT;
-  public static final int FEEDUP_VOLT;
-
-  static {
-    switch (Constants.getRobot()) {
-      case ROBOT_2025_COMP -> {
-        ENCODER_POSITION_CONVERSION = 0;
-        ENCODER_VELOCITY_CONVERSION = 0;
-
-        INDEX_VOLT = 0;
-        FEEDUP_VOLT = 0;
-
-        INDEX_PERCENT = 0;
-        FEEDUP_PERCENT = 0;
-
-        INDEXER_FEEDUP_ID = 0;
-        INDEXER_INDEXERMOTOR_ID = 0;
-      }
-      case ROBOT_BRIEFCASE -> {
-        ENCODER_POSITION_CONVERSION = 0;
-        ENCODER_VELOCITY_CONVERSION = 0;
-        INDEXER_FEEDUP_ID = 0;
-        INDEXER_INDEXERMOTOR_ID = 0;
-
-        INDEX_VOLT = 0;
-        FEEDUP_VOLT = 0;
-
-        INDEX_PERCENT = 0;
-        FEEDUP_PERCENT = 0;
-      }
-      default -> {
-        ENCODER_POSITION_CONVERSION = 0;
-        ENCODER_VELOCITY_CONVERSION = 0;
-        INDEXER_FEEDUP_ID = 0;
-        INDEXER_INDEXERMOTOR_ID = 0;
-
-        INDEX_VOLT = 0;
-        FEEDUP_VOLT = 0;
-
-        INDEX_PERCENT = 0;
-        FEEDUP_PERCENT = 0;
-      }
-    }
-  }
+  // public static final int INDEX_PERCENT;
+  // public static final int FEEDUP_PERCENT;
+  public static final int INDEX_VOLT = 3;
+  public static final int FEEDUP_VOLT = 3;
 }
