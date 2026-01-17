@@ -31,22 +31,22 @@ public class ShooterIOSparkMax implements ShooterIO {
     var leaderConfig = new SparkMaxConfig();
     leaderConfig
         .inverted(false)
-        .idleMode(IdleMode.kBrake)
-        .voltageCompensation(12)
-        .smartCurrentLimit(30);
+        .idleMode(IDLE_MODE)
+        .voltageCompensation(VOLTAGE_COMPENSATION)
+        .smartCurrentLimit(CURRENT_LIMIT);
 
     var followerConfig = new SparkMaxConfig();
     followerConfig
         .inverted(false)
-        .idleMode(IdleMode.kBrake)
-        .voltageCompensation(12)
-        .smartCurrentLimit(30);
+        .idleMode(IDLE_MODE)
+        .voltageCompensation(VOLTAGE_COMPENSATION)
+        .smartCurrentLimit(CURRENT_LIMIT);
 
     var follower2Config = new SparkMaxConfig();
     follower2Config
         .inverted(false)
-        .idleMode(IdleMode.kBrake)
-        .voltageCompensation(12)
+        .idleMode(IDLE_MODE)
+        .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(30);
 
     followerConfig.follow(leader.getDeviceId(), true);
