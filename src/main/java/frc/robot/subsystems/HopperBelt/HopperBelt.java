@@ -16,19 +16,13 @@ public class HopperBelt extends SubsystemBase {
     return Commands.run(() -> io.setSpeed(HopperBeltConstants.BELT_SPEED), this);
   }
 
-  // made a new command that returns the method in the sparkMax which starts the motor
   public Command stop() {
     return Commands.run(() -> io.stop(), this);
   }
-
-  // made a new command that returns the method in the sparkMax which stops the motor
 
   @Override
   public void periodic() {
 
     io.updateInputs(inputs);
   }
-
-  // updates inputs every 20 milliseconds, io object
-
 }

@@ -6,7 +6,7 @@ public interface HopperBeltIO {
 
   void updateInputs(HopperBeltIOInputs inputs);
 
-  // Set motor speed from 0.0 to 1.0
+  /** Set motor speed from 0.0 to 1.0 */
   void setSpeed(double speed);
 
   /** Stop the motor */
