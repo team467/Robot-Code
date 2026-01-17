@@ -26,7 +26,7 @@ public class ShooterIOSparkMax implements ShooterIO {
   public ShooterIOSparkMax() {
     leader = new SparkMax(LEADER_MOTOR_ID, MotorType.kBrushless);
     follower = new SparkMax(FOLLOWER_MOTOR_ID, MotorType.kBrushless);
-    follower2 = new SparkMax(FOLLOWER_MOTOR_ID, MotorType.kBrushless);
+    follower2 = new SparkMax(FOLLOWER2_MOTOR_ID, MotorType.kBrushless);
 
     var leaderConfig = new SparkMaxConfig();
     leaderConfig
