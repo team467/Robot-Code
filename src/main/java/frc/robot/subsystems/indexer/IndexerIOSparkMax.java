@@ -53,14 +53,14 @@ public class IndexerIOSparkMax implements IndexerIO {
   }
 
   @Override
-  public void setPercent(double percent) {
-    indexerMotor.set(percent);
-    feedUpMotor.set(percent);
+  public void setPercent(double indexerPercent, double feedUpPercent) {
+    indexerMotor.set(indexerPercent);
+    feedUpMotor.set(feedUpPercent);
   }
 
-  public void setVoltage(double volts) {
-    indexerMotor.setVoltage(volts);
-    feedUpMotor.setVoltage(volts);
+  public void setVoltage(double indexerVolts, double feedUpVolts) {
+    indexerMotor.setVoltage(indexerVolts);
+    feedUpMotor.setVoltage(feedUpVolts);
   }
 
   @Override

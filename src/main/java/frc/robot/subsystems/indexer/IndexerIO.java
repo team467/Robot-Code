@@ -16,9 +16,9 @@ public interface IndexerIO {
 
   default void updateInputs(IndexerIOInputs inputs) {}
 
-  default void setPercent(double percent) {}
+  default void setPercent(double indexPercent, double feedUpPercent) {}
 
-  default void setVoltage(double volts) {}
+  default void setVoltage(double volts, double volts2) {}
 
   default void stop() {}
 
