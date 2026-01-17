@@ -12,7 +12,7 @@ public class ShooterConstants {
 
   public static final double VOLTAGE_COMPENSATION = 12.0;
   public static final int CURRENT_LIMIT = 30;
-  public static final IdleMode IDLE_MODE = IdleMode.kBrake;
+  public static final IdleMode IDLE_MODE = IdleMode.kCoast;
 
   public static final double PID_P = 0.00005; // arbritrary values
   public static final double PID_I = 0.0000001;
