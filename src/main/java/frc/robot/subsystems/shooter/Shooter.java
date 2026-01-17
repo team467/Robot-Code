@@ -34,27 +34,27 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command setPercent(double percent) {
-    return Commands.run(
-        () -> {
-          io.setPercent(percent);
-        },
-        this);
+    return Commands.sequence(
+        Commands.runOnce(() -> setpointEnabled = false, this),
+        Commands.run(() -> io.setVoltage(percent), this)
+    );
   }
 
   public Command setVoltage(double volts) {
-    return Commands.run(
-        () -> {
-          io.setVoltage(volts);
-        },
-        this);
+    return Commands.sequence(
+        Commands.runOnce(() -> setpointEnabled = false, this),
+        Commands.run(() -> io.setVoltage(volts), this)
+    );
   }
 
   public Command setTargetVelocity(double setpoint) {
-    setpointEnabled = true;
-    return Commands.run(
-        () -> {
-          io.setTargetVelocity(setpoint);
-        },
-        this);
-  }
+   return Commands.sequence(
+       Commands.runOnce(() -> setpointEnabled = true, this),
+       Commands.runEnd(
+        () -> io.setTargetVelocity(setpoint),
+        () -> setpointEnabled = false,
+      this));
+}
+
+
 }
