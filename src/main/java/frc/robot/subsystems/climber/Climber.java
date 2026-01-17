@@ -3,7 +3,6 @@ package frc.robot.subsystems.climber;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
@@ -32,11 +31,11 @@ public class Climber extends SubsystemBase {
 
   public Command toRotation(double degrees) {
     return Commands.run(
-        () -> {
-          rotateToTarget = true;
-          io.setRotation(degrees);
-        },
-        this)
+            () -> {
+              rotateToTarget = true;
+              io.setRotation(degrees);
+            },
+            this)
         .until(() -> inputs.atTargetRotation);
   }
 
