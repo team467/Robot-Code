@@ -61,52 +61,51 @@ public class DriveCommands {
         .getTranslation();
   }
 
-//  public static Command startFlywheelAllianceShift(String gameData){
-//     Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-//     boolean received = false;
-//     Timer timer = new Timer();
-//     timer.start();
-//     while(received == false) {
-//        gameData = DriverStation.getGameSpecificMessage();
-//        if(gameData.length() != 0) {
-//          received = true;
-//        }
-//     }
-//     switch (gameData.charAt(0))
-//   {
-//     case 'B':
-//       if (alliance.get() == DriverStation.Alliance.Blue) {
-//         if(timer.hasElapsed(50) || timer.hasElapsed(100)) {
-//           //Need flywheel starter
-//       }
-//     }
-//     else if (alliance.get() == DriverStation.Alliance.Red) {
-//       if (timer.hasElapsed(75) || timer.hasElapsed(125)) {
-//         //Need flywheel starter
-//       }
-//       break;
-//     }
-      
-      
-//     case 'R':
-//       if (alliance.get() == DriverStation.Alliance.Red) {
-//         if(timer.hasElapsed(50) || timer.hasElapsed(100)) {
-//           //Need flywheel starter 
-//         }
-//       }
-//       else if(alliance.get() == DriverStation.Alliance.Blue){
-//         if (timer.hasElapsed(50) || timer.hasElapsed(100)) {
-//            //Need flywheel starter
-//         }
-//       }
-//       break;
-//     default :
-//       //This is corrupt data
-//       break;
-//   }
-// }
+ public static Command startFlywheelAllianceShift(){
+    Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+    Timer timer = new Timer();
+    timer.start();
+    if(alliance.isEmpty()) {
+      System.err.print("alliance data not found");
+      return Commands.none();
+    }
+    return Commands.sequence(
+      Commands.waitUntil(() -> DriverStation.getGameSpecificMessage().length() > 0),
+      Commands.runOnce(() -> {
+          String gameData = DriverStation.getGameSpecificMessage();
+          double gameDataTime = timer.get();
+          timer.stop();
+          double start1 = 0;
+          double start2 = 0;
+          if(gameData.charAt(0)=='B') {
+              if (alliance.get() == DriverStation.Alliance.Blue) {
+                start1 = 52;
+                start2 = 102;
+              } else if (alliance.get() == DriverStation.Alliance.Red) {
+                start1 = 77;
+                start2 = 127;
+              }
+          }
+            else if(gameData.charAt(0)=='R'){
+              if (alliance.get() == DriverStation.Alliance.Red) {
+                start1 = 52;
+                start2 = 102;
+              } else if (alliance.get() == DriverStation.Alliance.Blue) {
+                start1 = 77;
+                start2 = 127;
+              }
+            }
+        
+        Commands.waitSeconds(start1 - gameDataTime)
+        .andThen(Commands.none())
+        .schedule();
 
-
+        Commands.waitSeconds(start2 - gameDataTime)
+        .andThen(Commands.none())
+        .schedule();
+          })
+      );
+    }
 
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
