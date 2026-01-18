@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_LIMIT_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POSITION_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_EXTEND_ID;
@@ -52,7 +53,7 @@ public class IntakeIOSparkMax implements IntakeIO {
         intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     extendMotor.configure(
         intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    extendedInput = new DigitalInput(0);
+    extendedInput = new DigitalInput(EXTEND_LIMIT_ID);
   }
 
   @Override
