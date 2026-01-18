@@ -19,6 +19,8 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.leds.Leds;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -36,6 +38,7 @@ public class RobotContainer {
   private Vision vision;
   private Leds leds;
   private final Orchestrator orchestrator;
+  private Shooter shooter;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -65,6 +68,7 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1));
           leds = new Leds();
+
         }
 
         case ROBOT_SIMBOT -> {
@@ -81,6 +85,7 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
+          Shooter shooter = new Shooter(new ShooterIOSparkMax());
 
           //           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
@@ -153,6 +158,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+
+    driverController.x().onTrue(shooter.setVoltage(5.0)).onFalse(shooter.stop());
   }
 
   /**
