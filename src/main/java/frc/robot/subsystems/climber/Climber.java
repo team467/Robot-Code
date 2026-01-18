@@ -46,6 +46,13 @@ public class Climber extends SubsystemBase {
           io.setPercent(percent);
         },
         this);
+
+
+
+  }
+
+  public Command ogPos(double degrees){
+    return Commands.run(()->{io.setRotation(0);});
   }
 
   public double getPositionDegrees() {
