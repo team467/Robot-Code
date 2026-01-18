@@ -52,7 +52,7 @@ public class IntakeIOSparkMax implements IntakeIO {
     intakeMotor.configure(
         intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     extendMotor.configure(
-        intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        extendConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     extendedInput = new DigitalInput(EXTEND_LIMIT_ID);
   }
 
