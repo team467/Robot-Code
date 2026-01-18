@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-import edu.wpi.first.wpilibj.Timer;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -36,7 +35,7 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.75; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
-  //private static final String gameData;
+  // private static final String gameData;
 
   private DriveCommands() {}
 
@@ -61,51 +60,42 @@ public class DriveCommands {
         .getTranslation();
   }
 
- public static Command startFlywheelAllianceShift(){
-    Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-    Timer timer = new Timer();
-    timer.start();
-    if(alliance.isEmpty()) {
-      System.err.print("alliance data not found");
-      return Commands.none();
-    }
+  public static Command startFlywheelAllianceShift() {
     return Commands.sequence(
-      Commands.waitUntil(() -> DriverStation.getGameSpecificMessage().length() > 0),
-      Commands.runOnce(() -> {
-          String gameData = DriverStation.getGameSpecificMessage();
-          double gameDataTime = timer.get();
-          timer.stop();
-          double start1 = 0;
-          double start2 = 0;
-          if(gameData.charAt(0)=='B') {
-              if (alliance.get() == DriverStation.Alliance.Blue) {
-                start1 = 52;
-                start2 = 102;
-              } else if (alliance.get() == DriverStation.Alliance.Red) {
-                start1 = 77;
-                start2 = 127;
+        Commands.waitUntil(() -> DriverStation.getGameSpecificMessage().length() > 0),
+        Commands.runOnce(
+            () -> {
+              Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+              String gameData = DriverStation.getGameSpecificMessage();
+              double gameDataTime = Timer.getMatchTime();
+              if (alliance.isEmpty()) {
+                System.err.print("alliance data not found");
+                return;
               }
-          }
-            else if(gameData.charAt(0)=='R'){
-              if (alliance.get() == DriverStation.Alliance.Red) {
-                start1 = 52;
-                start2 = 102;
-              } else if (alliance.get() == DriverStation.Alliance.Blue) {
-                start1 = 77;
-                start2 = 127;
+              double start1 = 0;
+              double start2 = 0;
+              if (gameData.charAt(0) == 'B') {
+                if (alliance.get() == DriverStation.Alliance.Blue) {
+                  start1 = gameDataTime - 29;
+                  start2 = gameDataTime - 79;
+                } else if (alliance.get() == DriverStation.Alliance.Red) {
+                  start1 = gameDataTime - 54;
+                  start2 = gameDataTime - 104;
+                }
+              } else if (gameData.charAt(0) == 'R') {
+                if (alliance.get() == DriverStation.Alliance.Red) {
+                  start1 = gameDataTime - 29;
+                  start2 = gameDataTime - 79;
+                } else if (alliance.get() == DriverStation.Alliance.Blue) {
+                  start1 = gameDataTime - 54;
+                  start2 = gameDataTime - 104;
+                }
               }
-            }
-        
-        Commands.waitSeconds(start1 - gameDataTime)
-        .andThen(Commands.none())
-        .schedule();
+              Commands.waitSeconds(gameDataTime - start1).andThen(Commands.none()).schedule();
 
-        Commands.waitSeconds(start2 - gameDataTime)
-        .andThen(Commands.none())
-        .schedule();
-          })
-      );
-    }
+              Commands.waitSeconds(gameDataTime - start2).andThen(Commands.none()).schedule();
+            }));
+  }
 
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
