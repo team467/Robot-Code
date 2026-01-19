@@ -88,8 +88,7 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.atSetpoint = pidController.isAtSetpoint();
 
     inputs.shooterFollower2CurrentAmps = follower2.getOutputCurrent();
-    inputs.shooterFollower2AppliedVolts = follower2.getBusVoltage() *
-    follower2.getAppliedOutput();
+    inputs.shooterFollower2AppliedVolts = follower2.getBusVoltage() * follower2.getAppliedOutput();
     inputs.shooterFollower2VelocityRadPerSec = follower2Encoder.getVelocity();
   }
 
