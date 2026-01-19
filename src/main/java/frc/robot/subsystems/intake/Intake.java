@@ -23,16 +23,26 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
   }
 
-  private void setPercent(double intakePercent, double extendPercent) {
-    io.setPercent(intakePercent, extendPercent);
+  public void setPercentIntake(double intakePercent) {
+    io.setPercentIntake(intakePercent);
   }
 
-  private void setVoltage(double intakeVolts, double extendVolts) {
-    io.setVoltage(intakeVolts, extendVolts);
+  public void setPercentExtend(double extendPercent) {
+    io.setPercentIntake(extendPercent);
   }
 
-  private void stop() {
-    io.setVoltage(0, 0);
+  public void setVoltageIntake(double intakeVolts) {
+    io.setVoltageIntake(intakeVolts);
+  }
+  public void setVoltageExtend(double extendVolts) {
+    io.setVoltageIntake(extendVolts);
+  }
+
+  public void stopIntake() {
+    io.setVoltageIntake(0);
+  }
+  public void stopExtend(){
+    io.setVoltageExtend(0);
   }
 
   private boolean isHopperExtended() {
@@ -42,41 +52,39 @@ public class Intake extends SubsystemBase {
   public Command extend() {
     return Commands.run(
         () -> {
-          if (!isHopperExtended()) {
-            setVoltage(0, EXTEND_VOLTS);
-          }
-        });
+          setVoltageExtend(EXTEND_VOLTS);
+        }).until(() -> inputs.isExtended).finallyDo(interrupted -> stopExtend());
   }
 
   public Command intake() {
     return Commands.run(
         () -> {
-          if (isHopperExtended()) {
-            setVoltage(INTAKE_VOLTS, 0);
-          }
-        });
+          setVoltageIntake(INTAKE_VOLTS);
+        }).finallyDo(interrupted -> stopIntake());
   }
 
   public Command extendAndIntake() {
-    return Commands.run(
-        () -> {
-          if (!isHopperExtended()) {
-            setVoltage(INTAKE_VOLTS, EXTEND_VOLTS);
-          }
-        });
+    return Commands.deadline(
+            extend(),
+            intake()).andThen(intake());
   }
 
-  public Command stopCommand() {
+  public Command stopIntakeCommand() {
     return Commands.run(
-        () -> {
-          stop();
-        });
+            this::stopIntake);
+  }
+  public Command stopExtendingCommand() {
+    return Commands.run(
+        this::stopExtend);
   }
 
   public Command collapse() {
     return Commands.run(
         () -> {
-          setVoltage(0, COLLAPSE_VOLTS);
+          setVoltageExtend(COLLAPSE_VOLTS);
         });
+  }
+  public Command collapseAndIntake() {
+    return Commands.deadline(collapse(), intake()).andThen(intake());
   }
 }

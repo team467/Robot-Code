@@ -74,8 +74,11 @@ public class IntakeIOSparkMax implements IntakeIO {
   }
 
   @Override
-  public void setVoltage(double intakeVolts, double extendVolts) {
+  public void setVoltageIntake(double intakeVolts) {
     intakeMotor.setVoltage(intakeVolts);
+  }
+  @Override
+  public void setVoltageExtend(double extendVolts){
     extendMotor.setVoltage(extendVolts);
   }
 
