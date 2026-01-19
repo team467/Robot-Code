@@ -9,14 +9,13 @@ import java.util.Map;
 
 public class Constants {
   // Change this temporarily to override the RobotType, e.g. RobotType.ROBOT_SIMBOT
-  private static final RobotType ROBOT_TYPE_OVERRIDE = RobotType.ROBOT_2025_COMP;
+  private static final RobotType ROBOT_TYPE_OVERRIDE = RobotType.ROBOT_SIMBOT;
   public static final boolean tuningMode = false;
 
   private static final String ROBOT_FILENAME = "/home/lvuser/robot";
   private static RobotType cachedRobotTypeFromRoborio = null;
 
   public static RobotType getRobot() {
-
     if (cachedRobotTypeFromRoborio == null) {
       cachedRobotTypeFromRoborio = readRobotTypeFromRoborio();
     }
@@ -87,8 +86,6 @@ public class Constants {
     ROBOT_2024_COMP,
     ROBOT_2025_COMP,
     ROBOT_2025_TEST,
-
-    ROBOT_2026_COMP,
     ROBOT_BRIEFCASE,
     ROBOT_SIMBOT
   }

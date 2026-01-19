@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
@@ -100,11 +101,12 @@ public class RobotContainer {
 
     orchestrator = new Orchestrator(drive);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
+    Autos autos = new Autos(drive);
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("test path", drive.getAutonomousCommand("test path"));
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
+    autoChooser.addOption("CL auto", autos.CenterLeft());
     // Drive SysId
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
