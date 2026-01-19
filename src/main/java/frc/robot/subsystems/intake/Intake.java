@@ -3,6 +3,7 @@ package frc.robot.subsystems.intake;
 import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_VOLTS;
+import static frc.robot.subsystems.intake.IntakeConstants.OUTTAKE_VOLTS;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -62,6 +63,12 @@ public class Intake extends SubsystemBase {
           setVoltageIntake(INTAKE_VOLTS);
         }).finallyDo(interrupted -> stopIntake());
   }
+  public Command outtake(){
+    return Commands.run(
+        () -> {
+          setVoltageIntake(OUTTAKE_VOLTS);
+        }).finallyDo(interrupted -> stopIntake());
+  }
 
   public Command extendAndIntake() {
     return Commands.deadline(
@@ -87,4 +94,5 @@ public class Intake extends SubsystemBase {
   public Command collapseAndIntake() {
     return Commands.deadline(collapse(), intake()).andThen(intake());
   }
+
 }
