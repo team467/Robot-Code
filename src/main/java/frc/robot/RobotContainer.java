@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.HopperBelt.HopperBelt;
-import frc.robot.subsystems.HopperBelt.HopperBeltSparkMax;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
@@ -84,9 +83,8 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-          hopperBelt = new HopperBelt(new HopperBeltSparkMax());
+          //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
 
-          //           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
       }
     }
@@ -157,13 +155,6 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
-    driverController
-        .x() // b
-        .onTrue(hopperBelt.start());
-    driverController
-        .a() // x
-        .onTrue(hopperBelt.stop());
   }
 
   /**
