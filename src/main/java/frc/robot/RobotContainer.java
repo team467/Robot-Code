@@ -68,7 +68,6 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1));
           leds = new Leds();
-
         }
 
         case ROBOT_SIMBOT -> {
@@ -85,7 +84,7 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-          Shooter shooter = new Shooter(new ShooterIOSparkMax());
+          this.shooter = new Shooter(new ShooterIOSparkMax());
 
           //           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
@@ -159,7 +158,7 @@ public class RobotContainer {
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController.x().onTrue(shooter.setVoltage(5.0)).onFalse(shooter.stop());
+    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
   /**

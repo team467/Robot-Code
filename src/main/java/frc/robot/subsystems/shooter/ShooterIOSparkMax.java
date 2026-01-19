@@ -1,38 +1,45 @@
 package frc.robot.subsystems.shooter;
 
+import static frc.robot.Schematic.shooterBackId;
+import static frc.robot.Schematic.shooterFrontLeftId;
+import static frc.robot.Schematic.shooterFrontRightId;
 import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.controller.PIDController;
 
 public class ShooterIOSparkMax implements ShooterIO {
 
   private final SparkMax leader;
   private final SparkMax follower;
   private final SparkMax follower2;
-  private final PIDController pidController = new PIDController(PID_P, PID_I, PID_D);
+  private SparkClosedLoopController pidController;
   private final RelativeEncoder leaderEncoder;
   private final RelativeEncoder followerEncoder;
   private final RelativeEncoder follower2Encoder;
   private double setpointRPM = 0;
 
   public ShooterIOSparkMax() {
-    leader = new SparkMax(LEADER_MOTOR_ID, MotorType.kBrushless);
-    follower = new SparkMax(FOLLOWER_MOTOR_ID, MotorType.kBrushless);
-    follower2 = new SparkMax(FOLLOWER2_MOTOR_ID, MotorType.kBrushless);
+    leader = new SparkMax(shooterBackId, MotorType.kBrushless);
+    follower = new SparkMax(shooterFrontLeftId, MotorType.kBrushless);
+    pidController = leader.getClosedLoopController();
+    follower2 = new SparkMax(shooterFrontRightId, MotorType.kBrushless);
 
     var leaderConfig = new SparkMaxConfig();
     leaderConfig
         .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
-        .smartCurrentLimit(CURRENT_LIMIT);
+        .smartCurrentLimit(CURRENT_LIMIT)
+        .apply(new ClosedLoopConfig().p(PID_P).i(PID_I).d(PID_D));
 
     var followerConfig = new SparkMaxConfig();
     followerConfig
@@ -76,9 +83,13 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.shooterFollowerCurrentAmps = follower.getOutputCurrent();
     inputs.shooterFollowerAppliedVolts = follower.getBusVoltage() * follower.getAppliedOutput();
     inputs.shooterFollowerVelocityRadPerSec = followerEncoder.getVelocity();
+    inputs.setpointRPM = setpointRPM;
+
+    inputs.atSetpoint = pidController.isAtSetpoint();
 
     inputs.shooterFollower2CurrentAmps = follower2.getOutputCurrent();
-    inputs.shooterFollower2AppliedVolts = follower2.getBusVoltage() * follower2.getAppliedOutput();
+    inputs.shooterFollower2AppliedVolts = follower2.getBusVoltage() *
+    follower2.getAppliedOutput();
     inputs.shooterFollower2VelocityRadPerSec = follower2Encoder.getVelocity();
   }
 
@@ -104,6 +115,6 @@ public class ShooterIOSparkMax implements ShooterIO {
 
   @Override
   public void goToSetpoint() {
-    leader.set(pidController.calculate(leaderEncoder.getVelocity(), setpointRPM));
+    pidController.setSetpoint(setpointRPM, ControlType.kVelocity);
   }
 }
