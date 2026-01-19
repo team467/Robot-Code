@@ -7,6 +7,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_EXTEND_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_MOTOR_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_POSITION_CONVERSION;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -21,10 +22,12 @@ public class IntakeIOSparkMax implements IntakeIO {
   private final SparkMax intakeMotor;
   private final SparkMax extendMotor;
   private final DigitalInput extendedInput;
+  private final RelativeEncoder extendMotorEncoder;
 
   public IntakeIOSparkMax() {
     intakeMotor = new SparkMax(INTAKE_MOTOR_ID, MotorType.kBrushed);
     extendMotor = new SparkMax(INTAKE_EXTEND_ID, MotorType.kBrushed);
+    extendMotorEncoder = extendMotor.getEncoder();
 
     var intakeConfig = new SparkMaxConfig();
     intakeConfig
@@ -60,8 +63,9 @@ public class IntakeIOSparkMax implements IntakeIO {
   public void updateInputs(IntakeIOInputs inputs) {
     inputs.intakePercentOutput = intakeMotor.get();
     inputs.extendPercentOutput = extendMotor.get();
+    inputs.extendVelocity = extendMotorEncoder.getVelocity();
     inputs.intakeVolts = intakeMotor.getAppliedOutput();
-    inputs.extendedVolts = extendMotor.getAppliedOutput();
+    inputs.extendVolts = extendMotor.getAppliedOutput();
     inputs.intakeAmps = intakeMotor.getOutputCurrent();
     inputs.extendAmps = extendMotor.getOutputCurrent();
     inputs.isExtended = isHopperExtended();

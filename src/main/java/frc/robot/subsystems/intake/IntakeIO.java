@@ -8,10 +8,13 @@ public interface IntakeIO {
     public double intakePercentOutput = 0.0;
     public double extendPercentOutput = 0.0;
     public double intakeVolts = 0.0;
-    public double extendedVolts = 0.0;
+    public double extendVolts = 0.0;
     public double intakeAmps = 0.0;
+    public double extendVelocity = 0.0;
     public double extendAmps = 0.0;
     public boolean isExtended = false;
+
+    public boolean isStowed = false;
   }
 
   default void updateInputs(IntakeIOInputs inputs) {}
