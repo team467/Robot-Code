@@ -102,7 +102,11 @@ public class Intake extends SubsystemBase {
   }
 
   public Command extendAndIntake() {
-    return Commands.deadline(extend(), intake()).andThen(intake());
+    return Commands.run(() ->{
+          setVoltageIntake(EXTEND_VOLTS);
+          setVoltageExtend(COLLAPSE_VOLTS);
+        }).until(() -> inputs.isExtended)
+        .finallyDo(interrupted -> stopExtend()).andThen(intake());
   }
 
   public Command stopIntakeCommand() {
@@ -123,7 +127,11 @@ public class Intake extends SubsystemBase {
   }
 
   public Command collapseAndIntake() {
-    return Commands.deadline(collapse(), intake()).andThen(intake());
+    return Commands.run(() ->{
+      setVoltageIntake(INTAKE_VOLTS);
+      setVoltageExtend(COLLAPSE_VOLTS);
+    }).until(() -> !inputs.isExtended && inputs.isStowed)
+        .finallyDo(interrupted -> stopExtend()).andThen(intake());
   }
 
   public boolean isSlipping() {
