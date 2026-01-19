@@ -141,10 +141,16 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     indexer.setDefaultCommand(indexer.stopCommand());
+
     shooter.setDefaultCommand(shooter.stop());
+
     hopperBelt.setDefaultCommand(hopperBelt.stop());
+
+    climber.setDefaultCommand(climber.ogPos());
+
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -165,6 +171,9 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    driverController
+        .rightTrigger()
+        .whileTrue(Commands.parallel(shooter.setPercent(.3), shooter.setVoltage(3)));
   }
 
   /**

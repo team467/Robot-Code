@@ -25,7 +25,7 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public boolean atTargetRotation() {
+  private boolean atTargetRotation() {
     return inputs.atTargetRotation;
   }
 
@@ -46,24 +46,24 @@ public class Climber extends SubsystemBase {
           io.setPercent(percent);
         },
         this);
-
-
-
   }
 
-  public Command ogPos(double degrees){
-    return Commands.run(()->{io.setRotation(0);});
+  public Command ogPos() {
+    return Commands.run(
+        () -> {
+          io.setRotation(0);
+        });
   }
 
-  public double getPositionDegrees() {
+  private double getPositionDegrees() {
     return inputs.positionDegrees;
   }
 
-  public boolean isCalibrated() {
+  private boolean isCalibrated() {
     return inputs.isCalibrated;
   }
 
-  public boolean limitSwitchPressed() {
+  private boolean limitSwitchPressed() {
     return inputs.limitSwitch;
   }
 }
