@@ -4,6 +4,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.OUTTAKE_VOLTS;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -58,6 +59,7 @@ public class Intake extends SubsystemBase {
   public void setVoltageIntake(double intakeVolts) {
     io.setVoltageIntake(intakeVolts);
   }
+
   public void setVoltageExtend(double extendVolts) {
     io.setVoltageIntake(extendVolts);
   }
@@ -65,7 +67,8 @@ public class Intake extends SubsystemBase {
   public void stopIntake() {
     io.setVoltageIntake(0);
   }
-  public void stopExtend(){
+
+  public void stopExtend() {
     io.setVoltageExtend(0);
   }
 
@@ -75,45 +78,50 @@ public class Intake extends SubsystemBase {
 
   public Command extend() {
     return Commands.run(
-        () -> {
-          setVoltageExtend(EXTEND_VOLTS);
-        }).until(() -> inputs.isExtended).finallyDo(interrupted -> stopExtend());
+            () -> {
+              setVoltageExtend(EXTEND_VOLTS);
+            })
+        .until(() -> inputs.isExtended)
+        .finallyDo(interrupted -> stopExtend());
   }
 
   public Command intake() {
     return Commands.run(
-        () -> {
-          setVoltageIntake(INTAKE_VOLTS);
-        }).finallyDo(interrupted -> stopIntake());
+            () -> {
+              setVoltageIntake(INTAKE_VOLTS);
+            })
+        .finallyDo(interrupted -> stopIntake());
   }
-  public Command outtake(){
+
+  public Command outtake() {
     return Commands.run(
-        () -> {
-          setVoltageIntake(OUTTAKE_VOLTS);
-        }).finallyDo(interrupted -> stopIntake());
+            () -> {
+              setVoltageIntake(OUTTAKE_VOLTS);
+            })
+        .finallyDo(interrupted -> stopIntake());
   }
 
   public Command extendAndIntake() {
-    return Commands.deadline(
-            extend(),
-            intake()).andThen(intake());
+    return Commands.deadline(extend(), intake()).andThen(intake());
   }
 
   public Command stopIntakeCommand() {
-    return Commands.run(
-            this::stopIntake);
+    return Commands.run(this::stopIntake);
   }
+
   public Command stopExtendingCommand() {
-    return Commands.run(
-        this::stopExtend);
+    return Commands.run(this::stopExtend);
   }
 
   public Command collapse() {
     return Commands.run(
-        () -> {
-          setVoltageExtend(COLLAPSE_VOLTS);
-        }).until(() -> !inputs.isExtended && inputs.isStowed).finallyDo(interrupted -> stopExtend());
+            () -> {
+              setVoltageExtend(COLLAPSE_VOLTS);
+            })
+        .until(() -> !inputs.isExtended && inputs.isStowed)
+        .finallyDo(interrupted -> stopExtend());
   }
+
   public Command collapseAndIntake() {
     return Commands.deadline(collapse(), intake()).andThen(intake());
   }
@@ -121,5 +129,4 @@ public class Intake extends SubsystemBase {
   public boolean isSlipping() {
     return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts < -0.1;
   }
-
 }

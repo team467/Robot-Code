@@ -20,6 +20,7 @@ public interface IntakeIO {
   default void updateInputs(IntakeIOInputs inputs) {}
 
   default void setPercentIntake(double intakePercent) {}
+
   default void setPercentExtend(double intakePercent) {}
 
   void setVoltageIntake(double intakeVolts);

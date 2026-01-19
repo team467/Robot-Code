@@ -75,6 +75,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   public void setPercentIntake(double intakePercent) {
     intakeMotor.set(intakePercent);
   }
+
   @Override
   public void setPercentExtend(double extendPercent) {
     intakeMotor.set(extendPercent);
@@ -84,8 +85,9 @@ public class IntakeIOSparkMax implements IntakeIO {
   public void setVoltageIntake(double intakeVolts) {
     intakeMotor.setVoltage(intakeVolts);
   }
+
   @Override
-  public void setVoltageExtend(double extendVolts){
+  public void setVoltageExtend(double extendVolts) {
     extendMotor.setVoltage(extendVolts);
   }
 
