@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.subsystems.HopperBelt.HopperBelt;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
@@ -37,6 +38,7 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private Leds leds;
+  private HopperBelt hopperBelt;
   private final Orchestrator orchestrator;
   private Shooter shooter;
   private RobotState robotState = RobotState.getInstance();
@@ -86,7 +88,6 @@ public class RobotContainer {
           leds = new Leds();
           this.shooter = new Shooter(new ShooterIOSparkMax());
 
-          //           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
       }
     }

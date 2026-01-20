@@ -22,6 +22,8 @@ public class Schematic {
   public static final int shooterFrontLeftId;
   public static final int shooterFrontRightId;
   public static final int shooterBackId;
+  // hopper belt sub-system
+  public static final int hopperBeltCanId;
 
   static {
     switch (Constants.getRobot()) {
@@ -50,6 +52,7 @@ public class Schematic {
         shooterFrontLeftId = 0;
         shooterFrontRightId = 0;
         shooterBackId = 0;
+        hopperBeltCanId = 0;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -75,6 +78,7 @@ public class Schematic {
         shooterFrontLeftId = 0;
         shooterFrontRightId = 0;
         shooterBackId = 0;
+        hopperBeltCanId = 0;
       }
 
       default -> {
@@ -100,6 +104,7 @@ public class Schematic {
         shooterFrontLeftId = 0;
         shooterFrontRightId = 0;
         shooterBackId = 0;
+        hopperBeltCanId = 0;
       }
     }
   }
