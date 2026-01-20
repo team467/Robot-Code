@@ -19,6 +19,13 @@ public class Schematic {
   public static final int frontRightAbsoluteEncoderCanId;
   public static final int backRightAbsoluteEncoderCanId;
 
+  public static final int indexMotorCanId;
+  public static final int feedUpMotorCanId;
+  public static final int indexLimitSwitchDigId;
+
+  // hopper belt sub-system
+  public static final int hopperBeltCanId;
+
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2025_COMP -> {
@@ -41,6 +48,12 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 21;
         frontRightAbsoluteEncoderCanId = 19;
         backRightAbsoluteEncoderCanId = 20;
+
+        hopperBeltCanId = 0;
+
+        indexMotorCanId= 22;
+        feedUpMotorCanId = 23;
+        indexLimitSwitchDigId = 24;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -61,6 +74,10 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 0;
         frontRightAbsoluteEncoderCanId = 0;
         backRightAbsoluteEncoderCanId = 0;
+        hopperBeltCanId = 0;
+        indexMotorCanId= 22;
+        feedUpMotorCanId = 23;
+        indexLimitSwitchDigId = 24;
       }
 
       default -> {
@@ -81,6 +98,11 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 0;
         frontRightAbsoluteEncoderCanId = 0;
         backRightAbsoluteEncoderCanId = 0;
+
+        hopperBeltCanId = 0;
+        indexMotorCanId= 22;
+        feedUpMotorCanId = 23;
+        indexLimitSwitchDigId = 24;
       }
     }
   }

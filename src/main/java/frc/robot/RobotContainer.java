@@ -17,8 +17,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.subsystems.HopperBelt.HopperBelt;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -37,6 +39,7 @@ public class RobotContainer {
   private Vision vision;
   private Leds leds;
   private Indexer indexer;
+  private HopperBelt hopperBelt;
   private final Orchestrator orchestrator;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
@@ -83,7 +86,8 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-
+          //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
+          indexer = new Indexer(new IndexerIOSparkMax());
           //           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
       }
@@ -134,7 +138,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    driverController.rightBumper().whileTrue(indexer.start());
+    driverController.x().whileTrue(indexer.start());
+    indexer.setDefaultCommand(indexer.stopCommand());
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(

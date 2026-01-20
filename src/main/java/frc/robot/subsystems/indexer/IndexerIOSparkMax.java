@@ -1,5 +1,8 @@
 package frc.robot.subsystems.indexer;
 
+import static frc.robot.Schematic.feedUpMotorCanId;
+import static frc.robot.Schematic.indexLimitSwitchDigId;
+import static frc.robot.Schematic.indexMotorCanId;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_POSITION_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_VELOCITY_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_INDEX_POSITION_CONVERSION;
@@ -25,21 +28,15 @@ public class IndexerIOSparkMax implements IndexerIO {
   // private final DigitalInput limitSwitch2;
 
   public IndexerIOSparkMax() {
-    indexerMotor = new SparkMax(INDEXER_INDEX_MOTOR_ID, MotorType.kBrushed);
-    feedUpMotor = new SparkMax(INDEXER_FEEDUP_ID, MotorType.kBrushed);
+    indexerMotor = new SparkMax(indexMotorCanId, MotorType.kBrushless);
+    feedUpMotor = new SparkMax(feedUpMotorCanId, MotorType.kBrushless);
 
     var indexerConfig = new SparkMaxConfig();
     var feedUpConfig = new SparkMaxConfig();
-    indexerConfig
-        .inverted(true)
-        .idleMode(IdleMode.kBrake)
-        .voltageCompensation(12)
-        .smartCurrentLimit(30);
-    feedUpConfig
-        .inverted(true)
-        .idleMode(IdleMode.kBrake)
-        .voltageCompensation(12)
-        .smartCurrentLimit(30);
+    indexerConfig.inverted(true).idleMode(IdleMode.kBrake).voltageCompensation(12);
+    // .smartCurrentLimit(30);
+    feedUpConfig.inverted(true).idleMode(IdleMode.kBrake).voltageCompensation(12);
+    // .smartCurrentLimit(30);
 
     EncoderConfig indexerEnc = new EncoderConfig();
     EncoderConfig feederUpEnc = new EncoderConfig();
@@ -58,7 +55,7 @@ public class IndexerIOSparkMax implements IndexerIO {
     feedUpMotor.configure(
         feedUpConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    limitSwitch = new DigitalInput(LIMIT_SWITCH_CHANNEL);
+    limitSwitch = new DigitalInput(indexLimitSwitchDigId);
     // limitSwitch2 = new DigitalInput(0);
 
   }
