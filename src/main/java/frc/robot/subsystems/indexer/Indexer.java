@@ -38,7 +38,7 @@ public class Indexer extends SubsystemBase {
     io.isSwitchPressed();
   }
 
-  public Command run() {
+  public Command start() {
     return Commands.run(
         () -> {
           setVoltage(INDEX_VOLT, FEEDUP_VOLT);
