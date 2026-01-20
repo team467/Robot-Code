@@ -1,7 +1,7 @@
 // Controls the motor
 // Reads motor data every 20 ms
 // Implements the methods defined in HopperBeltIO
-package frc.robot.subsystems.hopperbelt;
+package frc.robot.subsystems.hopperbelt2;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;

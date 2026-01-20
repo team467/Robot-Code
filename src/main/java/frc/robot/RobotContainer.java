@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.hopperbelt.HopperBelt;
+import frc.robot.subsystems.hopperbelt2.HopperBelt;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;

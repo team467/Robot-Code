@@ -1,8 +1,9 @@
-package frc.robot.subsystems.hopperbelt;
+package frc.robot.subsystems.hopperbelt2;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.hopperbelt.HopperBeltIOInputsAutoLogged;
 
 public class HopperBelt extends SubsystemBase {
   private final HopperBeltIO io;

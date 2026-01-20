@@ -1,4 +1,4 @@
-package frc.robot.subsystems.hopperbelt;
+package frc.robot.subsystems.hopperbelt2;
 
 public final class HopperBeltConstants {
 
