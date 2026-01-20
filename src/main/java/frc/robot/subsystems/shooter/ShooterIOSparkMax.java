@@ -1,8 +1,8 @@
 package frc.robot.subsystems.shooter;
 
-import static frc.robot.Schematic.shooterBackId;
-import static frc.robot.Schematic.shooterFrontLeftId;
-import static frc.robot.Schematic.shooterFrontRightId;
+import static frc.robot.Schematic.shooterBackCanId;
+import static frc.robot.Schematic.shooterFrontLeftCanId;
+import static frc.robot.Schematic.shooterFrontRightCanId;
 import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import com.revrobotics.RelativeEncoder;
@@ -28,10 +28,10 @@ public class ShooterIOSparkMax implements ShooterIO {
   private double setpointRPM = 0;
 
   public ShooterIOSparkMax() {
-    leader = new SparkMax(shooterBackId, MotorType.kBrushless);
-    follower = new SparkMax(shooterFrontLeftId, MotorType.kBrushless);
+    leader = new SparkMax(shooterBackCanId, MotorType.kBrushless);
+    follower = new SparkMax(shooterFrontLeftCanId, MotorType.kBrushless);
     pidController = leader.getClosedLoopController();
-    follower2 = new SparkMax(shooterFrontRightId, MotorType.kBrushless);
+    follower2 = new SparkMax(shooterFrontRightCanId, MotorType.kBrushless);
 
     var leaderConfig = new SparkMaxConfig();
     leaderConfig

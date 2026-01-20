@@ -86,8 +86,8 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-          this.shooter = new Shooter(new ShooterIOSparkMax());
-        }
+          //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
+          //    shooter = new Shooter(new ShooterIOSparkMax());        }
       }
     }
 
@@ -158,7 +158,7 @@ public class RobotContainer {
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
+//    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
   /**
