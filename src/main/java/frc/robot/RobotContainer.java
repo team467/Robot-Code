@@ -87,7 +87,6 @@ public class RobotContainer {
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
           this.shooter = new Shooter(new ShooterIOSparkMax());
-
         }
       }
     }
