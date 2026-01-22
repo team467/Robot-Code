@@ -16,6 +16,7 @@ public class Constants {
   private static RobotType cachedRobotTypeFromRoborio = null;
 
   public static RobotType getRobot() {
+
     if (cachedRobotTypeFromRoborio == null) {
       cachedRobotTypeFromRoborio = readRobotTypeFromRoborio();
     }
@@ -86,6 +87,8 @@ public class Constants {
     ROBOT_2024_COMP,
     ROBOT_2025_COMP,
     ROBOT_2025_TEST,
+
+    ROBOT_2026_COMP,
     ROBOT_BRIEFCASE,
     ROBOT_SIMBOT
   }
