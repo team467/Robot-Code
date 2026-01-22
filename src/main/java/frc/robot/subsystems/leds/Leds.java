@@ -156,6 +156,7 @@ public class Leds extends SubsystemBase {
     // else no op for simulation
 
   }
+
   // tests led patterns from shuffleboard gui
   private void processLedPatternTestInputs() {
     try {
