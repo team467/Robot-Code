@@ -8,6 +8,7 @@ import static frc.robot.subsystems.drive.DriveConstants.*;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -128,19 +129,21 @@ public class ModuleIOTalonSpark implements ModuleIO {
 
     var driveConfig = new TalonFXConfiguration();
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    driveConfig.Slot0.kP = driveKp;
-    driveConfig.Slot0.kI = 0;
-    driveConfig.Slot0.kD = driveKd;
-    driveConfig.Slot0.kS = driveKs;
-    driveConfig.Slot0.kV = driveKv;
-    driveConfig.Slot0.kA = driveKa;
-    driveConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
     driveConfig.Feedback.SensorToMechanismRatio = driveMotorReduction;
     driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = driveMotorCurrentLimit;
     driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -driveMotorCurrentLimit;
     driveConfig.CurrentLimits.StatorCurrentLimit = driveMotorCurrentLimit;
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     driveConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    var slot0config = new Slot0Configs();
+    slot0config.kP = driveKp;
+    slot0config.kI = 0;
+    slot0config.kD = driveKd;
+    slot0config.kS = driveKs;
+    slot0config.kV = driveKv;
+    slot0config.kA = driveKa;
+    slot0config.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+    driveConfig.withSlot0(slot0config);
     PhoenixUtil.tryUntilOk(5, () -> driveTalon.getConfigurator().apply(driveConfig, 0.25));
     PhoenixUtil.tryUntilOk(5, () -> driveTalon.setPosition(0.0, 0.25));
 
