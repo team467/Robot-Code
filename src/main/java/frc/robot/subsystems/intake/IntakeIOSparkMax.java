@@ -30,8 +30,6 @@ public class IntakeIOSparkMax implements IntakeIO {
   private final PIDController pidController = new PIDController(PID_P, PID_I, PID_D);
   private double setpointRPM = 0;
 
-
-
   public IntakeIOSparkMax() {
     intakeMotor = new SparkMax(INTAKE_MOTOR_ID, MotorType.kBrushed);
     extendMotor = new SparkMax(INTAKE_EXTEND_ID, MotorType.kBrushed);
@@ -99,6 +97,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   public void setVoltageExtend(double extendVolts) {
     extendMotor.setVoltage(extendVolts);
   }
+
   @Override
   public void goToSetpoint() {
     extendMotor.set(pidController.calculate(extendMotorEncoder.getVelocity(), setpointRPM));
@@ -110,8 +109,8 @@ public class IntakeIOSparkMax implements IntakeIO {
   }
 
   @Override
-  public boolean slipCheck(){
-    return Math.abs(extendMotorEncoder.getVelocity()) < 0.1 && extendMotor.getAppliedOutput() < -0.1;
+  public boolean slipCheck() {
+    return Math.abs(extendMotorEncoder.getVelocity()) < 0.1
+        && extendMotor.getAppliedOutput() < -0.1;
   }
-
 }

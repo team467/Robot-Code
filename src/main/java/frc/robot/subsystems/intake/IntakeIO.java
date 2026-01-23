@@ -35,5 +35,7 @@ public interface IntakeIO {
     return false;
   }
 
-  default boolean slipCheck(){return false;}
+  default boolean slipCheck() {
+    return false;
+  }
 }

@@ -25,9 +25,7 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-
   }
-
 
   public void setPercentIntake(double intakePercent) {
     io.setPercentIntake(intakePercent);
@@ -56,6 +54,7 @@ public class Intake extends SubsystemBase {
   private boolean isHopperCollapsed() {
     return io.isHopperCollapsed();
   }
+
   public boolean isSlipping() {
     return io.slipCheck();
   }
@@ -86,11 +85,14 @@ public class Intake extends SubsystemBase {
   }
 
   public Command extendAndIntake() {
-    return Commands.run(() ->{
-          setVoltageIntake(EXTEND_VOLTS);
-          setVoltageExtend(COLLAPSE_VOLTS);
-        }).until(() -> !isHopperCollapsed())
-        .finallyDo(interrupted -> stopExtend()).andThen(intake());
+    return Commands.run(
+            () -> {
+              setVoltageIntake(EXTEND_VOLTS);
+              setVoltageExtend(COLLAPSE_VOLTS);
+            })
+        .until(() -> !isHopperCollapsed())
+        .finallyDo(interrupted -> stopExtend())
+        .andThen(intake());
   }
 
   public Command stopIntakeCommand() {
@@ -111,12 +113,13 @@ public class Intake extends SubsystemBase {
   }
 
   public Command collapseAndIntake() {
-    return Commands.run(() ->{
-      setVoltageIntake(INTAKE_VOLTS);
-      setVoltageExtend(COLLAPSE_VOLTS);
-    }).until(this::isHopperCollapsed)
-        .finallyDo(interrupted -> stopExtend()).andThen(intake());
+    return Commands.run(
+            () -> {
+              setVoltageIntake(INTAKE_VOLTS);
+              setVoltageExtend(COLLAPSE_VOLTS);
+            })
+        .until(this::isHopperCollapsed)
+        .finallyDo(interrupted -> stopExtend())
+        .andThen(intake());
   }
-
-
 }
