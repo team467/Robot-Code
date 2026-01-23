@@ -12,16 +12,16 @@ public interface IntakeIO {
     public double intakeAmps = 0.0;
     public double extendVelocity = 0.0;
     public double extendAmps = 0.0;
-    public boolean isExtended = false;
+    public boolean isCollapsed = false;
 
-    public boolean isStowed = false;
+    public boolean isSlipping = false;
   }
 
   default void updateInputs(IntakeIOInputs inputs) {}
 
   default void setPercentIntake(double intakePercent) {}
 
-  default void setPercentExtend(double intakePercent) {}
+  default void setPercentExtend(double extendPercent) {}
 
   void setVoltageIntake(double intakeVolts);
 
@@ -29,7 +29,11 @@ public interface IntakeIO {
 
   default void stop() {}
 
-  default boolean isHopperExtended() {
+  default void goToSetpoint() {}
+
+  default boolean isHopperCollapsed() {
     return false;
   }
+
+  default boolean slipCheck(){return false;}
 }

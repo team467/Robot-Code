@@ -6,6 +6,9 @@ import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVER
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_EXTEND_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_MOTOR_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_POSITION_CONVERSION;
+import static frc.robot.subsystems.shooter.ShooterConstants.PID_D;
+import static frc.robot.subsystems.shooter.ShooterConstants.PID_I;
+import static frc.robot.subsystems.shooter.ShooterConstants.PID_P;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -15,6 +18,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeIOSparkMax implements IntakeIO {
@@ -23,6 +27,10 @@ public class IntakeIOSparkMax implements IntakeIO {
   private final SparkMax extendMotor;
   private final DigitalInput extendedInput;
   private final RelativeEncoder extendMotorEncoder;
+  private final PIDController pidController = new PIDController(PID_P, PID_I, PID_D);
+  private double setpointRPM = 0;
+
+
 
   public IntakeIOSparkMax() {
     intakeMotor = new SparkMax(INTAKE_MOTOR_ID, MotorType.kBrushed);
@@ -68,7 +76,8 @@ public class IntakeIOSparkMax implements IntakeIO {
     inputs.extendVolts = extendMotor.getAppliedOutput();
     inputs.intakeAmps = intakeMotor.getOutputCurrent();
     inputs.extendAmps = extendMotor.getOutputCurrent();
-    inputs.isExtended = isHopperExtended();
+    inputs.isCollapsed = extendedInput.get();
+    inputs.isSlipping = Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts < -0.1;
   }
 
   @Override
@@ -78,7 +87,7 @@ public class IntakeIOSparkMax implements IntakeIO {
 
   @Override
   public void setPercentExtend(double extendPercent) {
-    intakeMotor.set(extendPercent);
+    extendMotor.set(extendPercent);
   }
 
   @Override
@@ -90,9 +99,19 @@ public class IntakeIOSparkMax implements IntakeIO {
   public void setVoltageExtend(double extendVolts) {
     extendMotor.setVoltage(extendVolts);
   }
+  @Override
+  public void goToSetpoint() {
+    extendMotor.set(pidController.calculate(extendMotorEncoder.getVelocity(), setpointRPM));
+  }
 
   @Override
-  public boolean isHopperExtended() {
+  public boolean isHopperCollapsed() {
     return extendedInput.get();
   }
+
+  @Override
+  public boolean slipCheck(){
+    return Math.abs(extendMotorEncoder.getVelocity()) < 0.1 && extendMotor.getAppliedOutput() < -0.1;
+  }
+
 }

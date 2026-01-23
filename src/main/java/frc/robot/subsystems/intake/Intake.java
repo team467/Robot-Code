@@ -25,28 +25,9 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-    if (inputs.extendVolts > 0.1 && stalled) {
-      stalled = false;
-    }
-    if (isSlipping()) {
-      stowTimer.start();
-    } else {
-      stowTimer.stop();
-      stowTimer.reset();
-    }
 
-    if (stowTimer.get() > 0.05) {
-      stalled = true;
-      stowTimer.stop();
-      stowTimer.reset();
-    }
-
-    inputs.isStowed = stalled && !isHopperExtended();
   }
 
-  public boolean isStowed() {
-    return inputs.isStowed;
-  }
 
   public void setPercentIntake(double intakePercent) {
     io.setPercentIntake(intakePercent);
@@ -72,8 +53,11 @@ public class Intake extends SubsystemBase {
     io.setVoltageExtend(0);
   }
 
-  private boolean isHopperExtended() {
-    return io.isHopperExtended();
+  private boolean isHopperCollapsed() {
+    return io.isHopperCollapsed();
+  }
+  public boolean isSlipping() {
+    return io.slipCheck();
   }
 
   public Command extend() {
@@ -81,7 +65,7 @@ public class Intake extends SubsystemBase {
             () -> {
               setVoltageExtend(EXTEND_VOLTS);
             })
-        .until(() -> inputs.isExtended)
+        .until(() -> !isHopperCollapsed())
         .finallyDo(interrupted -> stopExtend());
   }
 
@@ -105,7 +89,7 @@ public class Intake extends SubsystemBase {
     return Commands.run(() ->{
           setVoltageIntake(EXTEND_VOLTS);
           setVoltageExtend(COLLAPSE_VOLTS);
-        }).until(() -> inputs.isExtended)
+        }).until(() -> !isHopperCollapsed())
         .finallyDo(interrupted -> stopExtend()).andThen(intake());
   }
 
@@ -122,7 +106,7 @@ public class Intake extends SubsystemBase {
             () -> {
               setVoltageExtend(COLLAPSE_VOLTS);
             })
-        .until(() -> !inputs.isExtended && inputs.isStowed)
+        .until(this::isHopperCollapsed)
         .finallyDo(interrupted -> stopExtend());
   }
 
@@ -130,11 +114,9 @@ public class Intake extends SubsystemBase {
     return Commands.run(() ->{
       setVoltageIntake(INTAKE_VOLTS);
       setVoltageExtend(COLLAPSE_VOLTS);
-    }).until(() -> !inputs.isExtended && inputs.isStowed)
+    }).until(this::isHopperCollapsed)
         .finallyDo(interrupted -> stopExtend()).andThen(intake());
   }
 
-  public boolean isSlipping() {
-    return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts < -0.1;
-  }
+
 }
