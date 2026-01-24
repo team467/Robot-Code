@@ -170,6 +170,7 @@ public class RobotContainer {
           double velocityFPS = 16.8379527141 + 2.79775342767 * distance;
           double percentNeeded = velocityFPS * 0.0;
           shooter.setPercent(percentNeeded);
+          System.out.println("Suh-ass says we need this percent:" + percentNeeded);
         });
 
     // Lock to 0° when A button is held
