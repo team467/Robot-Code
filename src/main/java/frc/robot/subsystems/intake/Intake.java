@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     if (limitSwitchDisabled.getAsBoolean()) {
-      if (inputs.extendVolts > 0.1 && stalled) {
+      if (Math.abs(inputs.extendVolts)> 0.1 && stalled) {
         stalled = false;
       }
       if (isSlipping()) {
