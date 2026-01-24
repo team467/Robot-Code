@@ -118,7 +118,7 @@ public class ShooterIOSparkMax implements ShooterIO {
   }
 
   private double distanceToRPM(double distanceMeters) {
-    return distanceMeters * 100;
+    return distanceMeters * 2.79775342767 + 16.8379527141;
   }
 
   @Override
