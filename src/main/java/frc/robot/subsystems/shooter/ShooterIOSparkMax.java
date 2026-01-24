@@ -116,4 +116,13 @@ public class ShooterIOSparkMax implements ShooterIO {
   public void goToSetpoint() {
     pidController.setSetpoint(setpointRPM, ControlType.kVelocity);
   }
+
+  private double distanceToRPM(double distanceMeters) {
+    return distanceMeters * 100;
+  }
+
+  @Override
+  public void setTargetDistance(double distance) {
+    setTargetVelocity(distanceToRPM(distance));
+  }
 }
