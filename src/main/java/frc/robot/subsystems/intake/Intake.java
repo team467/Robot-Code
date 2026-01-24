@@ -48,11 +48,10 @@ public class Intake extends SubsystemBase {
         stowTimer.reset();
       }
 
-      if(stalled && inputs.extendVolts ==0){
+      if (stalled && inputs.extendVolts == 0) {
         isStowed = true;
       }
     }
-
   }
 
   private void setPercentIntake(double intakePercent) {
@@ -93,7 +92,7 @@ public class Intake extends SubsystemBase {
               setVoltageExtend(EXTEND_VOLTS);
               toPosExtend();
             })
-        //.until(() -> !isHopperCollapsed())
+        // .until(() -> !isHopperCollapsed())
         .finallyDo(interrupted -> stopExtend());
   }
 
@@ -120,7 +119,7 @@ public class Intake extends SubsystemBase {
               setVoltageExtend(COLLAPSE_VOLTS);
               toPosExtend();
             })
-        //.until(inputs.getExtendPos == EXTEND_POS)
+        // .until(inputs.getExtendPos == EXTEND_POS)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake());
   }
@@ -139,7 +138,7 @@ public class Intake extends SubsystemBase {
               setVoltageExtend(COLLAPSE_VOLTS);
               toPosCollapse();
             })
-        //.until(this::isHopperCollapsed)
+        // .until(this::isHopperCollapsed)
         .finallyDo(interrupted -> stopExtend());
   }
 
@@ -150,7 +149,7 @@ public class Intake extends SubsystemBase {
               setVoltageExtend(COLLAPSE_VOLTS);
               toPosCollapse();
             })
-        //.until(this::isHopperCollapsed)
+        // .until(this::isHopperCollapsed)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake());
   }
@@ -161,7 +160,8 @@ public class Intake extends SubsystemBase {
               io.setPIDEnabled(true);
               io.goToPos(EXTEND_POS);
             })
-        .until((isSlipping() && !limitSwitchDisabled.getAsBoolean()) || io.getExtendPos == EXTEND_POS)
+        .until(
+            (isSlipping() && !limitSwitchDisabled.getAsBoolean()) || io.getExtendPos == EXTEND_POS)
         .finallyDo(() -> io.setPIDEnabled(false));
   }
 
@@ -171,7 +171,10 @@ public class Intake extends SubsystemBase {
               io.setPIDEnabled(true);
               io.goToPos(COLLAPSE_POS);
             })
-        .until(isHopperCollapsed()||inputs.getExtendPos == COLLAPSE_POS || (!limitSwitchDisabled.getAsBoolean() && isStowed))
+        .until(
+            isHopperCollapsed()
+                || inputs.getExtendPos == COLLAPSE_POS
+                || (!limitSwitchDisabled.getAsBoolean() && isStowed))
         .finallyDo(() -> io.setPIDEnabled(false));
   }
 }
