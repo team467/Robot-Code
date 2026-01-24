@@ -160,10 +160,10 @@ public class RobotContainer {
 
     // driverController
     //     .leftBumper()
-    //     .whileTrue(new AutoAlignToHub(drive, AutoAlignToHub.BumperSide.LEFT));
+    //     .onTrue(new AutoAlignToHub(drive, AutoAlignToHub.BumperSide.LEFT));
     // driverController
     //     .rightBumper()
-    //     .whileTrue(new AutoAlignToHub(drive, AutoAlignToHub.BumperSide.RIGHT));
+    //     .onTrue(new AutoAlignToHub(drive, AutoAlignToHub.BumperSide.RIGHT));
     // driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
