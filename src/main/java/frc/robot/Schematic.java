@@ -19,6 +19,10 @@ public class Schematic {
   public static final int frontRightAbsoluteEncoderCanId;
   public static final int backRightAbsoluteEncoderCanId;
 
+  // shooter subsystem
+  public static final int shooterFrontLeftCanId;
+  public static final int shooterFrontRightCanId;
+  public static final int shooterBackCanId;
   // hopper belt sub-system
   public static final int hopperBeltCanId;
 
@@ -45,6 +49,12 @@ public class Schematic {
         frontRightAbsoluteEncoderCanId = 19;
         backRightAbsoluteEncoderCanId = 20;
 
+        // Shooter (CAN Ids)
+        shooterFrontLeftCanId = 0;
+        shooterFrontRightCanId = 0;
+        shooterBackCanId = 0;
+
+        // Hopper Belt (CAN Ids)
         hopperBeltCanId = 0;
       }
 
@@ -66,6 +76,13 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 0;
         frontRightAbsoluteEncoderCanId = 0;
         backRightAbsoluteEncoderCanId = 0;
+
+        // Shooter (CAN Ids)
+        shooterFrontLeftCanId = 0;
+        shooterFrontRightCanId = 0;
+        shooterBackCanId = 0;
+
+        // Hopper Belt (CAN Ids)
         hopperBeltCanId = 0;
       }
 
@@ -88,6 +105,12 @@ public class Schematic {
         frontRightAbsoluteEncoderCanId = 0;
         backRightAbsoluteEncoderCanId = 0;
 
+        // Shooter (CAN Ids)
+        shooterFrontLeftCanId = 0;
+        shooterFrontRightCanId = 0;
+        shooterBackCanId = 0;
+
+        // Hopper Belt (CAN Ids)
         hopperBeltCanId = 0;
       }
     }
