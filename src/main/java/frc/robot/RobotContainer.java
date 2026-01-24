@@ -42,7 +42,6 @@ public class RobotContainer {
   private Vision vision;
   private Leds leds;
   private HopperBelt hopperBelt;
-  private Shooter shooter;
   private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;

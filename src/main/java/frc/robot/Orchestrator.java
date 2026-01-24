@@ -20,6 +20,7 @@ public class Orchestrator {
     this.shooter = shooter;
     this.indexer = indexer;
   }
+
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
   public Command shootBalls() {
     return Commands.parallel(shooter.setVoltage(1), hopperBelt.start(), indexer.run());
