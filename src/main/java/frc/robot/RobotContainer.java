@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.auto.AutoAlignToHub;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
@@ -159,13 +158,13 @@ public class RobotContainer {
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController
-        .leftBumper()
-        .whileTrue(new AutoAlignToHub(drive, AutoAlignToHub.BumperSide.LEFT));
-    driverController
-        .rightBumper()
-        .whileTrue(new AutoAlignToHub(drive, AutoAlignToHub.BumperSide.RIGHT));
-    //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
+    // driverController
+    //     .leftBumper()
+    //     .whileTrue(new AutoAlignToHub(drive, AutoAlignToHub.BumperSide.LEFT));
+    // driverController
+    //     .rightBumper()
+    //     .whileTrue(new AutoAlignToHub(drive, AutoAlignToHub.BumperSide.RIGHT));
+    // driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
   /**
