@@ -13,7 +13,7 @@ public interface IntakeIO {
     public double extendVelocity = 0.0;
     public double extendAmps = 0.0;
     public boolean isCollapsed = false;
-    //public boolean manualModeInput;
+    // public boolean manualModeInput;
     public double getExtendPos = 0.0;
   }
 
