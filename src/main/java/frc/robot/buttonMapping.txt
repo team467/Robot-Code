@@ -5,10 +5,10 @@ a -> (hold) Spin intake and indexer backwards
 
 b ->
 
-rb -> Shoot (Hold)
+rb -> (hold) Shoot 
 rt ->  Auto Mode: Align to hub (single press), Manual Mode: Nothing
 
-lb -> Begin intaking (toggle)
+lb -> (toggle) Begin intaking 
 lt -> Toggle intake in/out
 
 povUp (D-pad) ->
