@@ -18,7 +18,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.leds.Leds;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -35,7 +37,9 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private Leds leds;
+  private HopperBelt hopperBelt;
   private final Orchestrator orchestrator;
+  private Shooter shooter;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -81,8 +85,8 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-
-          //           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
+          //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
+          //    shooter = new Shooter(new ShooterIOSparkMax());
         }
       }
     }
@@ -153,6 +157,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+
+    //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
   /**
