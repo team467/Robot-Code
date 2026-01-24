@@ -50,27 +50,27 @@ public class Intake extends SubsystemBase {
      inputs.isCollapsed == stalled;
   }
 
-  public void setPercentIntake(double intakePercent) {
+  private void setPercentIntake(double intakePercent) {
     io.setPercentIntake(intakePercent);
   }
 
-  public void setPercentExtend(double extendPercent) {
+  private void setPercentExtend(double extendPercent) {
     io.setPercentIntake(extendPercent);
   }
 
-  public void setVoltageIntake(double intakeVolts) {
+  private void setVoltageIntake(double intakeVolts) {
     io.setVoltageIntake(intakeVolts);
   }
 
-  public void setVoltageExtend(double extendVolts) {
+  private void setVoltageExtend(double extendVolts) {
     io.setVoltageIntake(extendVolts);
   }
 
-  public void stopIntake() {
+  private void stopIntake() {
     io.setVoltageIntake(0);
   }
 
-  public void stopExtend() {
+  private void stopExtend() {
     io.setVoltageExtend(0);
   }
 
@@ -78,7 +78,7 @@ public class Intake extends SubsystemBase {
     return io.isHopperCollapsed();
   }
 
-  public boolean isSlipping() {
+  private boolean isSlipping() {
     return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts < -0.1;
   }
 
