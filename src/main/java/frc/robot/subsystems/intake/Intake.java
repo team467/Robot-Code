@@ -31,7 +31,7 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     if (limitSwitchDisabled.getAsBoolean()) {
-      if (inputs.extendvolts > 0.1 && stalled) {
+      if (inputs.extendVolts > 0.1 && stalled) {
         stalled = false;
       }
       if (isSlipping()) {
@@ -166,7 +166,7 @@ public class Intake extends SubsystemBase {
               io.setPIDEnabled(true);
               io.goToPos(COLLAPSE_POS);
             })
-        .until(this::isHopperCollapsed)
+        .until(isHopperCollapsed()||inputs.getExtendPos == COLLAPSE_POS)
         .finallyDo(() -> io.setPIDEnabled(false));
   }
 }
