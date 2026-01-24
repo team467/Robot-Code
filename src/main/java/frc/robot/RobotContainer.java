@@ -106,9 +106,9 @@ public class RobotContainer {
     Autos autos = new Autos(drive);
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
-    autoChooser.addOption("test path", drive.getAutonomousCommand("test path"));
+    autoChooser.addOption("test path", autos.testPath());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
-    autoChooser.addOption("CL auto", autos.CenterLeft());
+    autoChooser.addOption("CL auto", autos.CenterA());
 
     // Drive SysId
     autoChooser.addOption(
