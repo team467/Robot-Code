@@ -21,6 +21,7 @@ import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.leds.Leds;
+import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -38,6 +39,7 @@ public class RobotContainer {
   private Vision vision;
   private Leds leds;
   private HopperBelt hopperBelt;
+  private Shooter shooter;
   private final Orchestrator orchestrator;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
@@ -68,6 +70,7 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1));
           leds = new Leds();
+          shooter = new Shooter(new ShooterIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
@@ -80,6 +83,7 @@ public class RobotContainer {
                   new ModuleIOSim());
 
           leds = new Leds();
+          shooter = new Shooter(new ShooterIOSparkMax());
         }
 
         case ROBOT_BRIEFCASE -> {
@@ -145,16 +149,28 @@ public class RobotContainer {
     driverController
         .leftBumper()
         .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> driverController.getLeftX(),
-                () -> driverController.getLeftY(),
-                () ->
-                    AllianceFlipUtil.apply(
-                            aprilTagLayout.getTagPose(9).get().toPose2d().getTranslation())
-                        .minus(drive.getPose().getTranslation())
-                        .getAngle()
-                        .minus(Rotation2d.fromDegrees(180))));
+            Commands.parallel(
+                DriveCommands.joystickDriveAtAngle(
+                    drive,
+                    () -> driverController.getLeftX(),
+                    () -> driverController.getLeftY(),
+                    () ->
+                        AllianceFlipUtil.apply(
+                                aprilTagLayout.getTagPose(9).get().toPose2d().getTranslation())
+                            .minus(drive.getPose().getTranslation())
+                            .getAngle()
+                            .minus(Rotation2d.fromDegrees(180)))));
+
+    Commands.run(
+        () -> {
+          double distance =
+              AllianceFlipUtil.apply(aprilTagLayout.getTagPose(9).get().toPose2d().getTranslation())
+                  .minus(drive.getPose().getTranslation())
+                  .getNorm();
+          double velocityFPS = 16.8379527141 + 2.79775342767 * distance;
+          double percentNeeded = velocityFPS * 0.0;
+          shooter.setPercent(percentNeeded);
+        });
 
     // Lock to 0° when A button is held
 
