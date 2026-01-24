@@ -17,6 +17,7 @@ import org.littletonrobotics.junction.Logger;
 public class Intake extends SubsystemBase {
   public static Timer stowTimer = new Timer();
   private boolean stalled = true;
+  private boolean isStowed = false;
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private BooleanSupplier limitSwitchDisabled;
@@ -46,8 +47,12 @@ public class Intake extends SubsystemBase {
         stowTimer.stop();
         stowTimer.reset();
       }
+
+      if(stalled && inputs.extendVolts ==0){
+        isStowed = true;
+      }
     }
-     inputs.isCollapsed == stalled;
+
   }
 
   private void setPercentIntake(double intakePercent) {
@@ -166,7 +171,7 @@ public class Intake extends SubsystemBase {
               io.setPIDEnabled(true);
               io.goToPos(COLLAPSE_POS);
             })
-        .until(isHopperCollapsed()||inputs.getExtendPos == COLLAPSE_POS)
+        .until(isHopperCollapsed()||inputs.getExtendPos == COLLAPSE_POS || (!limitSwitchDisabled.getAsBoolean() && isStowed))
         .finallyDo(() -> io.setPIDEnabled(false));
   }
 }
