@@ -1,7 +1,7 @@
 Driver Controller:
 x ->
 y ->
-a -> hold
+a -> (hold) Spin intake and indexer backwards
 
 b ->
 
@@ -11,8 +11,8 @@ rt ->  Auto Mode: Align to hub (single press), Manual Mode: Nothing
 lb -> Begin intaking (toggle)
 lt -> Toggle intake in/out
 
-povUp (D-pad) -> (Hold) Winch climber to position
-povDown (D-pad) -> (Hold) Winch climber down
+povUp (D-pad) ->
+povDown (D-pad) -> 
 povLeft (D-pad) ->
 povRight (D-pad) ->
 
@@ -32,8 +32,8 @@ rt ->
 lb ->
 lt ->
 
-povUp (D-pad) -> Manual Mode: (hold) Winch climber up
-povDown (D-pad) ->  Manual Mode: (hold) Winch climber down
+povUp (D-pad) -> (hold) Winch climber up
+povDown (D-pad) -> (hold) Winch climber down
 povLeft (D-pad) ->
 povRight (D-pad) ->
 
