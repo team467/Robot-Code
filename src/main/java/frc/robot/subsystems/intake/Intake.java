@@ -156,7 +156,7 @@ public class Intake extends SubsystemBase {
               io.setPIDEnabled(true);
               io.goToPos(EXTEND_POS);
             })
-        .until(inputs.getExtendPos == EXTEND_POS)
+        .until((isSlipping() && !limitSwitchDisabled.getAsBoolean()) || io.getExtendPos == EXTEND_POS)
         .finallyDo(() -> io.setPIDEnabled(false));
   }
 
