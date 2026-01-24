@@ -86,10 +86,9 @@ public class Intake extends SubsystemBase {
     return Commands.run(
             () -> {
               setVoltageExtend(EXTEND_VOLTS);
-              io.setPIDEnabled(true);
-              io.goToPos(EXTEND_POS);
+              toPosExtend();
             })
-        .until(() -> !isHopperCollapsed())
+        //.until(() -> !isHopperCollapsed())
         .finallyDo(interrupted -> stopExtend());
   }
 
@@ -114,10 +113,9 @@ public class Intake extends SubsystemBase {
             () -> {
               setVoltageIntake(EXTEND_VOLTS);
               setVoltageExtend(COLLAPSE_VOLTS);
-              io.setPIDEnabled(true);
-              io.goToPos(EXTEND_POS);
+              toPosExtend();
             })
-        .until(inputs.getExtendPos == EXTEND_POS)
+        //.until(inputs.getExtendPos == EXTEND_POS)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake());
   }
@@ -134,10 +132,9 @@ public class Intake extends SubsystemBase {
     return Commands.run(
             () -> {
               setVoltageExtend(COLLAPSE_VOLTS);
-              io.setPIDEnabled(true);
-              io.goToPos(COLLAPSE_POS);
+              toPosCollapse();
             })
-        .until(this::isHopperCollapsed)
+        //.until(this::isHopperCollapsed)
         .finallyDo(interrupted -> stopExtend());
   }
 
@@ -146,10 +143,9 @@ public class Intake extends SubsystemBase {
             () -> {
               setVoltageIntake(INTAKE_VOLTS);
               setVoltageExtend(COLLAPSE_VOLTS);
-              io.setPIDEnabled(true);
-              io.goToPos(COLLAPSE_POS);
+              toPosCollapse();
             })
-        .until(this::isHopperCollapsed)
+        //.until(this::isHopperCollapsed)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake());
   }
