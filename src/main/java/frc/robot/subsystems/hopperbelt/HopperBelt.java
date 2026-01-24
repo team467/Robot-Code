@@ -1,4 +1,4 @@
-package frc.robot.subsystems.HopperBelt;
+package frc.robot.subsystems.hopperbelt;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
