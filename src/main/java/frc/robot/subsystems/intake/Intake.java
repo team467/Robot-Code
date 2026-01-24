@@ -1,6 +1,8 @@
 package frc.robot.subsystems.intake;
 
+import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_VOLTS;
+import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.OUTTAKE_VOLTS;
@@ -9,6 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -16,15 +19,35 @@ public class Intake extends SubsystemBase {
   private boolean stalled = true;
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+  private BooleanSupplier limitSwitchDisabled;
 
-  public Intake(IntakeIO io) {
+  public Intake(IntakeIO io, BooleanSupplier limitSwitchDisabled) {
     this.io = io;
+    this.limitSwitchDisabled = limitSwitchDisabled;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
+    if (limitSwitchDisabled.getAsBoolean()) {
+      if (inputs.extendvolts > 0.1 && stalled) {
+        stalled = false;
+      }
+      if (isSlipping()) {
+        stowTimer.start();
+      } else {
+        stowTimer.stop();
+        stowTimer.reset();
+      }
+
+      if (stowTimer.get() > 0.05) {
+        stalled = true;
+        stowTimer.stop();
+        stowTimer.reset();
+      }
+    }
+     inputs.isCollapsed == stalled;
   }
 
   public void setPercentIntake(double intakePercent) {
@@ -56,13 +79,15 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isSlipping() {
-    return io.slipCheck();
+    return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts < -0.1;
   }
 
   public Command extend() {
     return Commands.run(
             () -> {
               setVoltageExtend(EXTEND_VOLTS);
+              io.setPIDEnabled(true);
+              io.goToPos(EXTEND_POS);
             })
         .until(() -> !isHopperCollapsed())
         .finallyDo(interrupted -> stopExtend());
@@ -89,8 +114,10 @@ public class Intake extends SubsystemBase {
             () -> {
               setVoltageIntake(EXTEND_VOLTS);
               setVoltageExtend(COLLAPSE_VOLTS);
+              io.setPIDEnabled(true);
+              io.goToPos(EXTEND_POS);
             })
-        .until(() -> !isHopperCollapsed())
+        .until(inputs.getExtendPos == EXTEND_POS)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake());
   }
@@ -107,6 +134,8 @@ public class Intake extends SubsystemBase {
     return Commands.run(
             () -> {
               setVoltageExtend(COLLAPSE_VOLTS);
+              io.setPIDEnabled(true);
+              io.goToPos(COLLAPSE_POS);
             })
         .until(this::isHopperCollapsed)
         .finallyDo(interrupted -> stopExtend());
@@ -117,9 +146,31 @@ public class Intake extends SubsystemBase {
             () -> {
               setVoltageIntake(INTAKE_VOLTS);
               setVoltageExtend(COLLAPSE_VOLTS);
+              io.setPIDEnabled(true);
+              io.goToPos(COLLAPSE_POS);
             })
         .until(this::isHopperCollapsed)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake());
+  }
+
+  public Command toPosExtend() {
+    return Commands.run(
+            () -> {
+              io.setPIDEnabled(true);
+              io.goToPos(EXTEND_POS);
+            })
+        .until(inputs.getExtendPos == EXTEND_POS)
+        .finallyDo(() -> io.setPIDEnabled(false));
+  }
+
+  public Command toPosCollapse() {
+    return Commands.run(
+            () -> {
+              io.setPIDEnabled(true);
+              io.goToPos(COLLAPSE_POS);
+            })
+        .until(this::isHopperCollapsed)
+        .finallyDo(() -> io.setPIDEnabled(false));
   }
 }

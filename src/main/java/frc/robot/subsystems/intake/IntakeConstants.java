@@ -20,4 +20,7 @@ public class IntakeConstants {
   public static final double PID_P = 0.00005; // arbritrary values
   public static final double PID_I = 0.0000001;
   public static final double PID_D = 0.0000001;
+
+  public static final double EXTEND_POS = 0.0;
+  public static final double COLLAPSE_POS = 0.0;
 }

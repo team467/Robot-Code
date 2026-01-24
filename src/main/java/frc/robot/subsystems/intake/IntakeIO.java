@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeIO {
@@ -13,8 +14,8 @@ public interface IntakeIO {
     public double extendVelocity = 0.0;
     public double extendAmps = 0.0;
     public boolean isCollapsed = false;
-
-    public boolean isSlipping = false;
+    public BooleanSupplier manualModeInput;
+    public double getExtendPos = 0.0;
   }
 
   default void updateInputs(IntakeIOInputs inputs) {}
@@ -29,13 +30,11 @@ public interface IntakeIO {
 
   default void stop() {}
 
-  default void goToSetpoint() {}
+  default void goToPos(double pos) {}
 
   default boolean isHopperCollapsed() {
     return false;
   }
 
-  default boolean slipCheck() {
-    return false;
-  }
+  default void setPIDEnabled(boolean enabled) {}
 }

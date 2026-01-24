@@ -11,14 +11,15 @@ import static frc.robot.subsystems.shooter.ShooterConstants.PID_I;
 import static frc.robot.subsystems.shooter.ShooterConstants.PID_P;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeIOSparkMax implements IntakeIO {
@@ -27,13 +28,16 @@ public class IntakeIOSparkMax implements IntakeIO {
   private final SparkMax extendMotor;
   private final DigitalInput extendedInput;
   private final RelativeEncoder extendMotorEncoder;
-  private final PIDController pidController = new PIDController(PID_P, PID_I, PID_D);
-  private double setpointRPM = 0;
+  private final SparkClosedLoopController pidController;
+  private double setPos = 0;
+  private boolean usingPID = false;
 
   public IntakeIOSparkMax() {
     intakeMotor = new SparkMax(INTAKE_MOTOR_ID, MotorType.kBrushed);
     extendMotor = new SparkMax(INTAKE_EXTEND_ID, MotorType.kBrushed);
     extendMotorEncoder = extendMotor.getEncoder();
+
+    pidController = extendMotor.getClosedLoopController();
 
     var intakeConfig = new SparkMaxConfig();
     intakeConfig
@@ -46,7 +50,9 @@ public class IntakeIOSparkMax implements IntakeIO {
         .inverted(false)
         .idleMode(IdleMode.kBrake)
         .voltageCompensation(12)
-        .smartCurrentLimit(30);
+        .smartCurrentLimit(30)
+        .closedLoop
+        .pid(PID_P, PID_I, PID_D);
 
     EncoderConfig intakeEnc = new EncoderConfig();
     intakeEnc.positionConversionFactor(INTAKE_POSITION_CONVERSION);
@@ -75,7 +81,7 @@ public class IntakeIOSparkMax implements IntakeIO {
     inputs.intakeAmps = intakeMotor.getOutputCurrent();
     inputs.extendAmps = extendMotor.getOutputCurrent();
     inputs.isCollapsed = extendedInput.get();
-    inputs.isSlipping = Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts < -0.1;
+    inputs.getExtendPos = extendMotorEncoder.getPosition();
   }
 
   @Override
@@ -99,8 +105,11 @@ public class IntakeIOSparkMax implements IntakeIO {
   }
 
   @Override
-  public void goToSetpoint() {
-    extendMotor.set(pidController.calculate(extendMotorEncoder.getVelocity(), setpointRPM));
+  public void goToPos(double setPos) {
+    this.setPos = setPos;
+    if (usingPID) {
+      pidController.setSetpoint(setPos, ControlType.kPosition);
+    }
   }
 
   @Override
@@ -108,9 +117,7 @@ public class IntakeIOSparkMax implements IntakeIO {
     return extendedInput.get();
   }
 
-  @Override
-  public boolean slipCheck() {
-    return Math.abs(extendMotorEncoder.getVelocity()) < 0.1
-        && extendMotor.getAppliedOutput() < -0.1;
+  public void setPIDEnabled(boolean enabled) {
+    this.usingPID = enabled;
   }
 }
