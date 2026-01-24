@@ -1,7 +1,7 @@
 // Controls the motor
 // Reads motor data every 20 ms
 // Implements the methods defined in HopperBeltIO
-package frc.robot.subsystems.HopperBelt;
+package frc.robot.subsystems.hopperbelt;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
+import frc.robot.Schematic;
 
 public class HopperBeltSparkMax implements HopperBeltIO {
 
@@ -19,7 +20,7 @@ public class HopperBeltSparkMax implements HopperBeltIO {
 
   public HopperBeltSparkMax() {
 
-    motor = new SparkMax(HopperBeltConstants.MOTOR_ID, MotorType.kBrushless);
+    motor = new SparkMax(Schematic.hopperBeltCanId, MotorType.kBrushless);
 
     SparkMaxConfig config = new SparkMaxConfig();
     config

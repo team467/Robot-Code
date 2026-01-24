@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -35,6 +36,7 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private Leds leds;
+  private HopperBelt hopperBelt;
   private final Orchestrator orchestrator;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
@@ -81,8 +83,8 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
+          //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
 
-          //           coral = new CoralEffector(new CoralEffectorIOSparkMAX());
         }
       }
     }
