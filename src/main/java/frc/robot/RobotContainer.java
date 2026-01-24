@@ -20,6 +20,7 @@ import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.leds.Leds;
+import frc.robot.subsystems.shooter.Shooter; // CHANGERDDDD MIGHT BE WRONG LOL :()
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -37,6 +38,7 @@ public class RobotContainer {
   private Vision vision;
   private Leds leds;
   private HopperBelt hopperBelt;
+  private Shooter shooter;
   private final Orchestrator orchestrator;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
@@ -100,7 +102,7 @@ public class RobotContainer {
               new ModuleIO() {});
     }
 
-    orchestrator = new Orchestrator(drive);
+    orchestrator = new Orchestrator(drive, hopperBelt, shooter);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up auto routines
