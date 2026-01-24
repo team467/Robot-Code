@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 
-
 public class AutoAlignToHub extends Command {
   public enum BumperSide {
     LEFT,
@@ -49,7 +48,6 @@ public class AutoAlignToHub extends Command {
     return driveCommand != null && driveCommand.isFinished();
   }
 
- 
   private Pose2d getTargetPose() {
     boolean isBlue =
         DriverStation.getAlliance().map(alliance -> alliance == Alliance.Blue).orElse(true);
