@@ -181,9 +181,9 @@ public class RobotContainer {
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-        if (Constants.getRobot() ==  Constants.RobotType.ROBOT_2026_COMP){
-          driverController.rightBumper().whileTrue(orchestrator.shootBalls());
-        }
+    if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
+      driverController.rightBumper().whileTrue(orchestrator.shootBalls());
+    }
   }
 
   /**

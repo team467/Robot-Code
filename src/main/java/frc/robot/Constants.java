@@ -64,7 +64,12 @@ public class Constants {
 
   public static Mode getMode() {
     switch (getRobot()) {
-      case ROBOT_2023, ROBOT_2024_COMP, ROBOT_BRIEFCASE, ROBOT_2025_COMP, ROBOT_2025_TEST, ROBOT_2026_COMP -> {
+      case ROBOT_2023,
+          ROBOT_2024_COMP,
+          ROBOT_BRIEFCASE,
+          ROBOT_2025_COMP,
+          ROBOT_2025_TEST,
+          ROBOT_2026_COMP -> {
         return RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
       }
       case ROBOT_SIMBOT -> {
