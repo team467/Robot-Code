@@ -40,6 +40,7 @@ public class RobotContainer {
   private HopperBelt hopperBelt;
   private Shooter shooter;
   private final Orchestrator orchestrator;
+  private Shooter shooter;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -86,7 +87,7 @@ public class RobotContainer {
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
-
+          //    shooter = new Shooter(new ShooterIOSparkMax());
         }
       }
     }
@@ -157,6 +158,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+
+    //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
   /**
