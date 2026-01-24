@@ -35,9 +35,9 @@ public class Autos {
                 new Pose2d(3.229, 5.331, new Rotation2d(Units.degreesToRadians(-55.222))));
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(center.get())),
-        drive.getAutonomousCommand("CL out").withTimeout(2.64),
+        drive.getAutonomousCommand("CL out"),
         new StraightDriveToPose(intakeStart.get(), drive).withTimeout(0.5),
-        new StraightDriveToPose(intakeEnd.get(), drive).withTimeout(1.3),
+        new StraightDriveToPose(intakeEnd.get(), drive),
         new StraightDriveToPose(closestLeftShot.get(), drive).withTimeout(3.4),
         new StraightDriveToPose(climb.get(), drive).withTimeout(2.0));
   }
