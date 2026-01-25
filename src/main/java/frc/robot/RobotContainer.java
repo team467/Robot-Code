@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
@@ -76,7 +77,7 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1));
           leds = new Leds();
-          shooter = new Shooter(new ShooterIOSparkMax());
+          //          shooter = new Shooter(new ShooterIOSparkMax());
         }
         case ROBOT_2026_COMP -> {
           drive =
