@@ -35,7 +35,6 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     if (limitSwitchDisabled.getAsBoolean()) {
-      // Clear stall flags when motor starts moving
       if (inputs.extendVolts > 0.1 && stalledExtend) {
         stalledExtend = false;
         isExtended = false;
@@ -45,7 +44,6 @@ public class Intake extends SubsystemBase {
         isStowed = false;
       }
 
-      // Detect stalling while collapsing (negative voltage, not moving)
       if (isStallingCollapse()) {
         stowTimer.start();
       } else {
@@ -59,7 +57,6 @@ public class Intake extends SubsystemBase {
         stowTimer.reset();
       }
 
-      // Detect stalling while extending (positive voltage, not moving)
       if (isStallingExtend()) {
         extendTimer.start();
       } else {
@@ -73,7 +70,6 @@ public class Intake extends SubsystemBase {
         extendTimer.reset();
       }
 
-      // Set position states when stalled and motor stopped
       if (stalledCollapse && inputs.extendVolts == 0) {
         isStowed = true;
       }
@@ -196,7 +192,7 @@ public class Intake extends SubsystemBase {
         .until(
             () ->
                 inputs.getExtendPos == EXTEND_POS
-                    || (!limitSwitchDisabled.getAsBoolean() && isExtended))
+                    || (limitSwitchDisabled.getAsBoolean() && isExtended))
         .finallyDo(
             () -> {
               io.setPIDEnabled(false);
@@ -214,7 +210,7 @@ public class Intake extends SubsystemBase {
             () ->
                 isHopperCollapsed()
                     || inputs.getExtendPos == COLLAPSE_POS
-                    || (!limitSwitchDisabled.getAsBoolean() && isStowed))
+                    || (limitSwitchDisabled.getAsBoolean() && isStowed))
         .finallyDo(
             () -> {
               io.setPIDEnabled(false);
