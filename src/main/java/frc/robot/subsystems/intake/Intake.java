@@ -16,8 +16,11 @@ import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
   public static Timer stowTimer = new Timer();
-  private boolean stalled = true;
+  public static Timer extendTimer = new Timer();
+  private boolean stalledCollapse = true;
+  private boolean stalledExtend = false;
   private boolean isStowed = false;
+  private boolean isExtended = false;
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private BooleanSupplier limitSwitchDisabled;
@@ -32,10 +35,18 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     if (limitSwitchDisabled.getAsBoolean()) {
-      if (Math.abs(inputs.extendVolts) > 0.1 && stalled) {
-        stalled = false;
+      // Clear stall flags when motor starts moving
+      if (inputs.extendVolts > 0.1 && stalledExtend) {
+        stalledExtend = false;
+        isExtended = false;
       }
-      if (isSlipping()) {
+      if (inputs.extendVolts < -0.1 && stalledCollapse) {
+        stalledCollapse = false;
+        isStowed = false;
+      }
+
+      // Detect stalling while collapsing (negative voltage, not moving)
+      if (isStallingCollapse()) {
         stowTimer.start();
       } else {
         stowTimer.stop();
@@ -43,13 +54,31 @@ public class Intake extends SubsystemBase {
       }
 
       if (stowTimer.get() > 0.05) {
-        stalled = true;
+        stalledCollapse = true;
         stowTimer.stop();
         stowTimer.reset();
       }
 
-      if (stalled && inputs.extendVolts == 0) {
+      // Detect stalling while extending (positive voltage, not moving)
+      if (isStallingExtend()) {
+        extendTimer.start();
+      } else {
+        extendTimer.stop();
+        extendTimer.reset();
+      }
+
+      if (extendTimer.get() > 0.05) {
+        stalledExtend = true;
+        extendTimer.stop();
+        extendTimer.reset();
+      }
+
+      // Set position states when stalled and motor stopped
+      if (stalledCollapse && inputs.extendVolts == 0) {
         isStowed = true;
+      }
+      if (stalledExtend && inputs.extendVolts == 0) {
+        isExtended = true;
       }
     }
   }
@@ -82,8 +111,12 @@ public class Intake extends SubsystemBase {
     return io.isHopperCollapsed();
   }
 
-  private boolean isSlipping() {
+  private boolean isStallingCollapse() {
     return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts < -0.1;
+  }
+
+  private boolean isStallingExtend() {
+    return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts > 0.1;
   }
 
   public Command extend() {
@@ -162,8 +195,8 @@ public class Intake extends SubsystemBase {
             })
         .until(
             () ->
-                (isSlipping() && !limitSwitchDisabled.getAsBoolean())
-                    || inputs.getExtendPos == EXTEND_POS)
+                inputs.getExtendPos == EXTEND_POS
+                    || (!limitSwitchDisabled.getAsBoolean() && isExtended))
         .finallyDo(
             () -> {
               io.setPIDEnabled(false);
