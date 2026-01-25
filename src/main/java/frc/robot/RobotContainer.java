@@ -197,7 +197,7 @@ public class RobotContainer {
                   .getNorm();
           double velocityFPS = 16.8379527141 + 2.79775342767 * distance;
           double percentNeeded = velocityFPS * 0.0;
-          shooter.setPercent(percentNeeded);
+//          shooter.setPercent(percentNeeded);
           System.out.println("Suh-ass says we need this percent:" + percentNeeded);
         });
 
