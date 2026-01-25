@@ -25,7 +25,8 @@ public class Autos {
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(CenterA.get())),
         drive.getAutonomousCommand("CA-out-intake"),
-        new StraightDriveToPose(climb.get(), drive).withTimeout(2.0));
+        drive.getAutonomousCommand("CA-in-shoot"),
+        drive.getAutonomousCommand("CA-out-climb"));
   }
 
   public Command testPath() {
