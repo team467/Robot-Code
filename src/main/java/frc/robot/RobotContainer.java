@@ -108,7 +108,7 @@ public class RobotContainer {
                   new ModuleIOSim());
 
           leds = new Leds();
-          shooter = new Shooter(new ShooterIOSparkMax());
+          //          shooter = new Shooter(new ShooterIOSparkMax());
         }
 
         case ROBOT_BRIEFCASE -> {
