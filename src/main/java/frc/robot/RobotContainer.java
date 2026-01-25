@@ -20,10 +20,12 @@ import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -43,6 +45,7 @@ public class RobotContainer {
   private final Orchestrator orchestrator;
   private Shooter shooter;
   private RobotState robotState = RobotState.getInstance();
+  private BooleanSupplier intakeSupp;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -89,6 +92,7 @@ public class RobotContainer {
           leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           //    shooter = new Shooter(new ShooterIOSparkMax());
+          intake = new Intake(new IntakeIOSparkMax(), intakeSupp);
         }
       }
     }
@@ -138,6 +142,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
+    driverController.x().whileTrue(Commands.run(() -> intake.collapse()));
+    driverController.rightTrigger().whileTrue(Commands.run(()-> intake.collapseAndIntake()));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(

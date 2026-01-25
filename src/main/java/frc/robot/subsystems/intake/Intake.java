@@ -89,7 +89,6 @@ public class Intake extends SubsystemBase {
   public Command extend() {
     return Commands.run(
             () -> {
-              setVoltageExtend(EXTEND_VOLTS);
               toPosExtend();
             })
         // .until(() -> !isHopperCollapsed())
@@ -115,9 +114,8 @@ public class Intake extends SubsystemBase {
   public Command extendAndIntake() {
     return Commands.run(
             () -> {
-              setVoltageIntake(EXTEND_VOLTS);
-              setVoltageExtend(COLLAPSE_VOLTS);
               toPosExtend();
+              setVoltageIntake(EXTEND_VOLTS);
             })
         // .until(inputs.getExtendPos == EXTEND_POS)
         .finallyDo(interrupted -> stopExtend())
@@ -135,7 +133,6 @@ public class Intake extends SubsystemBase {
   public Command collapse() {
     return Commands.run(
             () -> {
-              setVoltageExtend(COLLAPSE_VOLTS);
               toPosCollapse();
             })
         // .until(this::isHopperCollapsed)
@@ -145,9 +142,8 @@ public class Intake extends SubsystemBase {
   public Command collapseAndIntake() {
     return Commands.run(
             () -> {
-              setVoltageIntake(INTAKE_VOLTS);
-              setVoltageExtend(COLLAPSE_VOLTS);
               toPosCollapse();
+              setVoltageIntake(INTAKE_VOLTS);
             })
         // .until(this::isHopperCollapsed)
         .finallyDo(interrupted -> stopExtend())
@@ -158,12 +154,13 @@ public class Intake extends SubsystemBase {
     return Commands.run(
             () -> {
               io.setPIDEnabled(true);
+              setVoltageExtend(EXTEND_VOLTS);
               io.goToPos(EXTEND_POS);
             })
         .until(
             () ->
-                (isSlipping() && !limitSwitchDisabled.getAsBoolean())
-                    || inputs.getExtendPos == EXTEND_POS)
+                (isSlipping() && limitSwitchDisabled.getAsBoolean())
+                    || inputs.getExtendPos <= EXTEND_POS)
         .finallyDo(() -> io.setPIDEnabled(false));
   }
 
@@ -171,12 +168,13 @@ public class Intake extends SubsystemBase {
     return Commands.run(
             () -> {
               io.setPIDEnabled(true);
+              setVoltageExtend(COLLAPSE_VOLTS);
               io.goToPos(COLLAPSE_POS);
             })
         .until(
             () ->
                 isHopperCollapsed()
-                    || inputs.getExtendPos == COLLAPSE_POS
+                    || inputs.getExtendPos <= COLLAPSE_POS
                     || (!limitSwitchDisabled.getAsBoolean() && isStowed))
         .finallyDo(() -> io.setPIDEnabled(false));
   }
