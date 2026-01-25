@@ -53,8 +53,9 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command setTargetDistance(double distanceMeters) {
-      return Commands.sequence(
+    return Commands.sequence(
         Commands.runOnce(() -> setpointEnabled = true, this),
-        Commands.runEnd(() -> io.setTargetDistance(distanceMeters), () -> setpointEnabled = false, this));
+        Commands.runEnd(
+            () -> io.setTargetDistance(distanceMeters), () -> setpointEnabled = false, this));
   }
 }
