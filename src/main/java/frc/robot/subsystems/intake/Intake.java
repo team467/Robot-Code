@@ -164,7 +164,11 @@ public class Intake extends SubsystemBase {
             () ->
                 (isSlipping() && !limitSwitchDisabled.getAsBoolean())
                     || inputs.getExtendPos == EXTEND_POS)
-        .finallyDo(() -> io.setPIDEnabled(false));
+        .finallyDo(
+            () -> {
+              io.setPIDEnabled(false);
+              stopExtend();
+            });
   }
 
   public Command toPosCollapse() {
@@ -178,6 +182,10 @@ public class Intake extends SubsystemBase {
                 isHopperCollapsed()
                     || inputs.getExtendPos == COLLAPSE_POS
                     || (!limitSwitchDisabled.getAsBoolean() && isStowed))
-        .finallyDo(() -> io.setPIDEnabled(false));
+        .finallyDo(
+            () -> {
+              io.setPIDEnabled(false);
+              stopExtend();
+            });
   }
 }
