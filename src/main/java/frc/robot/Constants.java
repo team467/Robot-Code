@@ -83,6 +83,7 @@ public class Constants {
     ROBOT_2025_COMP,
     ROBOT_2025_TEST,
     ROBOT_BRIEFCASE,
+    ROBOT_2026_COMP,
     ROBOT_SIMBOT
   }
 
