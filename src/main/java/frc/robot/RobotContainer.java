@@ -176,7 +176,7 @@ public class RobotContainer {
             () -> -driverController.getRightX()));
     driverController
         .leftBumper()
-        .whileTrue(
+        .onTrue(
             Commands.parallel(
                 DriveCommands.joystickDriveAtAngle(
                     drive,
