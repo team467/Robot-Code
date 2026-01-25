@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static frc.robot.FieldConstants.Hub.blueCenter;
 import static frc.robot.FieldConstants.Hub.redCenter;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
@@ -176,30 +177,25 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
     driverController
-        .leftBumper()
-        .onTrue(
-            Commands.parallel(
-                DriveCommands.joystickDriveAtAngle(
-                    drive,
-                    () -> driverController.getLeftX(),
-                    () -> driverController.getLeftY(),
-                    () ->
-                        AllianceFlipUtil.apply(
-                                aprilTagLayout.getTagPose(9).get().toPose2d().getTranslation())
-                            .minus(drive.getPose().getTranslation())
-                            .getAngle()
-                            .minus(Rotation2d.fromDegrees(180)))));
+        .a()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> driverController.getLeftX(),
+                () -> driverController.getLeftY(),
+                () ->
+                    AllianceFlipUtil.apply(blueCenter)
+                        .minus(drive.getPose().getTranslation())
+                        .getAngle()));
 
     Commands.run(
         () -> {
           double distance =
-              AllianceFlipUtil.apply(redCenter)
-                  .minus(drive.getPose().getTranslation())
-                  .getNorm();
+              AllianceFlipUtil.apply(redCenter).minus(drive.getPose().getTranslation()).getNorm();
           double velocityFPS = 16.8379527141 + 2.79775342767 * distance;
           double percentNeeded = velocityFPS * 0.0;
-//          shooter.setPercent(percentNeeded);
-          System.out.println("Suh-ass says we need this percent:" + percentNeeded);
+          //          shooter.setPercent(percentNeeded);
+          System.out.println("Suhaas says we need this percent:" + percentNeeded);
         });
 
     // Lock to 0° when A button is held
