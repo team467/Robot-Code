@@ -120,4 +120,9 @@ public class IntakeIOSparkMax implements IntakeIO {
   public void setPIDEnabled(boolean enabled) {
     this.usingPID = enabled;
   }
+
+  @Override
+  public void resetExtendEncoder() {
+    extendMotorEncoder.setPosition(0);
+  }
 }

@@ -21,6 +21,7 @@ public class IntakeConstants {
   public static final double PID_I = 0.0000001;
   public static final double PID_D = 0.0000001;
 
-  public static final double EXTEND_POS = 0.0;
+  public static final double EXTEND_POS = 10.0; // TODO: change the actual value
   public static final double COLLAPSE_POS = 0.0;
+  public static final double POSITION_TOLERANCE = 0.5;
 }

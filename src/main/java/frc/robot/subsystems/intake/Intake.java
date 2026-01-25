@@ -6,6 +6,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.OUTTAKE_VOLTS;
+import static frc.robot.subsystems.intake.IntakeConstants.POSITION_TOLERANCE;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,10 +31,19 @@ public class Intake extends SubsystemBase {
     this.limitSwitchDisabled = limitSwitchDisabled;
   }
 
+  private boolean isAtPosition(double currentPos, double targetPos) {
+    return Math.abs(currentPos - targetPos) < POSITION_TOLERANCE;
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
+
+    if (!limitSwitchDisabled.getAsBoolean() && isHopperCollapsed()) {
+      io.resetExtendEncoder();
+    }
+
     if (limitSwitchDisabled.getAsBoolean()) {
       if (inputs.extendVolts > 0.1 && stalledExtend) {
         stalledExtend = false;
@@ -191,7 +201,7 @@ public class Intake extends SubsystemBase {
             })
         .until(
             () ->
-                inputs.getExtendPos == EXTEND_POS
+                isAtPosition(inputs.getExtendPos, EXTEND_POS)
                     || (limitSwitchDisabled.getAsBoolean() && isExtended))
         .finallyDo(
             () -> {
@@ -209,7 +219,7 @@ public class Intake extends SubsystemBase {
         .until(
             () ->
                 isHopperCollapsed()
-                    || inputs.getExtendPos == COLLAPSE_POS
+                    || isAtPosition(inputs.getExtendPos, COLLAPSE_POS)
                     || (limitSwitchDisabled.getAsBoolean() && isStowed))
         .finallyDo(
             () -> {

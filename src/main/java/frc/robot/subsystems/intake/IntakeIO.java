@@ -36,4 +36,6 @@ public interface IntakeIO {
   }
 
   default void setPIDEnabled(boolean enabled) {}
+
+  default void resetExtendEncoder() {}
 }
