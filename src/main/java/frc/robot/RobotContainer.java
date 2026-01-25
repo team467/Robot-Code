@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static frc.robot.FieldConstants.Hub.redCenter;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -192,7 +193,7 @@ public class RobotContainer {
     Commands.run(
         () -> {
           double distance =
-              AllianceFlipUtil.apply(aprilTagLayout.getTagPose(9).get().toPose2d().getTranslation())
+              AllianceFlipUtil.apply(redCenter)
                   .minus(drive.getPose().getTranslation())
                   .getNorm();
           double velocityFPS = 16.8379527141 + 2.79775342767 * distance;
