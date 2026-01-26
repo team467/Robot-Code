@@ -191,9 +191,7 @@ public class Intake extends SubsystemBase {
             })
         .until(
             () ->
-                limitSwitchDisabled.getAsBoolean()
-                    ? isExtended
-                    : inputs.getExtendPos >= EXTEND_POS)
+                limitSwitchDisabled.getAsBoolean() ? isExtended : inputs.getExtendPos >= EXTEND_POS)
         .finallyDo(
             () -> {
               io.setPIDEnabled(false);
