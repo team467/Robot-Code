@@ -191,8 +191,9 @@ public class Intake extends SubsystemBase {
             })
         .until(
             () ->
-                inputs.getExtendPos >= EXTEND_POS
-                    || (limitSwitchDisabled.getAsBoolean() && isExtended))
+                limitSwitchDisabled.getAsBoolean()
+                    ? isExtended
+                    : inputs.getExtendPos >= EXTEND_POS)
         .finallyDo(
             () -> {
               io.setPIDEnabled(false);
@@ -208,9 +209,9 @@ public class Intake extends SubsystemBase {
             })
         .until(
             () ->
-                isHopperCollapsed()
-                    || inputs.getExtendPos <= COLLAPSE_POS
-                    || (limitSwitchDisabled.getAsBoolean() && isStowed))
+                limitSwitchDisabled.getAsBoolean()
+                    ? isStowed
+                    : (isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS))
         .finallyDo(
             () -> {
               io.setPIDEnabled(false);
