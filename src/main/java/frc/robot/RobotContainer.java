@@ -133,7 +133,8 @@ public class RobotContainer {
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("test path", autos.testPath());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
-    autoChooser.addOption("CL auto", autos.CenterA());
+    autoChooser.addOption("CA auto", autos.CenterA());
+    autoChooser.addOption("CC auto", autos.CenterC());
 
     // Drive SysId
     autoChooser.addOption(

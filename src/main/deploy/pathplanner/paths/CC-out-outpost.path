@@ -8,53 +8,37 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.4713997627520765,
-        "y": 1.4689323843416366
+        "x": 3.8306707646765266,
+        "y": 3.3004310859363684
       },
       "isLocked": false,
       "linkedName": "CC"
     },
     {
       "anchor": {
-        "x": 6.871304863582444,
-        "y": 3.077611111111112
+        "x": 0.5101111111111114,
+        "y": 0.6085555555555562
       },
       "prevControl": {
-        "x": 6.418915578604672,
-        "y": 3.382610195957319
-      },
-      "nextControl": {
-        "x": 7.094936651310997,
-        "y": 2.9268394353339526
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 7.6350999999999996,
-        "y": 1.7473444444444444
-      },
-      "prevControl": {
-        "x": 6.974444748182465,
-        "y": 2.9230333057416127
+        "x": 1.2619859410917074,
+        "y": 1.3411239396448345
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "intakeEnd-Right"
+      "linkedName": "outpost"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.717607973421928,
-      "maxWaypointRelativePos": 1.457364341085276,
+      "minWaypointRelativePos": 0.722037652270217,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 2.3,
-        "maxAcceleration": 1.5,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
+        "maxVelocity": 3.0,
+        "maxAcceleration": 1.2,
+        "maxAngularVelocity": 400.0,
+        "maxAngularAcceleration": 400.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -65,14 +49,14 @@
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 400.0,
+    "maxAngularAcceleration": 400.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -42.51044707800088
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,

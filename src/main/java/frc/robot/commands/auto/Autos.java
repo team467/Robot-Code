@@ -20,6 +20,8 @@ public class Autos {
   private static final Supplier<Pose2d> center = () -> new Pose2d(3.504, 4.019, new Rotation2d(0));
   private static final Supplier<Pose2d> CenterA =
       () -> new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305)));
+  private static final Supplier<Pose2d> CenterC =
+      () -> new Pose2d(3.413, 3.078, new Rotation2d(Units.degreesToRadians(38.157)));
 
   public Command CenterA() {
     return Commands.sequence(
@@ -27,6 +29,14 @@ public class Autos {
         drive.getAutonomousCommand("CA-out-intake"),
         drive.getAutonomousCommand("CA-in-shoot"),
         drive.getAutonomousCommand("CA-out-climb"));
+  }
+
+  public Command CenterC() {
+    return Commands.sequence(
+        Commands.runOnce(() -> drive.setPose(CenterC.get())),
+        drive.getAutonomousCommand("CC-out-intake"),
+        drive.getAutonomousCommand("CC-in-shoot"),
+        drive.getAutonomousCommand("CC-out-climb"));
   }
 
   public Command testPath() {
