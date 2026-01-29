@@ -23,6 +23,7 @@ import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
@@ -43,6 +44,7 @@ public class RobotContainer {
   private Vision vision;
   private Leds leds;
   private HopperBelt hopperBelt;
+  private Intake intake;
   private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
