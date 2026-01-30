@@ -26,7 +26,7 @@ public class IntakeIOSparkMax implements IntakeIO {
 
   private final SparkMax intakeMotor;
   private final SparkMax extendMotor;
-  private final DigitalInput extendedInput;
+  private final DigitalInput collapsedLimitSwitch;
   private final RelativeEncoder extendMotorEncoder;
   private final SparkClosedLoopController pidController;
   private double setPos = 0;
@@ -68,7 +68,7 @@ public class IntakeIOSparkMax implements IntakeIO {
         intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     extendMotor.configure(
         extendConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    extendedInput = new DigitalInput(EXTEND_LIMIT_ID);
+    collapsedLimitSwitch = new DigitalInput(EXTEND_LIMIT_ID);
   }
 
   @Override
@@ -80,7 +80,7 @@ public class IntakeIOSparkMax implements IntakeIO {
     inputs.extendVolts = extendMotor.getAppliedOutput();
     inputs.intakeAmps = intakeMotor.getOutputCurrent();
     inputs.extendAmps = extendMotor.getOutputCurrent();
-    inputs.isCollapsed = extendedInput.get();
+    inputs.isCollapsed = collapsedLimitSwitch.get();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
   }
 
@@ -114,10 +114,15 @@ public class IntakeIOSparkMax implements IntakeIO {
 
   @Override
   public boolean isHopperCollapsed() {
-    return extendedInput.get();
+    return collapsedLimitSwitch.get();
   }
 
   public void setPIDEnabled(boolean enabled) {
     this.usingPID = enabled;
+  }
+
+  @Override
+  public void resetExtendEncoder() {
+    extendMotorEncoder.setPosition(0);
   }
 }

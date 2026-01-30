@@ -15,17 +15,20 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
+import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -42,10 +45,10 @@ public class RobotContainer {
   private Leds leds;
   private HopperBelt hopperBelt;
   private Intake intake;
+  private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
   private RobotState robotState = RobotState.getInstance();
-  private BooleanSupplier intakeSupp;
   private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
@@ -75,6 +78,24 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera1Name, robotToCamera1));
           leds = new Leds();
         }
+        case ROBOT_2026_COMP -> {
+          drive =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOTalonSpark(0),
+                  new ModuleIOTalonSpark(1),
+                  new ModuleIOTalonSpark(2),
+                  new ModuleIOTalonSpark(3));
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
+          leds = new Leds();
+          shooter = new Shooter(new ShooterIOSparkMax());
+          hopperBelt = new HopperBelt(new HopperBeltSparkMax());
+          indexer = new Indexer(new IndexerIOSparkMax());
+        }
 
         case ROBOT_SIMBOT -> {
           drive =
@@ -92,7 +113,6 @@ public class RobotContainer {
           leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           //    shooter = new Shooter(new ShooterIOSparkMax());
-          intake = new Intake(new IntakeIOSparkMax(), intakeSupp);
         }
       }
     }
@@ -108,11 +128,14 @@ public class RobotContainer {
               new ModuleIO() {});
     }
 
-    orchestrator = new Orchestrator(drive);
+    orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
+    Autos autos = new Autos(drive);
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
+    autoChooser.addOption("test path", autos.testPath());
+    autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
+    autoChooser.addOption("CL auto", autos.CenterA());
 
     // Drive SysId
     autoChooser.addOption(
@@ -142,8 +165,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    driverController.x().whileTrue(Commands.run(() -> intake.collapse()));
-    driverController.rightTrigger().whileTrue(Commands.run(()-> intake.collapseAndIntake()));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -166,6 +187,9 @@ public class RobotContainer {
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
+    if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
+      driverController.rightBumper().whileTrue(orchestrator.shootBalls());
+    }
     //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
