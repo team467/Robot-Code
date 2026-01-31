@@ -23,9 +23,9 @@ public interface IntakeIO {
 
   default void setPercentExtend(double extendPercent) {}
 
-  void setVoltageIntake(double intakeVolts);
+  default void setVoltageIntake(double intakeVolts) {}
 
-  void setVoltageExtend(double extendVolts);
+  default void setVoltageExtend(double extendVolts) {}
 
   default void stop() {}
 
@@ -42,4 +42,6 @@ public interface IntakeIO {
   default boolean isCollapsed() {
     return false;
   }
+
+  default void extendToPosition(double position) {}
 }

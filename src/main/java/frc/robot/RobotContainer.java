@@ -175,8 +175,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    driverController.x().onTrue(intake.extend());
+    //    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
+    driverController.y().onTrue(intake.toPosExtend());
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
