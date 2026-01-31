@@ -6,9 +6,9 @@ import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVER
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_EXTEND_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_MOTOR_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_POSITION_CONVERSION;
-import static frc.robot.subsystems.shooter.ShooterConstants.PID_D;
-import static frc.robot.subsystems.shooter.ShooterConstants.PID_I;
-import static frc.robot.subsystems.shooter.ShooterConstants.PID_P;
+import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
+import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
+import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;

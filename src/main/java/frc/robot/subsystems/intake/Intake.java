@@ -127,9 +127,8 @@ public class Intake extends SubsystemBase {
     return Commands.run(
             () -> {
               setVoltageExtend(EXTEND_VOLTS);
-              toPosExtend();
             })
-        // .until(() -> !isHopperCollapsed())
+        .until(() -> inputs.getExtendPos >= EXTEND_POS)
         .finallyDo(interrupted -> stopExtend());
   }
 
@@ -152,11 +151,10 @@ public class Intake extends SubsystemBase {
   public Command extendAndIntake() {
     return Commands.run(
             () -> {
-              setVoltageIntake(EXTEND_VOLTS);
-              setVoltageExtend(COLLAPSE_VOLTS);
-              toPosExtend();
+              setVoltageIntake(INTAKE_VOLTS);
+              setVoltageExtend(EXTEND_VOLTS);
             })
-        // .until(inputs.getExtendPos == EXTEND_POS)
+        .until(() -> inputs.getExtendPos >= EXTEND_POS)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake());
   }
@@ -173,9 +171,8 @@ public class Intake extends SubsystemBase {
     return Commands.run(
             () -> {
               setVoltageExtend(COLLAPSE_VOLTS);
-              toPosCollapse();
             })
-        // .until(this::isHopperCollapsed)
+        .until(() -> isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS)
         .finallyDo(interrupted -> stopExtend());
   }
 
@@ -184,9 +181,8 @@ public class Intake extends SubsystemBase {
             () -> {
               setVoltageIntake(INTAKE_VOLTS);
               setVoltageExtend(COLLAPSE_VOLTS);
-              toPosCollapse();
             })
-        // .until(this::isHopperCollapsed)
+        .until(() -> isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake());
   }
