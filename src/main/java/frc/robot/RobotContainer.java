@@ -24,11 +24,13 @@ import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -111,6 +113,15 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
+          intake =
+              new Intake(
+                  new IntakeIOSparkMax(),
+                  new BooleanSupplier() {
+                    @Override
+                    public boolean getAsBoolean() {
+                      return false;
+                    }
+                  });
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           //    shooter = new Shooter(new ShooterIOSparkMax());
         }
@@ -165,6 +176,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
+    driverController.x().onTrue(Commands.runOnce(() -> intake.voltageTest()));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(

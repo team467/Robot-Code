@@ -115,6 +115,14 @@ public class Intake extends SubsystemBase {
     return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts > 0.1;
   }
 
+  public Command voltageTest() {
+    return Commands.run(
+        () -> {
+          setVoltageExtend(EXTEND_VOLTS);
+          setVoltageIntake(INTAKE_VOLTS);
+        });
+  }
+
   public Command extend() {
     return Commands.run(
             () -> {
