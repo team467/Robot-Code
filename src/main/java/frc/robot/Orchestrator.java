@@ -16,7 +16,8 @@ public class Orchestrator {
   private final Intake intake;
   private final RobotState robotState = RobotState.getInstance();
 
-  public Orchestrator(Drive drive, HopperBelt hopperBelt, Shooter shooter, Indexer indexer, Intake intake) {
+  public Orchestrator(
+      Drive drive, HopperBelt hopperBelt, Shooter shooter, Indexer indexer, Intake intake) {
     this.drive = drive;
     this.hopperBelt = hopperBelt;
     this.shooter = shooter;
