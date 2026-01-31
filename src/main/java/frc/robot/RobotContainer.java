@@ -165,11 +165,12 @@ public class RobotContainer {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+        orchestrator.driveShootAtAngle(driverController::getLeftX, driverController::getLeftY));
+    //        DriveCommands.joystickDrive(
+    //            drive,
+    //            () -> -driverController.getLeftY(),
+    //            () -> -driverController.getLeftX(),
+    //            () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
 
@@ -202,5 +203,6 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
+    orchestrator.OrchestratorPeriodic();
   }
 }

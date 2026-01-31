@@ -1,15 +1,19 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants.Hub;
+import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.Optional;
+import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
   private final Drive drive;
@@ -25,74 +29,85 @@ public class Orchestrator {
     this.indexer = indexer;
   }
 
+  public void OrchestratorPeriodic() {
+    Logger.recordOutput("Orchestrator/Target", getFinalTargetPose());
+  }
+
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
   public Command shootBalls() {
     return Commands.parallel(shooter.setVoltage(1), hopperBelt.start(), indexer.run());
   }
 
-  //FOR SHOOTING WHILE DRIVE WE MUST KNOW A FUNCTION OF SHOOTER VELOCITY TO INITIAL VELOCITY OF THE BALL FORWARDS
+  public Command driveShootAtAngle(DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+    return DriveCommands.joystickDriveAtAngle(drive, xSupplier, ySupplier, this::getAngleToShoot);
+  }
 
-  public double getAngleToShoot() {
+  // FOR SHOOTING WHILE DRIVE WE MUST KNOW A FUNCTION OF SHOOTER VELOCITY TO INITIAL VELOCITY OF THE
+  // BALL FORWARDS
+
+  private Rotation2d getAngleToShoot() {
     double robotAngle = drive.getPose().getRotation().getRadians();
     Translation2d robotPose = drive.getPose().getTranslation();
     Translation2d finalTarget = getFinalTargetPose();
-    double angleDifference = Math.acos(finalTarget.dot(robotPose) / (finalTarget.getNorm()*robotPose.getNorm()));
-    return robotAngle + angleDifference;
+    double angleDifference =
+        Math.acos(finalTarget.dot(robotPose) / (finalTarget.getNorm() * robotPose.getNorm()));
+    return Rotation2d.fromRadians(robotAngle + angleDifference);
   }
-  public double getShooterVelocity(){
+
+  private double getShooterVelocity() {
     Translation2d robotPose = drive.getPose().getTranslation();
-    Translation2d robotVelocity = new Translation2d(drive.getChassisSpeeds().vxMetersPerSecond,
-        drive.getChassisSpeeds().vyMetersPerSecond);
+    Translation2d robotVelocity =
+        new Translation2d(
+            drive.getChassisSpeeds().vxMetersPerSecond, drive.getChassisSpeeds().vyMetersPerSecond);
     Translation2d finalTarget = getFinalTargetPose();
-    Optional<Double> shooterVelocity = solveShooterVelocity(
-        robotPose,
-        finalTarget,
-        Math.toRadians(45),
-        robotVelocity.getNorm(),
-        9.81
-    );
+    Optional<Double> shooterVelocity =
+        solveShooterVelocity(
+            robotPose, finalTarget, Math.toRadians(45), robotVelocity.getNorm(), 9.81);
     return shooterVelocity.orElse(0.0);
   }
 
-  public Translation2d getFinalTargetPose(){
+  private Translation2d getFinalTargetPose() {
     Translation2d hubPose = Hub.topCenterPoint.toTranslation2d();
     Translation2d robotPose = drive.getPose().getTranslation();
-    Translation2d robotVelocity = new Translation2d(drive.getChassisSpeeds().vxMetersPerSecond,
-        drive.getChassisSpeeds().vyMetersPerSecond);
-    return hubPose.minus(projection(hubPose.minus( robotPose), robotVelocity));
+    Translation2d robotVelocity =
+        new Translation2d(
+            drive.getChassisSpeeds().vxMetersPerSecond, drive.getChassisSpeeds().vyMetersPerSecond);
+    return hubPose.minus(projection(hubPose.minus(robotPose), robotVelocity));
   }
-  public boolean canShoot(){
+
+  private boolean canShoot() {
     Translation2d robotPose = drive.getPose().getTranslation();
-    Translation2d robotVelocity = new Translation2d(drive.getChassisSpeeds().vxMetersPerSecond,
-        drive.getChassisSpeeds().vyMetersPerSecond);
+    Translation2d robotVelocity =
+        new Translation2d(
+            drive.getChassisSpeeds().vxMetersPerSecond, drive.getChassisSpeeds().vyMetersPerSecond);
     Translation2d targetPose = getFinalTargetPose();
-    Optional<Double> shooterVelocity = solveShooterVelocity(
-        robotPose,
-        targetPose,
-        Math.toRadians(ShooterConstants.SHOOTER_ANGLE_DEGREES),
-        robotVelocity.getNorm(),
-        9.81
-    );
+    Optional<Double> shooterVelocity =
+        solveShooterVelocity(
+            robotPose,
+            targetPose,
+            Math.toRadians(ShooterConstants.SHOOTER_ANGLE_DEGREES),
+            robotVelocity.getNorm(),
+            9.81);
     return shooterVelocity.isPresent();
   }
-  public double getDistanceToShoot() {
+
+  private double getDistanceToShoot() {
     Translation2d robotPose = drive.getPose().getTranslation();
     Translation2d finalTarget = getFinalTargetPose();
     return robotPose.minus(finalTarget).getNorm();
   }
 
-  public Translation2d projection(Translation2d a, Translation2d b){
+  private Translation2d projection(Translation2d a, Translation2d b) {
     double scalar = (a.dot(b)) / (b.dot(b));
     return new Translation2d(b.getX() * scalar, b.getY() * scalar);
   }
 
-  public Optional<Double> solveShooterVelocity(
+  private Optional<Double> solveShooterVelocity(
       Translation2d shooterPos,
       Translation2d targetPos,
       double shooterAngleRad,
       double vDrive,
-      double g
-  ) {
+      double g) {
     double distance = shooterPos.getDistance(targetPos);
     double deltaZ = targetPos.getY() - shooterPos.getY();
     double cosTheta = Math.cos(shooterAngleRad);

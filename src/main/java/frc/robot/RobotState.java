@@ -38,18 +38,21 @@ public class RobotState {
       this.ledSection = section;
     }
   }
+
   public enum IntakePosition {
     STOWED,
     DEPLOYED,
     MOVING_OUT,
     MOVING_IN
   }
+
   public enum ClimberPosition {
     STOWED,
     DEPLOYED,
     MOVING_OUT,
     MOVING_IN
   }
+
   @AutoLogOutput(key = "RobotState/Mode")
   private Mode mode = Mode.OFF;
 
@@ -59,16 +62,22 @@ public class RobotState {
 
   @AutoLogOutput(key = "RobotState/PoseConfidence")
   public boolean PoseConfidence = false;
+
   @AutoLogOutput(key = "RobotState/Intaking")
   public boolean intaking = false;
+
   @AutoLogOutput(key = "RobotState/IntakePosition")
   public IntakePosition intakePosition = IntakePosition.STOWED;
+
   @AutoLogOutput(key = "RobotState/ClimberPosition")
   public ClimberPosition climberPosition = ClimberPosition.STOWED;
+
   @AutoLogOutput(key = "RobotState/IndexerHasFuel")
   public boolean indexerHasFuel = false;
+
   @AutoLogOutput(key = "RobotState/ShooterAtSpeed")
   public boolean shooterAtSpeed = false;
+
   @AutoLogOutput(key = "RobotState/IsAlignedToHub")
   public boolean isAlignedToHub = false;
 
