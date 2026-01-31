@@ -1,5 +1,6 @@
 package frc.robot.commands.auto;
 
+import choreo.auto.AutoFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -10,8 +11,16 @@ import java.util.function.Supplier;
 
 public class Autos {
   private final Drive drive;
+  private final AutoFactory autoFactory;
 
   public Autos(Drive drive) {
+    this.autoFactory =
+        new AutoFactory(
+            drive::getPose, // A function that returns the current robot pose
+            drive::setPose, // A function that resets the current robot pose to the provided Pose2d
+            drive::followTrajectory, // The drive subsystem trajectory follower
+            true, // If alliance flipping should be enabled
+            drive);
     this.drive = drive;
   }
 
@@ -39,11 +48,20 @@ public class Autos {
         drive.getAutonomousCommand("CC-out-climb"));
   }
 
+  public Command CC_1C_O_Climb() {
+    return drive.getAutonomousCommand("CC-1C-O-Climb");
+  }
+
   public Command testPath() {
     return Commands.sequence(
         Commands.runOnce(
             () ->
                 drive.setPose(new Pose2d(3.213, 5.600, new Rotation2d(Units.degreesToRadians(0))))),
         drive.getAutonomousCommand("test path"));
+  }
+
+  public Command choreotest() {
+    return Commands.sequence(
+        autoFactory.resetOdometry("CAoutIntake"), autoFactory.trajectoryCmd("CAoutIntake"));
   }
 }

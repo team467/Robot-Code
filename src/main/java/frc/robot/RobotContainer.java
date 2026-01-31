@@ -135,6 +135,7 @@ public class RobotContainer {
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     autoChooser.addOption("CA auto", autos.CenterA());
     autoChooser.addOption("CC auto", autos.CenterC());
+    autoChooser.addOption("choreo test", autos.choreotest());
 
     // Drive SysId
     autoChooser.addOption(
