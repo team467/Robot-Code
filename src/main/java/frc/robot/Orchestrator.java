@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,7 +31,11 @@ public class Orchestrator {
   }
 
   public void OrchestratorPeriodic() {
-    Logger.recordOutput("Orchestrator/Target", getFinalTargetPose());
+    Logger.recordOutput(
+        "Orchestrator/Target",
+        new Pose2d(
+            getFinalTargetPose().getX(), getFinalTargetPose().getY(), Rotation2d.fromDegrees(0)));
+    Logger.recordOutput("Orchestrator/Hub", Hub.innerCenterPoint);
   }
 
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
@@ -46,82 +51,98 @@ public class Orchestrator {
   // BALL FORWARDS
 
   private Rotation2d getAngleToShoot() {
-    double robotAngle = drive.getPose().getRotation().getRadians();
     Translation2d robotPose = drive.getPose().getTranslation();
     Translation2d finalTarget = getFinalTargetPose();
-    double angleDifference =
-        Math.acos(finalTarget.dot(robotPose) / (finalTarget.getNorm() * robotPose.getNorm()));
-    return Rotation2d.fromRadians(robotAngle + angleDifference);
+    return finalTarget.minus(robotPose).getAngle();
   }
 
   private double getShooterVelocity() {
     Translation2d robotPose = drive.getPose().getTranslation();
-    Translation2d robotVelocity =
-        new Translation2d(
-            drive.getChassisSpeeds().vxMetersPerSecond, drive.getChassisSpeeds().vyMetersPerSecond);
     Translation2d finalTarget = getFinalTargetPose();
+
     Optional<Double> shooterVelocity =
         solveShooterVelocity(
-            robotPose, finalTarget, Math.toRadians(45), robotVelocity.getNorm(), 9.81);
+            robotPose, finalTarget, Math.toRadians(ShooterConstants.SHOOTER_ANGLE_DEGREES), 9.81);
+
     return shooterVelocity.orElse(0.0);
   }
 
   private Translation2d getFinalTargetPose() {
     Translation2d hubPose = Hub.topCenterPoint.toTranslation2d();
     Translation2d robotPose = drive.getPose().getTranslation();
+
+    // Robot velocity as Translation2d
     Translation2d robotVelocity =
         new Translation2d(
             drive.getChassisSpeeds().vxMetersPerSecond, drive.getChassisSpeeds().vyMetersPerSecond);
-    return hubPose.minus(projection(hubPose.minus(robotPose), robotVelocity));
+
+    Translation2d toHub = hubPose.minus(robotPose);
+
+    Translation2d radialComponent = project(robotVelocity, toHub);
+    Translation2d tangentialVelocity = robotVelocity.minus(radialComponent);
+
+    Optional<Double> shooterVelocityOpt =
+        solveShooterVelocity(
+            robotPose, hubPose, Math.toRadians(ShooterConstants.SHOOTER_ANGLE_DEGREES), 9.81);
+
+    if (!shooterVelocityOpt.isPresent()) {
+      return hubPose;
+    }
+
+    double shooterVelocity = shooterVelocityOpt.get();
+
+    double flightTime =
+        toHub.getNorm()
+            / (shooterVelocity * Math.cos(Math.toRadians(ShooterConstants.SHOOTER_ANGLE_DEGREES)));
+
+    Translation2d offset = tangentialVelocity.times(flightTime).times(-1.0);
+
+    return hubPose.plus(offset);
+  }
+
+  private Translation2d project(Translation2d a, Translation2d b) {
+    double scale = a.dot(b) / b.dot(b);
+    return b.times(scale);
   }
 
   private boolean canShoot() {
     Translation2d robotPose = drive.getPose().getTranslation();
-    Translation2d robotVelocity =
-        new Translation2d(
-            drive.getChassisSpeeds().vxMetersPerSecond, drive.getChassisSpeeds().vyMetersPerSecond);
     Translation2d targetPose = getFinalTargetPose();
+
     Optional<Double> shooterVelocity =
         solveShooterVelocity(
-            robotPose,
-            targetPose,
-            Math.toRadians(ShooterConstants.SHOOTER_ANGLE_DEGREES),
-            robotVelocity.getNorm(),
-            9.81);
+            robotPose, targetPose, Math.toRadians(ShooterConstants.SHOOTER_ANGLE_DEGREES), 9.81);
+
     return shooterVelocity.isPresent();
   }
 
   private double getDistanceToShoot() {
     Translation2d robotPose = drive.getPose().getTranslation();
     Translation2d finalTarget = getFinalTargetPose();
-    return robotPose.minus(finalTarget).getNorm();
-  }
-
-  private Translation2d projection(Translation2d a, Translation2d b) {
-    double scalar = (a.dot(b)) / (b.dot(b));
-    return new Translation2d(b.getX() * scalar, b.getY() * scalar);
+    return robotPose.getDistance(finalTarget);
   }
 
   private Optional<Double> solveShooterVelocity(
-      Translation2d shooterPos,
-      Translation2d targetPos,
-      double shooterAngleRad,
-      double vDrive,
-      double g) {
+      Translation2d shooterPos, Translation2d targetPos, double shooterAngleRad, double g) {
+
     double distance = shooterPos.getDistance(targetPos);
-    double deltaZ = targetPos.getY() - shooterPos.getY();
+
+    double deltaZ = Hub.height - ShooterConstants.SHOOTER_HEIGHT;
+
     double cosTheta = Math.cos(shooterAngleRad);
-    double sinTheta = Math.sin(shooterAngleRad);
 
     if (Math.abs(cosTheta) < 1e-6) {
       return Optional.empty();
     }
 
-    double velocityShooterOut = (distance - vDrive) / cosTheta;
-    boolean feasible = velocityShooterOut > 0 && (sinTheta * velocityShooterOut - deltaZ) >= 0;
-    if (!feasible) {
+    double denom = distance * Math.tan(shooterAngleRad) - deltaZ;
+    if (denom <= 0) {
       return Optional.empty();
     }
-    return Optional.of(velocityShooterOut);
+
+    double velocity = Math.sqrt((g * distance * distance) / (2 * cosTheta * cosTheta * denom));
+
+    return Double.isFinite(velocity) && velocity > 0 ? Optional.of(velocity) : Optional.empty();
   }
+
 }
