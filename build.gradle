@@ -35,11 +35,26 @@ deploy {
                     jvmArgs.add("-XX:+UseSerialGC")
                     jvmArgs.add("-XX:MaxGCPauseMillis=50")
 
-                    // The options below may improve performance, but should only be enabled on the RIO 2
-                    final MAX_JAVA_HEAP_SIZE_MB = 100;
-                    jvmArgs.add("-Xmx" + MAX_JAVA_HEAP_SIZE_MB + "M")
-                    jvmArgs.add("-Xms" + MAX_JAVA_HEAP_SIZE_MB + "M")
+                    // Heap size is set dynamically in predeploy based on robot type
                     jvmArgs.add("-XX:+AlwaysPreTouch")
+
+                    predeploy << { ctx ->
+                        def robotTypeFile = "/home/lvuser/robot"
+                        def result = ctx.execute("cat " + robotTypeFile)
+                        def robotType = result.result.trim()
+                        println "Detected robot type: " + robotType
+
+                        def heapSize = 100
+                        if (robotType == "ROBOT_BRIEFCASE") {
+                            heapSize = 10
+                            println "Using reduced heap size for ROBOT_BRIEFCASE: " + heapSize + "MB"
+                        } else {
+                            println "Using default heap size: " + heapSize + "MB"
+                        }
+
+                        jvmArgs.add("-Xmx" + heapSize + "M")
+                        jvmArgs.add("-Xms" + heapSize + "M")
+                    }
                 }
 
                 // Static files artifact
@@ -91,6 +106,9 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
