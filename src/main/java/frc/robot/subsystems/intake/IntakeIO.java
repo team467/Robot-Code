@@ -15,6 +15,7 @@ public interface IntakeIO {
     public boolean isCollapsed = false;
     // public boolean manualModeInput;
     public double getExtendPos = 0.0;
+    public double setpointExtendPos = 0.0;
   }
 
   default void updateInputs(IntakeIOInputs inputs) {}

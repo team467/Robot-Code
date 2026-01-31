@@ -19,11 +19,11 @@ public class IntakeConstants {
   public static final int INTAKE_EXTEND_ID = 2;
   public static final int EXTEND_LIMIT_ID = 1;
 
-  public static final double PID_P = 0.005; // arbritrary values
-  public static final double PID_I = 0.000000;
-  public static final double PID_D = 0.0000001;
+  public static final double PID_P = 0.001; // arbritrary values
+  public static final double PID_I = 0;
+  public static final double PID_D = 0;
 
-  public static final double EXTEND_POS = 10.0; // TODO: change the actual value
+  public static final double EXTEND_POS = 7; // TODO: change the actual value
   public static final double COLLAPSE_POS = 0.0;
   public static final double POSITION_TOLERANCE = 0.5;
 }
