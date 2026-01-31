@@ -92,7 +92,7 @@ public class Intake extends SubsystemBase {
   }
 
   private void setVoltageExtend(double extendVolts) {
-    io.setVoltageIntake(extendVolts);
+    io.setVoltageExtend(extendVolts);
   }
 
   private void stopIntake() {

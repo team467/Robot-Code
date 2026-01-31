@@ -33,8 +33,8 @@ public class IntakeIOSparkMax implements IntakeIO {
   private boolean usingPID = false;
 
   public IntakeIOSparkMax() {
-    intakeMotor = new SparkMax(INTAKE_MOTOR_ID, MotorType.kBrushed);
-    extendMotor = new SparkMax(INTAKE_EXTEND_ID, MotorType.kBrushed);
+    intakeMotor = new SparkMax(INTAKE_MOTOR_ID, MotorType.kBrushless);
+    extendMotor = new SparkMax(INTAKE_EXTEND_ID, MotorType.kBrushless);
     extendMotorEncoder = extendMotor.getEncoder();
 
     pidController = extendMotor.getClosedLoopController();
