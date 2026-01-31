@@ -176,7 +176,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    driverController.x().onTrue(Commands.runOnce(() -> intake.voltageTest()));
+    driverController.x().onTrue(Commands.run(() -> intake.voltageTest()));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
