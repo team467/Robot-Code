@@ -36,7 +36,7 @@ public class Intake extends SubsystemBase {
       io.resetExtendEncoder();
     }
 
-    //    io.extendToPosition(extendPos);
+    io.extendToPosition(extendPos);
 
     if (limitSwitchDisabled.getAsBoolean()) {
       if (inputs.extendVolts > 0.1 && stalledExtend) {
@@ -184,37 +184,12 @@ public class Intake extends SubsystemBase {
   }
 
   public Command toPosExtend() {
-    return Commands.run(
-            () -> {
-              io.setPIDEnabled(true);
-              io.goToPos(EXTEND_POS);
-            })
-        .until(
-            () ->
-                limitSwitchDisabled.getAsBoolean() ? isExtended : inputs.getExtendPos >= EXTEND_POS)
-        .finallyDo(
-            () -> {
-              io.setPIDEnabled(false);
-              stopExtend();
-            });
+    return Commands.run(() -> extendPos = EXTEND_POS)
+        .until(() -> inputs.getExtendPos >= EXTEND_POS);
   }
 
   public Command toPosCollapse() {
-    extendPos = COLLAPSE_POS;
-    return Commands.run(
-            () -> {
-              io.setPIDEnabled(true);
-              io.goToPos(COLLAPSE_POS);
-            })
-        .until(
-            () ->
-                limitSwitchDisabled.getAsBoolean()
-                    ? isStowed
-                    : (isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS))
-        .finallyDo(
-            () -> {
-              io.setPIDEnabled(false);
-              stopExtend();
-            });
+    return Commands.run(() -> extendPos = COLLAPSE_POS)
+        .until(() -> inputs.getExtendPos <= COLLAPSE_POS);
   }
 }
