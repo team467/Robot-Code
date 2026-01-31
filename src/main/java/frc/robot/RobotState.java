@@ -39,9 +39,16 @@ public class RobotState {
     }
   }
   public enum IntakePosition {
-    IN,
-    OUT,
-    MOVING
+    STOWED,
+    DEPLOYED,
+    MOVING_OUT,
+    MOVING_IN
+  }
+  public enum ClimberPosition {
+    STOWED,
+    DEPLOYED,
+    MOVING_OUT,
+    MOVING_IN
   }
   @AutoLogOutput(key = "RobotState/Mode")
   private Mode mode = Mode.OFF;
@@ -55,7 +62,9 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/Intaking")
   public boolean intaking = false;
   @AutoLogOutput(key = "RobotState/IntakePosition")
-  public IntakePosition intakePosition = IntakePosition.IN;
+  public IntakePosition intakePosition = IntakePosition.STOWED;
+  @AutoLogOutput(key = "RobotState/ClimberPosition")
+  public ClimberPosition climberPosition = ClimberPosition.STOWED;
   @AutoLogOutput(key = "RobotState/IndexerHasFuel")
   public boolean indexerHasFuel = false;
   @AutoLogOutput(key = "RobotState/ShooterAtSpeed")

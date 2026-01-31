@@ -6,6 +6,7 @@ import static frc.robot.subsystems.indexer.IndexConstants.INDEX_VOLT;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
@@ -20,6 +21,7 @@ public class Indexer extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Index", inputs);
+    RobotState.getInstance().indexerHasFuel = isSwitchPressed();
   }
 
   private void setPercent(double indexPercent, double feedUpPercent) {
@@ -34,8 +36,8 @@ public class Indexer extends SubsystemBase {
     io.setVoltage(0, 0);
   }
 
-  private void isSwitchPressed() {
-    io.isSwitchPressed();
+  private boolean isSwitchPressed() {
+    return io.isSwitchPressed();
   }
 
   public Command run() {
