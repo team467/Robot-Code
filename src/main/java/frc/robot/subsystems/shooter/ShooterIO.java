@@ -34,4 +34,6 @@ public interface ShooterIO {
   default void setTargetVelocity(double setpoint) {}
 
   default void goToSetpoint() {}
+
+  default void setTargetDistance(double distanceMeters) {}
 }
