@@ -25,4 +25,9 @@ public class Orchestrator {
   public Command shootBalls() {
     return Commands.parallel(shooter.setVoltage(1), hopperBelt.start(), indexer.run());
   }
+
+  public double getAngleToShoot() {
+    double robotAngle = drive.getPose().getRotation().getDegrees();
+    return 0.0;
+  }
 }
