@@ -1,0 +1,113 @@
+{
+ "name":"choreo",
+ "version":2,
+ "type":"Swerve",
+ "variables":{
+  "expressions":{},
+  "poses":{
+   "CA":{
+    "x":{
+     "exp":"3.457 m",
+     "val":3.457
+    },
+    "y":{
+     "exp":"4.941 m",
+     "val":4.941
+    },
+    "heading":{
+     "exp":"-36.143 deg",
+     "val":-0.6308143515483106
+    }
+   },
+   "Depot":{
+    "x":{
+     "exp":"0.5524600148200989 m",
+     "val":0.5524600148200989
+    },
+    "y":{
+     "exp":"5.98360013961792 m",
+     "val":5.98360013961792
+    },
+    "heading":{
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   }
+  }
+ },
+ "config":{
+  "frontLeft":{
+   "x":{
+    "exp":"0.273 m",
+    "val":0.273
+   },
+   "y":{
+    "exp":"0.273 m",
+    "val":0.273
+   }
+  },
+  "backLeft":{
+   "x":{
+    "exp":"-0.273 m",
+    "val":-0.273
+   },
+   "y":{
+    "exp":"0.273 m",
+    "val":0.273
+   }
+  },
+  "mass":{
+   "exp":"123 lbs",
+   "val":55.79186151
+  },
+  "inertia":{
+   "exp":"0.7 kg m ^ 2",
+   "val":0.7
+  },
+  "gearing":{
+   "exp":"8.14",
+   "val":8.14
+  },
+  "radius":{
+   "exp":"0.048 m",
+   "val":0.048
+  },
+  "vmax":{
+   "exp":"6000 RPM",
+   "val":628.3185307179587
+  },
+  "tmax":{
+   "exp":"1.2 N * m",
+   "val":1.2
+  },
+  "cof":{
+   "exp":"1.2",
+   "val":1.2
+  },
+  "bumper":{
+   "front":{
+    "exp":"0.45 m",
+    "val":0.45
+   },
+   "side":{
+    "exp":"0.45 m",
+    "val":0.45
+   },
+   "back":{
+    "exp":"0.45 m",
+    "val":0.45
+   }
+  },
+  "differentialTrackWidth":{
+   "exp":"22 in",
+   "val":0.5588
+  }
+ },
+ "generationFeatures":[],
+ "codegen":{
+  "root":"..\\C:\\Users\\shayan\\Downloads\\bot code twin\\src\\main\\deploy",
+  "genVars":true,
+  "genTrajData":true,
+  "useChoreoLib":true
+ }
+}
