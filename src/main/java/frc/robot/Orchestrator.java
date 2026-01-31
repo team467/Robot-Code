@@ -36,6 +36,8 @@ public class Orchestrator {
         new Pose2d(
             getFinalTargetPose().getX(), getFinalTargetPose().getY(), Rotation2d.fromDegrees(0)));
     Logger.recordOutput("Orchestrator/Hub", Hub.innerCenterPoint);
+    Logger.recordOutput("Orchestrator/CanShoot", canShoot());
+    Logger.recordOutput("Orchestrator/ShooterVelocity", getShooterVelocity());
   }
 
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
@@ -57,14 +59,30 @@ public class Orchestrator {
   }
 
   private double getShooterVelocity() {
-    Translation2d robotPose = drive.getPose().getTranslation();
+    Translation2d robotPos = drive.getPose().getTranslation();
     Translation2d finalTarget = getFinalTargetPose();
 
-    Optional<Double> shooterVelocity =
+    Optional<Double> shooterVelocityOpt =
         solveShooterVelocity(
-            robotPose, finalTarget, Math.toRadians(ShooterConstants.SHOOTER_ANGLE_DEGREES), 9.81);
+            robotPos, finalTarget, Math.toRadians(ShooterConstants.SHOOTER_ANGLE_DEGREES), 9.81);
 
-    return shooterVelocity.orElse(0.0);
+    if (!shooterVelocityOpt.isPresent()) return 0.0;
+
+    double vRequired = shooterVelocityOpt.get();
+
+    // subtract radial component of robot velocity
+    Translation2d toHub = finalTarget.minus(robotPos);
+    Translation2d robotVelocity =
+        new Translation2d(
+            drive.getChassisSpeeds().vxMetersPerSecond, drive.getChassisSpeeds().vyMetersPerSecond);
+    Translation2d radialComponent = project(robotVelocity, toHub);
+
+    double radialSpeed = radialComponent.getNorm();
+    // check if robot is moving toward or away from hub
+    if (radialComponent.dot(toHub) < 0) radialSpeed *= -1;
+
+    double correctedShooterVelocity = vRequired - radialSpeed;
+    return Math.max(correctedShooterVelocity, 0.0);
   }
 
   private Translation2d getFinalTargetPose() {
@@ -144,5 +162,4 @@ public class Orchestrator {
 
     return Double.isFinite(velocity) && velocity > 0 ? Optional.of(velocity) : Optional.empty();
   }
-
 }
