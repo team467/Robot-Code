@@ -159,18 +159,16 @@ public class RobotContainer {
                                 aprilTagLayout.getTagPose(9).get().toPose2d().getTranslation())
                             .minus(drive.getPose().getTranslation())
                             .getAngle()
-                            .minus(Rotation2d.fromDegrees(180)))));
-
-    Commands.run(
-        () -> {
-          double distance =
-              AllianceFlipUtil.apply(aprilTagLayout.getTagPose(9).get().toPose2d().getTranslation())
-                  .minus(drive.getPose().getTranslation())
-                  .getNorm();
-          double velocityFPS = 16.8379527141 + 2.79775342767 * distance;
-          double percentNeeded = velocityFPS * 0.0;
-          shooter.setPercent(percentNeeded);
-        });
+                            .minus(Rotation2d.fromDegrees(180))),
+            Commands.run(
+                () -> {
+                  double distance =
+                      AllianceFlipUtil.apply(aprilTagLayout.getTagPose(9).get().toPose2d().getTranslation())
+                          .minus(drive.getPose().getTranslation())
+                          .getNorm();
+                  double velocityFPS = 16.8379527141 + 2.79775342767 * distance;
+                  shooter.setTargetVelocity(velocityFPS);
+        })));
 
     // Lock to 0° when A button is held
 
