@@ -19,6 +19,13 @@ public class Schematic {
   public static final int frontRightAbsoluteEncoderCanId;
   public static final int backRightAbsoluteEncoderCanId;
 
+  // shooter subsystem
+  public static final int shooterFrontLeftCanId;
+  public static final int shooterFrontRightCanId;
+  public static final int shooterBackCanId;
+  // hopper belt sub-system
+  public static final int hopperBeltCanId;
+
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2025_COMP -> {
@@ -41,6 +48,14 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 21;
         frontRightAbsoluteEncoderCanId = 19;
         backRightAbsoluteEncoderCanId = 20;
+
+        // Shooter (CAN Ids)
+        shooterFrontLeftCanId = 0;
+        shooterFrontRightCanId = 0;
+        shooterBackCanId = 0;
+
+        // Hopper Belt (CAN Ids)
+        hopperBeltCanId = 0;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -61,6 +76,14 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 0;
         frontRightAbsoluteEncoderCanId = 0;
         backRightAbsoluteEncoderCanId = 0;
+
+        // Shooter (CAN Ids)
+        shooterFrontLeftCanId = 0;
+        shooterFrontRightCanId = 0;
+        shooterBackCanId = 0;
+
+        // Hopper Belt (CAN Ids)
+        hopperBeltCanId = 0;
       }
 
       default -> {
@@ -81,6 +104,14 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 0;
         frontRightAbsoluteEncoderCanId = 0;
         backRightAbsoluteEncoderCanId = 0;
+
+        // Shooter (CAN Ids)
+        shooterFrontLeftCanId = 0;
+        shooterFrontRightCanId = 0;
+        shooterBackCanId = 0;
+
+        // Hopper Belt (CAN Ids)
+        hopperBeltCanId = 0;
       }
     }
   }
