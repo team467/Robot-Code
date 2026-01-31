@@ -38,4 +38,8 @@ public interface IntakeIO {
   default void setPIDEnabled(boolean enabled) {}
 
   default void resetExtendEncoder() {}
+
+  default boolean isCollapsed() {
+    return false;
+  }
 }

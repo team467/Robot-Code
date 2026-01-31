@@ -35,9 +35,6 @@ public class IntakeIOSparkMax implements IntakeIO {
   public IntakeIOSparkMax() {
     intakeMotor = new SparkMax(INTAKE_MOTOR_ID, MotorType.kBrushless);
     extendMotor = new SparkMax(INTAKE_EXTEND_ID, MotorType.kBrushless);
-    extendMotorEncoder = extendMotor.getEncoder();
-
-    pidController = extendMotor.getClosedLoopController();
 
     var intakeConfig = new SparkMaxConfig();
     intakeConfig
@@ -64,6 +61,9 @@ public class IntakeIOSparkMax implements IntakeIO {
     extendEnc.velocityConversionFactor(EXTEND_VELOCITY_CONVERSION);
     extendConfig.apply(extendEnc);
 
+    pidController = extendMotor.getClosedLoopController();
+    extendMotorEncoder = extendMotor.getEncoder();
+
     intakeMotor.configure(
         intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     extendMotor.configure(
@@ -82,6 +82,11 @@ public class IntakeIOSparkMax implements IntakeIO {
     inputs.extendAmps = extendMotor.getOutputCurrent();
     inputs.isCollapsed = collapsedLimitSwitch.get();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
+  }
+
+  @Override
+  public boolean isCollapsed() {
+    return collapsedLimitSwitch.get();
   }
 
   @Override
