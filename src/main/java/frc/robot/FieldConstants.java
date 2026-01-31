@@ -1,4 +1,5 @@
 package frc.robot;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -327,12 +328,12 @@ public class FieldConstants {
               Path p =
                   Constants.disableHAL
                       ? Path.of(
-                      "src",
-                      "main",
-                      "deploy",
-                      "apriltags",
-                      fieldType.getJsonFolder(),
-                      name + ".json")
+                          "src",
+                          "main",
+                          "deploy",
+                          "apriltags",
+                          fieldType.getJsonFolder(),
+                          name + ".json")
                       : Path.of(
                           Filesystem.getDeployDirectory().getPath(),
                           "apriltags",
