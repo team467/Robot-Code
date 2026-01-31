@@ -15,6 +15,9 @@ public interface ShooterIO {
     public double shooterFollowerAppliedVolts;
     public double shooterFollowerCurrentAmps;
 
+    public boolean atSetpoint = false;
+    public double setpointRPM = 0;
+
     public double shooterFollower2VelocityRadPerSec;
     public double shooterFollower2AppliedVolts;
     public double shooterFollower2CurrentAmps;
@@ -31,4 +34,6 @@ public interface ShooterIO {
   default void setTargetVelocity(double setpoint) {}
 
   default void goToSetpoint() {}
+
+  default void setTargetDistance(double distanceMeters) {}
 }

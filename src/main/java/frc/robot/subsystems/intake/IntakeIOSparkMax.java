@@ -6,9 +6,9 @@ import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVER
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_EXTEND_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_MOTOR_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_POSITION_CONVERSION;
-import static frc.robot.subsystems.shooter.ShooterConstants.PID_D;
-import static frc.robot.subsystems.shooter.ShooterConstants.PID_I;
-import static frc.robot.subsystems.shooter.ShooterConstants.PID_P;
+import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
+import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
+import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -26,18 +26,15 @@ public class IntakeIOSparkMax implements IntakeIO {
 
   private final SparkMax intakeMotor;
   private final SparkMax extendMotor;
-  private final DigitalInput extendedInput;
+  private final DigitalInput collapsedLimitSwitch;
   private final RelativeEncoder extendMotorEncoder;
   private final SparkClosedLoopController pidController;
   private double setPos = 0;
   private boolean usingPID = false;
 
   public IntakeIOSparkMax() {
-    intakeMotor = new SparkMax(INTAKE_MOTOR_ID, MotorType.kBrushed);
-    extendMotor = new SparkMax(INTAKE_EXTEND_ID, MotorType.kBrushed);
-    extendMotorEncoder = extendMotor.getEncoder();
-
-    pidController = extendMotor.getClosedLoopController();
+    intakeMotor = new SparkMax(INTAKE_MOTOR_ID, MotorType.kBrushless);
+    extendMotor = new SparkMax(INTAKE_EXTEND_ID, MotorType.kBrushless);
 
     var intakeConfig = new SparkMaxConfig();
     intakeConfig
@@ -64,11 +61,14 @@ public class IntakeIOSparkMax implements IntakeIO {
     extendEnc.velocityConversionFactor(EXTEND_VELOCITY_CONVERSION);
     extendConfig.apply(extendEnc);
 
+    pidController = extendMotor.getClosedLoopController();
+    extendMotorEncoder = extendMotor.getEncoder();
+
     intakeMotor.configure(
         intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     extendMotor.configure(
         extendConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    extendedInput = new DigitalInput(EXTEND_LIMIT_ID);
+    collapsedLimitSwitch = new DigitalInput(EXTEND_LIMIT_ID);
   }
 
   @Override
@@ -80,8 +80,13 @@ public class IntakeIOSparkMax implements IntakeIO {
     inputs.extendVolts = extendMotor.getAppliedOutput();
     inputs.intakeAmps = intakeMotor.getOutputCurrent();
     inputs.extendAmps = extendMotor.getOutputCurrent();
-    inputs.isCollapsed = extendedInput.get();
+    inputs.isCollapsed = collapsedLimitSwitch.get();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
+  }
+
+  @Override
+  public boolean isCollapsed() {
+    return collapsedLimitSwitch.get();
   }
 
   @Override
@@ -114,10 +119,15 @@ public class IntakeIOSparkMax implements IntakeIO {
 
   @Override
   public boolean isHopperCollapsed() {
-    return extendedInput.get();
+    return collapsedLimitSwitch.get();
   }
 
   public void setPIDEnabled(boolean enabled) {
     this.usingPID = enabled;
+  }
+
+  @Override
+  public void resetExtendEncoder() {
+    extendMotorEncoder.setPosition(0);
   }
 }
