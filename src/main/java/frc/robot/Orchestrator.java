@@ -3,8 +3,10 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
@@ -86,7 +88,7 @@ public class Orchestrator {
   }
 
   private Translation2d getFinalTargetPose() {
-    Translation2d hubPose = Hub.topCenterPoint.toTranslation2d();
+    Translation2d hubPose = AllianceFlipUtil.apply(Hub.topCenterPoint.toTranslation2d());
     Translation2d robotPose = drive.getPose().getTranslation();
 
     // Robot velocity as Translation2d
@@ -112,8 +114,10 @@ public class Orchestrator {
     double flightTime =
         toHub.getNorm()
             / (shooterVelocity * Math.cos(Math.toRadians(ShooterConstants.SHOOTER_ANGLE_DEGREES)));
-
-    Translation2d offset = tangentialVelocity.times(flightTime).times(-1.0);
+    Translation2d offset =
+        DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)
+            ? tangentialVelocity.times(flightTime).times(-1.0)
+            : tangentialVelocity.times(flightTime);
 
     return hubPose.plus(offset);
   }
