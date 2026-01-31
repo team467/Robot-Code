@@ -83,6 +83,7 @@ public class IntakeIOSparkMax implements IntakeIO {
     inputs.isCollapsed = collapsedLimitSwitch.get();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
     inputs.setpointExtendPos = this.setPos;
+    inputs.pidEnabled = this.usingPID;
   }
 
   @Override
