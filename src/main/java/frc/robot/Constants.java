@@ -16,7 +16,6 @@ public class Constants {
   private static RobotType cachedRobotTypeFromRoborio = null;
 
   public static RobotType getRobot() {
-
     if (cachedRobotTypeFromRoborio == null) {
       cachedRobotTypeFromRoborio = readRobotTypeFromRoborio();
     }
@@ -64,9 +63,10 @@ public class Constants {
 
   public static Mode getMode() {
     switch (getRobot()) {
-      case ROBOT_2023, ROBOT_2024_COMP, ROBOT_BRIEFCASE, ROBOT_2025_COMP, ROBOT_2025_TEST -> {
+      case ROBOT_BRIEFCASE, ROBOT_2025_COMP, ROBOT_2025_TEST, ROBOT_2026_COMP -> {
         return RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
       }
+
       case ROBOT_SIMBOT -> {
         return Mode.SIM;
       }
@@ -77,19 +77,13 @@ public class Constants {
   }
 
   public static final Map<RobotType, String> logFolders =
-      Map.of(
-          RobotType.ROBOT_2023, "/media/sda1",
-          RobotType.ROBOT_2024_COMP, "/media/sda1",
-          RobotType.ROBOT_2025_COMP, "/media/sda1");
+      Map.of(RobotType.ROBOT_2025_COMP, "/media/sda1");
 
   public enum RobotType {
-    ROBOT_2023,
-    ROBOT_2024_COMP,
     ROBOT_2025_COMP,
     ROBOT_2025_TEST,
-
-    ROBOT_2026_COMP,
     ROBOT_BRIEFCASE,
+    ROBOT_2026_COMP,
     ROBOT_SIMBOT
   }
 
