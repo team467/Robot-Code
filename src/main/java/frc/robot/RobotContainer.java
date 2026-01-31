@@ -63,7 +63,8 @@ public class RobotContainer {
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
+                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                  new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
         }
 
