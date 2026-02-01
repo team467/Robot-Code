@@ -10,8 +10,7 @@ import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-  public static Timer stowTimer = new Timer();
-  public static Timer extendTimer = new Timer();
+  public static Timer stallTimer = new Timer();
   private boolean stalledCollapse = true;
   private boolean stalledExtend = false;
   private boolean isStowed = false;
@@ -33,51 +32,46 @@ public class Intake extends SubsystemBase {
 
     // Calibrate the extend motor
     if (!limitSwitchDisabled.getAsBoolean() && isHopperCollapsed()) {
-      io.resetExtendEncoder();
+      io.resetExtendEncoder(0);
     }
+    Logger.recordOutput("Intake/stallTimer", stallTimer.get());
 
     io.extendToPosition(extendPos);
 
     if (limitSwitchDisabled.getAsBoolean()) {
-      if (inputs.extendVolts > 0.1 && stalledExtend) {
+      if (inputs.extendVolts > 0.05 && stalledExtend) {
         stalledExtend = false;
         isExtended = false;
       }
-      if (inputs.extendVolts < -0.1 && stalledCollapse) {
+      if (inputs.extendVolts < -0.05 && stalledCollapse) {
         stalledCollapse = false;
         isStowed = false;
       }
 
       if (isStallingCollapse()) {
-        stowTimer.start();
+        stallTimer.start();
       } else {
-        stowTimer.stop();
-        stowTimer.reset();
+        stallTimer.stop();
+        stallTimer.reset();
       }
 
-      if (stowTimer.get() > 0.05) {
+      if (stallTimer.get() > 0.01 && isStallingCollapse()) {
         stalledCollapse = true;
-        stowTimer.stop();
-        stowTimer.reset();
+        stallTimer.stop();
+        stallTimer.reset();
+      }
+      if (stallTimer.get() > 0.01 && isStallingExtend()) {
+        stalledCollapse = true;
+        stallTimer.stop();
+        stallTimer.reset();
       }
 
-      if (isStallingExtend()) {
-        extendTimer.start();
-      } else {
-        extendTimer.stop();
-        extendTimer.reset();
-      }
-
-      if (extendTimer.get() > 0.05) {
-        stalledExtend = true;
-        extendTimer.stop();
-        extendTimer.reset();
-      }
-
-      if (stalledCollapse && inputs.extendVolts == 0) {
+      if (stalledCollapse) {
+        io.resetExtendEncoder(0);
         isStowed = true;
       }
-      if (stalledExtend && inputs.extendVolts == 0) {
+      if (stalledExtend) {
+        io.resetExtendEncoder(EXTEND_POS);
         isExtended = true;
       }
     }
@@ -112,11 +106,11 @@ public class Intake extends SubsystemBase {
   }
 
   private boolean isStallingCollapse() {
-    return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts < -0.1;
+    return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts < -0.05;
   }
 
   private boolean isStallingExtend() {
-    return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts > 0.1;
+    return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts > 0.05;
   }
 
   public Command extend() {
