@@ -10,7 +10,6 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -19,7 +18,6 @@ public class ShooterIOSparkMax implements ShooterIO {
   private final SparkMax leader;
   private final SparkMax follower;
   private final SparkMax follower2;
-  //  private SparkClosedLoopController pidController;
   private final RelativeEncoder leaderEncoder;
   private final RelativeEncoder followerEncoder;
   private final RelativeEncoder follower2Encoder;
@@ -28,7 +26,6 @@ public class ShooterIOSparkMax implements ShooterIO {
   public ShooterIOSparkMax() {
     leader = new SparkMax(shooterBackCanId, MotorType.kBrushless);
     follower = new SparkMax(shooterFrontLeftCanId, MotorType.kBrushless);
-    //    pidController = leader.getClosedLoopController();
     follower2 = new SparkMax(shooterFrontRightCanId, MotorType.kBrushless);
 
     var leaderConfig = new SparkMaxConfig();
@@ -37,7 +34,6 @@ public class ShooterIOSparkMax implements ShooterIO {
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT)
-        .apply(new ClosedLoopConfig().p(PID_P).i(PID_I).d(PID_D));
 
     var followerConfig = new SparkMaxConfig();
     followerConfig
@@ -81,9 +77,6 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.shooterFollowerCurrentAmps = follower.getOutputCurrent();
     inputs.shooterFollowerAppliedVolts = follower.getBusVoltage() * follower.getAppliedOutput();
     inputs.shooterFollowerVelocityRadPerSec = followerEncoder.getVelocity();
-    //    inputs.setpointRPM = setpointRPM;
-
-    //    inputs.atSetpoint = pidController.isAtSetpoint();
 
     inputs.shooterFollower2CurrentAmps = follower2.getOutputCurrent();
     inputs.shooterFollower2AppliedVolts = follower2.getBusVoltage() * follower2.getAppliedOutput();
@@ -103,16 +96,5 @@ public class ShooterIOSparkMax implements ShooterIO {
   @Override
   public void stop() {
     leader.set(0);
-  }
-
-  @Override
-  public void setTargetVelocity(double setpoint) {
-    this.setpointRPM = setpoint;
-  }
-
-  @Override
-  public void goToSetpoint() {
-    //    pidController.setSetpoint(setpointRPM, ControlType.kVelocity);
-
   }
 }

@@ -17,17 +17,20 @@ public class Shooter extends SubsystemBase {
   private final ShooterIO io;
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
+  public boolean controllerEnabled = false;
+  private double targetRadPerSec = 0.0;
+
   private final LinearSystem<N1, N1, N1> flywheel =
       LinearSystemId.identifyVelocitySystem(ShooterConstants.KV, ShooterConstants.KA);
 
-  private final LinearQuadraticRegulator<N1, N1, N1> m_controller =
+  private final LinearQuadraticRegulator<N1, N1, N1> controller =
       new LinearQuadraticRegulator<>(
           flywheel,
-          VecBuilder.fill(ShooterConstants.VELOCITY_TOLERANCE),
-          VecBuilder.fill(ShooterConstants.MAX_VOLTAGE),
+          VecBuilder.fill(8.0), // Velocity error tolerance
+          VecBuilder.fill(12.0), // Control effort (voltage) tolerance
           0.020);
 
-  private final KalmanFilter<N1, N1, N1> m_observer =
+  private final KalmanFilter<N1, N1, N1> observer =
       new KalmanFilter<>(
           Nat.N1(),
           Nat.N1(),
@@ -36,11 +39,9 @@ public class Shooter extends SubsystemBase {
           VecBuilder.fill(0.01), // How accurate encoder data is
           0.020);
 
-  private final LinearSystemLoop<N1, N1, N1> m_loop =
+  private final LinearSystemLoop<N1, N1, N1> loop =
       new LinearSystemLoop<>(
-          flywheel, m_controller, m_observer, ShooterConstants.MAX_VOLTAGE, 0.020);
-
-  public boolean setpointEnabled = false;
+          flywheel, controller, observer, ShooterConstants.MAX_VOLTAGE, 0.020);
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -50,15 +51,11 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
 
-    //    if (setpointEnabled) {
-    //      io.goToSetpoint();
-    //    }
-
-    if (setpointEnabled) {
-      m_loop.setNextR(VecBuilder.fill(inputs.setpointRPM * (Math.PI / 30.0)));
-      m_loop.correct(VecBuilder.fill(inputs.shooterLeaderVelocityRadPerSec));
-      m_loop.predict(0.020);
-      io.setVoltage(m_loop.getU(0));
+    if (controllerEnabled) {
+      loop.setNextR(VecBuilder.fill(targetRadPerSec));
+      loop.correct(VecBuilder.fill(inputs.shooterLeaderVelocityRadPerSec));
+      loop.predict(0.020);
+      io.setVoltage(loop.getU(0));
     }
 
     Logger.processInputs("Shooter", inputs);
@@ -68,26 +65,29 @@ public class Shooter extends SubsystemBase {
     return Commands.runOnce(
         () -> {
           io.stop();
-          setpointEnabled = false;
+          controllerEnabled = false;
         },
         this);
   }
 
   public Command setPercent(double percent) {
     return Commands.sequence(
-        Commands.runOnce(() -> setpointEnabled = false, this),
+        Commands.runOnce(() -> controllerEnabled = false, this),
         Commands.run(() -> io.setVoltage(percent), this));
   }
 
   public Command setVoltage(double volts) {
     return Commands.sequence(
-        Commands.runOnce(() -> setpointEnabled = false, this),
+        Commands.runOnce(() -> controllerEnabled = false, this),
         Commands.run(() -> io.setVoltage(volts), this));
   }
 
-  public Command setTargetVelocity(double setpoint) {
-    return Commands.sequence(
-        Commands.runOnce(() -> setpointEnabled = true, this),
-        Commands.runEnd(() -> io.setTargetVelocity(setpoint), () -> setpointEnabled = false, this));
+  public Command setTargetVelocityRPM(double rpm) {
+    return Commands.runOnce(
+        () -> {
+          targetRadPerSec = rpm * Math.PI / 30.0;
+          controllerEnabled = true;
+        },
+        this);
   }
 }

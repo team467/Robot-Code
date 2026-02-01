@@ -17,6 +17,5 @@ public class ShooterConstants {
   public static final double KV = 0.0; // TODO: change these values
   public static final double KA = 0.0;
 
-  public static final double VELOCITY_TOLERANCE = 8.0; // RPM
   public static final double MAX_VOLTAGE = 12.0;
 }
