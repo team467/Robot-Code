@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIOPhysical;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
@@ -50,6 +52,7 @@ public class RobotContainer {
   private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
+  private Climber climber;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -97,6 +100,7 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOSparkMax());
           hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
+          climber = new Climber(new ClimberIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -137,6 +141,21 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {},
               new ModuleIO() {});
+    }
+    if (intake == null) {
+      intake = new Intake(new IntakeIOSparkMax(), () -> false);
+    }
+    if (hopperBelt == null) {
+      hopperBelt = new HopperBelt(new HopperBeltSparkMax());
+    }
+    if (shooter == null) {
+      shooter = new Shooter(new ShooterIOSparkMax());
+    }
+    if (indexer == null) {
+      indexer = new Indexer(new IndexerIOSparkMax());
+    }
+    if (climber == null) {
+      climber = new Climber(new ClimberIOPhysical());
     }
 
     orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer);
