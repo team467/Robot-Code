@@ -85,6 +85,11 @@ public class IntakeIOSparkMax implements IntakeIO {
   }
 
   @Override
+  public void extendToPosition(double position) {
+    pidController.setSetpoint(position, ControlType.kPosition);
+  }
+
+  @Override
   public boolean isCollapsed() {
     return collapsedLimitSwitch.get();
   }
@@ -127,7 +132,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   }
 
   @Override
-  public void resetExtendEncoder() {
-    extendMotorEncoder.setPosition(0);
+  public void resetExtendEncoder(double position) {
+    extendMotorEncoder.setPosition(position);
   }
 }

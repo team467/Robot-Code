@@ -23,9 +23,9 @@ public interface IntakeIO {
 
   default void setPercentExtend(double extendPercent) {}
 
-  void setVoltageIntake(double intakeVolts);
+  default void setVoltageIntake(double intakeVolts) {}
 
-  void setVoltageExtend(double extendVolts);
+  default void setVoltageExtend(double extendVolts) {}
 
   default void stop() {}
 
@@ -37,9 +37,11 @@ public interface IntakeIO {
 
   default void setPIDEnabled(boolean enabled) {}
 
-  default void resetExtendEncoder() {}
+  default void resetExtendEncoder(double position) {}
 
   default boolean isCollapsed() {
     return false;
   }
+
+  default void extendToPosition(double position) {}
 }

@@ -97,6 +97,7 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOSparkMax());
           hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
+          intake = new Intake(new IntakeIOSparkMax(), () -> false);
         }
 
         case ROBOT_SIMBOT -> {
@@ -119,7 +120,7 @@ public class RobotContainer {
                   new BooleanSupplier() {
                     @Override
                     public boolean getAsBoolean() {
-                      return false;
+                      return true;
                     }
                   });
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
@@ -139,7 +140,7 @@ public class RobotContainer {
               new ModuleIO() {});
     }
 
-    orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer);
+    orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer, intake);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     Autos autos = new Autos(drive);
     // Set up auto routines
@@ -175,8 +176,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    driverController.x().onTrue(intake.extend());
+    //    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
+    driverController.y().onTrue(intake.toPosExtend());
+    driverController.x().onTrue(intake.toPosCollapse());
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
