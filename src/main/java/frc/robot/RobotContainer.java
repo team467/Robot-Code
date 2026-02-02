@@ -24,13 +24,10 @@ import frc.robot.subsystems.climber.ClimberIOPhysical;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.hopperbelt.HopperBeltIO;
-import frc.robot.subsystems.hopperbelt.HopperBeltIO.HopperBeltIOInputs;
 import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
@@ -53,7 +50,6 @@ public class RobotContainer {
   private Vision vision;
   private Leds leds;
   private HopperBelt hopperBelt;
-  private Intake intake;
   private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
@@ -122,17 +118,6 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-          intake =
-              new Intake(
-                  new IntakeIOSparkMax(),
-                  new BooleanSupplier() {
-                    @Override
-                    public boolean getAsBoolean() {
-                      return false;
-                    }
-                  });
-          //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
-          //    shooter = new Shooter(new ShooterIOSparkMax());
         }
       }
     }
@@ -148,16 +133,16 @@ public class RobotContainer {
               new ModuleIO() {});
     }
     if (hopperBelt == null) {
-      hopperBelt = new HopperBelt(new HopperBeltIO(){});
+      hopperBelt = new HopperBelt(new HopperBeltIO() {});
     }
     if (shooter == null) {
-      shooter = new Shooter(new ShooterIO(){});
+      shooter = new Shooter(new ShooterIO() {});
     }
     if (indexer == null) {
-      indexer = new Indexer(new IndexerIO(){});
+      indexer = new Indexer(new IndexerIO() {});
     }
     if (climber == null) {
-      climber = new Climber(new ClimberIO(){});
+      climber = new Climber(new ClimberIO() {});
     }
 
     orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer);
@@ -196,10 +181,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    //    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    driverController.y().onTrue(intake.toPosExtend());
-    driverController.x().onTrue(intake.toPosCollapse());
-    // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
