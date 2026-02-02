@@ -177,8 +177,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     //    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    driverController.y().onTrue(intake.toPosExtend());
-    driverController.x().onTrue(intake.toPosCollapse());
+    driverController.y().onTrue(intake.moveToExtendedPosition());
+    driverController.x().onTrue(intake.moveToCollapsedPosition());
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(

@@ -18,7 +18,7 @@ public class Intake extends SubsystemBase {
   private boolean isStowed = false;
   private boolean isExtended = false;
 
-  private double extendPos = 0;
+  private double targetExtendPosition = 0;
 
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
@@ -40,7 +40,7 @@ public class Intake extends SubsystemBase {
       stalledCollapse = false;
     }
 
-    io.extendToPosition(extendPos);
+    io.extendToPosition(targetExtendPosition);
 
     if (limitSwitchDisabled.getAsBoolean()) {
       if (!stalledExtend && isStallingExtend()) {
@@ -177,13 +177,13 @@ public class Intake extends SubsystemBase {
         .andThen(intake());
   }
 
-  public Command toPosExtend() {
-    return Commands.run(() -> extendPos = EXTEND_POS)
+  public Command moveToExtendedPosition() {
+    return Commands.run(() -> targetExtendPosition = EXTEND_POS)
         .until(() -> inputs.getExtendPos >= EXTEND_POS);
   }
 
-  public Command toPosCollapse() {
-    return Commands.run(() -> extendPos = COLLAPSE_POS)
+  public Command moveToCollapsedPosition() {
+    return Commands.run(() -> targetExtendPosition = COLLAPSE_POS)
         .until(() -> inputs.getExtendPos <= COLLAPSE_POS);
   }
 }
