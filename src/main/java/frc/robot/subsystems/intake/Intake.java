@@ -28,7 +28,8 @@ public class Intake extends SubsystemBase {
    * Constructor for the Intake subsystem
    *
    * @param io The IO implementation to use
-   * @param limitSwitchDisabled A supplier to return whether the limit switch is currently disabled or not. If disabled, uses slipping to control intake.
+   * @param limitSwitchDisabled A supplier to return whether the limit switch is currently disabled
+   *     or not. If disabled, uses slipping to control intake.
    */
   public Intake(IntakeIO io, BooleanSupplier limitSwitchDisabled) {
     this.io = io;
