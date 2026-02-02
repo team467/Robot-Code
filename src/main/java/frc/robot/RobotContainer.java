@@ -28,13 +28,16 @@ import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
+import frc.robot.subsystems.intake.IntakeIOInputsAutoLogged;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import java.util.function.BooleanSupplier;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -54,6 +57,7 @@ public class RobotContainer {
   private final Orchestrator orchestrator;
   private Shooter shooter;
   private Climber climber;
+  private Intake intake;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -102,6 +106,7 @@ public class RobotContainer {
           hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           climber = new Climber(new ClimberIOPhysical());
+          intake = new Intake(new IntakeIOSparkMax());
         }
 
         case ROBOT_SIMBOT -> {
@@ -131,6 +136,9 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {},
               new ModuleIO() {});
+    }
+    if(intake == null) {
+      intake = new Intake(new IntakeIO() {});
     }
     if (hopperBelt == null) {
       hopperBelt = new HopperBelt(new HopperBeltIO() {});
