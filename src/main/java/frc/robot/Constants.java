@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class Constants {
   // Change this temporarily to override the RobotType, e.g. RobotType.ROBOT_SIMBOT
-  private static final RobotType ROBOT_TYPE_OVERRIDE = null;
+  private static final RobotType ROBOT_TYPE_OVERRIDE = RobotType.ROBOT_BRIEFCASE;
   public static final boolean tuningMode = false;
 
   private static final String ROBOT_FILENAME = "/home/lvuser/robot";
@@ -85,6 +85,12 @@ public class Constants {
     ROBOT_BRIEFCASE,
     ROBOT_2026_COMP,
     ROBOT_SIMBOT
+  }
+
+  public static boolean disableHAL = false;
+
+  public static void disableHAL() {
+    disableHAL = true;
   }
 
   public enum Mode {
