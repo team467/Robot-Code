@@ -24,6 +24,12 @@ public class Intake extends SubsystemBase {
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final BooleanSupplier limitSwitchDisabled;
 
+  /**
+   * Constructor for the Intake subsystem
+   *
+   * @param io The IO implementation to use
+   * @param limitSwitchDisabled A supplier to return whether the limit switch is currently disabled or not. If disabled, uses slipping to control intake.
+   */
   public Intake(IntakeIO io, BooleanSupplier limitSwitchDisabled) {
     this.io = io;
     this.limitSwitchDisabled = limitSwitchDisabled;
@@ -34,15 +40,20 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
 
+    // Non-slipping control calibration based on the limit switch state
     if (!limitSwitchDisabled.getAsBoolean() && isHopperCollapsed()) {
       io.resetExtendEncoder(0);
       isStowed = true;
       stalledCollapse = false;
     }
 
+    // Go to setpoint (EXTEND_POS for extending, COLLAPSE_POS for collapsing)
     io.extendToPosition(targetExtendPosition);
 
+    // Slipping system
     if (limitSwitchDisabled.getAsBoolean()) {
+
+      // If we are stalling in extend, start timing, otherwise stop timing
       if (!stalledExtend && isStallingExtend()) {
         stallExtendTimer.start();
       } else {
@@ -50,6 +61,7 @@ public class Intake extends SubsystemBase {
         stallExtendTimer.reset();
       }
 
+      // If we are not stalled extended but the timer has exceeded the stall time, set to stalled
       if (!stalledExtend && stallExtendTimer.get() > STALL_TIME) {
         stalledExtend = true;
         stallExtendTimer.stop();
@@ -58,6 +70,7 @@ public class Intake extends SubsystemBase {
         isExtended = true;
       }
 
+      // If we are stalling in collapse, start timing, otherwise stop timing
       if (!stalledCollapse && isStallingCollapse()) {
         stallCollapseTimer.start();
       } else {
@@ -65,6 +78,7 @@ public class Intake extends SubsystemBase {
         stallCollapseTimer.reset();
       }
 
+      // If we are not stalled collapsed but the timer has exceeded the stall time, set to stalled
       if (!stalledCollapse && stallCollapseTimer.get() > STALL_TIME) {
         stalledCollapse = true;
         stallCollapseTimer.stop();
@@ -73,6 +87,7 @@ public class Intake extends SubsystemBase {
         isStowed = true;
       }
 
+      // If we are moving, we are not stalled
       if (isMoving()) {
         stalledExtend = false;
         stalledCollapse = false;
@@ -114,6 +129,7 @@ public class Intake extends SubsystemBase {
   }
 
   private boolean isStallingExtend() {
+    // For our volts, we are not getting the right velocity
     return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts > EXTEND_VOLTS;
   }
 
