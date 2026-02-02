@@ -4,13 +4,16 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface HopperBeltIO {
 
-  default void updateInputs(HopperBeltIOInputs inputs) {};
+  default void updateInputs(HopperBeltIOInputs inputs) {}
+  ;
 
   /** Set motor speed from 0.0 to 1.0 */
-  default void setSpeed(double speed) {};
+  default void setSpeed(double speed) {}
+  ;
 
   /** Stop the motor */
-  default void stop(){};
+  default void stop() {}
+  ;
 
   @AutoLog
   class HopperBeltIOInputs {
