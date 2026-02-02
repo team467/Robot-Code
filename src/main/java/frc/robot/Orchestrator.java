@@ -45,4 +45,9 @@ public class Orchestrator {
   public Command shootBalls() {
     return Commands.parallel(shooter.setVoltage(1), hopperBelt.start(), indexer.run());
   }
+
+  public Command alignAndShoot(DoubleSupplier xsupplier, DoubleSupplier ysupplier){
+    return Commands.parallel(shootBalls, DriveCommands.joystickDriveAtAngle(xsupplier, ysupplier, shooterLeadCompensator.shootWhileDriving(
+            AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())).target().minus(drive.getPose()).getRotation()));
+  }
 }
