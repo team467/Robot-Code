@@ -114,11 +114,11 @@ public class Intake extends SubsystemBase {
   }
 
   private boolean isStallingExtend() {
-    return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts > 0.5;
+    return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts > EXTEND_VOLTS;
   }
 
   private boolean isStallingCollapse() {
-    return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts < -0.5;
+    return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts < COLLAPSE_VOLTS;
   }
 
   private boolean isMoving() {
