@@ -1,0 +1,50 @@
+package frc.robot.util;
+
+import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
+import java.util.function.Supplier;
+
+public class ShooterLeadCompensator {
+
+  private final Supplier<Translation2d> shooterPosition;
+  private final Supplier<Translation2d> robotVelocity;
+  private final Shooter shooter;
+
+  public ShooterLeadCompensator(Drive drive, Shooter shooter) {
+    this.shooterPosition =
+        () ->
+            drive
+                .getPose()
+                .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
+                .getTranslation();
+
+    this.robotVelocity =
+        () ->
+            new Translation2d(
+                drive.getChassisSpeeds().vxMetersPerSecond,
+                drive.getChassisSpeeds().vyMetersPerSecond);
+
+    this.shooter = shooter;
+  }
+
+  public ShootWhileDrivingResult shootWhileDriving(Translation2d targetPosition) {
+    Translation2d shooterPos = shooterPosition.get();
+    Translation2d v = robotVelocity.get();
+
+    Translation2d aimPoint = targetPosition;
+
+    for (int i = 0; i < 2; i++) {
+      double distance = aimPoint.minus(shooterPos).getNorm();
+      double t = shooter.getAirTimeSeconds(distance);
+      aimPoint = targetPosition.plus(v.times(t));
+    }
+
+    double finalDistance = aimPoint.minus(shooterPos).getNorm();
+
+    return new ShootWhileDrivingResult(aimPoint, finalDistance);
+  }
+
+  public record ShootWhileDrivingResult(Translation2d target, double distance) {}
+}

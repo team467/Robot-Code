@@ -61,4 +61,15 @@ public class Shooter extends SubsystemBase {
         Commands.runEnd(
             () -> io.setTargetDistance(distanceMeters), () -> setpointEnabled = false, this));
   }
+
+  // TODO: empirically determine the relationship between distance and air time
+  public double getAirTimeSeconds(double distance) {
+    return distance;
+  }
+
+  // TODO: empirically determine the relationship between distance and shooter velocity
+  public Command runShooterToDistance(double distance) {
+    Commands.run(() -> io.setVoltage(0));
+    return null;
+  }
 }
