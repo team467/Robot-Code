@@ -24,9 +24,6 @@ public class Intake extends SubsystemBase {
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final BooleanSupplier limitSwitchDisabled;
 
-  private static final double STALL_TIME = 0.1;
-  private static final double STALL_VEL_EPS = 0.1;
-
   public Intake(IntakeIO io, BooleanSupplier limitSwitchDisabled) {
     this.io = io;
     this.limitSwitchDisabled = limitSwitchDisabled;
@@ -117,15 +114,15 @@ public class Intake extends SubsystemBase {
   }
 
   private boolean isStallingExtend() {
-    return Math.abs(inputs.extendVelocity) < STALL_VEL_EPS && inputs.extendVolts > 0.5;
+    return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts > 0.5;
   }
 
   private boolean isStallingCollapse() {
-    return Math.abs(inputs.extendVelocity) < STALL_VEL_EPS && inputs.extendVolts < -0.5;
+    return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts < -0.5;
   }
 
   private boolean isMoving() {
-    return Math.abs(inputs.extendVelocity) > STALL_VEL_EPS;
+    return Math.abs(inputs.extendVelocity) > STALL_VELOCITY;
   }
 
   public Command extend() {
