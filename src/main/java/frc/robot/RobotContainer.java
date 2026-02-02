@@ -19,16 +19,21 @@ import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOPhysical;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
+import frc.robot.subsystems.hopperbelt.HopperBeltIO;
+import frc.robot.subsystems.hopperbelt.HopperBeltIO.HopperBeltIOInputs;
 import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -142,20 +147,17 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
-    if (intake == null) {
-      intake = new Intake(new IntakeIOSparkMax(), () -> false);
-    }
     if (hopperBelt == null) {
-      hopperBelt = new HopperBelt(new HopperBeltSparkMax());
+      hopperBelt = new HopperBelt(new HopperBeltIO(){});
     }
     if (shooter == null) {
-      shooter = new Shooter(new ShooterIOSparkMax());
+      shooter = new Shooter(new ShooterIO(){});
     }
     if (indexer == null) {
-      indexer = new Indexer(new IndexerIOSparkMax());
+      indexer = new Indexer(new IndexerIO(){});
     }
     if (climber == null) {
-      climber = new Climber(new ClimberIOPhysical());
+      climber = new Climber(new ClimberIO(){});
     }
 
     orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer);
