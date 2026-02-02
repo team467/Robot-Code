@@ -156,20 +156,22 @@ public class Intake extends SubsystemBase {
   }
 
   public Command extendAndIntake() {
-    return Commands.run(() -> {
-          setVoltageIntake(INTAKE_VOLTS);
-          setVoltageExtend(EXTEND_VOLTS);
-        })
+    return Commands.run(
+            () -> {
+              setVoltageIntake(INTAKE_VOLTS);
+              setVoltageExtend(EXTEND_VOLTS);
+            })
         .until(() -> inputs.getExtendPos >= EXTEND_POS)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake());
   }
 
   public Command collapseAndIntake() {
-    return Commands.run(() -> {
-          setVoltageIntake(INTAKE_VOLTS);
-          setVoltageExtend(COLLAPSE_VOLTS);
-        })
+    return Commands.run(
+            () -> {
+              setVoltageIntake(INTAKE_VOLTS);
+              setVoltageExtend(COLLAPSE_VOLTS);
+            })
         .until(() -> isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake());
@@ -185,4 +187,3 @@ public class Intake extends SubsystemBase {
         .until(() -> inputs.getExtendPos <= COLLAPSE_POS);
   }
 }
-
