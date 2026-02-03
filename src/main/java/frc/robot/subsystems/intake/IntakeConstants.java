@@ -27,4 +27,6 @@ public class IntakeConstants {
   public static final double EXTEND_POS = 10; // TODO: change the actual value
   public static final double COLLAPSE_POS = 0.0;
   public static final double POSITION_TOLERANCE = 0.5;
+
+  public static final double INTAKE_INTAKE_MOTOR_CURRENT_LIMIT = 30;
 }
