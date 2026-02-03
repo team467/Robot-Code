@@ -85,7 +85,7 @@ public class Shooter extends SubsystemBase {
   public Command setTargetVelocityRPM(double rpm) {
     return Commands.runOnce(
         () -> {
-          targetRadPerSec = rpm * Math.PI / 60.0;
+          targetRadPerSec = rpm * (2 * Math.PI / 60.0);
           controllerEnabled = true;
         },
         this);
