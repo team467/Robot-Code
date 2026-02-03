@@ -33,7 +33,6 @@ public class IndexerIOSparkMax implements IndexerIO {
         .smartCurrentLimit(30);
 
     EncoderConfig indexerEnc = new EncoderConfig();
-    EncoderConfig feederUpEnc = new EncoderConfig();
 
     indexerEnc.positionConversionFactor(ENCODER_INDEX_POSITION_CONVERSION);
 
