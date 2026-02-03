@@ -144,18 +144,6 @@ public class Intake extends SubsystemBase {
     return Math.abs(inputs.extendVelocity) > STALL_VELOCITY;
   }
 
-  public Command extend() {
-    return Commands.run(() -> setVoltageExtend(EXTEND_VOLTS))
-        .until(() -> inputs.getExtendPos >= EXTEND_POS)
-        .finallyDo(interrupted -> stopExtend());
-  }
-
-  public Command collapse() {
-    return Commands.run(() -> setVoltageExtend(COLLAPSE_VOLTS))
-        .until(() -> isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS)
-        .finallyDo(interrupted -> stopExtend());
-  }
-
   public Command intake() {
     return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS))
         .finallyDo(interrupted -> stopIntake());
