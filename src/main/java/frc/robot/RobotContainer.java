@@ -18,20 +18,26 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOPhysical;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
+import frc.robot.subsystems.hopperbelt.HopperBeltIO;
 import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOKraken;
 import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -47,10 +53,11 @@ public class RobotContainer {
   private Vision vision;
   private Leds leds;
   private HopperBelt hopperBelt;
-  private Intake intake;
   private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
+  private Climber climber;
+  private Intake intake;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -98,7 +105,8 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOSparkMax());
           hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
-          intake = new Intake(new IntakeIOKraken(), () -> false);
+          intake = new Intake(new IntakeIOKraken(), operatorController.rightTrigger());
+          climber = new Climber(new ClimberIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -115,17 +123,8 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-          intake =
-              new Intake(
-                  new IntakeIOSparkMax(),
-                  new BooleanSupplier() {
-                    @Override
-                    public boolean getAsBoolean() {
-                      return true;
-                    }
-                  });
-          //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
-          //    shooter = new Shooter(new ShooterIOSparkMax());
+
+          intake = new Intake(new IntakeIOKraken(), () -> true);
         }
       }
     }
@@ -139,6 +138,21 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {},
               new ModuleIO() {});
+    }
+    if (intake == null) {
+      intake = new Intake(new IntakeIO() {}, () -> false);
+    }
+    if (hopperBelt == null) {
+      hopperBelt = new HopperBelt(new HopperBeltIO() {});
+    }
+    if (shooter == null) {
+      shooter = new Shooter(new ShooterIO() {});
+    }
+    if (indexer == null) {
+      indexer = new Indexer(new IndexerIO() {});
+    }
+    if (climber == null) {
+      climber = new Climber(new ClimberIO() {});
     }
 
     orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer, intake);
@@ -177,16 +191,14 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    //    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    driverController.y().whileTrue(intake.moveToExtendedPosition());
-    driverController.x().whileTrue(intake.moveToCollapsedPosition());
-    // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
+
+    driverController.x().whileTrue(intake.intake());
 
     // Lock to 0° when A button is held
 
