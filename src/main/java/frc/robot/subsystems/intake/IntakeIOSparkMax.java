@@ -132,7 +132,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   }
 
   @Override
-  public void resetExtendEncoder() {
-    extendMotorEncoder.setPosition(0);
+  public void resetExtendEncoder(double position) {
+    extendMotorEncoder.setPosition(position);
   }
 }
