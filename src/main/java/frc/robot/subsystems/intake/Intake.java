@@ -10,17 +10,27 @@ import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-  public static Timer stowTimer = new Timer();
-  public static Timer extendTimer = new Timer();
-  private boolean stalledCollapse = true;
+  private final Timer stallExtendTimer = new Timer();
+  private final Timer stallCollapseTimer = new Timer();
+
   private boolean stalledExtend = false;
+  private boolean stalledCollapse = false;
   private boolean isStowed = false;
   private boolean isExtended = false;
-  private double extendPos = 0;
+
+  private double targetExtendPosition = 0;
+
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-  private BooleanSupplier limitSwitchDisabled;
+  private final BooleanSupplier limitSwitchDisabled;
 
+  /**
+   * Constructor for the Intake subsystem
+   *
+   * @param io The IO implementation to use
+   * @param limitSwitchDisabled A supplier to return whether the limit switch is currently disabled
+   *     or not. If disabled, uses slipping to control intake.
+   */
   public Intake(IntakeIO io, BooleanSupplier limitSwitchDisabled) {
     this.io = io;
     this.limitSwitchDisabled = limitSwitchDisabled;
@@ -29,58 +39,68 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    inputs.stalledExtended = stalledExtend;
+    inputs.stalledCollapsed = stalledCollapse;
+    inputs.stowed = isStowed;
+    inputs.stallExtendTimer = stallExtendTimer.get();
+    inputs.stallCollapseTimer = stallCollapseTimer.get();
     Logger.processInputs("Intake", inputs);
 
-    // Calibrate the extend motor
+    // Non-slipping control calibration based on the limit switch state
     if (!limitSwitchDisabled.getAsBoolean() && isHopperCollapsed()) {
-      io.resetExtendEncoder();
+      io.resetExtendEncoder(0);
+      isStowed = true;
+      stalledCollapse = false;
     }
 
-    io.extendToPosition(extendPos);
-
+    // Slipping system
     if (limitSwitchDisabled.getAsBoolean()) {
-      if (inputs.extendVolts > 0.1 && stalledExtend) {
-        stalledExtend = false;
-        isExtended = false;
-      }
-      if (inputs.extendVolts < -0.1 && stalledCollapse) {
-        stalledCollapse = false;
-        isStowed = false;
-      }
 
-      if (isStallingCollapse()) {
-        stowTimer.start();
+      // If we are stalling in extend, start timing, otherwise stop timing
+      if (!stalledExtend && isStallingExtend()) {
+        stallExtendTimer.start();
       } else {
-        stowTimer.stop();
-        stowTimer.reset();
+        stallExtendTimer.stop();
+        stallExtendTimer.reset();
       }
 
-      if (stowTimer.get() > 0.05) {
-        stalledCollapse = true;
-        stowTimer.stop();
-        stowTimer.reset();
-      }
-
-      if (isStallingExtend()) {
-        extendTimer.start();
-      } else {
-        extendTimer.stop();
-        extendTimer.reset();
-      }
-
-      if (extendTimer.get() > 0.05) {
+      // If we are not stalled extended but the timer has exceeded the stall time, set to stalled
+      if (!stalledExtend && stallExtendTimer.get() > STALL_TIME) {
         stalledExtend = true;
-        extendTimer.stop();
-        extendTimer.reset();
-      }
-
-      if (stalledCollapse && inputs.extendVolts == 0) {
-        isStowed = true;
-      }
-      if (stalledExtend && inputs.extendVolts == 0) {
+        stallExtendTimer.stop();
+        stallExtendTimer.reset();
+        io.resetExtendEncoder(EXTEND_POS);
         isExtended = true;
       }
+
+      // If we are stalling in collapse, start timing, otherwise stop timing
+      if (!stalledCollapse && isStallingCollapse()) {
+        stallCollapseTimer.start();
+      } else {
+        stallCollapseTimer.stop();
+        stallCollapseTimer.reset();
+      }
+
+      // If we are not stalled collapsed but the timer has exceeded the stall time, set to stalled
+      if (!stalledCollapse && stallCollapseTimer.get() > STALL_TIME) {
+        stalledCollapse = true;
+        stallCollapseTimer.stop();
+        stallCollapseTimer.reset();
+        io.resetExtendEncoder(0);
+        isStowed = true;
+      }
+
+      // If we are moving, we are not stalled
+      if (isMoving()) {
+        stalledExtend = false;
+        stalledCollapse = false;
+        isExtended = false;
+        isStowed = false;
+      }
     }
+
+    Logger.recordOutput("Intake/StalledExtend", stalledExtend);
+    Logger.recordOutput("Intake/StalledCollapse", stalledCollapse);
   }
 
   private void setPercentIntake(double intakePercent) {
@@ -88,7 +108,7 @@ public class Intake extends SubsystemBase {
   }
 
   private void setPercentExtend(double extendPercent) {
-    io.setPercentIntake(extendPercent);
+    io.setPercentExtend(extendPercent);
   }
 
   private void setVoltageIntake(double intakeVolts) {
@@ -111,45 +131,26 @@ public class Intake extends SubsystemBase {
     return io.isHopperCollapsed();
   }
 
-  private boolean isStallingCollapse() {
-    return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts < -0.1;
-  }
-
   private boolean isStallingExtend() {
-    return Math.abs(inputs.extendVelocity) < 0.1 && inputs.extendVolts > 0.1;
+    // For our volts, we are not getting the right velocity
+    return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts > EXTEND_VOLTS;
   }
 
-  public Command extend() {
-    return Commands.run(
-            () -> {
-              setVoltageExtend(EXTEND_VOLTS);
-            })
-        .until(() -> inputs.getExtendPos >= EXTEND_POS)
-        .finallyDo(interrupted -> stopExtend());
+  private boolean isStallingCollapse() {
+    return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts < COLLAPSE_VOLTS;
   }
 
-  public Command collapse() {
-    return Commands.run(
-            () -> {
-              setVoltageExtend(COLLAPSE_VOLTS);
-            })
-        .until(() -> isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS)
-        .finallyDo(interrupted -> stopExtend());
+  private boolean isMoving() {
+    return Math.abs(inputs.extendVelocity) > STALL_VELOCITY;
   }
 
   public Command intake() {
-    return Commands.run(
-            () -> {
-              setVoltageIntake(INTAKE_VOLTS);
-            })
+    return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS))
         .finallyDo(interrupted -> stopIntake());
   }
 
   public Command outtake() {
-    return Commands.run(
-            () -> {
-              setVoltageIntake(OUTTAKE_VOLTS);
-            })
+    return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS))
         .finallyDo(interrupted -> stopIntake());
   }
 
@@ -183,13 +184,13 @@ public class Intake extends SubsystemBase {
         .andThen(intake());
   }
 
-  public Command toPosExtend() {
-    return Commands.run(() -> extendPos = EXTEND_POS)
-        .until(() -> inputs.getExtendPos >= EXTEND_POS);
+  public Command moveToExtendedPosition() {
+    return Commands.run(() -> io.extendToPosition(EXTEND_POS))
+        .until(() -> Math.abs(inputs.getExtendPos - EXTEND_POS) <= POSITION_TOLERANCE);
   }
 
-  public Command toPosCollapse() {
-    return Commands.run(() -> extendPos = COLLAPSE_POS)
-        .until(() -> inputs.getExtendPos <= COLLAPSE_POS);
+  public Command moveToCollapsedPosition() {
+    return Commands.run(() -> io.extendToPosition(COLLAPSE_POS))
+        .until(() -> Math.abs(inputs.getExtendPos - COLLAPSE_POS) <= POSITION_TOLERANCE);
   }
 }
