@@ -8,20 +8,17 @@ public interface IndexerIO {
   class IndexerIOInputs {
 
     public double indexPercentOutput = 0.0;
-    public double feedUpPercentOutput = 0.0;
     public double indexVolts = 0.0;
-    public double feedUpVolts = 0.0;
     public double indexAmps = 0.0;
-    public double feedUpAmps = 0.0;
     public boolean ballAtSwitch = false;
     // public boolean ballAtSwitch2 = false;
   }
 
   default void updateInputs(IndexerIOInputs inputs) {}
 
-  default void setPercent(double indexPercent, double feedUpPercent) {}
+  default void setPercent(double indexPercent) {}
 
-  default void setVoltage(double indexVolts, double feedUpVolts) {}
+  default void setVoltage(double indexVolts) {}
 
   default void stop() {}
 
