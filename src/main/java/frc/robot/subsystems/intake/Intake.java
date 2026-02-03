@@ -39,6 +39,11 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    inputs.stalledExtended = stalledExtend;
+    inputs.stalledCollapsed = stalledCollapse;
+    inputs.stowed = isStowed;
+    inputs.stallExtendTimer = stallExtendTimer.get();
+    inputs.stallCollapseTimer = stallCollapseTimer.get();
     Logger.processInputs("Intake", inputs);
 
     // Non-slipping control calibration based on the limit switch state
@@ -47,9 +52,6 @@ public class Intake extends SubsystemBase {
       isStowed = true;
       stalledCollapse = false;
     }
-
-    // Go to setpoint (EXTEND_POS for extending, COLLAPSE_POS for collapsing)
-    io.extendToPosition(targetExtendPosition);
 
     // Slipping system
     if (limitSwitchDisabled.getAsBoolean()) {
@@ -195,12 +197,12 @@ public class Intake extends SubsystemBase {
   }
 
   public Command moveToExtendedPosition() {
-    return Commands.run(() -> targetExtendPosition = EXTEND_POS)
-        .until(() -> inputs.getExtendPos >= EXTEND_POS);
+    return Commands.run(() -> io.extendToPosition(EXTEND_POS))
+        .until(() -> Math.abs(inputs.getExtendPos - EXTEND_POS) <= POSITION_TOLERANCE);
   }
 
   public Command moveToCollapsedPosition() {
-    return Commands.run(() -> targetExtendPosition = COLLAPSE_POS)
-        .until(() -> inputs.getExtendPos <= COLLAPSE_POS);
+    return Commands.run(() -> io.extendToPosition(COLLAPSE_POS))
+        .until(() -> Math.abs(inputs.getExtendPos - COLLAPSE_POS) <= POSITION_TOLERANCE);
   }
 }

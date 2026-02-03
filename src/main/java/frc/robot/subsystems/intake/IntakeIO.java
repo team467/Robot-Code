@@ -15,6 +15,11 @@ public interface IntakeIO {
     public boolean isCollapsed = false;
     // public boolean manualModeInput;
     public double getExtendPos = 0.0;
+    public boolean stowed = false;
+    public boolean stalledExtended = false;
+    public boolean stalledCollapsed = false;
+    public double stallExtendTimer = 0.0;
+    public double stallCollapseTimer = 0.0;
   }
 
   default void updateInputs(IntakeIOInputs inputs) {}
