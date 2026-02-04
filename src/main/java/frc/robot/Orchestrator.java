@@ -9,6 +9,7 @@ import frc.robot.FieldConstants.Hub;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
 import org.littletonrobotics.junction.Logger;
@@ -18,10 +19,12 @@ public class Orchestrator {
   private final Shooter shooter;
   private final HopperBelt hopperBelt;
   private final Indexer indexer;
+  private final Intake intake;
   private final RobotState robotState = RobotState.getInstance();
   private final ShooterLeadCompensator shooterLeadCompensator;
 
-  public Orchestrator(Drive drive, HopperBelt hopperBelt, Shooter shooter, Indexer indexer) {
+  public Orchestrator(
+      Drive drive, HopperBelt hopperBelt, Shooter shooter, Indexer indexer, Intake intake) {
     this.drive = drive;
     this.hopperBelt = hopperBelt;
     this.shooter = shooter;
@@ -39,6 +42,7 @@ public class Orchestrator {
             shootWhileDrivingResult.target().getX(),
             shootWhileDrivingResult.target().getY(),
             Rotation2d.fromDegrees(0)));
+    this.intake = intake;
   }
 
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
