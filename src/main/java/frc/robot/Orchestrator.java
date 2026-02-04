@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
+import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.indexer.Indexer;
@@ -13,6 +14,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
 import org.littletonrobotics.junction.Logger;
+import java.util.function.DoubleSupplier;
 
 public class Orchestrator {
   private final Drive drive;
@@ -30,6 +32,7 @@ public class Orchestrator {
     this.shooter = shooter;
     this.indexer = indexer;
     this.shooterLeadCompensator = new ShooterLeadCompensator(drive, shooter);
+    this.intake = intake;
   }
 
   public void OrchestratorPeriodic() {
@@ -42,7 +45,6 @@ public class Orchestrator {
             shootWhileDrivingResult.target().getX(),
             shootWhileDrivingResult.target().getY(),
             Rotation2d.fromDegrees(0)));
-    this.intake = intake;
   }
 
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
@@ -51,7 +53,7 @@ public class Orchestrator {
   }
 
   public Command alignAndShoot(DoubleSupplier xsupplier, DoubleSupplier ysupplier){
-    return Commands.parallel(shootBalls, DriveCommands.joystickDriveAtAngle(xsupplier, ysupplier, shooterLeadCompensator.shootWhileDriving(
-            AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())).target().minus(drive.getPose()).getRotation()));
+    return Commands.parallel(shootBalls());
+    //TODO: AIMING LOGIC
   }
 }
