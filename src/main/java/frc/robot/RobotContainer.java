@@ -204,4 +204,7 @@ public class RobotContainer {
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
   }
+
+  // get the pose and then add robot to  camera0 in them,
+  // robot pose is a translation 2d, and the camera positon
 }
