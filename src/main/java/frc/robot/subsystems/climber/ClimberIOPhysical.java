@@ -38,6 +38,8 @@ public class ClimberIOPhysical implements ClimberIO {
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.CurrentLimits.StatorCurrentLimit = CLIMBER_CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.SupplyCurrentLimit = CLIMBER_SUPPLY_CURRENT_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.Slot0.kP = CLIMBER_KP;
     config.Slot0.kI = CLIMBER_KI;
     config.Slot0.kD = CLIMBER_KD;
