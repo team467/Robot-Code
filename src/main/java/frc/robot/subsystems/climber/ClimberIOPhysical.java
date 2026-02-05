@@ -1,88 +1,84 @@
 package frc.robot.subsystems.climber;
 
-import static frc.lib.utils.SparkUtil.*;
+import static frc.lib.utils.PhoenixUtil.*;
 import static frc.robot.subsystems.climber.ClimberConstants.*;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.*;
-import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class ClimberIOPhysical implements ClimberIO {
-  private final SparkMax spark;
-  private final RelativeEncoder encoder;
-  private final SparkClosedLoopController controller;
+  private final TalonFX talon;
   private final DigitalInput limitSwitch;
+
+  private final StatusSignal<Angle> position;
+  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Voltage> appliedVolts;
+  private final StatusSignal<Current> current;
+
+  private final VoltageOut voltageRequest = new VoltageOut(0);
+  private final PositionVoltage positionRequest = new PositionVoltage(0);
 
   private boolean isCalibrated = false;
   private double targetRotation;
 
   public ClimberIOPhysical() {
-    spark = new SparkMax(CLIMBER_MOTOR_ID, MotorType.kBrushless);
-    encoder = spark.getEncoder();
-    controller = spark.getClosedLoopController();
+    talon = new TalonFX(CLIMBER_MOTOR_ID);
     limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
 
-    var config = new SparkMaxConfig();
-    config
-        .idleMode(IdleMode.kBrake)
-        .inverted(false)
-        .smartCurrentLimit(CLIMBER_CURRENT_LIMIT)
-        .voltageCompensation(12.0);
-    config
-        .encoder
-        .positionConversionFactor(ENCODER_CONVERSION_FACTOR)
-        .velocityConversionFactor(ENCODER_CONVERSION_FACTOR / 60);
-    config
-        .closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .positionWrappingEnabled(false)
-        .pidf(CLIMBER_KP, CLIMBER_KI, CLIMBER_KD, 0.0);
-    config
-        .signals
-        .primaryEncoderPositionAlwaysOn(true)
-        .primaryEncoderPositionPeriodMs(20)
-        .primaryEncoderVelocityAlwaysOn(true)
-        .primaryEncoderVelocityPeriodMs(20)
-        .appliedOutputPeriodMs(20)
-        .busVoltagePeriodMs(20)
-        .outputCurrentPeriodMs(20);
+    var config = new TalonFXConfiguration();
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.CurrentLimits.StatorCurrentLimit = CLIMBER_CURRENT_LIMIT;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.SupplyCurrentLimit = CLIMBER_SUPPLY_CURRENT_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimitEnable = true;
+    config.Slot0.kP = CLIMBER_KP;
+    config.Slot0.kI = CLIMBER_KI;
+    config.Slot0.kD = CLIMBER_KD;
 
-    tryUntilOk(
-        spark,
-        5,
-        () ->
-            spark.configure(
-                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
-    tryUntilOk(spark, 5, () -> encoder.setPosition(STARTING_DEGREES));
+    tryUntilOk(5, () -> talon.getConfigurator().apply(config));
+    tryUntilOk(5, () -> talon.setPosition(STARTING_DEGREES / ENCODER_CONVERSION_FACTOR));
+
+    position = talon.getPosition();
+    velocity = talon.getVelocity();
+    appliedVolts = talon.getMotorVoltage();
+    current = talon.getStatorCurrent();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0, position, velocity, appliedVolts, current);
   }
 
   @Override
   public void updateInputs(ClimberIOInputs inputs) {
-    inputs.positionDegrees = encoder.getPosition();
-    inputs.velocityDegreesPerSec = encoder.getVelocity();
-    inputs.appliedVolts = spark.getBusVoltage() * spark.getAppliedOutput();
-    inputs.currentAmps = spark.getOutputCurrent();
+    BaseStatusSignal.refreshAll(position, velocity, appliedVolts, current);
+
+    inputs.positionDegrees = position.getValueAsDouble() * ENCODER_CONVERSION_FACTOR;
+    inputs.velocityDegreesPerSec = velocity.getValueAsDouble() * ENCODER_CONVERSION_FACTOR;
+    inputs.appliedVolts = appliedVolts.getValueAsDouble();
+    inputs.currentAmps = current.getValueAsDouble();
     inputs.targetRotation = targetRotation;
     inputs.atTargetRotation =
         isCalibrated && Math.abs(targetRotation - inputs.positionDegrees) < TOLERANCE;
     inputs.limitSwitch = !limitSwitch.get();
 
-    if (inputs.limitSwitch) {
+    if (inputs.limitSwitch && !this.isCalibrated) {
       this.isCalibrated = true;
-      encoder.setPosition(CALIBRATION_POSITION_DEGREES);
+      tryUntilOk(
+          5, () -> talon.setPosition(CALIBRATION_POSITION_DEGREES / ENCODER_CONVERSION_FACTOR));
     }
     inputs.isCalibrated = this.isCalibrated;
   }
 
   @Override
   public void setPercent(double percent) {
-    spark.set(percent);
+    talon.setControl(voltageRequest.withOutput(percent * 12.0));
   }
 
   @Override
@@ -95,7 +91,7 @@ public class ClimberIOPhysical implements ClimberIO {
     if (!isCalibrated) {
       setPercent(CALIBRATION_PERCENT);
     } else {
-      controller.setReference(this.targetRotation, SparkBase.ControlType.kPosition);
+      talon.setControl(positionRequest.withPosition(targetRotation / ENCODER_CONVERSION_FACTOR));
     }
   }
 }
