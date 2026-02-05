@@ -33,7 +33,7 @@ public class ShooterIOSparkMax implements ShooterIO {
         .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
-        .smartCurrentLimit(CURRENT_LIMIT)
+        .smartCurrentLimit(CURRENT_LIMIT);
 
     var followerConfig = new SparkMaxConfig();
     followerConfig
