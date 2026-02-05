@@ -67,7 +67,7 @@ public class ClimberIOPhysical implements ClimberIO {
         isCalibrated && Math.abs(targetRotation - inputs.positionDegrees) < TOLERANCE;
     inputs.limitSwitch = !limitSwitch.get();
 
-    if (inputs.limitSwitch) {
+    if (inputs.limitSwitch && !this.isCalibrated) {
       this.isCalibrated = true;
       tryUntilOk(5, () -> talon.setPosition(CALIBRATION_POSITION_DEGREES / 360.0));
     }
