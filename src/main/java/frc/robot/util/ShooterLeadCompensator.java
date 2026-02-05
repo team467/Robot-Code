@@ -35,7 +35,7 @@ public class ShooterLeadCompensator {
 
     Translation2d aimPoint = targetPosition;
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 10; i++) {
       double distance = aimPoint.minus(shooterPos).getNorm();
       double t = shooter.getAirTimeSeconds(distance);
       aimPoint = targetPosition.plus(v.times(t));
