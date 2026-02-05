@@ -6,15 +6,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
-import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
-import org.littletonrobotics.junction.Logger;
 import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
   private final Drive drive;
@@ -52,8 +51,8 @@ public class Orchestrator {
     return Commands.parallel(shooter.setVoltage(1), hopperBelt.start(), indexer.run());
   }
 
-  public Command alignAndShoot(DoubleSupplier xsupplier, DoubleSupplier ysupplier){
+  public Command alignAndShoot(DoubleSupplier xsupplier, DoubleSupplier ysupplier) {
     return Commands.parallel(shootBalls());
-    //TODO: AIMING LOGIC
+    // TODO: AIMING LOGIC
   }
 }
