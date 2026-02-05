@@ -11,7 +11,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -44,7 +43,7 @@ public class ClimberIOPhysical implements ClimberIO {
     config.Slot0.kD = CLIMBER_KD;
 
     tryUntilOk(5, () -> talon.getConfigurator().apply(config));
-    tryUntilOk(5, () -> talon.setPosition(STARTING_DEGREES / 360.0));
+    tryUntilOk(5, () -> talon.setPosition(STARTING_DEGREES / ENCODER_CONVERSION_FACTOR));
 
     position = talon.getPosition();
     velocity = talon.getVelocity();
@@ -58,8 +57,8 @@ public class ClimberIOPhysical implements ClimberIO {
   public void updateInputs(ClimberIOInputs inputs) {
     BaseStatusSignal.refreshAll(position, velocity, appliedVolts, current);
 
-    inputs.positionDegrees = Units.rotationsToDegrees(position.getValueAsDouble());
-    inputs.velocityDegreesPerSec = Units.rotationsToDegrees(velocity.getValueAsDouble());
+    inputs.positionDegrees = position.getValueAsDouble() * ENCODER_CONVERSION_FACTOR;
+    inputs.velocityDegreesPerSec = velocity.getValueAsDouble() * ENCODER_CONVERSION_FACTOR;
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = current.getValueAsDouble();
     inputs.targetRotation = targetRotation;
@@ -69,7 +68,8 @@ public class ClimberIOPhysical implements ClimberIO {
 
     if (inputs.limitSwitch && !this.isCalibrated) {
       this.isCalibrated = true;
-      tryUntilOk(5, () -> talon.setPosition(CALIBRATION_POSITION_DEGREES / 360.0));
+      tryUntilOk(
+          5, () -> talon.setPosition(CALIBRATION_POSITION_DEGREES / ENCODER_CONVERSION_FACTOR));
     }
     inputs.isCalibrated = this.isCalibrated;
   }
@@ -89,7 +89,7 @@ public class ClimberIOPhysical implements ClimberIO {
     if (!isCalibrated) {
       setPercent(CALIBRATION_PERCENT);
     } else {
-      talon.setControl(positionRequest.withPosition(targetRotation / 360.0));
+      talon.setControl(positionRequest.withPosition(targetRotation / ENCODER_CONVERSION_FACTOR));
     }
   }
 }
