@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
@@ -11,11 +13,15 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
   private final ShooterIO io;
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+  private final SysIdRoutine sysId;
 
   public boolean controllerEnabled = false;
   private double targetRadPerSec = 0.0;
@@ -40,11 +46,19 @@ public class Shooter extends SubsystemBase {
           0.020);
 
   private final LinearSystemLoop<N1, N1, N1> loop =
-      new LinearSystemLoop<>(
-          flywheel, controller, observer, ShooterConstants.MAX_VOLTAGE, 0.020);
+      new LinearSystemLoop<>(flywheel, controller, observer, ShooterConstants.MAX_VOLTAGE, 0.020);
 
   public Shooter(ShooterIO io) {
     this.io = io;
+
+    sysId =
+        new SysIdRoutine(
+            new Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput("Shooter/SysIdState", state.toString())),
+            new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   @Override
@@ -59,6 +73,20 @@ public class Shooter extends SubsystemBase {
     }
 
     Logger.processInputs("Shooter", inputs);
+  }
+
+  public void runCharacterization(double voltage) {
+    io.setVoltage(voltage);
+  }
+
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(0.0))
+        .withTimeout(1.0)
+        .andThen(sysId.quasistatic(direction));
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
   public Command stop() {
