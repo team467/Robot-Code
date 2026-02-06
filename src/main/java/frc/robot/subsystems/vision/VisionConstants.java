@@ -19,31 +19,41 @@ public class VisionConstants {
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
   public static Transform3d robotToCamera0 =
-      new Transform3d( //front camera
+      new Transform3d( // front camera
           Units.inchesToMeters(-8.779),
           Units.inchesToMeters(-10.445),
           Units.inchesToMeters(27.152),
-          new Rotation3d(Units.degreesToRadians(-25.2),Units.degreesToRadians(0), Units.degreesToRadians(0)));
+          new Rotation3d(
+              Units.degreesToRadians(-25.2), Units.degreesToRadians(0), Units.degreesToRadians(0)));
   public static Transform3d robotToCamera1 =
-      new Transform3d( //rear left camera
-          Units.inchesToMeters(-9.562), //x
-          Units.inchesToMeters(-10.974), //y
-          Units.inchesToMeters(17.035), //z
-          new Rotation3d(Units.degreesToRadians(16.7),Units.degreesToRadians(-4.8), Units.degreesToRadians(155.3)));
+      new Transform3d( // rear left camera
+          Units.inchesToMeters(-9.562), // x
+          Units.inchesToMeters(-10.974), // y
+          Units.inchesToMeters(17.035), // z
+          new Rotation3d(
+              Units.degreesToRadians(16.7),
+              Units.degreesToRadians(-4.8),
+              Units.degreesToRadians(155.3)));
 
   public static Transform3d robotToCamera2 =
-      new Transform3d( //rear right camera
+      new Transform3d( // rear right camera
           Units.inchesToMeters(9.562),
-          Units.inchesToMeters(-10.974), 
+          Units.inchesToMeters(-10.974),
           Units.inchesToMeters(17.035),
-          new Rotation3d(Units.degreesToRadians(-16.7),Units.degreesToRadians(4.8), Units.degreesToRadians(-155.3)));
+          new Rotation3d(
+              Units.degreesToRadians(-16.7),
+              Units.degreesToRadians(4.8),
+              Units.degreesToRadians(-155.3)));
 
   public static Transform3d robotToCamera3 =
-      new Transform3d( //left camera
-          Units.inchesToMeters(-9.669), 
-          Units.inchesToMeters(-10.961), 
+      new Transform3d( // left camera
+          Units.inchesToMeters(-9.669),
+          Units.inchesToMeters(-10.961),
           Units.inchesToMeters(24.656),
-          new Rotation3d(Units.degreesToRadians(0),Units.degreesToRadians(0), Units.degreesToRadians(75))); // CHANGE THIS LATER
+          new Rotation3d(
+              Units.degreesToRadians(0),
+              Units.degreesToRadians(0),
+              Units.degreesToRadians(75))); // CHANGE THIS LATER
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
