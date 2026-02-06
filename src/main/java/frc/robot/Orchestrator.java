@@ -64,6 +64,7 @@ public class Orchestrator {
 
   public Command alignAndShoot(DoubleSupplier xsupplier, DoubleSupplier ysupplier) {
     return Commands.parallel(shootBalls());
+//    shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target();
     // TODO: AIMING LOGIC
   }
 }
