@@ -47,9 +47,13 @@ public class Orchestrator {
   }
 
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
-  public Command shootBalls() {
-    return preloadBalls().andThen(shooter.setTargetVelocity(360)).onlyIf(() -> shooter.getSetpoint() ==0)
-        .andThen(Commands.parallel(hopperBelt.start(), indexer.run()))
+  public Command shootBallsWithDrive() {
+    return preloadBalls()
+        .andThen(
+            Commands.parallel(
+                hopperBelt.start(),
+                indexer.run(),
+                shooter.setTargetDistance(() -> shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).distance())))
         .onlyWhile(
             () ->
                 shooter.getSetpoint() > 0.1
@@ -62,9 +66,9 @@ public class Orchestrator {
     return indexer.run().until(indexer::isSwitchPressed);
   }
 
-  public Command alignAndShoot(DoubleSupplier xsupplier, DoubleSupplier ysupplier) {
-    return Commands.parallel(shootBalls());
-//    shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target();
+  public Command alignAndShootWhileDriving(DoubleSupplier xsupplier, DoubleSupplier ysupplier) {
+    return Commands.parallel(shootBallsWithDrive());
+    //    shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target();
     // TODO: AIMING LOGIC
   }
 }
