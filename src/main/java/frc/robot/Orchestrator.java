@@ -2,10 +2,13 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
+import frc.robot.commands.auto.DriveToPose;
+import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.indexer.Indexer;
@@ -16,6 +19,8 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
+  private final double FRONT_HUB_OFFSET = -1.0;
+  private final double FRONT_HUB_SHOOTER_VELOCITY = 0.0;
   private final Drive drive;
   private final Shooter shooter;
   private final HopperBelt hopperBelt;
@@ -45,7 +50,20 @@ public class Orchestrator {
             shootWhileDrivingResult.target().getY(),
             Rotation2d.fromDegrees(0)));
   }
+  //TODO move to drive commands/shooter?
+  public Command driveToHub(){
+    return new DriveToPose(drive, AllianceFlipUtil.apply(Hub.nearFace.transformBy(new Transform2d(0.0, -FRONT_HUB_OFFSET, Rotation2d.fromDegrees(0)))));
+  }
 
+  public Command shootAtHub(){
+    return shooter.setTargetVelocity(FRONT_HUB_SHOOTER_VELOCITY);
+  }
+
+  //Toggle
+  public Command shootBallsAtDistance(){
+    return Commands.none();
+    //TODO: Stop drive, face reef, shoot sequence
+  }
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
   public Command shootBallsWithDrive() {
     return preloadBalls()
