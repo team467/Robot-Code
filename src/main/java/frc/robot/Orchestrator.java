@@ -48,7 +48,7 @@ public class Orchestrator {
 
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
   public Command shootBalls() {
-    return preloadBalls().andThen(shooter.setTargetVelocity(360)).onlyIf(() -> shooter.getSetpoint() > 1)
+    return preloadBalls().andThen(shooter.setTargetVelocity(360)).onlyIf(() -> shooter.getSetpoint() ==0)
         .andThen(Commands.parallel(hopperBelt.start(), indexer.run()))
         .onlyWhile(
             () ->
