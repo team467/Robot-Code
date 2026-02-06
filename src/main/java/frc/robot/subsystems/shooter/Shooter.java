@@ -72,4 +72,8 @@ public class Shooter extends SubsystemBase {
     Commands.run(() -> io.setVoltage(0));
     return null;
   }
+
+  public double getSetpoint() {
+    return inputs.setpointRPM;
+  }
 }

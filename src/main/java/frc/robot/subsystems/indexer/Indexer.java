@@ -36,7 +36,7 @@ public class Indexer extends SubsystemBase {
     io.setVoltage(0, 0);
   }
 
-  private boolean isSwitchPressed() {
+  public boolean isSwitchPressed() {
     return io.isSwitchPressed();
   }
 

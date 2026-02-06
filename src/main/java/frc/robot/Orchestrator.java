@@ -48,7 +48,18 @@ public class Orchestrator {
 
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
   public Command shootBalls() {
-    return Commands.parallel(shooter.setVoltage(1), hopperBelt.start(), indexer.run());
+    return preloadBalls().andThen(shooter.setTargetVelocity(360)).onlyIf(() -> shooter.getSetpoint() > 1)
+        .andThen(Commands.parallel(hopperBelt.start(), indexer.run()))
+        .onlyWhile(
+            () ->
+                shooter.getSetpoint() > 0.1
+                    && RobotState.getInstance().shooterAtSpeed
+                    && RobotState.getInstance().isAlignedToHub)
+        .finallyDo(() -> Commands.parallel(hopperBelt.stop(), preloadBalls()));
+  }
+
+  public Command preloadBalls() {
+    return indexer.run().until(indexer::isSwitchPressed);
   }
 
   public Command alignAndShoot(DoubleSupplier xsupplier, DoubleSupplier ysupplier) {
