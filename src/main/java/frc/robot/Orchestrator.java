@@ -86,12 +86,6 @@ public class Orchestrator {
         .finallyDo(() -> Commands.parallel(hopperBelt.stop(), preloadBalls()));
   }
 
-  // Toggle
-  public Command shootBallsAtDistance() {
-    return Commands.none();
-    // TODO: Stop drive, face reef, shoot sequence
-  }
-
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
   public Command shootBallsWithDrive() {
     return preloadBalls()
@@ -124,30 +118,25 @@ public class Orchestrator {
     return Commands.sequence(
         DriveCommands.joystickDriveAtAngle(
             drive,
-            () -> driverController.getLeftX(),
-            () -> driverController.getLeftY(),
+            () -> 0.0,
+            () -> 0.0,
             () ->
                 AllianceFlipUtil.apply(Hub.blueCenter)
                     .minus(drive.getPose().getTranslation())
                     .getAngle()),
         shootBalls());
-
-    // TODO: AIMING LOGIC
   }
 
   public Command alignAndShootWhileDriving() {
     return Commands.parallel(
         DriveCommands.joystickDriveAtAngle(
             drive,
-            () -> driverController.getLeftX(),
-            () -> driverController.getLeftY(),
+                driverController::getLeftX,
+                driverController::getLeftY,
             () ->
-                AllianceFlipUtil.apply(Hub.blueCenter)
+                shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target().getTranslation()
                     .minus(drive.getPose().getTranslation())
                     .getAngle()),
         shootBallsWithDrive());
-
-    //    shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target();
-    // TODO: AIMING LOGIC
   }
 }
