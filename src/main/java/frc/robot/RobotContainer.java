@@ -198,7 +198,7 @@ public class RobotContainer {
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
-      driverController.rightBumper().whileTrue(orchestrator.shootBalls());
+      driverController.rightBumper().whileTrue(orchestrator.shootBallsVelocity(360));
     }
 
     //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());

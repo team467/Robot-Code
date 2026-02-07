@@ -18,6 +18,7 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
@@ -70,12 +71,25 @@ public class Orchestrator {
   }
 
   public Command shootAtHub() {
-    return shooter.setTargetVelocity(FRONT_HUB_SHOOTER_VELOCITY);
+    return shootBallsVelocity(FRONT_HUB_SHOOTER_VELOCITY);
   }
 
-  public Command shootBalls() {
+  public Command shootBallsVelocity(double targetVelocity) {
     return preloadBalls()
-        .andThen(shooter.setTargetVelocity(360)) // change
+        .andThen(shooter.setTargetVelocity(targetVelocity)) // change
+        .onlyIf(() -> shooter.getSetpoint() == 0)
+        .andThen(Commands.parallel(hopperBelt.start(), indexer.run()))
+        .onlyWhile(
+            () ->
+                shooter.getSetpoint() > 0.1
+                    && RobotState.getInstance().shooterAtSpeed
+                    && RobotState.getInstance().isAlignedToHub)
+        .finallyDo(() -> Commands.parallel(hopperBelt.stop(), preloadBalls()));
+  }
+
+  public Command shootBallsDistance(DoubleSupplier targetDistance) {
+    return preloadBalls()
+        .andThen(shooter.setTargetDistance(targetDistance)) // change
         .onlyIf(() -> shooter.getSetpoint() == 0)
         .andThen(Commands.parallel(hopperBelt.start(), indexer.run()))
         .onlyWhile(
@@ -87,7 +101,7 @@ public class Orchestrator {
   }
 
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
-  public Command shootBallsWithDrive() {
+  public Command shootBallsAtPoint() {
     return preloadBalls()
         .andThen(
             Commands.parallel(
@@ -124,19 +138,29 @@ public class Orchestrator {
                 AllianceFlipUtil.apply(Hub.blueCenter)
                     .minus(drive.getPose().getTranslation())
                     .getAngle()),
-        shootBalls());
+        shootBallsDistance(
+            () ->
+                AllianceFlipUtil.apply(Hub.blueCenter)
+                    .getDistance(drive.getPose().getTranslation())));
   }
 
   public Command alignAndShootWhileDriving() {
     return Commands.parallel(
         DriveCommands.joystickDriveAtAngle(
             drive,
-                driverController::getLeftX,
-                driverController::getLeftY,
+            driverController::getLeftX,
+            driverController::getLeftY,
             () ->
-                shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target().getTranslation()
+                shooterLeadCompensator
+                    .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
+                    .target()
+                    .getTranslation()
                     .minus(drive.getPose().getTranslation())
                     .getAngle()),
-        shootBallsWithDrive());
+        shootBallsDistance(
+            () ->
+                shooterLeadCompensator
+                    .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
+                    .distance()));
   }
 }
