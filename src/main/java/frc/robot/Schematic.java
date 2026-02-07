@@ -70,7 +70,7 @@ public class Schematic {
 
         // Indexer (CAN IDs)
         indexerIndexCanId = 0;
-        indexerFeedupCanId = 1;
+        indexerFeedupCanId = 0;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 1;
@@ -109,7 +109,7 @@ public class Schematic {
 
         // Indexer (CAN IDs)
         indexerIndexCanId = 0;
-        indexerFeedupCanId = 1;
+        indexerFeedupCanId = 0;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 1;
@@ -148,7 +148,7 @@ public class Schematic {
 
         // Indexer (CAN IDs)
         indexerIndexCanId = 0;
-        indexerFeedupCanId = 1;
+        indexerFeedupCanId = 0;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 1;
