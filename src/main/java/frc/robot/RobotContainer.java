@@ -15,12 +15,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -84,9 +86,9 @@ public class RobotContainer {
         }
 
         case ROBOT_BRIEFCASE -> {
-          leds = new Leds();
+          //          leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
-          //    shooter = new Shooter(new ShooterIOSparkMax());
+          shooter = new Shooter(new ShooterIOSparkMax());
         }
       }
     }
@@ -108,6 +110,9 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
+    autoChooser.addOption(
+        "runCharacterizationQuasistatic", shooter.sysIdQuasistatic(Direction.kForward));
+    autoChooser.addOption("runCharacterizationDynamic", shooter.sysIdDynamic(Direction.kForward));
     // Drive SysId
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
