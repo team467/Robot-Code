@@ -4,11 +4,13 @@ import static frc.robot.FieldConstants.Hub;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
+import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
@@ -21,6 +23,8 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
+  private final double FRONT_HUB_OFFSET = -1.0;
+  private final double FRONT_HUB_SHOOTER_VELOCITY = 0.0;
   private final Drive drive;
   private final Shooter shooter;
   private final HopperBelt hopperBelt;
@@ -57,13 +61,28 @@ public class Orchestrator {
             shootWhileDrivingResult.target().getY(),
             Rotation2d.fromDegrees(0)));
   }
+  //TODO move to drive commands/shooter?
+  public Command driveToHub(){
+    return new DriveToPose(drive, AllianceFlipUtil.apply(Hub.nearFace.transformBy(new Transform2d(0.0, -FRONT_HUB_OFFSET, Rotation2d.fromDegrees(0)))));
+  }
 
+  public Command shootAtHub(){
+    return shooter.setTargetVelocity(FRONT_HUB_SHOOTER_VELOCITY);
+  }
+
+  //Toggle
+  public Command shootBallsAtDistance(){
+    return Commands.none();
+    //TODO: Stop drive, face reef, shoot sequence
+  }
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
-  public Command shootBalls() {
+  public Command shootBallsWithDrive() {
     return preloadBalls()
-        .andThen(shooter.setTargetVelocity(360)) // change
-        .onlyIf(() -> shooter.getSetpoint() == 0)
-        .andThen(Commands.parallel(hopperBelt.start(), indexer.run()))
+        .andThen(
+            Commands.parallel(
+                hopperBelt.start(),
+                indexer.run(),
+                shooter.setTargetDistance(() -> shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).distance())))
         .onlyWhile(
             () ->
                 shooter.getSetpoint() > 0.1
@@ -76,36 +95,9 @@ public class Orchestrator {
     return indexer.run().until(indexer::isSwitchPressed);
   }
 
-  public DoubleSupplier distanceToSetpoint(Supplier<Pose2d> targetPose, Supplier<Pose2d> pose) {
-    return () -> targetPose.get().getTranslation().getDistance(pose.get().getTranslation());
-  }
-
-  public DoubleSupplier angleToSetpoint(Supplier<Pose2d> targetPose, Supplier<Pose2d> pose) {
-    return () -> {
-      Pose2d target = targetPose.get();
-      Pose2d current = pose.get();
-
-      // Calculate the angle to the target
-      double deltaX = target.getX() - current.getX();
-      double deltaY = target.getY() - current.getY();
-
-      return Math.atan2(deltaY, deltaX);
-    };
-  }
-
-  public Command alignAndShoot(
-      DoubleSupplier xsupplier,
-      DoubleSupplier ysupplier,
-      Supplier<Rotation2d> rotationSupplier,
-      Drive drive) {
-    return Commands.sequence(
-        DriveCommands.joystickDriveAtAngle(
-            drive,
-            () -> driverController.getLeftX(),
-            () -> driverController.getLeftY(),
-            AllianceFlipUtil.apply(Hub.blueCenter).minus(drive.getPose().getTranslation()).getAngle()),
-        shootBalls());
-
+  public Command alignAndShootWhileDriving(DoubleSupplier xsupplier, DoubleSupplier ysupplier) {
+    return Commands.parallel(shootBallsWithDrive());
+    //    shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target();
     // TODO: AIMING LOGIC
   }
 }
