@@ -124,7 +124,7 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //logger();
+    //logCameraPositions(); //uncomment to show camera positions in advantage scope
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
@@ -289,25 +289,23 @@ public class Drive extends SubsystemBase {
     return values;
   }
 
-  public void logger()
-  {
+  public void logCameraPositions() {
     Logger.recordOutput(
         "CameraPos/camera0position",
         new Pose3d(getPose().getX(), getPose().getY(), 0.0, new Rotation3d(getRotation()))
             .transformBy(VisionConstants.robotToCamera0));
     Logger.recordOutput(
-        "CameraPos/camera0position",
+        "CameraPos/camera1position",
         new Pose3d(getPose().getX(), getPose().getY(), 0.0, new Rotation3d(getRotation()))
             .transformBy(VisionConstants.robotToCamera1));
     Logger.recordOutput(
-        "CameraPos/camera0position",
+        "CameraPos/camera2position",
         new Pose3d(getPose().getX(), getPose().getY(), 0.0, new Rotation3d(getRotation()))
             .transformBy(VisionConstants.robotToCamera2));
     Logger.recordOutput(
-        "CameraPos/camera0position",
+        "CameraPos/camera3position",
         new Pose3d(getPose().getX(), getPose().getY(), 0.0, new Rotation3d(getRotation()))
             .transformBy(VisionConstants.robotToCamera3));
-    
   }
 
   /** Returns the average velocity of the modules in rad/sec. */
@@ -353,5 +351,4 @@ public class Drive extends SubsystemBase {
   public double getMaxAngularSpeedRadPerSec() {
     return maxSpeedMetersPerSec / driveBaseRadius;
   }
-  
 }

@@ -4,6 +4,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
@@ -18,18 +19,25 @@ public class VisionConstants {
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
+  // switched x and y
+  private static Rotation3d RotationCorrection =
+      new Rotation3d(0, 0, Math.PI / 2); // 90 degree roation around z-axis
   public static Transform3d robotToCamera0 =
       new Transform3d( // front camera
-          Units.inchesToMeters(-8.779),
-          Units.inchesToMeters(-10.445),
-          Units.inchesToMeters(27.152),
+          new Translation3d(
+                  Units.inchesToMeters(-8.779),
+                  Units.inchesToMeters(-10.445),
+                  Units.inchesToMeters(27.152 + 1.75))
+              .rotateBy(RotationCorrection),
           new Rotation3d(
               Units.degreesToRadians(-25.2), Units.degreesToRadians(0), Units.degreesToRadians(0)));
   public static Transform3d robotToCamera1 =
       new Transform3d( // rear left camera
-          Units.inchesToMeters(-9.562), // x
-          Units.inchesToMeters(-10.974), // y
-          Units.inchesToMeters(17.035), // z
+          new Translation3d(
+                  Units.inchesToMeters(-9.562), // x
+                  Units.inchesToMeters(-10.974), // y
+                  Units.inchesToMeters(17.035 + 1.75)) // z
+              .rotateBy(RotationCorrection),
           new Rotation3d(
               Units.degreesToRadians(16.7),
               Units.degreesToRadians(-4.8),
@@ -37,9 +45,11 @@ public class VisionConstants {
 
   public static Transform3d robotToCamera2 =
       new Transform3d( // rear right camera
-          Units.inchesToMeters(9.562),
-          Units.inchesToMeters(-10.974),
-          Units.inchesToMeters(17.035),
+          new Translation3d(
+                  Units.inchesToMeters(9.562),
+                  Units.inchesToMeters(-10.974),
+                  Units.inchesToMeters(17.035 + 1.75))
+              .rotateBy(RotationCorrection),
           new Rotation3d(
               Units.degreesToRadians(-16.7),
               Units.degreesToRadians(4.8),
@@ -47,9 +57,11 @@ public class VisionConstants {
 
   public static Transform3d robotToCamera3 =
       new Transform3d( // left camera
-          Units.inchesToMeters(-9.669),
-          Units.inchesToMeters(-10.961),
-          Units.inchesToMeters(24.656),
+          new Translation3d(
+                  Units.inchesToMeters(-9.669),
+                  Units.inchesToMeters(-10.961),
+                  Units.inchesToMeters(24.656 + 1.75))
+              .rotateBy(RotationCorrection),
           new Rotation3d(
               Units.degreesToRadians(0),
               Units.degreesToRadians(0),
