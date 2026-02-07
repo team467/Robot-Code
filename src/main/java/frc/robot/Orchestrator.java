@@ -66,8 +66,21 @@ public class Orchestrator {
     return new DriveToPose(drive, AllianceFlipUtil.apply(Hub.nearFace.transformBy(new Transform2d(0.0, -FRONT_HUB_OFFSET, Rotation2d.fromDegrees(0)))));
   }
 
-  public Command shootAtHub(){
+  public Command shootAtHub() {
     return shooter.setTargetVelocity(FRONT_HUB_SHOOTER_VELOCITY);
+  }
+  
+  public Command shootBalls() {
+    return preloadBalls()
+        .andThen(shooter.setTargetVelocity(360)) // change
+        .onlyIf(() -> shooter.getSetpoint() == 0)
+        .andThen(Commands.parallel(hopperBelt.start(), indexer.run()))
+        .onlyWhile(
+            () ->
+                shooter.getSetpoint() > 0.1
+                    && RobotState.getInstance().shooterAtSpeed
+                    && RobotState.getInstance().isAlignedToHub)
+        .finallyDo(() -> Commands.parallel(hopperBelt.stop(), preloadBalls()));
   }
 
   //Toggle
@@ -94,7 +107,21 @@ public class Orchestrator {
   public Command preloadBalls() {
     return indexer.run().until(indexer::isSwitchPressed);
   }
+ public Command alignAndShoot(
+      DoubleSupplier xsupplier,
+      DoubleSupplier ysupplier,
+      Supplier<Rotation2d> rotationSupplier,
+      Drive drive) {
+    return Commands.sequence(
+        DriveCommands.joystickDriveAtAngle(
+            drive,
+            () -> driverController.getLeftX(),
+            () -> driverController.getLeftY(),
+            AllianceFlipUtil.apply(Hub.blueCenter).minus(drive.getPose().getTranslation()).getAngle()),
+        shootBalls());
 
+    // TODO: AIMING LOGIC
+  }
   public Command alignAndShootWhileDriving(DoubleSupplier xsupplier, DoubleSupplier ysupplier) {
     return Commands.parallel(shootBallsWithDrive());
     //    shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target();
