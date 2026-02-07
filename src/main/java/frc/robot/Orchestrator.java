@@ -15,7 +15,6 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
 import java.util.function.DoubleSupplier;
@@ -29,7 +28,7 @@ public class Orchestrator {
   private final Shooter shooter;
   private final HopperBelt hopperBelt;
   private final Indexer indexer;
-  private final Intake intake;
+  // private final Intake intake; Commented Out Intake --> Add Back
   private final RobotState robotState = RobotState.getInstance();
   private final ShooterLeadCompensator shooterLeadCompensator;
   private final CommandXboxController driverController;
@@ -39,14 +38,14 @@ public class Orchestrator {
       HopperBelt hopperBelt,
       Shooter shooter,
       Indexer indexer,
-      Intake intake,
+      // Intake intake, Commented Out Intake --> Add Back
       CommandXboxController driverController) {
     this.drive = drive;
     this.hopperBelt = hopperBelt;
     this.shooter = shooter;
     this.indexer = indexer;
     this.shooterLeadCompensator = new ShooterLeadCompensator(drive, shooter);
-    this.intake = intake;
+    // this.intake = intake; Commented Out Intake --> Add Back
     this.driverController = driverController;
   }
 
@@ -61,15 +60,20 @@ public class Orchestrator {
             shootWhileDrivingResult.target().getY(),
             Rotation2d.fromDegrees(0)));
   }
-  //TODO move to drive commands/shooter?
-  public Command driveToHub(){
-    return new DriveToPose(drive, AllianceFlipUtil.apply(Hub.nearFace.transformBy(new Transform2d(0.0, -FRONT_HUB_OFFSET, Rotation2d.fromDegrees(0)))));
+
+  // TODO move to drive commands/shooter?
+  public Command driveToHub() {
+    return new DriveToPose(
+        drive,
+        AllianceFlipUtil.apply(
+            Hub.nearFace.transformBy(
+                new Transform2d(0.0, -FRONT_HUB_OFFSET, Rotation2d.fromDegrees(0)))));
   }
 
   public Command shootAtHub() {
     return shooter.setTargetVelocity(FRONT_HUB_SHOOTER_VELOCITY);
   }
-  
+
   public Command shootBalls() {
     return preloadBalls()
         .andThen(shooter.setTargetVelocity(360)) // change
@@ -83,11 +87,12 @@ public class Orchestrator {
         .finallyDo(() -> Commands.parallel(hopperBelt.stop(), preloadBalls()));
   }
 
-  //Toggle
-  public Command shootBallsAtDistance(){
+  // Toggle
+  public Command shootBallsAtDistance() {
     return Commands.none();
-    //TODO: Stop drive, face reef, shoot sequence
+    // TODO: Stop drive, face reef, shoot sequence
   }
+
   /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
   public Command shootBallsWithDrive() {
     return preloadBalls()
@@ -95,7 +100,11 @@ public class Orchestrator {
             Commands.parallel(
                 hopperBelt.start(),
                 indexer.run(),
-                shooter.setTargetDistance(() -> shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).distance())))
+                shooter.setTargetDistance(
+                    () ->
+                        shooterLeadCompensator
+                            .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
+                            .distance())))
         .onlyWhile(
             () ->
                 shooter.getSetpoint() > 0.1
@@ -107,7 +116,12 @@ public class Orchestrator {
   public Command preloadBalls() {
     return indexer.run().until(indexer::isSwitchPressed);
   }
- public Command alignAndShoot(
+
+  public Command driveShootAtAngle() {
+    return Commands.none();
+  }
+
+  public Command alignAndShoot(
       DoubleSupplier xsupplier,
       DoubleSupplier ysupplier,
       Supplier<Rotation2d> rotationSupplier,
@@ -117,11 +131,15 @@ public class Orchestrator {
             drive,
             () -> driverController.getLeftX(),
             () -> driverController.getLeftY(),
-            AllianceFlipUtil.apply(Hub.blueCenter).minus(drive.getPose().getTranslation()).getAngle()),
+            () ->
+                AllianceFlipUtil.apply(Hub.blueCenter)
+                    .minus(drive.getPose().getTranslation())
+                    .getAngle()),
         shootBalls());
 
     // TODO: AIMING LOGIC
   }
+
   public Command alignAndShootWhileDriving(DoubleSupplier xsupplier, DoubleSupplier ysupplier) {
     return Commands.parallel(shootBallsWithDrive());
     //    shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target();
@@ -132,7 +150,8 @@ public class Orchestrator {
 // shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target())
 // shootWhileDriving rn is just a placeholder method so dont use this at all
 // you aren't trying to go to the center...
-// what this code would do was it would drive to the literal center of the hub we are// what is .target()
+// what this code would do was it would drive to the literal center of the hub we are// what is
+// .target()
 
 // here's what the command would actually do
 // first, get the radius of the shot area that we can make form the center of the hub

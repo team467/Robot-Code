@@ -47,6 +47,7 @@ public class RobotContainer {
   private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
+
   private Climber climber;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
@@ -128,7 +129,7 @@ public class RobotContainer {
               new ModuleIO() {});
     }
 
-    orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer, climber);
+    orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer, driverController); //Commented Out Intake --> Add Back
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     Autos autos = new Autos(drive);
     // Set up auto routines
@@ -166,13 +167,12 @@ public class RobotContainer {
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        orchestrator.driveShootAtAngle(driverController::getLeftX, driverController::getLeftY));
-            DriveCommands.joystickDrive(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> -driverController.getRightX());
+    drive.setDefaultCommand(orchestrator.driveShootAtAngle());
+    DriveCommands.joystickDrive(
+        drive,
+        () -> -driverController.getLeftY(),
+        () -> -driverController.getLeftX(),
+        () -> -driverController.getRightX());
 
     // Lock to 0° when A button is held
 
@@ -190,9 +190,8 @@ public class RobotContainer {
 
     if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
       driverController.rightBumper().whileTrue(orchestrator.shootBalls());
-
     }
-    
+
     //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
