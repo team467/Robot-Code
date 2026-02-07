@@ -18,8 +18,6 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
@@ -138,7 +136,8 @@ public class Orchestrator {
   }
 
   public Command alignAndShootWhileDriving() {
-    return Commands.parallel(DriveCommands.joystickDriveAtAngle(
+    return Commands.parallel(
+        DriveCommands.joystickDriveAtAngle(
             drive,
             () -> driverController.getLeftX(),
             () -> driverController.getLeftY(),
@@ -146,7 +145,7 @@ public class Orchestrator {
                 AllianceFlipUtil.apply(Hub.blueCenter)
                     .minus(drive.getPose().getTranslation())
                     .getAngle()),
-                        shootBallsWithDrive());
+        shootBallsWithDrive());
 
     //    shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target();
     // TODO: AIMING LOGIC
