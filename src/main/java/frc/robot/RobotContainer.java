@@ -18,13 +18,22 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOPhysical;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
+import frc.robot.subsystems.hopperbelt.HopperBeltIO;
 import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -46,6 +55,8 @@ public class RobotContainer {
   private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
+  private Climber climber;
+  private Intake intake;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -95,6 +106,8 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOSparkMax());
           hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
+          climber = new Climber(new ClimberIOPhysical());
+          intake = new Intake(new IntakeIOSparkMax(), operatorController.rightTrigger());
         }
 
         case ROBOT_SIMBOT -> {
@@ -111,8 +124,6 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-          //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
-          //    shooter = new Shooter(new ShooterIOSparkMax());
         }
       }
     }
@@ -127,8 +138,23 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
+    if (intake == null) {
+      intake = new Intake(new IntakeIO() {}, () -> false);
+    }
+    if (hopperBelt == null) {
+      hopperBelt = new HopperBelt(new HopperBeltIO() {});
+    }
+    if (shooter == null) {
+      shooter = new Shooter(new ShooterIO() {});
+    }
+    if (indexer == null) {
+      indexer = new Indexer(new IndexerIO() {});
+    }
+    if (climber == null) {
+      climber = new Climber(new ClimberIO() {});
+    }
 
-    orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer);
+    orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer, intake);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     Autos autos = new Autos(drive);
     // Set up auto routines
@@ -164,8 +190,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,

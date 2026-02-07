@@ -87,6 +87,12 @@ public class Constants {
     ROBOT_SIMBOT
   }
 
+  public static boolean disableHAL = false;
+
+  public static void disableHAL() {
+    disableHAL = true;
+  }
+
   public enum Mode {
     REAL,
     REPLAY,
