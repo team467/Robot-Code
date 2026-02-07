@@ -24,6 +24,7 @@ import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
@@ -49,6 +50,7 @@ public class RobotContainer {
   private Shooter shooter;
 
   private Climber climber;
+  private Intake intake;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -129,7 +131,14 @@ public class RobotContainer {
               new ModuleIO() {});
     }
 
-    orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer, driverController); //Commented Out Intake --> Add Back
+    orchestrator =
+        new Orchestrator(
+            drive,
+            hopperBelt,
+            shooter,
+            indexer,
+            intake,
+            driverController); // Commented Out Intake --> Add Back
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     Autos autos = new Autos(drive);
     // Set up auto routines
