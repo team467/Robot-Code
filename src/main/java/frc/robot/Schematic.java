@@ -73,8 +73,8 @@ public class Schematic {
         indexerFeedupCanId = 0;
 
         // Intake (CAN IDs)
-        intakeMotorCanId = 1;
-        intakeExtendCanId = 2;
+        intakeMotorCanId = 0;
+        intakeExtendCanId = 0;
 
         // Climber (CAN IDs)
         climberMotorCanId = 0;
@@ -112,8 +112,8 @@ public class Schematic {
         indexerFeedupCanId = 0;
 
         // Intake (CAN IDs)
-        intakeMotorCanId = 1;
-        intakeExtendCanId = 2;
+        intakeMotorCanId = 0;
+        intakeExtendCanId = 0;
 
         // Climber (CAN IDs)
         climberMotorCanId = 0;
@@ -151,8 +151,8 @@ public class Schematic {
         indexerFeedupCanId = 0;
 
         // Intake (CAN IDs)
-        intakeMotorCanId = 1;
-        intakeExtendCanId = 2;
+        intakeMotorCanId = 0;
+        intakeExtendCanId = 0;
 
         // Climber (CAN IDs)
         climberMotorCanId = 0;
