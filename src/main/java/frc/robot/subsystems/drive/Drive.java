@@ -124,7 +124,7 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    logCameraPositions(); // uncomment to show camera positions in advantage scope
+    //logCameraPositions(); // uncomment to show camera positions in advantage scope
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);

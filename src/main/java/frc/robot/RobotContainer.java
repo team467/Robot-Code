@@ -74,8 +74,8 @@ public class RobotContainer {
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1),
-                  new VisionIOPhotonVision(camera2Name, robotToCamera2));
-          new VisionIOPhotonVision(camera2Name, robotToCamera3);
+                  new VisionIOPhotonVision(camera2Name, robotToCamera2),
+                  new VisionIOPhotonVision(camera2Name, robotToCamera3));
           leds = new Leds();
         }
         case ROBOT_2026_COMP -> {
