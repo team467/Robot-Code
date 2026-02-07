@@ -86,7 +86,7 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1),
                   new VisionIOPhotonVision(camera2Name, robotToCamera2),
-                  new VisionIOPhotonVision(camera2Name, robotToCamera3));
+                  new VisionIOPhotonVision(camera3Name, robotToCamera3));
           leds = new Leds();
         }
         case ROBOT_2026_COMP -> {
@@ -97,11 +97,11 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(1),
                   new ModuleIOTalonSpark(2),
                   new ModuleIOTalonSpark(3));
-          vision =
-              new Vision(
-                  drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
+          // vision =
+          //     new Vision(
+          //         drive::addVisionMeasurement,
+          //         new VisionIOPhotonVision(camera0Name, robotToCamera0),
+          //         new VisionIOPhotonVision(camera1Name, robotToCamera1));
           leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
           hopperBelt = new HopperBelt(new HopperBeltSparkMax());
