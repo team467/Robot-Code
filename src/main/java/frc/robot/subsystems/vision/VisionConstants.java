@@ -15,11 +15,11 @@ public class VisionConstants {
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "camera_0";
   public static String camera1Name = "camera_1";
-  public static String camera2Name = "camera_2"; // CHANGED
+  public static String camera2Name = "camera_2";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
-  // switched x and y
+
   private static Rotation3d RotationCorrection =
       new Rotation3d(0, 0, Math.PI / 2); // 90 degree roation around z-axis
   public static Transform3d robotToCamera0 =
