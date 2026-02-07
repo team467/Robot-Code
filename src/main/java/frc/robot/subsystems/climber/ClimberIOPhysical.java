@@ -1,6 +1,7 @@
 package frc.robot.subsystems.climber;
 
 import static frc.lib.utils.PhoenixUtil.*;
+import static frc.robot.Schematic.climberMotorCanId;
 import static frc.robot.subsystems.climber.ClimberConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -30,7 +31,7 @@ public class ClimberIOPhysical implements ClimberIO {
   private double targetRotation;
 
   public ClimberIOPhysical() {
-    talon = new TalonFX(CLIMBER_MOTOR_ID);
+    talon = new TalonFX(climberMotorCanId);
     limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
 
     var config = new TalonFXConfiguration();

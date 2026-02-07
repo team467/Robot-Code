@@ -26,6 +26,17 @@ public class Schematic {
   // hopper belt sub-system
   public static final int hopperBeltCanId;
 
+  //  indexer subsystem
+  public static final int indexerIndexCanId;
+  // public static final int indexerFeedupCanId = 1;
+
+  // intake subsystem
+  public static final int intakeMotorCanId;
+  public static final int intakeExtendCanId;
+
+  // climber subsystem
+  public static final int climberMotorCanId;
+
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2025_COMP -> {
@@ -56,6 +67,16 @@ public class Schematic {
 
         // Hopper Belt (CAN Ids)
         hopperBeltCanId = 0;
+
+        // Indexer (CAN IDs)
+        indexerIndexCanId = 0;
+
+        // Intake (CAN IDs)
+        intakeMotorCanId = 1;
+        intakeExtendCanId = 2;
+
+        // Climber (CAN IDs)
+        climberMotorCanId = 0;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -84,6 +105,16 @@ public class Schematic {
 
         // Hopper Belt (CAN Ids)
         hopperBeltCanId = 0;
+
+        // Indexer (CAN IDs)
+        indexerIndexCanId = 0;
+
+        // Intake (CAN IDs)
+        intakeMotorCanId = 1;
+        intakeExtendCanId = 2;
+
+        // Climber (CAN IDs)
+        climberMotorCanId = 0;
       }
 
       default -> {
@@ -112,6 +143,16 @@ public class Schematic {
 
         // Hopper Belt (CAN Ids)
         hopperBeltCanId = 0;
+
+        // Indexer (CAN IDs)
+        indexerIndexCanId = 0;
+
+        // Intake (CAN IDs)
+        intakeMotorCanId = 1;
+        intakeExtendCanId = 2;
+
+        // Climber (CAN IDs)
+        climberMotorCanId = 0;
       }
     }
   }
