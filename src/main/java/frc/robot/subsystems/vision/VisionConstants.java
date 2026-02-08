@@ -16,6 +16,8 @@ public class VisionConstants {
   public static String camera0Name = "camera_0";
   public static String camera1Name = "camera_1";
   public static String camera2Name = "camera_2";
+   public static String camera3Name = "camera_3";
+
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
@@ -65,7 +67,7 @@ public class VisionConstants {
           new Rotation3d(
               Units.degreesToRadians(0),
               Units.degreesToRadians(0),
-              Units.degreesToRadians(75))); // CHANGE THIS LATER
+              Units.degreesToRadians(75))); 
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
