@@ -2,6 +2,7 @@ package frc.robot.subsystems.leds;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLED.ColorOrder;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.LEDPattern;
@@ -127,9 +128,9 @@ public class Leds extends SubsystemBase {
 
     leds = new AddressableLED(LedConstants.LED_CHANNEL);
     leds.setLength(LedConstants.FULL_LENGTH);
+    leds.setColorOrder(ColorOrder.kRGB);
     leds.setData(buffer);
     leds.start();
-
     initLedTabInShuffleboard();
     initLedModeTabInShuffleboard();
   }
