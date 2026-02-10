@@ -14,8 +14,11 @@ public class ShooterConstants {
   public static final double PID_I = 0.0000003;
   public static final double PID_D = 0.00000;
 
-  public static final double KV = 0.002027;
-  public static final double KA = 0.00033377;
+  //  public static final double KV = 0.002027;  //single motor
+  //  public static final double KA = 0.00033377;  //single motor
+
+  public static final double KV = 0.0019641; // casebot with flywheel
+  public static final double KA = 0.00017327; // casebot with flywheel
 
   public static final double MAX_VOLTAGE = 12.0;
 }

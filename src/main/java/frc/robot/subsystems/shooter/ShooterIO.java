@@ -10,10 +10,12 @@ public interface ShooterIO {
     public double shooterLeaderVelocityRadPerSec;
     public double shooterLeaderAppliedVolts;
     public double shooterLeaderCurrentAmps;
+    public double shooterLeaderPosition;
 
     public double shooterFollowerVelocityRadPerSec;
     public double shooterFollowerAppliedVolts;
     public double shooterFollowerCurrentAmps;
+    public double shooterFollowerPosition;
 
     public boolean atSetpoint = false;
     public double setpointRPM = 0.0;
@@ -21,6 +23,7 @@ public interface ShooterIO {
     public double shooterFollower2VelocityRadPerSec;
     public double shooterFollower2AppliedVolts;
     public double shooterFollower2CurrentAmps;
+    public double shooterFollower2Position;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {}

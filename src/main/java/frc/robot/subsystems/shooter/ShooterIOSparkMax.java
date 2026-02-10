@@ -71,16 +71,20 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.shooterLeaderCurrentAmps = leader.getOutputCurrent();
     inputs.shooterLeaderAppliedVolts = leader.getBusVoltage() * leader.getAppliedOutput();
     inputs.shooterLeaderVelocityRadPerSec = leaderEncoder.getVelocity();
+    inputs.shooterLeaderPosition = leaderEncoder.getPosition();
 
-    //    inputs.shooterFollowerCurrentAmps = follower.getOutputCurrent();
-    //    inputs.shooterFollowerAppliedVolts = follower.getBusVoltage() *
-    // follower.getAppliedOutput();
-    //    inputs.shooterFollowerVelocityRadPerSec = followerEncoder.getVelocity();
+    //        inputs.shooterFollowerCurrentAmps = follower.getOutputCurrent();
+    //        inputs.shooterFollowerAppliedVolts = follower.getBusVoltage() *
+    //     follower.getAppliedOutput();
+    //        inputs.shooterFollowerVelocityRadPerSec = followerEncoder.getVelocity();
+    //        inputs.shooterFollowerPosition();
     //
-    //    inputs.shooterFollower2CurrentAmps = follower2.getOutputCurrent();
-    //    inputs.shooterFollower2AppliedVolts = follower2.getBusVoltage() *
-    // follower2.getAppliedOutput();
-    //    inputs.shooterFollower2VelocityRadPerSec = follower2Encoder.getVelocity();
+    //
+    //        inputs.shooterFollower2CurrentAmps = follower2.getOutputCurrent();
+    //        inputs.shooterFollower2AppliedVolts = follower2.getBusVoltage() *
+    //     follower2.getAppliedOutput();
+    //        inputs.shooterFollower2VelocityRadPerSec = follower2Encoder.getVelocity();
+    //        inputs.shooterFollower2Position();
   }
 
   @Override

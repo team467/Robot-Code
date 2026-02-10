@@ -113,6 +113,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "runCharacterizationQuasistatic", shooter.sysIdQuasistatic(Direction.kForward));
     autoChooser.addOption("runCharacterizationDynamic", shooter.sysIdDynamic(Direction.kForward));
+
+    autoChooser.addOption(
+        "runCharacterizationQuasistaticReverse", shooter.sysIdQuasistatic(Direction.kReverse));
+    autoChooser.addOption(
+        "runCharacterizationDynamicReverse", shooter.sysIdDynamic(Direction.kReverse));
+
     // Drive SysId
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -163,7 +169,7 @@ public class RobotContainer {
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
+    driverController.x().onTrue(shooter.setTargetVelocityRPM(250)).onFalse(shooter.stop());
   }
 
   /**
