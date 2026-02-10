@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.5682777777777774,
-        "y": 3.752822222222222
+        "x": 1.1308228980322,
+        "y": 4.7732558139534875
       },
       "prevControl": {
-        "x": 1.8863845878547865,
-        "y": 3.8981331523967833
+        "x": 1.448929708109209,
+        "y": 4.918566744128049
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "climb"
+      "linkedName": "climbA"
     }
   ],
   "rotationTargets": [],
@@ -56,7 +56,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.5968094512291419
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": null,

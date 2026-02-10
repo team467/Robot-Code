@@ -7,16 +7,16 @@
   "poses":{
    "CA":{
     "x":{
-     "exp":"3.457 m",
-     "val":3.457
+     "exp":"3.5171055793762207 m",
+     "val":3.5171055793762207
     },
     "y":{
-     "exp":"4.941 m",
-     "val":4.941
+     "exp":"4.96037483215332 m",
+     "val":4.96037483215332
     },
     "heading":{
-     "exp":"-36.143 deg",
-     "val":-0.6308143515483106
+     "exp":"-0.7853978811004882 rad",
+     "val":-0.7853978811004882
     }
    },
    "Depot":{
@@ -32,28 +32,42 @@
      "exp":"180 deg",
      "val":3.141592653589793
     }
+   },
+   "intakeA":{
+    "x":{
+     "exp":"5.715144634246826 m",
+     "val":5.715144634246826
+    },
+    "y":{
+     "exp":"5.27 m",
+     "val":5.27
+    },
+    "heading":{
+     "exp":"-54.491877174010234 deg",
+     "val":-0.9510626722788216
+    }
    }
   }
  },
  "config":{
   "frontLeft":{
    "x":{
-    "exp":"0.273 m",
-    "val":0.273
+    "exp":"11 in",
+    "val":0.2794
    },
    "y":{
-    "exp":"0.273 m",
-    "val":0.273
+    "exp":"9.625 in",
+    "val":0.244475
    }
   },
   "backLeft":{
    "x":{
-    "exp":"-0.273 m",
-    "val":-0.273
+    "exp":"-11 in",
+    "val":-0.2794
    },
    "y":{
-    "exp":"0.273 m",
-    "val":0.273
+    "exp":"9.625 in",
+    "val":0.244475
    }
   },
   "mass":{
@@ -69,8 +83,8 @@
    "val":8.14
   },
   "radius":{
-   "exp":"0.048 m",
-   "val":0.048
+   "exp":"1.9 in",
+   "val":0.04826
   },
   "vmax":{
    "exp":"6000 RPM",
@@ -86,16 +100,16 @@
   },
   "bumper":{
    "front":{
-    "exp":"0.45 m",
-    "val":0.45
+    "exp":"13.8125 in",
+    "val":0.35083749999999997
    },
    "side":{
-    "exp":"0.45 m",
-    "val":0.45
+    "exp":"14.6875 in",
+    "val":0.3730625
    },
    "back":{
-    "exp":"0.45 m",
-    "val":0.45
+    "exp":"13.8125 in",
+    "val":0.35083749999999997
    }
   },
   "differentialTrackWidth":{
@@ -105,7 +119,7 @@
  },
  "generationFeatures":[],
  "codegen":{
-  "root":"..\\C:\\Users\\shayan\\Downloads\\bot code twin\\src\\main\\deploy",
+  "root":"",
   "genVars":true,
   "genTrajData":true,
   "useChoreoLib":true

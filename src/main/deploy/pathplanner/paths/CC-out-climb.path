@@ -8,31 +8,31 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.257967620287915,
-        "y": 3.1327142714712535
+        "x": 1.2444007155635064,
+        "y": 1.2685688729874764
       },
       "isLocked": false,
       "linkedName": "CC"
     },
     {
       "anchor": {
-        "x": 1.5682777777777774,
-        "y": 3.752822222222222
+        "x": 1.0334704830053665,
+        "y": 2.7126296958855094
       },
       "prevControl": {
-        "x": 1.3255652623838423,
-        "y": 3.6929003157843527
+        "x": 1.0983720930232552,
+        "y": 2.2420930232558134
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "climb"
+      "linkedName": "climbC"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.6636670416197931,
+      "minWaypointRelativePos": 0.3,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 1.5,
@@ -56,7 +56,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.5968094512291419
+    "rotation": -90.71615994547042
   },
   "reversed": false,
   "folder": null,

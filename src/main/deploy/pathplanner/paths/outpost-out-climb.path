@@ -16,22 +16,22 @@
     },
     {
       "anchor": {
-        "x": 1.5682777777777774,
-        "y": 3.752822222222222
+        "x": 1.0334704830053665,
+        "y": 2.7126296958855094
       },
       "prevControl": {
-        "x": 3.3923555555555556,
-        "y": 3.772977777777778
+        "x": 1.1470483005366723,
+        "y": 2.0960644007155635
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "climb"
+      "linkedName": "climbC"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 0.0
+      "waypointRelativePos": 0.4251336898395722,
+      "rotationDegrees": -90.0
     }
   ],
   "constraintZones": [
@@ -61,7 +61,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.5968094512291419
+    "rotation": -90.71615994547042
   },
   "reversed": false,
   "folder": null,

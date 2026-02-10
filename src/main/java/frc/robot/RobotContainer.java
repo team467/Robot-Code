@@ -6,10 +6,12 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
+import choreo.auto.AutoChooser;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -59,6 +61,7 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final AutoChooser choreoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -141,6 +144,7 @@ public class RobotContainer {
 
     orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    choreoChooser = new AutoChooser();
     Autos autos = new Autos(drive);
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
@@ -148,7 +152,7 @@ public class RobotContainer {
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     autoChooser.addOption("CA auto", autos.CenterA());
     autoChooser.addOption("CC auto", autos.CenterC());
-    autoChooser.addOption("choreo test", autos.choreotest());
+    SmartDashboard.putData("Choreo Autos", choreoChooser);
 
     // Drive SysId
     autoChooser.addOption(
@@ -178,8 +182,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     //    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    driverController.y().onTrue(intake.toPosExtend());
-    driverController.x().onTrue(intake.toPosCollapse());
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -215,6 +217,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public AutoChooser getAutoChooser() {
+    return choreoChooser;
   }
 
   public void robotPeriodic() {

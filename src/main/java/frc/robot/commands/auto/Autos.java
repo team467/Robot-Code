@@ -1,6 +1,5 @@
 package frc.robot.commands.auto;
 
-import choreo.auto.AutoFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -11,16 +10,8 @@ import java.util.function.Supplier;
 
 public class Autos {
   private final Drive drive;
-  private final AutoFactory autoFactory;
 
   public Autos(Drive drive) {
-    this.autoFactory =
-        new AutoFactory(
-            drive::getPose, // A function that returns the current robot pose
-            drive::setPose, // A function that resets the current robot pose to the provided Pose2d
-            drive::followTrajectory, // The drive subsystem trajectory follower
-            true, // If alliance flipping should be enabled
-            drive);
     this.drive = drive;
   }
 
@@ -31,6 +22,15 @@ public class Autos {
       () -> new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305)));
   private static final Supplier<Pose2d> CenterC =
       () -> new Pose2d(3.413, 3.078, new Rotation2d(Units.degreesToRadians(38.157)));
+
+  private static Command intakeA;
+  private static Command intakeDepot;
+  private static Command intakeOutpost;
+
+  public static void loadAutoTrajectories(Drive drive) {
+
+    drive.getAutoFactory().cache().loadTrajectory("IntakeA");
+  }
 
   public Command CenterA() {
     return Commands.sequence(
@@ -58,10 +58,5 @@ public class Autos {
             () ->
                 drive.setPose(new Pose2d(3.213, 5.600, new Rotation2d(Units.degreesToRadians(0))))),
         drive.getAutonomousCommand("test path"));
-  }
-
-  public Command choreotest() {
-    return Commands.sequence(
-        autoFactory.resetOdometry("CAoutIntake"), autoFactory.trajectoryCmd("CAoutIntake"));
   }
 }

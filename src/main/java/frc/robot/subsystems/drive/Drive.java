@@ -3,6 +3,7 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
+import choreo.auto.AutoFactory;
 import choreo.trajectory.SwerveSample;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -35,6 +36,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -67,7 +69,8 @@ public class Drive extends SubsystemBase {
   // Choreo PIDs
   private final PIDController xController = new PIDController(10.0, 0.0, 0.5);
   private final PIDController yController = new PIDController(10.0, 0.0, 0.5);
-  private final PIDController headingController = new PIDController(10.0, 0.0, 0);
+  private final PIDController headingController = new PIDController(5.0, 0.0, 0);
+  @Getter private final AutoFactory autoFactory;
 
   public Drive(
       GyroIO gyroIO,
@@ -91,7 +94,7 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(7.5, 0.0, 0.0), new PIDConstants(8.5, 0.0, 0.0)),
+            new PIDConstants(7.5, 0.0, 0.0), new PIDConstants(8.5, 0.0, 0)),
         ppConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -106,6 +109,13 @@ public class Drive extends SubsystemBase {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
 
+    autoFactory =
+        new AutoFactory(
+            this::getPose, // A function that returns the current robot pose
+            this::setPose, // A function that resets the current robot pose to the provided Pose2d
+            this::followTrajectory, // The drive subsystem trajectory follower
+            true, // If alliance flipping should be enabled
+            this);
     // Configure SysId
     sysId =
         new SysIdRoutine(

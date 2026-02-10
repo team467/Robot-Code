@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -208,7 +209,8 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     autoStart = Timer.getTimestamp();
     autonomousCommand = robotContainer.getAutonomousCommand();
-
+    RobotModeTriggers.autonomous()
+        .whileTrue(robotContainer.getAutoChooser().selectedCommandScheduler());
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
