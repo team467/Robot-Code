@@ -168,14 +168,18 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    //pathplanner
-    NamedCommands.registerCommand("startShooter",Commands.parallel(orchestrator.preloadBalls(),orchestrator.prepShooter()));
-    NamedCommands.registerCommand("shoot",orchestrator.shootBalls());
-    NamedCommands.registerCommand("shootClimb",orchestrator.shootBallsonClimb());
-    NamedCommands.registerCommand("shootDistance",orchestrator.shootBallsAtDistance());
-    NamedCommands.registerCommand("extend hopper and intake",intake.extendAndIntake());
-    NamedCommands.registerCommand("stopIntake",Commands.sequence(intake.collapseAndIntake(),Commands.waitSeconds(0.3),intake.stopIntakeCommand()));
-    NamedCommands.registerCommand("climb",Commands.none());
+    // pathplanner
+    NamedCommands.registerCommand(
+        "startShooter", Commands.parallel(orchestrator.preloadBalls(), orchestrator.prepShooter()));
+    NamedCommands.registerCommand("shoot", orchestrator.shootBalls());
+    NamedCommands.registerCommand("shootClimb", orchestrator.shootBallsonClimb());
+    NamedCommands.registerCommand("shootDistance", orchestrator.shootBallsAtDistance());
+    NamedCommands.registerCommand("extend hopper and intake", intake.extendAndIntake());
+    NamedCommands.registerCommand(
+        "stopIntake",
+        Commands.sequence(
+            intake.collapseAndIntake(), Commands.waitSeconds(0.3), intake.stopIntakeCommand()));
+    NamedCommands.registerCommand("climb", Commands.none());
     autoChooser.addOption("CA-1C-O-Climb", autos.CenterA());
     autoChooser.addOption("CC-1C-D-Climb", autos.CenterC());
     // Configure the button bindings

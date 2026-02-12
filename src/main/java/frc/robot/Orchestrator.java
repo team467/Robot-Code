@@ -91,6 +91,7 @@ public class Orchestrator {
     return Commands.none();
     // TODO: Stop drive, face reef, shoot sequence
   }
+
   public Command shootBallsonClimb() {
     return Commands.none();
     // TODO: tune shoot speed for climb, that it bro
@@ -154,10 +155,8 @@ public class Orchestrator {
     //    shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target();
     // TODO: AIMING LOGIC
   }
-  public Command prepShooter(){
-    return Commands.parallel(
-        this.preloadBalls(),
-        shooter.setPercent(0.2)
-    );
+
+  public Command prepShooter() {
+    return Commands.parallel(this.preloadBalls(), shooter.setPercent(0.2));
   }
 }
