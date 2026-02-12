@@ -1,0 +1,97 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shootDistance"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CB-out-intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CB-in-shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootDistance"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CB-out-intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CB-in-shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootDistance"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CB-out-intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CB-in-shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootDistance"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CB-out-depot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "depot-out-climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootClimb"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
