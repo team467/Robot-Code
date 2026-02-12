@@ -17,9 +17,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CC-out-climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climb"
           }
         }
       ]

@@ -1,8 +1,13 @@
 package frc.robot.subsystems.shooter;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class ShooterConstants {
+  public static final double SHOOTER_HEIGHT = 0.84; // meters
+  public static final double SHOOTER_ANGLE_DEGREES = 45.0;
   public static final double ENCODER_POSITION_CONVERSION = 1.0;
   public static final double ENCODER_VELOCITY_CONVERSION = 1.0;
 
@@ -13,4 +18,6 @@ public class ShooterConstants {
   public static final double PID_P = 0.00007;
   public static final double PID_I = 0.0000003;
   public static final double PID_D = 0.00000;
+  public static Transform2d kShooterOffsetFromRobotCenter =
+      new Transform2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0));
 }

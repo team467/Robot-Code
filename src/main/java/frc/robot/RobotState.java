@@ -13,7 +13,6 @@ import org.littletonrobotics.junction.AutoLogOutput;
  * leds or for the shooter to know if the system has a game piece in the robot.
  */
 public class RobotState {
-
   public enum Mode {
     // 2026 Specific
 
@@ -40,6 +39,20 @@ public class RobotState {
     }
   }
 
+  public enum IntakePosition {
+    STOWED,
+    DEPLOYED,
+    MOVING_OUT,
+    MOVING_IN
+  }
+
+  public enum ClimberPosition {
+    STOWED,
+    DEPLOYED,
+    MOVING_OUT,
+    MOVING_IN
+  }
+
   @AutoLogOutput(key = "RobotState/Mode")
   private Mode mode = Mode.OFF;
 
@@ -49,6 +62,24 @@ public class RobotState {
 
   @AutoLogOutput(key = "RobotState/PoseConfidence")
   public boolean PoseConfidence = false;
+
+  @AutoLogOutput(key = "RobotState/Intaking")
+  public boolean intaking = false;
+
+  @AutoLogOutput(key = "RobotState/IntakePosition")
+  public IntakePosition intakePosition = IntakePosition.STOWED;
+
+  @AutoLogOutput(key = "RobotState/ClimberPosition")
+  public ClimberPosition climberPosition = ClimberPosition.STOWED;
+
+  @AutoLogOutput(key = "RobotState/IndexerHasFuel")
+  public boolean indexerHasFuel = false;
+
+  @AutoLogOutput(key = "RobotState/ShooterAtSpeed")
+  public boolean shooterAtSpeed = false;
+
+  @AutoLogOutput(key = "RobotState/IsAlignedToHub")
+  public boolean isAlignedToHub = false;
 
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
@@ -63,17 +94,6 @@ public class RobotState {
       instance = new RobotState();
     }
     return instance;
-  }
-
-  public enum ElevatorPosition {
-    INTAKE,
-    HOME,
-    L1,
-    L2,
-    L3,
-    L4,
-    ALGAE_L2,
-    ALGAE_L3
   }
 
   public void updateLEDState() {

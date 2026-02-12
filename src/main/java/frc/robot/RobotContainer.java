@@ -8,6 +8,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import choreo.auto.AutoChooser;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -20,19 +21,18 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -48,10 +48,12 @@ public class RobotContainer {
   private Vision vision;
   private Leds leds;
   private HopperBelt hopperBelt;
-  private Intake intake;
   private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
+
+  private Climber climber;
+  private Intake intake;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -116,15 +118,6 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-          intake =
-              new Intake(
-                  new IntakeIOSparkMax(),
-                  new BooleanSupplier() {
-                    @Override
-                    public boolean getAsBoolean() {
-                      return false;
-                    }
-                  });
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           //    shooter = new Shooter(new ShooterIOSparkMax());
         }
@@ -142,7 +135,14 @@ public class RobotContainer {
               new ModuleIO() {});
     }
 
-    orchestrator = new Orchestrator(drive, hopperBelt, shooter, indexer);
+    orchestrator =
+        new Orchestrator(
+            drive,
+            hopperBelt,
+            shooter,
+            indexer,
+            intake,
+            driverController); // Commented Out Intake --> Add Back
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     choreoChooser = new AutoChooser();
     Autos autos = new Autos(drive);
@@ -150,8 +150,7 @@ public class RobotContainer {
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("test path", autos.testPath());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
-    autoChooser.addOption("CA auto", autos.CenterA());
-    autoChooser.addOption("CC auto", autos.CenterC());
+
     SmartDashboard.putData("Choreo Autos", choreoChooser);
 
     // Drive SysId
@@ -169,7 +168,16 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
+    //pathplanner
+    NamedCommands.registerCommand("startShooter",Commands.parallel(orchestrator.preloadBalls(),orchestrator.prepShooter()));
+    NamedCommands.registerCommand("shoot",orchestrator.shootBalls());
+    NamedCommands.registerCommand("shootClimb",orchestrator.shootBallsonClimb());
+    NamedCommands.registerCommand("shootDistance",orchestrator.shootBallsAtDistance());
+    NamedCommands.registerCommand("extend hopper and intake",intake.extendAndIntake());
+    NamedCommands.registerCommand("stopIntake",Commands.sequence(intake.collapseAndIntake(),Commands.waitSeconds(0.3),intake.stopIntakeCommand()));
+    NamedCommands.registerCommand("climb",Commands.none());
+    autoChooser.addOption("CA-1C-O-Climb", autos.CenterA());
+    autoChooser.addOption("CC-1C-D-Climb", autos.CenterC());
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -181,14 +189,15 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     //    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+    drive.setDefaultCommand(orchestrator.driveShootAtAngle());
+    DriveCommands.joystickDrive(
+        drive,
+        () -> -driverController.getLeftY(),
+        () -> -driverController.getLeftX(),
+        () -> -driverController.getRightX());
 
     // Lock to 0° when A button is held
 
@@ -207,6 +216,7 @@ public class RobotContainer {
     if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
       driverController.rightBumper().whileTrue(orchestrator.shootBalls());
     }
+
     //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
@@ -225,5 +235,6 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
+    orchestrator.OrchestratorPeriodic();
   }
 }

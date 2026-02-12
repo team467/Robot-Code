@@ -1,41 +1,23 @@
-Driver Controller:
-x ->
-y ->
-a -> (hold) Spin intake and indexer backwards
+AUTOMATIC MODE (controlled by switch on DS):
+Left Stick: Translation
+Right stick: Rotation (left+right)
+R1: Align to hub (single press)
+Rotate to face hub and get shooter up to correct speed
+LEDS: If outside of range, flash red rapidly but spin up to nearest speed
+Cancel alignment with any stick input R2: Shoot (Hold)
+While button is held robot should be updating wheel velocity and rotation (imagine we get knocked by defense)L1: Toggle intake in/out
+Don't wait to complete the action before allowing a new toggle: if the bottom is pressed and released another press should toggle again whether it has reached the set point or not.L2: Begin intaking (toggle)
+If the intake isn't out yet, put it out first A (hold):
+Spin intake and indexer backwards for unjammingOperator Console:
+Linear slide: Nothing
+Up button (hold): Winch climber to released position
+Down button (hold): Winch climber down to climber setpoint (limit switch will be pressed)
 
-b ->
-
-rb -> (hold) Shoot 
-rt ->  Auto Mode: Align to hub (single press), Manual Mode: Nothing
-
-lb -> (toggle) Begin intaking 
-lt -> Toggle intake in/out
-
-povUp (D-pad) ->
-povDown (D-pad) -> 
-povLeft (D-pad) ->
-povRight (D-pad) ->
-
-start ->
-back ->
-
-Operator Controller:
-
-x ->
-y ->
-a ->
-b ->
-
-rb ->
-rt ->
-
-lb ->
-lt ->
-
-povUp (D-pad) -> (hold) Winch climber up
-povDown (D-pad) -> (hold) Winch climber down
-povLeft (D-pad) ->
-povRight (D-pad) ->
-
-start ->
-back ->
+MANUAL MODE:
+(If not listed it's the same as auto mode)
+R1: Nothing
+R2: Shoot (hold)
+Operator console:
+Linear slide: controls wheel velocity with the minimum being a shot against the hub and the maximum being max speed
+Up button (hold): Winch climber up to release position (limit switch ignored)
+Down button (hold): Winch climber down (limit switch ignored)

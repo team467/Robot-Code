@@ -50,7 +50,20 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "extend hopper and intake",
+      "waypointRelativePos": 0.613559322033898,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "stopIntake",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 6.5,
     "maxAcceleration": 4.5,

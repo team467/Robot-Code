@@ -63,7 +63,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "extend hopper",
+      "name": "extend hopper and intake",
       "waypointRelativePos": 0.6892307692307461,
       "endWaypointRelativePos": null,
       "command": null

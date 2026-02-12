@@ -17,6 +17,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "shootDistance"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CA-out-depot"
@@ -26,6 +32,18 @@
           "type": "path",
           "data": {
             "pathName": "depot-out-climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootClimb"
           }
         }
       ]

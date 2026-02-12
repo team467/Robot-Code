@@ -3,6 +3,8 @@ package frc.robot.subsystems.shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -23,6 +25,8 @@ public class Shooter extends SubsystemBase {
     }
 
     Logger.processInputs("Shooter", inputs);
+
+    RobotState.getInstance().shooterAtSpeed = inputs.atSetpoint;
   }
 
   public Command stop() {
@@ -52,10 +56,30 @@ public class Shooter extends SubsystemBase {
         Commands.runEnd(() -> io.setTargetVelocity(setpoint), () -> setpointEnabled = false, this));
   }
 
+  public Command setTargetDistance(DoubleSupplier distanceMeters) {
+    return Commands.sequence(
+        Commands.runOnce(() -> setpointEnabled = true, this),
+        Commands.runEnd(
+            () -> io.setTargetDistance(distanceMeters.getAsDouble()),
+            () -> setpointEnabled = false,
+            this));
+  }
+
   public Command setTargetDistance(double distanceMeters) {
     return Commands.sequence(
         Commands.runOnce(() -> setpointEnabled = true, this),
         Commands.runEnd(
             () -> io.setTargetDistance(distanceMeters), () -> setpointEnabled = false, this));
+  }
+
+  // TODO: empirically determine the relationship between distance and air time
+  public double getAirTimeSeconds(double distance) {
+    return distance;
+  }
+
+  // TODO: empirically determine the relationship between distance and shooter velocity
+
+  public double getSetpoint() {
+    return inputs.setpointRPM;
   }
 }
