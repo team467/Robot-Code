@@ -218,7 +218,22 @@ public class RobotContainer {
             intake.collapseAndIntake(), Commands.waitSeconds(0.3), intake.stopIntakeCommand()));
     NamedCommands.registerCommand("climb", Commands.none());
     autoChooser.addOption("CA-1C-O-Climb", autos.CenterA());
-    autoChooser.addOption("CC-1C-D-Climb", autos.CenterC());
+    autoChooser.addOption("CA-2C-Climb", drive.getAutonomousCommand("CA-2C-Climb"));
+    autoChooser.addOption("CA-2C-O-Climb", drive.getAutonomousCommand("CA-2C-O-Climb"));
+    autoChooser.addOption("CA-3C-Climb", drive.getAutonomousCommand("CA-3C-Climb"));
+    autoChooser.addOption("CA-3C-O-Climb", drive.getAutonomousCommand("CA-3C-O-Climb"));
+
+    autoChooser.addOption("CC-1C-Climb", autos.CenterC());
+    autoChooser.addOption("CC-2C-Climb", drive.getAutonomousCommand("CC-2C-Climb"));
+    autoChooser.addOption("CC-2C-O-Climb", drive.getAutonomousCommand("CC-2C-O-Climb"));
+    autoChooser.addOption("CC-3C-Climb", drive.getAutonomousCommand("CC-3C-Climb"));
+    autoChooser.addOption("CC-3C-O-Climb", drive.getAutonomousCommand("CC-3C-O-Climb"));
+
+    autoChooser.addOption("CB-1C-O-Climb", autos.CenterB());
+    autoChooser.addOption("CB-2C-Climb", drive.getAutonomousCommand("CB-2C-Climb"));
+    autoChooser.addOption("CB-2C-O-Climb", drive.getAutonomousCommand("CB-2C-O-Climb"));
+    autoChooser.addOption("CB-3C-Climb", drive.getAutonomousCommand("CB-3C-Climb"));
+    autoChooser.addOption("CB-3C-O-Climb", drive.getAutonomousCommand("CB-3C-O-Climb"));
     // Configure the button bindings
     configureButtonBindings();
   }
