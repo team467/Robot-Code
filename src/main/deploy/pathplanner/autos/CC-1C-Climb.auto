@@ -25,7 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "shootDistance"
           }
         },
         {
