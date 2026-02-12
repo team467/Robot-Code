@@ -61,7 +61,6 @@ public class RobotContainer {
   private final Orchestrator orchestrator;
   private Shooter shooter;
   private Climber climber;
-  private Intake intake;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
