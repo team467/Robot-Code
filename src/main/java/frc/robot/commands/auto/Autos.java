@@ -23,8 +23,9 @@ public class Autos {
   private static final Supplier<Pose2d> CenterC =
       () -> new Pose2d(3.413, 3.078, new Rotation2d(Units.degreesToRadians(38.157)));
   private static final Supplier<Pose2d> CenterB =
-      () -> new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305))); // Same as CA for now
-
+      () ->
+          new Pose2d(
+              3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305))); // Same as CA for now
 
   private static Command intakeA;
   private static Command intakeDepot;
@@ -58,8 +59,6 @@ public class Autos {
         drive.getAutonomousCommand("CB-in-shoot"),
         drive.getAutonomousCommand("CB-out-climb"));
   }
-
-
 
   public Command CC_1C_O_Climb() {
     return drive.getAutonomousCommand("CC-1C-O-Climb");
