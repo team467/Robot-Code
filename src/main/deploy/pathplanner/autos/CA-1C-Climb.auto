@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "shootDistance"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CA-out-intake"
