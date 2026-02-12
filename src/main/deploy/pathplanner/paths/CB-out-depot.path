@@ -1,0 +1,86 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.457,
+        "y": 4.941
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.2109592986732176,
+        "y": 5.607134715887394
+      },
+      "isLocked": false,
+      "linkedName": "CB"
+    },
+    {
+      "anchor": {
+        "x": 0.6612777777777776,
+        "y": 5.9397
+      },
+      "prevControl": {
+        "x": 2.384577777777778,
+        "y": 5.879233333333334
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "depot"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 180.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.5891472868217089,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 400.0,
+        "maxAngularAcceleration": 400.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "extend hopper and intake",
+      "waypointRelativePos": 0.613559322033898,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "stopIntake",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 6.5,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 350.0,
+    "maxAngularAcceleration": 240.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 179.559271927239
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -36.143
+  },
+  "useDefaultConstraints": true
+}
