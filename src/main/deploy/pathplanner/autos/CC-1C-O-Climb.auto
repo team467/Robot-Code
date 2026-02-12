@@ -23,6 +23,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "shootDistance"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CC-out-outpost"
@@ -32,6 +38,18 @@
           "type": "path",
           "data": {
             "pathName": "outpost-out-climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootClimb"
           }
         }
       ]
