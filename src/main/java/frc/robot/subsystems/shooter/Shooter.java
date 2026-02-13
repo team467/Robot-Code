@@ -23,7 +23,7 @@ public class Shooter extends SubsystemBase {
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
   private final SysIdRoutine sysId;
 
-  public boolean controllerEnabled = false;
+  public boolean controllerEnabled = true;
   private double targetRadPerSec = 0.0;
 
   private final LinearSystem<N1, N1, N1> flywheel =
@@ -114,7 +114,8 @@ public class Shooter extends SubsystemBase {
   public Command setTargetVelocityRPM(double rpm) {
     return Commands.runOnce(
         () -> {
-          targetRadPerSec = rpm * (2 * Math.PI / 60.0);
+          //          targetRadPerSec = rpm * 60 / (2 * Math.PI);
+          targetRadPerSec = rpm / (2 * Math.PI / 60);
           controllerEnabled = true;
         },
         this);

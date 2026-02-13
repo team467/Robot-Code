@@ -3,8 +3,11 @@ package frc.robot.subsystems.shooter;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class ShooterConstants {
-  public static final double ENCODER_POSITION_CONVERSION = 1.0;
-  public static final double ENCODER_VELOCITY_CONVERSION = 1.0;
+  public static final double ENCODER_POSITION_CONVERSION = (2 * Math.PI / 60.0);
+  public static final double ENCODER_VELOCITY_CONVERSION = (2 * Math.PI / 60.0);
+  //
+  //  public static final double ENCODER_POSITION_CONVERSION = 1.0;
+  //  public static final double ENCODER_VELOCITY_CONVERSION = 1.0;
 
   public static final double VOLTAGE_COMPENSATION = 12.0;
   public static final int CURRENT_LIMIT = 30;
