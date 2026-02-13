@@ -1,6 +1,7 @@
 package frc.robot.subsystems.indexer;
 
 import static frc.robot.subsystems.indexer.IndexConstants.FEEDUP_VOLT;
+// import static frc.robot.subsystems.indexer.IndexConstants.FEEDUP_VOLT;
 import static frc.robot.subsystems.indexer.IndexConstants.INDEX_VOLT;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,8 +29,8 @@ public class Indexer extends SubsystemBase {
     io.setPercent(indexPercent, feedUpPercent);
   }
 
-  private void setVoltage(double indexVolt, double feedUpVolt) {
-    io.setVoltage(indexVolt, feedUpVolt);
+  private void setVoltage(double indexVolts, double feedUpVolts) {
+    io.setVoltage(indexVolts, feedUpVolts);
   }
 
   private void stop() {
