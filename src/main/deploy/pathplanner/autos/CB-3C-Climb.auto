@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CB-in-shoot"
+            "pathName": "CA-in-shoot"
           }
         },
         {
@@ -31,13 +31,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CB-out-intake"
+            "pathName": "CA-out-intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "CB-in-shoot"
+            "pathName": "CA-in-shoot"
           }
         },
         {
@@ -49,13 +49,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CB-out-intake"
+            "pathName": "CA-out-intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "CB-in-shoot"
+            "pathName": "CA-in-shoot"
           }
         },
         {
@@ -67,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CB-out-climb"
+            "pathName": "CA-out-climb"
           }
         },
         {

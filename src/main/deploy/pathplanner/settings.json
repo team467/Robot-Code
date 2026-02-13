@@ -1,6 +1,6 @@
 {
-  "robotWidth": 0.9,
-  "robotLength": 0.9,
+  "robotWidth": 0.702,
+  "robotLength": 0.702,
   "holonomicMode": true,
   "pathFolders": [],
   "autoFolders": [],
@@ -9,8 +9,8 @@
   "defaultMaxAngVel": 350.0,
   "defaultMaxAngAccel": 240.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 59.0,
-  "robotMOI": 5.57,
+  "robotMass": 55.792,
+  "robotMOI": 0.7,
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.048,
   "driveGearing": 8.16,
@@ -19,14 +19,17 @@
   "driveCurrentLimit": 50.0,
   "wheelCOF": 1.2,
   "flModuleX": 0.273,
-  "flModuleY": 0.273,
+  "flModuleY": 0.244,
   "frModuleX": 0.273,
-  "frModuleY": -0.273,
+  "frModuleY": -0.244,
   "blModuleX": -0.273,
-  "blModuleY": 0.273,
+  "blModuleY": 0.244,
   "brModuleX": -0.273,
-  "brModuleY": -0.273,
+  "brModuleY": -0.244,
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
-  "robotFeatures": []
+  "robotFeatures": [
+    "{\"name\":\"Intake\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.3,\"y\":-0.2},\"end\":{\"x\":0.3,\"y\":0.2},\"strokeWidth\":0.01}}",
+    "{\"name\":\"Shooter\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":-0.2,\"y\":0.0},\"size\":{\"width\":0.37,\"length\":0.12},\"borderRadius\":0.01,\"strokeWidth\":0.02,\"filled\":false}}"
+  ]
 }

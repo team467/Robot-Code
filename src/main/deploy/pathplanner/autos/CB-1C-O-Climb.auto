@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CB-in-shoot"
+            "pathName": "CA-in-shoot"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CB-out-depot"
+            "pathName": "CA-out-depot"
           }
         },
         {

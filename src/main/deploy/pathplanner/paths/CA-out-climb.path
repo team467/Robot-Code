@@ -8,27 +8,32 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.522108288480906,
-        "y": 4.368725458284064
+        "x": 2.3784460125800484,
+        "y": 4.597804950761452
       },
       "isLocked": false,
       "linkedName": "CA"
     },
     {
       "anchor": {
-        "x": 1.1308228980322,
-        "y": 4.7732558139534875
+        "x": 1.5689087656529512,
+        "y": 4.367620751341681
       },
       "prevControl": {
-        "x": 1.448929708109209,
-        "y": 4.918566744128049
+        "x": 1.8084588523327711,
+        "y": 4.439145264424195
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "climbA"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
@@ -56,7 +61,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
