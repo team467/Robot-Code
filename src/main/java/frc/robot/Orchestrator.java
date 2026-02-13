@@ -80,7 +80,7 @@ public class Orchestrator {
 
   public Command shootBallsVelocity(double targetVelocity) {
     return preloadBalls()
-        .andThen(shooter.setTargetVelocity(targetVelocity)) // change
+        .andThen(shooter.setTargetVelocity(shooter.getSetpoint())) // change
         .onlyIf(() -> shooter.getSetpoint() == 0)
         .andThen(Commands.parallel(hopperBelt.start(), indexer.run()))
         .onlyWhile(

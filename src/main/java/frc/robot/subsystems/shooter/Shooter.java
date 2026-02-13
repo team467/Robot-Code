@@ -50,6 +50,10 @@ public class Shooter extends SubsystemBase {
         Commands.run(() -> io.setVoltage(volts), this));
   }
 
+  public Command updateSetpoint(double setpoint) {
+    return Commands.runOnce(() -> io.setTargetVelocity(setpoint), this);
+  }
+
   public Command setTargetVelocity(double setpoint) {
     return Commands.sequence(
         Commands.runOnce(() -> setpointEnabled = true, this),

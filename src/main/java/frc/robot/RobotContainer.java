@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
@@ -64,7 +65,7 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
-
+  private double shooterIncrement = 10.0;
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -226,8 +227,12 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-    new Trigger(() -> driverController.getHID().getPOV() != -1)
-        .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    // new Trigger(() -> driverController.getHID().getPOV() != -1)
+    //     .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    driverController.povUp().onTrue(shooter.updateSetpoint(shooter.getSetpoint() + shooterIncrement));
+    driverController.povDown().onTrue(shooter.updateSetpoint(shooter.getSetpoint() - shooterIncrement));
+    driverController.povRight().onTrue(Commands.runOnce(() -> shooterIncrement += 50.0));
+    driverController.povLeft().onTrue(Commands.runOnce(() -> shooterIncrement -= 50.0));                      
 
     if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
       driverController.rightBumper().whileTrue(orchestrator.shootBallsVelocity(360));
