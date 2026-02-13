@@ -47,7 +47,6 @@ public enum LedPatterns {
   SOLID_OUTOFRANGE(LEDPattern.solid(Color.kIndianRed)),
   STRIPE_INRANGE(LEDPattern.steps(Map.of(0, Color.kDarkBlue, 0.50, Color.kDarkGoldenrod))),
 
-
   GRADIENT_COM(
       LEDPattern.gradient(
           LEDPattern.GradientType.kContinuous, Color.kDarkBlue, Color.kDarkGoldenrod)),
