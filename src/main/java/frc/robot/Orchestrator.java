@@ -17,6 +17,7 @@ import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.util.ShooterLeadCompensator;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -59,6 +60,9 @@ public class Orchestrator {
             shootWhileDrivingResult.target().getX(),
             shootWhileDrivingResult.target().getY(),
             Rotation2d.fromDegrees(0)));
+
+    Logger.recordOutput("Shooter/DistanceToHub", drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(Hub.topCenterPoint).toTranslation2d().plus(
+        ShooterConstants.kShooterOffsetFromRobotCenter.getTranslation())));
   }
 
   // TODO move to drive commands/shooter?
