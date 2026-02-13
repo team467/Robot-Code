@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.Schematic;
 
 public class ClimberIOPhysical implements ClimberIO {
   private final TalonFX talon;
@@ -30,7 +31,7 @@ public class ClimberIOPhysical implements ClimberIO {
   private double targetRotation;
 
   public ClimberIOPhysical() {
-    talon = new TalonFX(CLIMBER_MOTOR_ID);
+    talon = new TalonFX(Schematic.climberCanId);
     limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
 
     var config = new TalonFXConfiguration();

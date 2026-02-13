@@ -23,39 +23,53 @@ public class Schematic {
   public static final int shooterFrontLeftCanId;
   public static final int shooterFrontRightCanId;
   public static final int shooterBackCanId;
+
   // hopper belt sub-system
   public static final int hopperBeltCanId;
 
+  // climber subsystem
+  public static final int climberCanId;
+
+  // indexer subsystem
+  public static final int indexerCanId;
+  public static final int indexerFeedUpCanId;
+
   static {
     switch (Constants.getRobot()) {
-      case ROBOT_2025_COMP -> {
-        // Device CAN IDs
-        // TODO: Change for 2025 as needed
-        // Drive (CAN IDs)
+      case ROBOT_2026_COMP -> {
+        // Device CAN Id
         pigeonCanId = 17;
 
+        // Drive (CAN Ids)
         frontLeftDriveCanId = 1;
-        backLeftDriveCanId = 7;
-        frontRightDriveCanId = 3;
-        backRightDriveCanId = 5;
-
         frontLeftTurnCanId = 2;
-        backLeftTurnCanId = 8;
+        frontRightDriveCanId = 3;
         frontRightTurnCanId = 4;
+
+        backRightDriveCanId = 5;
         backRightTurnCanId = 6;
+        backLeftDriveCanId = 7;
+        backLeftTurnCanId = 8;
 
         frontLeftAbsoluteEncoderCanId = 18;
-        backLeftAbsoluteEncoderCanId = 21;
         frontRightAbsoluteEncoderCanId = 19;
         backRightAbsoluteEncoderCanId = 20;
+        backLeftAbsoluteEncoderCanId = 21;
 
         // Shooter (CAN Ids)
-        shooterFrontLeftCanId = 0;
-        shooterFrontRightCanId = 0;
-        shooterBackCanId = 0;
+        shooterFrontLeftCanId = 11;
+        shooterBackCanId = 12;
+        shooterFrontRightCanId = 13;
 
-        // Hopper Belt (CAN Ids)
-        hopperBeltCanId = 0;
+        // Hopper (CAN Ids)
+        hopperBeltCanId = 14;
+
+        // Climber (CAN Ids)
+        climberCanId = 15;
+
+        // Indexer (CAN Ids)
+        indexerCanId = 9;
+        indexerFeedUpCanId = 10;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -84,6 +98,13 @@ public class Schematic {
 
         // Hopper Belt (CAN Ids)
         hopperBeltCanId = 0;
+
+        // Climber (CAN Ids)
+        climberCanId = 0;
+
+        // Indexer (CAN Ids)
+        indexerCanId = 0;
+        indexerFeedUpCanId = 0;
       }
 
       default -> {
@@ -112,6 +133,13 @@ public class Schematic {
 
         // Hopper Belt (CAN Ids)
         hopperBeltCanId = 0;
+
+        // Climber (CAN Ids)
+        climberCanId = 0;
+
+        // Indexer (CAN Ids)
+        indexerCanId = 0;
+        indexerFeedUpCanId = 0;
       }
     }
   }

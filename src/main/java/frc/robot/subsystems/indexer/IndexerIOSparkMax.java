@@ -4,8 +4,6 @@ import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_POSITIO
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_VELOCITY_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_INDEX_POSITION_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_INDEX_VELOCITY_CONVERSION;
-import static frc.robot.subsystems.indexer.IndexConstants.INDEXER_FEEDUP_ID;
-import static frc.robot.subsystems.indexer.IndexConstants.INDEXER_INDEX_MOTOR_ID;
 import static frc.robot.subsystems.indexer.IndexConstants.LIMIT_SWITCH_CHANNEL;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -16,6 +14,7 @@ import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.Schematic;
 
 public class IndexerIOSparkMax implements IndexerIO {
 
@@ -26,8 +25,8 @@ public class IndexerIOSparkMax implements IndexerIO {
   // private final DigitalInput limitSwitch2;
 
   public IndexerIOSparkMax() {
-    indexerMotor = new SparkMax(INDEXER_INDEX_MOTOR_ID, MotorType.kBrushed);
-    feedUpMotor = new SparkMax(INDEXER_FEEDUP_ID, MotorType.kBrushed);
+    indexerMotor = new SparkMax(Schematic.indexerCanId, MotorType.kBrushed);
+    feedUpMotor = new SparkMax(Schematic.indexerFeedUpCanId, MotorType.kBrushed);
 
     var indexerConfig = new SparkMaxConfig();
     var feedUpConfig = new SparkMaxConfig();
