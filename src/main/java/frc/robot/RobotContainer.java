@@ -218,8 +218,10 @@ public class RobotContainer {
       driverController.rightBumper().whileTrue(orchestrator.shootBalls());
     }
 
-    driverController.rightBumper().whileTrue(shooter.setVoltage(10)).onFalse(shooter.stop());
-    //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
+    driverController
+        .rightBumper()
+        .whileTrue(shooter.setTargetVelocity(4000))
+        .onFalse(shooter.stop());
   }
 
   /**
