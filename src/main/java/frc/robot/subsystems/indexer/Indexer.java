@@ -23,7 +23,7 @@ public class Indexer extends SubsystemBase {
     Logger.processInputs("Index", inputs);
   }
 
-  public void setPercent(double indexPercent, double feedUpPercent) {
+  private void setPercent(double indexPercent, double feedUpPercent) {
     io.setPercent(indexPercent, feedUpPercent);
   }
 

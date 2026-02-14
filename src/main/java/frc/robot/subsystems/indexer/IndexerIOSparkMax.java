@@ -2,12 +2,12 @@ package frc.robot.subsystems.indexer;
 
 import static frc.robot.Schematic.indexerFeedupCanId;
 import static frc.robot.Schematic.indexerIndexCanId;
+import static frc.robot.Schematic.indexerLeftLimitSwitchCanId;
+import static frc.robot.Schematic.indexerRightLimitSwitchCanId;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_POSITION_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_VELOCITY_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_INDEX_POSITION_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_INDEX_VELOCITY_CONVERSION;
-import static frc.robot.subsystems.indexer.IndexConstants.LEFT_LIMIT_SWITCH_CHANNEL;
-import static frc.robot.subsystems.indexer.IndexConstants.RIGHT_LIMIT_SWITCH_CHANNEL;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -27,7 +27,7 @@ public class IndexerIOSparkMax implements IndexerIO {
   private final DigitalInput rightLimitSwitch;
 
   public IndexerIOSparkMax() {
-    indexerMotor = new SparkMax(indexerIndexCanId, MotorType.kBrushed);
+    indexerMotor = new SparkMax(indexerIndexCanId, MotorType.kBrushless);
     feedUpMotor = new SparkMax(indexerFeedupCanId, MotorType.kBrushless);
 
     var indexerConfig = new SparkMaxConfig();
@@ -60,8 +60,8 @@ public class IndexerIOSparkMax implements IndexerIO {
     feedUpMotor.configure(
         feedUpConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    leftLimitSwitch = new DigitalInput(LEFT_LIMIT_SWITCH_CHANNEL);
-    rightLimitSwitch = new DigitalInput(RIGHT_LIMIT_SWITCH_CHANNEL);
+    leftLimitSwitch = new DigitalInput(indexerLeftLimitSwitchCanId);
+    rightLimitSwitch = new DigitalInput(indexerRightLimitSwitchCanId);
   }
 
   @Override
