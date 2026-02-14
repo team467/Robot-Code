@@ -67,7 +67,7 @@ public class Shooter extends SubsystemBase {
 
     if (controllerEnabled) {
       loop.setNextR(VecBuilder.fill(targetRadPerSec));
-      loop.correct(VecBuilder.fill(inputs.shooterLeaderVelocityRadPerSec));
+      loop.correct(VecBuilder.fill(inputs.shooterLeaderVelocityRPM));
       loop.predict(0.020);
       io.setVoltage(loop.getU(0));
     }
