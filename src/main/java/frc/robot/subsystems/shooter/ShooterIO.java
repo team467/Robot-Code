@@ -7,18 +7,18 @@ public interface ShooterIO {
   @AutoLog
   class ShooterIOInputs {
 
-    public double shooterLeaderVelocityRadPerSec;
+    public double shooterLeaderVelocityRPM;
     public double shooterLeaderAppliedVolts;
     public double shooterLeaderCurrentAmps;
 
-    public double shooterFollowerVelocityRadPerSec;
+    public double shooterFollowerVelocityRPM;
     public double shooterFollowerAppliedVolts;
     public double shooterFollowerCurrentAmps;
 
     public boolean atSetpoint = false;
     public double setpointRPM = 0;
 
-    public double shooterFollower2VelocityRadPerSec;
+    public double shooterFollower2VelocityRPM;
     public double shooterFollower2AppliedVolts;
     public double shooterFollower2CurrentAmps;
   }
