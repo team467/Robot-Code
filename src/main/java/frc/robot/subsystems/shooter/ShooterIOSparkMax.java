@@ -39,7 +39,6 @@ public class ShooterIOSparkMax implements ShooterIO {
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT)
-        //        .closedLoopRampRate(CLOSE_RAMP_RATE)
         .apply(new ClosedLoopConfig().p(PID_P).i(PID_I).d(PID_D));
 
     var bottomMotorConfig = new SparkMaxConfig();
@@ -47,7 +46,6 @@ public class ShooterIOSparkMax implements ShooterIO {
         .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
-        //        .closedLoopRampRate(CLOSE_RAMP_RATE)
         .smartCurrentLimit(CURRENT_LIMIT);
 
     var topMotorConfig = new SparkMaxConfig();
@@ -55,7 +53,6 @@ public class ShooterIOSparkMax implements ShooterIO {
         .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
-        //        .closedLoopRampRate(CLOSE_RAMP_RATE)
         .smartCurrentLimit(CURRENT_LIMIT);
 
     topMotorConfig.follow(middleMotor.getDeviceId(), true);
