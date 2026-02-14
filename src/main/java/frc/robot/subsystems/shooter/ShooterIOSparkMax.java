@@ -77,25 +77,21 @@ public class ShooterIOSparkMax implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.middleMotorCurrentAmps = middleMotor.getOutputCurrent();
-    inputs.middleMotorAppliedVolts = middleMotor.getBusVoltage() * middleMotor.getAppliedOutput();
-    inputs.middleMotorRPM = middleMotorEncoder.getVelocity();
+    inputs.shooterLeaderCurrentAmps = leader.getOutputCurrent();
+    inputs.shooterLeaderAppliedVolts = leader.getBusVoltage() * leader.getAppliedOutput();
+    inputs.shooterLeaderVelocityRPM = leaderEncoder.getVelocity();
 
-    inputs.bottomMotorCurrentAmps = bottomMotor.getOutputCurrent();
-    inputs.bottomMotorAppliedVolts = bottomMotor.getBusVoltage() * bottomMotor.getAppliedOutput();
-    inputs.bottomMotorRPM = bottomMotorEncoder.getVelocity();
+    inputs.shooterFollowerCurrentAmps = follower.getOutputCurrent();
+    inputs.shooterFollowerAppliedVolts = follower.getBusVoltage() * follower.getAppliedOutput();
+    inputs.shooterFollowerVelocityRPM = followerEncoder.getVelocity();
+    inputs.setpointRPM = setpointRPM;
 
     inputs.setpointRPM = setpointRPM;
     inputs.atSetpoint = pidController.isAtSetpoint();
 
-    inputs.topMotorCurrentAmps = topMotor.getOutputCurrent();
-    inputs.topMotorAppliedVolts = topMotor.getBusVoltage() * topMotor.getAppliedOutput();
-    inputs.topMotorRPM = topMotorEncoder.getVelocity();
-
-    inputs.totalAmps =
-        inputs.topMotorCurrentAmps + inputs.middleMotorCurrentAmps + inputs.bottomMotorCurrentAmps;
-
-    inputs.shooterRPM = inputs.middleMotorRPM / 2.5;
+    inputs.shooterFollower2CurrentAmps = follower2.getOutputCurrent();
+    inputs.shooterFollower2AppliedVolts = follower2.getBusVoltage() * follower2.getAppliedOutput();
+    inputs.shooterFollower2VelocityRPM = follower2Encoder.getVelocity();
   }
 
   @Override
