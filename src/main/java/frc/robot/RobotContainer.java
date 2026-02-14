@@ -13,16 +13,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOPhysical;
-import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.hopperbelt.HopperBeltIO;
@@ -203,7 +199,6 @@ public class RobotContainer {
   private void configureButtonBindings() {
     driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(orchestrator.driveShootAtAngle());
     DriveCommands.joystickDrive(
         drive,
         () -> -driverController.getLeftY(),
@@ -229,10 +224,14 @@ public class RobotContainer {
                 .ignoringDisable(true));
     // new Trigger(() -> driverController.getHID().getPOV() != -1)
     //     .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    driverController.povUp().onTrue(shooter.updateSetpoint(shooter.getSetpoint() + shooterIncrement));
-    driverController.povDown().onTrue(shooter.updateSetpoint(shooter.getSetpoint() - shooterIncrement));
+    driverController
+        .povUp()
+        .onTrue(shooter.updateSetpoint(shooter.getSetpoint() + shooterIncrement));
+    driverController
+        .povDown()
+        .onTrue(shooter.updateSetpoint(shooter.getSetpoint() - shooterIncrement));
     driverController.povRight().onTrue(Commands.runOnce(() -> shooterIncrement += 50.0));
-    driverController.povLeft().onTrue(Commands.runOnce(() -> shooterIncrement -= 50.0));                      
+    driverController.povLeft().onTrue(Commands.runOnce(() -> shooterIncrement -= 50.0));
 
     if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
       driverController.rightBumper().whileTrue(orchestrator.shootBallsVelocity(360));

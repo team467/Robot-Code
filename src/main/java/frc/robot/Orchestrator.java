@@ -61,8 +61,15 @@ public class Orchestrator {
             shootWhileDrivingResult.target().getY(),
             Rotation2d.fromDegrees(0)));
 
-    Logger.recordOutput("Shooter/DistanceToHub", drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(Hub.topCenterPoint).toTranslation2d().plus(
-        ShooterConstants.kShooterOffsetFromRobotCenter.getTranslation())));
+    Logger.recordOutput(
+        "Orchestrator/ShooterDistanceToHub",
+        drive
+            .getPose()
+            .getTranslation()
+            .getDistance(
+                AllianceFlipUtil.apply(Hub.topCenterPoint)
+                    .toTranslation2d()
+                    .plus(ShooterConstants.kShooterOffsetFromRobotCenter.getTranslation())));
   }
 
   // TODO move to drive commands/shooter?
