@@ -29,6 +29,8 @@ public class Schematic {
   //  indexer subsystem
   public static final int indexerIndexCanId;
   public static final int indexerFeedupCanId;
+  public static final int indexerLeftLimitSwitchCanId;
+  public static final int indexerRightLimitSwitchCanId;
 
   // intake subsystem
   public static final int intakeMotorCanId;
@@ -71,6 +73,8 @@ public class Schematic {
         // Indexer (CAN IDs)
         indexerIndexCanId = 0;
         indexerFeedupCanId = 0;
+        indexerLeftLimitSwitchCanId = 0;
+        indexerRightLimitSwitchCanId = 0;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 0;
@@ -110,6 +114,8 @@ public class Schematic {
         // Indexer (CAN IDs)
         indexerIndexCanId = 0;
         indexerFeedupCanId = 0;
+        indexerLeftLimitSwitchCanId = 0;
+        indexerRightLimitSwitchCanId = 0;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 0;
@@ -149,6 +155,8 @@ public class Schematic {
         // Indexer (CAN IDs)
         indexerIndexCanId = 0;
         indexerFeedupCanId = 0;
+        indexerLeftLimitSwitchCanId = 0;
+        indexerRightLimitSwitchCanId = 0;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 0;

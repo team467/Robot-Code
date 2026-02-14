@@ -6,7 +6,8 @@ import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_POSITIO
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_VELOCITY_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_INDEX_POSITION_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_INDEX_VELOCITY_CONVERSION;
-import static frc.robot.subsystems.indexer.IndexConstants.LIMIT_SWITCH_CHANNEL;
+import static frc.robot.subsystems.indexer.IndexConstants.LEFT_LIMIT_SWITCH_CHANNEL;
+import static frc.robot.subsystems.indexer.IndexConstants.RIGHT_LIMIT_SWITCH_CHANNEL;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -19,23 +20,23 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IndexerIOSparkMax implements IndexerIO {
 
-  private final SparkMax indexerMotor;
+    private final SparkMax indexerMotor;
   private final SparkMax feedUpMotor;
-  private final DigitalInput limitSwitch;
 
-  // private final DigitalInput limitSwitch2;
+    private final DigitalInput leftLimitSwitch;
+    private final DigitalInput rightLimitSwitch;
 
   public IndexerIOSparkMax() {
-    indexerMotor = new SparkMax(indexerIndexCanId, MotorType.kBrushed);
-    feedUpMotor = new SparkMax(indexerFeedupCanId, MotorType.kBrushed);
+        indexerMotor = new SparkMax(indexerIndexCanId, MotorType.kBrushed);
+    feedUpMotor = new SparkMax(indexerFeedupCanId, MotorType.kBrushless);
 
-    var indexerConfig = new SparkMaxConfig();
+        var indexerConfig = new SparkMaxConfig();
     var feedUpConfig = new SparkMaxConfig();
-    indexerConfig
-        .inverted(true)
-        .idleMode(IdleMode.kBrake)
-        .voltageCompensation(12)
-        .smartCurrentLimit(30);
+        indexerConfig
+            .inverted(true)
+            .idleMode(IdleMode.kBrake)
+            .voltageCompensation(12)
+            .smartCurrentLimit(30);
     feedUpConfig
         .inverted(true)
         .idleMode(IdleMode.kBrake)
@@ -51,51 +52,55 @@ public class IndexerIOSparkMax implements IndexerIO {
     indexerEnc.velocityConversionFactor(ENCODER_INDEX_VELOCITY_CONVERSION);
     feederUpEnc.velocityConversionFactor(ENCODER_FEEDUP_VELOCITY_CONVERSION);
 
-    indexerConfig.apply(indexerEnc);
+        indexerConfig.apply(indexerEnc);
     feedUpConfig.apply(feederUpEnc);
 
-    indexerMotor.configure(
-        indexerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        indexerMotor.configure(
+            indexerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     feedUpMotor.configure(
         feedUpConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    limitSwitch = new DigitalInput(LIMIT_SWITCH_CHANNEL);
-    // limitSwitch2 = new DigitalInput(0);
-
+        leftLimitSwitch = new DigitalInput(LEFT_LIMIT_SWITCH_CHANNEL);
+        rightLimitSwitch = new DigitalInput(RIGHT_LIMIT_SWITCH_CHANNEL);
   }
 
   @Override
   public void updateInputs(IndexerIOInputs inputs) {
-    inputs.indexPercentOutput = indexerMotor.get();
+        inputs.indexPercentOutput = indexerMotor.get();
     inputs.feedUpPercentOutput = feedUpMotor.get();
-    inputs.indexVolts = indexerMotor.getBusVoltage() * indexerMotor.getAppliedOutput();
+        inputs.indexVolts = indexerMotor.getBusVoltage() * indexerMotor.getAppliedOutput();
     inputs.feedUpVolts = feedUpMotor.getBusVoltage() * feedUpMotor.getAppliedOutput();
-    inputs.indexAmps = indexerMotor.getOutputCurrent();
+        inputs.indexAmps = indexerMotor.getOutputCurrent();
     inputs.feedUpAmps = feedUpMotor.getOutputCurrent();
-    inputs.ballAtSwitch = isSwitchPressed();
-    // inputs.ballAtSwitch2 = isSwitchPressed();
+        inputs.ballAtLeftSwitch = leftLimitSwitch.get();
+        inputs.ballAtRightSwitch = rightLimitSwitch.get();
   }
 
   @Override
   public void setPercent(double indexerPercent, double feedUpPercent) {
-    indexerMotor.set(indexerPercent);
+        indexerMotor.set(indexerPercent);
     feedUpMotor.set(feedUpPercent);
   }
 
   @Override
   public void setVoltage(double indexerVolts, double feedUpVolts) {
-    indexerMotor.setVoltage(indexerVolts);
+        indexerMotor.setVoltage(indexerVolts);
     feedUpMotor.setVoltage(feedUpVolts);
   }
 
   @Override
   public void stop() {
-    indexerMotor.set(0);
+        indexerMotor.set(0);
     feedUpMotor.set(0);
   }
 
-  @Override
-  public boolean isSwitchPressed() {
-    return limitSwitch.get();
-  }
+    @Override
+    public boolean isLeftSwitchPressed() {
+      return leftLimitSwitch.get();
+    }
+
+    @Override
+    public boolean isRightSwitchPressed() {
+      return rightLimitSwitch.get();
+    }
 }
