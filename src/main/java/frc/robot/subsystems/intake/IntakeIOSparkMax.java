@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import static frc.robot.Schematic.intakeExtendCanId;
 import static frc.robot.Schematic.intakeMotorCanId;
+import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_LIMIT_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POSITION_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVERSION;
@@ -31,6 +32,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   private final SparkClosedLoopController pidController;
   private double setPos = 0;
   private boolean usingPID = false;
+  private boolean isCalibrated = false;
 
   public IntakeIOSparkMax() {
     intakeMotor = new SparkMax(intakeMotorCanId, MotorType.kBrushless);
@@ -82,6 +84,11 @@ public class IntakeIOSparkMax implements IntakeIO {
     inputs.extendAmps = extendMotor.getOutputCurrent();
     inputs.isCollapsed = collapsedLimitSwitch.get();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
+    if (inputs.isCollapsed && !this.isCalibrated) {
+      this.isCalibrated = true;
+      goToPos(COLLAPSE_POS);
+    }
+    inputs.isCalibrated = this.isCalibrated;
   }
 
   @Override

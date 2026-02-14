@@ -20,6 +20,7 @@ public interface IntakeIO {
     public boolean stalledCollapsed = false;
     public double stallExtendTimer = 0.0;
     public double stallCollapseTimer = 0.0;
+    public boolean isCalibrated = false;
   }
 
   default void updateInputs(IntakeIOInputs inputs) {}

@@ -119,6 +119,10 @@ public class Intake extends SubsystemBase {
     io.setVoltageExtend(extendVolts);
   }
 
+  private void goToPos(double setPos) {
+    goToPos(setPos);
+  }
+
   private void stopIntake() {
     io.setVoltageIntake(0);
   }
