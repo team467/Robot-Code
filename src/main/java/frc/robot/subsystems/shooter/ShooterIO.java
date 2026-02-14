@@ -22,6 +22,8 @@ public interface ShooterIO {
     public double topMotorCurrentAmps;
 
     public double totalAmps;
+
+    public double shooterRPM;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {}

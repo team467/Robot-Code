@@ -58,8 +58,8 @@ public class ShooterIOSparkMax implements ShooterIO {
         //        .closedLoopRampRate(CLOSE_RAMP_RATE)
         .smartCurrentLimit(CURRENT_LIMIT);
 
-    bottomMotorConfig.follow(middleMotor.getDeviceId(), true);
     topMotorConfig.follow(middleMotor.getDeviceId(), true);
+    bottomMotorConfig.follow(middleMotor.getDeviceId(), true);
 
     EncoderConfig enc = new EncoderConfig();
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
@@ -95,7 +95,10 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.topMotorAppliedVolts = topMotor.getBusVoltage() * topMotor.getAppliedOutput();
     inputs.topMotorRPM = topMotorEncoder.getVelocity();
 
-    inputs.totalAmps = inputs.topMotorCurrentAmps + inputs.middleMotorCurrentAmps + inputs.bottomMotorCurrentAmps;
+    inputs.totalAmps =
+        inputs.topMotorCurrentAmps + inputs.middleMotorCurrentAmps + inputs.bottomMotorCurrentAmps;
+
+    inputs.shooterRPM = inputs.middleMotorRPM / 2.5;
   }
 
   @Override
