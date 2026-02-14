@@ -70,7 +70,7 @@ public class ShooterIOSparkMax implements ShooterIO {
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeaderCurrentAmps = leader.getOutputCurrent();
     inputs.shooterLeaderAppliedVolts = leader.getBusVoltage() * leader.getAppliedOutput();
-    inputs.shooterLeaderVelocityRadPerSec = leaderEncoder.getVelocity();
+    inputs.shooterLeaderVelocityRPM = leaderEncoder.getVelocity();
     inputs.shooterLeaderPosition = leaderEncoder.getPosition();
 
     //        inputs.shooterFollowerCurrentAmps = follower.getOutputCurrent();
