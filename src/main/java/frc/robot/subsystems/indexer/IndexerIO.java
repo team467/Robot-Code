@@ -13,8 +13,8 @@ public interface IndexerIO {
     public double feedUpVolts = 0.0;
     public double indexAmps = 0.0;
     public double feedUpAmps = 0.0;
-    public boolean ballAtSwitch = false;
-    // public boolean ballAtSwitch2 = false;
+    public boolean ballAtLeftSwitch = false;
+    public boolean ballAtRightSwitch = false;
   }
 
   default void updateInputs(IndexerIOInputs inputs) {}
@@ -25,7 +25,11 @@ public interface IndexerIO {
 
   default void stop() {}
 
-  default boolean isSwitchPressed() {
+  default boolean isLeftSwitchPressed() {
+    return false;
+  }
+
+  default boolean isRightSwitchPressed() {
     return false;
   }
 }

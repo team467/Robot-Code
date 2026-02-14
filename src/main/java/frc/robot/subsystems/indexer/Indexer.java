@@ -23,20 +23,20 @@ public class Indexer extends SubsystemBase {
     Logger.processInputs("Index", inputs);
   }
 
-  private void setPercent(double indexPercent, double feedUpPercent) {
+  public void setPercent(double indexPercent, double feedUpPercent) {
     io.setPercent(indexPercent, feedUpPercent);
   }
 
-  private void setVoltage(double indexVolts, double feedUpVolts) {
+  public void setVoltage(double indexVolts, double feedUpVolts) {
     io.setVoltage(indexVolts, feedUpVolts);
   }
 
-  private void stop() {
-    io.setVoltage(0, 0);
+  public boolean isLeftSwitchPressed() {
+    return io.isLeftSwitchPressed();
   }
 
-  private boolean isSwitchPressed() {
-    return io.isSwitchPressed();
+  public boolean isRightSwitchPressed() {
+    return io.isRightSwitchPressed();
   }
 
   public Command run() {
@@ -46,10 +46,14 @@ public class Indexer extends SubsystemBase {
         });
   }
 
-  public Command stopCommand() {
+  public Command reverse() {
     return Commands.run(
         () -> {
-          stop();
+          setVoltage(-INDEX_VOLT, -FEEDUP_VOLT);
         });
+  }
+
+  public Command stop() {
+    return Commands.run(io::stop);
   }
 }
