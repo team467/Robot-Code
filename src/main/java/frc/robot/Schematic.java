@@ -100,9 +100,9 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 0;
 
         // Shooter (CAN Ids)
-        shooterFrontLeftCanId = 0;
-        shooterFrontRightCanId = 0;
-        shooterBackCanId = 0;
+        shooterFrontLeftCanId = 1;
+        shooterFrontRightCanId = 11;
+        shooterBackCanId = 2;
 
         // Hopper Belt (CAN Ids)
         hopperBeltCanId = 0;

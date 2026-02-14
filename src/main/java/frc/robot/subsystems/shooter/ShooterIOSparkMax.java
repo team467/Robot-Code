@@ -58,8 +58,8 @@ public class ShooterIOSparkMax implements ShooterIO {
         .closedLoopRampRate(CLOSE_RAMP_RATE)
         .smartCurrentLimit(30);
 
-    followerConfig.follow(leader.getDeviceId(), true);
-    follower2Config.follow(leader.getDeviceId(), true);
+    //    followerConfig.follow(leader.getDeviceId(), true);
+    //    follower2Config.follow(leader.getDeviceId(), true);
 
     EncoderConfig enc = new EncoderConfig();
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);

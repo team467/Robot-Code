@@ -126,6 +126,7 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
+          shooter = new Shooter(new ShooterIOSparkMax());
         }
       }
     }
@@ -216,6 +217,8 @@ public class RobotContainer {
     if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
       driverController.rightBumper().whileTrue(orchestrator.shootBalls());
     }
+
+    driverController.rightBumper().whileTrue(shooter.setVoltage(10)).onFalse(shooter.stop());
     //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
