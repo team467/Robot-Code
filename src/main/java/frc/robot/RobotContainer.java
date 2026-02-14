@@ -126,7 +126,6 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-          hopperBelt = new HopperBelt(new HopperBeltSparkMax());
         }
       }
     }
@@ -217,8 +216,6 @@ public class RobotContainer {
     if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
       driverController.rightBumper().whileTrue(orchestrator.shootBalls());
     }
-
-    driverController.rightBumper().whileTrue(hopperBelt.start()).onFalse(hopperBelt.stop());
   }
 
   /**
