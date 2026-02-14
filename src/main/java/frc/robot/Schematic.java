@@ -109,7 +109,7 @@ public class Schematic {
         shooterMiddleMotorCanId = 0;
 
         // Hopper Belt (CAN Ids)
-        hopperBeltCanId = 0;
+        hopperBeltCanId = 11;
 
         // Indexer (CAN IDs)
         indexerIndexCanId = 0;

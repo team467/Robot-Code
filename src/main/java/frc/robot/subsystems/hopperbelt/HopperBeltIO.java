@@ -4,6 +4,13 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface HopperBeltIO {
 
+  @AutoLog
+  class HopperBeltIOInputs {
+    public double appliedVolts = 0.0;
+    public double currentAmps = 0.0;
+    public double motorVelocity = 0.0; // RPM
+  }
+
   default void updateInputs(HopperBeltIOInputs inputs) {}
   ;
 
@@ -14,11 +21,4 @@ public interface HopperBeltIO {
   /** Stop the motor */
   default void stop() {}
   ;
-
-  @AutoLog
-  class HopperBeltIOInputs {
-    public double appliedOutput = 0.0;
-    public double motorCurrent = 0.0;
-    public double motorVelocity = 0.0; // RPM
-  }
 }
