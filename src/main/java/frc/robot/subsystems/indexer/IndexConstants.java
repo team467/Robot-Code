@@ -10,5 +10,5 @@ public class IndexConstants {
   public static final int RIGHT_LIMIT_SWITCH_CHANNEL = 4;
 
   public static final int INDEX_VOLT = 0;
-  public static final int FEEDUP_VOLT = 12;
+  public static final int FEEDUP_VOLT = 6;
 }
