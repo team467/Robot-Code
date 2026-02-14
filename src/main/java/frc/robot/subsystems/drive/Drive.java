@@ -10,6 +10,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
@@ -37,8 +38,11 @@ import frc.lib.utils.LocalADStarAK;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.subsystems.vision.VisionConstants;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -72,7 +76,10 @@ public class Drive extends SubsystemBase {
   // Choreo PIDs
   private final PIDController xController = new PIDController(10.0, 0.0, 0.5);
   private final PIDController yController = new PIDController(10.0, 0.0, 0.5);
-  private final PIDController headingController = new PIDController(5.0, 0.0, 0);
+  private final PIDController headingController = new PIDController(8.5, 0.0, 0);
+  @Getter
+  public final PPHolonomicDriveController controller =  new PPHolonomicDriveController(
+      new PIDConstants(7.5, 0.0, 0.0), new PIDConstants(8.5, 0.0, 0),0.02);
   @Getter private final AutoFactory autoFactory;
 
   public Drive(
@@ -96,8 +103,8 @@ public class Drive extends SubsystemBase {
         this::setPose,
         this::getChassisSpeeds,
         this::runVelocity,
-        new PPHolonomicDriveController(
-            new PIDConstants(7.5, 0.0, 0.0), new PIDConstants(8.5, 0.0, 0)),
+        controller
+       ,
         ppConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -214,6 +221,11 @@ public class Drive extends SubsystemBase {
 
     // Log optimized setpoints (runSetpoint mutates each state)
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+  }
+  public void overrideHeading(Rotation2d heading){
+    DoubleSupplier error = ()-> headingController.calculate(this.getPose().getRotation().minus(heading).getRadians(),0);
+
+    PPHolonomicDriveController.overrideRotationFeedback(error);
   }
 
   /** Runs the drive in a straight line with the specified drive output. */
