@@ -29,7 +29,7 @@ public class Indexer extends SubsystemBase {
     io.setPercent(indexPercent, feedUpPercent);
   }
 
-  public void setVoltage(double indexVolts, double feedUpVolts) {
+  private void setVoltage(double indexVolts, double feedUpVolts) {
     io.setVoltage(indexVolts, feedUpVolts);
   }
 

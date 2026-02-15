@@ -20,9 +20,6 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOPhysical;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.hopperbelt.HopperBelt;
-import frc.robot.subsystems.hopperbelt.HopperBeltIO;
-import frc.robot.subsystems.hopperbelt.HopperBeltSparkMax;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
@@ -30,6 +27,9 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
+import frc.robot.subsystems.magiccarpet.MagicCarpet;
+import frc.robot.subsystems.magiccarpet.MagicCarpetIO;
+import frc.robot.subsystems.magiccarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
@@ -49,7 +49,7 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private Leds leds;
-  private HopperBelt hopperBelt;
+  private MagicCarpet magicCarpet;
   private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
@@ -104,7 +104,7 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera3Name, robotToCamera3));
           leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
-          hopperBelt = new HopperBelt(new HopperBeltSparkMax());
+          magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           climber = new Climber(new ClimberIOPhysical());
           intake = new Intake(new IntakeIOSparkMax(), operatorController.rightTrigger());
@@ -141,8 +141,8 @@ public class RobotContainer {
     if (intake == null) {
       intake = new Intake(new IntakeIO() {}, () -> false);
     }
-    if (hopperBelt == null) {
-      hopperBelt = new HopperBelt(new HopperBeltIO() {});
+    if (magicCarpet == null) {
+      magicCarpet = new MagicCarpet(new MagicCarpetIO() {});
     }
     if (shooter == null) {
       shooter = new Shooter(new ShooterIO() {});
@@ -154,14 +154,7 @@ public class RobotContainer {
       climber = new Climber(new ClimberIO() {});
     }
 
-    orchestrator =
-        new Orchestrator(
-            drive,
-            hopperBelt,
-            shooter,
-            indexer,
-            intake,
-            driverController); // Commented Out Intake --> Add Back
+    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     Autos autos = new Autos(drive);
     // Set up auto routines
@@ -249,6 +242,5 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
-    orchestrator.OrchestratorPeriodic();
   }
 }
