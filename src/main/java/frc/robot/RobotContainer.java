@@ -21,7 +21,6 @@ import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOPhysical;
-import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.hopperbelt.HopperBelt;
 import frc.robot.subsystems.hopperbelt.HopperBeltIO;

@@ -5,12 +5,12 @@ import static frc.robot.FieldConstants.Hub;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.commands.auto.DriveToPose;
@@ -154,19 +154,21 @@ public class Orchestrator {
             drive,
             driverController::getLeftX,
             driverController::getLeftY,
-            () -> shooterLeadCompensator
-                .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
-                .target()
-                .getTranslation()
-                .minus(drive.getPose().getTranslation())
-                .getAngle()),
+            () ->
+                shooterLeadCompensator
+                    .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
+                    .target()
+                    .getTranslation()
+                    .minus(drive.getPose().getTranslation())
+                    .getAngle()),
         shootBallsDistance(
-            () -> shooterLeadCompensator
-                .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
-                .distance()));
+            () ->
+                shooterLeadCompensator
+                    .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
+                    .distance()));
   }
-  
-    public Command startFlywheelAllianceShift() {
+
+  public Command startFlywheelAllianceShift() {
     return Commands.sequence(
         Commands.waitUntil(() -> DriverStation.getGameSpecificMessage().length() > 0),
         Commands.runOnce(
@@ -182,19 +184,19 @@ public class Orchestrator {
               double start2 = 0;
               if (gameData.charAt(0) == 'B') {
                 if (alliance.get() == DriverStation.Alliance.Blue) {
-                  start1 = 54-gameDataTime;
-                  start2 = 104-gameDataTime;
+                  start1 = 54 - gameDataTime;
+                  start2 = 104 - gameDataTime;
                 } else if (alliance.get() == DriverStation.Alliance.Red) {
-                  start1 = 79-gameDataTime;
-                  start2 = 129-gameDataTime;
+                  start1 = 79 - gameDataTime;
+                  start2 = 129 - gameDataTime;
                 }
               } else if (gameData.charAt(0) == 'R') {
                 if (alliance.get() == DriverStation.Alliance.Red) {
-                  start1 = 54-gameDataTime;
-                  start2 = 104-gameDataTime;
+                  start1 = 54 - gameDataTime;
+                  start2 = 104 - gameDataTime;
                 } else if (alliance.get() == DriverStation.Alliance.Blue) {
-                  start1 = 79-gameDataTime;
-                  start2 = 129-gameDataTime;
+                  start1 = 79 - gameDataTime;
+                  start2 = 129 - gameDataTime;
                 }
               }
               Commands.waitSeconds(start1).andThen(shooter.setTargetVelocity(1000)).schedule();
