@@ -25,8 +25,11 @@ public class Orchestrator {
     this.intake = intake;
   }
 
-  /** created command to shoot the balls so it runs the shooter, hopperBelt and indexer */
   public Command shootBalls() {
-    return Commands.parallel(shooter.setVoltage(1), hopperBelt.start(), indexer.run());
+    return Commands.parallel(shooter.setTargetVelocity(8000), hopperBelt.start(), indexer.run());
+  }
+
+  public Command stopShooting() {
+    return Commands.parallel(shooter.stop(), hopperBelt.stop(), indexer.stop());
   }
 }

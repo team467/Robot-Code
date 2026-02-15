@@ -222,8 +222,8 @@ public class RobotContainer {
     shooter.setSetpoint(1000);
     driverController
         .rightBumper()
-        .whileTrue(Commands.parallel(indexer.run().repeatedly(), shooter.setTargetVelocity(8000)))
-        .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
+        .whileTrue(orchestrator.shootBalls())
+        .onFalse(orchestrator.stopShooting());
   }
 
   /**
