@@ -218,12 +218,6 @@ public class RobotContainer {
     if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
       driverController.rightBumper().whileTrue(orchestrator.shootBalls());
     }
-
-    shooter.setSetpoint(1000);
-    driverController
-        .rightBumper()
-        .whileTrue(orchestrator.shootBalls())
-        .onFalse(orchestrator.stopShooting());
   }
 
   /**
