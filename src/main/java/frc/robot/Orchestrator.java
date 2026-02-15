@@ -8,6 +8,9 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.commands.auto.DriveToPose;
@@ -18,6 +21,7 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -150,17 +154,52 @@ public class Orchestrator {
             drive,
             driverController::getLeftX,
             driverController::getLeftY,
-            () ->
-                shooterLeadCompensator
-                    .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
-                    .target()
-                    .getTranslation()
-                    .minus(drive.getPose().getTranslation())
-                    .getAngle()),
+            () -> shooterLeadCompensator
+                .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
+                .target()
+                .getTranslation()
+                .minus(drive.getPose().getTranslation())
+                .getAngle()),
         shootBallsDistance(
-            () ->
-                shooterLeadCompensator
-                    .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
-                    .distance()));
+            () -> shooterLeadCompensator
+                .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
+                .distance()));
+  }
+  
+    public Command startFlywheelAllianceShift() {
+    return Commands.sequence(
+        Commands.waitUntil(() -> DriverStation.getGameSpecificMessage().length() > 0),
+        Commands.runOnce(
+            () -> {
+              Optional<Alliance> alliance = DriverStation.getAlliance();
+              String gameData = DriverStation.getGameSpecificMessage();
+              double gameDataTime = Timer.getMatchTime();
+              if (alliance.isEmpty()) {
+                System.err.print("alliance data not found");
+                return;
+              }
+              double start1 = 0;
+              double start2 = 0;
+              if (gameData.charAt(0) == 'B') {
+                if (alliance.get() == DriverStation.Alliance.Blue) {
+                  start1 = 54-gameDataTime;
+                  start2 = 104-gameDataTime;
+                } else if (alliance.get() == DriverStation.Alliance.Red) {
+                  start1 = 79-gameDataTime;
+                  start2 = 129-gameDataTime;
+                }
+              } else if (gameData.charAt(0) == 'R') {
+                if (alliance.get() == DriverStation.Alliance.Red) {
+                  start1 = 54-gameDataTime;
+                  start2 = 104-gameDataTime;
+                } else if (alliance.get() == DriverStation.Alliance.Blue) {
+                  start1 = 79-gameDataTime;
+                  start2 = 129-gameDataTime;
+                }
+              }
+              Commands.waitSeconds(start1).andThen(shooter.setTargetVelocity(1000)).schedule();
+
+              Commands.waitSeconds(start2).andThen(shooter.setTargetVelocity(1000)).schedule();
+            }));
   }
 }
