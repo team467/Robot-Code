@@ -104,17 +104,17 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 0;
 
         // Shooter (CAN Ids)
-        shooterBottomMotorCanId = 11;
-        shooterTopMotorCanId = 1;
-        shooterMiddleMotorCanId = 2;
+        shooterBottomMotorCanId = 0;
+        shooterTopMotorCanId = 0;
+        shooterMiddleMotorCanId = 0;
 
         // Hopper Belt (CAN Ids)
         hopperBeltCanId = 0;
 
         // Indexer (CAN IDs)
         indexerIndexCanId = 0;
-        indexerFeedupCanId = 14;
-        indexerLeftLimitSwitchCanId = 8;
+        indexerFeedupCanId = 0;
+        indexerLeftLimitSwitchCanId = 0;
         indexerRightLimitSwitchCanId = 0;
 
         // Intake (CAN IDs)
