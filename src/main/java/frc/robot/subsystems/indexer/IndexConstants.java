@@ -7,5 +7,5 @@ public class IndexConstants {
   public static final double ENCODER_FEEDUP_VELOCITY_CONVERSION = 1;
 
   public static final int INDEX_VOLT = 0;
-  public static final int FEEDUP_VOLT = 6;
+  public static final int FEEDUP_VOLT = 9;
 }

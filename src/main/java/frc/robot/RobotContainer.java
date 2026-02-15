@@ -126,6 +126,8 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
+          shooter = new Shooter(new ShooterIOSparkMax());
+          indexer = new Indexer(new IndexerIOSparkMax());
         }
       }
     }
@@ -216,6 +218,12 @@ public class RobotContainer {
     if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
       driverController.rightBumper().whileTrue(orchestrator.shootBalls());
     }
+
+    shooter.setSetpoint(1000);
+    driverController
+        .rightBumper()
+        .whileTrue(Commands.parallel(indexer.run().repeatedly(), shooter.setTargetVelocity(8000)))
+        .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
   }
 
   /**
