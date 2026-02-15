@@ -88,7 +88,7 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.bottomMotorRPM = bottomMotorEncoder.getVelocity();
 
     inputs.setpointRPM = setpointRPM;
-    inputs.atSetpoint = Math.abs(rpm - setpointRPM) < 25;
+    inputs.atSetpoint = Math.abs(rpm - setpointRPM) < TOLERANCE;
 
     inputs.topMotorCurrentAmps = topMotor.getOutputCurrent();
     inputs.topMotorAppliedVolts = topMotor.getBusVoltage() * topMotor.getAppliedOutput();
@@ -136,6 +136,6 @@ public class ShooterIOSparkMax implements ShooterIO {
 
   @Override
   public boolean isAtSetpoint() {
-    return Math.abs(rpm - setpointRPM) < 25;
+    return Math.abs(rpm - setpointRPM) < TOLERANCE;
   }
 }
