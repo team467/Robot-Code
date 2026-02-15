@@ -22,7 +22,7 @@ public class Indexer extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Index", inputs);
-    RobotState.getInstance().indexerHasFuel = isSwitchPressed();
+    RobotState.getInstance().indexerHasFuel = isLeftSwitchPressed() || isRightSwitchPressed();
   }
 
   private void setPercent(double indexPercent, double feedUpPercent) {

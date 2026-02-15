@@ -227,7 +227,7 @@ public class RobotContainer {
     driverController.povLeft().onTrue(Commands.runOnce(() -> shooterIncrement -= 50.0));
 
     if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
-      driverController.rightBumper().whileTrue(orchestrator.shootBallsVelocity(360));
+      driverController.rightBumper().whileTrue(orchestrator.shootBalls());
     }
   }
 
