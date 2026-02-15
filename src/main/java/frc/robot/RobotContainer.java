@@ -200,14 +200,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(orchestrator.driveShootAtAngle());
-    DriveCommands.joystickDrive(
-        drive,
-        () -> -driverController.getLeftY(),
-        () -> -driverController.getLeftX(),
-        () -> -driverController.getRightX());
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -232,8 +224,6 @@ public class RobotContainer {
     if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
       driverController.rightBumper().whileTrue(orchestrator.shootBallsVelocity(360));
     }
-
-    //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
   /**

@@ -40,8 +40,8 @@ public class VisionConstants {
                   Units.inchesToMeters(17.035 + 1.75)) // z
               .rotateBy(RotationCorrection),
           new Rotation3d(
-              Units.degreesToRadians(16.7),
-              Units.degreesToRadians(-4.8),
+              Units.degreesToRadians(-11.32),
+              Units.degreesToRadians(0),
               Units.degreesToRadians(155.3)));
 
   public static Transform3d robotToCamera2 =
@@ -52,8 +52,8 @@ public class VisionConstants {
                   Units.inchesToMeters(17.035 + 1.75))
               .rotateBy(RotationCorrection),
           new Rotation3d(
-              Units.degreesToRadians(-16.7),
-              Units.degreesToRadians(4.8),
+              Units.degreesToRadians(-11.32),
+              Units.degreesToRadians(0),
               Units.degreesToRadians(-155.3)));
 
   public static Transform3d robotToCamera3 =

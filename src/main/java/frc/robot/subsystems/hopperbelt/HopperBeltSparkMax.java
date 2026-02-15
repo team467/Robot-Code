@@ -37,8 +37,8 @@ public class HopperBeltSparkMax implements HopperBeltIO {
   @Override
   public void updateInputs(HopperBeltIOInputs inputs) {
     // Called every 20 ms by subsystem periodic
-    inputs.appliedOutput = motor.getAppliedOutput();
-    inputs.motorCurrent = motor.getOutputCurrent();
+    inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
+    inputs.currentAmps = motor.getOutputCurrent();
     inputs.motorVelocity = encoder.getVelocity();
   }
 
