@@ -23,8 +23,8 @@ public class Schematic {
   public static final int shooterBottomMotorCanId;
   public static final int shooterTopMotorCanId;
   public static final int shooterMiddleMotorCanId;
-  // hopper belt sub-system
-  public static final int hopperBeltCanId;
+  // magic carpet sub-system
+  public static final int magicCarpetCanId;
 
   //  indexer subsystem
   public static final int indexerIndexCanId;
@@ -67,8 +67,8 @@ public class Schematic {
         shooterTopMotorCanId = 0;
         shooterMiddleMotorCanId = 0;
 
-        // Hopper Belt (CAN Ids)
-        hopperBeltCanId = 0;
+        // Magic Carpet (CAN Ids)
+        magicCarpetCanId = 0;
 
         // Indexer (CAN IDs)
         indexerIndexCanId = 0;
@@ -108,8 +108,8 @@ public class Schematic {
         shooterTopMotorCanId = 0;
         shooterMiddleMotorCanId = 0;
 
-        // Hopper Belt (CAN Ids)
-        hopperBeltCanId = 0;
+        // Magic Carpet (CAN Ids)
+        magicCarpetCanId = 0;
 
         // Indexer (CAN IDs)
         indexerIndexCanId = 0;
@@ -149,8 +149,8 @@ public class Schematic {
         shooterTopMotorCanId = 0;
         shooterMiddleMotorCanId = 0;
 
-        // Hopper Belt (CAN Ids)
-        hopperBeltCanId = 0;
+        // Magic Carpet (CAN Ids)
+        magicCarpetCanId = 0;
 
         // Indexer (CAN IDs)
         indexerIndexCanId = 0;
