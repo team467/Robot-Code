@@ -126,8 +126,6 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
-          shooter = new Shooter(new ShooterIOSparkMax());
-          indexer = new Indexer(new IndexerIOSparkMax());
         }
       }
     }

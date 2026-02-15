@@ -24,12 +24,4 @@ public class Orchestrator {
     this.indexer = indexer;
     this.intake = intake;
   }
-
-  public Command shootBalls() {
-    return Commands.parallel(shooter.setTargetVelocity(8000), hopperBelt.start(), indexer.run());
-  }
-
-  public Command stopShooting() {
-    return Commands.parallel(shooter.stop(), hopperBelt.stop(), indexer.stop());
-  }
 }
