@@ -1,6 +1,5 @@
 package frc.robot.subsystems.intake;
 
-import java.util.Optional;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeIO {
@@ -16,7 +15,8 @@ public interface IntakeIO {
     public boolean isCollapsed = false;
     // public boolean manualModeInput;
     public boolean atSetpoint = false;
-    public Optional<Double> setpoint = Optional.of(0.0);
+    public boolean hasSetpoint = false;
+    public double setpointValue = 0.0;
     public double getExtendPos = 0.0;
     public boolean stowed = false;
     public boolean stalledExtended = false;

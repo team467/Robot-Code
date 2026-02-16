@@ -206,7 +206,7 @@ public class Intake extends SubsystemBase {
                 Commands.run(() -> io.setVoltageExtend(COLLAPSE_VOLTS)),
                 () -> angle > inputs.getExtendPos)
             .until(() -> Math.abs(angle - inputs.getExtendPos) < POSITION_TOLERANCE),
-        () -> inputs.setpoint.isPresent());
+        () -> inputs.hasSetpoint);
   }
 
   public Command intakePrivate() {
