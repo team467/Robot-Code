@@ -89,20 +89,14 @@ public class Shooter extends SubsystemBase {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
-  //
   public Command stop() {
     return Commands.runOnce(
         () -> {
+          controllerEnabled = false;
+          targetRadPerSec = 0.0;
           io.stop();
-          //          controllerEnabled = false;
         },
         this);
-  }
-
-  public Command setPercent(double percent) {
-    return Commands.sequence(
-        Commands.runOnce(() -> controllerEnabled = false, this),
-        Commands.run(() -> io.setVoltage(percent), this));
   }
 
   public Command setVoltage(double volts) {
@@ -114,17 +108,16 @@ public class Shooter extends SubsystemBase {
   public Command setTargetVelocityRPM(double rpm) {
     return Commands.runOnce(
         () -> {
-          //          targetRadPerSec = rpm * 60 / (2 * Math.PI);
-          targetRadPerSec = rpm / (2 * Math.PI / 60);
+          targetRadPerSec = rpm * 2 * Math.PI / 60.0;
           controllerEnabled = true;
         },
         this);
   }
 
-  public Command setTargetVelocityRadians(double radians) {
+  public Command setTargetVelocityRadians(double radPerSec) {
     return Commands.runOnce(
         () -> {
-          targetRadPerSec = radians;
+          targetRadPerSec = radPerSec;
           controllerEnabled = true;
         },
         this);

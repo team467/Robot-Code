@@ -13,10 +13,6 @@ public class ShooterConstants {
   public static final int CURRENT_LIMIT = 30;
   public static final IdleMode IDLE_MODE = IdleMode.kCoast;
 
-  public static final double PID_P = 0.00007;
-  public static final double PID_I = 0.0000003;
-  public static final double PID_D = 0.00000;
-
   //  public static final double KV = 0.002027;  //single motor
   //  public static final double KA = 0.00033377;  //single motor
 
