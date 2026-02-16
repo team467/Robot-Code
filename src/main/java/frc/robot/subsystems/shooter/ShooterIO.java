@@ -39,4 +39,8 @@ public interface ShooterIO {
   default void goToSetpoint() {}
 
   default void setTargetDistance(double distanceMeters) {}
+
+  default boolean isAtSetpoint() {
+    return false;
+  }
 }
