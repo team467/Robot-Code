@@ -19,8 +19,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
 import org.littletonrobotics.junction.Logger;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 public class Orchestrator {
   private final double FRONT_HUB_OFFSET = -1.0;
@@ -118,18 +116,35 @@ public class Orchestrator {
                     && RobotState.getInstance().isAlignedToHub)
         .finallyDo(() -> Commands.parallel(hopperBelt.stop(), preloadBalls()));
   }
-  public Supplier<Optional<Rotation2d>> getAdjustedTargetWithDrive(){
-    return new Supplier<Optional<Rotation2d>>(
-        shooterLeadCompensator.shootWhileDriving(Hub.innerCenterPoint.toTranslation2d()).target().minus(drive.getPose()).getTranslation().getAngle()) {
-      @Override
-      public Optional<Rotation2d> get() {
-        return Optional.empty();
-      }
-    };
+
+  public Rotation2d getAdjustedTargetWithDrive() {
+    return shooterLeadCompensator
+        .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
+        .target()
+        .minus(drive.getPose())
+        .getTranslation()
+        .getAngle();
   }
-  public Command autoShootBallsWithDrive(){
-    return  Commands.sequence(prepShooter(), Commands.parallel( hopperBelt.start(),
-        indexer.run()));
+
+  public Command startShooterSequence() {
+    return Commands.sequence(
+        prepShooter(),
+        Commands.parallel(
+            hopperBelt.start(),
+            indexer.run(),
+            shooter.setTargetDistance(
+                () ->
+                    shooterLeadCompensator
+                        .shootWhileDriving(Hub.innerCenterPoint.toTranslation2d())
+                        .distance())));
+  }
+
+  public Command endShooterSequence() {
+    return Commands.parallel(hopperBelt.stop(), indexer.stopCommand(), shooter.stop());
+  }
+
+  public Command adjustDriveToShoot() {
+    return Commands.run(() -> drive.overrideHeading(getAdjustedTargetWithDrive()));
   }
 
   public Command preloadBalls() {

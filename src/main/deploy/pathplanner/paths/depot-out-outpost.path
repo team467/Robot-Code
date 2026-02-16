@@ -45,8 +45,33 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
-  "pointTowardsZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.3186440677966101,
+      "maxWaypointRelativePos": 1.633898305084745,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 4.5,
+        "maxAngularVelocity": 350.0,
+        "maxAngularAcceleration": 240.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.625,
+        "y": 4.025
+      },
+      "rotationOffset": 180.0,
+      "minWaypointRelativePos": 0.33898305084745767,
+      "maxWaypointRelativePos": 1.5864406779661009,
+      "name": "Hub"
+    }
+  ],
   "eventMarkers": [
     {
       "name": "trackHubShoot",
@@ -62,7 +87,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 6.5,
+    "maxVelocity": 6.8,
     "maxAcceleration": 4.5,
     "maxAngularVelocity": 350.0,
     "maxAngularAcceleration": 240.0,

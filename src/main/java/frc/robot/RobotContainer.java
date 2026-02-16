@@ -9,6 +9,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import choreo.auto.AutoChooser;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.PointTowardsZoneTrigger;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -42,7 +43,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import javax.naming.Name;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -183,6 +183,30 @@ public class RobotContainer {
             driverController); // Commented Out Intake --> Add Back
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     choreoChooser = new AutoChooser();
+        NamedCommands.registerCommand(
+            "startShooter", Commands.parallel(orchestrator.preloadBalls(),
+     orchestrator.prepShooter()));
+        NamedCommands.registerCommand("shoot", orchestrator.shootBalls());
+        NamedCommands.registerCommand("shootClimb", orchestrator.shootBallsonClimb());
+        NamedCommands.registerCommand("shootDistance", orchestrator.shootBallsAtDistance());
+        NamedCommands.registerCommand("extend hopper and intake", intake.extendAndIntake());
+        NamedCommands.registerCommand(
+            "stopIntake",
+            Commands.sequence(
+                intake.collapseAndIntake(), Commands.waitSeconds(0.3),
+     intake.stopIntakeCommand()));
+        NamedCommands.registerCommand("climb", Commands.none());
+        NamedCommands.registerCommand(
+            "endTrackingShoot",
+            Commands.run(() -> RobotState.getInstance().trackHub = false)
+                .andThen(shooter.setPercent(0.1)));
+
+    new PointTowardsZoneTrigger("Hub")
+        .onTrue(orchestrator.startShooterSequence())
+        .whileTrue(Commands.run(orchestrator::adjustDriveToShoot).repeatedly())
+        .onFalse(
+            Commands.parallel(
+                orchestrator.endShooterSequence(), Commands.runOnce(() -> drive.stopOverride())));
     Autos autos = new Autos(drive);
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
@@ -207,35 +231,24 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // pathplanner
-    NamedCommands.registerCommand(
-        "startShooter", Commands.parallel(orchestrator.preloadBalls(), orchestrator.prepShooter()));
-    NamedCommands.registerCommand("shoot", orchestrator.shootBalls());
-    NamedCommands.registerCommand("shootClimb", orchestrator.shootBallsonClimb());
-    NamedCommands.registerCommand("shootDistance", orchestrator.shootBallsAtDistance());
-    NamedCommands.registerCommand("extend hopper and intake", intake.extendAndIntake());
-    NamedCommands.registerCommand(
-        "stopIntake",
-        Commands.sequence(
-            intake.collapseAndIntake(), Commands.waitSeconds(0.3), intake.stopIntakeCommand()));
-    NamedCommands.registerCommand("climb", Commands.none());
-    NamedCommands.registerCommand("trackHubShoot",orchestrator.shootBallsWithDrive());
-//    autoChooser.addOption("CA-1C-O-Climb", autos.CenterA());
-//    autoChooser.addOption("CA-2C-Climb", drive.getAutonomousCommand("CA-2C-Climb"));
-//    autoChooser.addOption("CA-2C-O-Climb", drive.getAutonomousCommand("CA-2C-O-Climb"));
-//    autoChooser.addOption("CA-3C-Climb", drive.getAutonomousCommand("CA-3C-Climb"));
-//    autoChooser.addOption("CA-3C-O-Climb", drive.getAutonomousCommand("CA-3C-O-Climb"));
-//
-//    autoChooser.addOption("CC-1C-Climb", autos.CenterC());
-//    autoChooser.addOption("CC-2C-Climb", drive.getAutonomousCommand("CC-2C-Climb"));
-//    autoChooser.addOption("CC-2C-O-Climb", drive.getAutonomousCommand("CC-2C-O-Climb"));
-//    autoChooser.addOption("CC-3C-Climb", drive.getAutonomousCommand("CC-3C-Climb"));
-//    autoChooser.addOption("CC-3C-O-Climb", drive.getAutonomousCommand("CC-3C-O-Climb"));
-//
-//    autoChooser.addOption("CB-1C-O-Climb", autos.CenterB());
-//    autoChooser.addOption("CB-2C-Climb", drive.getAutonomousCommand("CB-2C-Climb"));
-//    autoChooser.addOption("CB-2C-O-Climb", drive.getAutonomousCommand("CB-2C-O-Climb"));
-//    autoChooser.addOption("CB-3C-Climb", drive.getAutonomousCommand("CB-3C-Climb"));
-//    autoChooser.addOption("CB-3C-O-Climb", drive.getAutonomousCommand("CB-3C-O-Climb"));
+
+    //    autoChooser.addOption("CA-1C-O-Climb", autos.CenterA());
+    //    autoChooser.addOption("CA-2C-Climb", drive.getAutonomousCommand("CA-2C-Climb"));
+    //    autoChooser.addOption("CA-2C-O-Climb", drive.getAutonomousCommand("CA-2C-O-Climb"));
+    //    autoChooser.addOption("CA-3C-Climb", drive.getAutonomousCommand("CA-3C-Climb"));
+    //    autoChooser.addOption("CA-3C-O-Climb", drive.getAutonomousCommand("CA-3C-O-Climb"));
+    //
+    //    autoChooser.addOption("CC-1C-Climb", autos.CenterC());
+    //    autoChooser.addOption("CC-2C-Climb", drive.getAutonomousCommand("CC-2C-Climb"));
+    //    autoChooser.addOption("CC-2C-O-Climb", drive.getAutonomousCommand("CC-2C-O-Climb"));
+    //    autoChooser.addOption("CC-3C-Climb", drive.getAutonomousCommand("CC-3C-Climb"));
+    //    autoChooser.addOption("CC-3C-O-Climb", drive.getAutonomousCommand("CC-3C-O-Climb"));
+    //
+    //    autoChooser.addOption("CB-1C-O-Climb", autos.CenterB());
+    //    autoChooser.addOption("CB-2C-Climb", drive.getAutonomousCommand("CB-2C-Climb"));
+    //    autoChooser.addOption("CB-2C-O-Climb", drive.getAutonomousCommand("CB-2C-O-Climb"));
+    //    autoChooser.addOption("CB-3C-Climb", drive.getAutonomousCommand("CB-3C-Climb"));
+    //    autoChooser.addOption("CB-3C-O-Climb", drive.getAutonomousCommand("CB-3C-O-Climb"));
     // Configure the button bindings
     configureButtonBindings();
   }

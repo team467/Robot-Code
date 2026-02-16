@@ -81,6 +81,9 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/IsAlignedToHub")
   public boolean isAlignedToHub = false;
 
+  @AutoLogOutput(key = "RobotState/trackHub")
+  public boolean trackHub = false;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
