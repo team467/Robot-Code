@@ -27,7 +27,7 @@ import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOSparkMax;
+import frc.robot.subsystems.intake.IntakeIOKraken;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magiccarpet.MagicCarpet;
 import frc.robot.subsystems.magiccarpet.MagicCarpetIO;
@@ -115,7 +115,6 @@ public class RobotContainer {
                   operatorController.rightTrigger(),
                   operatorController.leftBumper());
           climber = new Climber(new ClimberIOPhysical());
-          intake = new Intake(new IntakeIOSparkMax(), operatorController.rightTrigger());
         }
 
         case ROBOT_SIMBOT -> {

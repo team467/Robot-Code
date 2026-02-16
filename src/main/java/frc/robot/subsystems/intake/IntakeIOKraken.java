@@ -1,10 +1,11 @@
 package frc.robot.subsystems.intake;
 
 import static frc.lib.utils.PhoenixUtil.tryUntilOk;
+import static frc.robot.Schematic.intakeExtendCanId;
+import static frc.robot.Schematic.intakeMotorCanId;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_LIMIT_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POSITION_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVERSION;
-import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_EXTEND_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_INTAKE_MOTOR_CURRENT_LIMIT;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
@@ -45,8 +46,8 @@ public class IntakeIOKraken implements IntakeIO {
   private final StatusSignal<Current> intakeCurrent;
 
   public IntakeIOKraken() {
-    intakeMotor = new TalonFX(INTAKE_EXTEND_ID);
-    extendMotor = new SparkMax(INTAKE_EXTEND_ID, MotorType.kBrushless);
+    intakeMotor = new TalonFX(intakeMotorCanId);
+    extendMotor = new SparkMax(intakeExtendCanId, MotorType.kBrushless);
 
     var intakeConfig = new TalonFXConfiguration();
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
