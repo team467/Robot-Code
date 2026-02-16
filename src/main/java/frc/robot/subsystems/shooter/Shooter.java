@@ -27,6 +27,8 @@ public class Shooter extends SubsystemBase {
     Logger.processInputs("Shooter", inputs);
 
     RobotState.getInstance().shooterAtSpeed = inputs.atSetpoint;
+
+    RobotState.getInstance().shooterSetpoint = inputs.setpointRPM;
   }
 
   public Command stop() {
@@ -38,7 +40,7 @@ public class Shooter extends SubsystemBase {
         this);
   }
 
-  public Command setPercent(double percent) {
+  public Command calculateSetpoint(double percent) {
     return Commands.sequence(
         Commands.runOnce(() -> setpointEnabled = false, this),
         Commands.run(() -> io.setVoltage(percent), this));
@@ -79,7 +81,7 @@ public class Shooter extends SubsystemBase {
 
   // TODO: empirically determine the relationship between distance and shooter velocity
 
-  public double getSetpoint() {
+  public double calculateSetpoint() {
     return inputs.setpointRPM;
   }
 }

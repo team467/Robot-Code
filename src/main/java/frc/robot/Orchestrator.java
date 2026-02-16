@@ -1,7 +1,5 @@
 package frc.robot;
 
-import static frc.robot.FieldConstants.Hub;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -81,11 +79,11 @@ public class Orchestrator {
   public Command shootBallsVelocity(double targetVelocity) {
     return preloadBalls()
         .andThen(shooter.setTargetVelocity(targetVelocity)) // change
-        .onlyIf(() -> shooter.getSetpoint() == 0)
+        .onlyIf(() -> shooter.calculateSetpoint() == 0)
         .andThen(Commands.parallel(hopperBelt.start(), indexer.run()))
         .onlyWhile(
             () ->
-                shooter.getSetpoint() > 0.1
+                shooter.calculateSetpoint() > 0.1
                     && RobotState.getInstance().shooterAtSpeed
                     && RobotState.getInstance().isAlignedToHub)
         .finallyDo(() -> Commands.parallel(hopperBelt.stop(), preloadBalls()));
@@ -94,11 +92,11 @@ public class Orchestrator {
   public Command shootBallsDistance(DoubleSupplier targetDistance) {
     return preloadBalls()
         .andThen(shooter.setTargetDistance(targetDistance)) // change
-        .onlyIf(() -> shooter.getSetpoint() == 0)
+        .onlyIf(() -> RobotState.getInstance().shooterSetpoint == 0)
         .andThen(Commands.parallel(hopperBelt.start(), indexer.run()))
         .onlyWhile(
             () ->
-                shooter.getSetpoint() > 0.1
+                RobotState.getInstance().shooterSetpoint > 0.1
                     && RobotState.getInstance().shooterAtSpeed
                     && RobotState.getInstance().isAlignedToHub)
         .finallyDo(() -> Commands.parallel(hopperBelt.stop(), preloadBalls()));
@@ -118,14 +116,14 @@ public class Orchestrator {
                             .distance())))
         .onlyWhile(
             () ->
-                shooter.getSetpoint() > 0.1
+                shooter.calculateSetpoint() > 0.1
                     && RobotState.getInstance().shooterAtSpeed
                     && RobotState.getInstance().isAlignedToHub)
         .finallyDo(() -> Commands.parallel(hopperBelt.stop(), preloadBalls()));
   }
 
   public Command preloadBalls() {
-    return indexer.run().until(indexer::isSwitchPressed);
+    return indexer.run().until(()->indexer.isLeftSwitchPressed() || indexer.isRightSwitchPressed());
   }
 
   public Command driveShootAtAngle() {

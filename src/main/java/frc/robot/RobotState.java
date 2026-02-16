@@ -81,6 +81,9 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/IsAlignedToHub")
   public boolean isAlignedToHub = false;
 
+  @AutoLogOutput(key= "RobotState/ShooterSetpoint")
+  public double shooterSetpoint = 0.0;
+
   /** The singleton instance of the RobotState class. */
   private static RobotState instance = null;
 
