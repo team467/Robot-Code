@@ -24,6 +24,7 @@ public class IndexerIOSparkMax implements IndexerIO {
   private final SparkMax feedUpMotor;
 
   private final DigitalInput leftLimitSwitch;
+
   private final DigitalInput rightLimitSwitch;
 
   public IndexerIOSparkMax() {
@@ -72,7 +73,7 @@ public class IndexerIOSparkMax implements IndexerIO {
     inputs.feedUpVolts = feedUpMotor.getBusVoltage() * feedUpMotor.getAppliedOutput();
     inputs.indexAmps = indexerMotor.getOutputCurrent();
     inputs.feedUpAmps = feedUpMotor.getOutputCurrent();
-    inputs.ballAtLeftSwitch = leftLimitSwitch.get();
+    inputs.ballAtLeftSwitch = !leftLimitSwitch.get();
     inputs.ballAtRightSwitch = rightLimitSwitch.get();
   }
 
@@ -96,11 +97,11 @@ public class IndexerIOSparkMax implements IndexerIO {
 
   @Override
   public boolean isLeftSwitchPressed() {
-    return leftLimitSwitch.get();
+    return !leftLimitSwitch.get();
   }
 
   @Override
   public boolean isRightSwitchPressed() {
-    return rightLimitSwitch.get();
+    return false;
   }
 }

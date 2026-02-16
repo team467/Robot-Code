@@ -50,14 +50,14 @@ public class Shooter extends SubsystemBase {
         Commands.run(() -> io.setVoltage(volts), this));
   }
 
-  public Command updateSetpoint(double setpoint) {
-    return Commands.runOnce(() -> io.setTargetVelocity(setpoint), this);
-  }
-
   public Command setTargetVelocity(double setpoint) {
     return Commands.sequence(
         Commands.runOnce(() -> setpointEnabled = true, this),
         Commands.runEnd(() -> io.setTargetVelocity(setpoint), () -> setpointEnabled = false, this));
+  }
+
+  public void setSetpoint(double setpoint) {
+    io.setTargetVelocity(setpoint);
   }
 
   public Command setTargetDistance(DoubleSupplier distanceMeters) {
@@ -81,9 +81,11 @@ public class Shooter extends SubsystemBase {
     return distance;
   }
 
-  // TODO: empirically determine the relationship between distance and shooter velocity
-
   public double getSetpoint() {
     return inputs.setpointRPM;
+  }
+
+  public boolean isAtSetpoint() {
+    return io.isAtSetpoint();
   }
 }

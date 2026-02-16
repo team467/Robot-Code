@@ -26,6 +26,7 @@ public class ShooterIOSparkMax implements ShooterIO {
   private final RelativeEncoder bottomMotorEncoder;
   private final RelativeEncoder topMotorEncoder;
   private double setpointRPM = 0;
+  private double rpm = 0;
 
   public ShooterIOSparkMax() {
     middleMotor = new SparkMax(shooterMiddleMotorCanId, MotorType.kBrushless);
@@ -80,13 +81,14 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.middleMotorCurrentAmps = middleMotor.getOutputCurrent();
     inputs.middleMotorAppliedVolts = middleMotor.getBusVoltage() * middleMotor.getAppliedOutput();
     inputs.middleMotorRPM = middleMotorEncoder.getVelocity();
+    rpm = inputs.middleMotorRPM;
 
     inputs.bottomMotorCurrentAmps = bottomMotor.getOutputCurrent();
     inputs.bottomMotorAppliedVolts = bottomMotor.getBusVoltage() * bottomMotor.getAppliedOutput();
     inputs.bottomMotorRPM = bottomMotorEncoder.getVelocity();
 
     inputs.setpointRPM = setpointRPM;
-    inputs.atSetpoint = pidController.isAtSetpoint();
+    inputs.atSetpoint = Math.abs(rpm - setpointRPM) < TOLERANCE;
 
     inputs.topMotorCurrentAmps = topMotor.getOutputCurrent();
     inputs.topMotorAppliedVolts = topMotor.getBusVoltage() * topMotor.getAppliedOutput();
@@ -130,5 +132,10 @@ public class ShooterIOSparkMax implements ShooterIO {
   @Override
   public void setTargetDistance(double distance) {
     setTargetVelocity(distanceToRPM(distance));
+  }
+
+  @Override
+  public boolean isAtSetpoint() {
+    return Math.abs(rpm - setpointRPM) < TOLERANCE;
   }
 }
