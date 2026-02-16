@@ -120,6 +120,7 @@ public class Shooter extends SubsystemBase {
         },
         this);
   }
+
   public Command setTargetVelocityRadians(double radians) {
     return Commands.runOnce(
         () -> {
@@ -128,5 +129,4 @@ public class Shooter extends SubsystemBase {
         },
         this);
   }
-
 }
