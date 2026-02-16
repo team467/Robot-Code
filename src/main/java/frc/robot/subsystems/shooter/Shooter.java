@@ -26,12 +26,12 @@ public class Shooter extends SubsystemBase {
   public boolean controllerEnabled = true;
   private double targetRadPerSec = 0.0;
 
-  private final LinearSystem<N1, N1, N1> flywheel =
+  private final LinearSystem<N1, N1, N1> shooterWheel =
       LinearSystemId.identifyVelocitySystem(ShooterConstants.KV, ShooterConstants.KA);
 
   private final LinearQuadraticRegulator<N1, N1, N1> controller =
       new LinearQuadraticRegulator<>(
-          flywheel,
+          shooterWheel,
           VecBuilder.fill(8.0), // Velocity error tolerance
           VecBuilder.fill(12.0), // Control effort (voltage) tolerance
           0.020);
@@ -40,13 +40,14 @@ public class Shooter extends SubsystemBase {
       new KalmanFilter<>(
           Nat.N1(),
           Nat.N1(),
-          flywheel,
+          shooterWheel,
           VecBuilder.fill(3.0), // How accurate model is
           VecBuilder.fill(0.01), // How accurate encoder data is
           0.020);
 
   private final LinearSystemLoop<N1, N1, N1> loop =
-      new LinearSystemLoop<>(flywheel, controller, observer, ShooterConstants.MAX_VOLTAGE, 0.020);
+      new LinearSystemLoop<>(
+          shooterWheel, controller, observer, ShooterConstants.MAX_VOLTAGE, 0.020);
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -67,14 +68,14 @@ public class Shooter extends SubsystemBase {
 
     if (controllerEnabled) {
       loop.setNextR(VecBuilder.fill(targetRadPerSec));
-      loop.correct(VecBuilder.fill(inputs.flywheelVelocityRadPerSec));
+      loop.correct(VecBuilder.fill(inputs.shooterWheelVelocityRadPerSec));
       loop.predict(0.020);
       io.setVoltage(loop.getU(0));
     }
 
     Logger.processInputs("Shooter", inputs);
     Logger.recordOutput(
-        "Shooter/FlywheelRPM", inputs.flywheelVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
+        "Shooter/ShooterWheelRPM", inputs.shooterWheelVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
     Logger.recordOutput("Shooter/TargetRPM", targetRadPerSec * 60.0 / (2.0 * Math.PI));
     Logger.recordOutput(
         "Shooter/MiddleMotorRPM", inputs.middleMotorVelocityRadPerSec * 60.0 / (2.0 * Math.PI));

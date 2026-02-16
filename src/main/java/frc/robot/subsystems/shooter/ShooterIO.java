@@ -20,7 +20,7 @@ public interface ShooterIO {
 
     public double totalAmps;
 
-    public double flywheelVelocityRadPerSec;
+    public double shooterWheelVelocityRadPerSec;
 
     public boolean atSetpoint = false;
     public double setpointRadPerSec = 0.0;

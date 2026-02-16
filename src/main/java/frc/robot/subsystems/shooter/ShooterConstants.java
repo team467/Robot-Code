@@ -16,10 +16,10 @@ public class ShooterConstants {
   //  public static final double KV = 0.002027;  //single motor
   //  public static final double KA = 0.00033377;  //single motor
 
-  public static final double KV = 0.0019641; // casebot with flywheel
-  public static final double KA = 0.00017327; // casebot with flywheel
+  public static final double KV = 0.0019641; // casebot with shooter wheel
+  public static final double KA = 0.00017327; // casebot with shooter wheel
 
-  public static final double FLYWHEEL_GEAR_RATIO = 2.5;
+  public static final double SHOOTER_WHEEL_GEAR_RATIO = 2.5;
 
   public static final double MAX_VOLTAGE = 12.0;
 }

@@ -85,7 +85,8 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.totalAmps =
         inputs.middleMotorCurrentAmps + inputs.bottomMotorCurrentAmps + inputs.topMotorCurrentAmps;
 
-    inputs.flywheelVelocityRadPerSec = inputs.middleMotorVelocityRadPerSec / FLYWHEEL_GEAR_RATIO;
+    inputs.shooterWheelVelocityRadPerSec =
+        inputs.middleMotorVelocityRadPerSec / SHOOTER_WHEEL_GEAR_RATIO;
   }
 
   @Override
