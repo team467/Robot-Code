@@ -1,7 +1,7 @@
 // Controls the motor
 // Reads motor data every 20 ms
-// Implements the methods defined in HopperBeltIO
-package frc.robot.subsystems.hopperbelt;
+// Implements the methods defined in MagicCarpetIO
+package frc.robot.subsystems.magiccarpet;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -13,20 +13,20 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import frc.robot.Schematic;
 
-public class HopperBeltSparkMax implements HopperBeltIO {
+public class MagicCarpetSparkMax implements MagicCarpetIO {
 
   private final SparkMax motor; // object controlling motor
   private final RelativeEncoder encoder; // reads motor speed
 
-  public HopperBeltSparkMax() {
+  public MagicCarpetSparkMax() {
 
-    motor = new SparkMax(Schematic.hopperBeltCanId, MotorType.kBrushless);
+    motor = new SparkMax(Schematic.magicCarpetCanId, MotorType.kBrushless);
 
     SparkMaxConfig config = new SparkMaxConfig();
     config
-        .inverted(HopperBeltConstants.MOTOR_INVERTED)
+        .inverted(MagicCarpetConstants.MOTOR_INVERTED)
         .idleMode(IdleMode.kBrake) // stops motor quickly when set to 0
-        .smartCurrentLimit(HopperBeltConstants.CURRENT_LIMIT);
+        .smartCurrentLimit(MagicCarpetConstants.CURRENT_LIMIT);
 
     motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -35,10 +35,10 @@ public class HopperBeltSparkMax implements HopperBeltIO {
   }
 
   @Override
-  public void updateInputs(HopperBeltIOInputs inputs) {
+  public void updateInputs(MagicCarpetIOInputs inputs) {
     // Called every 20 ms by subsystem periodic
-    inputs.appliedOutput = motor.getAppliedOutput();
-    inputs.motorCurrent = motor.getOutputCurrent();
+    inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
+    inputs.currentAmps = motor.getOutputCurrent();
     inputs.motorVelocity = encoder.getVelocity();
   }
 

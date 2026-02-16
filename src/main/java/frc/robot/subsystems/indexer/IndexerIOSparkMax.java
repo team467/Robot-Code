@@ -1,12 +1,13 @@
 package frc.robot.subsystems.indexer;
 
+import static frc.robot.Schematic.indexerFeedupCanId;
+import static frc.robot.Schematic.indexerIndexCanId;
+import static frc.robot.Schematic.indexerLeftLimitSwitchDIO;
+import static frc.robot.Schematic.indexerRightLimitSwitchDIO;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_POSITION_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_VELOCITY_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_INDEX_POSITION_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_INDEX_VELOCITY_CONVERSION;
-import static frc.robot.subsystems.indexer.IndexConstants.INDEXER_FEEDUP_ID;
-import static frc.robot.subsystems.indexer.IndexConstants.INDEXER_INDEX_MOTOR_ID;
-import static frc.robot.subsystems.indexer.IndexConstants.LIMIT_SWITCH_CHANNEL;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -21,13 +22,13 @@ public class IndexerIOSparkMax implements IndexerIO {
 
   private final SparkMax indexerMotor;
   private final SparkMax feedUpMotor;
-  private final DigitalInput limitSwitch;
 
-  // private final DigitalInput limitSwitch2;
+  private final DigitalInput leftLimitSwitch;
+  private final DigitalInput rightLimitSwitch;
 
   public IndexerIOSparkMax() {
-    indexerMotor = new SparkMax(INDEXER_INDEX_MOTOR_ID, MotorType.kBrushed);
-    feedUpMotor = new SparkMax(INDEXER_FEEDUP_ID, MotorType.kBrushed);
+    indexerMotor = new SparkMax(indexerIndexCanId, MotorType.kBrushless);
+    feedUpMotor = new SparkMax(indexerFeedupCanId, MotorType.kBrushless);
 
     var indexerConfig = new SparkMaxConfig();
     var feedUpConfig = new SparkMaxConfig();
@@ -59,9 +60,8 @@ public class IndexerIOSparkMax implements IndexerIO {
     feedUpMotor.configure(
         feedUpConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    limitSwitch = new DigitalInput(LIMIT_SWITCH_CHANNEL);
-    // limitSwitch2 = new DigitalInput(0);
-
+    leftLimitSwitch = new DigitalInput(indexerLeftLimitSwitchDIO);
+    rightLimitSwitch = new DigitalInput(indexerRightLimitSwitchDIO);
   }
 
   @Override
@@ -72,8 +72,8 @@ public class IndexerIOSparkMax implements IndexerIO {
     inputs.feedUpVolts = feedUpMotor.getBusVoltage() * feedUpMotor.getAppliedOutput();
     inputs.indexAmps = indexerMotor.getOutputCurrent();
     inputs.feedUpAmps = feedUpMotor.getOutputCurrent();
-    inputs.ballAtSwitch = isSwitchPressed();
-    // inputs.ballAtSwitch2 = isSwitchPressed();
+    inputs.ballAtLeftSwitch = leftLimitSwitch.get();
+    inputs.ballAtRightSwitch = rightLimitSwitch.get();
   }
 
   @Override
@@ -95,7 +95,12 @@ public class IndexerIOSparkMax implements IndexerIO {
   }
 
   @Override
-  public boolean isSwitchPressed() {
-    return limitSwitch.get();
+  public boolean isLeftSwitchPressed() {
+    return leftLimitSwitch.get();
+  }
+
+  @Override
+  public boolean isRightSwitchPressed() {
+    return rightLimitSwitch.get();
   }
 }

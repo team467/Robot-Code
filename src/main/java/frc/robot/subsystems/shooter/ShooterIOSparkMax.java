@@ -1,8 +1,8 @@
 package frc.robot.subsystems.shooter;
 
-import static frc.robot.Schematic.shooterBackCanId;
-import static frc.robot.Schematic.shooterFrontLeftCanId;
-import static frc.robot.Schematic.shooterFrontRightCanId;
+import static frc.robot.Schematic.shooterBottomMotorCanId;
+import static frc.robot.Schematic.shooterMiddleMotorCanId;
+import static frc.robot.Schematic.shooterTopMotorCanId;
 import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import com.revrobotics.RelativeEncoder;
@@ -18,93 +18,99 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class ShooterIOSparkMax implements ShooterIO {
 
-  private final SparkMax leader;
-  private final SparkMax follower;
-  private final SparkMax follower2;
+  private final SparkMax middleMotor;
+  private final SparkMax bottomMotor;
+  private final SparkMax topMotor;
   private SparkClosedLoopController pidController;
-  private final RelativeEncoder leaderEncoder;
-  private final RelativeEncoder followerEncoder;
-  private final RelativeEncoder follower2Encoder;
+  private final RelativeEncoder middleMotorEncoder;
+  private final RelativeEncoder bottomMotorEncoder;
+  private final RelativeEncoder topMotorEncoder;
   private double setpointRPM = 0;
 
   public ShooterIOSparkMax() {
-    leader = new SparkMax(shooterBackCanId, MotorType.kBrushless);
-    follower = new SparkMax(shooterFrontLeftCanId, MotorType.kBrushless);
-    pidController = leader.getClosedLoopController();
-    follower2 = new SparkMax(shooterFrontRightCanId, MotorType.kBrushless);
+    middleMotor = new SparkMax(shooterMiddleMotorCanId, MotorType.kBrushless);
+    bottomMotor = new SparkMax(shooterBottomMotorCanId, MotorType.kBrushless);
+    pidController = middleMotor.getClosedLoopController();
+    topMotor = new SparkMax(shooterTopMotorCanId, MotorType.kBrushless);
 
-    var leaderConfig = new SparkMaxConfig();
-    leaderConfig
+    var middleMotorConfig = new SparkMaxConfig();
+    middleMotorConfig
         .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT)
         .apply(new ClosedLoopConfig().p(PID_P).i(PID_I).d(PID_D));
 
-    var followerConfig = new SparkMaxConfig();
-    followerConfig
+    var bottomMotorConfig = new SparkMaxConfig();
+    bottomMotorConfig
         .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
 
-    var follower2Config = new SparkMaxConfig();
-    follower2Config
+    var topMotorConfig = new SparkMaxConfig();
+    topMotorConfig
         .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
-        .smartCurrentLimit(30);
+        .smartCurrentLimit(CURRENT_LIMIT);
 
-    followerConfig.follow(leader.getDeviceId(), true);
-    follower2Config.follow(leader.getDeviceId(), true);
+    topMotorConfig.follow(middleMotor.getDeviceId(), true);
+    bottomMotorConfig.follow(middleMotor.getDeviceId(), true);
 
     EncoderConfig enc = new EncoderConfig();
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
     enc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
-    leaderConfig.apply(enc);
+    middleMotorConfig.apply(enc);
 
-    leader.configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    follower.configure(
-        followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    follower2.configure(
-        follower2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    middleMotor.configure(
+        middleMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    bottomMotor.configure(
+        bottomMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    topMotor.configure(
+        topMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    leaderEncoder = leader.getEncoder();
-    followerEncoder = follower.getEncoder();
-    follower2Encoder = follower2.getEncoder();
+    middleMotorEncoder = middleMotor.getEncoder();
+    bottomMotorEncoder = bottomMotor.getEncoder();
+    topMotorEncoder = topMotor.getEncoder();
   }
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.shooterLeaderCurrentAmps = leader.getOutputCurrent();
-    inputs.shooterLeaderAppliedVolts = leader.getBusVoltage() * leader.getAppliedOutput();
-    inputs.shooterLeaderVelocityRadPerSec = leaderEncoder.getVelocity();
+    inputs.middleMotorCurrentAmps = middleMotor.getOutputCurrent();
+    inputs.middleMotorAppliedVolts = middleMotor.getBusVoltage() * middleMotor.getAppliedOutput();
+    inputs.middleMotorRPM = middleMotorEncoder.getVelocity();
 
-    inputs.shooterFollowerCurrentAmps = follower.getOutputCurrent();
-    inputs.shooterFollowerAppliedVolts = follower.getBusVoltage() * follower.getAppliedOutput();
-    inputs.shooterFollowerVelocityRadPerSec = followerEncoder.getVelocity();
+    inputs.bottomMotorCurrentAmps = bottomMotor.getOutputCurrent();
+    inputs.bottomMotorAppliedVolts = bottomMotor.getBusVoltage() * bottomMotor.getAppliedOutput();
+    inputs.bottomMotorRPM = bottomMotorEncoder.getVelocity();
+
     inputs.setpointRPM = setpointRPM;
-
     inputs.atSetpoint = pidController.isAtSetpoint();
 
-    inputs.shooterFollower2CurrentAmps = follower2.getOutputCurrent();
-    inputs.shooterFollower2AppliedVolts = follower2.getBusVoltage() * follower2.getAppliedOutput();
-    inputs.shooterFollower2VelocityRadPerSec = follower2Encoder.getVelocity();
+    inputs.topMotorCurrentAmps = topMotor.getOutputCurrent();
+    inputs.topMotorAppliedVolts = topMotor.getBusVoltage() * topMotor.getAppliedOutput();
+    inputs.topMotorRPM = topMotorEncoder.getVelocity();
+
+    inputs.totalAmps =
+        inputs.topMotorCurrentAmps + inputs.middleMotorCurrentAmps + inputs.bottomMotorCurrentAmps;
+
+    inputs.shooterRPM = inputs.middleMotorRPM / 2.5;
   }
 
   @Override
   public void setPercent(double percent) {
-    leader.set(percent);
+    middleMotor.set(percent);
   }
 
   @Override
   public void setVoltage(double volts) {
-    leader.setVoltage(volts);
+    middleMotor.setVoltage(volts);
   }
 
   @Override
   public void stop() {
-    leader.set(0);
+    middleMotor.set(0);
   }
 
   @Override

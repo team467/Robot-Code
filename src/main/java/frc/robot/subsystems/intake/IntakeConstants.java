@@ -15,8 +15,6 @@ public class IntakeConstants {
   public static final double COLLAPSE_VOLTS = -0.01;
   public static final double INTAKE_MAX_VELOCITY = 200;
 
-  public static final int INTAKE_MOTOR_ID = 1;
-  public static final int INTAKE_EXTEND_ID = 2;
   public static final int EXTEND_LIMIT_ID = 1;
 
   public static final double PID_P = 0.011; // arbritrary values
