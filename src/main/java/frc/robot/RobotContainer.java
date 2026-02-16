@@ -197,8 +197,6 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
 
-    driverController.x().whileTrue(intake.intake());
-
     // Lock to 0° when A button is held
 
     driverController
@@ -212,11 +210,6 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
-    if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
-      driverController.rightBumper().whileTrue(orchestrator.shootBalls());
-    }
-    //    driverController.x().onTrue(shooter.setTargetVelocity(250)).onFalse(shooter.stop());
   }
 
   /**
