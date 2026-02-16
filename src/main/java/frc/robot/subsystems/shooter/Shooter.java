@@ -67,15 +67,25 @@ public class Shooter extends SubsystemBase {
 
     if (controllerEnabled) {
       loop.setNextR(VecBuilder.fill(targetRadPerSec));
-      loop.correct(VecBuilder.fill(inputs.shooterLeaderVelocityRadPerSec));
+      loop.correct(VecBuilder.fill(inputs.flywheelVelocityRadPerSec));
       loop.predict(0.020);
       io.setVoltage(loop.getU(0));
     }
 
     Logger.processInputs("Shooter", inputs);
     Logger.recordOutput(
-        "Shooter/VelocityRPM", inputs.shooterLeaderVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
+        "Shooter/FlywheelRPM", inputs.flywheelVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
     Logger.recordOutput("Shooter/TargetRPM", targetRadPerSec * 60.0 / (2.0 * Math.PI));
+    Logger.recordOutput(
+        "Shooter/MiddleMotorRPM", inputs.middleMotorVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
+    Logger.recordOutput(
+        "Shooter/BottomMotorRPM", inputs.bottomMotorVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
+    Logger.recordOutput(
+        "Shooter/TopMotorRPM", inputs.topMotorVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
+    Logger.recordOutput("Shooter/MiddleMotorAmps", inputs.middleMotorCurrentAmps);
+    Logger.recordOutput("Shooter/BottomMotorAmps", inputs.bottomMotorCurrentAmps);
+    Logger.recordOutput("Shooter/TopMotorAmps", inputs.topMotorCurrentAmps);
+    Logger.recordOutput("Shooter/TotalAmps", inputs.totalAmps);
   }
 
   public void runCharacterization(double voltage) {

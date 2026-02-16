@@ -6,28 +6,27 @@ public interface ShooterIO {
 
   @AutoLog
   class ShooterIOInputs {
+    public double middleMotorVelocityRadPerSec;
+    public double middleMotorAppliedVolts;
+    public double middleMotorCurrentAmps;
 
-    public double shooterLeaderVelocityRadPerSec;
-    public double shooterLeaderAppliedVolts;
-    public double shooterLeaderCurrentAmps;
-    public double shooterLeaderPosition;
+    public double bottomMotorVelocityRadPerSec;
+    public double bottomMotorAppliedVolts;
+    public double bottomMotorCurrentAmps;
 
-    public double shooterFollowerVelocityRadPerSec;
-    public double shooterFollowerAppliedVolts;
-    public double shooterFollowerCurrentAmps;
-    public double shooterFollowerPosition;
+    public double topMotorVelocityRadPerSec;
+    public double topMotorAppliedVolts;
+    public double topMotorCurrentAmps;
+
+    public double totalAmps;
+
+    public double flywheelVelocityRadPerSec;
 
     public boolean atSetpoint = false;
     public double setpointRadPerSec = 0.0;
-
-    public double shooterFollower2VelocityRadPerSec;
-    public double shooterFollower2AppliedVolts;
-    public double shooterFollower2CurrentAmps;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {}
-
-  default void setPercent(double percent) {}
 
   default void setVoltage(double volts) {}
 
