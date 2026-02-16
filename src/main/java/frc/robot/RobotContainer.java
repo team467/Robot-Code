@@ -221,16 +221,15 @@ public class RobotContainer {
     //     .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
     driverController
         .povUp()
-        .onTrue(shooter.updateSetpoint(shooter.getSetpoint() + shooterIncrement));
+        .onTrue(
+            Commands.runOnce(() -> shooter.setSetpoint(shooter.getSetpoint() + shooterIncrement)));
     driverController
         .povDown()
-        .onTrue(shooter.updateSetpoint(shooter.getSetpoint() - shooterIncrement));
+        .onTrue(
+            Commands.runOnce(() -> shooter.setSetpoint(shooter.getSetpoint() - shooterIncrement)));
     driverController.povRight().onTrue(Commands.runOnce(() -> shooterIncrement += 50.0));
     driverController.povLeft().onTrue(Commands.runOnce(() -> shooterIncrement -= 50.0));
 
-    if (Constants.getRobot() == Constants.RobotType.ROBOT_2026_COMP) {
-      driverController.rightBumper().whileTrue(orchestrator.shootBalls());
-    }
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
   }
