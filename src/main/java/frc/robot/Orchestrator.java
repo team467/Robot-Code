@@ -1,7 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
@@ -23,10 +21,5 @@ public class Orchestrator {
     this.shooter = shooter;
     this.indexer = indexer;
     this.intake = intake;
-  }
-
-  /** created command to shoot the balls so it runs the shooter, magicCarpet and indexer */
-  public Command shootBalls() {
-    return Commands.parallel(shooter.setVoltage(1), magicCarpet.start(), indexer.run());
   }
 }
