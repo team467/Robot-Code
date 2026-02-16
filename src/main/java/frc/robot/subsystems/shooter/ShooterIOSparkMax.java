@@ -19,7 +19,7 @@ public class ShooterIOSparkMax implements ShooterIO {
   private final RelativeEncoder leaderEncoder;
   //  private final RelativeEncoder followerEncoder;
   //  private final RelativeEncoder follower2Encoder;
-  private double setpointRPM = 0;
+  private double setpointRadPerSec = 0;
 
   public ShooterIOSparkMax() {
     leader = new SparkMax(shooterBackCanId, MotorType.kBrushless);
@@ -70,7 +70,7 @@ public class ShooterIOSparkMax implements ShooterIO {
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooterLeaderCurrentAmps = leader.getOutputCurrent();
     inputs.shooterLeaderAppliedVolts = leader.getBusVoltage() * leader.getAppliedOutput();
-    inputs.shooterLeaderVelocityRPM = leaderEncoder.getVelocity();
+    inputs.shooterLeaderVelocityRadPerSec = leaderEncoder.getVelocity();
     inputs.shooterLeaderPosition = leaderEncoder.getPosition();
 
     //        inputs.shooterFollowerCurrentAmps = follower.getOutputCurrent();
