@@ -108,8 +108,12 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
-          //TODO: GET THE ACTUAL BUTTON BINDINGS FOR THE OP SWITCHES
-          intake = new Intake(new IntakeIOKraken(), operatorController.rightTrigger(), operatorController.leftBumper());
+          // TODO: GET THE ACTUAL BUTTON BINDINGS FOR THE OP SWITCHES
+          intake =
+              new Intake(
+                  new IntakeIOKraken(),
+                  operatorController.rightTrigger(),
+                  operatorController.leftBumper());
           climber = new Climber(new ClimberIOPhysical());
           intake = new Intake(new IntakeIOSparkMax(), operatorController.rightTrigger());
         }
@@ -143,7 +147,7 @@ public class RobotContainer {
               new ModuleIO() {});
     }
     if (intake == null) {
-      intake = new Intake(new IntakeIO() {}, () -> false, () ->false);
+      intake = new Intake(new IntakeIO() {}, () -> false, () -> false);
     }
     if (magicCarpet == null) {
       magicCarpet = new MagicCarpet(new MagicCarpetIO() {});
