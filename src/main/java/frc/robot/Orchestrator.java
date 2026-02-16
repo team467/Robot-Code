@@ -27,8 +27,13 @@ public class Orchestrator {
 
   public Command shootAndIndex(double shooterTargetRPM) {
     return Commands.parallel(
-        indexer.run().until(() -> !shooter.isAtSetpoint() && (indexer.isLeftSwitchPressed() | indexer.isRightSwitchPressed())),
-        shooter.setTargetVelocity(shooterTargetRPM)
-    );
-  };
+        indexer
+            .run()
+            .until(
+                () ->
+                    !shooter.isAtSetpoint()
+                        && (indexer.isLeftSwitchPressed() | indexer.isRightSwitchPressed())),
+        shooter.setTargetVelocity(shooterTargetRPM));
+  }
+  ;
 }
