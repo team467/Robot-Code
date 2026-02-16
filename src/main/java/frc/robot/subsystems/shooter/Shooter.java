@@ -73,6 +73,8 @@ public class Shooter extends SubsystemBase {
     }
 
     Logger.processInputs("Shooter", inputs);
+    Logger.recordOutput("Shooter/VelocityRPM", inputs.shooterLeaderVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
+    Logger.recordOutput("Shooter/TargetRPM", targetRadPerSec * 60.0 / (2.0 * Math.PI));
   }
 
   public void runCharacterization(double voltage) {
