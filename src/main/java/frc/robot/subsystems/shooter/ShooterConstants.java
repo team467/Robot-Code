@@ -14,5 +14,5 @@ public class ShooterConstants {
   public static final double PID_I = 0.000000;
   public static final double PID_D = 0.00000;
 
-  public static final double CLOSE_RAMP_RATE = 5;
+  public static final double TOLERANCE = 25;
 }
