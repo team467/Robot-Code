@@ -104,7 +104,8 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOSparkMax());
           hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
-          intake = new Intake(new IntakeIOKraken(), operatorController.rightTrigger());
+          //TODO: GET THE ACTUAL BUTTON BINDINGS FOR THE OP SWITCHES
+          intake = new Intake(new IntakeIOKraken(), operatorController.rightTrigger(), operatorController.leftBumper());
           climber = new Climber(new ClimberIOPhysical());
         }
 
@@ -123,7 +124,7 @@ public class RobotContainer {
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
 
-          intake = new Intake(new IntakeIOKraken(), () -> true);
+          intake = new Intake(new IntakeIOKraken(), () -> true, ()->true);
         }
       }
     }
@@ -139,7 +140,7 @@ public class RobotContainer {
               new ModuleIO() {});
     }
     if (intake == null) {
-      intake = new Intake(new IntakeIO() {}, () -> false);
+      intake = new Intake(new IntakeIO() {}, () -> false, () ->false);
     }
     if (hopperBelt == null) {
       hopperBelt = new HopperBelt(new HopperBeltIO() {});
