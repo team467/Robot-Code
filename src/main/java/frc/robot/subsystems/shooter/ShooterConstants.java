@@ -3,8 +3,8 @@ package frc.robot.subsystems.shooter;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class ShooterConstants {
-  public static final double ENCODER_POSITION_CONVERSION = (2 * Math.PI / 60.0);
-  public static final double ENCODER_VELOCITY_CONVERSION = (2 * Math.PI / 60.0);
+  public static final double ENCODER_POSITION_CONVERSION = 1;
+  public static final double ENCODER_VELOCITY_CONVERSION = 1;
   //
   //  public static final double ENCODER_POSITION_CONVERSION = 1.0;
   //  public static final double ENCODER_VELOCITY_CONVERSION = 1.0;
@@ -16,8 +16,8 @@ public class ShooterConstants {
   //  public static final double KV = 0.002027;  //single motor
   //  public static final double KA = 0.00033377;  //single motor
 
-  public static final double KV = 0.0019641; // casebot with shooter wheel
-  public static final double KA = 0.00017327; // casebot with shooter wheel
+  public static final double KV = 0.002027; // casebot with shooter wheel
+  public static final double KA = 0.00033377; // casebot with shooter wheel
 
   public static final double SHOOTER_WHEEL_GEAR_RATIO = 2.5;
 

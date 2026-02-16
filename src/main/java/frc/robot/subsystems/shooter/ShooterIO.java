@@ -21,6 +21,7 @@ public interface ShooterIO {
     public double totalAmps;
 
     public double shooterWheelVelocityRadPerSec;
+    public double shooterWheelPosition;
 
     public boolean atSetpoint = false;
     public double setpointRadPerSec = 0.0;

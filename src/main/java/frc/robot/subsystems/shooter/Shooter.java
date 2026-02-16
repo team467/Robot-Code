@@ -83,6 +83,11 @@ public class Shooter extends SubsystemBase {
         "Shooter/BottomMotorRPM", inputs.bottomMotorVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
     Logger.recordOutput(
         "Shooter/TopMotorRPM", inputs.topMotorVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
+    Logger.recordOutput("Shooter/ShooterWheelRadians", inputs.shooterWheelVelocityRadPerSec);
+    Logger.recordOutput("Shooter/TargetRadians", targetRadPerSec);
+    Logger.recordOutput("Shooter/MiddleMotorRadians", inputs.middleMotorVelocityRadPerSec);
+    Logger.recordOutput("Shooter/BottomMotorRadians", inputs.bottomMotorVelocityRadPerSec);
+    Logger.recordOutput("Shooter/TopMotorRadians", inputs.topMotorVelocityRadPerSec);
     Logger.recordOutput("Shooter/MiddleMotorAmps", inputs.middleMotorCurrentAmps);
     Logger.recordOutput("Shooter/BottomMotorAmps", inputs.bottomMotorCurrentAmps);
     Logger.recordOutput("Shooter/TopMotorAmps", inputs.topMotorCurrentAmps);
