@@ -21,6 +21,7 @@ import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
+import java.util.Optional;
 
 public class IntakeIOSparkMax implements IntakeIO {
 
@@ -82,6 +83,11 @@ public class IntakeIOSparkMax implements IntakeIO {
     inputs.extendAmps = extendMotor.getOutputCurrent();
     inputs.isCollapsed = collapsedLimitSwitch.get();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
+    inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint() && usingPID;
+    inputs.setpoint =
+        usingPID
+            ? Optional.of(extendMotor.getClosedLoopController().getSetpoint())
+            : Optional.empty();
   }
 
   @Override

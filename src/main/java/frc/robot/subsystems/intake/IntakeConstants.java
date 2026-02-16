@@ -13,7 +13,6 @@ public class IntakeConstants {
   public static final double OUTTAKE_VOLTS = -3;
   public static final double EXTEND_VOLTS = 0.01;
   public static final double COLLAPSE_VOLTS = -0.01;
-
   public static final double INTAKE_MAX_VELOCITY = 200;
 
   public static final int INTAKE_MOTOR_ID = 1;

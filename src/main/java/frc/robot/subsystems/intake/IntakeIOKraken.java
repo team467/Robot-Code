@@ -29,6 +29,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import java.util.Optional;
 
 public class IntakeIOKraken implements IntakeIO {
 
@@ -94,6 +95,11 @@ public class IntakeIOKraken implements IntakeIO {
     inputs.extendAmps = extendMotor.getOutputCurrent();
     inputs.isCollapsed = collapsedLimitSwitch.get();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
+    inputs.setpoint =
+        usingPID
+            ? Optional.of(extendMotor.getClosedLoopController().getSetpoint())
+            : Optional.empty();
+    inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint();
   }
 
   @Override
@@ -139,8 +145,14 @@ public class IntakeIOKraken implements IntakeIO {
     return collapsedLimitSwitch.get();
   }
 
+  @Override
   public void setPIDEnabled(boolean enabled) {
     this.usingPID = enabled;
+  }
+
+  @Override
+  public boolean getPIDEnabled() {
+    return usingPID;
   }
 
   @Override
