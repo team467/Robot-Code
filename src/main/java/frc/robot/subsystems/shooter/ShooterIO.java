@@ -22,9 +22,6 @@ public interface ShooterIO {
 
     public double shooterWheelVelocityRadPerSec;
     public double shooterWheelPosition;
-
-    public boolean atSetpoint = false;
-    public double setpointRadPerSec = 0.0;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {}
@@ -32,14 +29,4 @@ public interface ShooterIO {
   default void setVoltage(double volts) {}
 
   default void stop() {}
-
-  default void setTargetVelocity(double setpoint) {}
-
-  default void goToSetpoint() {}
-
-  default void setTargetDistance(double distanceMeters) {}
-
-  default boolean isAtSetpoint() {
-    return false;
-  }
 }

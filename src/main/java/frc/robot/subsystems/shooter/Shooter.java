@@ -1,6 +1,7 @@
 package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.subsystems.climber.ClimberConstants.TOLERANCE;
 
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
@@ -137,10 +138,6 @@ public class Shooter extends SubsystemBase {
         this);
   }
 
-  public void setSetpoint(double setpoint) {
-    io.setTargetVelocity(setpoint);
-  }
-
   // public Command setTargetDistance(double distanceMeters) {
   //   return Commands.sequence(
   //       Commands.runOnce(() -> setpointEnabled = true, this),
@@ -149,6 +146,6 @@ public class Shooter extends SubsystemBase {
   // }
 
   public boolean isAtSetpoint() {
-    return io.isAtSetpoint();
+    return Math.abs(inputs.shooterWheelVelocityRadPerSec - targetRadPerSec) < TOLERANCE;
   }
 }
