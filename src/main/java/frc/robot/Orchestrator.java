@@ -29,7 +29,8 @@ public class Orchestrator {
     return Commands.sequence(
         shooter.setTargetVelocity(shooterTargetRPM),
         indexer
-            .run().until(() -> indexer.isLeftSwitchPressed() || indexer.isRightSwitchPressed())
+            .run()
+            .until(() -> indexer.isLeftSwitchPressed() || indexer.isRightSwitchPressed())
             .andThen(indexer.stop()),
         shooter.setTargetVelocity(shooterTargetRPM).until(shooter::isAtSetpoint),
         indexer.run().onlyWhile(shooter::isAtSetpoint).andThen(indexer.stop()));
