@@ -38,4 +38,3 @@ public class Orchestrator {
         shooter.setTargetVelocity(shooterTargetRPM));
   }
 }
-
