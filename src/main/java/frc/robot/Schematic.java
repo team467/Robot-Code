@@ -104,16 +104,16 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 0;
 
         // Shooter (CAN Ids)
-        shooterBottomMotorCanId = 11;
-        shooterTopMotorCanId = 1;
-        shooterMiddleMotorCanId = 2;
+        shooterBottomMotorCanId = 0;
+        shooterTopMotorCanId = 0;
+        shooterMiddleMotorCanId = 0;
 
         // Magic Carpet (CAN Ids)
         magicCarpetCanId = 0;
 
         // Indexer (CAN IDs and DIOs)
         indexerIndexCanId = 0;
-        indexerFeedupCanId = 14;
+        indexerFeedupCanId = 0;
         indexerLeftLimitSwitchDIO = 0;
         indexerRightLimitSwitchDIO = 0;
 
