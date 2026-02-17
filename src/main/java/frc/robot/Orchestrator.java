@@ -29,10 +29,10 @@ public class Orchestrator {
     return Commands.parallel(
         indexer
             .run()
-            .until(
+            .onlyWhile(
                 () ->
-                    !shooter.isAtSetpoint()
-                        && (indexer.isLeftSwitchPressed() | indexer.isRightSwitchPressed())),
+                    shooter.isAtSetpoint() || !(indexer.isLeftSwitchPressed() || indexer.isRightSwitchPressed())
+                        ),
         shooter.setTargetVelocity(shooterTargetRPM));
   }
   ;
