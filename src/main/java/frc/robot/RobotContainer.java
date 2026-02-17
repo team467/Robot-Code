@@ -169,7 +169,7 @@ public class RobotContainer {
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController.x().onTrue(shooter.setTargetVelocityRadians(200)).onFalse(shooter.stop());
+    driverController.x().onTrue(shooter.setTargetVelocityRadians(75)).onFalse(shooter.stop());
   }
 
   /**
