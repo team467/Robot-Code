@@ -99,4 +99,8 @@ public class ShooterIOSparkMax implements ShooterIO {
   public void stop() {
     middleMotor.set(0);
   }
+
+  private double distanceToRPM(double distanceMeters) {
+    return distanceMeters * 2.79775342767 + 16.8379527141;
+  }
 }

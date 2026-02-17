@@ -22,9 +22,6 @@ public interface ShooterIO {
 
     public double shooterWheelVelocityRadPerSec;
     public double shooterWheelPosition;
-
-    public boolean atSetpoint = false;
-    public double setpointRadPerSec = 0.0;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {}

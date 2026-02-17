@@ -16,12 +16,25 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOPhysical;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.hopperbelt.HopperBelt;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIO;
+import frc.robot.subsystems.indexer.IndexerIOSparkMax;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
+import frc.robot.subsystems.magiccarpet.MagicCarpet;
+import frc.robot.subsystems.magiccarpet.MagicCarpetIO;
+import frc.robot.subsystems.magiccarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -39,9 +52,12 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private Leds leds;
-  private HopperBelt hopperBelt;
+  private MagicCarpet magicCarpet;
+  private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
+  private Climber climber;
+  private Intake intake;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -69,8 +85,32 @@ public class RobotContainer {
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1));
+                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                  new VisionIOPhotonVision(camera2Name, robotToCamera2),
+                  new VisionIOPhotonVision(camera3Name, robotToCamera3));
           leds = new Leds();
+        }
+        case ROBOT_2026_COMP -> {
+          drive =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOTalonSpark(0),
+                  new ModuleIOTalonSpark(1),
+                  new ModuleIOTalonSpark(2),
+                  new ModuleIOTalonSpark(3));
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                  new VisionIOPhotonVision(camera2Name, robotToCamera2),
+                  new VisionIOPhotonVision(camera3Name, robotToCamera3));
+          leds = new Leds();
+          shooter = new Shooter(new ShooterIOSparkMax());
+          magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
+          indexer = new Indexer(new IndexerIOSparkMax());
+          climber = new Climber(new ClimberIOPhysical());
+          intake = new Intake(new IntakeIOSparkMax(), operatorController.rightTrigger());
         }
 
         case ROBOT_SIMBOT -> {
@@ -103,12 +143,30 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
+    if (intake == null) {
+      intake = new Intake(new IntakeIO() {}, () -> false);
+    }
+    if (magicCarpet == null) {
+      magicCarpet = new MagicCarpet(new MagicCarpetIO() {});
+    }
+    if (shooter == null) {
+      shooter = new Shooter(new ShooterIO() {});
+    }
+    if (indexer == null) {
+      indexer = new Indexer(new IndexerIO() {});
+    }
+    if (climber == null) {
+      climber = new Climber(new ClimberIO() {});
+    }
 
-    orchestrator = new Orchestrator(drive);
+    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
+    Autos autos = new Autos(drive);
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
+    autoChooser.addOption("test path", autos.testPath());
+    autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
+    autoChooser.addOption("CL auto", autos.CenterA());
 
     autoChooser.addOption(
         "runCharacterizationQuasistatic", shooter.sysIdQuasistatic(Direction.kForward));
@@ -146,8 +204,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    driverController.y().onTrue(Commands.runOnce(() -> isRobotOriented = !isRobotOriented));
-    // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
