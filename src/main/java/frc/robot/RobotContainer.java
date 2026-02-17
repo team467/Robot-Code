@@ -126,6 +126,8 @@ public class RobotContainer {
 
         case ROBOT_BRIEFCASE -> {
           leds = new Leds();
+          indexer = new Indexer(new IndexerIOSparkMax());
+          shooter = new Shooter(new ShooterIOSparkMax());
         }
       }
     }
@@ -212,6 +214,20 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+
+    driverController
+        .x()
+        .whileTrue(orchestrator.shootAndIndex(2000))
+        .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
+    driverController.y().whileTrue(shooter.setTargetVelocity(2000)).onFalse(shooter.stop());
+    driverController
+        .a()
+        .whileTrue(
+            indexer
+                .run()
+                .until(() -> indexer.isLeftSwitchPressed() || indexer.isRightSwitchPressed())
+                .andThen(indexer.stop()))
+        .onFalse(indexer.stop());
   }
 
   /**
