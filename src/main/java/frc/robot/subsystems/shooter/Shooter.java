@@ -32,8 +32,8 @@ public class Shooter extends SubsystemBase {
   private final LinearQuadraticRegulator<N1, N1, N1> controller =
       new LinearQuadraticRegulator<>(
           shooterWheel,
-          VecBuilder.fill(8.0), // Velocity error tolerance
-          VecBuilder.fill(12.0), // Control effort (voltage) tolerance
+          VecBuilder.fill(2.0), // Velocity error tolerance
+          VecBuilder.fill(30.0), // Control effort (voltage) tolerance
           0.020);
 
   private final KalmanFilter<N1, N1, N1> observer =
@@ -60,6 +60,8 @@ public class Shooter extends SubsystemBase {
                 null,
                 (state) -> Logger.recordOutput("Shooter/SysIdState", state.toString())),
             new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+    controller.latencyCompensate(shooterWheel, 0.02, 0.025);
+    ;
   }
 
   @Override
