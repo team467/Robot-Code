@@ -32,4 +32,14 @@ public interface ShooterIO {
   default void setVoltage(double volts) {}
 
   default void stop() {}
+
+  default void setTargetVelocity(double setpoint) {}
+
+  default void goToSetpoint() {}
+
+  default void setTargetDistance(double distanceMeters) {}
+
+  default boolean isAtSetpoint() {
+    return false;
+  }
 }

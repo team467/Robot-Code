@@ -136,4 +136,19 @@ public class Shooter extends SubsystemBase {
         },
         this);
   }
+
+  public void setSetpoint(double setpoint) {
+    io.setTargetVelocity(setpoint);
+  }
+
+  public Command setTargetDistance(double distanceMeters) {
+    return Commands.sequence(
+        Commands.runOnce(() -> setpointEnabled = true, this),
+        Commands.runEnd(
+            () -> io.setTargetDistance(distanceMeters), () -> setpointEnabled = false, this));
+  }
+
+  public boolean isAtSetpoint() {
+    return io.isAtSetpoint();
+  }
 }

@@ -7,8 +7,8 @@ public class LedConstants {
   public static final int LED_COUNT;
 
   /* num LEDs - change the first two numbers based on actual led strip */
-  public static final int FULL_LENGTH = 81;
-  public static final int BAR_LENGTH = Math.min(27, FULL_LENGTH);
+  public static final int FULL_LENGTH = 105;
+  public static final int BAR_LENGTH = Math.min(10, FULL_LENGTH);
   public static final int BASE_LENGTH = (FULL_LENGTH - BAR_LENGTH) / 2;
 
   public static final int BASE1_START = 0;

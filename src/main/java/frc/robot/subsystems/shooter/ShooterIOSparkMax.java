@@ -99,4 +99,23 @@ public class ShooterIOSparkMax implements ShooterIO {
   public void stop() {
     middleMotor.set(0);
   }
+
+  @Override
+  public void setTargetVelocity(double setpoint) {
+    this.setpointRPM = setpoint;
+  }
+
+  private double distanceToRPM(double distanceMeters) {
+    return distanceMeters * 2.79775342767 + 16.8379527141;
+  }
+
+  @Override
+  public void setTargetDistance(double distance) {
+    setTargetVelocity(distanceToRPM(distance));
+  }
+
+  @Override
+  public boolean isAtSetpoint() {
+    return Math.abs(rpm - setpointRPM) < TOLERANCE;
+  }
 }

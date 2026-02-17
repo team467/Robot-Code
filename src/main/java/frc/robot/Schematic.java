@@ -20,11 +20,24 @@ public class Schematic {
   public static final int backRightAbsoluteEncoderCanId;
 
   // shooter subsystem
-  public static final int shooterMiddleMotorCanId;
   public static final int shooterBottomMotorCanId;
   public static final int shooterTopMotorCanId;
-  // hopper belt sub-system
-  public static final int hopperBeltCanId;
+  public static final int shooterMiddleMotorCanId;
+  // magic carpet sub-system
+  public static final int magicCarpetCanId;
+
+  //  indexer subsystem
+  public static final int indexerIndexCanId;
+  public static final int indexerFeedupCanId;
+  public static final int indexerLeftLimitSwitchDIO;
+  public static final int indexerRightLimitSwitchDIO;
+
+  // intake subsystem
+  public static final int intakeMotorCanId;
+  public static final int intakeExtendCanId;
+
+  // climber subsystem
+  public static final int climberMotorCanId;
 
   static {
     switch (Constants.getRobot()) {
@@ -54,8 +67,21 @@ public class Schematic {
         shooterBottomMotorCanId = 0;
         shooterTopMotorCanId = 0;
 
-        // Hopper Belt (CAN Ids)
-        hopperBeltCanId = 0;
+        // Magic Carpet (CAN Ids)
+        magicCarpetCanId = 0;
+
+        // Indexer (CAN IDs and DIOs)
+        indexerIndexCanId = 0;
+        indexerFeedupCanId = 0;
+        indexerLeftLimitSwitchDIO = 0;
+        indexerRightLimitSwitchDIO = 0;
+
+        // Intake (CAN IDs)
+        intakeMotorCanId = 0;
+        intakeExtendCanId = 0;
+
+        // Climber (CAN IDs)
+        climberMotorCanId = 0;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -82,8 +108,21 @@ public class Schematic {
         shooterBottomMotorCanId = 11;
         shooterTopMotorCanId = 1;
 
-        // Hopper Belt (CAN Ids)
-        hopperBeltCanId = 0;
+        // Magic Carpet (CAN Ids)
+        magicCarpetCanId = 0;
+
+        // Indexer (CAN IDs and DIOs)
+        indexerIndexCanId = 0;
+        indexerFeedupCanId = 0;
+        indexerLeftLimitSwitchDIO = 0;
+        indexerRightLimitSwitchDIO = 0;
+
+        // Intake (CAN IDs)
+        intakeMotorCanId = 0;
+        intakeExtendCanId = 0;
+
+        // Climber (CAN IDs)
+        climberMotorCanId = 0;
       }
 
       default -> {
@@ -110,8 +149,21 @@ public class Schematic {
         shooterBottomMotorCanId = 0;
         shooterTopMotorCanId = 0;
 
-        // Hopper Belt (CAN Ids)
-        hopperBeltCanId = 0;
+        // Magic Carpet (CAN Ids)
+        magicCarpetCanId = 0;
+
+        // Indexer (CAN IDs and DIOs)
+        indexerIndexCanId = 0;
+        indexerFeedupCanId = 0;
+        indexerLeftLimitSwitchDIO = 0;
+        indexerRightLimitSwitchDIO = 0;
+
+        // Intake (CAN IDs)
+        intakeMotorCanId = 0;
+        intakeExtendCanId = 0;
+
+        // Climber (CAN IDs)
+        climberMotorCanId = 0;
       }
     }
   }
