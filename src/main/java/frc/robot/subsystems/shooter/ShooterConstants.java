@@ -17,7 +17,7 @@ public class ShooterConstants {
   //  public static final double KA = 0.00033377;  //single motor
 
   public static final double KV = 0.04685; // casebot with shooter wheel
-  public static final double KA = 0.042389; // casebot with shooter wheel
+  public static final double KA = 0.04; // casebot with shooter wheel
 
   public static final double SHOOTER_WHEEL_GEAR_RATIO = 2.5;
 
