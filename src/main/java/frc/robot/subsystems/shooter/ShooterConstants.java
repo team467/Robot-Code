@@ -5,19 +5,13 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 public class ShooterConstants {
   public static final double ENCODER_POSITION_CONVERSION = 1;
   public static final double ENCODER_VELOCITY_CONVERSION = (2 * Math.PI) / 60;
-  //
-  //  public static final double ENCODER_POSITION_CONVERSION = 1.0;
-  //  public static final double ENCODER_VELOCITY_CONVERSION = 1.0;
 
   public static final double VOLTAGE_COMPENSATION = 12.0;
   public static final int CURRENT_LIMIT = 20;
   public static final IdleMode IDLE_MODE = IdleMode.kCoast;
 
-  //  public static final double KV = 0.002027;  //single motor
-  //  public static final double KA = 0.00033377;  //single motor
-
-  public static final double KV = 0.04685; // casebot with shooter wheel
-  public static final double KA = 0.04; // casebot with shooter wheel
+  public static final double KV = 0.04685;
+  public static final double KA = 0.04;
 
   public static final double SHOOTER_WHEEL_GEAR_RATIO = 2.5;
 

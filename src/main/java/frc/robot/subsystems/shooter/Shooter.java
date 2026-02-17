@@ -138,12 +138,9 @@ public class Shooter extends SubsystemBase {
         this);
   }
 
-  // public Command setTargetDistance(double distanceMeters) {
-  //   return Commands.sequence(
-  //       Commands.runOnce(() -> setpointEnabled = true, this),
-  //       Commands.runEnd(
-  //           () -> io.setTargetDistance(distanceMeters), () -> setpointEnabled = false, this));
-  // }
+   public Command setTargetDistance(double distanceMeters) {
+    return Commands.runOnce(() -> {targetRadPerSec = distanceMeters; controllerEnabled = true;});
+   }
 
   public boolean isAtSetpoint() {
     return Math.abs(inputs.shooterWheelVelocityRadPerSec - targetRadPerSec) < TOLERANCE;
