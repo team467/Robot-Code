@@ -55,6 +55,8 @@ public class ShooterIOSparkMax implements ShooterIO {
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
     enc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
     middleMotorConfig.apply(enc);
+    bottomMotorConfig.apply(enc);
+    topMotorConfig.apply(enc);
 
     middleMotor.configure(
         middleMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
