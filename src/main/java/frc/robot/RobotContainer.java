@@ -129,6 +129,7 @@ public class RobotContainer {
           //          leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           shooter = new Shooter(new ShooterIOSparkMax());
+          indexer = new Indexer(new IndexerIOSparkMax());
         }
       }
     }
@@ -225,7 +226,11 @@ public class RobotContainer {
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController.x().onTrue(shooter.setTargetVelocityRadians(75)).onFalse(shooter.stop());
+    driverController
+        .x()
+        .whileTrue(orchestrator.shootAndIndex(1250))
+        .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
+    //    driverController.x().onTrue(shooter.setTargetVelocityRadians(75)).onFalse(shooter.stop());
     driverController.y().onTrue(shooter.setTargetVelocityRadians(25)).onFalse(shooter.stop());
     driverController.b().onTrue(shooter.setTargetVelocityRadians(50)).onFalse(shooter.stop());
     driverController.a().onTrue(shooter.setTargetVelocityRadians(100)).onFalse(shooter.stop());

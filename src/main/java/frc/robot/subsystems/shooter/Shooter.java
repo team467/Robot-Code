@@ -2,7 +2,7 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.subsystems.climber.ClimberConstants.TOLERANCE;
+import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
@@ -128,7 +128,7 @@ public class Shooter extends SubsystemBase {
   public Command setTargetVelocityRPM(double rpm) {
     return Commands.runOnce(
         () -> {
-          targetRadPerSec = rpm * 2 * Math.PI / 60.0;
+          targetRadPerSec = ((rpm * 2 * Math.PI) / 60.0) + 5;
           controllerEnabled = true;
         },
         this);
@@ -152,6 +152,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return Math.abs(inputs.shooterWheelVelocityRadPerSec - targetRadPerSec) < TOLERANCE;
+    return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetRadPerSec - 5)) < TOLERANCE;
   }
 }

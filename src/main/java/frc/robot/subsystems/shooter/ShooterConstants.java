@@ -16,4 +16,6 @@ public class ShooterConstants {
   public static final double SHOOTER_WHEEL_GEAR_RATIO = 2.5;
 
   public static final double MAX_VOLTAGE = 12.0;
+
+  public static final double TOLERANCE = 1.0; // measured in radians
 }

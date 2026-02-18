@@ -113,7 +113,7 @@ public class Schematic {
 
         // Indexer (CAN IDs and DIOs)
         indexerIndexCanId = 0;
-        indexerFeedupCanId = 0;
+        indexerFeedupCanId = 14;
         indexerLeftLimitSwitchDIO = 0;
         indexerRightLimitSwitchDIO = 0;
 
