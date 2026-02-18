@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.climber.ClimberConstants.TOLERANCE;
 
@@ -58,7 +59,7 @@ public class Shooter extends SubsystemBase {
     sysId =
         new SysIdRoutine(
             new Config(
-                null,
+                Volts.per(Second).of(1),
                 null,
                 null,
                 (state) -> Logger.recordOutput("Shooter/SysIdState", state.toString())),
