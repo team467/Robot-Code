@@ -7,6 +7,7 @@ import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.system.LinearSystem;
@@ -52,6 +53,9 @@ public class Shooter extends SubsystemBase {
   private final LinearSystemLoop<N1, N1, N1> loop =
       new LinearSystemLoop<>(
           shooterWheel, controller, observer, ShooterConstants.MAX_VOLTAGE, 0.020);
+  private final SimpleMotorFeedforward feedforward =
+      new SimpleMotorFeedforward(
+          ShooterConstants.KS, ShooterConstants.KV, ShooterConstants.KA, 0.020);
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -74,7 +78,7 @@ public class Shooter extends SubsystemBase {
       loop.setNextR(VecBuilder.fill(targetRadPerSec));
       loop.correct(VecBuilder.fill(inputs.shooterWheelVelocityRadPerSec));
       loop.predict(0.020);
-      io.setVoltage(loop.getU(0));
+      io.setVoltage(loop.getU(0) + feedforward.calculate(targetRadPerSec));
     }
 
     Logger.processInputs("Shooter", inputs);
