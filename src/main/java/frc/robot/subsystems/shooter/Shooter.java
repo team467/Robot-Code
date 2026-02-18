@@ -137,7 +137,7 @@ public class Shooter extends SubsystemBase {
   public Command setTargetVelocityRadians(double radPerSec) {
     return Commands.runOnce(
         () -> {
-          targetRadPerSec = radPerSec;
+          targetRadPerSec = radPerSec + 5;
           controllerEnabled = true;
         },
         this);
