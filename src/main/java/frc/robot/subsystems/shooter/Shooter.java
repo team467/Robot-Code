@@ -97,13 +97,15 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0.0))
-        .withTimeout(1.0)
+    return Commands.runOnce(() -> controllerEnabled = false, this)
+        .andThen(run(() -> runCharacterization(0.0)).withTimeout(1.0))
         .andThen(sysId.quasistatic(direction));
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+    return Commands.runOnce(() -> controllerEnabled = false, this)
+        .andThen(run(() -> runCharacterization(0.0)).withTimeout(1.0))
+        .andThen(sysId.dynamic(direction));
   }
 
   public Command stop() {
