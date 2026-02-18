@@ -34,7 +34,7 @@ public class Shooter extends SubsystemBase {
   private final LinearQuadraticRegulator<N1, N1, N1> controller =
       new LinearQuadraticRegulator<>(
           shooterWheel,
-          VecBuilder.fill(60), // Velocity error tolerance
+          VecBuilder.fill(80), // Velocity error tolerance
           VecBuilder.fill(2), // Control effort (voltage)
           //          VecBuilder.fill(60), // Velocity error tolerance
           //          VecBuilder.fill(2.50), // Control effort (voltage) tolerance
