@@ -7,7 +7,7 @@ public class ShooterConstants {
   public static final double ENCODER_VELOCITY_CONVERSION = (2 * Math.PI) / 60;
 
   public static final double VOLTAGE_COMPENSATION = 12.0;
-  public static final int CURRENT_LIMIT = 10;
+  public static final int CURRENT_LIMIT = 25;
   public static final IdleMode IDLE_MODE = IdleMode.kCoast;
 
   public static final double KV = 0.049642;
