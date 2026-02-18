@@ -226,14 +226,14 @@ public class RobotContainer {
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    driverController
-        .x()
-        .whileTrue(orchestrator.shootAndIndex(1600))
-        .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
-    //    driverController.x().onTrue(shooter.setTargetVelocityRadians(75)).onFalse(shooter.stop());
+    //    driverController
+    //        .x()
+    //        .whileTrue(orchestrator.shootAndIndex(1300))
+    //        .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
+    driverController.x().onTrue(shooter.setVoltage(8)).onFalse(shooter.stop());
     driverController.y().onTrue(shooter.setTargetVelocityRadians(25)).onFalse(shooter.stop());
     driverController.b().onTrue(shooter.setTargetVelocityRadians(50)).onFalse(shooter.stop());
-    driverController.a().onTrue(shooter.setTargetVelocityRadians(100)).onFalse(shooter.stop());
+    driverController.a().onTrue(shooter.setTargetVelocityRadians(130)).onFalse(shooter.stop());
   }
 
   /**
