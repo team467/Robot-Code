@@ -10,8 +10,8 @@ public class ShooterConstants {
   public static final int CURRENT_LIMIT = 20;
   public static final IdleMode IDLE_MODE = IdleMode.kCoast;
 
-  public static final double KV = 0.002027;
-  public static final double KA = 0.00033377;
+  public static final double KV = 0.049642;
+  public static final double KA = 0.031259;
 
   public static final double SHOOTER_WHEEL_GEAR_RATIO = 2.5;
 

@@ -105,8 +105,8 @@ public class Schematic {
 
         // Shooter (CAN Ids)
         shooterMiddleMotorCanId = 2;
-        shooterBottomMotorCanId = 11;
-        shooterTopMotorCanId = 1;
+        shooterBottomMotorCanId = 1;
+        shooterTopMotorCanId = 11;
 
         // Magic Carpet (CAN Ids)
         magicCarpetCanId = 0;
