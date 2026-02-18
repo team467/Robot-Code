@@ -91,6 +91,7 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Shooter/BottomMotorAmps", inputs.bottomMotorCurrentAmps);
     Logger.recordOutput("Shooter/TopMotorAmps", inputs.topMotorCurrentAmps);
     Logger.recordOutput("Shooter/TotalAmps", inputs.totalAmps);
+    Logger.recordOutput("Shooter/AtSetpoint", isAtSetpoint());
   }
 
   public void runCharacterization(double voltage) {
@@ -128,7 +129,7 @@ public class Shooter extends SubsystemBase {
   public Command setTargetVelocityRPM(double rpm) {
     return Commands.runOnce(
         () -> {
-          targetRadPerSec = ((rpm * 2 * Math.PI) / 60.0) + 5;
+          targetRadPerSec = ((rpm * 2 * Math.PI) / 60.0);
           controllerEnabled = true;
         },
         this);
@@ -137,7 +138,7 @@ public class Shooter extends SubsystemBase {
   public Command setTargetVelocityRadians(double radPerSec) {
     return Commands.runOnce(
         () -> {
-          targetRadPerSec = radPerSec + 5;
+          targetRadPerSec = radPerSec;
           controllerEnabled = true;
         },
         this);
@@ -152,6 +153,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetRadPerSec - 5)) < TOLERANCE;
+    return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetRadPerSec)) < TOLERANCE;
   }
 }

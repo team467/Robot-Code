@@ -228,7 +228,7 @@ public class RobotContainer {
 
     driverController
         .x()
-        .whileTrue(orchestrator.shootAndIndex(1250))
+        .whileTrue(orchestrator.shootAndIndex(1600))
         .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
     //    driverController.x().onTrue(shooter.setTargetVelocityRadians(75)).onFalse(shooter.stop());
     driverController.y().onTrue(shooter.setTargetVelocityRadians(25)).onFalse(shooter.stop());
