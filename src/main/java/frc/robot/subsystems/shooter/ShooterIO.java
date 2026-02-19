@@ -28,5 +28,7 @@ public interface ShooterIO {
 
   default void setVoltage(double volts) {}
 
+  default void goToSpeed(double volts, double rpm) {}
+
   default void stop() {}
 }

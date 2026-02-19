@@ -12,6 +12,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.controller.proto.SimpleMotorFeedforwardProto;
 
 public class ShooterIOSparkMax implements ShooterIO {
 
@@ -21,6 +23,9 @@ public class ShooterIOSparkMax implements ShooterIO {
   private final RelativeEncoder middleMotorEncoder;
   private final RelativeEncoder bottomMotorEncoder;
   private final RelativeEncoder topMotorEncoder;
+  private final SimpleMotorFeedforward middleMotorFeedForward;
+  private final SimpleMotorFeedforward topMotorFeedForward;
+  private final SimpleMotorFeedforward bottomMotorFeedForward;
 
   public ShooterIOSparkMax() {
     middleMotor = new SparkMax(shooterMiddleMotorCanId, MotorType.kBrushless);
@@ -36,20 +41,17 @@ public class ShooterIOSparkMax implements ShooterIO {
 
     var bottomMotorConfig = new SparkMaxConfig();
     bottomMotorConfig
-        .inverted(false)
+        .inverted(true)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
 
     var topMotorConfig = new SparkMaxConfig();
     topMotorConfig
-        .inverted(false)
+        .inverted(true)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
-
-    topMotorConfig.follow(middleMotor.getDeviceId(), true);
-    bottomMotorConfig.follow(middleMotor.getDeviceId(), true);
 
     EncoderConfig enc = new EncoderConfig();
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
@@ -66,6 +68,10 @@ public class ShooterIOSparkMax implements ShooterIO {
     middleMotorEncoder = middleMotor.getEncoder();
     bottomMotorEncoder = bottomMotor.getEncoder();
     topMotorEncoder = topMotor.getEncoder();
+
+    middleMotorFeedForward = new SimpleMotorFeedforward(KS, KV, KA);
+    topMotorFeedForward = new SimpleMotorFeedforward(KS, KV, KA);
+    bottomMotorFeedForward = new SimpleMotorFeedforward(KS, KV, KA);
   }
 
   @Override
@@ -93,6 +99,13 @@ public class ShooterIOSparkMax implements ShooterIO {
   @Override
   public void setVoltage(double volts) {
     middleMotor.setVoltage(volts);
+  }
+
+  @Override
+  public void goToSpeed(double volts, double rpm) {
+    middleMotor.setVoltage(volts + middleMotorFeedForward.calculateWithVelocities(middleMotorEncoder.getVelocity(), rpm));
+    topMotor.setVoltage(volts + topMotorFeedForward.calculateWithVelocities(topMotorEncoder.getVelocity(), rpm));
+    bottomMotor.setVoltage(volts + bottomMotorFeedForward.calculateWithVelocities(bottomMotorEncoder.getVelocity(), rpm));
   }
 
   @Override
