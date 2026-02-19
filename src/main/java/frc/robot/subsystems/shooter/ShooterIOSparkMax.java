@@ -48,8 +48,8 @@ public class ShooterIOSparkMax implements ShooterIO {
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
 
-    topMotorConfig.follow(middleMotor.getDeviceId(), true);
-    bottomMotorConfig.follow(middleMotor.getDeviceId(), true);
+    topMotorConfig.follow(bottomMotor.getDeviceId(), false);
+    middleMotorConfig.follow(bottomMotor.getDeviceId(), true);
 
     EncoderConfig enc = new EncoderConfig();
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
