@@ -27,10 +27,9 @@ public class Shooter extends SubsystemBase {
   // Feedforward: handles steady-state voltage (V = KS + KV * velocity)
   private final SimpleMotorFeedforward feedforward =
       new SimpleMotorFeedforward(ShooterConstants.KS, ShooterConstants.KV);
-
   // PID: handles error correction on top of feedforward
   // P only — no I term (causes integral windup oscillation)
-  private final PIDController pid = new PIDController(0.02, 0.0, 0.0);
+  private final PIDController pid = new PIDController(0.0005, 0.001, 0, 0.02);
 
   // Slew rate limiter: ramps the target velocity gradually (rad/s per second)
   // This prevents current spikes that cause oscillation with a 20A limit
@@ -38,7 +37,6 @@ public class Shooter extends SubsystemBase {
 
   public Shooter(ShooterIO io) {
     this.io = io;
-
     sysId =
         new SysIdRoutine(
             new Config(

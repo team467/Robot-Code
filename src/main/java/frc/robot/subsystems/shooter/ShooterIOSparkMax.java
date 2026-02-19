@@ -88,18 +88,18 @@ public class ShooterIOSparkMax implements ShooterIO {
         inputs.middleMotorCurrentAmps + inputs.bottomMotorCurrentAmps + inputs.topMotorCurrentAmps;
 
     inputs.shooterWheelVelocityRadPerSec =
-        inputs.middleMotorVelocityRadPerSec / SHOOTER_WHEEL_GEAR_RATIO;
-    inputs.shooterWheelPosition = middleMotorEncoder.getPosition() / SHOOTER_WHEEL_GEAR_RATIO;
+        inputs.bottomMotorVelocityRadPerSec / SHOOTER_WHEEL_GEAR_RATIO;
+    inputs.shooterWheelPosition = bottomMotorEncoder.getPosition() / SHOOTER_WHEEL_GEAR_RATIO;
   }
 
   @Override
   public void setVoltage(double volts) {
-    middleMotor.setVoltage(volts);
+    bottomMotor.setVoltage(volts);
   }
 
   @Override
   public void stop() {
-    middleMotor.set(0);
+    bottomMotor.set(0);
   }
 
   private double distanceToRPM(double distanceMeters) {
