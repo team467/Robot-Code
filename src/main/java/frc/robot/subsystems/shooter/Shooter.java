@@ -4,15 +4,9 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.LinearQuadraticRegulator;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.estimator.KalmanFilter;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.system.LinearSystem;
-import edu.wpi.first.math.system.LinearSystemLoop;
-import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,34 +22,19 @@ public class Shooter extends SubsystemBase {
 
   public boolean controllerEnabled = true;
   private double targetRadPerSec = 0.0;
+  private double rampedTarget = 0.0;
 
-  private final LinearSystem<N1, N1, N1> shooterWheel =
-      LinearSystemId.identifyVelocitySystem(ShooterConstants.KV, ShooterConstants.KA);
-
-  private final LinearQuadraticRegulator<N1, N1, N1> controller =
-      new LinearQuadraticRegulator<>(
-          shooterWheel,
-          VecBuilder.fill(80), // Velocity error tolerance
-          VecBuilder.fill(2.5), // Control effort (voltage)
-          //          VecBuilder.fill(60), // Velocity error tolerance
-          //          VecBuilder.fill(2.50), // Control effort (voltage) tolerance
-          0.020);
-
-  private final KalmanFilter<N1, N1, N1> observer =
-      new KalmanFilter<>(
-          Nat.N1(),
-          Nat.N1(),
-          shooterWheel,
-          VecBuilder.fill(3.0), // How accurate model is
-          VecBuilder.fill(0.01), // How accurate encoder data is
-          0.020);
-
-  private final LinearSystemLoop<N1, N1, N1> loop =
-      new LinearSystemLoop<>(
-          shooterWheel, controller, observer, ShooterConstants.MAX_VOLTAGE, 0.020);
+  // Feedforward: handles steady-state voltage (V = KS + KV * velocity)
   private final SimpleMotorFeedforward feedforward =
-      new SimpleMotorFeedforward(
-          ShooterConstants.KS, ShooterConstants.KV, ShooterConstants.KA, 0.020);
+      new SimpleMotorFeedforward(ShooterConstants.KS, ShooterConstants.KV);
+
+  // PID: handles error correction on top of feedforward
+  // P only — no I term (causes integral windup oscillation)
+  private final PIDController pid = new PIDController(0.02, 0.0, 0.0);
+
+  // Slew rate limiter: ramps the target velocity gradually (rad/s per second)
+  // This prevents current spikes that cause oscillation with a 20A limit
+  private final SlewRateLimiter targetRamper = new SlewRateLimiter(100);
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -75,16 +54,29 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
 
     if (controllerEnabled) {
-      loop.setNextR(VecBuilder.fill(targetRadPerSec));
-      loop.correct(VecBuilder.fill(inputs.shooterWheelVelocityRadPerSec));
-      loop.predict(0.020);
-      io.setVoltage(loop.getU(0) + feedforward.calculate(targetRadPerSec));
+      // Ramp toward the target to avoid current spikes
+      rampedTarget = targetRamper.calculate(targetRadPerSec);
+
+      double ff = feedforward.calculate(rampedTarget);
+      double pidOutput = pid.calculate(inputs.shooterWheelVelocityRadPerSec, rampedTarget);
+      double voltage = ff + pidOutput;
+
+      // Clamp to valid voltage range
+      voltage =
+          Math.max(-ShooterConstants.MAX_VOLTAGE, Math.min(ShooterConstants.MAX_VOLTAGE, voltage));
+      io.setVoltage(voltage);
+
+      Logger.recordOutput("Shooter/FFVoltage", ff);
+      Logger.recordOutput("Shooter/PIDVoltage", pidOutput);
+      Logger.recordOutput("Shooter/CommandedVoltage", voltage);
+      Logger.recordOutput("Shooter/RampedTargetRadPerSec", rampedTarget);
     }
 
     Logger.processInputs("Shooter", inputs);
     Logger.recordOutput(
         "Shooter/ShooterWheelRPM", inputs.shooterWheelVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
     Logger.recordOutput("Shooter/TargetRPM", targetRadPerSec * 60.0 / (2.0 * Math.PI));
+    Logger.recordOutput("Shooter/RampedTargetRPM", rampedTarget * 60.0 / (2.0 * Math.PI));
     Logger.recordOutput(
         "Shooter/MiddleMotorRPM", inputs.middleMotorVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
     Logger.recordOutput(
@@ -119,6 +111,8 @@ public class Shooter extends SubsystemBase {
         () -> {
           controllerEnabled = false;
           targetRadPerSec = 0.0;
+          rampedTarget = 0.0;
+          targetRamper.reset(0.0);
           io.stop();
         },
         this);
