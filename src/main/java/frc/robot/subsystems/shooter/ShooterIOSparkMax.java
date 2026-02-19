@@ -13,7 +13,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.controller.proto.SimpleMotorFeedforwardProto;
 
 public class ShooterIOSparkMax implements ShooterIO {
 
@@ -103,9 +102,16 @@ public class ShooterIOSparkMax implements ShooterIO {
 
   @Override
   public void goToSpeed(double volts, double rpm) {
-    middleMotor.setVoltage(volts + middleMotorFeedForward.calculateWithVelocities(middleMotorEncoder.getVelocity(), rpm));
-    topMotor.setVoltage(volts + topMotorFeedForward.calculateWithVelocities(topMotorEncoder.getVelocity(), rpm));
-    bottomMotor.setVoltage(volts + bottomMotorFeedForward.calculateWithVelocities(bottomMotorEncoder.getVelocity(), rpm));
+    middleMotor.setVoltage(
+        volts
+            + middleMotorFeedForward.calculateWithVelocities(
+                middleMotorEncoder.getVelocity(), rpm));
+    topMotor.setVoltage(
+        volts + topMotorFeedForward.calculateWithVelocities(topMotorEncoder.getVelocity(), rpm));
+    bottomMotor.setVoltage(
+        volts
+            + bottomMotorFeedForward.calculateWithVelocities(
+                bottomMotorEncoder.getVelocity(), rpm));
   }
 
   @Override
