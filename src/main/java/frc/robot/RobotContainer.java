@@ -27,7 +27,7 @@ import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOSparkMax;
+import frc.robot.subsystems.intake.IntakeIOKraken;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magiccarpet.MagicCarpet;
 import frc.robot.subsystems.magiccarpet.MagicCarpetIO;
@@ -108,8 +108,13 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
+          // TODO: GET THE ACTUAL BUTTON BINDINGS FOR THE OP SWITCHES
+          intake =
+              new Intake(
+                  new IntakeIOKraken(),
+                  operatorController.rightTrigger(),
+                  operatorController.leftBumper());
           climber = new Climber(new ClimberIOPhysical());
-          intake = new Intake(new IntakeIOSparkMax(), operatorController.rightTrigger());
         }
 
         case ROBOT_SIMBOT -> {
@@ -141,7 +146,7 @@ public class RobotContainer {
               new ModuleIO() {});
     }
     if (intake == null) {
-      intake = new Intake(new IntakeIO() {}, () -> false);
+      intake = new Intake(new IntakeIO() {}, () -> false, () -> false);
     }
     if (magicCarpet == null) {
       magicCarpet = new MagicCarpet(new MagicCarpetIO() {});
@@ -199,7 +204,7 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
 
-    // Lock to 0° when A button is held
+    // Lock to 0 degrees when A button is held
 
     driverController
         .start()

@@ -9,8 +9,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import java.io.IOException;
 import java.nio.file.Path;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 /**
  * Contains information for location of field element and other useful reference points.
@@ -300,12 +298,19 @@ public class FieldConstants {
         new Translation2d(0, AprilTagLayoutType.OFFICIAL.getLayout().getTagPose(29).get().getY());
   }
 
-  @RequiredArgsConstructor
   public enum FieldType {
     ANDYMARK("andymark"),
     WELDED("welded");
 
-    @Getter private final String jsonFolder;
+    private final String jsonFolder;
+
+    FieldType(String jsonFolder) {
+      this.jsonFolder = jsonFolder;
+    }
+
+    public String getJsonFolder() {
+      return jsonFolder;
+    }
   }
 
   public enum AprilTagLayoutType {
