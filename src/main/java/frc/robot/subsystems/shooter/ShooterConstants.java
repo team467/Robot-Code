@@ -15,8 +15,8 @@ public class ShooterConstants {
   public static final int CURRENT_LIMIT = 20;
   public static final IdleMode IDLE_MODE = IdleMode.kCoast;
 
-  public static final double PID_P = 0.0002;
-  public static final double PID_I = 0.000000;
+  public static final double PID_P = 0.00035;
+  public static final double PID_I = 0.0000002;
   public static final double PID_D = 0.00000;
   public static Transform2d kShooterOffsetFromRobotCenter =
       new Transform2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0));
