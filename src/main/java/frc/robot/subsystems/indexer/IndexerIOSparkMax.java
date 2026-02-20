@@ -24,7 +24,6 @@ public class IndexerIOSparkMax implements IndexerIO {
   private final SparkMax feedUpMotor;
 
   private final DigitalInput leftLimitSwitch;
-
   private final DigitalInput rightLimitSwitch;
 
   public IndexerIOSparkMax() {
