@@ -176,19 +176,17 @@ public class Intake extends SubsystemBase {
 
   // Jack's Chugga Chugga mode
   public Command shakeAndIntake() {
-    return Commands.runOnce(
+    return Commands.repeatingSequence(
+        Commands.runOnce(
             () ->
-                Commands.runOnce(
-                        () ->
-                            Commands.deadline(
-                                moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
-                        this)
-                    .andThen(
-                        () ->
-                            Commands.deadline(
-                                moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
-                        this))
-        .repeatedly();
+                Commands.deadline(
+                    moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+            this),
+        Commands.runOnce(
+            () ->
+                Commands.deadline(
+                    moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+            this));
   }
 
   public Command moveToAngle(double angle) {
