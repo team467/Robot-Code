@@ -35,6 +35,6 @@ public class Orchestrator {
             indexer
                 .run()
                 .until(() -> !indexer.isLeftSwitchPressed() && !indexer.isRightSwitchPressed())),
-        shooter.setTargetVelocity(shooterTargetRPM));
+        shooter.setTargetVelocityRPM(shooterTargetRPM));
   }
 }

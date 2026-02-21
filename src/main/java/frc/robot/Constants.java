@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class Constants {
   // Change this temporarily to override the RobotType, e.g. RobotType.ROBOT_SIMBOT
-  private static final RobotType ROBOT_TYPE_OVERRIDE = null;
+  private static final RobotType ROBOT_TYPE_OVERRIDE = RobotType.ROBOT_BRIEFCASE;
   public static final boolean tuningMode = false;
 
   private static final String ROBOT_FILENAME = "/home/lvuser/robot";
@@ -77,7 +77,10 @@ public class Constants {
   }
 
   public static final Map<RobotType, String> logFolders =
-      Map.of(RobotType.ROBOT_2025_COMP, "/media/sda1");
+      Map.of(
+          RobotType.ROBOT_BRIEFCASE, "/media/sda1",
+          RobotType.ROBOT_2026_COMP, "/media/sda1",
+          RobotType.ROBOT_2025_COMP, "/media/sda1");
 
   public enum RobotType {
     ROBOT_2025_COMP,

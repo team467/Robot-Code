@@ -6,13 +6,10 @@ import static frc.robot.Schematic.shooterTopMotorCanId;
 import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -21,17 +18,13 @@ public class ShooterIOSparkMax implements ShooterIO {
   private final SparkMax middleMotor;
   private final SparkMax bottomMotor;
   private final SparkMax topMotor;
-  private SparkClosedLoopController pidController;
   private final RelativeEncoder middleMotorEncoder;
   private final RelativeEncoder bottomMotorEncoder;
   private final RelativeEncoder topMotorEncoder;
-  private double setpointRPM = 0;
-  private double rpm = 0;
 
   public ShooterIOSparkMax() {
     middleMotor = new SparkMax(shooterMiddleMotorCanId, MotorType.kBrushless);
     bottomMotor = new SparkMax(shooterBottomMotorCanId, MotorType.kBrushless);
-    pidController = middleMotor.getClosedLoopController();
     topMotor = new SparkMax(shooterTopMotorCanId, MotorType.kBrushless);
 
     var middleMotorConfig = new SparkMaxConfig();
@@ -39,8 +32,7 @@ public class ShooterIOSparkMax implements ShooterIO {
         .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
-        .smartCurrentLimit(CURRENT_LIMIT)
-        .apply(new ClosedLoopConfig().p(PID_P).i(PID_I).d(PID_D));
+        .smartCurrentLimit(CURRENT_LIMIT);
 
     var bottomMotorConfig = new SparkMaxConfig();
     bottomMotorConfig
@@ -56,13 +48,15 @@ public class ShooterIOSparkMax implements ShooterIO {
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
 
-    topMotorConfig.follow(middleMotor.getDeviceId(), true);
-    bottomMotorConfig.follow(middleMotor.getDeviceId(), true);
+    topMotorConfig.follow(bottomMotor.getDeviceId(), false);
+    middleMotorConfig.follow(bottomMotor.getDeviceId(), true);
 
     EncoderConfig enc = new EncoderConfig();
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
     enc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
     middleMotorConfig.apply(enc);
+    bottomMotorConfig.apply(enc);
+    topMotorConfig.apply(enc);
 
     middleMotor.configure(
         middleMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -80,62 +74,35 @@ public class ShooterIOSparkMax implements ShooterIO {
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.middleMotorCurrentAmps = middleMotor.getOutputCurrent();
     inputs.middleMotorAppliedVolts = middleMotor.getBusVoltage() * middleMotor.getAppliedOutput();
-    inputs.middleMotorRPM = middleMotorEncoder.getVelocity();
-    rpm = inputs.middleMotorRPM;
+    inputs.middleMotorVelocityRadPerSec = middleMotorEncoder.getVelocity();
 
     inputs.bottomMotorCurrentAmps = bottomMotor.getOutputCurrent();
     inputs.bottomMotorAppliedVolts = bottomMotor.getBusVoltage() * bottomMotor.getAppliedOutput();
-    inputs.bottomMotorRPM = bottomMotorEncoder.getVelocity();
-
-    inputs.setpointRPM = setpointRPM;
-    inputs.atSetpoint = Math.abs(rpm - setpointRPM) < TOLERANCE;
+    inputs.bottomMotorVelocityRadPerSec = bottomMotorEncoder.getVelocity();
 
     inputs.topMotorCurrentAmps = topMotor.getOutputCurrent();
     inputs.topMotorAppliedVolts = topMotor.getBusVoltage() * topMotor.getAppliedOutput();
-    inputs.topMotorRPM = topMotorEncoder.getVelocity();
+    inputs.topMotorVelocityRadPerSec = topMotorEncoder.getVelocity();
 
     inputs.totalAmps =
-        inputs.topMotorCurrentAmps + inputs.middleMotorCurrentAmps + inputs.bottomMotorCurrentAmps;
+        inputs.middleMotorCurrentAmps + inputs.bottomMotorCurrentAmps + inputs.topMotorCurrentAmps;
 
-    inputs.shooterRPM = inputs.middleMotorRPM / 2.5;
-  }
-
-  @Override
-  public void setPercent(double percent) {
-    middleMotor.set(percent);
+    inputs.shooterWheelVelocityRadPerSec =
+        inputs.bottomMotorVelocityRadPerSec / SHOOTER_WHEEL_GEAR_RATIO;
+    inputs.shooterWheelPosition = bottomMotorEncoder.getPosition() / SHOOTER_WHEEL_GEAR_RATIO;
   }
 
   @Override
   public void setVoltage(double volts) {
-    middleMotor.setVoltage(volts);
+    bottomMotor.setVoltage(volts);
   }
 
   @Override
   public void stop() {
-    middleMotor.set(0);
-  }
-
-  @Override
-  public void setTargetVelocity(double setpoint) {
-    this.setpointRPM = setpoint;
-  }
-
-  @Override
-  public void goToSetpoint() {
-    pidController.setSetpoint(setpointRPM, ControlType.kVelocity);
+    bottomMotor.set(0);
   }
 
   private double distanceToRPM(double distanceMeters) {
     return distanceMeters * 2.79775342767 + 16.8379527141;
-  }
-
-  @Override
-  public void setTargetDistance(double distance) {
-    setTargetVelocity(distanceToRPM(distance));
-  }
-
-  @Override
-  public boolean isAtSetpoint() {
-    return Math.abs(rpm - setpointRPM) < TOLERANCE;
   }
 }

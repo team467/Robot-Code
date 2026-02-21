@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
@@ -125,7 +126,10 @@ public class RobotContainer {
         }
 
         case ROBOT_BRIEFCASE -> {
-          leds = new Leds();
+          //          leds = new Leds();
+          //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
+          shooter = new Shooter(new ShooterIOSparkMax());
+          indexer = new Indexer(new IndexerIOSparkMax());
         }
       }
     }
@@ -164,6 +168,15 @@ public class RobotContainer {
     autoChooser.addOption("test path", autos.testPath());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     autoChooser.addOption("CL auto", autos.CenterA());
+
+    autoChooser.addOption(
+        "runCharacterizationQuasistatic", shooter.sysIdQuasistatic(Direction.kForward));
+    autoChooser.addOption("runCharacterizationDynamic", shooter.sysIdDynamic(Direction.kForward));
+
+    autoChooser.addOption(
+        "runCharacterizationQuasistaticReverse", shooter.sysIdQuasistatic(Direction.kReverse));
+    autoChooser.addOption(
+        "runCharacterizationDynamicReverse", shooter.sysIdDynamic(Direction.kReverse));
 
     // Drive SysId
     autoChooser.addOption(
@@ -212,6 +225,31 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+
+    //    driverController
+    //        .x()
+    //        .whileTrue(orchestrator.shootAndIndex(1300))
+    //        .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
+    driverController.x().onTrue(shooter.setTargetVelocityRadians(20)).onFalse(shooter.stop());
+    driverController.y().onTrue(shooter.setTargetVelocityRadians(40)).onFalse(shooter.stop());
+    driverController.b().onTrue(shooter.setTargetVelocityRadians(60)).onFalse(shooter.stop());
+    driverController.a().onTrue(shooter.setTargetVelocityRadians(80)).onFalse(shooter.stop());
+    driverController
+        .rightTrigger()
+        .onTrue(shooter.setTargetVelocityRadians(100))
+        .onFalse(shooter.stop());
+    driverController
+        .leftTrigger()
+        .onTrue(shooter.setTargetVelocityRadians(120))
+        .onFalse(shooter.stop());
+    driverController
+        .leftBumper()
+        .onTrue(shooter.setTargetVelocityRadians(140))
+        .onFalse(shooter.stop());
+    driverController
+        .rightBumper()
+        .onTrue(shooter.setTargetVelocityRadians(160))
+        .onFalse(shooter.stop());
   }
 
   /**
