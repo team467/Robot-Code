@@ -27,29 +27,34 @@ public class Shooter extends SubsystemBase {
 
   public Command stop() {
     return Commands.runOnce(
-        () -> {
-          io.stop();
-          setpointEnabled = false;
-        },
-        this);
+            () -> {
+              io.stop();
+              setpointEnabled = false;
+            },
+            this)
+        .withName("stopShooter()");
   }
 
   public Command setPercent(double percent) {
     return Commands.sequence(
-        Commands.runOnce(() -> setpointEnabled = false, this),
-        Commands.run(() -> io.setVoltage(percent), this));
+            Commands.runOnce(() -> setpointEnabled = false, this),
+            Commands.run(() -> io.setVoltage(percent), this))
+        .withName("shooterSetPercent()");
   }
 
   public Command setVoltage(double volts) {
     return Commands.sequence(
-        Commands.runOnce(() -> setpointEnabled = false, this),
-        Commands.run(() -> io.setVoltage(volts), this));
+            Commands.runOnce(() -> setpointEnabled = false, this),
+            Commands.run(() -> io.setVoltage(volts), this))
+        .withName("shooterSetVoltage()");
   }
 
   public Command setTargetVelocity(double setpoint) {
     return Commands.sequence(
-        Commands.runOnce(() -> setpointEnabled = true, this),
-        Commands.runEnd(() -> io.setTargetVelocity(setpoint), () -> setpointEnabled = false, this));
+            Commands.runOnce(() -> setpointEnabled = true, this),
+            Commands.runEnd(
+                () -> io.setTargetVelocity(setpoint), () -> setpointEnabled = false, this))
+        .withName("setShooterTargetVelocity()");
   }
 
   public void setSetpoint(double setpoint) {
@@ -58,9 +63,10 @@ public class Shooter extends SubsystemBase {
 
   public Command setTargetDistance(double distanceMeters) {
     return Commands.sequence(
-        Commands.runOnce(() -> setpointEnabled = true, this),
-        Commands.runEnd(
-            () -> io.setTargetDistance(distanceMeters), () -> setpointEnabled = false, this));
+            Commands.runOnce(() -> setpointEnabled = true, this),
+            Commands.runEnd(
+                () -> io.setTargetDistance(distanceMeters), () -> setpointEnabled = false, this))
+        .withName("setShooterTargetDistance()");
   }
 
   public boolean isAtSetpoint() {

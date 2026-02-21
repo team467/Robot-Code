@@ -13,11 +13,12 @@ public class MagicCarpet extends SubsystemBase {
   }
 
   public Command start() {
-    return Commands.run(() -> io.setSpeed(MagicCarpetConstants.BELT_SPEED), this);
+    return Commands.run(() -> io.setSpeed(MagicCarpetConstants.BELT_SPEED), this)
+        .withName("startMagicCarpet()");
   }
 
   public Command stop() {
-    return Commands.run(() -> io.stop(), this);
+    return Commands.run(() -> io.stop(), this).withName("stopMagicCarpet()");
   }
 
   @Override
