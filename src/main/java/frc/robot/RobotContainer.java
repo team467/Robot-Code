@@ -183,23 +183,21 @@ public class RobotContainer {
             driverController); // Commented Out Intake --> Add Back
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     choreoChooser = new AutoChooser();
-        NamedCommands.registerCommand(
-            "startShooter", Commands.parallel(orchestrator.preloadBalls(),
-     orchestrator.prepShooter()));
-        NamedCommands.registerCommand("shoot", orchestrator.shootBalls());
-        NamedCommands.registerCommand("shootClimb", orchestrator.shootBallsonClimb());
-        NamedCommands.registerCommand("shootDistance", orchestrator.shootBallsAtDistance());
-        NamedCommands.registerCommand("extend hopper and intake", intake.extendAndIntake());
-        NamedCommands.registerCommand(
-            "stopIntake",
-            Commands.sequence(
-                intake.collapseAndIntake(), Commands.waitSeconds(0.3),
-     intake.stopIntakeCommand()));
-        NamedCommands.registerCommand("climb", Commands.none());
-        NamedCommands.registerCommand(
-            "endTrackingShoot",
-            Commands.run(() -> RobotState.getInstance().trackHub = false)
-                .andThen(shooter.setPercent(0.1)));
+    NamedCommands.registerCommand(
+        "startShooter", Commands.parallel(orchestrator.preloadBalls(), orchestrator.prepShooter()));
+    NamedCommands.registerCommand("shoot", orchestrator.shootBalls());
+    NamedCommands.registerCommand("shootClimb", orchestrator.shootBallsonClimb());
+    NamedCommands.registerCommand("shootDistance", orchestrator.shootBallsAtDistance());
+    NamedCommands.registerCommand("extend hopper and intake", intake.extendAndIntake());
+    NamedCommands.registerCommand(
+        "stopIntake",
+        Commands.sequence(
+            intake.collapseAndIntake(), Commands.waitSeconds(0.3), intake.stopIntakeCommand()));
+    NamedCommands.registerCommand("climb", Commands.none());
+    NamedCommands.registerCommand(
+        "endTrackingShoot",
+        Commands.run(() -> RobotState.getInstance().trackHub = false)
+            .andThen(shooter.setPercent(0.1)));
 
     new PointTowardsZoneTrigger("Hub")
         .onTrue(orchestrator.startShooterSequence())
