@@ -39,19 +39,21 @@ public class Indexer extends SubsystemBase {
 
   public Command run() {
     return Commands.run(
-        () -> {
+                    () -> {
           setVoltage(FEEDUP_VOLT);
-        });
+        })
+        .withName("run");
   }
 
   public Command reverse() {
     return Commands.run(
         () -> {
           setVoltage(-FEEDUP_VOLT);
-        });
+        })
+        .withName("reverse");
   }
 
   public Command stop() {
-    return Commands.run(io::stop);
+    return Commands.run(io::stop).withName("stop");
   }
 }
