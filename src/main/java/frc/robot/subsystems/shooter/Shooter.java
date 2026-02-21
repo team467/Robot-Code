@@ -31,25 +31,25 @@ public class Shooter extends SubsystemBase {
           io.stop();
           setpointEnabled = false;
         },
-        this);
+        this).withName("stop");
   }
 
   public Command setPercent(double percent) {
     return Commands.sequence(
         Commands.runOnce(() -> setpointEnabled = false, this),
-        Commands.run(() -> io.setVoltage(percent), this));
+        Commands.run(() -> io.setVoltage(percent), this)).withName("setPercent");
   }
 
   public Command setVoltage(double volts) {
     return Commands.sequence(
         Commands.runOnce(() -> setpointEnabled = false, this),
-        Commands.run(() -> io.setVoltage(volts), this));
+        Commands.run(() -> io.setVoltage(volts), this).withName("setVoltage"));
   }
 
   public Command setTargetVelocity(double setpoint) {
     return Commands.sequence(
         Commands.runOnce(() -> setpointEnabled = true, this),
-        Commands.runEnd(() -> io.setTargetVelocity(setpoint), () -> setpointEnabled = false, this));
+        Commands.runEnd(() -> io.setTargetVelocity(setpoint), () -> setpointEnabled = false, this).withName("setTargetVelocity"));
   }
 
   public void setSetpoint(double setpoint) {
@@ -60,7 +60,7 @@ public class Shooter extends SubsystemBase {
     return Commands.sequence(
         Commands.runOnce(() -> setpointEnabled = true, this),
         Commands.runEnd(
-            () -> io.setTargetDistance(distanceMeters), () -> setpointEnabled = false, this));
+            () -> io.setTargetDistance(distanceMeters), () -> setpointEnabled = false, this).withName("setTargetDistance"));
   }
 
   public boolean isAtSetpoint() {

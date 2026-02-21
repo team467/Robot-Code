@@ -147,7 +147,7 @@ public class Intake extends SubsystemBase {
   public Command intake() {
     return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS))
         .finallyDo(interrupted -> stopIntake())
-        .withName("Intake");
+        .withName("intake");
   }
 
   public Command outtake() {
@@ -157,11 +157,11 @@ public class Intake extends SubsystemBase {
   }
 
   public Command stopIntakeCommand() {
-    return Commands.run(this::stopIntake).withName("StopIntake");
+    return Commands.run(this::stopIntake).withName("stopIntakeCommand");
   }
 
   public Command stopExtendingCommand() {
-    return Commands.run(this::stopExtend).withName("intakeStopExtending");
+    return Commands.run(this::stopExtend).withName("stopExtendingCommand");
   }
 
   public Command extendAndIntake() {
@@ -173,7 +173,7 @@ public class Intake extends SubsystemBase {
         .until(() -> inputs.getExtendPos >= EXTEND_POS)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake())
-        .withName("ExtendAndIntake");
+        .withName("extendAndIntake");
   }
 
   public Command collapseAndIntake() {
@@ -185,18 +185,18 @@ public class Intake extends SubsystemBase {
         .until(() -> isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS)
         .finallyDo(interrupted -> stopExtend())
         .andThen(intake())
-        .withName("intakeCollapseAndIntake");
+        .withName("collapseAndIntake");
   }
 
   public Command moveToExtendedPosition() {
     return Commands.run(() -> io.extendToPosition(EXTEND_POS))
         .until(() -> Math.abs(inputs.getExtendPos - EXTEND_POS) <= POSITION_TOLERANCE)
-        .withName("intakeMoveToExtendedPosition");
+        .withName("moveToExtendedPosition");
   }
 
   public Command moveToCollapsedPosition() {
     return Commands.run(() -> io.extendToPosition(COLLAPSE_POS))
         .until(() -> Math.abs(inputs.getExtendPos - COLLAPSE_POS) <= POSITION_TOLERANCE)
-        .withName("intakeMoveToCollapsedPosition");
+        .withName("moveToCollapsedPosition");
   }
 }

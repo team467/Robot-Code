@@ -44,7 +44,7 @@ public class Indexer extends SubsystemBase {
             () -> {
               setVoltage(INDEX_VOLT, FEEDUP_VOLT);
             })
-        .withName("IndexerRun");
+        .withName("run");
   }
 
   public Command reverse() {
@@ -52,10 +52,10 @@ public class Indexer extends SubsystemBase {
             () -> {
               setVoltage(-INDEX_VOLT, -FEEDUP_VOLT);
             })
-        .withName("IndexerReverse");
+        .withName("reverse");
   }
 
   public Command stop() {
-    return Commands.run(io::stop).withName("IndexerStop");
+    return Commands.run(io::stop).withName("stop");
   }
 }
