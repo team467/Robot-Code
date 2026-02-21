@@ -36,7 +36,8 @@ public class Climber extends SubsystemBase {
               io.setRotation(degrees);
             },
             this)
-        .until(() -> inputs.atTargetRotation);
+        .until(() -> inputs.atTargetRotation
+        ).withName("toRotation()");
   }
 
   public Command runPercent(double percent) {
