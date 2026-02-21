@@ -42,14 +42,14 @@ public class Indexer extends SubsystemBase {
   public Command run() {
     return Commands.run(
         () -> {
-          setVoltage(INDEX_VOLT, FEEDUP_VOLT);
+          setVoltage(FEEDUP_VOLT);
         });
   }
 
   public Command reverse() {
     return Commands.run(
         () -> {
-          setVoltage(-INDEX_VOLT, -FEEDUP_VOLT);
+          setVoltage(-FEEDUP_VOLT);
         });
   }
 

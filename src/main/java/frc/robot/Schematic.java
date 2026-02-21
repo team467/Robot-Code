@@ -27,7 +27,6 @@ public class Schematic {
   public static final int magicCarpetCanId;
 
   //  indexer subsystem
-  public static final int indexerIndexCanId;
   public static final int indexerFeedupCanId;
   public static final int indexerLeftLimitSwitchDIO;
   public static final int indexerRightLimitSwitchDIO;
@@ -71,7 +70,6 @@ public class Schematic {
         magicCarpetCanId = 0;
 
         // Indexer (CAN IDs and DIOs)
-        indexerIndexCanId = 0;
         indexerFeedupCanId = 0;
         indexerLeftLimitSwitchDIO = 0;
         indexerRightLimitSwitchDIO = 0;
@@ -113,7 +111,6 @@ public class Schematic {
         magicCarpetCanId = 15;
 
         // Indexer (CAN Ids)
-        indexerIndexCanId = 10;
         indexerFeedupCanId = 9;
         indexerLeftLimitSwitchDIO = 0;
         indexerRightLimitSwitchDIO = 1;
@@ -154,7 +151,6 @@ public class Schematic {
         magicCarpetCanId = 0;
 
         // Indexer (CAN IDs and DIOs)
-        indexerIndexCanId = 0;
         indexerFeedupCanId = 0;
         indexerLeftLimitSwitchDIO = 0;
         indexerRightLimitSwitchDIO = 0;
@@ -195,7 +191,6 @@ public class Schematic {
         magicCarpetCanId = 0;
 
         // Indexer (CAN IDs and DIOs)
-        indexerIndexCanId = 0;
         indexerFeedupCanId = 0;
         indexerLeftLimitSwitchDIO = 0;
         indexerRightLimitSwitchDIO = 0;
