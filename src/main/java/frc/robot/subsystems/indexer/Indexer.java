@@ -39,17 +39,17 @@ public class Indexer extends SubsystemBase {
 
   public Command run() {
     return Commands.run(
-                    () -> {
-          setVoltage(FEEDUP_VOLT);
-        })
+            () -> {
+              setVoltage(FEEDUP_VOLT);
+            })
         .withName("run");
   }
 
   public Command reverse() {
     return Commands.run(
-        () -> {
-          setVoltage(-FEEDUP_VOLT);
-        })
+            () -> {
+              setVoltage(-FEEDUP_VOLT);
+            })
         .withName("reverse");
   }
 
