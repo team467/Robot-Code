@@ -146,20 +146,22 @@ public class Intake extends SubsystemBase {
 
   public Command intake() {
     return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS))
-        .finallyDo(interrupted -> stopIntake());
+        .finallyDo(interrupted -> stopIntake())
+        .withName("Intake");
   }
 
   public Command outtake() {
     return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS))
-        .finallyDo(interrupted -> stopIntake());
+        .finallyDo(interrupted -> stopIntake())
+        .withName("outtake");
   }
 
   public Command stopIntakeCommand() {
-    return Commands.run(this::stopIntake);
+    return Commands.run(this::stopIntake).withName("StopIntake");
   }
 
   public Command stopExtendingCommand() {
-    return Commands.run(this::stopExtend);
+    return Commands.run(this::stopExtend).withName("intakeStopExtending");
   }
 
   public Command extendAndIntake() {
@@ -170,7 +172,8 @@ public class Intake extends SubsystemBase {
             })
         .until(() -> inputs.getExtendPos >= EXTEND_POS)
         .finallyDo(interrupted -> stopExtend())
-        .andThen(intake());
+        .andThen(intake())
+        .withName("ExtendAndIntake");
   }
 
   public Command collapseAndIntake() {
@@ -181,16 +184,19 @@ public class Intake extends SubsystemBase {
             })
         .until(() -> isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS)
         .finallyDo(interrupted -> stopExtend())
-        .andThen(intake());
+        .andThen(intake())
+        .withName("intakeCollapseAndIntake");
   }
 
   public Command moveToExtendedPosition() {
     return Commands.run(() -> io.extendToPosition(EXTEND_POS))
-        .until(() -> Math.abs(inputs.getExtendPos - EXTEND_POS) <= POSITION_TOLERANCE);
+        .until(() -> Math.abs(inputs.getExtendPos - EXTEND_POS) <= POSITION_TOLERANCE)
+        .withName("intakeMoveToExtendedPosition");
   }
 
   public Command moveToCollapsedPosition() {
     return Commands.run(() -> io.extendToPosition(COLLAPSE_POS))
-        .until(() -> Math.abs(inputs.getExtendPos - COLLAPSE_POS) <= POSITION_TOLERANCE);
+        .until(() -> Math.abs(inputs.getExtendPos - COLLAPSE_POS) <= POSITION_TOLERANCE)
+        .withName("intakeMoveToCollapsedPosition");
   }
 }
