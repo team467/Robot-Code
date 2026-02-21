@@ -110,20 +110,20 @@ public class Schematic {
         shooterBottomMotorCanId = 13;
 
         // Hopper (CAN Ids)
-        magicCarpetCanId = 14;
+        magicCarpetCanId = 15;
 
         // Indexer (CAN Ids)
-        indexerIndexCanId = 9;
-        indexerFeedupCanId = 10;
+        indexerIndexCanId = 10;
+        indexerFeedupCanId = 9;
         indexerLeftLimitSwitchDIO = 0;
         indexerRightLimitSwitchDIO = 1;
 
         // Intake (CAN IDs)
-        intakeMotorCanId = 0;
-        intakeExtendCanId = 0;
+        intakeMotorCanId = 23;
+        intakeExtendCanId = 14;
 
         // Climber (CAN Ids)
-        climberMotorCanId = 15;
+        climberMotorCanId = 22;
       }
 
       case ROBOT_BRIEFCASE -> {
