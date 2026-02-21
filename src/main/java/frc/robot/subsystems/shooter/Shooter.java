@@ -52,7 +52,7 @@ public class Shooter extends SubsystemBase {
     return Commands.sequence(
         Commands.runOnce(() -> setpointEnabled = true, this),
         Commands.runEnd(() -> io.setTargetVelocity(setpoint), () -> setpointEnabled = false, this)
-            .withName("setTargetVelocity"));
+            ).withName("setTargetVelocity");
   }
 
   public void setSetpoint(double setpoint) {
@@ -64,7 +64,7 @@ public class Shooter extends SubsystemBase {
         Commands.runOnce(() -> setpointEnabled = true, this),
         Commands.runEnd(
                 () -> io.setTargetDistance(distanceMeters), () -> setpointEnabled = false, this)
-            .withName("setTargetDistance"));
+            ).withName("setTargetDistance");
   }
 
   public boolean isAtSetpoint() {
