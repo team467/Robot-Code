@@ -7,11 +7,8 @@ public interface IndexerIO {
   @AutoLog
   class IndexerIOInputs {
 
-    public double indexPercentOutput = 0.0;
     public double feedUpPercentOutput = 0.0;
-    public double indexVolts = 0.0;
     public double feedUpVolts = 0.0;
-    public double indexAmps = 0.0;
     public double feedUpAmps = 0.0;
     public boolean ballAtLeftSwitch = false;
     public boolean ballAtRightSwitch = false;
@@ -21,7 +18,7 @@ public interface IndexerIO {
 
   default void setPercent(double indexPercent, double feedUpPercent) {}
 
-  default void setVoltage(double indexVolts, double feedUpVolts) {}
+  default void setVoltage(double feedUpVolts) {}
 
   default void stop() {}
 

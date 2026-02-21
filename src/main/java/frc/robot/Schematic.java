@@ -27,7 +27,6 @@ public class Schematic {
   public static final int magicCarpetCanId;
 
   //  indexer subsystem
-  public static final int indexerIndexCanId;
   public static final int indexerFeedupCanId;
   public static final int indexerLeftLimitSwitchDIO;
   public static final int indexerRightLimitSwitchDIO;
@@ -71,7 +70,6 @@ public class Schematic {
         magicCarpetCanId = 0;
 
         // Indexer (CAN IDs and DIOs)
-        indexerIndexCanId = 0;
         indexerFeedupCanId = 0;
         indexerLeftLimitSwitchDIO = 0;
         indexerRightLimitSwitchDIO = 0;
@@ -82,6 +80,47 @@ public class Schematic {
 
         // Climber (CAN IDs)
         climberMotorCanId = 0;
+      }
+
+      case ROBOT_2026_COMP -> {
+        // Device CAN Id
+        pigeonCanId = 17;
+
+        // Drive (CAN Ids)
+        frontLeftDriveCanId = 1;
+        frontLeftTurnCanId = 2;
+        frontRightDriveCanId = 3;
+        frontRightTurnCanId = 4;
+
+        backRightDriveCanId = 5;
+        backRightTurnCanId = 6;
+        backLeftDriveCanId = 7;
+        backLeftTurnCanId = 8;
+
+        frontLeftAbsoluteEncoderCanId = 18;
+        frontRightAbsoluteEncoderCanId = 19;
+        backRightAbsoluteEncoderCanId = 20;
+        backLeftAbsoluteEncoderCanId = 21;
+
+        // Shooter (CAN Ids)
+        shooterTopMotorCanId = 11;
+        shooterMiddleMotorCanId = 12;
+        shooterBottomMotorCanId = 13;
+
+        // Hopper (CAN Ids)
+        magicCarpetCanId = 15;
+
+        // Indexer (CAN Ids)
+        indexerFeedupCanId = 9;
+        indexerLeftLimitSwitchDIO = 0;
+        indexerRightLimitSwitchDIO = 1;
+
+        // Intake (CAN IDs)
+        intakeMotorCanId = 23;
+        intakeExtendCanId = 14;
+
+        // Climber (CAN Ids)
+        climberMotorCanId = 22;
       }
 
       case ROBOT_BRIEFCASE -> {
@@ -112,7 +151,6 @@ public class Schematic {
         magicCarpetCanId = 0;
 
         // Indexer (CAN IDs and DIOs)
-        indexerIndexCanId = 0;
         indexerFeedupCanId = 0;
         indexerLeftLimitSwitchDIO = 0;
         indexerRightLimitSwitchDIO = 0;
@@ -153,7 +191,6 @@ public class Schematic {
         magicCarpetCanId = 0;
 
         // Indexer (CAN IDs and DIOs)
-        indexerIndexCanId = 0;
         indexerFeedupCanId = 0;
         indexerLeftLimitSwitchDIO = 0;
         indexerRightLimitSwitchDIO = 0;
