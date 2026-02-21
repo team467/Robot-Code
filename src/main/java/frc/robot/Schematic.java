@@ -84,6 +84,48 @@ public class Schematic {
         climberMotorCanId = 0;
       }
 
+      case ROBOT_2026_COMP -> {
+        // Device CAN Id
+        pigeonCanId = 17;
+
+        // Drive (CAN Ids)
+        frontLeftDriveCanId = 1;
+        frontLeftTurnCanId = 2;
+        frontRightDriveCanId = 3;
+        frontRightTurnCanId = 4;
+
+        backRightDriveCanId = 5;
+        backRightTurnCanId = 6;
+        backLeftDriveCanId = 7;
+        backLeftTurnCanId = 8;
+
+        frontLeftAbsoluteEncoderCanId = 18;
+        frontRightAbsoluteEncoderCanId = 19;
+        backRightAbsoluteEncoderCanId = 20;
+        backLeftAbsoluteEncoderCanId = 21;
+
+        // Shooter (CAN Ids)
+        shooterTopMotorCanId = 11;
+        shooterMiddleMotorCanId = 12;
+        shooterBottomMotorCanId = 13;
+
+        // Hopper (CAN Ids)
+        magicCarpetCanId = 14;
+
+        // Indexer (CAN Ids)
+        indexerIndexCanId = 9;
+        indexerFeedupCanId = 10;
+        indexerLeftLimitSwitchDIO = 0;
+        indexerRightLimitSwitchDIO = 1;
+
+        // Intake (CAN IDs)
+        intakeMotorCanId = 0;
+        intakeExtendCanId = 0;
+
+        // Climber (CAN Ids)
+        climberMotorCanId = 15;
+      }
+
       case ROBOT_BRIEFCASE -> {
         // Drive (CAN IDs)
         pigeonCanId = 0;
