@@ -18,8 +18,9 @@ public class ShooterConstants {
   public static final double PID_P = 0.0002;
   public static final double PID_I = 0.000000;
   public static final double PID_D = 0.00000;
+  //TODO: check this pose logged in sim
   public static Transform2d kShooterOffsetFromRobotCenter =
-      new Transform2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0));
+      new Transform2d(new Translation2d(-0.163, 0.0), new Rotation2d(0.0));
 
   public static final double CLOSE_RAMP_RATE = 5;
 }
