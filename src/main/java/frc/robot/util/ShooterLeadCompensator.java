@@ -36,6 +36,12 @@ public class ShooterLeadCompensator {
 
     Translation2d aimPoint = targetPosition;
 
+    /** 
+    Our function for defining our target pose is dependant on the distance it takes for the ball to reach the final pose.
+    This circular reasoning is a problem. To fix it we assume that distance is equal to our current "target" and adjust our target
+    pose by the distance to the current "target." After around 10 iterations we will have a very good approximation for the
+    optimal target.
+    **/
     for (int i = 0; i < 10; i++) {
       double distance = aimPoint.minus(shooterPos).getNorm();
       double t = shooter.getAirTimeSeconds(distance);
