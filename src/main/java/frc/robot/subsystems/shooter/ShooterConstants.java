@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class ShooterConstants {
-  public static final double SHOOTER_HEIGHT = 0.84; // meters
+  public static final double SHOOTER_HEIGHT = 0.701; // meters
   public static final double SHOOTER_ANGLE_DEGREES = 45.0;
   public static final double ENCODER_POSITION_CONVERSION = 1.0;
   public static final double ENCODER_VELOCITY_CONVERSION = 1.0;
