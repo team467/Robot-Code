@@ -36,7 +36,7 @@ public class ShooterIOSparkMax implements ShooterIO {
 
     var bottomMotorConfig = new SparkMaxConfig();
     bottomMotorConfig
-        .inverted(false)
+        .inverted(true)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);

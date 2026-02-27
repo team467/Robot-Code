@@ -57,7 +57,7 @@ public class Shooter extends SubsystemBase {
 
       double ff = feedforward.calculate(rampedTarget);
       double pidOutput = pid.calculate(inputs.shooterWheelVelocityRadPerSec, rampedTarget);
-      double voltage = ff + pidOutput;
+      double voltage = ff;
 
       // Clamp to valid voltage range
       voltage =

@@ -231,21 +231,12 @@ public class RobotContainer {
     //        .whileTrue(orchestrator.shootAndIndex(1300))
     //        .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
     driverController.x().onTrue(shooter.setTargetVelocityRadians(20)).onFalse(shooter.stop());
-    driverController.y().onTrue(shooter.setTargetVelocityRadians(40)).onFalse(shooter.stop());
-    driverController.b().onTrue(shooter.setTargetVelocityRadians(60)).onFalse(shooter.stop());
-    driverController.a().onTrue(shooter.setTargetVelocityRadians(80)).onFalse(shooter.stop());
-    driverController
-        .rightTrigger()
-        .onTrue(shooter.setTargetVelocityRadians(100))
-        .onFalse(shooter.stop());
-    driverController
-        .leftTrigger()
-        .onTrue(shooter.setTargetVelocityRadians(120))
-        .onFalse(shooter.stop());
+    driverController.b().onTrue(shooter.setTargetVelocityRadians(80)).onFalse(shooter.stop());
     driverController
         .leftBumper()
-        .onTrue(shooter.setTargetVelocityRadians(140))
-        .onFalse(shooter.stop());
+        .whileTrue(
+            Commands.parallel(
+                magicCarpet.start(), indexer.run(), shooter.setTargetVelocityRadians(120)));
     driverController
         .rightBumper()
         .onTrue(shooter.setTargetVelocityRadians(160))
