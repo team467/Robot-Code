@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.function.Supplier;
 
 public class ShooterLeadCompensator {
@@ -14,9 +13,7 @@ public class ShooterLeadCompensator {
   private final Shooter shooter;
 
   public ShooterLeadCompensator(Drive drive, Shooter shooter) {
-    this.shooterPosition =
-        () ->
-            new Translation2d();
+    this.shooterPosition = () -> new Translation2d();
 
     this.robotVelocity =
         () ->

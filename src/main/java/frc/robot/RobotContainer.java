@@ -160,7 +160,7 @@ public class RobotContainer {
       climber = new Climber(new ClimberIO() {});
     }
 
-    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake,driverController);
+    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, driverController);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     Autos autos = new Autos(drive);
     // Set up auto routines
