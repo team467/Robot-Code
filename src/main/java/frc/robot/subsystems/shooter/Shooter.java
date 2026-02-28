@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-import org.littletonrobotics.junction.Logger;
 import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
   private final ShooterIO io;
@@ -153,11 +153,11 @@ public class Shooter extends SubsystemBase {
   // TODO: empirically determine the relationship between distance and shooter velocity
 
   public double calculateSetpoint(DoubleSupplier distance) {
-    //calculate radians per second depending on distance
+    // calculate radians per second depending on distance
     return inputs.setpointRPM;
   }
 
-  public double getSetpoint(){
+  public double getSetpoint() {
     return inputs.setpointRPM;
   }
 }
