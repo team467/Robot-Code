@@ -7,6 +7,7 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -169,7 +170,14 @@ public class RobotContainer {
     orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, driverController);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     Autos autos = new Autos(drive);
-    // Set up auto routines
+//    NamedCommands.registerCommand("startShooter",Commands.parallel(orchestrator.preloadBalls(),orchestrator.prepShooter()));
+//    NamedCommands.registerCommand("shoot",orchestrator.shootBalls());
+//    NamedCommands.registerCommand("shootClimb",orchestrator.shootBallsonClimb());
+//    NamedCommands.registerCommand("shootDistance",orchestrator.shootBallsAtDistance());
+//    NamedCommands.registerCommand("extend hopper and intake",intake.extendAndIntake());
+//    NamedCommands.registerCommand("stopIntake",Commands.sequence(intake.collapseAndIntake(),Commands.waitSeconds(0.3),intake.stopIntakeCommand()));
+//    NamedCommands.registerCommand("climb",Commands.none());
+//    // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("test path", autos.testPath());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
