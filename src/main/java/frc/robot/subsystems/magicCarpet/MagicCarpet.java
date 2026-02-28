@@ -1,4 +1,4 @@
-package frc.robot.subsystems.magiccarpet;
+package frc.robot.subsystems.magicCarpet;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -13,12 +13,12 @@ public class MagicCarpet extends SubsystemBase {
     this.io = io;
   }
 
-  public Command start() {
-    return Commands.run(() -> io.setSpeed(MagicCarpetConstants.BELT_SPEED), this).withName("start");
+  public Command run() {
+    return Commands.run(() -> io.setSpeed(MagicCarpetConstants.BELT_SPEED), this).withName("start").finallyDo(this::stop);
   }
 
   public Command stop() {
-    return Commands.run(() -> io.stop(), this).withName("stop");
+    return Commands.runOnce(io::stop, this).withName("stop");
   }
 
   @Override
