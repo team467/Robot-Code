@@ -90,6 +90,9 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.shooterWheelVelocityRadPerSec =
         inputs.bottomMotorVelocityRadPerSec / SHOOTER_WHEEL_GEAR_RATIO;
     inputs.shooterWheelPosition = bottomMotorEncoder.getPosition() / SHOOTER_WHEEL_GEAR_RATIO;
+
+    inputs.setpointRPM = bottomMotor.getClosedLoopController().getSetpoint();
+    inputs.atSetpoint = bottomMotor.getClosedLoopController().isAtSetpoint();
   }
 
   @Override

@@ -1,6 +1,9 @@
 package frc.robot.subsystems.shooter;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class ShooterConstants {
   public static final double ENCODER_POSITION_CONVERSION = 1;
@@ -19,4 +22,8 @@ public class ShooterConstants {
   public static final double MAX_VOLTAGE = 12.0;
 
   public static final double TOLERANCE = 1.0; // measured in radians
+
+  public static Transform2d kShooterOffsetFromRobotCenter =
+      new Transform2d(new Translation2d(-0.163, 0.0), new Rotation2d(0.0));
+
 }

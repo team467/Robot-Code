@@ -30,9 +30,9 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
-import frc.robot.subsystems.magiccarpet.MagicCarpet;
-import frc.robot.subsystems.magiccarpet.MagicCarpetIO;
-import frc.robot.subsystems.magiccarpet.MagicCarpetSparkMax;
+import frc.robot.subsystems.magicCarpet.MagicCarpet;
+import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
+import frc.robot.subsystems.magicCarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
@@ -238,8 +238,7 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             Commands.parallel(
-                magicCarpet.start(), indexer.run(), shooter.setTargetVelocityRadians(120)))
-        .onFalse(Commands.parallel(magicCarpet.stop(), indexer.stop(), shooter.stop()));
+                magicCarpet.run(), indexer.run(), shooter.setTargetVelocityRadians(120)));
     driverController
         .rightBumper()
         .onTrue(shooter.setTargetVelocityRadians(160))

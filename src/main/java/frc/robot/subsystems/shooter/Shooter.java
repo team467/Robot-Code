@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import org.littletonrobotics.junction.Logger;
+import java.util.function.DoubleSupplier;
 
 public class Shooter extends SubsystemBase {
   private final ShooterIO io;
@@ -140,15 +141,23 @@ public class Shooter extends SubsystemBase {
         this);
   }
 
-  public Command setTargetDistance(double distanceMeters) {
-    return Commands.runOnce(
-        () -> {
-          targetRadPerSec = distanceMeters;
-          controllerEnabled = true;
-        });
-  }
-
   public boolean isAtSetpoint() {
     return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetRadPerSec)) < TOLERANCE;
+  }
+
+  // TODO: empirically determine the relationship between distance and air time
+  public double getAirTimeSeconds(double distance) {
+    return distance;
+  }
+
+  // TODO: empirically determine the relationship between distance and shooter velocity
+
+  public double calculateSetpoint(DoubleSupplier distance) {
+    //calculate radians per second depending on distance
+    return inputs.setpointRPM;
+  }
+
+  public double getSetpoint(){
+    return inputs.setpointRPM;
   }
 }
