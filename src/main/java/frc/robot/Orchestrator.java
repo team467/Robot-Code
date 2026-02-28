@@ -91,11 +91,11 @@ public class Orchestrator {
 
   public Command shootBallsVelocity(double targetVelocity) {
     return Commands.parallel(
-            preloadBalls()
-                .andThen(Commands.parallel(magicCarpet.run(), indexer.run()))
-                .onlyWhile(() -> RobotState.getInstance().shooterAtSpeed),
-            shooter.setTargetVelocityRadians(targetVelocity))
-        //        .onlyWhile(
+            Commands.either(
+                preloadBalls(),
+                Commands.parallel(magicCarpet.run(), indexer.run()),
+                () -> !RobotState.getInstance().shooterAtSpeed),
+            shooter.setTargetVelocityRadians(targetVelocity)) //        .onlyWhile(
         //            () ->
         //                shooter.getSetpoint() > 0
         //                    && RobotState.getInstance().shooterAtSpeed
