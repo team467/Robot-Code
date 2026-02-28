@@ -253,6 +253,7 @@ public class RobotContainer {
     driverController.a().whileTrue(intake.intake());
     driverController.b().whileTrue(intake.moveToAngle(0));
     driverController.y().whileTrue(intake.moveToAngle(IntakeConstants.EXTEND_POS));
+    driverController.x().whileTrue(indexer.run());
     //    driverController.x().onTrue(shooter.setTargetVelocityRPM(700)).onFalse(shooter.stop());
     driverController.leftBumper().whileTrue(orchestrator.shootBallsVelocity(1200));
     //    driverController
