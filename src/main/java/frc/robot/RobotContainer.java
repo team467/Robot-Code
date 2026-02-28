@@ -98,13 +98,13 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(1),
                   new ModuleIOTalonSpark(2),
                   new ModuleIOTalonSpark(3));
-          vision =
-              new Vision(
-                  drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
-                  new VisionIOPhotonVision(camera2Name, robotToCamera2),
-                  new VisionIOPhotonVision(camera3Name, robotToCamera3));
+          //          vision =
+          //              new Vision(
+          //                  drive::addVisionMeasurement,
+          //                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
+          //                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
+          //                  new VisionIOPhotonVision(camera2Name, robotToCamera2),
+          //                  new VisionIOPhotonVision(camera3Name, robotToCamera3));
           leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
@@ -160,7 +160,7 @@ public class RobotContainer {
       climber = new Climber(new ClimberIO() {});
     }
 
-    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake);
+    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake,driverController);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     Autos autos = new Autos(drive);
     // Set up auto routines
@@ -232,11 +232,14 @@ public class RobotContainer {
     //        .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
     driverController.x().onTrue(shooter.setTargetVelocityRadians(20)).onFalse(shooter.stop());
     driverController.b().onTrue(shooter.setTargetVelocityRadians(80)).onFalse(shooter.stop());
+    driverController.a().onTrue(orchestrator.preloadBalls());
+    driverController.y().onTrue(indexer.run());
     driverController
         .leftBumper()
         .whileTrue(
             Commands.parallel(
-                magicCarpet.start(), indexer.run(), shooter.setTargetVelocityRadians(120)));
+                magicCarpet.start(), indexer.run(), shooter.setTargetVelocityRadians(120)))
+        .onFalse(Commands.parallel(magicCarpet.stop(), indexer.stop(), shooter.stop()));
     driverController
         .rightBumper()
         .onTrue(shooter.setTargetVelocityRadians(160))

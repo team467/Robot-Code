@@ -33,7 +33,7 @@ public class Shooter extends SubsystemBase {
 
   // Slew rate limiter: ramps the target velocity gradually (rad/s per second)
   // This prevents current spikes that cause oscillation with a 20A limit
-  private final SlewRateLimiter targetRamper = new SlewRateLimiter(100);
+  private final SlewRateLimiter targetRamper = new SlewRateLimiter(600);
 
   public Shooter(ShooterIO io) {
     this.io = io;

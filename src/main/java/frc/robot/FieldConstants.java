@@ -73,6 +73,10 @@ public class FieldConstants {
 
   /** Hub related constants */
   public static class Hub {
+    public static final Translation2d blueCenter =
+        new Translation2d(Units.inchesToMeters(158.6), fieldWidth / 2.0);
+    public static final Translation2d redCenter =
+        new Translation2d(fieldLength - Units.inchesToMeters(158.6), fieldWidth / 2.0);
 
     // Dimensions
     public static final double width = Units.inchesToMeters(47.0);
