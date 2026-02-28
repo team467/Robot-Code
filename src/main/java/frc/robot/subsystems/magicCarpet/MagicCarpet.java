@@ -14,7 +14,9 @@ public class MagicCarpet extends SubsystemBase {
   }
 
   public Command run() {
-    return Commands.run(() -> io.setSpeed(MagicCarpetConstants.BELT_SPEED), this).withName("start").finallyDo(this::stop);
+    return Commands.run(() -> io.setSpeed(MagicCarpetConstants.BELT_SPEED), this)
+        .withName("start")
+        .finallyDo(this::stop);
   }
 
   public Command stop() {
