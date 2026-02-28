@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
+import frc.robot.RobotState;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -34,7 +35,7 @@ public class Shooter extends SubsystemBase {
 
   // Slew rate limiter: ramps the target velocity gradually (rad/s per second)
   // This prevents current spikes that cause oscillation with a 20A limit
-  private final SlewRateLimiter targetRamper = new SlewRateLimiter(600);
+  private final SlewRateLimiter targetRamper = new SlewRateLimiter(800);
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -51,7 +52,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-
+    RobotState.getInstance().shooterAtSpeed = inputs.atSetpoint;
     if (controllerEnabled) {
       // Ramp toward the target to avoid current spikes
       rampedTarget = targetRamper.calculate(targetRadPerSec);

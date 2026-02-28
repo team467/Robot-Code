@@ -106,11 +106,6 @@ public class IntakeIOKraken implements IntakeIO {
   }
 
   @Override
-  public boolean isCollapsed() {
-    return collapsedLimitSwitch.get();
-  }
-
-  @Override
   public void setPercentIntake(double intakePercent) {
     intakeMotor.set(intakePercent);
   }
@@ -139,7 +134,7 @@ public class IntakeIOKraken implements IntakeIO {
   }
 
   @Override
-  public boolean isHopperCollapsed() {
+  public boolean isCollapsed() {
     return collapsedLimitSwitch.get();
   }
 

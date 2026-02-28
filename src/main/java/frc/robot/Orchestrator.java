@@ -3,9 +3,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -19,7 +16,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
-import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -94,15 +90,17 @@ public class Orchestrator {
   }
 
   public Command shootBallsVelocity(double targetVelocity) {
-    return preloadBalls()
-        .andThen(shooter.setTargetVelocityRPM(targetVelocity))
-        .andThen(Commands.parallel(magicCarpet.run(), indexer.run()))
-        .onlyWhile(
-            () ->
-                shooter.getSetpoint() > 0
-                    && RobotState.getInstance().shooterAtSpeed
-                    && RobotState.getInstance().isAlignedToHub)
-        .finallyDo(() -> Commands.parallel(magicCarpet.stop(), preloadBalls()));
+    return Commands.parallel(
+            preloadBalls()
+                .andThen(Commands.parallel(magicCarpet.run(), indexer.run()))
+                .onlyWhile(() -> RobotState.getInstance().shooterAtSpeed),
+            shooter.setTargetVelocityRadians(targetVelocity))
+        //        .onlyWhile(
+        //            () ->
+        //                shooter.getSetpoint() > 0
+        //                    && RobotState.getInstance().shooterAtSpeed
+        //                    && RobotState.getInstance().isAlignedToHub)
+        .finallyDo(this::preloadBalls);
   }
 
   public Command shootBallsDistance(DoubleSupplier targetDistance) {
@@ -110,8 +108,7 @@ public class Orchestrator {
   }
 
   public Command preloadBalls() {
-    return indexer
-        .run()
+    return Commands.parallel(magicCarpet.run(), indexer.runPreloadSpeeds())
         .until(() -> indexer.isLeftSwitchPressed() || indexer.isRightSwitchPressed());
   }
 
@@ -153,40 +150,40 @@ public class Orchestrator {
                     .getDistance(drive.getPose().getTranslation())));
   }
 
-  public Command startFlywheelAllianceShift() {
-    return Commands.sequence(
-        Commands.waitUntil(() -> !DriverStation.getGameSpecificMessage().isEmpty()),
-        Commands.runOnce(
-            () -> {
-              Optional<Alliance> alliance = DriverStation.getAlliance();
-              String gameData = DriverStation.getGameSpecificMessage();
-              double gameDataTime = Timer.getMatchTime();
-              if (alliance.isEmpty()) {
-                System.err.print("alliance data not found");
-                return;
-              }
-              double start1 = 0;
-              double start2 = 0;
-              if (gameData.charAt(0) == 'B') {
-                if (alliance.get() == DriverStation.Alliance.Blue) {
-                  start1 = 54 - gameDataTime;
-                  start2 = 104 - gameDataTime;
-                } else if (alliance.get() == DriverStation.Alliance.Red) {
-                  start1 = 79 - gameDataTime;
-                  start2 = 129 - gameDataTime;
-                }
-              } else if (gameData.charAt(0) == 'R') {
-                if (alliance.get() == DriverStation.Alliance.Red) {
-                  start1 = 54 - gameDataTime;
-                  start2 = 104 - gameDataTime;
-                } else if (alliance.get() == DriverStation.Alliance.Blue) {
-                  start1 = 79 - gameDataTime;
-                  start2 = 129 - gameDataTime;
-                }
-              }
-              Commands.waitSeconds(start1).andThen(spinUpShooterWhileDriving()).isScheduled();
-
-              Commands.waitSeconds(start2).andThen(spinUpShooterWhileDriving()).isScheduled();
-            }));
-  }
+  //  public Command startFlywheelAllianceShift() {
+  //    return Commands.sequence(
+  //        Commands.waitUntil(() -> !DriverStation.getGameSpecificMessage().isEmpty()),
+  //        Commands.runOnce(
+  //            () -> {
+  //              Optional<Alliance> alliance = DriverStation.getAlliance();
+  //              String gameData = DriverStation.getGameSpecificMessage();
+  //              double gameDataTime = Timer.getMatchTime();
+  //              if (alliance.isEmpty()) {
+  //                System.err.print("alliance data not found");
+  //                return;
+  //              }
+  //              double start1 = 0;
+  //              double start2 = 0;
+  //              if (gameData.charAt(0) == 'B') {
+  //                if (alliance.get() == DriverStation.Alliance.Blue) {
+  //                  start1 = 54 - gameDataTime;
+  //                  start2 = 104 - gameDataTime;
+  //                } else if (alliance.get() == DriverStation.Alliance.Red) {
+  //                  start1 = 79 - gameDataTime;
+  //                  start2 = 129 - gameDataTime;
+  //                }
+  //              } else if (gameData.charAt(0) == 'R') {
+  //                if (alliance.get() == DriverStation.Alliance.Red) {
+  //                  start1 = 54 - gameDataTime;
+  //                  start2 = 104 - gameDataTime;
+  //                } else if (alliance.get() == DriverStation.Alliance.Blue) {
+  //                  start1 = 79 - gameDataTime;
+  //                  start2 = 129 - gameDataTime;
+  //                }
+  //              }
+  //              Commands.waitSeconds(start1).andThen(spinUpShooterWhileDriving()).isScheduled();
+  //
+  //              Commands.waitSeconds(start2).andThen(spinUpShooterWhileDriving()).isScheduled();
+  //            }));
+  //  }
 }

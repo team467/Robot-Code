@@ -27,6 +27,7 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOKraken;
 import frc.robot.subsystems.leds.Leds;
@@ -235,19 +236,23 @@ public class RobotContainer {
     //        .x()
     //        .whileTrue(orchestrator.shootAndIndex(1300))
     //        .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
-    driverController.x().onTrue(shooter.setTargetVelocityRadians(20)).onFalse(shooter.stop());
-    driverController.b().onTrue(shooter.setTargetVelocityRadians(80)).onFalse(shooter.stop());
-    driverController.a().onTrue(orchestrator.preloadBalls());
-    driverController.y().onTrue(indexer.run());
-    driverController
-        .leftBumper()
-        .whileTrue(
-            Commands.parallel(
-                magicCarpet.run(), indexer.run(), shooter.setTargetVelocityRadians(120)));
-    driverController
-        .rightBumper()
-        .onTrue(shooter.setTargetVelocityRadians(160))
-        .onFalse(shooter.stop());
+
+    //    driverController.x().onTrue(shooter.setTargetVelocityRadians(20)).onFalse(shooter.stop());
+    //    driverController.b().onTrue(shooter.setTargetVelocityRadians(80)).onFalse(shooter.stop());
+    //    driverController.a().onTrue(orchestrator.preloadBalls());
+    //    driverController.y().onTrue(indexer.run());
+
+    driverController.a().whileTrue(intake.intake());
+    driverController.b().whileTrue(intake.moveToAngle(0));
+    driverController.y().whileTrue(intake.moveToAngle(IntakeConstants.EXTEND_POS));
+    //    driverController.x().onTrue(shooter.setTargetVelocityRPM(700)).onFalse(shooter.stop());
+    driverController.leftBumper().whileTrue(orchestrator.shootBallsVelocity(1200));
+    //    driverController
+    //        .leftBumper()
+    //        .whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+    //    driverController
+    //        .rightBumper()
+    //        .whileTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
   }
 
   /**

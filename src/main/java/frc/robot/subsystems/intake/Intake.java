@@ -43,7 +43,6 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     inputs.stalledExtended = stalledExtend;
     inputs.stalledCollapsed = stalledCollapse;
-    inputs.stowed = isStowed;
     inputs.stallExtendTimer = stallExtendTimer.get();
     inputs.stallCollapseTimer = stallCollapseTimer.get();
     Logger.processInputs("Intake", inputs);
@@ -134,7 +133,7 @@ public class Intake extends SubsystemBase {
   }
 
   private boolean isHopperCollapsed() {
-    return io.isHopperCollapsed();
+    return io.isCollapsed();
   }
 
   private boolean isStallingExtend() {

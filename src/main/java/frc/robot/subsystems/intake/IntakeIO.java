@@ -18,7 +18,6 @@ public interface IntakeIO {
     public boolean hasSetpoint = false;
     public double setpointValue = 0.0;
     public double getExtendPos = 0.0;
-    public boolean stowed = false;
     public boolean stalledExtended = false;
     public boolean stalledCollapsed = false;
     public double stallExtendTimer = 0.0;
@@ -38,10 +37,6 @@ public interface IntakeIO {
   default void stop() {}
 
   default void goToPos(double pos) {}
-
-  default boolean isHopperCollapsed() {
-    return false;
-  }
 
   default void setPIDEnabled(boolean enabled) {}
 

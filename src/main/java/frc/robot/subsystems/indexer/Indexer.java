@@ -1,6 +1,7 @@
 package frc.robot.subsystems.indexer;
 
 import static frc.robot.subsystems.indexer.IndexConstants.FEEDUP_VOLT;
+import static frc.robot.subsystems.indexer.IndexConstants.PRELOAD_VOLT;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -42,7 +43,18 @@ public class Indexer extends SubsystemBase {
             () -> {
               setVoltage(FEEDUP_VOLT);
             })
+        .finallyDo(this::stop)
         .withName("run");
+  }
+
+  public Command runPreloadSpeeds() {
+    return Commands.run(
+            () -> {
+              setVoltage(PRELOAD_VOLT);
+            },
+            this)
+        .finallyDo(this::stop)
+        .withName("runPeriodic");
   }
 
   public Command reverse() {
@@ -50,6 +62,7 @@ public class Indexer extends SubsystemBase {
             () -> {
               setVoltage(-FEEDUP_VOLT);
             })
+        .finallyDo(this::stop)
         .withName("reverse");
   }
 

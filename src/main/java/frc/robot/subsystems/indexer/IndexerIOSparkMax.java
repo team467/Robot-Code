@@ -53,7 +53,7 @@ public class IndexerIOSparkMax implements IndexerIO {
     inputs.feedUpVolts = feedUpMotor.getBusVoltage() * feedUpMotor.getAppliedOutput();
     inputs.feedUpAmps = feedUpMotor.getOutputCurrent();
     inputs.ballAtLeftSwitch = !leftLimitSwitch.get();
-    inputs.ballAtRightSwitch = rightLimitSwitch.get();
+    inputs.ballAtRightSwitch = !rightLimitSwitch.get();
   }
 
   @Override

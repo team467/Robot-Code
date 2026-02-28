@@ -125,11 +125,6 @@ public class IntakeIOSparkMax implements IntakeIO {
     }
   }
 
-  @Override
-  public boolean isHopperCollapsed() {
-    return collapsedLimitSwitch.get();
-  }
-
   public void setPIDEnabled(boolean enabled) {
     this.usingPID = enabled;
   }
