@@ -23,6 +23,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final BooleanSupplier limitSwitchDisabled;
+  private final BooleanSupplier pidModeDisabled;
 
   /**
    * Constructor for the Intake subsystem
@@ -31,9 +32,10 @@ public class Intake extends SubsystemBase {
    * @param limitSwitchDisabled A supplier to return whether the limit switch is currently disabled
    *     or not. If disabled, uses slipping to control intake.
    */
-  public Intake(IntakeIO io, BooleanSupplier limitSwitchDisabled) {
+  public Intake(IntakeIO io, BooleanSupplier limitSwitchDisabled, BooleanSupplier pidModeDisabled) {
     this.io = io;
     this.limitSwitchDisabled = limitSwitchDisabled;
+    this.pidModeDisabled = pidModeDisabled;
   }
 
   @Override
@@ -46,6 +48,10 @@ public class Intake extends SubsystemBase {
     inputs.stallCollapseTimer = stallCollapseTimer.get();
     Logger.processInputs("Intake", inputs);
 
+    // setPID mode in io to true or false depending on the passed in trigger
+    if (pidModeDisabled.getAsBoolean() == io.getPIDEnabled()) {
+      io.setPIDEnabled(!pidModeDisabled.getAsBoolean());
+    }
     // Non-slipping control calibration based on the limit switch state
     if (!limitSwitchDisabled.getAsBoolean() && isHopperCollapsed()) {
       io.resetExtendEncoder(0);
@@ -145,15 +151,14 @@ public class Intake extends SubsystemBase {
   }
 
   public Command intake() {
-    return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS))
-        .finallyDo(interrupted -> stopIntake())
-        .withName("intake");
+    return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS), this)
+        .withName("intake")
+        .finallyDo(interrupted -> stopIntake());
   }
 
   public Command outtake() {
-    return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS))
-        .finallyDo(interrupted -> stopIntake())
-        .withName("outtake");
+    return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS), this)
+        .withName("outtake").finallyDo(interrupted -> stopIntake());
   }
 
   public Command stopIntakeCommand() {
@@ -161,42 +166,55 @@ public class Intake extends SubsystemBase {
   }
 
   public Command stopExtendingCommand() {
-    return Commands.run(this::stopExtend).withName("stopExtendingCommand");
+    return Commands.run(this::stopExtend, this);
   }
 
-  public Command extendAndIntake() {
-    return Commands.run(
-            () -> {
-              setVoltageIntake(INTAKE_VOLTS);
-              setVoltageExtend(EXTEND_VOLTS);
-            })
-        .until(() -> inputs.getExtendPos >= EXTEND_POS)
+  public Command extendToAngleAndIntake(double angle) {
+    return Commands.run(() -> Commands.deadline(moveToAnglePrivate(angle), intakePrivate()), this)
         .finallyDo(interrupted -> stopExtend())
-        .andThen(intake())
-        .withName("extendAndIntake");
+        .andThen(intake());
   }
 
-  public Command collapseAndIntake() {
-    return Commands.run(
-            () -> {
-              setVoltageIntake(INTAKE_VOLTS);
-              setVoltageExtend(COLLAPSE_VOLTS);
-            })
-        .until(() -> isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS)
-        .finallyDo(interrupted -> stopExtend())
-        .andThen(intake())
-        .withName("collapseAndIntake");
+  // Jack's Chugga Chugga mode
+  public Command shakeAndIntake() {
+    return Commands.repeatingSequence(
+        Commands.runOnce(
+            () ->
+                Commands.deadline(
+                    moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+            this),
+        Commands.runOnce(
+            () ->
+                Commands.deadline(
+                    moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+            this)).withName("shakeAndIntake");
   }
 
-  public Command moveToExtendedPosition() {
-    return Commands.run(() -> io.extendToPosition(EXTEND_POS))
-        .until(() -> Math.abs(inputs.getExtendPos - EXTEND_POS) <= POSITION_TOLERANCE)
-        .withName("moveToExtendedPosition");
+  public Command moveToAngle(double angle) {
+    return Commands.run(() -> moveToAngle(angle), this).withName("moveToAngle");
   }
 
-  public Command moveToCollapsedPosition() {
-    return Commands.run(() -> io.extendToPosition(COLLAPSE_POS))
-        .until(() -> Math.abs(inputs.getExtendPos - COLLAPSE_POS) <= POSITION_TOLERANCE)
-        .withName("moveToCollapsedPosition");
+  // private because it doesn't have requirements and therefore it shouldn't be called beyond the
+  // subsystem
+  // itself
+  private Command moveToAnglePrivate(double angle) {
+    return Commands.either(
+        Commands.run(() -> io.goToPos(angle)).until(() -> inputs.atSetpoint),
+        Commands.either(
+                Commands.run(() -> io.setVoltageExtend(EXTEND_VOLTS)),
+                Commands.run(() -> io.setVoltageExtend(COLLAPSE_VOLTS)),
+                () -> angle > inputs.getExtendPos)
+            .until(() -> Math.abs(angle - inputs.getExtendPos) < POSITION_TOLERANCE),
+        () -> inputs.hasSetpoint);
+  }
+
+  public Command intakePrivate() {
+    return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS))
+        .finallyDo(interrupted -> stopIntake());
+  }
+
+  public Command outtakePrivate() {
+    return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS))
+        .finallyDo(interrupted -> stopIntake());
   }
 }

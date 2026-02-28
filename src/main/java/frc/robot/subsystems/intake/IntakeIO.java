@@ -14,6 +14,9 @@ public interface IntakeIO {
     public double extendAmps = 0.0;
     public boolean isCollapsed = false;
     // public boolean manualModeInput;
+    public boolean atSetpoint = false;
+    public boolean hasSetpoint = false;
+    public double setpointValue = 0.0;
     public double getExtendPos = 0.0;
     public boolean stowed = false;
     public boolean stalledExtended = false;
@@ -41,6 +44,10 @@ public interface IntakeIO {
   }
 
   default void setPIDEnabled(boolean enabled) {}
+
+  default boolean getPIDEnabled() {
+    return false;
+  }
 
   default void resetExtendEncoder(double position) {}
 
