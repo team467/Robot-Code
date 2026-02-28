@@ -158,7 +158,8 @@ public class Intake extends SubsystemBase {
 
   public Command outtake() {
     return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS), this)
-        .withName("outtake").finallyDo(interrupted -> stopIntake());
+        .withName("outtake")
+        .finallyDo(interrupted -> stopIntake());
   }
 
   public Command stopIntakeCommand() {
@@ -171,23 +172,25 @@ public class Intake extends SubsystemBase {
 
   public Command extendToAngleAndIntake(double angle) {
     return (Commands.run(() -> Commands.deadline(moveToAnglePrivate(angle), intakePrivate()), this)
-        .finallyDo(interrupted -> stopExtend())
-        .andThen(intake())).withName("extendToAngleAndIntake");
+            .finallyDo(interrupted -> stopExtend())
+            .andThen(intake()))
+        .withName("extendToAngleAndIntake");
   }
 
   // Jack's Chugga Chugga mode
   public Command shakeAndIntake() {
     return Commands.repeatingSequence(
-        Commands.runOnce(
-            () ->
-                Commands.deadline(
-                    moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
-            this),
-        Commands.runOnce(
-            () ->
-                Commands.deadline(
-                    moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
-            this)).withName("shakeAndIntake");
+            Commands.runOnce(
+                () ->
+                    Commands.deadline(
+                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+                this),
+            Commands.runOnce(
+                () ->
+                    Commands.deadline(
+                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+                this))
+        .withName("shakeAndIntake");
   }
 
   public Command moveToAngle(double angle) {
