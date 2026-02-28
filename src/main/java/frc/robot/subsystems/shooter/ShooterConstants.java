@@ -25,5 +25,4 @@ public class ShooterConstants {
 
   public static Transform2d kShooterOffsetFromRobotCenter =
       new Transform2d(new Translation2d(-0.163, 0.0), new Rotation2d(0.0));
-
 }
