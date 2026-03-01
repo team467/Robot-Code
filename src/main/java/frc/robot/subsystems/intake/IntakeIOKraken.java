@@ -3,9 +3,13 @@ package frc.robot.subsystems.intake;
 import static frc.lib.utils.PhoenixUtil.tryUntilOk;
 import static frc.robot.Schematic.intakeExtendCanId;
 import static frc.robot.Schematic.intakeMotorCanId;
+import static frc.robot.subsystems.climber.ClimberConstants.CALIBRATION_POSITION_DEGREES;
+import static frc.robot.subsystems.climber.ClimberConstants.ENCODER_CONVERSION_FACTOR;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_LIMIT_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POSITION_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVERSION;
+import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_CALIBRATION_POSITION_DEGREES;
+import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_ENCODER_CONVERSION_FACTOR;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_INTAKE_MOTOR_CURRENT_LIMIT;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
@@ -40,6 +44,8 @@ public class IntakeIOKraken implements IntakeIO {
   private final SparkClosedLoopController pidController;
   private double setPos = 0;
   private boolean usingPID = false;
+  private boolean isCalibrated = false;
+
 
   private final StatusSignal<Voltage> intakeAppliedVolts;
   private final StatusSignal<Current> intakeCurrent;
@@ -98,6 +104,13 @@ public class IntakeIOKraken implements IntakeIO {
     inputs.hasSetpoint = usingPID;
     inputs.setpointValue = usingPID ? extendMotor.getClosedLoopController().getSetpoint() : 0.0;
     inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint();
+    if(inputs.isCalibrated && !this.isCalibrated){
+      this.isCalibrated = true;
+
+      extendMotorEncoder.setPosition(INTAKE_CALIBRATION_POSITION_DEGREES/INTAKE_ENCODER_CONVERSION_FACTOR);
+    }
+
+    inputs.isCalibrated = this.isCalibrated;
   }
 
   @Override
@@ -130,6 +143,10 @@ public class IntakeIOKraken implements IntakeIO {
     this.setPos = setPos;
     if (usingPID) {
       pidController.setSetpoint(setPos, ControlType.kPosition);
+
+    }
+    else{
+
     }
   }
 
