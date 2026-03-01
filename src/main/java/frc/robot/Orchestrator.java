@@ -93,7 +93,7 @@ public class Orchestrator {
     return Commands.parallel(
             Commands.either(
                 preloadBalls(),
-                Commands.parallel(magicCarpet.run(), indexer.run()),
+                Commands.waitSeconds(0.1).andThen(Commands.parallel(magicCarpet.run(), indexer.run())) we,
                 () -> !RobotState.getInstance().shooterAtSpeed),
             shooter.setTargetVelocityRadians(targetVelocity)) //        .onlyWhile(
         //            () ->
@@ -109,7 +109,8 @@ public class Orchestrator {
 
   public Command preloadBalls() {
     return Commands.parallel(magicCarpet.run(), indexer.runPreloadSpeeds())
-        .until(() -> indexer.isLeftSwitchPressed() || indexer.isRightSwitchPressed());
+        .onlyIf(() -> !indexer.isLeftSwitchPressed() || !indexer.isRightSwitchPressed())
+        .onlyWhile(() -> indexer.isLeftSwitchPressed() || indexer.isRightSwitchPressed());
   }
 
   public Command driveShootAtAngle() {
