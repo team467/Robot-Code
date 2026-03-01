@@ -7,6 +7,7 @@ import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,7 +53,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    RobotState.getInstance().shooterAtSpeed = inputs.atSetpoint;
+    RobotState.getInstance().shooterAtSpeed = isAtSetpoint();
     if (controllerEnabled) {
       // Ramp toward the target to avoid current spikes
       rampedTarget = targetRamper.calculate(targetRadPerSec);
@@ -74,15 +75,20 @@ public class Shooter extends SubsystemBase {
 
     Logger.processInputs("Shooter", inputs);
     Logger.recordOutput(
-        "Shooter/ShooterWheelRPM", inputs.shooterWheelVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
-    Logger.recordOutput("Shooter/TargetRPM", targetRadPerSec * 60.0 / (2.0 * Math.PI));
-    Logger.recordOutput("Shooter/RampedTargetRPM", rampedTarget * 60.0 / (2.0 * Math.PI));
+        "Shooter/ShooterWheelRPM",
+        Units.radiansPerSecondToRotationsPerMinute(inputs.shooterWheelVelocityRadPerSec));
     Logger.recordOutput(
-        "Shooter/MiddleMotorRPM", inputs.middleMotorVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
+        "Shooter/TargetRPM", Units.radiansPerSecondToRotationsPerMinute(targetRadPerSec));
+    Logger.recordOutput("Shooter/RampedTargetRPM", rampedTarget);
     Logger.recordOutput(
-        "Shooter/BottomMotorRPM", inputs.bottomMotorVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
+        "Shooter/MiddleMotorRPM",
+        Units.radiansPerSecondToRotationsPerMinute(inputs.middleMotorVelocityRadPerSec));
     Logger.recordOutput(
-        "Shooter/TopMotorRPM", inputs.topMotorVelocityRadPerSec * 60.0 / (2.0 * Math.PI));
+        "Shooter/BottomMotorRPM",
+        Units.radiansPerSecondToRotationsPerMinute(inputs.bottomMotorVelocityRadPerSec));
+    Logger.recordOutput(
+        "Shooter/TopMotorRPM",
+        Units.radiansPerSecondToRotationsPerMinute(inputs.topMotorVelocityRadPerSec));
     Logger.recordOutput("Shooter/MiddleMotorAmps", inputs.middleMotorCurrentAmps);
     Logger.recordOutput("Shooter/BottomMotorAmps", inputs.bottomMotorCurrentAmps);
     Logger.recordOutput("Shooter/TopMotorAmps", inputs.topMotorCurrentAmps);
@@ -127,7 +133,7 @@ public class Shooter extends SubsystemBase {
   public Command setTargetVelocityRPM(double rpm) {
     return Commands.runOnce(
         () -> {
-          targetRadPerSec = ((rpm * 2 * Math.PI) / 60.0);
+          targetRadPerSec = ((rpm / 2 * Math.PI) * 60.0);
           controllerEnabled = true;
         },
         this);
@@ -147,15 +153,15 @@ public class Shooter extends SubsystemBase {
   }
 
   // TODO: empirically determine the relationship between distance and air time
-  public double getAirTimeSeconds(double distance) {
-    return distance;
+  public double getAirTimeSeconds(DoubleSupplier distance) {
+    return distance.getAsDouble();
   }
 
   // TODO: empirically determine the relationship between distance and shooter velocity
 
   public double calculateSetpoint(DoubleSupplier distance) {
     // calculate radians per second depending on distance
-    return inputs.setpointRPM;
+    return 0.0;
   }
 
   public double getSetpoint() {

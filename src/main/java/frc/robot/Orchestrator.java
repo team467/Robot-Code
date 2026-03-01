@@ -109,8 +109,8 @@ public class Orchestrator {
 
   public Command preloadBalls() {
     return Commands.parallel(magicCarpet.run(), indexer.runPreloadSpeeds())
-        .onlyIf(() -> !indexer.isLeftSwitchPressed() || !indexer.isRightSwitchPressed())
-        .onlyWhile(() -> indexer.isLeftSwitchPressed() || indexer.isRightSwitchPressed());
+        .until(() -> indexer.isLeftSwitchPressed() || indexer.isRightSwitchPressed())
+        .onlyIf(() -> !indexer.isLeftSwitchPressed() || !indexer.isRightSwitchPressed());
   }
 
   public Command driveShootAtAngle() {

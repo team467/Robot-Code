@@ -169,7 +169,16 @@ public class RobotContainer {
     orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, driverController);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     Autos autos = new Autos(drive);
-    // Set up auto routines
+    //
+    // NamedCommands.registerCommand("startShooter",Commands.parallel(orchestrator.preloadBalls(),orchestrator.prepShooter()));
+    //    NamedCommands.registerCommand("shoot",orchestrator.shootBalls());
+    //    NamedCommands.registerCommand("shootClimb",orchestrator.shootBallsonClimb());
+    //    NamedCommands.registerCommand("shootDistance",orchestrator.shootBallsAtDistance());
+    //    NamedCommands.registerCommand("extend hopper and intake",intake.extendAndIntake());
+    //
+    // NamedCommands.registerCommand("stopIntake",Commands.sequence(intake.collapseAndIntake(),Commands.waitSeconds(0.3),intake.stopIntakeCommand()));
+    //    NamedCommands.registerCommand("climb",Commands.none());
+    //    // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("test path", autos.testPath());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
@@ -242,12 +251,18 @@ public class RobotContainer {
     //    driverController.a().onTrue(orchestrator.preloadBalls());
     //    driverController.y().onTrue(indexer.run());
 
-    driverController.a().whileTrue(intake.intake());
-    driverController.b().whileTrue(intake.moveToAngle(0));
-    driverController.y().whileTrue(intake.moveToAngle(IntakeConstants.EXTEND_POS));
-    driverController.x().whileTrue(indexer.run());
+    driverController.x().whileTrue(intake.intake());
+    driverController.y().whileTrue(intake.moveToAngle(0));
+    driverController.b().whileTrue(intake.moveToAngle(IntakeConstants.EXTEND_POS));
+    driverController.a().whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+    //    driverController.x().whileTrue(indexer.run());
     //    driverController.x().onTrue(shooter.setTargetVelocityRPM(700)).onFalse(shooter.stop());
     driverController.leftBumper().whileTrue(orchestrator.shootBallsVelocity(1200));
+    driverController
+        .rightBumper()
+        .onTrue(
+            Commands.parallel(
+                magicCarpet.run(), indexer.run(), shooter.setTargetVelocityRPM(1200)));
     //    driverController
     //        .leftBumper()
     //        .whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
