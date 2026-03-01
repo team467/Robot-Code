@@ -152,17 +152,17 @@ public class Intake extends SubsystemBase {
   public Command intake() {
     return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS), this)
         .withName("intake")
-        .finallyDo(interrupted -> stopIntake());
+        .finallyDo(this::stopIntake);
   }
 
   public Command outtake() {
     return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS), this)
         .withName("outtake")
-        .finallyDo(interrupted -> stopIntake());
+        .finallyDo(this::stopIntake);
   }
 
   public Command stopIntakeCommand() {
-    return Commands.run(this::stopIntake).withName("stopIntakeCommand");
+    return Commands.run(this::stopIntake, this).withName("stopIntakeCommand");
   }
 
   public Command stopExtendingCommand() {
@@ -216,6 +216,7 @@ public class Intake extends SubsystemBase {
     //        () -> inputs.hasSetpoint);
     return Commands.runOnce(() -> io.goToPos(angle))
         .andThen(() -> io.goToPos(angle))
-        .until(() -> inputs.atSetpoint);
+        .until(() -> inputs.atSetpoint)
+        .finallyDo(this::stopExtendingCommand);
   }
 }

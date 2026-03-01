@@ -20,7 +20,7 @@ public class MagicCarpet extends SubsystemBase {
   }
 
   public Command stop() {
-    return Commands.runOnce(io::stop, this).withName("stop");
+    return Commands.run(() -> io.setSpeed(0.0), this).withName("stop");
   }
 
   @Override

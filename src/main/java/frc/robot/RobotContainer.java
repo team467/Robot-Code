@@ -219,6 +219,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    magicCarpet.setDefaultCommand(magicCarpet.stop());
+    indexer.setDefaultCommand(indexer.stop());
+    shooter.setDefaultCommand(shooter.stop());
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -252,13 +256,16 @@ public class RobotContainer {
     //        driverController.a().onTrue(orchestrator.preloadBalls());
     //        driverController.y().onTrue(indexer.run());
 
-    driverController.x().whileTrue(Commands.parallel(intake.intake(), magicCarpet.run()));
+    // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
+    driverController.x().whileTrue(intake.intake());
+    driverController.x().whileTrue(magicCarpet.run());
+
     driverController.y().whileTrue(intake.moveToAngle(0));
     driverController.b().whileTrue(intake.moveToAngle(IntakeConstants.EXTEND_POS));
     driverController.a().whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
     //    driverController.x().whileTrue(indexer.run());
     //    driverController.x().onTrue(shooter.setTargetVelocityRPM(700)).onFalse(shooter.stop());
-    driverController.leftBumper().whileTrue(orchestrator.shootBallsVelocity(120));
+    driverController.leftBumper().toggleOnTrue(orchestrator.shootBallsVelocity(120));
     driverController
         .rightBumper()
         .onTrue(

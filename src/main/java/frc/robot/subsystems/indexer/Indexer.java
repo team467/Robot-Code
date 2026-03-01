@@ -67,6 +67,6 @@ public class Indexer extends SubsystemBase {
   }
 
   public Command stop() {
-    return Commands.run(io::stop).withName("stop");
+    return Commands.run(io::stop, this).withName("stop");
   }
 }
