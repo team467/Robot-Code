@@ -19,5 +19,5 @@ public class ClimberConstants {
   public static final int LIMIT_SWITCH_ID = 3;
   public static final double CALIBRATION_POSITION_DEGREES =
       0.0; // position when limit switch is hit
-  public static final double CALIBRATION_PERCENT = -0.15;// slow speed to find limit switch
+  public static final double CALIBRATION_PERCENT = -0.15; // slow speed to find limit switch
 }

@@ -136,6 +136,10 @@ public class Intake extends SubsystemBase {
     return io.isCollapsed();
   }
 
+  private boolean isCalibrated() {
+    return inputs.isCalibrated;
+  }
+
   private boolean isStallingExtend() {
     // For our volts, we are not getting the right velocity
     return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts > EXTEND_VOLTS;

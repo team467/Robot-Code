@@ -32,7 +32,7 @@ public class IntakeConstants {
 
   public static final double INTAKE_INTAKE_MOTOR_CURRENT_LIMIT = 30;
 
-  public static final double INTAKE_CALIBRATION_POSITION_DEGREES =
-      0.0;
+  public static final double INTAKE_CALIBRATION_POSITION_DEGREES = 0.0;
   public static final double INTAKE_ENCODER_CONVERSION_FACTOR = 360.0;
+  public static final double INTAKE_CALIBRATION_PERCENT = -0.15;
 }
