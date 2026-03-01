@@ -34,8 +34,8 @@ public class Intake extends SubsystemBase {
    */
   public Intake(IntakeIO io, BooleanSupplier limitSwitchDisabled, BooleanSupplier pidModeDisabled) {
     this.io = io;
-    this.limitSwitchDisabled = limitSwitchDisabled;
-    this.pidModeDisabled = pidModeDisabled;
+    this.limitSwitchDisabled = () -> false;
+    this.pidModeDisabled = () -> false;
   }
 
   @Override
@@ -170,53 +170,52 @@ public class Intake extends SubsystemBase {
   }
 
   public Command extendToAngleAndIntake(double angle) {
-    return (Commands.run(() -> Commands.deadline(moveToAnglePrivate(angle), intakePrivate()), this)
-            .finallyDo(interrupted -> stopExtend())
-            .andThen(intake()))
+    return Commands.either(
+            Commands.runOnce(() -> io.goToPos(angle))
+                .andThen(
+                    () -> {
+                      io.goToPos(angle);
+                      io.setVoltageIntake(INTAKE_VOLTS);
+                    })
+                .until(() -> inputs.atSetpoint)
+                .finallyDo(this::stopExtend),
+            Commands.run(() -> io.setVoltageIntake(INTAKE_VOLTS)),
+            () -> !inputs.atSetpoint)
+        .finallyDo(() -> stopExtendingCommand().andThen(stopIntakeCommand()))
         .withName("extendToAngleAndIntake");
   }
 
   // Jack's Chugga Chugga mode
-  public Command shakeAndIntake() {
-    return Commands.repeatingSequence(
-            Commands.runOnce(
-                () ->
-                    Commands.deadline(
-                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
-                this),
-            Commands.runOnce(
-                () ->
-                    Commands.deadline(
-                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
-                this))
-        .withName("shakeAndIntake");
-  }
 
-  public Command moveToAngle(double angle) {
-    return Commands.run(() -> moveToAngle(angle), this).withName("moveToAngle");
-  }
+  //  public Command shakeAndIntake() {
+  //    return Commands.repeatingSequence(
+  //            Commands.runOnce(
+  //                () ->
+  //                    Commands.deadline(
+  //                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+  //                this),
+  //            Commands.runOnce(
+  //                () ->
+  //                    Commands.deadline(
+  //                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+  //                this))
+  //        .withName("shakeAndIntake");
+  //  }
 
   // private because it doesn't have requirements and therefore it shouldn't be called beyond the
   // subsystem
   // itself
-  private Command moveToAnglePrivate(double angle) {
-    return Commands.either(
-        Commands.run(() -> io.goToPos(angle)).until(() -> inputs.atSetpoint),
-        Commands.either(
-                Commands.run(() -> io.setVoltageExtend(EXTEND_VOLTS)),
-                Commands.run(() -> io.setVoltageExtend(COLLAPSE_VOLTS)),
-                () -> angle > inputs.getExtendPos)
-            .until(() -> Math.abs(angle - inputs.getExtendPos) < POSITION_TOLERANCE),
-        () -> inputs.hasSetpoint);
-  }
-
-  public Command intakePrivate() {
-    return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS))
-        .finallyDo(interrupted -> stopIntake());
-  }
-
-  public Command outtakePrivate() {
-    return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS))
-        .finallyDo(interrupted -> stopIntake());
+  public Command moveToAngle(double angle) {
+    //     return Commands.either(
+    //        Commands.run(() -> io.goToPos(angle)).until(() -> inputs.atSetpoint),
+    //        Commands.either(
+    //                Commands.run(() -> io.setVoltageExtend(EXTEND_VOLTS)),
+    //                Commands.run(() -> io.setVoltageExtend(COLLAPSE_VOLTS)),
+    //                () -> angle > inputs.getExtendPos)
+    //            .until(() -> Math.abs(angle - inputs.getExtendPos) < POSITION_TOLERANCE),
+    //        () -> inputs.hasSetpoint);
+    return Commands.runOnce(() -> io.goToPos(angle))
+        .andThen(() -> io.goToPos(angle))
+        .until(() -> inputs.atSetpoint);
   }
 }

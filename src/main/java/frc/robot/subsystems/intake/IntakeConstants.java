@@ -18,7 +18,7 @@ public class IntakeConstants {
 
   public static final int EXTEND_LIMIT_ID = 1;
 
-  public static final double PID_P = 0.001; // arbritrary values
+  public static final double PID_P = 0.01; // arbritrary values
   public static final double PID_I = 0.000002;
   public static final double PID_D = 0.00001;
 
