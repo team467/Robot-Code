@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Constants;
 
 public class DriveConstants {
   public static final double maxSpeedMetersPerSec = 11.8;
@@ -26,10 +27,33 @@ public class DriveConstants {
       };
 
   // Zeroed rotation values for each module, see setup instructions
-  public static final Rotation2d frontLeftZeroRotation = Rotation2d.fromDegrees(-2.46 + 180);
-  public static final Rotation2d frontRightZeroRotation = Rotation2d.fromDegrees(-10.63 + 180);
-  public static final Rotation2d backLeftZeroRotation = Rotation2d.fromDegrees(17.11);
-  public static final Rotation2d backRightZeroRotation = Rotation2d.fromDegrees(-45.27);
+  public static final Rotation2d frontLeftZeroRotation;
+  public static final Rotation2d frontRightZeroRotation;
+  public static final Rotation2d backLeftZeroRotation;
+  public static final Rotation2d backRightZeroRotation;
+
+  static {
+    switch (Constants.getRobot()) {
+      case ROBOT_2026_COMP -> {
+        frontLeftZeroRotation = Rotation2d.fromDegrees(-2.46 + 180);
+        frontRightZeroRotation = Rotation2d.fromDegrees(-10.63 + 180);
+        backLeftZeroRotation = Rotation2d.fromDegrees(17.11);
+        backRightZeroRotation = Rotation2d.fromDegrees(-45.27);
+      }
+      case ROBOT_2025_COMP -> {
+        frontLeftZeroRotation = Rotation2d.fromDegrees(0);
+        frontRightZeroRotation = Rotation2d.fromDegrees(0);
+        backLeftZeroRotation = Rotation2d.fromDegrees(0);
+        backRightZeroRotation = Rotation2d.fromDegrees(0);
+      }
+      default -> {
+        frontLeftZeroRotation = Rotation2d.fromDegrees(0);
+        frontRightZeroRotation = Rotation2d.fromDegrees(0);
+        backLeftZeroRotation = Rotation2d.fromDegrees(0);
+        backRightZeroRotation = Rotation2d.fromDegrees(0);
+      }
+    }
+  }
 
   // Drive motor configuration
   public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
