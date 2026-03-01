@@ -53,5 +53,7 @@ public interface IntakeIO {
 
   default void extendToPosition(double position) {}
 
-  default boolean calibrated(){return false;}
+  default boolean calibrated() {
+    return false;
+  }
 }
