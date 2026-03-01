@@ -41,10 +41,11 @@ public class DriveConstants {
         backRightZeroRotation = Rotation2d.fromDegrees(-45.27);
       }
       case ROBOT_2025_COMP -> {
-        frontLeftZeroRotation = Rotation2d.fromDegrees(0);
-        frontRightZeroRotation = Rotation2d.fromDegrees(0);
-        backLeftZeroRotation = Rotation2d.fromDegrees(0);
-        backRightZeroRotation = Rotation2d.fromDegrees(0);
+        frontLeftZeroRotation = Rotation2d.fromDegrees(88.42 - 45);
+
+        frontRightZeroRotation = Rotation2d.fromDegrees(9.58 + 180);
+        backLeftZeroRotation = Rotation2d.fromDegrees(-76.90 + 45);
+        backRightZeroRotation = Rotation2d.fromDegrees(-139.48 + 180);
       }
       default -> {
         frontLeftZeroRotation = Rotation2d.fromDegrees(0);

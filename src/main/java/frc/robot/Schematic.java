@@ -51,15 +51,15 @@ public class Schematic {
         frontRightDriveCanId = 7;
         frontRightTurnCanId = 8;
 
-        backRightDriveCanId = 2;
-        backRightTurnCanId = 1;
+        backRightDriveCanId = 1;
+        backRightTurnCanId = 2;
         backLeftDriveCanId = 5;
         backLeftTurnCanId = 6;
 
         frontLeftAbsoluteEncoderCanId = 19;
-        frontRightAbsoluteEncoderCanId = 18;
-        backRightAbsoluteEncoderCanId = 20;
-        backLeftAbsoluteEncoderCanId = 21;
+        frontRightAbsoluteEncoderCanId = 21;
+        backRightAbsoluteEncoderCanId = 18;
+        backLeftAbsoluteEncoderCanId = 20;
 
         // Shooter (CAN Ids)
         shooterBottomMotorCanId = 0;
