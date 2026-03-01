@@ -62,7 +62,7 @@ public class IntakeIOKraken implements IntakeIO {
 
     var extendConfig = new SparkMaxConfig();
     extendConfig
-        .inverted(false)
+        .inverted(true)
         .idleMode(IdleMode.kCoast)
         .voltageCompensation(12)
         .smartCurrentLimit(30)
@@ -99,7 +99,7 @@ public class IntakeIOKraken implements IntakeIO {
     inputs.extendVolts = extendMotor.getAppliedOutput();
     inputs.intakeAmps = intakeCurrent.getValueAsDouble();
     inputs.extendAmps = extendMotor.getOutputCurrent();
-    inputs.isCollapsed = collapsedLimitSwitch.get();
+    inputs.isCollapsed = !collapsedLimitSwitch.get();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
     inputs.hasSetpoint = usingPID;
     inputs.setpointValue = usingPID ? extendMotor.getClosedLoopController().getSetpoint() : 0.0;
@@ -141,7 +141,7 @@ public class IntakeIOKraken implements IntakeIO {
   @Override
   public void goToPos(double setPos) {
     this.setPos = setPos;
-    if (usingPID) {
+    if (usingPID && !(isCollapsed() && (setPos > 0))) {
       pidController.setSetpoint(setPos, ControlType.kPosition);
 
     }
@@ -152,7 +152,7 @@ public class IntakeIOKraken implements IntakeIO {
 
   @Override
   public boolean isCollapsed() {
-    return collapsedLimitSwitch.get();
+    return !collapsedLimitSwitch.get();
   }
 
   @Override
