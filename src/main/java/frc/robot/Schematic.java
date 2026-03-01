@@ -87,18 +87,18 @@ public class Schematic {
         pigeonCanId = 17;
 
         // Drive (CAN Ids)
-        frontLeftDriveCanId = 1;
-        frontLeftTurnCanId = 2;
-        frontRightDriveCanId = 3;
-        frontRightTurnCanId = 4;
+        frontLeftDriveCanId = 3;
+        frontLeftTurnCanId = 4;
+        frontRightDriveCanId = 1;
+        frontRightTurnCanId = 2;
 
-        backRightDriveCanId = 5;
-        backRightTurnCanId = 6;
-        backLeftDriveCanId = 7;
-        backLeftTurnCanId = 8;
+        backRightDriveCanId = 7;
+        backRightTurnCanId = 8;
+        backLeftDriveCanId = 5;
+        backLeftTurnCanId = 6;
 
-        frontLeftAbsoluteEncoderCanId = 18;
-        frontRightAbsoluteEncoderCanId = 19;
+        frontLeftAbsoluteEncoderCanId = 19;
+        frontRightAbsoluteEncoderCanId = 18;
         backRightAbsoluteEncoderCanId = 20;
         backLeftAbsoluteEncoderCanId = 21;
 

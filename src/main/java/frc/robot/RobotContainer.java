@@ -8,6 +8,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,7 +29,6 @@ import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOKraken;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
@@ -110,11 +110,11 @@ public class RobotContainer {
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           // TODO: GET THE ACTUAL BUTTON BINDINGS FOR THE OP SWITCHES
-          intake =
-              new Intake(
-                  new IntakeIOKraken(),
-                  operatorController.rightTrigger(),
-                  operatorController.leftBumper());
+          //          intake =
+          //              new Intake(
+          //                  new IntakeIOKraken(),
+          //                  operatorController.rightTrigger(),
+          //                  operatorController.leftBumper());
           //          climber = new Climber(new ClimberIOPhysical());
         }
 
@@ -226,6 +226,13 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
 
+    driverController
+        .x()
+        .whileTrue(Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0, 0, 0.1))));
+    driverController
+        .y()
+        .whileTrue(Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0, 0, -0.1))));
+
     // Lock to 0 degrees when A button is held
 
     driverController
@@ -250,8 +257,8 @@ public class RobotContainer {
     //    driverController.a().onTrue(orchestrator.preloadBalls());
     //    driverController.y().onTrue(indexer.run());
 
-    driverController.x().whileTrue(intake.intake());
-    driverController.y().whileTrue(intake.moveToAngle(0));
+    //    driverController.x().whileTrue(intake.intake());
+    //    driverController.y().whileTrue(intake.moveToAngle(0));
     driverController.b().whileTrue(intake.moveToAngle(IntakeConstants.EXTEND_POS));
     driverController.a().whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
     //    driverController.x().whileTrue(indexer.run());
