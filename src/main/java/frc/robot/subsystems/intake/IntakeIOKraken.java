@@ -57,7 +57,7 @@ public class IntakeIOKraken implements IntakeIO {
     var extendConfig = new SparkMaxConfig();
     extendConfig
         .inverted(false)
-        .idleMode(IdleMode.kBrake)
+        .idleMode(IdleMode.kCoast)
         .voltageCompensation(12)
         .smartCurrentLimit(30)
         .closedLoop
