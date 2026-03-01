@@ -116,7 +116,7 @@ public class RobotContainer {
                   new IntakeIOKraken(),
                   operatorController.rightTrigger(),
                   operatorController.leftBumper());
-          climber = new Climber(new ClimberIOPhysical());
+//          climber = new Climber(new ClimberIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
