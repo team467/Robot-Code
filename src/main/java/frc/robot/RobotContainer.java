@@ -21,7 +21,6 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOPhysical;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
@@ -99,13 +98,13 @@ public class RobotContainer {
                   new ModuleIOTalonSpark(1),
                   new ModuleIOTalonSpark(2),
                   new ModuleIOTalonSpark(3));
-          //          vision =
-          //              new Vision(
-          //                  drive::addVisionMeasurement,
-          //                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-          //                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
-          //                  new VisionIOPhotonVision(camera2Name, robotToCamera2),
-          //                  new VisionIOPhotonVision(camera3Name, robotToCamera3));
+          vision =
+              new Vision(
+                  drive::addVisionMeasurement,
+                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                  new VisionIOPhotonVision(camera2Name, robotToCamera2),
+                  new VisionIOPhotonVision(camera3Name, robotToCamera3));
           leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
@@ -116,7 +115,7 @@ public class RobotContainer {
                   new IntakeIOKraken(),
                   operatorController.rightTrigger(),
                   operatorController.leftBumper());
-//          climber = new Climber(new ClimberIOPhysical());
+          //          climber = new Climber(new ClimberIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
