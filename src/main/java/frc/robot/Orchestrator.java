@@ -114,7 +114,9 @@ public class Orchestrator {
 
   public Command preloadBalls() {
     return Commands.parallel(magicCarpet.run(), indexer.runPreloadSpeeds())
-        .onlyWhile(() -> !RobotState.getInstance().indexerHasFuel).onlyIf(() -> !RobotState.getInstance().indexerHasFuel).until(() -> RobotState.getInstance().indexerHasFuel);
+        .onlyWhile(() -> !RobotState.getInstance().indexerHasFuel)
+        .onlyIf(() -> !RobotState.getInstance().indexerHasFuel)
+        .until(() -> RobotState.getInstance().indexerHasFuel);
   }
 
   public Command driveShootAtAngle() {
