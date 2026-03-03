@@ -90,13 +90,17 @@ public class Orchestrator {
   }
 
   public Command shootBallsVelocity(double targetVelocity) {
-    return Commands.parallel(
-            Commands.either(
-                preloadBalls(),
-                Commands.waitSeconds(0.1)
-                    .andThen(Commands.parallel(magicCarpet.run(), indexer.run())),
-                () -> !RobotState.getInstance().shooterAtSpeed),
-            shooter.setTargetVelocityRadians(targetVelocity)) //        .onlyWhile(
+    return Commands.runOnce(() -> shooter.setTargetVelocityRadians(targetVelocity))
+        .andThen(
+            Commands.parallel(
+                Commands.either(
+                    preloadBalls(),
+                    Commands.waitSeconds(0.2)
+                        .andThen(Commands.parallel(magicCarpet.run(), indexer.run()))
+                        .onlyIf(() -> RobotState.getInstance().shooterAtSpeed)
+                        .onlyWhile(() -> RobotState.getInstance().shooterAtSpeed),
+                    () -> !RobotState.getInstance().shooterAtSpeed),
+                shooter.setTargetVelocityRadians(targetVelocity))) //        .onlyWhile(
         //            () ->
         //                shooter.getSetpoint() > 0
         //                    && RobotState.getInstance().shooterAtSpeed
@@ -110,8 +114,7 @@ public class Orchestrator {
 
   public Command preloadBalls() {
     return Commands.parallel(magicCarpet.run(), indexer.runPreloadSpeeds())
-        .until(() -> indexer.isLeftSwitchPressed() || indexer.isRightSwitchPressed())
-        .onlyIf(() -> !indexer.isLeftSwitchPressed() || !indexer.isRightSwitchPressed());
+        .onlyWhile(() -> !RobotState.getInstance().indexerHasFuel).onlyIf(() -> !RobotState.getInstance().indexerHasFuel).until(() -> RobotState.getInstance().indexerHasFuel);
   }
 
   public Command driveShootAtAngle() {

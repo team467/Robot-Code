@@ -27,7 +27,7 @@ public class IndexerIOSparkMax implements IndexerIO {
 
     var feedUpConfig = new SparkMaxConfig();
     feedUpConfig
-        .inverted(true)
+        .inverted(false)
         .idleMode(IdleMode.kBrake)
         .voltageCompensation(12)
         .smartCurrentLimit(30);
