@@ -56,7 +56,7 @@ public class IntakeIOKraken implements IntakeIO {
 
     var extendConfig = new SparkMaxConfig();
     extendConfig
-        .inverted(true)
+        .inverted(false)
         .idleMode(IdleMode.kCoast)
         .voltageCompensation(12)
         .smartCurrentLimit(30)
@@ -128,7 +128,7 @@ public class IntakeIOKraken implements IntakeIO {
   @Override
   public void goToPos(double setPos) {
     this.setPos = setPos;
-    if (usingPID && !(isCollapsed() && (setPos > 0))) {
+    if (usingPID && !((isCollapsed() && (setPos > 0)))) {
       pidController.setSetpoint(setPos, ControlType.kPosition);
     }
   }

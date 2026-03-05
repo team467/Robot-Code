@@ -28,9 +28,11 @@ import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOKraken;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
+import frc.robot.subsystems.magicCarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
@@ -105,15 +107,15 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera3Name, robotToCamera3));
           leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
-          //          magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
+          magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           // TODO: GET THE ACTUAL BUTTON BINDINGS FOR THE OP SWITCHES
-          //          intake =
-          //              new Intake(
-          //                  new IntakeIOKraken(),
-          //                  operatorController.rightTrigger(),
-          //                  operatorController.leftBumper());
-          //          climber = new Climber(new ClimberIOPhysical());
+          intake =
+              new Intake(
+                  new IntakeIOKraken(),
+                  operatorController.rightTrigger(),
+                  operatorController.leftBumper());
+          //                    climber = new Climber(new ClimberIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -260,12 +262,13 @@ public class RobotContainer {
 
     driverController.x().whileTrue(orchestrator.preloadBalls());
 
-    driverController.y().whileTrue(intake.moveToAngle(0));
-    driverController.b().whileTrue(intake.moveToAngle(IntakeConstants.EXTEND_POS));
-    driverController.a().whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+    driverController.y().whileTrue(intake.extendToAngleAndIntake(0));
+    driverController.b().whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+    driverController.a().whileTrue(intake.intake());
+    driverController.a().whileTrue(magicCarpet.run());
     //    driverController.x().whileTrue(indexer.run());
     //    driverController.x().onTrue(shooter.setTargetVelocityRPM(700)).onFalse(shooter.stop());
-    driverController.leftBumper().toggleOnTrue(orchestrator.shootBallsVelocity(1200));
+    driverController.leftBumper().toggleOnTrue(orchestrator.shootBallsVelocity(314.16));
     driverController
         .rightBumper()
         .onTrue(

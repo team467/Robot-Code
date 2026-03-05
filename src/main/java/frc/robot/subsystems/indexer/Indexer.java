@@ -6,6 +6,7 @@ import static frc.robot.subsystems.indexer.IndexConstants.PRELOAD_VOLT;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
@@ -19,6 +20,7 @@ public class Indexer extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    RobotState.getInstance().indexerHasFuel = inputs.ballAtLeftSwitch || inputs.ballAtRightSwitch;
     Logger.processInputs("Index", inputs);
   }
 

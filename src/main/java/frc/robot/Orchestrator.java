@@ -96,9 +96,7 @@ public class Orchestrator {
                 Commands.either(
                     preloadBalls(),
                     Commands.waitSeconds(0.2)
-                        .andThen(Commands.parallel(magicCarpet.run(), indexer.run()))
-                        .onlyIf(() -> RobotState.getInstance().shooterAtSpeed)
-                        .onlyWhile(() -> RobotState.getInstance().shooterAtSpeed),
+                        .andThen(Commands.parallel(magicCarpet.run(), indexer.run())),
                     () -> !RobotState.getInstance().shooterAtSpeed),
                 shooter.setTargetVelocityRadians(targetVelocity))) //        .onlyWhile(
         //            () ->
@@ -114,7 +112,9 @@ public class Orchestrator {
 
   public Command preloadBalls() {
     return Commands.parallel(magicCarpet.run(), indexer.runPreloadSpeeds())
-        .onlyWhile(() -> !RobotState.getInstance().indexerHasFuel).onlyIf(() -> !RobotState.getInstance().indexerHasFuel).until(() -> RobotState.getInstance().indexerHasFuel);
+        .onlyWhile(() -> !RobotState.getInstance().indexerHasFuel)
+        .onlyIf(() -> !RobotState.getInstance().indexerHasFuel)
+        .until(() -> RobotState.getInstance().indexerHasFuel);
   }
 
   public Command driveShootAtAngle() {

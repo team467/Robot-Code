@@ -8,4 +8,5 @@ public final class MagicCarpetConstants {
   public static final double BELT_SPEED = 0.4;
 
   private MagicCarpetConstants() {}
+  ;
 }

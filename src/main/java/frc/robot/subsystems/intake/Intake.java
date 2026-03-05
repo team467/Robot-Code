@@ -170,18 +170,14 @@ public class Intake extends SubsystemBase {
   }
 
   public Command extendToAngleAndIntake(double angle) {
-    return Commands.either(
-            Commands.runOnce(() -> io.goToPos(angle))
-                .andThen(
-                    () -> {
-                      io.goToPos(angle);
-                      io.setVoltageIntake(INTAKE_VOLTS);
-                    })
-                .until(() -> inputs.atSetpoint)
-                .finallyDo(this::stopExtend),
-            Commands.run(() -> io.setVoltageIntake(INTAKE_VOLTS)),
-            () -> !inputs.atSetpoint)
-        .finallyDo(() -> stopExtendingCommand().andThen(stopIntakeCommand()))
+    return Commands.run(
+            () -> {
+              io.goToPos(angle);
+              io.setVoltageIntake(INTAKE_VOLTS);
+            },
+            this)
+        .until(() -> inputs.atSetpoint)
+        .finallyDo(this::stopExtend)
         .withName("extendToAngleAndIntake");
   }
 
@@ -214,8 +210,8 @@ public class Intake extends SubsystemBase {
     //                () -> angle > inputs.getExtendPos)
     //            .until(() -> Math.abs(angle - inputs.getExtendPos) < POSITION_TOLERANCE),
     //        () -> inputs.hasSetpoint);
-    return Commands.runOnce(() -> io.goToPos(angle))
-        .andThen(() -> io.goToPos(angle))
+    return Commands.runOnce(() -> io.goToPos(angle), this)
+        .andThen(() -> io.goToPos(angle), this)
         .until(() -> inputs.atSetpoint)
         .finallyDo(this::stopExtendingCommand);
   }
