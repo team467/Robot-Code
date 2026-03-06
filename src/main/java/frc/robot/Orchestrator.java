@@ -81,9 +81,17 @@ public class Orchestrator {
   public Command driveToHub() {
     return new DriveToPose(
         drive,
-        AllianceFlipUtil.apply(
-            Hub.nearFace.transformBy(
-                new Transform2d(FRONT_HUB_OFFSET, 0.0, Rotation2d.fromDegrees(0.0)))));
+        () -> {
+          Pose2d hubApproachPose =
+              AllianceFlipUtil.apply(
+                  Hub.nearFace.transformBy(
+                      new Transform2d(FRONT_HUB_OFFSET, 0.0, Rotation2d.fromDegrees(0.0))));
+          Rotation2d sameAsAlignAndShootHeading =
+              AllianceFlipUtil.apply(Hub.blueCenter)
+                  .minus(hubApproachPose.getTranslation())
+                  .getAngle();
+          return new Pose2d(hubApproachPose.getTranslation(), sameAsAlignAndShootHeading);
+        });
   }
 
   public Command shootAtHub() {
