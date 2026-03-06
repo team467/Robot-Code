@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -20,7 +21,7 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
-  private final double FRONT_HUB_OFFSET = -1.0;
+  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(20.0);
   private final double FRONT_HUB_SHOOTER_VELOCITY = 0.0;
   private final Drive drive;
   private final Shooter shooter;
@@ -82,7 +83,7 @@ public class Orchestrator {
         drive,
         AllianceFlipUtil.apply(
             Hub.nearFace.transformBy(
-                new Transform2d(0.0, -FRONT_HUB_OFFSET, Rotation2d.fromDegrees(0)))));
+                new Transform2d(FRONT_HUB_OFFSET, 0.0, Rotation2d.fromDegrees(0.0)))));
   }
 
   public Command shootAtHub() {
@@ -148,7 +149,8 @@ public class Orchestrator {
             () ->
                 AllianceFlipUtil.apply(Hub.blueCenter)
                     .minus(drive.getPose().getTranslation())
-                    .getAngle()),
+                    .getAngle()
+                    .plus(Rotation2d.fromDegrees(0.0))),
         shootBallsDistance(
             () ->
                 AllianceFlipUtil.apply(Hub.blueCenter)
