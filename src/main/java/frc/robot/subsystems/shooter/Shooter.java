@@ -32,9 +32,7 @@ public class Shooter extends SubsystemBase {
       new SimpleMotorFeedforward(ShooterConstants.KS, ShooterConstants.KV);
   // PID: handles error correction on top of feedforward
   // P only — no I term (causes integral windup oscillation)
-  private final PIDController pid = new PIDController(10.0
-      , 0.1
-      , 0, 0.02);
+  private final PIDController pid = new PIDController(10.0, 0.1, 0, 0.02);
 
   // Slew rate limiter: ramps the target velocity gradually (rad/s per second)
   // This prevents current spikes that cause oscillation with a 20A limit
