@@ -44,7 +44,8 @@ public class Indexer extends SubsystemBase {
     return Commands.run(
             () -> {
               setVoltage(FEEDUP_VOLT);
-            })
+            },
+            this)
         .finallyDo(this::stop)
         .withName("run");
   }
