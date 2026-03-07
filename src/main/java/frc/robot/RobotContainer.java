@@ -258,33 +258,26 @@ public class RobotContainer {
     // driverController.x().onTrue(shooter.setTargetVelocityRadians(20)).onFalse(shooter.stop());
     //
     // driverController.b().onTrue(shooter.setTargetVelocityRadians(80)).onFalse(shooter.stop());
-    //        driverController.a().onTrue(orchestrator.preloadBalls());
+    driverController.a().onTrue(orchestrator.preloadBalls());
     //        driverController.y().onTrue(indexer.run());
 
+    //    driverController.y().whileTrue(intake.extendToAngleAndIntake(0));
+    //    driverController.b().whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
-    //    driverController.x().whileTrue(intake.intake());
-    //    driverController.x().whileTrue(magicCarpet.run());
+    driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
+    driverController.leftTrigger(0.2).toggleOnTrue(magicCarpet.run());
 
-    driverController.x().whileTrue(orchestrator.preloadBalls());
+    driverController.rightBumper().toggleOnTrue(orchestrator.driveToHub());
 
-    driverController.y().whileTrue(intake.extendToAngleAndIntake(0));
-    // driverController.b().whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
-    // driverController.a().whileTrue(intake.intake());
-    // driverController.a().whileTrue(magicCarpet.run());
-
-    driverController.a().whileTrue(orchestrator.driveToHub());
-    driverController.b().toggleOnTrue(orchestrator.alignAndShoot());
-
-    //    driverController.x().whileTrue(indexer.run());
-    //    driverController.x().onTrue(shooter.setTargetVelocityRPM(700)).onFalse(shooter.stop());
     driverController
-        .leftBumper()
+        .a()
         .toggleOnTrue(
-            orchestrator.shootBallsVelocity(Units.rotationsPerMinuteToRadiansPerSecond(3000)));
+            shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1100)));
     driverController
-        .rightBumper()
+        .x()
         .toggleOnTrue(
-            orchestrator.shootBallsVelocity(Units.rotationsPerMinuteToRadiansPerSecond(1000)));
+            shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(5600)));
+    driverController.rightTrigger(0.2).toggleOnTrue(orchestrator.feedUp());
     //    driverController
     //        .leftBumper()
     //        .whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));

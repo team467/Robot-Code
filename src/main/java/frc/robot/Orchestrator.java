@@ -21,7 +21,7 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
-  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(20.0);
+  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(40);
   private final double FRONT_HUB_SHOOTER_VELOCITY = 0.0;
   private final Drive drive;
   private final Shooter shooter;
@@ -94,22 +94,21 @@ public class Orchestrator {
         });
   }
 
-  public Command shootAtHub() {
-    return shootBallsVelocity(FRONT_HUB_SHOOTER_VELOCITY);
-  }
-
-  public Command shootBallsVelocity(double targetVelocity) {
-    return Commands.parallel(
-            shooter.setTargetVelocityRadians(targetVelocity),
-            Commands.repeatingSequence(
-                preloadBalls().until(() -> RobotState.getInstance().shooterAtSpeed),
-                Commands.parallel(magicCarpet.run(), indexer.run())
-                    .until(() -> !RobotState.getInstance().shooterAtSpeed)))
-        .withName("shootBallsVelocity");
+  public Command feedUp() {
+    return Commands.repeatingSequence(
+            preloadBalls().until(() -> RobotState.getInstance().shooterAtSpeed),
+            Commands.parallel(magicCarpet.run(), indexer.run())
+                .until(() -> !RobotState.getInstance().shooterAtSpeed)).onlyIf(() ->shooter.getSetpoint() > 0).onlyWhile(() ->shooter.getSetpoint()>0)
+        .withName("feedUp");
   }
 
   public Command shootBallsDistance(DoubleSupplier targetDistance) {
-    return shootBallsVelocity(shooter.calculateSetpoint(targetDistance));
+    return Commands.parallel(spinUpShooterDistance(targetDistance), feedUp())
+        .withName("shootBallsDistance");
+  }
+
+  public Command spinUpShooterDistance(DoubleSupplier targetDistance) {
+    return shooter.setTargetVelocityRadians(shooter.calculateSetpoint(targetDistance));
   }
 
   public Command preloadBalls() {
