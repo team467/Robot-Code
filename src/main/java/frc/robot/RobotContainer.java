@@ -178,6 +178,11 @@ public class RobotContainer {
     // NamedCommands.registerCommand("stopIntake",Commands.sequence(intake.collapseAndIntake(),Commands.waitSeconds(0.3),intake.stopIntakeCommand()));
     //    NamedCommands.registerCommand("climb",Commands.none());
     //    // Set up auto routines
+
+    //    NamedCommands.registerCommand("startIntake", intake.intake());
+    //    NamedCommands.registerCommand("endIntake", intake.stopIntakeCommand());
+    //    NamedCommands.registerCommand("shootDistance", orchestrator.alignAndShoot());
+
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("test path", autos.testPath());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));

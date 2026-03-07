@@ -76,7 +76,7 @@ public class DriveConstants {
   public static final double driveKs = 0.5;
   public static final double driveKv = 0.0;
   public static final double driveKa = 0.0;
-  public static final double driveSimP = 0.05;
+  public static final double driveSimP = 0.3;
   public static final double driveSimD = 0.0;
   public static final double driveSimKs = 0.0;
   public static final double driveSimKv = 0.0789;
@@ -97,7 +97,7 @@ public class DriveConstants {
   // Turn PID configuration
   public static final double turnKp = 3.5;
   public static final double turnKd = 0.0;
-  public static final double turnSimP = 8.0;
+  public static final double turnSimP = 9.0;
   public static final double turnSimD = 0.0;
   public static final double turnPIDMinInput = -Math.PI; // Radians
   public static final double turnPIDMaxInput = Math.PI; // Radians
