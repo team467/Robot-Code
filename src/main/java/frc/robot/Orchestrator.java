@@ -94,7 +94,6 @@ public class Orchestrator {
         });
   }
 
-
   public Command shootAtHub() {
     return shootBallsVelocity(FRONT_HUB_SHOOTER_VELOCITY);
   }
