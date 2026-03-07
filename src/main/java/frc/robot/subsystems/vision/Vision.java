@@ -106,8 +106,6 @@ public class Vision extends SubsystemBase {
         } else {
           robotPosesAccepted.add(observation.pose());
         }
-        RobotState.getInstance().PoseConfidence = !robotPosesAccepted.isEmpty();
-
         // Skip if rejected
         if (rejectPose) {
           continue;
@@ -160,6 +158,7 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+    RobotState.getInstance().PoseConfidence = !allRobotPosesAccepted.isEmpty();
   }
 
   /**
