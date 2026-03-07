@@ -99,20 +99,13 @@ public class Orchestrator {
   }
 
   public Command shootBallsVelocity(double targetVelocity) {
-    return Commands.runOnce(() -> shooter.setTargetVelocityRadians(targetVelocity))
-        .andThen(
-            Commands.parallel(
-                Commands.either(
-                    preloadBalls(),
-                    Commands.waitSeconds(0.2)
-                        .andThen(Commands.parallel(magicCarpet.run(), indexer.run())),
-                    () -> !RobotState.getInstance().shooterAtSpeed),
-                shooter.setTargetVelocityRadians(targetVelocity))) //        .onlyWhile(
-        //            () ->
-        //                shooter.getSetpoint() > 0
-        //                    && RobotState.getInstance().shooterAtSpeed
-        //                    && RobotState.getInstance().isAlignedToHub)
-        .finallyDo(this::preloadBalls);
+    return Commands.parallel(
+            shooter.setTargetVelocityRadians(targetVelocity),
+            Commands.repeatingSequence(
+                preloadBalls().until(() -> RobotState.getInstance().shooterAtSpeed),
+                Commands.parallel(magicCarpet.run(), indexer.run())
+                    .until(() -> !RobotState.getInstance().shooterAtSpeed)))
+        .withName("shootBallsVelocity");
   }
 
   public Command shootBallsDistance(DoubleSupplier targetDistance) {

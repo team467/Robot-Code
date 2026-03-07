@@ -8,6 +8,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,6 +27,7 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOKraken;
 import frc.robot.subsystems.leds.Leds;
@@ -261,22 +263,24 @@ public class RobotContainer {
 
     driverController.x().whileTrue(orchestrator.preloadBalls());
 
-    //    driverController.y().whileTrue(intake.extendToAngleAndIntake(0));
-    //    driverController.b().whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
-    //    driverController.a().whileTrue(intake.intake());
-    //    driverController.a().whileTrue(magicCarpet.run());
+    driverController.y().whileTrue(intake.extendToAngleAndIntake(0));
+    driverController.b().whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+    driverController.a().whileTrue(intake.intake());
+    driverController.a().whileTrue(magicCarpet.run());
 
-    driverController.a().whileTrue(orchestrator.driveToHub());
-    driverController.b().toggleOnTrue(orchestrator.alignAndShoot());
+    //    driverController.a().whileTrue(orchestrator.driveToHub());
+    //    driverController.b().toggleOnTrue(orchestrator.alignAndShoot());
 
     //    driverController.x().whileTrue(indexer.run());
     //    driverController.x().onTrue(shooter.setTargetVelocityRPM(700)).onFalse(shooter.stop());
-    driverController.leftBumper().toggleOnTrue(orchestrator.shootBallsVelocity(314.16));
+    driverController
+        .leftBumper()
+        .toggleOnTrue(
+            orchestrator.shootBallsVelocity(Units.rotationsPerMinuteToRadiansPerSecond(3000)));
     driverController
         .rightBumper()
-        .onTrue(
-            Commands.parallel(
-                magicCarpet.run(), indexer.run(), shooter.setTargetVelocityRPM(1200)));
+        .toggleOnTrue(
+            orchestrator.shootBallsVelocity(Units.rotationsPerMinuteToRadiansPerSecond(1000)));
     //    driverController
     //        .leftBumper()
     //        .whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));

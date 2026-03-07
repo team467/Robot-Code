@@ -32,7 +32,7 @@ public class Shooter extends SubsystemBase {
       new SimpleMotorFeedforward(ShooterConstants.KS, ShooterConstants.KV);
   // PID: handles error correction on top of feedforward
   // P only — no I term (causes integral windup oscillation)
-  private final PIDController pid = new PIDController(10.0, 0.1, 0, 0.02);
+  private final PIDController pid = new PIDController(0.001, 0.1, 0.1, 0.02);
 
   // Slew rate limiter: ramps the target velocity gradually (rad/s per second)
   // This prevents current spikes that cause oscillation with a 20A limit
@@ -60,7 +60,7 @@ public class Shooter extends SubsystemBase {
 
       double ff = feedforward.calculate(rampedTarget);
       double pidOutput = pid.calculate(inputs.shooterWheelVelocityRadPerSec, rampedTarget);
-      double voltage = ff + pidOutput;
+      double voltage = ff;
 
       // Clamp to valid voltage range
       voltage =
@@ -114,14 +114,15 @@ public class Shooter extends SubsystemBase {
 
   public Command stop() {
     return Commands.runOnce(
-        () -> {
-          controllerEnabled = false;
-          targetRadPerSec = 0.0;
-          rampedTarget = 0.0;
-          targetRamper.reset(0.0);
-          io.stop();
-        },
-        this);
+            () -> {
+              controllerEnabled = false;
+              targetRadPerSec = 0.0;
+              rampedTarget = 0.0;
+              targetRamper.reset(0.0);
+              io.stop();
+            },
+            this)
+        .withName("shooter_stop_please");
   }
 
   public Command setVoltage(double volts) {
@@ -131,21 +132,23 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command setTargetVelocityRPM(double rpm) {
-    return Commands.runOnce(
-        () -> {
-          targetRadPerSec = ((rpm / 2 * Math.PI) * 60.0);
-          controllerEnabled = true;
-        },
-        this);
+    return Commands.run(
+            () -> {
+              targetRadPerSec = ((rpm / 2 * Math.PI) * 60.0);
+              controllerEnabled = true;
+            },
+            this)
+        .withName("setTargetVelocityRPM");
   }
 
   public Command setTargetVelocityRadians(double radPerSec) {
-    return Commands.runOnce(
-        () -> {
-          targetRadPerSec = radPerSec;
-          controllerEnabled = true;
-        },
-        this);
+    return Commands.run(
+            () -> {
+              targetRadPerSec = radPerSec;
+              controllerEnabled = true;
+            },
+            this)
+        .withName("setTargetVelocityRadians");
   }
 
   public boolean isAtSetpoint() {
