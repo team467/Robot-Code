@@ -26,8 +26,8 @@ public class VisionConstants {
   public static Transform3d robotToCamera0 =
       new Transform3d( // front camera
           new Translation3d(
-                  Units.inchesToMeters(8.779),
                   Units.inchesToMeters(10.445),
+                  Units.inchesToMeters(8.779),
                   Units.inchesToMeters(27.152 + 1.75))
               .rotateBy(RotationCorrection),
           new Rotation3d(
@@ -37,8 +37,8 @@ public class VisionConstants {
   public static Transform3d robotToCamera1 =
       new Transform3d( // rear left camera
           new Translation3d(
-                  Units.inchesToMeters(9.562), // x
-                  Units.inchesToMeters(10.974), // y
+                  Units.inchesToMeters(10.974), // x
+                  Units.inchesToMeters(9.562), // y
                   Units.inchesToMeters(17.035 + 1.75)) // z
               .rotateBy(RotationCorrection),
           new Rotation3d(
@@ -49,8 +49,8 @@ public class VisionConstants {
   public static Transform3d robotToCamera2 =
       new Transform3d( // rear right camera
           new Translation3d(
-                  Units.inchesToMeters(-9.562),
-                  Units.inchesToMeters(10.974),
+                  Units.inchesToMeters(-10.974),
+                  Units.inchesToMeters(9.562),
                   Units.inchesToMeters(17.035 + 1.75))
               .rotateBy(RotationCorrection),
           new Rotation3d(
@@ -61,8 +61,8 @@ public class VisionConstants {
   public static Transform3d robotToCamera3 =
       new Transform3d( // left camera
           new Translation3d(
-                  Units.inchesToMeters(9.669),
                   Units.inchesToMeters(10.961),
+                  Units.inchesToMeters(9.669),
                   Units.inchesToMeters(24.656 + 1.75))
               .rotateBy(RotationCorrection),
           new Rotation3d(
