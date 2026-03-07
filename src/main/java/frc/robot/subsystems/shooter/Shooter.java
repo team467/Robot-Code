@@ -7,7 +7,6 @@ import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -74,25 +73,6 @@ public class Shooter extends SubsystemBase {
     }
 
     Logger.processInputs("Shooter", inputs);
-    Logger.recordOutput(
-        "Shooter/ShooterWheelRPM",
-        Units.radiansPerSecondToRotationsPerMinute(inputs.shooterWheelVelocityRadPerSec));
-    Logger.recordOutput(
-        "Shooter/TargetRPM", Units.radiansPerSecondToRotationsPerMinute(targetRadPerSec));
-    Logger.recordOutput("Shooter/RampedTargetRPM", rampedTarget);
-    Logger.recordOutput(
-        "Shooter/MiddleMotorRPM",
-        Units.radiansPerSecondToRotationsPerMinute(inputs.middleMotorVelocityRadPerSec));
-    Logger.recordOutput(
-        "Shooter/BottomMotorRPM",
-        Units.radiansPerSecondToRotationsPerMinute(inputs.bottomMotorVelocityRadPerSec));
-    Logger.recordOutput(
-        "Shooter/TopMotorRPM",
-        Units.radiansPerSecondToRotationsPerMinute(inputs.topMotorVelocityRadPerSec));
-    Logger.recordOutput("Shooter/MiddleMotorAmps", inputs.middleMotorCurrentAmps);
-    Logger.recordOutput("Shooter/BottomMotorAmps", inputs.bottomMotorCurrentAmps);
-    Logger.recordOutput("Shooter/TopMotorAmps", inputs.topMotorCurrentAmps);
-    Logger.recordOutput("Shooter/TotalAmps", inputs.totalAmps);
     Logger.recordOutput("Shooter/AtSetpoint", isAtSetpoint());
   }
 

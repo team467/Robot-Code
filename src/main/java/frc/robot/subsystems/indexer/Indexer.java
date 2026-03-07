@@ -32,6 +32,10 @@ public class Indexer extends SubsystemBase {
     io.setVoltage(feedUpVolts);
   }
 
+  public double getVoltage() {
+    return inputs.feedUpVolts;
+  }
+
   public boolean isLeftSwitchPressed() {
     return io.isLeftSwitchPressed();
   }
