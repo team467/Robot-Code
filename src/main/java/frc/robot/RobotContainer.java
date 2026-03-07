@@ -227,6 +227,7 @@ public class RobotContainer {
     magicCarpet.setDefaultCommand(magicCarpet.stop());
     indexer.setDefaultCommand(indexer.stop());
     shooter.setDefaultCommand(shooter.stop());
+    //    shooter.setDefaultCommand(shooter.stop());
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(

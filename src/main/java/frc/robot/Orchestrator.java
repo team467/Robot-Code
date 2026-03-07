@@ -21,7 +21,7 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
-  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(40);
+  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(40.0);
   private final double FRONT_HUB_SHOOTER_VELOCITY = 0.0;
   private final Drive drive;
   private final Shooter shooter;
@@ -142,19 +142,20 @@ public class Orchestrator {
 
   public Command alignAndShoot() {
     return Commands.sequence(
-        DriveCommands.joystickDriveAtAngle(
-            drive,
-            () -> 0.0,
-            () -> 0.0,
-            () ->
-                AllianceFlipUtil.apply(Hub.blueCenter)
-                    .minus(drive.getPose().getTranslation())
-                    .getAngle()
-                    .plus(Rotation2d.fromDegrees(0.0))),
-        shootBallsDistance(
-            () ->
-                AllianceFlipUtil.apply(Hub.blueCenter)
-                    .getDistance(drive.getPose().getTranslation())));
+          DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> 0.0,
+                () -> 0.0,
+                () ->
+                    AllianceFlipUtil.apply(Hub.blueCenter)
+                        .minus(drive.getPose().getTranslation())
+                        .getAngle()
+                        .plus(Rotation2d.fromDegrees(0.0))),
+            shootBallsDistance(
+                () ->
+                    AllianceFlipUtil.apply(Hub.blueCenter)
+                        .getDistance(drive.getPose().getTranslation())))
+        .repeatedly();
   }
 
   //  public Command startFlywheelAllianceShift() {
