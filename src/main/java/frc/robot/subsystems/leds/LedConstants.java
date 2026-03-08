@@ -43,7 +43,7 @@ public class LedConstants {
         LED_COUNT = FULL_LENGTH;
       }
       case ROBOT_BRIEFCASE -> {
-        LED_CHANNEL = 9;
+        LED_CHANNEL = 0;
         LED_COUNT = 14;
       }
       default -> {
