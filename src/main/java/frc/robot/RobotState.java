@@ -15,6 +15,33 @@ import org.littletonrobotics.junction.AutoLogOutput;
 public class RobotState {
   public enum Mode {
     // 2026 Specific
+    INTAKING(LedPatterns.YELLOW.blink(0.2).atBrightness(Percent.of(80)), Sections.FULL),
+    // INTAKE_MOVING_IN(LedPatterns.YELLOW.blink(0.5).atBrightness(Percent.of(50)), Sections.FULL),
+    // INTAKE_MOVING_OUT(LedPatterns.YELLOW.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+    // INTAKE_DEPLOYED(LedPatterns.CENTER_OF_MASS_GOLD.colorPatternOnly().atBrightness(Percent.of(50)),Sections.FULL),
+    // INTAKE_STOWED(LedPatterns.CENTER_OF_MASS_BLUE.colorPatternOnly().atBrightness(Percent.of(50)),Sections.FULL),
+
+    SHOOTER_SPINNING_UP(
+        LedPatterns.WHITE.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    SHOOTER_AT_SPEED(LedPatterns.WHITE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+
+    INDEXER_RUNNING(
+        LedPatterns.CENTER_OF_MASS_BLUE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+
+    INTAKING_INDEXING_SHOOTING(
+        LedPatterns.STRIPE_YELOW_WHITE_BLUE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+    INTAKING_INDEXING(
+        LedPatterns.STRIPE_YELLOW_BLUE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+    INTAKING_SHOOTING(
+        LedPatterns.STRIPE_YELLOW_WHITE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+    INDEXING_SHOOTING(
+        LedPatterns.STRIPE_BLUE_WHITE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+
+    BROWNING_OUT(
+        LedPatterns.INDIAN_RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    IN_SHOOTING_RANGE(
+        LedPatterns.STRIPE_COM.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    OUTOF_SHOOTING_RANGE(LedPatterns.RED.blink().atBrightness(Percent.of(50)), Sections.FULL),
 
     // Same every year
     ESTOPPED(LedPatterns.RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
@@ -75,6 +102,9 @@ public class RobotState {
   @AutoLogOutput(key = "RobotState/IndexerHasFuel")
   public boolean indexerHasFuel = false;
 
+  @AutoLogOutput(key = "RobotState/IndexerRunning")
+  public boolean indexerRunning = false;
+
   @AutoLogOutput(key = "RobotState/ShooterAtSpeed")
   public boolean shooterAtSpeed = false;
 
@@ -127,6 +157,47 @@ public class RobotState {
     // Auto
     if (DriverStation.isAutonomous()) {
       mode = Mode.AUTONOMOUS;
+      return;
+    }
+
+    // check combinations of shooter and indexer and intaking states
+    if (intaking && indexerRunning && shooterAtSpeed) {
+      mode = Mode.INTAKING_INDEXING_SHOOTING;
+      return;
+    } else if (intaking && indexerRunning) {
+      mode = Mode.INTAKING_INDEXING;
+      return;
+    } else if (intaking && shooterAtSpeed) {
+      mode = Mode.INTAKING_SHOOTING;
+      return;
+    } else if (indexerRunning && shooterAtSpeed) {
+      mode = Mode.INDEXING_SHOOTING;
+      return;
+    }
+
+    // Intake
+    if (intaking) {
+      mode = Mode.INTAKING;
+      return;
+    } // else if (intakePosition == IntakePosition.MOVING_IN) {
+    // mode = Mode.INTAKE_MOVING_IN;
+    // return;
+    // } else if (intakePosition == IntakePosition.MOVING_OUT) {
+    //  mode = Mode.INTAKE_MOVING_OUT;
+    //  return;
+    // } else if (intakePosition == IntakePosition.DEPLOYED) {
+    //  mode = Mode.INTAKE_DEPLOYED;
+    //  return;
+    // } else if (intakePosition == IntakePosition.STOWED) {
+    //  mode = Mode.INTAKE_STOWED;
+    //  return;
+    // }
+
+    if (shooterAtSpeed) {
+      mode = Mode.SHOOTER_AT_SPEED;
+      return;
+    } else if (shooterSetpoint > 0.0) {
+      mode = Mode.SHOOTER_SPINNING_UP;
       return;
     }
 
