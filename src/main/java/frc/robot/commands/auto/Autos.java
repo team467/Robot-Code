@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
@@ -23,7 +24,7 @@ public class Autos {
 
   public Command CenterA() {
     return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(CenterA.get())),
+        Commands.runOnce(() -> drive.setPose(AllianceFlipUtil.apply(CenterA.get()))),
         drive.getAutonomousCommand("CA-out-intake"),
         new StraightDriveToPose(climb.get(), drive).withTimeout(2.0));
   }
@@ -32,7 +33,27 @@ public class Autos {
     return Commands.sequence(
         Commands.runOnce(
             () ->
-                drive.setPose(new Pose2d(3.213, 5.600, new Rotation2d(Units.degreesToRadians(0))))),
+                drive.setPose(
+                    AllianceFlipUtil.apply(
+                        new Pose2d(3.213, 5.600, new Rotation2d(Units.degreesToRadians(0)))))),
         drive.getAutonomousCommand("test path"));
+  }
+
+  public Command Bummmmpar() {
+    return Commands.sequence(
+        Commands.runOnce(
+            () ->
+                drive.setPose(
+                    AllianceFlipUtil.apply(
+                        new Pose2d(3.213, 5.600, new Rotation2d(Units.degreesToRadians(0)))))),
+        new DriveToPose(
+            drive,
+            () -> AllianceFlipUtil.apply(new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(0)))),
+        new DriveToPose(
+            drive,
+            () -> AllianceFlipUtil.apply(new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(0)))),
+        new DriveToPose(
+            drive,
+            () -> AllianceFlipUtil.apply(new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(0)))));
   }
 }
