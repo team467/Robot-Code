@@ -5,27 +5,40 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "A-Cycle-Center"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "A-Cycle-Center"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "startIntake"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "driveToHub"
+            "name": "endIntake"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "feedShooter"
+            "name": "driveToHubAuto"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 4.0
+            "name": "shootAuto"
           }
         },
         {

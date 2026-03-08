@@ -148,6 +148,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getSetpoint() {
-    return inputs.setpointRPM;
+    return targetRadPerSec;
   }
 }

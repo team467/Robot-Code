@@ -53,11 +53,11 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.6440677966101698,
-      "maxWaypointRelativePos": 1.1864406779661107,
+      "minWaypointRelativePos": 0.6,
+      "maxWaypointRelativePos": 0.66,
       "constraints": {
-        "maxVelocity": 1.5,
-        "maxAcceleration": 6.0,
+        "maxVelocity": 1.35,
+        "maxAcceleration": 4.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -66,11 +66,24 @@
     },
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.3898305084745763,
-      "maxWaypointRelativePos": 1.5661016949152557,
+      "minWaypointRelativePos": 0.66,
+      "maxWaypointRelativePos": 1.08,
       "constraints": {
-        "maxVelocity": 2.6,
-        "maxAcceleration": 6.0,
+        "maxVelocity": 0.9,
+        "maxAcceleration": 2.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.08,
+      "maxWaypointRelativePos": 1.75,
+      "constraints": {
+        "maxVelocity": 2.5,
+        "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -79,26 +92,7 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "startIntake",
-      "waypointRelativePos": 0.46779661016949126,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "endIntake",
-      "waypointRelativePos": 1.3220338983050837,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "spinUp",
-      "waypointRelativePos": 1.3288135593220365,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 6.0,

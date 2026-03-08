@@ -177,17 +177,50 @@ public class RobotContainer {
     }
 
     orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, driverController);
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     Autos autos = new Autos(drive, orchestrator);
     NamedCommands.registerCommand(
-        "startIntake", intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).repeatedly());
-    NamedCommands.registerCommand("endIntake", intake.stopIntakeCommand());
+        "startIntake",
+        Commands.parallel(
+                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
+                orchestrator.preloadBalls())
+            .withTimeout(10.0));
+    NamedCommands.registerCommand(
+        "endIntake",
+        Commands.parallel(
+                intake.stopIntakeCommand().withTimeout(0.05),
+                magicCarpet.stop().withTimeout(0.05),
+                indexer.stop().withTimeout(0.05))
+            .withTimeout(0.05));
     NamedCommands.registerCommand(
         "spinUp",
         shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1315)));
-    NamedCommands.registerCommand("feedShooter", orchestrator.feedUp());
+    NamedCommands.registerCommand(
+        "feedShooter",
+        Commands.parallel(
+            orchestrator.feedUp(),
+            shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1085))));
     NamedCommands.registerCommand("bringInIntake", intake.extendToAngleAndIntake(0));
     NamedCommands.registerCommand("driveToHub", orchestrator.driveToHub());
+    NamedCommands.registerCommand("driveToHubAuto", orchestrator.driveToHub().withTimeout(3.0));
+    NamedCommands.registerCommand(
+        "shootAuto",
+        Commands.sequence(
+            Commands.parallel(
+                    orchestrator.spinUpShooterHub().withTimeout(0.6),
+                    intake.stopIntakeCommand(),
+                    magicCarpet.stop(),
+                    indexer.stop())
+                .withTimeout(0.6),
+            Commands.deadline(
+                Commands.waitSeconds(2.6),
+                orchestrator.spinUpShooterHub(),
+                magicCarpet.run(),
+                indexer.run()),
+            Commands.parallel(
+                    shooter.stop().withTimeout(0.05),
+                    magicCarpet.stop().withTimeout(0.05),
+                    indexer.stop().withTimeout(0.05))
+                .withTimeout(0.05)));
     AutoBuilder.configure(
         drive::getPose,
         drive::setPose,
@@ -226,6 +259,7 @@ public class RobotContainer {
     // NamedCommands.registerCommand("stopIntake",Commands.sequence(intake.collapseAndIntake(),Commands.waitSeconds(0.3),intake.stopIntakeCommand()));
     //        NamedCommands.registerCommand("climb",Commands.none());
     // Set up auto routines
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
