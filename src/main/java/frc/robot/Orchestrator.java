@@ -98,7 +98,9 @@ public class Orchestrator {
     return Commands.repeatingSequence(
             preloadBalls().until(() -> RobotState.getInstance().shooterAtSpeed),
             Commands.parallel(magicCarpet.run(), indexer.run())
-                .until(() -> !RobotState.getInstance().shooterAtSpeed)).onlyIf(() ->shooter.getSetpoint() > 0).onlyWhile(() ->shooter.getSetpoint()>0)
+                .until(() -> !RobotState.getInstance().shooterAtSpeed))
+        .onlyIf(() -> shooter.getSetpoint() > 0)
+        .onlyWhile(() -> shooter.getSetpoint() > 0)
         .withName("feedUp");
   }
 
@@ -142,7 +144,7 @@ public class Orchestrator {
 
   public Command alignAndShoot() {
     return Commands.sequence(
-          DriveCommands.joystickDriveAtAngle(
+            DriveCommands.joystickDriveAtAngle(
                 drive,
                 () -> 0.0,
                 () -> 0.0,
