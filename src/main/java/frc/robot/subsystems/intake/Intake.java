@@ -173,7 +173,7 @@ public class Intake extends SubsystemBase {
     return Commands.run(
             () -> {
               io.goToPos(angle);
-              // io.setVoltageIntake(INTAKE_VOLTS);
+              io.setVoltageIntake(INTAKE_VOLTS);
             },
             this)
         .until(() -> inputs.atSetpoint)

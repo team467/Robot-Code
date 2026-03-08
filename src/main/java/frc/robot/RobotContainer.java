@@ -4,12 +4,19 @@
 
 package frc.robot;
 
+import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.lib.utils.LocalADStarAK;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.drive.DriveCommands;
@@ -41,6 +49,7 @@ import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -169,7 +178,35 @@ public class RobotContainer {
 
     orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, driverController);
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    Autos autos = new Autos(drive);
+    Autos autos = new Autos(drive, orchestrator);
+    NamedCommands.registerCommand(
+        "startIntake", intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).repeatedly());
+    NamedCommands.registerCommand("endIntake", intake.stopIntakeCommand());
+    NamedCommands.registerCommand(
+        "spinUp",
+        shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1315)));
+    NamedCommands.registerCommand("feedShooter", orchestrator.feedUp());
+    NamedCommands.registerCommand("bringInIntake", intake.extendToAngleAndIntake(0));
+    NamedCommands.registerCommand("driveToHub", orchestrator.driveToHub());
+    AutoBuilder.configure(
+        drive::getPose,
+        drive::setPose,
+        drive::getChassisSpeeds,
+        drive::runVelocity,
+        new PPHolonomicDriveController(new PIDConstants(12, 0, 0), new PIDConstants(9, 0, 0)),
+        ppConfig,
+        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+        drive);
+    Pathfinding.setPathfinder(new LocalADStarAK());
+    PathPlannerLogging.setLogActivePathCallback(
+        (activePath) -> {
+          Logger.recordOutput(
+              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+        });
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (targetPose) -> {
+          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+        });
 
     NamedCommands.registerCommand(
         "Drive Back Left",
@@ -177,22 +214,21 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Drive Over Left",
         new DriveToPose(drive, () -> new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(180))));
+
     //
     // NamedCommands.registerCommand("startShooter",Commands.parallel(orchestrator.preloadBalls(),orchestrator.prepShooter()));
-    //    NamedCommands.registerCommand("shoot",orchestrator.shootBalls());
-    //    NamedCommands.registerCommand("shootClimb",orchestrator.shootBallsonClimb());
-    //    NamedCommands.registerCommand("shootDistance",orchestrator.shootBallsAtDistance());
-    //    NamedCommands.registerCommand("extend hopper and intake",intake.extendAndIntake());
+    //        NamedCommands.registerCommand("shoot",orchestrator.shootBalls());
+    //        NamedCommands.registerCommand("shootClimb",orchestrator.shootBallsonClimb());
+    //        NamedCommands.registerCommand("shootDistance",orchestrator.shootBallsAtDistance());
+    //        NamedCommands.registerCommand("extend hopper and intake",intake.extendAndIntake());
+    //
     //
     // NamedCommands.registerCommand("stopIntake",Commands.sequence(intake.collapseAndIntake(),Commands.waitSeconds(0.3),intake.stopIntakeCommand()));
-    //    NamedCommands.registerCommand("climb",Commands.none());
-    //    // Set up auto routines
-
-    //    NamedCommands.registerCommand("startIntake", intake.intake());
-    //    NamedCommands.registerCommand("endIntake", intake.stopIntakeCommand());
-    //    NamedCommands.registerCommand("shootDistance", orchestrator.alignAndShoot());
+    //        NamedCommands.registerCommand("climb",Commands.none());
+    // Set up auto routines
 
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
+
     autoChooser.addOption("test path", autos.testPath());
     autoChooser.addOption("Bummmmpar", autos.Bummmmpar());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
@@ -222,7 +258,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
+    autoChooser.addOption("8Ball", autos.EightBalls());
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -276,6 +312,7 @@ public class RobotContainer {
     driverController
         .leftBumper()
         .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+    driverController.leftBumper().toggleOnTrue(magicCarpet.run());
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
     driverController.leftTrigger(0.2).toggleOnTrue(magicCarpet.run());
@@ -285,7 +322,7 @@ public class RobotContainer {
     driverController
         .a()
         .toggleOnTrue(
-            shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1100)));
+            shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1085)));
     driverController
         .x()
         .toggleOnTrue(

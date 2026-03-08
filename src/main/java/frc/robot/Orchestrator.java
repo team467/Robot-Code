@@ -113,11 +113,16 @@ public class Orchestrator {
     return shooter.setTargetVelocityRadians(shooter.calculateSetpoint(targetDistance));
   }
 
+  public Command spinUpShooterHub() {
+    return shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1085));
+  }
+
   public Command preloadBalls() {
     return Commands.parallel(magicCarpet.run(), indexer.runPreloadSpeeds())
         .onlyWhile(() -> !RobotState.getInstance().indexerHasFuel)
         .onlyIf(() -> !RobotState.getInstance().indexerHasFuel)
-        .until(() -> RobotState.getInstance().indexerHasFuel);
+        .until(() -> RobotState.getInstance().indexerHasFuel)
+        .andThen(indexer.stop().withTimeout(0.01));
   }
 
   public Command driveShootAtAngle() {

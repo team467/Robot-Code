@@ -52,7 +52,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    RobotState.getInstance().shooterAtSpeed = isAtSetpoint();
+    RobotState.getInstance().shooterAtSpeed = isAtSetpoint() && targetRadPerSec > 0;
     if (controllerEnabled) {
       // Ramp toward the target to avoid current spikes
       rampedTarget = targetRamper.calculate(targetRadPerSec);
