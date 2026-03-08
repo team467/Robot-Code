@@ -27,6 +27,7 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOKraken;
 import frc.robot.subsystems.leds.Leds;
@@ -262,8 +263,10 @@ public class RobotContainer {
     driverController.a().onTrue(orchestrator.preloadBalls());
     //        driverController.y().onTrue(indexer.run());
 
-    //    driverController.y().whileTrue(intake.extendToAngleAndIntake(0));
-    //    driverController.b().whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+    driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(0));
+    driverController
+        .leftBumper()
+        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
     driverController.leftTrigger(0.2).toggleOnTrue(magicCarpet.run());
