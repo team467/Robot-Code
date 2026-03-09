@@ -181,8 +181,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "startIntake",
         Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())
+                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS), orchestrator.preloadBalls())
             .withTimeout(10.0));
     NamedCommands.registerCommand(
         "endIntake",
