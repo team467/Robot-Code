@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.lib.utils.LocalADStarAK;
+import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.drive.DriveCommands;
@@ -49,6 +50,7 @@ import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.util.CustomTriggers;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -339,11 +341,8 @@ public class RobotContainer {
     driverController.a().onTrue(orchestrator.preloadBalls());
     //        driverController.y().onTrue(indexer.run());
 
-    driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(0));
-    driverController
-        .leftBumper()
-        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
-    driverController.leftBumper().toggleOnTrue(magicCarpet.run());
+    CustomTriggers.toggleIntakeUp(driverController.leftBumper(), () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED).toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
+    CustomTriggers.toggleIntakeDown(driverController.leftBumper(), () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED).toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
     driverController.leftTrigger(0.2).toggleOnTrue(magicCarpet.run());
