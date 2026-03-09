@@ -205,17 +205,16 @@ public class RobotContainer {
                     shooter
                         .setTargetVelocityRadiansRepeatedly(
                             Units.rotationsPerMinuteToRadiansPerSecond(1085))
-                        .withTimeout(0.6),
+                        .withTimeout(0.8),
                     intake.stopIntakeCommand(),
                     magicCarpet.stop(),
                     indexer.stop())
-                .withTimeout(0.6),
+                .withTimeout(0.8),
             Commands.deadline(
-                Commands.waitSeconds(2.6),
+                Commands.waitSeconds(3.2),
                 shooter.setTargetVelocityRadiansRepeatedly(
                     Units.rotationsPerMinuteToRadiansPerSecond(1085)),
-                magicCarpet.run(),
-                indexer.run()),
+                orchestrator.feedUp()),
             Commands.parallel(
                     magicCarpet.stop().withTimeout(0.05), indexer.stop().withTimeout(0.05))
                 .withTimeout(0.05)));
