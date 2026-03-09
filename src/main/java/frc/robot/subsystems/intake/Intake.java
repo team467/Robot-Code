@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.BooleanSupplier;
+import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -46,6 +47,7 @@ public class Intake extends SubsystemBase {
     inputs.stallExtendTimer = stallExtendTimer.get();
     inputs.stallCollapseTimer = stallCollapseTimer.get();
     Logger.processInputs("Intake", inputs);
+    RobotState.getInstance().intaking = inputs.intakeVolts > 0;
 
     // setPID mode in io to true or false depending on the passed in trigger
     if (pidModeDisabled.getAsBoolean() == io.getPIDEnabled()) {

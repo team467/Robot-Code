@@ -21,6 +21,7 @@ public class Indexer extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     RobotState.getInstance().indexerHasFuel = inputs.ballAtLeftSwitch || inputs.ballAtRightSwitch;
+    RobotState.getInstance().indexerRunning = inputs.feedUpVolts > 0;
     Logger.processInputs("Index", inputs);
   }
 
