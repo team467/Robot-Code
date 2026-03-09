@@ -131,6 +131,24 @@ public class Shooter extends SubsystemBase {
         .withName("setTargetVelocityRadians");
   }
 
+  /**
+   * Continuously re-asserts shooter target while scheduled.
+   *
+   * <p>Useful for toggle/manual control flows where another command may temporarily disable the
+   * shooter controller.
+   */
+  public Command setTargetVelocityRadiansRepeatedly(double radPerSec) {
+    return Commands.repeatingSequence(
+            Commands.runOnce(
+                () -> {
+                  targetRadPerSec = radPerSec;
+                  controllerEnabled = true;
+                },
+                this),
+            Commands.waitSeconds(0.02))
+        .withName("setTargetVelocityRadiansRepeatedly");
+  }
+
   public boolean isAtSetpoint() {
     return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetRadPerSec)) < TOLERANCE;
   }

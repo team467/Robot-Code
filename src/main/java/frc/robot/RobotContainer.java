@@ -192,12 +192,9 @@ public class RobotContainer {
             .withTimeout(0.05));
     NamedCommands.registerCommand(
         "spinUp",
-        shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1315)));
-    NamedCommands.registerCommand(
-        "feedShooter",
-        Commands.parallel(
-            orchestrator.feedUp(),
-            shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1085))));
+        shooter.setTargetVelocityRadiansRepeatedly(
+            Units.rotationsPerMinuteToRadiansPerSecond(1315)));
+    NamedCommands.registerCommand("feedShooter", orchestrator.feedUp());
     NamedCommands.registerCommand("bringInIntake", intake.extendToAngleAndIntake(0));
     NamedCommands.registerCommand("driveToHub", orchestrator.driveToHub());
     NamedCommands.registerCommand("driveToHubAuto", orchestrator.driveToHub().withTimeout(3.0));
@@ -205,20 +202,22 @@ public class RobotContainer {
         "shootAuto",
         Commands.sequence(
             Commands.parallel(
-                    orchestrator.spinUpShooterHub().withTimeout(0.6),
+                    shooter
+                        .setTargetVelocityRadiansRepeatedly(
+                            Units.rotationsPerMinuteToRadiansPerSecond(1085))
+                        .withTimeout(0.6),
                     intake.stopIntakeCommand(),
                     magicCarpet.stop(),
                     indexer.stop())
                 .withTimeout(0.6),
             Commands.deadline(
                 Commands.waitSeconds(2.6),
-                orchestrator.spinUpShooterHub(),
+                shooter.setTargetVelocityRadiansRepeatedly(
+                    Units.rotationsPerMinuteToRadiansPerSecond(1085)),
                 magicCarpet.run(),
                 indexer.run()),
             Commands.parallel(
-                    shooter.stop().withTimeout(0.05),
-                    magicCarpet.stop().withTimeout(0.05),
-                    indexer.stop().withTimeout(0.05))
+                    magicCarpet.stop().withTimeout(0.05), indexer.stop().withTimeout(0.05))
                 .withTimeout(0.05)));
     AutoBuilder.configure(
         drive::getPose,
