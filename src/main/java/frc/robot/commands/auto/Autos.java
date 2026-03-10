@@ -35,7 +35,7 @@ public class Autos {
   private static final Supplier<Pose2d> firstPoseB =
       () -> new Pose2d(7.724780082702637, 2.436420202255249, Rotation2d.fromDegrees(0.0));
   private static final Supplier<Pose2d> secondPoseB =
-      () -> new Pose2d(3.1251401901245117, 5.808189868927002, Rotation2d.fromDegrees(0.0));
+      () -> new Pose2d(3.1251401901245117, 2.397440195083618, Rotation2d.fromDegrees(0.0));
 
   public Command CenterA() {
     return Commands.sequence(
