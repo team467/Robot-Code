@@ -100,8 +100,7 @@ public class Autos {
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(thirdPose.get())).withTimeout(5),
             Commands.parallel(
-                intake.extendToAngle(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())));
+                intake.extendToAngle(IntakeConstants.EXTEND_POS), orchestrator.preloadBalls())));
   }
 
   public Command BCCManuelAuto() {
@@ -123,7 +122,6 @@ public class Autos {
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(thirdPose.get())).withTimeout(5),
             Commands.parallel(
-                intake.extendToAngle(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())));
+                intake.extendToAngle(IntakeConstants.EXTEND_POS), orchestrator.preloadBalls())));
   }
 }
