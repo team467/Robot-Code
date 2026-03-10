@@ -113,6 +113,3 @@ public class Autos {
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
 }
-
-
-
