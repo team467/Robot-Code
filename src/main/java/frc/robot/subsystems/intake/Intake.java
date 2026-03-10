@@ -238,18 +238,4 @@ public class Intake extends SubsystemBase {
   // private because it doesn't have requirements and therefore it shouldn't be called beyond the
   // subsystem
   // itself
-  public Command moveToAngle(double angle) {
-    //     return Commands.either(
-    //        Commands.run(() -> io.goToPos(angle)).until(() -> inputs.atSetpoint),
-    //        Commands.either(
-    //                Commands.run(() -> io.setVoltageExtend(EXTEND_VOLTS)),
-    //                Commands.run(() -> io.setVoltageExtend(COLLAPSE_VOLTS)),
-    //                () -> angle > inputs.getExtendPos)
-    //            .until(() -> Math.abs(angle - inputs.getExtendPos) < POSITION_TOLERANCE),
-    //        () -> inputs.hasSetpoint);
-    return Commands.runOnce(() -> io.goToPos(angle), this)
-        .andThen(() -> io.goToPos(angle), this)
-        .until(() -> inputs.atSetpoint)
-        .finallyDo(this::stopExtendingCommand);
-  }
 }
