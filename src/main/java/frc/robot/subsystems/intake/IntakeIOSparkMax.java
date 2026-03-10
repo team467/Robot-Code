@@ -39,7 +39,7 @@ public class IntakeIOSparkMax implements IntakeIO {
     var intakeConfig = new SparkMaxConfig();
     intakeConfig
         .inverted(false)
-        .idleMode(IdleMode.kBrake)
+        .idleMode(IdleMode.kCoast)
         .voltageCompensation(12)
         .smartCurrentLimit(30);
     var extendConfig = new SparkMaxConfig();
