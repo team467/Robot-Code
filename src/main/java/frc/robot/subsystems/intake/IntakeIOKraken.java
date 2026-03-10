@@ -96,7 +96,7 @@ public class IntakeIOKraken implements IntakeIO {
     inputs.isCollapsed = !collapsedLimitSwitch.get();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
     inputs.hasSetpoint = usingPID;
-    inputs.setpointValue = usingPID ? extendMotor.getClosedLoopController().getSetpoint() : 0.0;
+    inputs.setpointValue = extendMotor.getClosedLoopController().getSetpoint();
     inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint();
   }
 

@@ -340,9 +340,15 @@ public class RobotContainer {
     // driverController.b().onTrue(shooter.setTargetVelocityRadians(80)).onFalse(shooter.stop());
     driverController.a().onTrue(orchestrator.preloadBalls());
     //        driverController.y().onTrue(indexer.run());
-
-    CustomTriggers.toggleIntakeUp(driverController.leftBumper(), () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED).toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
-    CustomTriggers.toggleIntakeDown(driverController.leftBumper(), () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED).toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+    driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
+    CustomTriggers.toggleIntakeUp(
+            driverController.leftBumper(),
+            () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
+        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
+    CustomTriggers.toggleIntakeDown(
+            driverController.leftBumper(),
+            () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
+        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
     driverController.leftTrigger(0.2).toggleOnTrue(magicCarpet.run());

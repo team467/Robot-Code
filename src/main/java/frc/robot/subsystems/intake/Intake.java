@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.function.BooleanSupplier;
 import frc.robot.RobotState;
 import frc.robot.RobotState.IntakePosition;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -49,10 +49,10 @@ public class Intake extends SubsystemBase {
     inputs.stallCollapseTimer = stallCollapseTimer.get();
     Logger.processInputs("Intake", inputs);
     RobotState.getInstance().intaking = inputs.intakeVolts > 0;
-    if(inputs.atSetpoint && inputs.setpointValue == COLLAPSE_POS){
+    if (inputs.atSetpoint && inputs.setpointValue == COLLAPSE_POS) {
       RobotState.getInstance().intakePosition = IntakePosition.STOWED;
     }
-    if(inputs.atSetpoint && inputs.setpointValue == EXTEND_POS){
+    if (inputs.atSetpoint && inputs.setpointValue == EXTEND_POS) {
       RobotState.getInstance().intakePosition = IntakePosition.STOWED;
     }
 
