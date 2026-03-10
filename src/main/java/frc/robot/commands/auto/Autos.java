@@ -28,13 +28,13 @@ public class Autos {
   private static final Supplier<Pose2d> center = () -> new Pose2d(3.504, 4.019, new Rotation2d(0));
   private static final Supplier<Pose2d> CenterA =
       () -> new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305)));
-  private static final Supplier<Pose2d> firstPoseLeft =
+  private static final Supplier<Pose2d> firstPoseA =
       () -> new Pose2d(7.7052903175354, 5.8276801109313965, Rotation2d.fromDegrees(0.0));
-  private static final Supplier<Pose2d> secondPoseLeft =
+  private static final Supplier<Pose2d> secondPoseA =
       () -> new Pose2d(3.0666706562042236, 5.808189868927002, Rotation2d.fromDegrees(0.0));
-  private static final Supplier<Pose2d> firstPoseRight =
+  private static final Supplier<Pose2d> firstPoseB =
       () -> new Pose2d(7.724780082702637, 2.436420202255249, Rotation2d.fromDegrees(0.0));
-  private static final Supplier<Pose2d> secondPoseRight =
+  private static final Supplier<Pose2d> secondPoseB =
       () -> new Pose2d(3.1251401901245117, 5.808189868927002, Rotation2d.fromDegrees(0.0));
 
   public Command CenterA() {
@@ -79,14 +79,14 @@ public class Autos {
         Commands.parallel(orchestrator.spinUpShooterHub(), orchestrator.feedUp()));
   }
 
-  public Command SkibidiManuelAutoLeft() {
+  public Command ACCManuelAuto() {
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseLeft.get())).withTimeout(5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())).withTimeout(5),
             Commands.parallel(
                 intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
                 orchestrator.preloadBalls())),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseLeft.get())).withTimeout(5),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseA.get())).withTimeout(5),
         intake.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
@@ -96,14 +96,14 @@ public class Autos {
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
 
-  public Command SkibidiManuelAutoRight() {
+  public Command BCCManuelAuto() {
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseRight.get())).withTimeout(5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseB.get())).withTimeout(5),
             Commands.parallel(
                 intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
                 orchestrator.preloadBalls())),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseRight.get())).withTimeout(5),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseB.get())).withTimeout(5),
         intake.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
