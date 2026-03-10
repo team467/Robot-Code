@@ -200,7 +200,7 @@ public class Intake extends SubsystemBase {
             this)
         .until(() -> inputs.atSetpoint)
         .finallyDo(this::stopExtend)
-        .withName("extendToAngleAndIntake");
+        .withName("extendToAngle");
   }
 
   public Command holdAngleAndIntake(double angle) {
