@@ -130,6 +130,15 @@ public class Shooter extends SubsystemBase {
             this)
         .withName("setTargetVelocityRadians");
   }
+  public Command setTargetVelocityRadians(DoubleSupplier radPerSec) {
+    return Commands.run(
+            () -> {
+              targetRadPerSec = radPerSec.getAsDouble();
+              controllerEnabled = true;
+            },
+            this)
+        .withName("setTargetVelocityRadians");
+  }
 
   /**
    * Continuously re-asserts shooter target while scheduled.

@@ -358,11 +358,13 @@ public class RobotContainer {
 
     driverController.rightBumper().toggleOnTrue(orchestrator.driveToHub());
     operatorController
-        .rightBumper()
+        .rightTrigger(0.1)
         .toggleOnTrue(
             shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1085)));
     operatorController.y().whileTrue(indexer.reverse());
     operatorController.x().whileTrue(intake.outtake());
+
+    operatorController.leftTrigger().whileTrue(shooter.setTargetVelocityRadians(() -> operatorController.getLeftY() * Units.rotationsPerMinuteToRadiansPerSecond(5600)));
 //    driverController
 //        .x()
 //        .toggleOnTrue(
