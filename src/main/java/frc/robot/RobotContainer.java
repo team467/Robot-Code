@@ -179,7 +179,7 @@ public class RobotContainer {
     }
 
     orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, driverController);
-    Autos autos = new Autos(drive, orchestrator);
+    Autos autos = new Autos(drive, orchestrator, intake);
     NamedCommands.registerCommand(
         "startIntake",
         Commands.parallel(
@@ -264,6 +264,7 @@ public class RobotContainer {
 
     autoChooser.addOption("test path", autos.testPath());
     autoChooser.addOption("Bummmmpar", autos.Bummmmpar());
+    autoChooser.addOption("Manual A-CC", autos.SkibidiManuelAuto());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     autoChooser.addOption("CL auto", autos.CenterA());
 

@@ -8,15 +8,19 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.Orchestrator;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConstants;
 import java.util.function.Supplier;
 
 public class Autos {
   private final Drive drive;
   private final Orchestrator orchestrator;
+  private final Intake intake;
 
-  public Autos(Drive drive, Orchestrator orchestrator) {
+  public Autos(Drive drive, Orchestrator orchestrator, Intake intake) {
     this.drive = drive;
     this.orchestrator = orchestrator;
+    this.intake = intake;
   }
 
   private static final Supplier<Pose2d> climb =
@@ -24,6 +28,10 @@ public class Autos {
   private static final Supplier<Pose2d> center = () -> new Pose2d(3.504, 4.019, new Rotation2d(0));
   private static final Supplier<Pose2d> CenterA =
       () -> new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305)));
+  private static final Supplier<Pose2d> firstPose =
+      () -> new Pose2d(7.7052903175354, 5.8276801109313965, Rotation2d.fromDegrees(0.0));
+  private static final Supplier<Pose2d> secondPose =
+      () -> new Pose2d(3.0666706562042236, 5.808189868927002, Rotation2d.fromDegrees(0.0));
 
   public Command CenterA() {
     return Commands.sequence(
@@ -65,5 +73,22 @@ public class Autos {
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3.0), orchestrator.spinUpShooterHub()),
         Commands.parallel(orchestrator.spinUpShooterHub(), orchestrator.feedUp()));
+  }
+
+  public Command SkibidiManuelAuto() {
+    return Commands.sequence(
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPose.get())).withTimeout(5),
+            Commands.parallel(
+                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
+                orchestrator.preloadBalls())),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPose.get())).withTimeout(5),
+        intake.stopIntakeCommand().withTimeout(0.05),
+        Commands.deadline(
+            orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
+        Commands.parallel(
+            orchestrator.spinUpShooterHub(),
+            orchestrator.feedUp(),
+            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
 }
