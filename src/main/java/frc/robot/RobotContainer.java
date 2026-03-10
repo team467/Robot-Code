@@ -351,7 +351,6 @@ public class RobotContainer {
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
         .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
 
-
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
     driverController.leftTrigger(0.2).toggleOnTrue(magicCarpet.run());
@@ -364,12 +363,19 @@ public class RobotContainer {
     operatorController.y().whileTrue(indexer.reverse());
     operatorController.x().whileTrue(intake.outtake());
 
-    operatorController.leftTrigger().whileTrue(shooter.setTargetVelocityRadians(() -> operatorController.getLeftY() * Units.rotationsPerMinuteToRadiansPerSecond(5600)));
-//    driverController
-//        .x()
-//        .toggleOnTrue(
-//            shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(5600)));
-//    driverController.rightTrigger(0.2).toggleOnTrue(orchestrator.feedUp());
+    operatorController
+        .leftTrigger()
+        .whileTrue(
+            shooter.setTargetVelocityRadians(
+                () ->
+                    operatorController.getLeftY()
+                        * Units.rotationsPerMinuteToRadiansPerSecond(5600)));
+    //    driverController
+    //        .x()
+    //        .toggleOnTrue(
+    //
+    // shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(5600)));
+    //    driverController.rightTrigger(0.2).toggleOnTrue(orchestrator.feedUp());
     //    driverController
     //        .leftBumper()
     //        .whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
