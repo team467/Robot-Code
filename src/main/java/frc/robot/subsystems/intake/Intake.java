@@ -49,10 +49,12 @@ public class Intake extends SubsystemBase {
     inputs.stallCollapseTimer = stallCollapseTimer.get();
     Logger.processInputs("Intake", inputs);
     RobotState.getInstance().intaking = inputs.intakeVolts > 0;
-    if (inputs.setpointValue == COLLAPSE_POS && inputs.atSetpoint) {
+    if (inputs.setpointValue == COLLAPSE_POS
+        && Math.abs(inputs.getExtendPos - inputs.setpointValue) < 10) {
       RobotState.getInstance().intakePosition = IntakePosition.STOWED;
     }
-    if (inputs.setpointValue == EXTEND_POS && inputs.atSetpoint) {
+    if (inputs.setpointValue == EXTEND_POS
+        && Math.abs(inputs.getExtendPos - inputs.setpointValue) < 10) {
       RobotState.getInstance().intakePosition = IntakePosition.DEPLOYED;
     }
 
