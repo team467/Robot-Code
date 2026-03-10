@@ -29,7 +29,7 @@ public class Autos {
   private static final Supplier<Pose2d> CenterA =
       () -> new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305)));
   private static final Supplier<Pose2d> firstPose =
-      () -> new Pose2d(9.128060340881348, 5.8276801109313965, Rotation2d.fromDegrees(0.0));
+      () -> new Pose2d(7.7052903175354, 5.8276801109313965, Rotation2d.fromDegrees(0.0));
   private static final Supplier<Pose2d> secondPose =
       () -> new Pose2d(3.0666706562042236, 5.808189868927002, Rotation2d.fromDegrees(0.0));
 
