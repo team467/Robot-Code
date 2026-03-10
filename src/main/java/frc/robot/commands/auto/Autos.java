@@ -36,6 +36,8 @@ public class Autos {
       () -> new Pose2d(7.724780082702637, 2.436420202255249, Rotation2d.fromDegrees(0.0));
   private static final Supplier<Pose2d> secondPoseB =
       () -> new Pose2d(3.1251401901245117, 2.397440195083618, Rotation2d.fromDegrees(0.0));
+  private static final Supplier<Pose2d> thirdPose =
+      () -> new Pose2d(0.5134801864624023, 0.6628301739692688, Rotation2d.fromDegrees(180));
 
   public Command CenterA() {
     return Commands.sequence(
@@ -93,7 +95,13 @@ public class Autos {
         Commands.parallel(
             orchestrator.spinUpShooterHub(),
             orchestrator.feedUp(),
-            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
+            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
+        intake.stopIntakeCommand(),
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(thirdPose.get())).withTimeout(5),
+            Commands.parallel(
+                intake.extendToAngle(IntakeConstants.EXTEND_POS),
+                orchestrator.preloadBalls())));
   }
 
   public Command BCCManuelAuto() {
@@ -110,6 +118,12 @@ public class Autos {
         Commands.parallel(
             orchestrator.spinUpShooterHub(),
             orchestrator.feedUp(),
-            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
+            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
+        intake.stopIntakeCommand(),
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(thirdPose.get())).withTimeout(5),
+            Commands.parallel(
+                intake.extendToAngle(IntakeConstants.EXTEND_POS),
+                orchestrator.preloadBalls())));
   }
 }
