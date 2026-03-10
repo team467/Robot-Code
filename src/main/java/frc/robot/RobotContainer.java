@@ -344,7 +344,7 @@ public class RobotContainer {
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
     driverController.leftTrigger(0.2).toggleOnTrue(magicCarpet.run());
-
+    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
     driverController.rightBumper().toggleOnTrue(orchestrator.driveToHub());
     operatorController
         .rightTrigger(0.1)
