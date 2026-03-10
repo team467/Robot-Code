@@ -330,17 +330,7 @@ public class RobotContainer {
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
-    //    driverController
-    //        .x()
-    //        .whileTrue(orchestrator.shootAndIndex(1300))
-    //        .onFalse(Commands.parallel(shooter.stop(), indexer.stop()));
-
-    //
-    // driverController.x().onTrue(shooter.setTargetVelocityRadians(20)).onFalse(shooter.stop());
-    //
-    // driverController.b().onTrue(shooter.setTargetVelocityRadians(80)).onFalse(shooter.stop());
     driverController.a().onTrue(orchestrator.preloadBalls());
-    //        driverController.y().onTrue(indexer.run());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     CustomTriggers.toggleIntakeUp(
             driverController.leftBumper(),
@@ -370,18 +360,6 @@ public class RobotContainer {
                 () ->
                     operatorController.getLeftY()
                         * Units.rotationsPerMinuteToRadiansPerSecond(5600)));
-    //    driverController
-    //        .x()
-    //        .toggleOnTrue(
-    //
-    // shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(5600)));
-    //    driverController.rightTrigger(0.2).toggleOnTrue(orchestrator.feedUp());
-    //    driverController
-    //        .leftBumper()
-    //        .whileTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
-    //    driverController
-    //        .rightBumper()
-    //        .whileTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
   }
 
   /**
