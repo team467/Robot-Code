@@ -268,6 +268,7 @@ public class RobotContainer {
     autoChooser.addOption("Manual B-CC", autos.BCCManuelAuto());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     autoChooser.addOption("CL auto", autos.CenterA());
+    autoChooser.addOption("8 Ball Auto", autos.EightBalls());
 
     autoChooser.addOption(
         "runCharacterizationQuasistatic", shooter.sysIdQuasistatic(Direction.kForward));
