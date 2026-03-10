@@ -340,7 +340,7 @@ public class RobotContainer {
     CustomTriggers.toggleIntakeDown(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
-        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+        .toggleOnTrue(intake.extendToAngle(IntakeConstants.EXTEND_POS));
 
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());

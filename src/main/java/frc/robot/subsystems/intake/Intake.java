@@ -192,6 +192,17 @@ public class Intake extends SubsystemBase {
         .withName("extendToAngleAndIntake");
   }
 
+  public Command extendToAngle(double angle) {
+    return Commands.run(
+            () -> {
+              io.goToPos(angle);
+            },
+            this)
+        .until(() -> inputs.atSetpoint)
+        .finallyDo(this::stopExtend)
+        .withName("extendToAngleAndIntake");
+  }
+
   public Command holdAngleAndIntake(double angle) {
     return Commands.run(
             () -> {
