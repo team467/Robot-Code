@@ -99,14 +99,14 @@ public class CustomTriggers {
         });
   }
 
-  public static Trigger toggleIntakeUp(Trigger toggle, BooleanSupplier intakeDown){
+  public static Trigger toggleIntakeUp(Trigger toggle, BooleanSupplier intakeDown) {
     return new Trigger(
         () -> {
           return (toggle.getAsBoolean() && intakeDown.getAsBoolean());
-        }
-    );
+        });
   }
-  public static Trigger toggleIntakeDown(Trigger toggle, BooleanSupplier intakeUp){
+
+  public static Trigger toggleIntakeDown(Trigger toggle, BooleanSupplier intakeUp) {
     return new Trigger(() -> (toggle.getAsBoolean() && intakeUp.getAsBoolean()));
   }
 }
