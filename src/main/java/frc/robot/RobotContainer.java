@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
+import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -193,7 +194,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "spinUp",
         shooter.setTargetVelocityRadiansRepeatedly(
-            Units.rotationsPerMinuteToRadiansPerSecond(1315)));
+            Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)));
     NamedCommands.registerCommand("feedShooter", orchestrator.feedUp());
     NamedCommands.registerCommand("bringInIntake", intake.extendToAngleAndIntake(0));
     NamedCommands.registerCommand("driveToHub", orchestrator.driveToHub());
@@ -204,7 +205,7 @@ public class RobotContainer {
             Commands.parallel(
                     shooter
                         .setTargetVelocityRadiansRepeatedly(
-                            Units.rotationsPerMinuteToRadiansPerSecond(1085))
+                            Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM))
                         .withTimeout(0.8),
                     intake.stopIntakeCommand(),
                     magicCarpet.stop(),
@@ -213,7 +214,7 @@ public class RobotContainer {
             Commands.deadline(
                 Commands.waitSeconds(3.2),
                 shooter.setTargetVelocityRadiansRepeatedly(
-                    Units.rotationsPerMinuteToRadiansPerSecond(1085)),
+                    Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)),
                 orchestrator.feedUp()),
             Commands.parallel(
                     magicCarpet.stop().withTimeout(0.05), indexer.stop().withTimeout(0.05))
@@ -265,6 +266,7 @@ public class RobotContainer {
     autoChooser.addOption("Manual A-CC", autos.ACCManuelAuto());
     autoChooser.addOption("Manual A-CC-Improved", autos.ACCManuelAutoAlt());
     autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManuelAutoOverBump());
+    autoChooser.addOption("Manual ADepot", autos.ADepot());
     autoChooser.addOption("Manual B-CC", autos.BCCManuelAuto());
     autoChooser.addOption("Manual B-CC-Improved", autos.BCCManuelAutoAlt());
     autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManuelAutoOverBump());
@@ -296,7 +298,6 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption("8Ball", autos.EightBalls());
     // Configure the button bindings
     configureButtonBindings();
   }

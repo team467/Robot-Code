@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -66,7 +68,7 @@ public class Orchestrator {
     return shootWhileDrivingResult.distance();
   }
 
-  public void OrchestratorPeriodic() {
+  public void orchestratorPeriodic() {
     var shootWhileDrivingResult =
         shooterLeadCompensator.shootWhileDriving(
             AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
@@ -122,11 +124,12 @@ public class Orchestrator {
   }
 
   public Command spinUpShooterDistance(DoubleSupplier targetDistance) {
-    return shooter.setTargetVelocityRadians(shooter.calculateSetpoint(targetDistance));
+    return shooter.setTargetVelocityRadians(() -> shooter.calculateSetpoint(targetDistance));
   }
 
   public Command spinUpShooterHub() {
-    return shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1085));
+    return shooter.setTargetVelocityRadians(
+        Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM));
   }
 
   public Command spinUpShooter(double velocityRPM) {
@@ -160,8 +163,8 @@ public class Orchestrator {
   }
 
   public Command spinUpShooterWhileDriving() {
-    return shooter.setTargetVelocityRPM(
-        shooter.calculateSetpoint(this::getShootWhileDrivingResultDistance));
+    return shooter.setTargetVelocityRadians(
+        () -> shooter.calculateSetpoint(this::getShootWhileDrivingResultDistance));
   }
 
   public Command alignAndShoot() {
