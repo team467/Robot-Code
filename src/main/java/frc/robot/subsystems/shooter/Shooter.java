@@ -171,9 +171,9 @@ public class Shooter extends SubsystemBase {
   // TODO: empirically determine the relationship between distance and shooter velocity
 
   public DoubleSupplier calculateSetpoint(DoubleSupplier distance) {
-    // calculate rpm depending on distance
+    // calculate rad/s depending on distance
     return () -> {
-      double setpoint = 44.1 * distance.getAsDouble() + 1100;
+      double setpoint = 4.62* distance.getAsDouble() + 523.6;
       if (setpoint > 5000) {
         return 5000;
       } else return setpoint;
