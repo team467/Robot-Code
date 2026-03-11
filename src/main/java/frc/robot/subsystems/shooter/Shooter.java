@@ -173,9 +173,9 @@ public class Shooter extends SubsystemBase {
   public DoubleSupplier calculateSetpoint(DoubleSupplier distance) {
     // calculate rad/s depending on distance
     return () -> {
-      double setpoint = 4.62* distance.getAsDouble() + 523.6;
-      if (setpoint > 5000) {
-        return 5000;
+      double setpoint = 4.62 * distance.getAsDouble() + 115;
+      if (setpoint > 523.6) {
+        return 523.6;
       } else return setpoint;
     };
   }

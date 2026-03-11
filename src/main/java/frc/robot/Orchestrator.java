@@ -80,8 +80,11 @@ public class Orchestrator {
       return shootWhileDrivingResult.distance();
     };
   }
-  public DoubleSupplier getHubDistance(){
-    return ()->AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()).getDistance(drive.getPose().getTranslation());
+
+  public DoubleSupplier getHubDistance() {
+    return () ->
+        AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())
+            .getDistance(drive.getPose().getTranslation());
   }
 
   private Rotation2d filteredHubAngle(Rotation2d raw) {
