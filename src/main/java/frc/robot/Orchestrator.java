@@ -117,6 +117,11 @@ public class Orchestrator {
     return shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1085));
   }
 
+  public Command spinUpShooter(double velocityRPM) {
+    return shooter.setTargetVelocityRadians(
+        Units.rotationsPerMinuteToRadiansPerSecond(velocityRPM));
+  }
+
   public Command preloadBalls() {
     return Commands.parallel(magicCarpet.run(), indexer.runPreloadSpeeds())
         .onlyWhile(() -> !RobotState.getInstance().indexerHasFuel)

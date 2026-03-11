@@ -179,7 +179,7 @@ public class RobotContainer {
     }
 
     orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, driverController);
-    Autos autos = new Autos(drive, orchestrator, intake);
+    Autos autos = new Autos(drive, orchestrator, intake, shooter);
     NamedCommands.registerCommand(
         "startIntake",
         Commands.parallel(
