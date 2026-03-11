@@ -70,6 +70,7 @@ public class Shooter extends SubsystemBase {
       Logger.recordOutput("Shooter/PIDVoltage", pidOutput);
       Logger.recordOutput("Shooter/CommandedVoltage", voltage);
       Logger.recordOutput("Shooter/RampedTargetRadPerSec", rampedTarget);
+      Logger.recordOutput("Shooter/Setpoint", targetRadPerSec);
     }
 
     Logger.processInputs("Shooter", inputs);
