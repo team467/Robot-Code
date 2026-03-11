@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
-  private static final double ANGLE_KP = 0.1;
+  private static final double ANGLE_KP = 0.5;
   private static final double ANGLE_KD = 1.0;
   private static final double ANGLE_MAX_VELOCITY = 6.0;
   private static final double ANGLE_MAX_ACCELERATION = 20.0;
