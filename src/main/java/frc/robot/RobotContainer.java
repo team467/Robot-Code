@@ -80,7 +80,7 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(0);
 
   private double shooterTargetRPM = 0.0;
-  private double shooterIncrement = 5.0;
+  private double shooterIncrement = 10.0;
   private int lastPOV = -1;
 
   // Dashboard inputs
