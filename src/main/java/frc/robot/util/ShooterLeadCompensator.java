@@ -39,7 +39,7 @@ public class ShooterLeadCompensator {
      */
     for (int i = 0; i < 10; i++) {
       double distance = aimPoint.minus(shooterPos).getNorm();
-      double t = 0.02;
+      double t = shooter.getAirTimeSeconds(() -> distance);
       aimPoint = targetPosition.plus(v.times(t));
     }
 
