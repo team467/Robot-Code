@@ -66,7 +66,7 @@ public class Orchestrator {
     return shootWhileDrivingResult.distance();
   }
 
-  public void OrchestratorPeriodic() {
+  public void orchestratorPeriodic() {
     var shootWhileDrivingResult =
         shooterLeadCompensator.shootWhileDriving(
             AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
