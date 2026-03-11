@@ -336,7 +336,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    driverController.x().toggleOnTrue(orchestrator.alignToHub());
+    driverController.x().toggleOnTrue(orchestrator.aimAndSpinUpShooter());
     driverController.a().toggleOnTrue(orchestrator.driveShootAtAngle());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     CustomTriggers.toggleIntakeUp(

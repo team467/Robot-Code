@@ -140,11 +140,6 @@ public class Orchestrator {
         .withName("spinUpShooterTest");
   }
 
-  public Command shootBallsDistance(DoubleSupplier targetDistance) {
-    return Commands.parallel(spinUpShooterDistance(targetDistance), feedUp())
-        .withName("shootBallsDistance");
-  }
-
   public Command spinUpShooterDistance(DoubleSupplier targetDistance) {
     return shooter.setTargetVelocityRadians(() -> shooter.calculateSetpoint(targetDistance));
   }
@@ -171,7 +166,7 @@ public class Orchestrator {
     return Commands.parallel(
         Commands.run(
             () -> {
-              shootBallsDistance(this::getShootWhileDrivingResultDistance);
+              spinUpShooterDistance(this::getShootWhileDrivingResultDistance);
             }),
         DriveCommands.joystickDriveAtAngle(
             drive,
@@ -190,7 +185,7 @@ public class Orchestrator {
         () -> shooter.calculateSetpoint(this::getShootWhileDrivingResultDistance));
   }
 
-  public Command alignAndShoot() {
+  public Command aimAndSpinUpShooter() {
     return Commands.sequence(
             DriveCommands.joystickDriveAtAngle(
                 drive,
@@ -203,7 +198,7 @@ public class Orchestrator {
                           .getAngle();
                   return filteredHubAngle(rawAngle);
                 }),
-            shootBallsDistance(
+            spinUpShooterDistance(
                 () ->
                     AllianceFlipUtil.apply(Hub.blueCenter)
                         .getDistance(drive.getPose().getTranslation())))
