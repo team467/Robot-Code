@@ -336,8 +336,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
-    driverController.a().onTrue(orchestrator.preloadBalls());
+    driverController.x().toggleOnTrue(orchestrator.alignToHub());
+    driverController.a().toggleOnTrue(orchestrator.driveShootAtAngle());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     CustomTriggers.toggleIntakeUp(
             driverController.leftBumper(),
@@ -353,11 +353,7 @@ public class RobotContainer {
     driverController.leftTrigger(0.2).toggleOnTrue(magicCarpet.run());
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
     driverController.rightBumper().toggleOnTrue(orchestrator.driveToHub());
-    operatorController
-        .rightTrigger(0.1)
-        .toggleOnTrue(
-            shooter.setTargetVelocityRadians(
-                Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)));
+    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController.y().whileTrue(indexer.reverse());
     operatorController.x().whileTrue(intake.outtake());
 
@@ -381,5 +377,6 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
+    orchestrator.orchestratorPeriodic();
   }
 }
