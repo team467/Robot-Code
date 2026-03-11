@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
+import frc.robot.RobotState.IntakePosition;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -23,6 +25,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final BooleanSupplier limitSwitchDisabled;
+  private final BooleanSupplier pidModeDisabled;
 
   /**
    * Constructor for the Intake subsystem
@@ -31,9 +34,10 @@ public class Intake extends SubsystemBase {
    * @param limitSwitchDisabled A supplier to return whether the limit switch is currently disabled
    *     or not. If disabled, uses slipping to control intake.
    */
-  public Intake(IntakeIO io, BooleanSupplier limitSwitchDisabled) {
+  public Intake(IntakeIO io, BooleanSupplier limitSwitchDisabled, BooleanSupplier pidModeDisabled) {
     this.io = io;
-    this.limitSwitchDisabled = limitSwitchDisabled;
+    this.limitSwitchDisabled = () -> false;
+    this.pidModeDisabled = () -> false;
   }
 
   @Override
@@ -41,11 +45,23 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     inputs.stalledExtended = stalledExtend;
     inputs.stalledCollapsed = stalledCollapse;
-    inputs.stowed = isStowed;
     inputs.stallExtendTimer = stallExtendTimer.get();
     inputs.stallCollapseTimer = stallCollapseTimer.get();
     Logger.processInputs("Intake", inputs);
+    RobotState.getInstance().intaking = inputs.intakeVolts > 0;
+    if (inputs.setpointValue == COLLAPSE_POS
+        && Math.abs(inputs.getExtendPos - inputs.setpointValue) < 10) {
+      RobotState.getInstance().intakePosition = IntakePosition.STOWED;
+    }
+    if (inputs.setpointValue == EXTEND_POS
+        && Math.abs(inputs.getExtendPos - inputs.setpointValue) < 10) {
+      RobotState.getInstance().intakePosition = IntakePosition.DEPLOYED;
+    }
 
+    // setPID mode in io to true or false depending on the passed in trigger
+    if (pidModeDisabled.getAsBoolean() == io.getPIDEnabled()) {
+      io.setPIDEnabled(!pidModeDisabled.getAsBoolean());
+    }
     // Non-slipping control calibration based on the limit switch state
     if (!limitSwitchDisabled.getAsBoolean() && isHopperCollapsed()) {
       io.resetExtendEncoder(0);
@@ -128,7 +144,7 @@ public class Intake extends SubsystemBase {
   }
 
   private boolean isHopperCollapsed() {
-    return io.isHopperCollapsed();
+    return io.isCollapsed();
   }
 
   private boolean isStallingExtend() {
@@ -145,58 +161,81 @@ public class Intake extends SubsystemBase {
   }
 
   public Command intake() {
-    return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS))
-        .finallyDo(interrupted -> stopIntake())
-        .withName("intake");
+    return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS), this)
+        .withName("intake")
+        .finallyDo(this::stopIntake);
   }
 
   public Command outtake() {
-    return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS))
-        .finallyDo(interrupted -> stopIntake())
-        .withName("outtake");
+    return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS), this)
+        .withName("outtake")
+        .finallyDo(this::stopIntake);
   }
 
   public Command stopIntakeCommand() {
-    return Commands.run(this::stopIntake).withName("stopIntakeCommand");
+    return Commands.run(this::stopIntake, this).withName("stopIntakeCommand");
   }
 
   public Command stopExtendingCommand() {
-    return Commands.run(this::stopExtend).withName("stopExtendingCommand");
+    return Commands.run(this::stopExtend, this);
   }
 
-  public Command extendAndIntake() {
+  public Command extendToAngleAndIntake(double angle) {
     return Commands.run(
             () -> {
-              setVoltageIntake(INTAKE_VOLTS);
-              setVoltageExtend(EXTEND_VOLTS);
-            })
-        .until(() -> inputs.getExtendPos >= EXTEND_POS)
-        .finallyDo(interrupted -> stopExtend())
-        .andThen(intake())
-        .withName("extendAndIntake");
+              io.goToPos(angle);
+              io.setVoltageIntake(INTAKE_VOLTS);
+            },
+            this)
+        .until(() -> inputs.atSetpoint)
+        .finallyDo(this::stopExtend)
+        .withName("extendToAngleAndIntake");
   }
 
-  public Command collapseAndIntake() {
+  public Command extendToAngle(double angle) {
     return Commands.run(
             () -> {
-              setVoltageIntake(INTAKE_VOLTS);
-              setVoltageExtend(COLLAPSE_VOLTS);
+              io.goToPos(angle);
+            },
+            this)
+        .until(() -> inputs.atSetpoint)
+        .finallyDo(this::stopExtend)
+        .withName("extendToAngle");
+  }
+
+  public Command holdAngleAndIntake(double angle) {
+    return Commands.run(
+            () -> {
+              io.goToPos(angle);
+              io.setVoltageIntake(INTAKE_VOLTS);
+            },
+            this)
+        .finallyDo(
+            () -> {
+              stopExtend();
+              stopIntake();
             })
-        .until(() -> isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS)
-        .finallyDo(interrupted -> stopExtend())
-        .andThen(intake())
-        .withName("collapseAndIntake");
+        .withName("holdAngleAndIntake");
   }
 
-  public Command moveToExtendedPosition() {
-    return Commands.run(() -> io.extendToPosition(EXTEND_POS))
-        .until(() -> Math.abs(inputs.getExtendPos - EXTEND_POS) <= POSITION_TOLERANCE)
-        .withName("moveToExtendedPosition");
-  }
+  // Jack's Chugga Chugga mode
 
-  public Command moveToCollapsedPosition() {
-    return Commands.run(() -> io.extendToPosition(COLLAPSE_POS))
-        .until(() -> Math.abs(inputs.getExtendPos - COLLAPSE_POS) <= POSITION_TOLERANCE)
-        .withName("moveToCollapsedPosition");
-  }
+  //  public Command shakeAndIntake() {
+  //    return Commands.repeatingSequence(
+  //            Commands.runOnce(
+  //                () ->
+  //                    Commands.deadline(
+  //                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+  //                this),
+  //            Commands.runOnce(
+  //                () ->
+  //                    Commands.deadline(
+  //                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+  //                this))
+  //        .withName("shakeAndIntake");
+  //  }
+
+  // private because it doesn't have requirements and therefore it shouldn't be called beyond the
+  // subsystem
+  // itself
 }

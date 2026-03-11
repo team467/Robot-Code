@@ -1,4 +1,4 @@
-package frc.robot.subsystems.magiccarpet;
+package frc.robot.subsystems.magicCarpet;
 
 import org.littletonrobotics.junction.AutoLog;
 

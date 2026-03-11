@@ -1,9 +1,10 @@
-package frc.robot;
+package frc.robot.util;
 
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class CustomTriggers {
@@ -96,5 +97,16 @@ public class CustomTriggers {
         () -> {
           return inputButton.getAsBoolean() && !manualMode.getAsBoolean();
         });
+  }
+
+  public static Trigger toggleIntakeUp(Trigger toggle, BooleanSupplier intakeDown) {
+    return new Trigger(
+        () -> {
+          return (toggle.getAsBoolean() && intakeDown.getAsBoolean());
+        });
+  }
+
+  public static Trigger toggleIntakeDown(Trigger toggle, BooleanSupplier intakeUp) {
+    return new Trigger(() -> (toggle.getAsBoolean() && intakeUp.getAsBoolean()));
   }
 }

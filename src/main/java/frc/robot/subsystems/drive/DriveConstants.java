@@ -10,12 +10,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Constants;
 
 public class DriveConstants {
-  public static final double maxSpeedMetersPerSec = Units.feetToMeters(15.0);
+  public static final double maxSpeedMetersPerSec = 11.8;
   public static final double odometryFrequency = 100.0; // Hz
-  public static final double trackWidth = Units.inchesToMeters(23);
-  public static final double wheelBase = Units.inchesToMeters(23.5);
+  public static final double trackWidth = 0.273 * 2;
+  public static final double wheelBase = 0.488;
   public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
   public static final Translation2d[] moduleTranslations =
       new Translation2d[] {
@@ -26,17 +27,41 @@ public class DriveConstants {
       };
 
   // Zeroed rotation values for each module, see setup instructions
-  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0.7470486164093018);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.18867963552474976);
-  public static final Rotation2d backLeftZeroRotation = new Rotation2d(-2.998932361602783);
-  public static final Rotation2d backRightZeroRotation = new Rotation2d(-0.08283495903015138);
+  public static final Rotation2d frontLeftZeroRotation;
+  public static final Rotation2d frontRightZeroRotation;
+  public static final Rotation2d backLeftZeroRotation;
+  public static final Rotation2d backRightZeroRotation;
+
+  static {
+    switch (Constants.getRobot()) {
+      case ROBOT_2026_COMP -> {
+        frontLeftZeroRotation = Rotation2d.fromDegrees(-2.46);
+        frontRightZeroRotation = Rotation2d.fromDegrees(-10.63);
+        backLeftZeroRotation = Rotation2d.fromDegrees(17.11 + 180);
+        backRightZeroRotation = Rotation2d.fromDegrees(-45.27 + 180);
+      }
+      case ROBOT_2025_COMP -> {
+        frontLeftZeroRotation = Rotation2d.fromDegrees(88.42 - 45);
+
+        frontRightZeroRotation = Rotation2d.fromDegrees(9.58 + 180);
+        backLeftZeroRotation = Rotation2d.fromDegrees(-76.90 + 45);
+        backRightZeroRotation = Rotation2d.fromDegrees(-139.48 + 180);
+      }
+      default -> {
+        frontLeftZeroRotation = Rotation2d.fromDegrees(0);
+        frontRightZeroRotation = Rotation2d.fromDegrees(0);
+        backLeftZeroRotation = Rotation2d.fromDegrees(0);
+        backRightZeroRotation = Rotation2d.fromDegrees(0);
+      }
+    }
+  }
 
   // Drive motor configuration
   public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
       ClosedLoopOutputType.Voltage;
   public static final int driveMotorCurrentLimit = 50;
   public static final double wheelRadiusMeters = Units.inchesToMeters(1.905);
-  public static final double driveMotorReduction = 6.75;
+  public static final double driveMotorReduction = 8.16;
   public static final DCMotor driveGearbox = DCMotor.getKrakenX60Foc(1);
 
   // Drive encoder configuration
@@ -51,14 +76,14 @@ public class DriveConstants {
   public static final double driveKs = 0.5;
   public static final double driveKv = 0.0;
   public static final double driveKa = 0.0;
-  public static final double driveSimP = 0.05;
+  public static final double driveSimP = 0.3;
   public static final double driveSimD = 0.0;
   public static final double driveSimKs = 0.0;
   public static final double driveSimKv = 0.0789;
 
   // Turn motor configuration
   public static final boolean turnInverted = false;
-  public static final int turnMotorCurrentLimit = 30;
+  public static final int turnMotorCurrentLimit = 10;
   public static final double turnMotorReduction = 12.8;
   public static final DCMotor turnGearbox = DCMotor.getNEO(1);
 
@@ -72,7 +97,7 @@ public class DriveConstants {
   // Turn PID configuration
   public static final double turnKp = 3.5;
   public static final double turnKd = 0.0;
-  public static final double turnSimP = 8.0;
+  public static final double turnSimP = 9.0;
   public static final double turnSimD = 0.0;
   public static final double turnPIDMinInput = -Math.PI; // Radians
   public static final double turnPIDMaxInput = Math.PI; // Radians

@@ -84,7 +84,7 @@ public class SysIdFactory {
   /**
    * Returns a command to run a dynamic test in the specified direction.
    *
-   * <p>In this test, a constant ‘step voltage’ is given to the mechanism, so that the behavior
+   * <p>In this test, a constant "step voltage" is given to the mechanism, so that the behavior
    * while accelerating can be determined.
    *
    * <p>The command will call the `driveVoltage` callbacks supplied at routine construction once per

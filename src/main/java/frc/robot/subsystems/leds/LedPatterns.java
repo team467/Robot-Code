@@ -27,13 +27,11 @@ public enum LedPatterns {
   WHITE(LEDPattern.solid(Color.kWhite)),
   GOLD(LEDPattern.solid(Color.kGold)),
   SILVER(LEDPattern.solid(Color.kSilver)),
+  INDIAN_RED(LEDPattern.solid(Color.kIndianRed)),
 
   // FRC
   FRC_BLUE(LEDPattern.solid(Color.kFirstBlue)),
   FRC_RED(LEDPattern.solid(Color.kFirstRed)),
-
-  // Game
-  SOLID_BROWNINGOUT(LEDPattern.solid(Color.kRed)),
 
   // Center of Mass
   CENTER_OF_MASS_BLUE(LEDPattern.solid(Color.kDarkBlue)),
@@ -41,11 +39,6 @@ public enum LedPatterns {
 
   // Multi-Color Patterns
   RAINBOW(LEDPattern.rainbow(255, 128)),
-
-  // Game Specific
-  SOLID_INTAKE(LEDPattern.solid(Color.kYellow)),
-  SOLID_OUTOFRANGE(LEDPattern.solid(Color.kIndianRed)),
-  STRIPE_INRANGE(LEDPattern.steps(Map.of(0, Color.kDarkBlue, 0.50, Color.kDarkGoldenrod))),
 
   GRADIENT_COM(
       LEDPattern.gradient(
@@ -56,8 +49,15 @@ public enum LedPatterns {
   GRADIENT_FRC(
       LEDPattern.gradient(
           LEDPattern.GradientType.kContinuous, Color.kFirstBlue, Color.kWhite, Color.kFirstRed)),
+
   STRIPE_FRC(
-      LEDPattern.steps(Map.of(0, Color.kFirstBlue, 0.33, Color.kWhite, 0.66, Color.kFirstRed)));
+      LEDPattern.steps(Map.of(0, Color.kFirstBlue, 0.33, Color.kWhite, 0.66, Color.kFirstRed))),
+
+  STRIPE_YELOW_WHITE_BLUE(
+      LEDPattern.steps(Map.of(0, Color.kYellow, 0.33, Color.kWhite, 0.66, Color.kBlue))),
+  STRIPE_YELLOW_WHITE(LEDPattern.steps(Map.of(0, Color.kYellow, 0.50, Color.kWhite))),
+  STRIPE_YELLOW_BLUE(LEDPattern.steps(Map.of(0, Color.kYellow, 0.50, Color.kBlue))),
+  STRIPE_BLUE_WHITE(LEDPattern.steps(Map.of(0, Color.kBlue, 0.50, Color.kWhite)));
 
   private static final double BREATH_TIME = 1.0;
   private static final double STROBE_TIME = 1.0;
