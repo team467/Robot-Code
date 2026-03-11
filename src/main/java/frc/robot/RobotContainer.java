@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
+import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -206,7 +207,7 @@ public class RobotContainer {
             Commands.parallel(
                     shooter
                         .setTargetVelocityRadiansRepeatedly(
-                            Units.rotationsPerMinuteToRadiansPerSecond(1085))
+                            Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM))
                         .withTimeout(0.8),
                     intake.stopIntakeCommand(),
                     magicCarpet.stop(),
@@ -215,7 +216,7 @@ public class RobotContainer {
             Commands.deadline(
                 Commands.waitSeconds(3.2),
                 shooter.setTargetVelocityRadiansRepeatedly(
-                    Units.rotationsPerMinuteToRadiansPerSecond(1085)),
+                    Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)),
                 orchestrator.feedUp()),
             Commands.parallel(
                     magicCarpet.stop().withTimeout(0.05), indexer.stop().withTimeout(0.05))
@@ -355,7 +356,8 @@ public class RobotContainer {
     operatorController
         .rightTrigger(0.1)
         .toggleOnTrue(
-            shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1085)));
+            shooter.setTargetVelocityRadians(
+                Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)));
     operatorController.y().whileTrue(indexer.reverse());
     operatorController.x().whileTrue(intake.outtake());
 

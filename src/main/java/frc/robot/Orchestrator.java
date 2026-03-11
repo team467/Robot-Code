@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -126,7 +128,8 @@ public class Orchestrator {
   }
 
   public Command spinUpShooterHub() {
-    return shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1085));
+    return shooter.setTargetVelocityRadians(
+        Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM));
   }
 
   public Command spinUpShooter(double velocityRPM) {
