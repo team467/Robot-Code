@@ -2,6 +2,7 @@ package frc.robot;
 
 import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -34,6 +35,8 @@ public class Orchestrator {
   private final RobotState robotState = RobotState.getInstance();
   private final ShooterLeadCompensator shooterLeadCompensator;
   private final CommandXboxController driverController;
+  private final LinearFilter hubAngleFilter = LinearFilter.singlePoleIIR(0.06, 0.02);
+  private Rotation2d lastHubAngle = new Rotation2d();
 
   public Orchestrator(
       Drive drive,
@@ -68,6 +71,14 @@ public class Orchestrator {
     return shootWhileDrivingResult.distance();
   }
 
+  private Rotation2d filteredHubAngle(Rotation2d raw) {
+    if (Math.abs(raw.minus(lastHubAngle).getRadians()) > Math.PI / 2) {
+      hubAngleFilter.reset();
+    }
+    lastHubAngle = raw;
+    return Rotation2d.fromRadians(hubAngleFilter.calculate(raw.getRadians()));
+  }
+
   public void orchestratorPeriodic() {
     var shootWhileDrivingResult =
         shooterLeadCompensator.shootWhileDriving(
@@ -78,6 +89,7 @@ public class Orchestrator {
             shootWhileDrivingResult.target().getX(),
             shootWhileDrivingResult.target().getY(),
             Rotation2d.fromDegrees(0)));
+    Logger.recordOutput("Orchestrator/DistanceToHub", shootWhileDrivingResult.distance());
   }
 
   // TODO move to drive commands/shooter?
@@ -166,10 +178,11 @@ public class Orchestrator {
             driverController::getLeftX,
             driverController::getLeftY,
             () ->
-                (getShootWhileDrivingResultPose()
-                    .getTranslation()
-                    .minus(drive.getPose().getTranslation())
-                    .getAngle())));
+                filteredHubAngle(
+                    (getShootWhileDrivingResultPose()
+                        .getTranslation()
+                        .minus(drive.getPose().getTranslation())
+                        .getAngle()))));
   }
 
   public Command spinUpShooterWhileDriving() {
@@ -183,16 +196,20 @@ public class Orchestrator {
                 drive,
                 () -> 0.0,
                 () -> 0.0,
-                () ->
-                    AllianceFlipUtil.apply(Hub.blueCenter)
-                        .minus(drive.getPose().getTranslation())
-                        .getAngle()),
+                () -> {
+                  Rotation2d rawAngle =
+                      AllianceFlipUtil.apply(Hub.blueCenter)
+                          .minus(drive.getPose().getTranslation())
+                          .getAngle();
+                  return filteredHubAngle(rawAngle);
+                }),
             shootBallsDistance(
                 () ->
                     AllianceFlipUtil.apply(Hub.blueCenter)
                         .getDistance(drive.getPose().getTranslation())))
         .repeatedly();
   }
+}
 
   //  public Command startFlywheelAllianceShift() {
   //    return Commands.sequence(
@@ -230,4 +247,3 @@ public class Orchestrator {
   //              Commands.waitSeconds(start2).andThen(spinUpShooterWhileDriving()).isScheduled();
   //            }));
   //  }
-}
