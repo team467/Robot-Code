@@ -124,7 +124,7 @@ public class Orchestrator {
   }
 
   public Command spinUpShooterDistance(DoubleSupplier targetDistance) {
-    return shooter.setTargetVelocityRadians(shooter.calculateSetpoint(targetDistance));
+    return shooter.setTargetVelocityRadians(() -> shooter.calculateSetpoint(targetDistance));
   }
 
   public Command spinUpShooterHub() {
@@ -163,8 +163,8 @@ public class Orchestrator {
   }
 
   public Command spinUpShooterWhileDriving() {
-    return shooter.setTargetVelocityRPM(
-        shooter.calculateSetpoint(this::getShootWhileDrivingResultDistance));
+    return shooter.setTargetVelocityRadians(
+      () -> shooter.calculateSetpoint(this::getShootWhileDrivingResultDistance));
   }
 
   public Command alignAndShoot() {
