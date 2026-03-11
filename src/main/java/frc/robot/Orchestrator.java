@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.commands.auto.DriveToPose;
+import frc.robot.commands.auto.RotateToOrientation;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
@@ -91,6 +92,17 @@ public class Orchestrator {
                   .minus(hubApproachPose.getTranslation())
                   .getAngle();
           return new Pose2d(hubApproachPose.getTranslation(), sameAsAlignAndShootHeading);
+        });
+  }
+
+  public Command alignToHub() {
+    return new RotateToOrientation(
+        drive,
+        () -> {
+          Pose2d hubApproachPose = AllianceFlipUtil.apply(Hub.nearFace);
+          Rotation2d angle =
+              hubApproachPose.getTranslation().minus(drive.getPose().getTranslation()).getAngle();
+          return angle;
         });
   }
 
