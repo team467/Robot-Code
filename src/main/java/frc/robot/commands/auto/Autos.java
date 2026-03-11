@@ -126,6 +126,28 @@ public class Autos {
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
 
+  public Command ACCManuelAutoOverBump() {
+    return Commands.sequence(
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())).withTimeout(5),
+            Commands.parallel(
+                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
+                orchestrator.preloadBalls())),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt1.get())).withTimeout(5),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt2.get())).withTimeout(5),
+        intake.stopIntakeCommand().withTimeout(0.05),
+        Commands.deadline(
+            Commands.waitSeconds(5),
+            orchestrator.spinUpShooterHub(),
+            orchestrator.feedUp(),
+            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
+        intake.stopIntakeCommand().withTimeout(0.05),
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())).withTimeout(5),
+            Commands.parallel(
+                intake.extendToAngle(IntakeConstants.EXTEND_POS), orchestrator.preloadBalls())));
+  }
+
   public Command BCCManuelAuto() {
     return Commands.sequence(
         Commands.deadline(
@@ -137,19 +159,29 @@ public class Autos {
         intake.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
-        Commands.deadline(
-            Commands.waitSeconds(5),
+        Commands.parallel(
             orchestrator.spinUpShooterHub(),
             orchestrator.feedUp(),
-            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
-        intake.stopIntakeCommand().withTimeout(0.05),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(thirdPose.get())).withTimeout(5),
-            Commands.parallel(
-                intake.extendToAngle(IntakeConstants.EXTEND_POS), orchestrator.preloadBalls())));
+            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
 
   public Command BCCManuelAutoAlt() {
+    return Commands.sequence(
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseB.get())).withTimeout(5),
+            Commands.parallel(
+                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
+                orchestrator.preloadBalls())),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt1.get())).withTimeout(5),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt2.get())).withTimeout(5),
+        intake.stopIntakeCommand().withTimeout(0.05),
+        Commands.parallel(
+            orchestrator.spinUpShooterHub(),
+            orchestrator.feedUp(),
+            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
+  }
+
+  public Command BCCManuelAutoOverBump() {
     return Commands.sequence(
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseB.get())).withTimeout(5),
@@ -166,7 +198,7 @@ public class Autos {
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
         intake.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(thirdPose.get())).withTimeout(5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseB.get())).withTimeout(5),
             Commands.parallel(
                 intake.extendToAngle(IntakeConstants.EXTEND_POS), orchestrator.preloadBalls())));
   }
