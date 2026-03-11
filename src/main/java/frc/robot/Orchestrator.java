@@ -117,14 +117,17 @@ public class Orchestrator {
         .onlyWhile(() -> shooter.getSetpoint() > 0)
         .withName("feedUp");
   }
+
   public Command spinUpShooterTest() {
     SmartDashboard.putNumber("Shooter/TestRPM", 1000.0); // sets default if not already present
-    return shooter.setTargetVelocityRadians(
+    return shooter
+        .setTargetVelocityRadians(
             () ->
                 Units.rotationsPerMinuteToRadiansPerSecond(
                     SmartDashboard.getNumber("Shooter/TestRPM", 1000.0)))
         .withName("spinUpShooterTest");
   }
+
   public Command shootBallsDistance(DoubleSupplier targetDistance) {
     return Commands.parallel(spinUpShooterDistance(targetDistance), feedUp())
         .withName("shootBallsDistance");
