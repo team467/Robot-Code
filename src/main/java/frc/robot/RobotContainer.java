@@ -14,6 +14,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -22,15 +23,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.lib.utils.LocalADStarAK;
+import frc.robot.FieldConstants.Hub;
 import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.drive.*;
@@ -75,9 +76,11 @@ public class RobotContainer {
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
-  // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+
+  private double shooterTargetRPM = 0.0;
+  private double shooterIncrement = 5.0;
+  private int lastPOV = -1;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -123,12 +126,7 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
-          // TODO: GET THE ACTUAL BUTTON BINDINGS FOR THE OP SWITCHES
-          intake =
-              new Intake(
-                  new IntakeIOKraken(),
-                  operatorController.rightTrigger(),
-                  operatorController.leftBumper());
+          intake = new Intake(new IntakeIOKraken(), () -> false, () -> false);
           //                    climber = new Climber(new ClimberIOPhysical());
         }
 
@@ -313,7 +311,6 @@ public class RobotContainer {
     magicCarpet.setDefaultCommand(magicCarpet.stop());
     indexer.setDefaultCommand(indexer.stop());
     shooter.setDefaultCommand(shooter.stop());
-    //    shooter.setDefaultCommand(shooter.stop());
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -321,8 +318,6 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
-
-    // Lock to 0 degrees when A button is held
 
     driverController
         .start()
@@ -333,11 +328,11 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-    new Trigger(() -> driverController.getHID().getPOV() != -1)
-        .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
 
     driverController.a().onTrue(orchestrator.preloadBalls());
+
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
+
     CustomTriggers.toggleIntakeUp(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
@@ -347,25 +342,29 @@ public class RobotContainer {
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
         .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
 
-    // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
     driverController.leftTrigger(0.2).toggleOnTrue(magicCarpet.run());
-    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
-    driverController.rightBumper().toggleOnTrue(orchestrator.driveToHub());
-    operatorController
-        .rightTrigger(0.1)
-        .toggleOnTrue(
-            shooter.setTargetVelocityRadians(Units.rotationsPerMinuteToRadiansPerSecond(1085)));
-    operatorController.y().whileTrue(indexer.reverse());
-    operatorController.x().whileTrue(intake.outtake());
 
-    operatorController
-        .leftTrigger()
-        .whileTrue(
+    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
+
+    driverController
+        .rightBumper()
+        .toggleOnTrue(
             shooter.setTargetVelocityRadians(
-                () ->
-                    operatorController.getLeftY()
-                        * Units.rotationsPerMinuteToRadiansPerSecond(5600)));
+                () -> Units.rotationsPerMinuteToRadiansPerSecond(shooterTargetRPM)));
+
+    driverController
+        .back()
+        .toggleOnTrue(
+            Commands.run(
+                () -> {
+                  drive.stopWithX();
+                },
+                drive));
+
+    driverController.x().whileTrue(indexer.reverse());
+
+    driverController.b().whileTrue(intake.outtake());
   }
 
   /**
@@ -379,5 +378,28 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
+
+    int pov = driverController.getHID().getPOV();
+    if (pov != lastPOV && pov != -1) {
+      switch (pov) {
+        case 0 -> shooterTargetRPM += shooterIncrement;
+        case 180 -> shooterTargetRPM = Math.max(0, shooterTargetRPM - shooterIncrement);
+        case 90 -> shooterIncrement += 5.0;
+        case 270 -> shooterIncrement = Math.max(5.0, shooterIncrement - 5.0);
+        default -> {}
+      }
+    }
+    lastPOV = pov;
+
+    Translation2d hubCenter = AllianceFlipUtil.apply(Hub.blueCenter);
+    double distanceToHub = hubCenter.getDistance(drive.getPose().getTranslation());
+    Logger.recordOutput("Regression/DistanceToHubMeters", distanceToHub);
+
+    ChassisSpeeds speeds = drive.getChassisSpeeds();
+    double robotSpeed = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+    Logger.recordOutput("Regression/RobotSpeedMPS", robotSpeed);
+
+    Logger.recordOutput("Regression/ShooterTargetRPM", shooterTargetRPM);
+    Logger.recordOutput("Regression/ShooterIncrementRPM", shooterIncrement);
   }
 }
