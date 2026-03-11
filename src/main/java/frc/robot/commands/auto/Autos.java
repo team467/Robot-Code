@@ -51,8 +51,10 @@ public class Autos {
       () ->
           new Pose2d(
               3.1251401901245117, 2.397440195083618, Rotation2d.fromRadians(0.7188299996216245));
-  private static final Supplier<Pose2d> thirdPose =
-      () -> new Pose2d(0.5134801864624023, 0.6628301739692688, Rotation2d.fromDegrees(180));
+  private static final Supplier<Pose2d> depotPoseStopPoint =
+      () -> new Pose2d(1.7998201847076416, 5.983600616455078, Rotation2d.fromDegrees(180));
+  private static final Supplier<Pose2d> depotPose =
+      () -> new Pose2d(0.45501017570495605, 5.983600616455078, Rotation2d.fromDegrees(180));
 
   public Command CenterA() {
     return Commands.sequence(
@@ -111,6 +113,35 @@ public class Autos {
             orchestrator.spinUpShooterHub(),
             orchestrator.feedUp(),
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
+  }
+
+  public Command ADepot() {
+    return Commands.sequence(
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(depotPoseStopPoint.get()))
+            .withTimeout(2),
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(depotPose.get())).withTimeout(3.5),
+            Commands.parallel(
+                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
+                orchestrator.preloadBalls())),
+        intake.stopIntakeCommand().withTimeout(0.05),
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt2.get()))
+                .withTimeout(2),
+            orchestrator.spinUpShooter(1250)),
+        Commands.deadline(
+            Commands.waitSeconds(5),
+            orchestrator.spinUpShooter(1250),
+            orchestrator.feedUp(),
+            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
+        intake.stopIntakeCommand().withTimeout(0.05),
+        shooter.stop(),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt1.get())).withTimeout(2),
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())).withTimeout(3.5),
+            Commands.parallel(
+                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
+                orchestrator.preloadBalls())));
   }
 
   public Command ACCManuelAutoAlt() {
