@@ -164,7 +164,7 @@ public class Orchestrator {
 
   public Command spinUpShooterWhileDriving() {
     return shooter.setTargetVelocityRadians(
-      () -> shooter.calculateSetpoint(this::getShootWhileDrivingResultDistance));
+        () -> shooter.calculateSetpoint(this::getShootWhileDrivingResultDistance));
   }
 
   public Command alignAndShoot() {
