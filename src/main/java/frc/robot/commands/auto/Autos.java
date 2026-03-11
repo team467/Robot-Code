@@ -24,7 +24,6 @@ public class Autos {
     this.orchestrator = orchestrator;
     this.intake = intake;
     this.shooter = shooter;
-
   }
 
   private static final Supplier<Pose2d> climb =
