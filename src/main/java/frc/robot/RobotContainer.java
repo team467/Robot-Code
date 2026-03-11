@@ -266,8 +266,10 @@ public class RobotContainer {
     autoChooser.addOption("Bummmmpar", autos.Bummmmpar());
     autoChooser.addOption("Manual A-CC", autos.ACCManuelAuto());
     autoChooser.addOption("Manual A-CC-Improved", autos.ACCManuelAutoAlt());
+    autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManuelAutoOverBump());
     autoChooser.addOption("Manual B-CC", autos.BCCManuelAuto());
     autoChooser.addOption("Manual B-CC-Improved", autos.BCCManuelAutoAlt());
+    autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManuelAutoOverBump());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     autoChooser.addOption("CL auto", autos.CenterA());
     autoChooser.addOption("8 Ball Auto", autos.EightBalls());
