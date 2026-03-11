@@ -196,7 +196,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "spinUp",
         shooter.setTargetVelocityRadiansRepeatedly(
-            Units.rotationsPerMinuteToRadiansPerSecond(1315)));
+            Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)));
     NamedCommands.registerCommand("feedShooter", orchestrator.feedUp());
     NamedCommands.registerCommand("bringInIntake", intake.extendToAngleAndIntake(0));
     NamedCommands.registerCommand("driveToHub", orchestrator.driveToHub());
