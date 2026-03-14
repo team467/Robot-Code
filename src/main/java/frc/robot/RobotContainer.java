@@ -337,7 +337,6 @@ public class RobotContainer {
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
     driverController.x().toggleOnTrue(orchestrator.aimToHub());
-    driverController.a().toggleOnTrue(orchestrator.driveShootAtAngle());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     CustomTriggers.toggleIntakeUp(
             driverController.leftBumper(),
@@ -350,14 +349,15 @@ public class RobotContainer {
 
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
-    driverController.leftTrigger(0.2).toggleOnTrue(magicCarpet.run());
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
     driverController.rightBumper().toggleOnTrue(orchestrator.driveToHub());
     //    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController
         .rightTrigger(0.1)
         .toggleOnTrue(
+            //
             orchestrator.spinUpShooterDistance(orchestrator.getShootWhileDrivingResultDistance()));
+    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController.y().whileTrue(indexer.reverse());
     operatorController.x().whileTrue(intake.outtake());
 

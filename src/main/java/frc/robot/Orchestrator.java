@@ -149,7 +149,7 @@ public class Orchestrator {
   }
 
   public Command spinUpShooterTest() {
-    SmartDashboard.putNumber("Shooter/TestRPM", 1000.0);
+    SmartDashboard.putNumber("Shooter/TestRPM", CLOSE_HUB_SHOOTER_RPM);
     return shooter
         .setTargetVelocityRadians(
             () ->
@@ -160,7 +160,9 @@ public class Orchestrator {
 
   public Command spinUpShooterDistance(DoubleSupplier targetDistance) {
     return shooter.setTargetVelocityRadians(
-        () -> shooter.calculateSetpoint(targetDistance).getAsDouble());
+        () ->
+            Units.rotationsPerMinuteToRadiansPerSecond(
+                shooter.calculateSetpoint(targetDistance).getAsDouble()));
   }
 
   public Command spinUpShooterHub() {
@@ -192,11 +194,10 @@ public class Orchestrator {
             driverController::getLeftX,
             driverController::getLeftY,
             () ->
-                filteredHubAngle(
-                    (getShootWhileDrivingResultPose()
-                        .getTranslation()
-                        .minus(drive.getPose().getTranslation())
-                        .getAngle()))));
+                (getShootWhileDrivingResultPose()
+                    .getTranslation()
+                    .minus(drive.getPose().getTranslation())
+                    .getAngle())));
   }
 
   public Command spinUpShooterWhileDriving() {
@@ -205,16 +206,14 @@ public class Orchestrator {
   }
 
   public Command aimToHub() {
-    return DriveCommands.joystickDriveAtAngle(
+    return new DriveToPose(
         drive,
-        () -> 0.0,
-        () -> 0.0,
-        () -> {
-          Rotation2d rawAngle =
-              AllianceFlipUtil.apply(Hub.blueCenter)
-                  .minus(drive.getPose().getTranslation())
-                  .getAngle();
-          return filteredHubAngle(rawAngle);
-        });
+        () ->
+            new Pose2d(
+                drive.getPose().getX(),
+                drive.getPose().getY(),
+                AllianceFlipUtil.apply(Hub.blueCenter)
+                    .minus(drive.getPose().getTranslation())
+                    .getAngle()));
   }
 }
