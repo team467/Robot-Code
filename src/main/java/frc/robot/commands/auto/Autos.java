@@ -157,9 +157,9 @@ public class Autos {
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt2.get()))
                 .withTimeout(2),
-            orchestrator.spinUpShooter(1250)),
+            orchestrator.spinUpShooter(1240)),
         Commands.parallel(
-            orchestrator.spinUpShooter(1250),
+            orchestrator.spinUpShooter(1240),
             orchestrator.feedUp(),
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
@@ -223,9 +223,9 @@ public class Autos {
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt2.get()))
                 .withTimeout(2),
-            orchestrator.spinUpShooter(1250)),
+            orchestrator.spinUpShooter(1240)),
         Commands.parallel(
-            orchestrator.spinUpShooter(1250),
+            orchestrator.spinUpShooter(1240),
             orchestrator.feedUp(),
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
