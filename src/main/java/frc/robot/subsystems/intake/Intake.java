@@ -176,6 +176,15 @@ public class Intake extends SubsystemBase {
     return Commands.run(this::stopIntake, this).withName("stopIntakeCommand");
   }
 
+  public Command runIntakeExtendVolts(double volts) {
+    return Commands.run(
+        () -> {
+          io.setPIDEnabled(false);
+          io.setVoltageExtend(volts);
+        },
+        this);
+  }
+
   public Command stopExtendingCommand() {
     return Commands.run(this::stopExtend, this);
   }
@@ -183,6 +192,7 @@ public class Intake extends SubsystemBase {
   public Command extendToAngleAndIntake(double angle) {
     return Commands.run(
             () -> {
+              io.setPIDEnabled(true);
               io.goToPos(angle);
               io.setVoltageIntake(INTAKE_VOLTS);
             },
@@ -195,6 +205,7 @@ public class Intake extends SubsystemBase {
   public Command extendToAngle(double angle) {
     return Commands.run(
             () -> {
+              io.setPIDEnabled(true);
               io.goToPos(angle);
             },
             this)
@@ -206,6 +217,7 @@ public class Intake extends SubsystemBase {
   public Command holdAngleAndIntake(double angle) {
     return Commands.run(
             () -> {
+              io.setPIDEnabled(true);
               io.goToPos(angle);
               io.setVoltageIntake(INTAKE_VOLTS);
             },

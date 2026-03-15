@@ -13,6 +13,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
  * leds or for the shooter to know if the system has a game piece in the robot.
  */
 public class RobotState {
+
   public enum Mode {
     // 2026 Specific
     INTAKING(LedPatterns.YELLOW.blink(0.2).atBrightness(Percent.of(80)), Sections.FULL),
