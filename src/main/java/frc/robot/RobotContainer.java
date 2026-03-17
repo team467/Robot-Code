@@ -48,6 +48,7 @@ import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
 import frc.robot.subsystems.magicCarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -141,7 +142,7 @@ public class RobotContainer {
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim());
-
+          shooter = new Shooter(new ShooterIOSim());
           leds = new Leds();
         }
 
@@ -381,5 +382,9 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
+  }
+
+  public Drive getDrive() {
+    return drive;
   }
 }

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.sim.FuelPhysicsSim;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class Robot extends LoggedRobot {
   private boolean autoMessagePrinted;
   private RobotContainer robotContainer;
   private RobotState state = RobotState.getInstance();
+  private FuelPhysicsSim ballSim;
   private LinearFilter batteryFilter = LinearFilter.movingAverage(15);
 
   private static final int LOW_VOLTAGE = 9;
@@ -250,9 +252,25 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    ballSim = new FuelPhysicsSim("Sim/Fuel");
+    var drive = robotContainer.getDrive();
+    // Robot bumper dimensions (meters) — approximate
+    ballSim.configureRobot(
+        0.838, // width with bumpers (~33")
+        0.838, // length with bumpers (~33")
+        0.2, // bumper height (~8")
+        drive::getPose,
+        drive::getChassisSpeeds);
+    ballSim.placeFieldBalls();
+    ballSim.enable();
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    if (ballSim != null) {
+      ballSim.tick();
+    }
+  }
 }

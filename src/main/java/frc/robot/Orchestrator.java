@@ -5,6 +5,8 @@ import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RP
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -19,7 +21,7 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.util.ShooterLeadCompensator;
+import frc.robot.subsystems.shooter.ShotCalculator;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -32,7 +34,6 @@ public class Orchestrator {
   private final Indexer indexer;
   private final Intake intake;
   private final RobotState robotState = RobotState.getInstance();
-  private final ShooterLeadCompensator shooterLeadCompensator;
   private final CommandXboxController driverController;
 
   public Orchestrator(
@@ -47,37 +48,62 @@ public class Orchestrator {
     this.shooter = shooter;
     this.indexer = indexer;
     this.intake = intake;
-    this.shooterLeadCompensator = new ShooterLeadCompensator(drive, shooter);
     this.driverController = driverController;
   }
 
+  /** Run the fire control solver and return the result. */
+  private ShotCalculator.LaunchParameters solveShot() {
+    Translation2d hubCenter = AllianceFlipUtil.apply(Hub.blueCenter);
+    // Hub forward vector points from the hub face toward the robot
+    Translation2d hubForward =
+        new Translation2d(
+            drive.getPose().getX() - hubCenter.getX(), drive.getPose().getY() - hubCenter.getY());
+    double norm = hubForward.getNorm();
+    if (norm > 0.01) {
+      hubForward = new Translation2d(hubForward.getX() / norm, hubForward.getY() / norm);
+    }
+
+    // Convert robot-relative chassis speeds to field-relative for the solver
+    ChassisSpeeds robotSpeeds = drive.getChassisSpeeds();
+    ChassisSpeeds fieldSpeeds =
+        ChassisSpeeds.fromRobotRelativeSpeeds(robotSpeeds, drive.getRotation());
+
+    return shooter.solve(
+        drive.getPose(),
+        fieldSpeeds,
+        robotSpeeds,
+        hubCenter,
+        hubForward,
+        1.0); // TODO: pass actual vision confidence when available
+  }
+
   public Pose2d getShootWhileDrivingResultPose() {
-    var shootWhileDrivingResult =
-        shooterLeadCompensator.shootWhileDriving(
-            AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
-    return new Pose2d(
-        shootWhileDrivingResult.target().getX(),
-        shootWhileDrivingResult.target().getY(),
-        Rotation2d.fromDegrees(0));
+    ShotCalculator.LaunchParameters params = solveShot();
+    if (params.isValid()) {
+      return new Pose2d(drive.getPose().getTranslation(), params.driveAngle());
+    }
+    // Fallback: aim directly at hub
+    Translation2d hubCenter = AllianceFlipUtil.apply(Hub.blueCenter);
+    return new Pose2d(hubCenter.getX(), hubCenter.getY(), Rotation2d.fromDegrees(0));
   }
 
   public double getShootWhileDrivingResultDistance() {
-    var shootWhileDrivingResult =
-        shooterLeadCompensator.shootWhileDriving(
-            AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
-    return shootWhileDrivingResult.distance();
+    ShotCalculator.LaunchParameters params = solveShot();
+    if (params.isValid()) {
+      return params.solvedDistanceM();
+    }
+    // Fallback: straight-line distance
+    return AllianceFlipUtil.apply(Hub.blueCenter).getDistance(drive.getPose().getTranslation());
   }
 
   public void orchestratorPeriodic() {
-    var shootWhileDrivingResult =
-        shooterLeadCompensator.shootWhileDriving(
-            AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
-    Logger.recordOutput(
-        "Orchestrator/Target",
-        new Pose2d(
-            shootWhileDrivingResult.target().getX(),
-            shootWhileDrivingResult.target().getY(),
-            Rotation2d.fromDegrees(0)));
+    ShotCalculator.LaunchParameters params = solveShot();
+    if (params.isValid()) {
+      Logger.recordOutput(
+          "Orchestrator/Target", new Pose2d(drive.getPose().getTranslation(), params.driveAngle()));
+      Logger.recordOutput("Orchestrator/Confidence", params.confidence());
+      Logger.recordOutput("Orchestrator/SolvedRPM", params.rpm());
+    }
   }
 
   // TODO move to drive commands/shooter?
@@ -145,6 +171,33 @@ public class Orchestrator {
         .andThen(indexer.stop().withTimeout(0.01));
   }
 
+  /** Shoot-on-the-move: spins up to fire-control-solved RPM and aims at the compensated heading. */
+  public Command shootOnTheMove() {
+    return Commands.parallel(
+        shooter.setTargetVelocityRadians(
+            () -> {
+              ShotCalculator.LaunchParameters params = solveShot();
+              if (params.isValid() && params.confidence() > 30) {
+                return params.rpm() * (2.0 * Math.PI) / 60.0;
+              }
+              return 0.0;
+            }),
+        DriveCommands.joystickDriveAtAngle(
+            drive,
+            driverController::getLeftX,
+            driverController::getLeftY,
+            () -> {
+              ShotCalculator.LaunchParameters params = shooter.getLastLaunchParams();
+              if (params.isValid()) {
+                return params.driveAngle();
+              }
+              return AllianceFlipUtil.apply(Hub.blueCenter)
+                  .minus(drive.getPose().getTranslation())
+                  .getAngle();
+            }),
+        feedUp());
+  }
+
   public Command driveShootAtAngle() {
     return Commands.parallel(
         Commands.run(
@@ -184,41 +237,4 @@ public class Orchestrator {
                         .getDistance(drive.getPose().getTranslation())))
         .repeatedly();
   }
-
-  //  public Command startFlywheelAllianceShift() {
-  //    return Commands.sequence(
-  //        Commands.waitUntil(() -> !DriverStation.getGameSpecificMessage().isEmpty()),
-  //        Commands.runOnce(
-  //            () -> {
-  //              Optional<Alliance> alliance = DriverStation.getAlliance();
-  //              String gameData = DriverStation.getGameSpecificMessage();
-  //              double gameDataTime = Timer.getMatchTime();
-  //              if (alliance.isEmpty()) {
-  //                System.err.print("alliance data not found");
-  //                return;
-  //              }
-  //              double start1 = 0;
-  //              double start2 = 0;
-  //              if (gameData.charAt(0) == 'B') {
-  //                if (alliance.get() == DriverStation.Alliance.Blue) {
-  //                  start1 = 54 - gameDataTime;
-  //                  start2 = 104 - gameDataTime;
-  //                } else if (alliance.get() == DriverStation.Alliance.Red) {
-  //                  start1 = 79 - gameDataTime;
-  //                  start2 = 129 - gameDataTime;
-  //                }
-  //              } else if (gameData.charAt(0) == 'R') {
-  //                if (alliance.get() == DriverStation.Alliance.Red) {
-  //                  start1 = 54 - gameDataTime;
-  //                  start2 = 104 - gameDataTime;
-  //                } else if (alliance.get() == DriverStation.Alliance.Blue) {
-  //                  start1 = 79 - gameDataTime;
-  //                  start2 = 129 - gameDataTime;
-  //                }
-  //              }
-  //              Commands.waitSeconds(start1).andThen(spinUpShooterWhileDriving()).isScheduled();
-  //
-  //              Commands.waitSeconds(start2).andThen(spinUpShooterWhileDriving()).isScheduled();
-  //            }));
-  //  }
 }
