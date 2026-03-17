@@ -11,6 +11,7 @@ import frc.robot.RobotState.IntakePosition;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
+// TODO:rewrite this for v1.5
 public class Intake extends SubsystemBase {
   private final Timer stallExtendTimer = new Timer();
   private final Timer stallCollapseTimer = new Timer();
