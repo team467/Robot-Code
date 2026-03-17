@@ -340,30 +340,33 @@ public class RobotContainer {
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     driverController
         .leftBumper()
-        .and(driverController.pov(180))
-        .toggleOnTrue(intake.runIntakeExtendVolts(-4));
+        .and(operatorController.pov(180))
+        .whileTrue(intake.runIntakeExtendVolts(-4))
+        .onFalse(intake.stopExtendingCommand());
     CustomTriggers.toggleIntakeUp(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
-        .and(() -> !driverController.pov(180).getAsBoolean())
+        .and(() -> !operatorController.pov(180).getAsBoolean())
         .toggleOnTrue(intake.extendToAngle(IntakeConstants.COLLAPSE_POS));
     CustomTriggers.toggleIntakeDown(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
-        .and(() -> !driverController.pov(180).getAsBoolean())
+        .and(() -> !operatorController.pov(180).getAsBoolean())
         .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
 
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
+    driverController.a().and(operatorController.pov(180)).onTrue(intake.resetExtendPosition());
     driverController
         .rightBumper()
-        .and(() -> !driverController.pov(180).getAsBoolean())
+        .and(() -> !operatorController.pov(180).getAsBoolean())
         .toggleOnTrue(orchestrator.driveToHub());
     driverController
         .rightBumper()
-        .and(driverController.pov(180))
-        .toggleOnTrue(intake.runIntakeExtendVolts(4));
+        .and(operatorController.pov(180))
+        .whileTrue(intake.runIntakeExtendVolts(4))
+        .onFalse(intake.stopExtendingCommand());
     //    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController
         .rightTrigger(0.1)

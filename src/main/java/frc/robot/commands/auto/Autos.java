@@ -50,7 +50,7 @@ public class Autos {
   private static final Supplier<Pose2d> secondPoseBAlt2 =
       () ->
           new Pose2d(
-              3.1251401901245117, 2.397440195083618, Rotation2d.fromRadians(0.7188299996216245));
+              3.1251401901245117, 2.397440195083618, Rotation2d.fromRadians(0.7358299996216245));
   private static final Supplier<Pose2d> depotPoseStopPoint =
       () -> new Pose2d(1.7998201847076416, 5.983600616455078, Rotation2d.fromDegrees(180));
   private static final Supplier<Pose2d> depotPose =

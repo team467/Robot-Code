@@ -156,6 +156,10 @@ public class Intake extends SubsystemBase {
     return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts < COLLAPSE_VOLTS;
   }
 
+  public Command resetExtendPosition() {
+    return Commands.runOnce(() -> io.resetExtendEncoder(0), this);
+  }
+
   private boolean isMoving() {
     return Math.abs(inputs.extendVelocity) > STALL_VELOCITY;
   }
