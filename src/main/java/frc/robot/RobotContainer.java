@@ -336,28 +336,48 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-
-    driverController.a().onTrue(orchestrator.preloadBalls());
+    driverController.x().toggleOnTrue(orchestrator.aimToHub());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
+    driverController
+        .leftBumper()
+        .and(operatorController.pov(180))
+        .whileTrue(intake.runIntakeExtendVolts(-4))
+        .onFalse(intake.stopExtendingCommand());
     CustomTriggers.toggleIntakeUp(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
+        .and(() -> !operatorController.pov(180).getAsBoolean())
         .toggleOnTrue(intake.extendToAngle(IntakeConstants.COLLAPSE_POS));
     CustomTriggers.toggleIntakeDown(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
+        .and(() -> !operatorController.pov(180).getAsBoolean())
         .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
 
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
-    driverController.leftTrigger(0.2).toggleOnTrue(magicCarpet.run());
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
-    driverController.rightBumper().toggleOnTrue(orchestrator.driveToHub());
+    driverController.a().and(operatorController.pov(180)).onTrue(intake.resetExtendPosition());
+    driverController
+        .rightBumper()
+        .and(() -> !operatorController.pov(180).getAsBoolean())
+        .toggleOnTrue(orchestrator.driveToHub());
+    driverController
+        .rightBumper()
+        .and(operatorController.pov(180))
+        .whileTrue(intake.runIntakeExtendVolts(4))
+        .onFalse(intake.stopExtendingCommand());
+    //    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController
         .rightTrigger(0.1)
+        .and(() -> !operatorController.pov(0).getAsBoolean())
         .toggleOnTrue(
-            shooter.setTargetVelocityRadians(
-                Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)));
+            orchestrator.spinUpShooterDistance(orchestrator.getShootWhileDrivingResultDistance()));
+    operatorController
+        .rightTrigger(0.1)
+        .and(operatorController.pov(0))
+        .toggleOnTrue(orchestrator.spinUpShooterHub());
+    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController.y().whileTrue(indexer.reverse());
     operatorController.x().whileTrue(intake.outtake());
 
@@ -381,5 +401,6 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
+    orchestrator.orchestratorPeriodic();
   }
 }

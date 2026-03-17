@@ -50,7 +50,7 @@ public class Autos {
   private static final Supplier<Pose2d> secondPoseBAlt2 =
       () ->
           new Pose2d(
-              3.1251401901245117, 2.397440195083618, Rotation2d.fromRadians(0.7188299996216245));
+              3.1251401901245117, 2.397440195083618, Rotation2d.fromRadians(0.7358299996216245));
   private static final Supplier<Pose2d> depotPoseStopPoint =
       () -> new Pose2d(1.7998201847076416, 5.983600616455078, Rotation2d.fromDegrees(180));
   private static final Supplier<Pose2d> depotPose =
@@ -157,9 +157,9 @@ public class Autos {
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt2.get()))
                 .withTimeout(2),
-            orchestrator.spinUpShooter(1250)),
+            orchestrator.spinUpShooter(1240)),
         Commands.parallel(
-            orchestrator.spinUpShooter(1250),
+            orchestrator.spinUpShooter(1240),
             orchestrator.feedUp(),
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
@@ -223,9 +223,9 @@ public class Autos {
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt2.get()))
                 .withTimeout(2),
-            orchestrator.spinUpShooter(1250)),
+            orchestrator.spinUpShooter(1240)),
         Commands.parallel(
-            orchestrator.spinUpShooter(1250),
+            orchestrator.spinUpShooter(1240),
             orchestrator.feedUp(),
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
