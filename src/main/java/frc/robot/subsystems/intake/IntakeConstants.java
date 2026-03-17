@@ -11,7 +11,7 @@ public class IntakeConstants {
   public static final double STALL_TIME = 0.1;
   public static final double STALL_VELOCITY = 0.1;
   public static final double INTAKE_VOLTS = 12;
-  public static final double OUTTAKE_VOLTS = -3;
+  public static final double OUTTAKE_VOLTS = -10;
   public static final double EXTEND_VOLTS = 0.01;
   public static final double COLLAPSE_VOLTS = -0.01;
   public static final double INTAKE_MAX_VELOCITY = 200;

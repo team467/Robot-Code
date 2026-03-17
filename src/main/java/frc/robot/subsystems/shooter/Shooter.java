@@ -70,6 +70,7 @@ public class Shooter extends SubsystemBase {
       Logger.recordOutput("Shooter/PIDVoltage", pidOutput);
       Logger.recordOutput("Shooter/CommandedVoltage", voltage);
       Logger.recordOutput("Shooter/RampedTargetRadPerSec", rampedTarget);
+      Logger.recordOutput("Shooter/Setpoint", targetRadPerSec);
     }
 
     Logger.processInputs("Shooter", inputs);
@@ -165,14 +166,19 @@ public class Shooter extends SubsystemBase {
 
   // TODO: empirically determine the relationship between distance and air time
   public double getAirTimeSeconds(DoubleSupplier distance) {
-    return distance.getAsDouble();
+    return 0.0617 * distance.getAsDouble() + 0.872;
   }
 
   // TODO: empirically determine the relationship between distance and shooter velocity
 
-  public double calculateSetpoint(DoubleSupplier distance) {
-    // calculate radians per second depending on distance
-    return 0.0;
+  public DoubleSupplier calculateSetpoint(DoubleSupplier distance) {
+    // calculate rad/s depending on distance
+    return () -> {
+      double setpoint = 183.35 * distance.getAsDouble() + 750.93;
+      if (setpoint > 5000) {
+        return 5000;
+      } else return setpoint;
+    };
   }
 
   public double getSetpoint() {
