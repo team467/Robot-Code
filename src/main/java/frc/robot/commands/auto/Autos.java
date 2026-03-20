@@ -135,7 +135,7 @@ public class Autos {
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt1.get())).withTimeout(2),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())).withTimeout(3.5),
-            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))));
+            (intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))));
   }
 
   public Command ACCManuelAutoAlt() {

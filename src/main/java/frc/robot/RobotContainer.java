@@ -183,7 +183,7 @@ public class RobotContainer {
     Autos autos = new Autos(drive, orchestrator, intake, shooter);
     NamedCommands.registerCommand(
         "startIntake",
-        Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)).withTimeout(10.0));
+        intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(10.0));
     NamedCommands.registerCommand(
         "endIntake",
         Commands.parallel(
