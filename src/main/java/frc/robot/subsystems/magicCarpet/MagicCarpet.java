@@ -34,8 +34,7 @@ public class MagicCarpet extends SubsystemBase {
     if (!manualRun) {
       if (RobotState.getInstance().indexerRunning) {
         io.setSpeed(MagicCarpetConstants.BELT_SPEED);
-      }
-      else {
+      } else {
         io.setSpeed(0.0);
       }
     }
