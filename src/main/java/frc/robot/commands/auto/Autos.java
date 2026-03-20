@@ -102,9 +102,7 @@ public class Autos {
     return Commands.sequence(
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())).withTimeout(5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())),
+            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseA.get())).withTimeout(5),
         intake.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
@@ -121,9 +119,7 @@ public class Autos {
             .withTimeout(2),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(depotPose.get())).withTimeout(3.5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())),
+            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))),
         intake.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt2.get()))
@@ -139,18 +135,14 @@ public class Autos {
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt1.get())).withTimeout(2),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())).withTimeout(3.5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())));
+            (intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))));
   }
 
   public Command ACCManuelAutoAlt() {
     return Commands.sequence(
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())).withTimeout(5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())),
+            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt1.get()))
             .withTimeout(3.5),
         intake.stopIntakeCommand().withTimeout(0.05),
@@ -168,9 +160,7 @@ public class Autos {
     return Commands.sequence(
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())).withTimeout(5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())),
+            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt1.get()))
             .withTimeout(3.5),
         intake.stopIntakeCommand().withTimeout(0.05),
@@ -186,20 +176,16 @@ public class Autos {
         intake.stopIntakeCommand().withTimeout(0.05),
         shooter.stop(),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt1.get())).withTimeout(2),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())).withTimeout(3.5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())));
+        Commands.deadline(new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())))
+            .withTimeout(3.5),
+        Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)));
   }
 
   public Command BCCManuelAuto() {
     return Commands.sequence(
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseB.get())).withTimeout(5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())),
+            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseB.get())).withTimeout(5),
         intake.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
@@ -214,9 +200,7 @@ public class Autos {
     return Commands.sequence(
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseB.get())).withTimeout(5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())),
+            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt1.get()))
             .withTimeout(3.5),
         intake.stopIntakeCommand().withTimeout(0.05),
@@ -234,9 +218,7 @@ public class Autos {
     return Commands.sequence(
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseB.get())).withTimeout(5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())),
+            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt1.get()))
             .withTimeout(3.5),
         intake.stopIntakeCommand().withTimeout(0.05),
@@ -254,8 +236,6 @@ public class Autos {
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt1.get())).withTimeout(2),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseB.get())).withTimeout(3.5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())));
+            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))));
   }
 }
