@@ -189,8 +189,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "endIntake",
         Commands.parallel(
-                intake.stopIntakeCommand().withTimeout(0.05),
-                indexer.stop().withTimeout(0.05))
+                intake.stopIntakeCommand().withTimeout(0.05), indexer.stop().withTimeout(0.05))
             .withTimeout(0.05));
     NamedCommands.registerCommand(
         "spinUp",
@@ -216,9 +215,7 @@ public class RobotContainer {
                 shooter.setTargetVelocityRadiansRepeatedly(
                     Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)),
                 orchestrator.feedUp()),
-            Commands.parallel(
-                  indexer.stop().withTimeout(0.05))
-                .withTimeout(0.05)));
+            Commands.parallel(indexer.stop().withTimeout(0.05)).withTimeout(0.05)));
     AutoBuilder.configure(
         drive::getPose,
         drive::setPose,

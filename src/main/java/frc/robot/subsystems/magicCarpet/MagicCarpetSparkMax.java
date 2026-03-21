@@ -45,7 +45,6 @@ public class MagicCarpetSparkMax implements MagicCarpetIO {
   public void setSpeed(double speed) {
 
     motor.set(MathUtil.clamp(speed, 0.0, 1.0)); // so the is between 0 and 1, 1==100%
-
   }
 
   /**

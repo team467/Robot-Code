@@ -3,8 +3,8 @@ package frc.robot.subsystems.magicCarpet;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.Logger;
 import frc.robot.RobotState;
+import org.littletonrobotics.junction.Logger;
 
 public class MagicCarpet extends SubsystemBase {
   private final MagicCarpetIO io;
@@ -17,8 +17,8 @@ public class MagicCarpet extends SubsystemBase {
   }
 
   public Command run() {
-    return setManualControl(true).andThen(
-        Commands.run(() -> io.setSpeed(MagicCarpetConstants.BELT_SPEED), this))
+    return setManualControl(true)
+        .andThen(Commands.run(() -> io.setSpeed(MagicCarpetConstants.BELT_SPEED), this))
         .finallyDo(() -> setManualControl(false).schedule())
         .withName("start");
   }
@@ -39,5 +39,4 @@ public class MagicCarpet extends SubsystemBase {
       }
     }
   }
-    }
-
+}
