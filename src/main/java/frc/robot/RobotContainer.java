@@ -26,8 +26,9 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeExtend;
 import frc.robot.subsystems.intake.IntakeIOSparkMax;
+import frc.robot.subsystems.intake.IntakeRollers;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magiccarpet.MagicCarpet;
 import frc.robot.subsystems.magiccarpet.MagicCarpetIO;
@@ -109,7 +110,11 @@ public class RobotContainer {
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           climber = new Climber(new ClimberIOPhysical());
-          intake = new Intake(new IntakeIOSparkMax(), operatorController.rightTrigger());
+          intake =
+              new Intake(
+                  new IntakeIOSparkMax(),
+                  new IntakeRollers(new IntakeIOSparkMax()),
+                  new IntakeExtend(new IntakeIOSparkMax(), operatorController.rightTrigger()));
         }
 
         case ROBOT_SIMBOT -> {
@@ -141,7 +146,12 @@ public class RobotContainer {
               new ModuleIO() {});
     }
     if (intake == null) {
-      intake = new Intake(new IntakeIO() {}, () -> false);
+      //      intake = new Intake(new IntakeIO() {}, () -> false);
+      intake =
+          new Intake(
+              new IntakeIOSparkMax(),
+              new IntakeRollers(new IntakeIOSparkMax()),
+              new IntakeExtend(new IntakeIOSparkMax(), () -> false));
     }
     if (magicCarpet == null) {
       magicCarpet = new MagicCarpet(new MagicCarpetIO() {});
