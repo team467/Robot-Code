@@ -32,7 +32,6 @@ public class Orchestrator {
   private final MagicCarpet magicCarpet;
   private final Indexer indexer;
   private final Intake intake;
-  private final RobotState robotState = RobotState.getInstance();
   private final ShooterLeadCompensator shooterLeadCompensator;
   private final CommandXboxController driverController;
 
@@ -140,7 +139,6 @@ public class Orchestrator {
 
   public Command feedUp() {
     return Commands.repeatingSequence(
-            preloadBalls().until(() -> RobotState.getInstance().shooterAtSpeed),
             Commands.parallel(magicCarpet.run(), indexer.run())
                 .until(() -> !RobotState.getInstance().shooterAtSpeed))
         .onlyIf(() -> shooter.getSetpoint() > 0)
@@ -173,14 +171,6 @@ public class Orchestrator {
   public Command spinUpShooter(double velocityRPM) {
     return shooter.setTargetVelocityRadians(
         Units.rotationsPerMinuteToRadiansPerSecond(velocityRPM));
-  }
-
-  public Command preloadBalls() {
-    return Commands.parallel(magicCarpet.run(), indexer.runPreloadSpeeds())
-        .onlyWhile(() -> !RobotState.getInstance().indexerHasFuel)
-        .onlyIf(() -> !RobotState.getInstance().indexerHasFuel)
-        .until(() -> RobotState.getInstance().indexerHasFuel)
-        .andThen(indexer.stop().withTimeout(0.01));
   }
 
   public Command driveShootAtAngle() {
