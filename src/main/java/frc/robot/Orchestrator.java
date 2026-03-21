@@ -216,4 +216,8 @@ public class Orchestrator {
                     .minus(drive.getPose().getTranslation())
                     .getAngle()));
   }
+
+  public Command preloadWhileIntaking() {
+    return Commands.parallel(intake.intake(), preloadBalls());
+  }
 }
