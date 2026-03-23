@@ -348,3 +348,4 @@ bin/
 
 # Simgui
 simgui.json
+gradle.properties

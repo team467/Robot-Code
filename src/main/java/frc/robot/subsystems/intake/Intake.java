@@ -5,8 +5,12 @@ import static frc.robot.subsystems.intake.IntakeConstants.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
+import frc.robot.RobotState.IntakePosition;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
+// TODO:rewrite this for v1.5
 public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
@@ -30,7 +34,7 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
   }
 
-  public Command extendAndIntake() {
+  public Command extendToAngleAndIntake(double angle) {
     return Commands.run(
             () -> {
               rollers.setVoltageIntake(INTAKE_VOLTS);
@@ -42,7 +46,7 @@ public class Intake extends SubsystemBase {
         .withName("extendAndIntake");
   }
 
-  public Command collapseAndIntake() {
+  public Command extendToAngle(double angle) {
     return Commands.run(
             () -> {
               io.setVoltageIntake(INTAKE_VOLTS);

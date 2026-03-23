@@ -4,10 +4,20 @@
 
 package frc.robot;
 
+import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
+import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,12 +25,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.lib.utils.LocalADStarAK;
+import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
+import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOPhysical;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
@@ -30,14 +43,16 @@ import frc.robot.subsystems.intake.IntakeExtend;
 import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.intake.IntakeRollers;
 import frc.robot.subsystems.leds.Leds;
-import frc.robot.subsystems.magiccarpet.MagicCarpet;
-import frc.robot.subsystems.magiccarpet.MagicCarpetIO;
-import frc.robot.subsystems.magiccarpet.MagicCarpetSparkMax;
+import frc.robot.subsystems.magicCarpet.MagicCarpet;
+import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
+import frc.robot.subsystems.magicCarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.util.CustomTriggers;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -109,7 +124,6 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
-          climber = new Climber(new ClimberIOPhysical());
           intake =
               new Intake(
                   new IntakeIOSparkMax(),
@@ -130,6 +144,8 @@ public class RobotContainer {
         }
 
         case ROBOT_BRIEFCASE -> {
+          //          leds = new Leds();
+          //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           leds = new Leds();
         }
       }
@@ -166,14 +182,111 @@ public class RobotContainer {
       climber = new Climber(new ClimberIO() {});
     }
 
-    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake);
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    Autos autos = new Autos(drive);
+    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, driverController);
+    Autos autos = new Autos(drive, orchestrator, intake, shooter);
+    NamedCommands.registerCommand(
+        "startIntake",
+        Commands.parallel(
+                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS), orchestrator.preloadBalls())
+            .withTimeout(10.0));
+    NamedCommands.registerCommand(
+        "endIntake",
+        Commands.parallel(
+                intake.stopIntakeCommand().withTimeout(0.05),
+                magicCarpet.stop().withTimeout(0.05),
+                indexer.stop().withTimeout(0.05))
+            .withTimeout(0.05));
+    NamedCommands.registerCommand(
+        "spinUp",
+        shooter.setTargetVelocityRadiansRepeatedly(
+            Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)));
+    NamedCommands.registerCommand("feedShooter", orchestrator.feedUp());
+    NamedCommands.registerCommand("bringInIntake", intake.extendToAngleAndIntake(0));
+    NamedCommands.registerCommand("driveToHub", orchestrator.driveToHub());
+    NamedCommands.registerCommand("driveToHubAuto", orchestrator.driveToHub().withTimeout(3.0));
+    NamedCommands.registerCommand(
+        "shootAuto",
+        Commands.sequence(
+            Commands.parallel(
+                    shooter
+                        .setTargetVelocityRadiansRepeatedly(
+                            Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM))
+                        .withTimeout(0.8),
+                    intake.stopIntakeCommand(),
+                    magicCarpet.stop(),
+                    indexer.stop())
+                .withTimeout(0.8),
+            Commands.deadline(
+                Commands.waitSeconds(3.2),
+                shooter.setTargetVelocityRadiansRepeatedly(
+                    Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)),
+                orchestrator.feedUp()),
+            Commands.parallel(
+                    magicCarpet.stop().withTimeout(0.05), indexer.stop().withTimeout(0.05))
+                .withTimeout(0.05)));
+    AutoBuilder.configure(
+        drive::getPose,
+        drive::setPose,
+        drive::getChassisSpeeds,
+        drive::runVelocity,
+        new PPHolonomicDriveController(new PIDConstants(12, 0, 0), new PIDConstants(9, 0, 0)),
+        ppConfig,
+        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+        drive);
+    Pathfinding.setPathfinder(new LocalADStarAK());
+    PathPlannerLogging.setLogActivePathCallback(
+        (activePath) -> {
+          Logger.recordOutput(
+              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+        });
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (targetPose) -> {
+          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+        });
+
+    NamedCommands.registerCommand(
+        "Drive Back Left",
+        new DriveToPose(drive, () -> new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(180))));
+    NamedCommands.registerCommand(
+        "Drive Over Left",
+        new DriveToPose(drive, () -> new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(180))));
+
+    //
+    // NamedCommands.registerCommand("startShooter",Commands.parallel(orchestrator.preloadBalls(),orchestrator.prepShooter()));
+    //        NamedCommands.registerCommand("shoot",orchestrator.shootBalls());
+    //        NamedCommands.registerCommand("shootClimb",orchestrator.shootBallsonClimb());
+    //        NamedCommands.registerCommand("shootDistance",orchestrator.shootBallsAtDistance());
+    //        NamedCommands.registerCommand("extend hopper and intake",intake.extendAndIntake());
+    //
+    //
+    // NamedCommands.registerCommand("stopIntake",Commands.sequence(intake.collapseAndIntake(),Commands.waitSeconds(0.3),intake.stopIntakeCommand()));
+    //        NamedCommands.registerCommand("climb",Commands.none());
     // Set up auto routines
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
+
     autoChooser.addOption("test path", autos.testPath());
+    autoChooser.addOption("Bummmmpar", autos.Bummmmpar());
+    autoChooser.addOption("Manual A-CC", autos.ACCManuelAuto());
+    autoChooser.addOption("Manual A-CC-Improved", autos.ACCManuelAutoAlt());
+    autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManuelAutoOverBump());
+    autoChooser.addOption("Manual ADepot", autos.ADepot());
+    autoChooser.addOption("Manual B-CC", autos.BCCManuelAuto());
+    autoChooser.addOption("Manual B-CC-Improved", autos.BCCManuelAutoAlt());
+    autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManuelAutoOverBump());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     autoChooser.addOption("CL auto", autos.CenterA());
+    autoChooser.addOption("8 Ball Auto", autos.EightBalls());
+
+    autoChooser.addOption(
+        "runCharacterizationQuasistatic", shooter.sysIdQuasistatic(Direction.kForward));
+    autoChooser.addOption("runCharacterizationDynamic", shooter.sysIdDynamic(Direction.kForward));
+
+    autoChooser.addOption(
+        "runCharacterizationQuasistaticReverse", shooter.sysIdQuasistatic(Direction.kReverse));
+    autoChooser.addOption(
+        "runCharacterizationDynamicReverse", shooter.sysIdDynamic(Direction.kReverse));
 
     // Drive SysId
     autoChooser.addOption(
@@ -190,7 +303,6 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -202,6 +314,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    magicCarpet.setDefaultCommand(magicCarpet.stop());
+    indexer.setDefaultCommand(indexer.stop());
+    shooter.setDefaultCommand(shooter.stop());
+    //    shooter.setDefaultCommand(shooter.stop());
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -209,7 +326,7 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
 
-    // Lock to 0° when A button is held
+    // Lock to 0 degrees when A button is held
 
     driverController
         .start()
@@ -222,6 +339,58 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+    driverController.x().toggleOnTrue(orchestrator.aimToHub());
+    driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
+    driverController
+        .leftBumper()
+        .and(operatorController.pov(180))
+        .whileTrue(intake.runIntakeExtendVolts(-4))
+        .onFalse(intake.stopExtendingCommand());
+    CustomTriggers.toggleIntakeUp(
+            driverController.leftBumper(),
+            () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
+        .and(() -> !operatorController.pov(180).getAsBoolean())
+        .toggleOnTrue(intake.extendToAngle(IntakeConstants.COLLAPSE_POS));
+    CustomTriggers.toggleIntakeDown(
+            driverController.leftBumper(),
+            () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
+        .and(() -> !operatorController.pov(180).getAsBoolean())
+        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+
+    // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
+    driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
+    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
+    driverController.a().and(operatorController.pov(180)).onTrue(intake.resetExtendPosition());
+    driverController
+        .rightBumper()
+        .and(() -> !operatorController.pov(180).getAsBoolean())
+        .toggleOnTrue(orchestrator.driveToHub());
+    driverController
+        .rightBumper()
+        .and(operatorController.pov(180))
+        .whileTrue(intake.runIntakeExtendVolts(4))
+        .onFalse(intake.stopExtendingCommand());
+    //    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
+    operatorController
+        .rightTrigger(0.1)
+        .and(() -> !operatorController.pov(0).getAsBoolean())
+        .toggleOnTrue(
+            orchestrator.spinUpShooterDistance(orchestrator.getShootWhileDrivingResultDistance()));
+    operatorController
+        .rightTrigger(0.1)
+        .and(operatorController.pov(0))
+        .toggleOnTrue(orchestrator.spinUpShooterHub());
+    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
+    operatorController.y().whileTrue(indexer.reverse());
+    operatorController.x().whileTrue(intake.outtake());
+
+    operatorController
+        .leftTrigger()
+        .whileTrue(
+            shooter.setTargetVelocityRadians(
+                () ->
+                    operatorController.getLeftY()
+                        * Units.rotationsPerMinuteToRadiansPerSecond(5600)));
   }
 
   /**
@@ -235,5 +404,6 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
+    orchestrator.orchestratorPeriodic();
   }
 }

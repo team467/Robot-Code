@@ -1,7 +1,7 @@
 // Controls the motor
 // Reads motor data every 20 ms
 // Implements the methods defined in MagicCarpetIO
-package frc.robot.subsystems.magiccarpet;
+package frc.robot.subsystems.magicCarpet;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;

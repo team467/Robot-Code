@@ -1,41 +1,93 @@
-Driver Controller:
-x ->
-y ->
-a -> (hold) Spin intake and indexer backwards
+AUTOMATIC MODE
 
-b ->
+(Controlled by switch on DS)
 
-rb -> (hold) Shoot 
-rt ->  Auto Mode: Align to hub (single press), Manual Mode: Nothing
+    Driver Controls
 
-lb -> (toggle) Begin intaking 
-lt -> Toggle intake in/out
+      Left Stick: Translation
 
-povUp (D-pad) ->
-povDown (D-pad) -> 
-povLeft (D-pad) ->
-povRight (D-pad) ->
+      Right Stick (Left/Right): Rotation
 
-start ->
-back ->
+      R1 (Single Press): Align to hub
 
-Operator Controller:
+      Rotate to face hub
 
-x ->
-y ->
-a ->
-b ->
+      Bring shooter to correct speed
 
-rb ->
-rt ->
+    LEDs:
 
-lb ->
-lt ->
+      If outside of range → flash red rapidly
 
-povUp (D-pad) -> (hold) Winch climber up
-povDown (D-pad) -> (hold) Winch climber down
-povLeft (D-pad) ->
-povRight (D-pad) ->
+      Shooter spins to nearest valid speed
 
-start ->
-back ->
+      Alignment is canceled by any stick input
+
+    R2 (Hold): Shoot
+
+      While held:
+
+      Continuously update wheel velocity
+
+      Continuously update rotation
+
+      (Compensates for defensive contact)
+
+    L1 (Toggle): Intake In/Out
+
+      Do not wait for completion before allowing another toggle
+
+      Each press toggles state, regardless of whether setpoint is reached
+
+    L2 (Toggle): Begin Intaking
+
+      If intake is not deployed, deploy first
+
+    A (Hold):
+
+      Spin intake and indexer backwards (unjam)
+
+  Operator Console
+
+    Linear Slide: Nothing
+
+    Up Button (Hold):
+
+      Winch climber to released position
+
+    Down Button (Hold):
+
+      Winch climber down to climber setpoint
+
+    Limit switch will be pressed
+
+MANUAL MODE
+
+(If not listed, controls are the same as Automatic Mode)
+
+  Driver Controls
+
+    R1: Nothing
+
+    R2 (Hold): Shoot
+
+  Operator Console
+
+    Linear Slide:
+
+      Controls wheel velocity
+
+      Minimum = hub shot
+
+      Maximum = full speed
+
+    Up Button (Hold):
+
+      Winch climber to release position
+
+      Limit switch ignored
+
+    Down Button (Hold):
+
+        Winch climber down
+
+        Limit switch ignored
