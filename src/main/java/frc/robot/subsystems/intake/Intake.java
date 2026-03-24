@@ -18,31 +18,38 @@ public class Intake {
     this.extend = extend;
   }
 
-  public void periodic() {
-    Logger.processInputs("Intake", inputs);
-  }
-
   public Command extendToAngleAndIntake(double angle) {
-    return Commands.run(
-            () -> {
-              rollers.setVoltageIntake(INTAKE_VOLTS);
-              extend.setVoltageExtend(EXTEND_VOLTS);
-            })
-        .until(() -> inputs.getExtendPos >= EXTEND_POS)
-        .finallyDo(interrupted -> extend.stopExtend())
-        .andThen(rollers.intake())
-        .withName("extendAndIntake");
-  }
-
-  public Command extendToAngle(double angle) {
-    return Commands.run(
-            () -> {
-              io.setVoltageIntake(INTAKE_VOLTS);
-              io.setVoltageExtend(COLLAPSE_VOLTS);
-            })
-        .until(() -> extend.isHopperCollapsed() || inputs.getExtendPos <= COLLAPSE_POS)
-        .finallyDo(interrupted -> extend.stopExtend())
-        .andThen(rollers.intake())
-        .withName("collapseAndIntake");
+    return extend.extendToAngle(angle)
+        .andThen(
+            Commands.parallel(
+                extend.holdAngle(angle),
+                rollers.intake()
+            )
+        )
+        .withName("extendToAngleAndIntake");
   }
 }
+
+
+
+// Jack's Chugga Chugga mode
+
+//  public Command shakeAndIntake() {
+//    return Commands.repeatingSequence(
+//            Commands.runOnce(
+//                () ->
+//                    Commands.deadline(
+//                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+//                this),
+//            Commands.runOnce(
+//                () ->
+//                    Commands.deadline(
+//                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
+//                this))
+//        .withName("shakeAndIntake");
+//  }
+
+// private because it doesn't have requirements and therefore it shouldn't be called beyond the
+// subsystem
+// itself
+
