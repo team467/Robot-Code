@@ -131,7 +131,8 @@ public class RobotContainer {
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           intakeRollers = new IntakeRollers(new IntakeRollersIOSparkMax());
-          intakeExtend = new IntakeExtend(new IntakeExtendIOSparkMax(), operatorController.rightTrigger());
+          intakeExtend =
+              new IntakeExtend(new IntakeExtendIOSparkMax(), operatorController.rightTrigger());
         }
 
         case ROBOT_SIMBOT -> {
@@ -184,7 +185,7 @@ public class RobotContainer {
     }
 
     intake = new Intake(intakeRollers, intakeExtend);
-    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, driverController);
+    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, intakeRollers, driverController);
     Autos autos = new Autos(drive, orchestrator, intake, shooter);
     NamedCommands.registerCommand(
         "startIntake",
@@ -362,7 +363,10 @@ public class RobotContainer {
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intakeRollers.intake());
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
-    driverController.a().and(operatorController.pov(180)).onTrue(intakeExtend.resetExtendPosition());
+    driverController
+        .a()
+        .and(operatorController.pov(180))
+        .onTrue(intakeExtend.resetExtendPosition());
     driverController
         .rightBumper()
         .and(() -> !operatorController.pov(180).getAsBoolean())
