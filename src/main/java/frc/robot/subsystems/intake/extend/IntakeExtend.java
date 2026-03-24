@@ -133,6 +133,10 @@ public class IntakeExtend extends SubsystemBase {
     io.setVoltageExtend(0);
   }
 
+  public Command resetExtendPosition() {
+    return Commands.runOnce(() -> io.resetExtendEncoder(0), this);
+  }
+
   public Command moveToExtendedPosition() {
     return Commands.run(() -> io.extendToPosition(EXTEND_POS))
         .until(() -> Math.abs(inputs.getExtendPos - EXTEND_POS) <= POSITION_TOLERANCE)

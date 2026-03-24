@@ -39,8 +39,13 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
+import frc.robot.subsystems.intake.extend.IntakeExtendIO;
+import frc.robot.subsystems.intake.extend.IntakeExtendIOSparkMax;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
+import frc.robot.subsystems.intake.rollers.IntakeRollersIO;
+import frc.robot.subsystems.intake.rollers.IntakeRollersIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
@@ -71,7 +76,9 @@ public class RobotContainer {
   private final Orchestrator orchestrator;
   private Shooter shooter;
   private Climber climber;
-  private Intake intake;
+  private final Intake intake;
+  private IntakeRollers intakeRollers;
+  private IntakeExtend intakeExtend;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -123,11 +130,8 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
-          intake =
-              new Intake(
-                  new IntakeIOSparkMax(),
-                  new IntakeRollers(new IntakeIOSparkMax()),
-                  new IntakeExtend(new IntakeIOSparkMax(), operatorController.rightTrigger()));
+          intakeRollers = new IntakeRollers(new IntakeRollersIOSparkMax());
+          intakeExtend = new IntakeExtend(new IntakeExtendIOSparkMax(), operatorController.rightTrigger());
         }
 
         case ROBOT_SIMBOT -> {
@@ -160,13 +164,6 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
-    if (intake == null) {
-      //      intake = new Intake(new IntakeIO() {}, () -> false);
-      intake =
-          new Intake(
-              new IntakeRollers(new IntakeIOSparkMax()),
-              new IntakeExtend(new IntakeIOSparkMax(), () -> false));
-    }
     if (magicCarpet == null) {
       magicCarpet = new MagicCarpet(new MagicCarpetIO() {});
     }
@@ -179,7 +176,14 @@ public class RobotContainer {
     if (climber == null) {
       climber = new Climber(new ClimberIO() {});
     }
+    if (intakeRollers == null) {
+      intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
+    }
+    if (intakeExtend == null) {
+      intakeExtend = new IntakeExtend(new IntakeExtendIO() {}, () -> false);
+    }
 
+    intake = new Intake(intakeRollers, intakeExtend);
     orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, driverController);
     Autos autos = new Autos(drive, orchestrator, intake, shooter);
     NamedCommands.registerCommand(
@@ -190,7 +194,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "endIntake",
         Commands.parallel(
-                intake.stopIntakeCommand().withTimeout(0.05),
+                intakeRollers.stopIntakeCommand().withTimeout(0.05),
                 magicCarpet.stop().withTimeout(0.05),
                 indexer.stop().withTimeout(0.05))
             .withTimeout(0.05));
@@ -210,7 +214,7 @@ public class RobotContainer {
                         .setTargetVelocityRadiansRepeatedly(
                             Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM))
                         .withTimeout(0.8),
-                    intake.stopIntakeCommand(),
+                    intakeRollers.stopIntakeCommand(),
                     magicCarpet.stop(),
                     indexer.stop())
                 .withTimeout(0.8),
@@ -342,13 +346,13 @@ public class RobotContainer {
     driverController
         .leftBumper()
         .and(operatorController.pov(180))
-        .whileTrue(intake.runIntakeExtendVolts(-4))
-        .onFalse(intake.stopExtendingCommand());
+        .whileTrue(intakeExtend.runIntakeExtendVolts(-4))
+        .onFalse(intakeExtend.stopExtendingCommand());
     CustomTriggers.toggleIntakeUp(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
         .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(intake.extendToAngle(IntakeConstants.COLLAPSE_POS));
+        .toggleOnTrue(intakeExtend.extendToAngle(IntakeConstants.COLLAPSE_POS));
     CustomTriggers.toggleIntakeDown(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
@@ -356,9 +360,9 @@ public class RobotContainer {
         .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
 
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
-    driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
+    driverController.leftTrigger(0.2).toggleOnTrue(intakeRollers.intake());
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
-    driverController.a().and(operatorController.pov(180)).onTrue(intake.resetExtendPosition());
+    driverController.a().and(operatorController.pov(180)).onTrue(intakeExtend.resetExtendPosition());
     driverController
         .rightBumper()
         .and(() -> !operatorController.pov(180).getAsBoolean())
@@ -366,8 +370,8 @@ public class RobotContainer {
     driverController
         .rightBumper()
         .and(operatorController.pov(180))
-        .whileTrue(intake.runIntakeExtendVolts(4))
-        .onFalse(intake.stopExtendingCommand());
+        .whileTrue(intakeExtend.runIntakeExtendVolts(4))
+        .onFalse(intakeExtend.stopExtendingCommand());
     //    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController
         .rightTrigger(0.1)
@@ -380,7 +384,7 @@ public class RobotContainer {
         .toggleOnTrue(orchestrator.spinUpShooterHub());
     operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController.y().whileTrue(indexer.reverse());
-    operatorController.x().whileTrue(intake.outtake());
+    operatorController.x().whileTrue(intakeRollers.outtake());
 
     operatorController
         .leftTrigger()

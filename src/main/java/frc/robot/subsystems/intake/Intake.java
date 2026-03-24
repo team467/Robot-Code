@@ -28,12 +28,17 @@ public class Intake {
         )
         .withName("extendToAngleAndIntake");
   }
-}
 
+  public Command holdAngleAndIntake(double angle) {
+    return Commands.parallel(
+            extend.holdAngle(angle),
+            rollers.intake()
+        )
+        .withName("holdAngleAndIntake");
+  }
 
-
-// Jack's Chugga Chugga mode
-
+//  // Jack's Chugga Chugga mode
+//
 //  public Command shakeAndIntake() {
 //    return Commands.repeatingSequence(
 //            Commands.runOnce(
@@ -48,8 +53,8 @@ public class Intake {
 //                this))
 //        .withName("shakeAndIntake");
 //  }
-
-// private because it doesn't have requirements and therefore it shouldn't be called beyond the
-// subsystem
-// itself
-
+//
+//// private because it doesn't have requirements and therefore it shouldn't be called beyond the
+//// subsystem
+//// itself
+}
