@@ -185,8 +185,10 @@ public class RobotContainer {
     }
 
     intake = new Intake(intakeRollers, intakeExtend);
-    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, intakeRollers, driverController);
-    Autos autos = new Autos(drive, orchestrator, intake, shooter);
+    orchestrator =
+        new Orchestrator(
+            drive, magicCarpet, shooter, indexer, intake, intakeRollers, driverController);
+    Autos autos = new Autos(drive, orchestrator, intake, intakeRollers, shooter);
     NamedCommands.registerCommand(
         "startIntake",
         Commands.parallel(
