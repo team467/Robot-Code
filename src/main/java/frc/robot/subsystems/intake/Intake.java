@@ -37,24 +37,18 @@ public class Intake {
         .withName("holdAngleAndIntake");
   }
 
-//  // Jack's Chugga Chugga mode
-//
-//  public Command shakeAndIntake() {
-//    return Commands.repeatingSequence(
-//            Commands.runOnce(
-//                () ->
-//                    Commands.deadline(
-//                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
-//                this),
-//            Commands.runOnce(
-//                () ->
-//                    Commands.deadline(
-//                        moveToAnglePrivate(FUNNEL_POS + SHAKE_POS_OFFSET), intakePrivate()),
-//                this))
-//        .withName("shakeAndIntake");
-//  }
-//
-//// private because it doesn't have requirements and therefore it shouldn't be called beyond the
-//// subsystem
-//// itself
+  // Jack's Chugga Chugga mode
+
+  public Command shakeAndIntake() {
+    return Commands.repeatingSequence(
+            Commands.deadline(
+                extend.extendToAngle(FUNNEL_POS + SHAKE_POS_OFFSET), rollers.intake()),
+            Commands.deadline(
+                extend.extendToAngle(FUNNEL_POS + SHAKE_POS_OFFSET), rollers.intake()))
+        .withName("shakeAndIntake");
+  }
+
+// private because it doesn't have requirements and therefore it shouldn't be called beyond the
+// subsystem
+// itself
 }
