@@ -4,6 +4,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VOLTS;
+import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.POSITION_TOLERANCE;
 import static frc.robot.subsystems.intake.IntakeConstants.STALL_TIME;
 import static frc.robot.subsystems.intake.IntakeConstants.STALL_VELOCITY;
@@ -133,10 +134,6 @@ public class IntakeExtend extends SubsystemBase {
     io.setVoltageExtend(0);
   }
 
-  public Command stopExtendingCommand() {
-    return Commands.run(this::stopExtend).withName("stopExtendingCommand");
-  }
-
   public Command moveToExtendedPosition() {
     return Commands.run(() -> io.extendToPosition(EXTEND_POS))
         .until(() -> Math.abs(inputs.getExtendPos - EXTEND_POS) <= POSITION_TOLERANCE)
@@ -147,5 +144,46 @@ public class IntakeExtend extends SubsystemBase {
     return Commands.run(() -> io.extendToPosition(COLLAPSE_POS))
         .until(() -> Math.abs(inputs.getExtendPos - COLLAPSE_POS) <= POSITION_TOLERANCE)
         .withName("moveToCollapsedPosition");
+  }
+
+  public Command runIntakeExtendVolts(double volts) {
+    return Commands.run(
+        () -> {
+          io.setPIDEnabled(false);
+          io.setVoltageExtend(volts);
+        },
+        this);
+  }
+
+  public Command stopExtendingCommand() {
+    return Commands.run(this::stopExtend, this);
+  }
+
+  public Command extendToAngle(double angle) {
+    return Commands.run(
+            () -> {
+              io.setPIDEnabled(true);
+              io.goToPos(angle);
+            },
+            this)
+        .until(() -> inputs.atSetpoint)
+        .finallyDo(this::stopExtend)
+        .withName("extendToAngle");
+  }
+
+  public Command holdAngleAndIntake(double angle) {
+    return Commands.run(
+            () -> {
+              io.setPIDEnabled(true);
+              io.goToPos(angle);
+              io.setVoltageIntake(INTAKE_VOLTS);
+            },
+            this)
+        .finallyDo(
+            () -> {
+              stopExtend();
+              stopIntake();
+            })
+        .withName("holdAngleAndIntake");
   }
 }
