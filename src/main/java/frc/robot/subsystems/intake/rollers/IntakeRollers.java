@@ -34,13 +34,13 @@ public class IntakeRollers extends SubsystemBase {
   }
 
   public Command intake() {
-    return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS),this)
+    return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS), this)
         .finallyDo(interrupted -> stopIntake())
         .withName("intake");
   }
 
   public Command outtake() {
-    return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS),this)
+    return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS), this)
         .finallyDo(interrupted -> stopIntake())
         .withName("outtake");
   }

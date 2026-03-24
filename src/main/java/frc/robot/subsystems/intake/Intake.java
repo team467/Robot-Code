@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
-import org.littletonrobotics.junction.Logger;
 
 // TODO:rewrite this for v1.5
 public class Intake {
@@ -19,21 +18,14 @@ public class Intake {
   }
 
   public Command extendToAngleAndIntake(double angle) {
-    return extend.extendToAngle(angle)
-        .andThen(
-            Commands.parallel(
-                extend.holdAngle(angle),
-                rollers.intake()
-            )
-        )
+    return extend
+        .extendToAngle(angle)
+        .andThen(Commands.parallel(extend.holdAngle(angle), rollers.intake()))
         .withName("extendToAngleAndIntake");
   }
 
   public Command holdAngleAndIntake(double angle) {
-    return Commands.parallel(
-            extend.holdAngle(angle),
-            rollers.intake()
-        )
+    return Commands.parallel(extend.holdAngle(angle), rollers.intake())
         .withName("holdAngleAndIntake");
   }
 
@@ -48,7 +40,7 @@ public class Intake {
         .withName("shakeAndIntake");
   }
 
-// private because it doesn't have requirements and therefore it shouldn't be called beyond the
-// subsystem
-// itself
+  // private because it doesn't have requirements and therefore it shouldn't be called beyond the
+  // subsystem
+  // itself
 }
