@@ -1,15 +1,8 @@
 package frc.robot.subsystems.intake.rollers;
 
 import static frc.lib.utils.PhoenixUtil.tryUntilOk;
-import static frc.robot.Schematic.intakeExtendCanId;
 import static frc.robot.Schematic.intakeMotorCanId;
-import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_LIMIT_ID;
-import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POSITION_CONVERSION;
-import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_INTAKE_MOTOR_CURRENT_LIMIT;
-import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
-import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
-import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -17,10 +10,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeRollersIOKraken implements IntakeRollersIO {
 
@@ -30,7 +21,7 @@ public class IntakeRollersIOKraken implements IntakeRollersIO {
   private final StatusSignal<Voltage> intakeAppliedVolts;
   private final StatusSignal<Current> intakeCurrent;
 
-  public IntakeIOKraken() {
+  public IntakeRollersIOKraken() {
     intakeMotor = new TalonFX(intakeMotorCanId);
 
     var intakeConfig = new TalonFXConfiguration();
@@ -48,7 +39,7 @@ public class IntakeRollersIOKraken implements IntakeRollersIO {
   }
 
   @Override
-  public void updateInputs(IntakeIOInputs inputs) {
+  public void updateInputs(IntakeRollersIOInputs inputs) {
     BaseStatusSignal.refreshAll(intakeAppliedVolts, intakeCurrent);
     inputs.intakeVolts = intakeAppliedVolts.getValueAsDouble();
     inputs.intakeAmps = intakeCurrent.getValueAsDouble();

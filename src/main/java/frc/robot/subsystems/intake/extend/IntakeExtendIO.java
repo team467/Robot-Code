@@ -5,7 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface IntakeExtendIO {
 
   @AutoLog
-  class IntakeIOInputs {
+  class IntakeExtendIOInputs {
     public double extendPercentOutput = 0.0;
     public double extendVolts = 0.0;
     public double extendVelocity = 0.0;
@@ -22,7 +22,7 @@ public interface IntakeExtendIO {
     public double stallCollapseTimer = 0.0;
   }
 
-  default void updateInputs(IntakeIOInputs inputs) {}
+  default void updateInputs(IntakeExtendIOInputs inputs) {}
 
   default void setPercentExtend(double extendPercent) {}
 

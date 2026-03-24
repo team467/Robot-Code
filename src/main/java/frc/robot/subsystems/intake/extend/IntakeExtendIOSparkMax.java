@@ -1,11 +1,9 @@
 package frc.robot.subsystems.intake.extend;
 
 import static frc.robot.Schematic.intakeExtendCanId;
-import static frc.robot.Schematic.intakeMotorCanId;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_LIMIT_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POSITION_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVERSION;
-import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_POSITION_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
@@ -21,7 +19,6 @@ import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.subsystems.intake.extend.IntakeExtendIO;
 
 public class IntakeExtendIOSparkMax implements IntakeExtendIO {
 
@@ -60,7 +57,7 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
   }
 
   @Override
-  public void updateInputs(IntakeIOInputs inputs) {
+  public void updateInputs(IntakeExtendIOInputs inputs) {
     inputs.extendPercentOutput = extendMotor.get();
     inputs.extendVelocity = extendMotorEncoder.getVelocity();
     inputs.extendVolts = extendMotor.getAppliedOutput();
@@ -81,7 +78,6 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
   public boolean isCollapsed() {
     return collapsedLimitSwitch.get();
   }
-
 
   @Override
   public void setPercentExtend(double extendPercent) {

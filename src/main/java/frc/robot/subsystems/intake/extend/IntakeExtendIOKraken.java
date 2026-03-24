@@ -1,8 +1,6 @@
 package frc.robot.subsystems.intake.extend;
 
-import static frc.lib.utils.PhoenixUtil.tryUntilOk;
 import static frc.robot.Schematic.intakeExtendCanId;
-import static frc.robot.Schematic.intakeMotorCanId;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_LIMIT_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POSITION_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVERSION;
@@ -11,10 +9,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
@@ -27,10 +22,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.subsystems.intake.extend.IntakeExtendIO;
 
 public class IntakeExtendIOKraken implements IntakeExtendIO {
   private final SparkMax extendMotor;
@@ -72,7 +64,7 @@ public class IntakeExtendIOKraken implements IntakeExtendIO {
   }
 
   @Override
-  public void updateInputs(IntakeIOInputs inputs) {
+  public void updateInputs(IntakeExtendIOInputs inputs) {
     inputs.extendPercentOutput = extendMotor.get();
     inputs.extendVelocity = extendMotorEncoder.getVelocity();
     inputs.extendVolts = extendMotor.getAppliedOutput();
@@ -89,12 +81,10 @@ public class IntakeExtendIOKraken implements IntakeExtendIO {
     pidController.setSetpoint(position, ControlType.kPosition);
   }
 
-
   @Override
   public void setPercentExtend(double extendPercent) {
     extendMotor.set(extendPercent);
   }
-
 
   @Override
   public void setVoltageExtend(double extendVolts) {

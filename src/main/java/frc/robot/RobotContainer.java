@@ -39,9 +39,8 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeExtend;
-import frc.robot.subsystems.intake.IntakeIOSparkMax;
-import frc.robot.subsystems.intake.IntakeRollers;
+import frc.robot.subsystems.intake.extend.IntakeExtend;
+import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
@@ -165,7 +164,6 @@ public class RobotContainer {
       //      intake = new Intake(new IntakeIO() {}, () -> false);
       intake =
           new Intake(
-              new IntakeIOSparkMax(),
               new IntakeRollers(new IntakeIOSparkMax()),
               new IntakeExtend(new IntakeIOSparkMax(), () -> false));
     }

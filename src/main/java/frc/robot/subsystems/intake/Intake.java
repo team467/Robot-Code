@@ -4,33 +4,21 @@ import static frc.robot.subsystems.intake.IntakeConstants.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotState;
-import frc.robot.RobotState.IntakePosition;
-import java.util.function.BooleanSupplier;
+import frc.robot.subsystems.intake.extend.IntakeExtend;
+import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import org.littletonrobotics.junction.Logger;
 
 // TODO:rewrite this for v1.5
-public class Intake extends SubsystemBase {
-  private final IntakeIO io;
-  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+public class Intake {
   private final IntakeRollers rollers;
   private final IntakeExtend extend;
 
-  /**
-   * Constructor for the Intake subsystem
-   *
-   * @param io The IO implementation to use
-   */
-  public Intake(IntakeIO io, IntakeRollers rollers, IntakeExtend extend) {
-    this.io = io;
+  public Intake(IntakeRollers rollers, IntakeExtend extend) {
     this.rollers = rollers;
     this.extend = extend;
   }
 
-  @Override
   public void periodic() {
-    io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
   }
 

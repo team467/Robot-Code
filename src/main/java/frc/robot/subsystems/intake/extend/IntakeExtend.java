@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.intake.extend;
 
 import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_VOLTS;
@@ -16,9 +16,8 @@ import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeExtend extends SubsystemBase {
-  private final IntakeIO io;
-  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-
+  private final IntakeExtendIO io;
+  private final IntakeExtendIOInputsAutoLogged inputs = new IntakeExtendIOInputsAutoLogged();
   private final Timer stallExtendTimer = new Timer();
   private final Timer stallCollapseTimer = new Timer();
 
@@ -100,13 +99,13 @@ public class IntakeExtend extends SubsystemBase {
     Logger.recordOutput("Intake/IntakeExtended/StalledCollapse", stalledCollapse);
   }
 
-  public IntakeExtend(IntakeIO io, BooleanSupplier limitSwitchDisabled) {
+  public IntakeExtend(IntakeExtendIO io, BooleanSupplier limitSwitchDisabled) {
     this.io = io;
     this.limitSwitchDisabled = limitSwitchDisabled;
   }
 
   public boolean isHopperCollapsed() {
-    return io.isHopperCollapsed();
+    return io.isCollapsed();
   }
 
   private boolean isStallingExtend() {
