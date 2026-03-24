@@ -218,6 +218,6 @@ public class Orchestrator {
   }
 
   public Command preloadWhileIntaking() {
-    return Commands.parallel(intake.intake(), preloadBalls());
+    return Commands.parallel(rollers.intake(), preloadBalls());
   }
 }
