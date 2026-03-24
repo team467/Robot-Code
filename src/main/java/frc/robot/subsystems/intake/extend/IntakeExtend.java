@@ -171,19 +171,17 @@ public class IntakeExtend extends SubsystemBase {
         .withName("extendToAngle");
   }
 
-  public Command holdAngleAndIntake(double angle) {
+  public Command holdAngle(double angle) {
     return Commands.run(
             () -> {
               io.setPIDEnabled(true);
               io.goToPos(angle);
-              io.setVoltageIntake(INTAKE_VOLTS);
             },
             this)
         .finallyDo(
             () -> {
               stopExtend();
-              stopIntake();
             })
-        .withName("holdAngleAndIntake");
+        .withName("holdAngle");
   }
 }
