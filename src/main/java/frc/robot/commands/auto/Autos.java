@@ -21,7 +21,12 @@ public class Autos {
   private final IntakeRollers rollers;
   private final Shooter shooter;
 
-  public Autos(Drive drive, Orchestrator orchestrator, Intake intake, IntakeRollers rollers, Shooter shooter) {
+  public Autos(
+      Drive drive,
+      Orchestrator orchestrator,
+      Intake intake,
+      IntakeRollers rollers,
+      Shooter shooter) {
     this.drive = drive;
     this.orchestrator = orchestrator;
     this.intake = intake;
