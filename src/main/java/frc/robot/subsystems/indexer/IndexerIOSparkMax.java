@@ -1,8 +1,6 @@
 package frc.robot.subsystems.indexer;
 
 import static frc.robot.Schematic.indexerFeedupCanId;
-import static frc.robot.Schematic.indexerLeftLimitSwitchDIO;
-import static frc.robot.Schematic.indexerRightLimitSwitchDIO;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_POSITION_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_VELOCITY_CONVERSION;
 
@@ -13,14 +11,10 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IndexerIOSparkMax implements IndexerIO {
 
   private final SparkMax feedUpMotor;
-
-  private final DigitalInput leftLimitSwitch;
-  private final DigitalInput rightLimitSwitch;
 
   public IndexerIOSparkMax() {
     feedUpMotor = new SparkMax(indexerFeedupCanId, MotorType.kBrushless);
@@ -42,9 +36,6 @@ public class IndexerIOSparkMax implements IndexerIO {
 
     feedUpMotor.configure(
         feedUpConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    leftLimitSwitch = new DigitalInput(indexerLeftLimitSwitchDIO);
-    rightLimitSwitch = new DigitalInput(indexerRightLimitSwitchDIO);
   }
 
   @Override
@@ -52,8 +43,6 @@ public class IndexerIOSparkMax implements IndexerIO {
     inputs.feedUpPercentOutput = feedUpMotor.get();
     inputs.feedUpVolts = feedUpMotor.getBusVoltage() * feedUpMotor.getAppliedOutput();
     inputs.feedUpAmps = feedUpMotor.getOutputCurrent();
-    inputs.ballAtLeftSwitch = !leftLimitSwitch.get();
-    inputs.ballAtRightSwitch = !rightLimitSwitch.get();
   }
 
   @Override
@@ -69,15 +58,5 @@ public class IndexerIOSparkMax implements IndexerIO {
   @Override
   public void stop() {
     feedUpMotor.set(0);
-  }
-
-  @Override
-  public boolean isLeftSwitchPressed() {
-    return !leftLimitSwitch.get();
-  }
-
-  @Override
-  public boolean isRightSwitchPressed() {
-    return rightLimitSwitch.get();
   }
 }
