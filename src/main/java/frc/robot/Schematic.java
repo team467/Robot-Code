@@ -28,8 +28,6 @@ public class Schematic {
 
   //  indexer subsystem
   public static final int indexerFeedupCanId;
-  public static final int indexerLeftLimitSwitchDIO;
-  public static final int indexerRightLimitSwitchDIO;
 
   // intake subsystem
   public static final int intakeMotorCanId;
@@ -71,8 +69,6 @@ public class Schematic {
 
         // Indexer (CAN IDs and DIOs)
         indexerFeedupCanId = 0;
-        indexerLeftLimitSwitchDIO = 0;
-        indexerRightLimitSwitchDIO = 0;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 0;
@@ -87,20 +83,20 @@ public class Schematic {
         pigeonCanId = 17;
 
         // Drive (CAN Ids)
-        frontLeftDriveCanId = 3;
-        frontLeftTurnCanId = 4;
-        frontRightDriveCanId = 1;
-        frontRightTurnCanId = 2;
+        frontLeftDriveCanId = 1;
+        frontLeftTurnCanId = 2;
+        frontRightDriveCanId = 3;
+        frontRightTurnCanId = 4;
 
-        backRightDriveCanId = 7;
-        backRightTurnCanId = 8;
-        backLeftDriveCanId = 5;
-        backLeftTurnCanId = 6;
+        backRightDriveCanId = 5;
+        backRightTurnCanId = 6;
+        backLeftDriveCanId = 7;
+        backLeftTurnCanId = 8;
 
-        frontLeftAbsoluteEncoderCanId = 19;
-        frontRightAbsoluteEncoderCanId = 18;
-        backRightAbsoluteEncoderCanId = 20;
-        backLeftAbsoluteEncoderCanId = 21;
+        frontLeftAbsoluteEncoderCanId = 18;
+        frontRightAbsoluteEncoderCanId = 19;
+        backRightAbsoluteEncoderCanId = 21;
+        backLeftAbsoluteEncoderCanId = 20;
 
         // Shooter (CAN Ids)
         shooterTopMotorCanId = 11;
@@ -112,8 +108,6 @@ public class Schematic {
 
         // Indexer (CAN Ids)
         indexerFeedupCanId = 9;
-        indexerLeftLimitSwitchDIO = 0;
-        indexerRightLimitSwitchDIO = 2;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 23;
@@ -152,8 +146,6 @@ public class Schematic {
 
         // Indexer (CAN IDs and DIOs)
         indexerFeedupCanId = 0;
-        indexerLeftLimitSwitchDIO = 0;
-        indexerRightLimitSwitchDIO = 2;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 0;
