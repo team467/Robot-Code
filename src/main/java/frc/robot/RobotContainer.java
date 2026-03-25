@@ -41,7 +41,6 @@ import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOKraken;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
@@ -125,11 +124,11 @@ public class RobotContainer {
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           // TODO: GET THE ACTUAL BUTTON BINDINGS FOR THE OP SWITCHES
-          intake =
-              new Intake(
-                  new IntakeIOKraken(),
-                  operatorController.rightTrigger(),
-                  operatorController.leftBumper());
+          //          intake =
+          //              new Intake(
+          //                  new IntakeIOKraken(),
+          //                  operatorController.rightTrigger(),
+          //                  operatorController.leftBumper());
           //                    climber = new Climber(new ClimberIOPhysical());
         }
 

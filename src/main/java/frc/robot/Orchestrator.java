@@ -141,7 +141,7 @@ public class Orchestrator {
   public Command feedUp() {
     return Commands.repeatingSequence(
             preloadBalls().until(() -> RobotState.getInstance().shooterAtSpeed),
-            Commands.run(() -> indexer.run()).until(() -> !RobotState.getInstance().shooterAtSpeed))
+            indexer.run().until(() -> !RobotState.getInstance().shooterAtSpeed))
         .onlyIf(() -> shooter.getSetpoint() > 0)
         .onlyWhile(() -> shooter.getSetpoint() > 0)
         .withName("feedUp");
