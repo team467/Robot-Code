@@ -41,7 +41,6 @@ import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOKraken;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
@@ -125,11 +124,11 @@ public class RobotContainer {
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           // TODO: GET THE ACTUAL BUTTON BINDINGS FOR THE OP SWITCHES
-          intake =
-              new Intake(
-                  new IntakeIOKraken(),
-                  operatorController.rightTrigger(),
-                  operatorController.leftBumper());
+          //          intake =
+          //              new Intake(
+          //                  new IntakeIOKraken(),
+          //                  operatorController.rightTrigger(),
+          //                  operatorController.leftBumper());
           //                    climber = new Climber(new ClimberIOPhysical());
         }
 
@@ -189,9 +188,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "endIntake",
         Commands.parallel(
-                intake.stopIntakeCommand().withTimeout(0.05),
-                magicCarpet.stop().withTimeout(0.05),
-                indexer.stop().withTimeout(0.05))
+                intake.stopIntakeCommand().withTimeout(0.05), indexer.stop().withTimeout(0.05))
             .withTimeout(0.05));
     NamedCommands.registerCommand(
         "spinUp",
@@ -210,7 +207,6 @@ public class RobotContainer {
                             Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM))
                         .withTimeout(0.8),
                     intake.stopIntakeCommand(),
-                    magicCarpet.stop(),
                     indexer.stop())
                 .withTimeout(0.8),
             Commands.deadline(
@@ -218,9 +214,7 @@ public class RobotContainer {
                 shooter.setTargetVelocityRadiansRepeatedly(
                     Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)),
                 orchestrator.feedUp()),
-            Commands.parallel(
-                    magicCarpet.stop().withTimeout(0.05), indexer.stop().withTimeout(0.05))
-                .withTimeout(0.05)));
+            Commands.parallel(indexer.stop().withTimeout(0.05)).withTimeout(0.05)));
     AutoBuilder.configure(
         drive::getPose,
         drive::setPose,
@@ -311,7 +305,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    magicCarpet.setDefaultCommand(magicCarpet.stop());
     indexer.setDefaultCommand(indexer.stop());
     shooter.setDefaultCommand(shooter.stop());
     //    shooter.setDefaultCommand(shooter.stop());
