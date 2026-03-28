@@ -1,11 +1,14 @@
 package frc.robot;
 
-import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
+import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,30 +24,25 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.util.ShooterLeadCompensator;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
-  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(40.0);
+  private static final double FRONT_HUB_OFFSET = Units.inchesToMeters(40.0);
+  private static final double PHASE_DELAY_SECONDS = 0.03;
+  private static final int CONVERGENCE_ITERATIONS = 20;
+  private static final double ANGLE_ALPHA = 0.15;
+
   private final Drive drive;
   private final Shooter shooter;
   private final MagicCarpet magicCarpet;
   private final Indexer indexer;
   private final Intake intake;
-  private final RobotState robotState = RobotState.getInstance();
-  private final ShooterLeadCompensator shooterLeadCompensator;
   private final CommandXboxController driverController;
 
-  // Wraparound-safe angle filter
   private double filteredAngleRad = Double.NaN;
-  private static final double ANGLE_ALPHA =
-      0.15; // tune: lower = smoother, higher = more responsive
-
-  // Filtering for lead compensator outputs
   private final LinearFilter targetXFilter = LinearFilter.singlePoleIIR(0.06, 0.02);
   private final LinearFilter targetYFilter = LinearFilter.singlePoleIIR(0.06, 0.02);
-  private final LinearFilter distanceFilter = LinearFilter.singlePoleIIR(0.06, 0.02);
 
   public Orchestrator(
       Drive drive,
@@ -58,27 +56,64 @@ public class Orchestrator {
     this.shooter = shooter;
     this.indexer = indexer;
     this.intake = intake;
-    this.shooterLeadCompensator = new ShooterLeadCompensator(drive, shooter);
     this.driverController = driverController;
   }
 
+  private Translation2d getShooterPosition(Pose2d robotPose) {
+    Translation2d rotatedOffset =
+        kShooterOffsetFromRobotCenter.getTranslation().rotateBy(robotPose.getRotation());
+    return robotPose.getTranslation().plus(rotatedOffset);
+  }
+
+  private record LeadResult(Pose2d target, double distance, double timeOfFlight) {}
+
+  private LeadResult computeLeadCompensation(Translation2d targetPosition) {
+    Pose2d robotPose = drive.getPose();
+    ChassisSpeeds speeds = drive.getChassisSpeeds();
+
+    Pose2d compensatedPose =
+        robotPose.exp(
+            new Twist2d(
+                speeds.vxMetersPerSecond * PHASE_DELAY_SECONDS,
+                speeds.vyMetersPerSecond * PHASE_DELAY_SECONDS,
+                speeds.omegaRadiansPerSecond * PHASE_DELAY_SECONDS));
+
+    Translation2d shooterPos = getShooterPosition(compensatedPose);
+    Translation2d fieldVelocity =
+        new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+
+    Translation2d aimPoint = targetPosition;
+    double timeOfFlight = 0.0;
+
+    for (int i = 0; i < CONVERGENCE_ITERATIONS; i++) {
+      double distance = aimPoint.minus(shooterPos).getNorm();
+      timeOfFlight = timeOfFlightMap.get(distance);
+      aimPoint = targetPosition.minus(fieldVelocity.times(timeOfFlight));
+    }
+
+    double finalDistance = aimPoint.minus(shooterPos).getNorm();
+
+    Logger.recordOutput("LeadComp/AimPoint", new Pose2d(aimPoint, Rotation2d.kZero));
+    Logger.recordOutput("LeadComp/Distance", finalDistance);
+    Logger.recordOutput("LeadComp/TOF", timeOfFlight);
+
+    return new LeadResult(
+        new Pose2d(aimPoint, aimPoint.minus(shooterPos).getAngle()), finalDistance, timeOfFlight);
+  }
+
   public Pose2d getShootWhileDrivingResultPose() {
-    var shootWhileDrivingResult =
-        shooterLeadCompensator.shootWhileDriving(
-            AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
+    var result =
+        computeLeadCompensation(AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
     return new Pose2d(
-        targetXFilter.calculate(shootWhileDrivingResult.target().getX()),
-        targetYFilter.calculate(shootWhileDrivingResult.target().getY()),
-        Rotation2d.fromDegrees(0));
+        targetXFilter.calculate(result.target().getX()),
+        targetYFilter.calculate(result.target().getY()),
+        Rotation2d.kZero);
   }
 
   public DoubleSupplier getShootWhileDrivingResultDistance() {
-    return () -> {
-      var shootWhileDrivingResult =
-          shooterLeadCompensator.shootWhileDriving(
-              AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
-      return shootWhileDrivingResult.distance();
-    };
+    return () ->
+        computeLeadCompensation(AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()))
+            .distance();
   }
 
   public DoubleSupplier getHubDistance() {
@@ -98,17 +133,13 @@ public class Orchestrator {
   }
 
   public void orchestratorPeriodic() {
-    var shootWhileDrivingResult =
-        shooterLeadCompensator.shootWhileDriving(
-            AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
+    var result =
+        computeLeadCompensation(AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
+    Logger.recordOutput("Orchestrator/Target", result.target());
+    Logger.recordOutput("Orchestrator/DistanceToHub", result.distance());
     Logger.recordOutput(
-        "Orchestrator/Target",
-        new Pose2d(
-            shootWhileDrivingResult.target().getX(),
-            shootWhileDrivingResult.target().getY(),
-            Rotation2d.fromDegrees(0)));
-    Logger.recordOutput("Orchestrator/DistanceToHub", shootWhileDrivingResult.distance());
-    Logger.recordOutput("Orchestrator/ShooterPosition", shooterLeadCompensator.shooterPose());
+        "Orchestrator/ShooterPosition",
+        new Pose2d(getShooterPosition(drive.getPose()), Rotation2d.kZero));
   }
 
   public Command driveToHub() {
@@ -119,11 +150,11 @@ public class Orchestrator {
               AllianceFlipUtil.apply(
                   Hub.nearFace.transformBy(
                       new Transform2d(FRONT_HUB_OFFSET, 0.0, Rotation2d.fromDegrees(0.0))));
-          Rotation2d sameAsAlignAndShootHeading =
+          Rotation2d heading =
               AllianceFlipUtil.apply(Hub.blueCenter)
                   .minus(hubApproachPose.getTranslation())
                   .getAngle();
-          return new Pose2d(hubApproachPose.getTranslation(), sameAsAlignAndShootHeading);
+          return new Pose2d(hubApproachPose.getTranslation(), heading);
         });
   }
 
@@ -132,9 +163,10 @@ public class Orchestrator {
         drive,
         () -> {
           Pose2d hubApproachPose = AllianceFlipUtil.apply(Hub.nearFace);
-          Rotation2d angle =
-              hubApproachPose.getTranslation().minus(drive.getPose().getTranslation()).getAngle();
-          return angle;
+          return hubApproachPose
+              .getTranslation()
+              .minus(drive.getPose().getTranslation())
+              .getAngle();
         });
   }
 
@@ -162,7 +194,7 @@ public class Orchestrator {
     return shooter.setTargetVelocityRadians(
         () ->
             Units.rotationsPerMinuteToRadiansPerSecond(
-                shooter.calculateSetpoint(targetDistance).getAsDouble()));
+                shooterRpmMap.get(targetDistance.getAsDouble())));
   }
 
   public Command spinUpShooterHub() {
@@ -185,24 +217,23 @@ public class Orchestrator {
 
   public Command driveShootAtAngle() {
     return Commands.parallel(
-        Commands.run(
-            () -> {
-              spinUpShooterDistance(this.getShootWhileDrivingResultDistance());
-            }),
+        Commands.run(() -> spinUpShooterDistance(this.getShootWhileDrivingResultDistance())),
         DriveCommands.joystickDriveAtAngle(
             drive,
             driverController::getLeftX,
             driverController::getLeftY,
             () ->
-                (getShootWhileDrivingResultPose()
+                getShootWhileDrivingResultPose()
                     .getTranslation()
                     .minus(drive.getPose().getTranslation())
-                    .getAngle())));
+                    .getAngle()));
   }
 
   public Command spinUpShooterWhileDriving() {
     return shooter.setTargetVelocityRadians(
-        () -> shooter.calculateSetpoint(this.getShootWhileDrivingResultDistance()).getAsDouble());
+        () ->
+            Units.rotationsPerMinuteToRadiansPerSecond(
+                shooterRpmMap.get(getShootWhileDrivingResultDistance().getAsDouble())));
   }
 
   public Command aimToHub() {
