@@ -19,6 +19,7 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
@@ -32,6 +33,7 @@ public class Orchestrator {
   private final MagicCarpet magicCarpet;
   private final Indexer indexer;
   private final Intake intake;
+  private final IntakeRollers rollers;
   private final RobotState robotState = RobotState.getInstance();
   private final ShooterLeadCompensator shooterLeadCompensator;
   private final CommandXboxController driverController;
@@ -52,12 +54,14 @@ public class Orchestrator {
       Shooter shooter,
       Indexer indexer,
       Intake intake,
+      IntakeRollers rollers,
       CommandXboxController driverController) {
     this.drive = drive;
     this.magicCarpet = hopperBelt;
     this.shooter = shooter;
     this.indexer = indexer;
     this.intake = intake;
+    this.rollers = rollers;
     this.shooterLeadCompensator = new ShooterLeadCompensator(drive, shooter);
     this.driverController = driverController;
   }
@@ -217,6 +221,6 @@ public class Orchestrator {
   }
 
   public Command preloadWhileIntaking() {
-    return Commands.parallel(intake.intake(), preloadBalls());
+    return Commands.parallel(rollers.intake(), preloadBalls());
   }
 }
