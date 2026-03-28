@@ -189,10 +189,7 @@ public class IntakeExtend extends SubsystemBase {
               io.goToPos(angle);
             },
             this)
-        .finallyDo(
-            () -> {
-              stopExtend();
-            })
+        .finallyDo(this::stopExtend)
         .withName("holdAngle");
   }
 }

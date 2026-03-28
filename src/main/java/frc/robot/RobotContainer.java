@@ -197,7 +197,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "endIntake",
         Commands.parallel(
-                intakeRollers.stopIntakeCommand().withTimeout(0.05), ,
+                intakeRollers.stopIntakeCommand().withTimeout(0.05),
                 indexer.stop().withTimeout(0.05))
             .withTimeout(0.05));
     NamedCommands.registerCommand(
