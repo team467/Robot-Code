@@ -6,6 +6,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.OUTTAKE_VOLTS;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeRollers extends SubsystemBase {
@@ -19,6 +20,7 @@ public class IntakeRollers extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake/IntakeRollers", inputs);
+    RobotState.getInstance().intaking = inputs.intakeVolts > 0;
   }
 
   private void setPercentIntake(double intakePercent) {

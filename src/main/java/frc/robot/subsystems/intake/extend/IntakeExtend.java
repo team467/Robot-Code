@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
+import frc.robot.RobotState.IntakePosition;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -40,6 +42,15 @@ public class IntakeExtend extends SubsystemBase {
     inputs.stowed = isStowed;
     inputs.stallExtendTimer = stallExtendTimer.get();
     inputs.stallCollapseTimer = stallCollapseTimer.get();
+
+    if (inputs.setpointValue == COLLAPSE_POS
+        && Math.abs(inputs.getExtendPos - inputs.setpointValue) < 10) {
+      RobotState.getInstance().intakePosition = IntakePosition.STOWED;
+    }
+    if (inputs.setpointValue == EXTEND_POS
+        && Math.abs(inputs.getExtendPos - inputs.setpointValue) < 10) {
+      RobotState.getInstance().intakePosition = IntakePosition.DEPLOYED;
+    }
 
     // Non-slipping control calibration based on the limit switch state
     if (!limitSwitchDisabled.getAsBoolean() && isHopperCollapsed()) {

@@ -18,7 +18,7 @@ public class IntakeConstants {
 
   public static final int EXTEND_LIMIT_ID = 1;
 
-  public static final double PID_P = 0.01; // arbritrary values
+  public static final double PID_P = 0.021; // arbritrary values
   public static final double PID_I = 0.000004;
   public static final double PID_D = 0.00001;
 
@@ -28,7 +28,7 @@ public class IntakeConstants {
   // shake around the funnel pos by this much
   public static final double SHAKE_POS_OFFSET = 1;
   public static final double COLLAPSE_POS = 4.0;
-  public static final double POSITION_TOLERANCE = 0.5;
+  public static final double POSITION_TOLERANCE = 1;
 
   public static final double INTAKE_EXTEND_MOTOR_CURRENT_LIMIT = 20;
   public static final double INTAKE_ROLLERS_MOTOR_CURRENT_LIMIT = 20;
