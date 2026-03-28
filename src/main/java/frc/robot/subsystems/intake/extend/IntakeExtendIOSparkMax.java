@@ -67,7 +67,7 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
     inputs.getExtendPos = extendMotorEncoder.getPosition();
     inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint() && usingPID;
     inputs.hasSetpoint = usingPID;
-    inputs.setpointValue = usingPID ? extendMotor.getClosedLoopController().getSetpoint() : 0.0;
+    inputs.setpointValue = extendMotor.getClosedLoopController().getSetpoint();
   }
 
   @Override

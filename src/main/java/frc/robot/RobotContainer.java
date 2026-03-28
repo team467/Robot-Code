@@ -45,7 +45,7 @@ import frc.robot.subsystems.intake.extend.IntakeExtendIO;
 import frc.robot.subsystems.intake.extend.IntakeExtendIOSparkMax;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.intake.rollers.IntakeRollersIO;
-import frc.robot.subsystems.intake.rollers.IntakeRollersIOSparkMax;
+import frc.robot.subsystems.intake.rollers.IntakeRollersIOKraken;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
@@ -130,7 +130,7 @@ public class RobotContainer {
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
-          intakeRollers = new IntakeRollers(new IntakeRollersIOSparkMax());
+          intakeRollers = new IntakeRollers(new IntakeRollersIOKraken());
           intakeExtend =
               new IntakeExtend(new IntakeExtendIOSparkMax(), operatorController.rightTrigger());
         }

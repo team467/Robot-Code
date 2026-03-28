@@ -43,15 +43,6 @@ public class IntakeExtend extends SubsystemBase {
     inputs.stallExtendTimer = stallExtendTimer.get();
     inputs.stallCollapseTimer = stallCollapseTimer.get();
 
-    if (inputs.setpointValue == COLLAPSE_POS
-        && Math.abs(inputs.getExtendPos - inputs.setpointValue) < 10) {
-      RobotState.getInstance().intakePosition = IntakePosition.STOWED;
-    }
-    if (inputs.setpointValue == EXTEND_POS
-        && Math.abs(inputs.getExtendPos - inputs.setpointValue) < 10) {
-      RobotState.getInstance().intakePosition = IntakePosition.DEPLOYED;
-    }
-
     // Non-slipping control calibration based on the limit switch state
     if (!limitSwitchDisabled.getAsBoolean() && isHopperCollapsed()) {
       io.resetExtendEncoder(0);
@@ -108,6 +99,12 @@ public class IntakeExtend extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("Intake/IntakeExtend/StalledExtend", stalledExtend);
     Logger.recordOutput("Intake/IntakeExtended/StalledCollapse", stalledCollapse);
+    if (inputs.getExtendPos > EXTEND_POS / 2) {
+      RobotState.getInstance().intakePosition = IntakePosition.STOWED;
+    }
+    if (inputs.getExtendPos <= EXTEND_POS / 2) {
+      RobotState.getInstance().intakePosition = IntakePosition.DEPLOYED;
+    }
   }
 
   public IntakeExtend(IntakeExtendIO io, BooleanSupplier limitSwitchDisabled) {
