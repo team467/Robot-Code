@@ -10,6 +10,7 @@ import frc.robot.Orchestrator;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
+import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.shooter.Shooter;
 import java.util.function.Supplier;
 
@@ -17,12 +18,19 @@ public class Autos {
   private final Drive drive;
   private final Orchestrator orchestrator;
   private final Intake intake;
+  private final IntakeRollers rollers;
   private final Shooter shooter;
 
-  public Autos(Drive drive, Orchestrator orchestrator, Intake intake, Shooter shooter) {
+  public Autos(
+      Drive drive,
+      Orchestrator orchestrator,
+      Intake intake,
+      IntakeRollers rollers,
+      Shooter shooter) {
     this.drive = drive;
     this.orchestrator = orchestrator;
     this.intake = intake;
+    this.rollers = rollers;
     this.shooter = shooter;
   }
 
@@ -106,7 +114,7 @@ public class Autos {
                 intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
                 orchestrator.preloadBalls())),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseA.get())).withTimeout(5),
-        intake.stopIntakeCommand().withTimeout(0.05),
+        rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
         Commands.parallel(
@@ -124,7 +132,7 @@ public class Autos {
             Commands.parallel(
                 intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
                 orchestrator.preloadBalls())),
-        intake.stopIntakeCommand().withTimeout(0.05),
+        rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt2.get()))
                 .withTimeout(2),
@@ -134,7 +142,7 @@ public class Autos {
             orchestrator.spinUpShooter(1250),
             orchestrator.feedUp(),
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
-        intake.stopIntakeCommand().withTimeout(0.05),
+        rollers.stopIntakeCommand().withTimeout(0.05),
         shooter.stop(),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt1.get())).withTimeout(2),
         Commands.deadline(
@@ -153,7 +161,7 @@ public class Autos {
                 orchestrator.preloadBalls())),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt1.get()))
             .withTimeout(3.5),
-        intake.stopIntakeCommand().withTimeout(0.05),
+        rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt2.get()))
                 .withTimeout(2),
@@ -173,7 +181,7 @@ public class Autos {
                 orchestrator.preloadBalls())),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt1.get()))
             .withTimeout(3.5),
-        intake.stopIntakeCommand().withTimeout(0.05),
+        rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt2.get()))
                 .withTimeout(2),
@@ -183,7 +191,7 @@ public class Autos {
             orchestrator.spinUpShooter(1250),
             orchestrator.feedUp(),
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
-        intake.stopIntakeCommand().withTimeout(0.05),
+        rollers.stopIntakeCommand().withTimeout(0.05),
         shooter.stop(),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseAAlt1.get())).withTimeout(2),
         Commands.deadline(
@@ -201,7 +209,7 @@ public class Autos {
                 intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
                 orchestrator.preloadBalls())),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseB.get())).withTimeout(5),
-        intake.stopIntakeCommand().withTimeout(0.05),
+        rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
         Commands.parallel(
@@ -219,7 +227,7 @@ public class Autos {
                 orchestrator.preloadBalls())),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt1.get()))
             .withTimeout(3.5),
-        intake.stopIntakeCommand().withTimeout(0.05),
+        rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt2.get()))
                 .withTimeout(2),
@@ -239,7 +247,7 @@ public class Autos {
                 orchestrator.preloadBalls())),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt1.get()))
             .withTimeout(3.5),
-        intake.stopIntakeCommand().withTimeout(0.05),
+        rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt2.get()))
                 .withTimeout(2),
@@ -249,7 +257,7 @@ public class Autos {
             orchestrator.spinUpShooter(1250),
             orchestrator.feedUp(),
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
-        intake.stopIntakeCommand().withTimeout(0.05),
+        rollers.stopIntakeCommand().withTimeout(0.05),
         shooter.stop(),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseBAlt1.get())).withTimeout(2),
         Commands.deadline(
