@@ -141,8 +141,7 @@ public class Orchestrator {
   public Command feedUp() {
     return Commands.repeatingSequence(
             preloadBalls().until(() -> RobotState.getInstance().shooterAtSpeed),
-            Commands.parallel(magicCarpet.run(), indexer.run())
-                .until(() -> !RobotState.getInstance().shooterAtSpeed))
+            indexer.run().until(() -> !RobotState.getInstance().shooterAtSpeed))
         .onlyIf(() -> shooter.getSetpoint() > 0)
         .onlyWhile(() -> shooter.getSetpoint() > 0)
         .withName("feedUp");
@@ -176,7 +175,7 @@ public class Orchestrator {
   }
 
   public Command preloadBalls() {
-    return Commands.parallel(magicCarpet.run(), indexer.runPreloadSpeeds())
+    return Commands.run(() -> indexer.runPreloadSpeeds())
         .onlyWhile(() -> !RobotState.getInstance().indexerHasFuel)
         .onlyIf(() -> !RobotState.getInstance().indexerHasFuel)
         .until(() -> RobotState.getInstance().indexerHasFuel)
