@@ -4,7 +4,7 @@ import static frc.robot.Schematic.intakeExtendCanId;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_LIMIT_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POSITION_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVERSION;
-import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_INTAKE_MOTOR_CURRENT_LIMIT;
+import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_EXTEND_MOTOR_CURRENT_LIMIT;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
@@ -36,9 +36,9 @@ public class IntakeExtendIOKraken implements IntakeExtendIO {
     extendMotor = new SparkMax(intakeExtendCanId, MotorType.kBrushless);
 
     var intakeConfig = new TalonFXConfiguration();
-    intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     intakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    intakeConfig.CurrentLimits.StatorCurrentLimit = INTAKE_INTAKE_MOTOR_CURRENT_LIMIT;
+    intakeConfig.CurrentLimits.StatorCurrentLimit = INTAKE_EXTEND_MOTOR_CURRENT_LIMIT;
     intakeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     var extendConfig = new SparkMaxConfig();

@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake.rollers;
 
 import static frc.robot.Schematic.intakeMotorCanId;
+import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_EXTEND_MOTOR_CURRENT_LIMIT;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_POSITION_CONVERSION;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -23,7 +24,7 @@ public class IntakeRollersIOSparkMax implements IntakeRollersIO {
         .inverted(false)
         .idleMode(IdleMode.kCoast)
         .voltageCompensation(12)
-        .smartCurrentLimit(30);
+        .smartCurrentLimit((int) Math.round(INTAKE_EXTEND_MOTOR_CURRENT_LIMIT));
 
     EncoderConfig intakeEnc = new EncoderConfig();
     intakeEnc.positionConversionFactor(INTAKE_POSITION_CONVERSION);

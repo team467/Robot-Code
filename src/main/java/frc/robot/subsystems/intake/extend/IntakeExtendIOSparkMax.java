@@ -4,6 +4,7 @@ import static frc.robot.Schematic.intakeExtendCanId;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_LIMIT_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POSITION_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVERSION;
+import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_EXTEND_MOTOR_CURRENT_LIMIT;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
@@ -35,9 +36,9 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
     var extendConfig = new SparkMaxConfig();
     extendConfig
         .inverted(false)
-        .idleMode(IdleMode.kBrake)
+        .idleMode(IdleMode.kCoast)
         .voltageCompensation(12)
-        .smartCurrentLimit(30)
+        .smartCurrentLimit((int) Math.round(INTAKE_EXTEND_MOTOR_CURRENT_LIMIT))
         .closedLoop
         .pid(PID_P, PID_I, PID_D);
 

@@ -2,7 +2,7 @@ package frc.robot.subsystems.intake.rollers;
 
 import static frc.lib.utils.PhoenixUtil.tryUntilOk;
 import static frc.robot.Schematic.intakeMotorCanId;
-import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_INTAKE_MOTOR_CURRENT_LIMIT;
+import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_ROLLERS_MOTOR_CURRENT_LIMIT;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -27,7 +27,7 @@ public class IntakeRollersIOKraken implements IntakeRollersIO {
     var intakeConfig = new TalonFXConfiguration();
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     intakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    intakeConfig.CurrentLimits.StatorCurrentLimit = INTAKE_INTAKE_MOTOR_CURRENT_LIMIT;
+    intakeConfig.CurrentLimits.StatorCurrentLimit = INTAKE_ROLLERS_MOTOR_CURRENT_LIMIT;
     intakeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     tryUntilOk(5, () -> intakeMotor.getConfigurator().apply(intakeConfig));
