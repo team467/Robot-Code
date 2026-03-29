@@ -3,7 +3,6 @@ package frc.robot.subsystems.intake.extend;
 import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.POSITION_TOLERANCE;
-import static frc.robot.subsystems.intake.IntakeConstants.STALL_TIME;
 import static frc.robot.subsystems.intake.IntakeConstants.STALL_VELOCITY;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -40,52 +39,54 @@ public class IntakeExtend extends SubsystemBase {
     inputs.stowed = isStowed;
     inputs.stallExtendTimer = stallExtendTimer.get();
     inputs.stallCollapseTimer = stallCollapseTimer.get();
-    if (stalledExtend) {
-      stalledExtend = false;
-    }
-    if (stalledCollapse) {
-      stalledCollapse = false;
-    }
-    // Non-slipping control calibration based on the limit switch state
-    if (!limitSwitchDisabled.getAsBoolean() && isHopperCollapsed()) {
-      io.resetExtendEncoder(0);
-      isStowed = true;
-      stalledCollapse = false;
-    }
-
-    // If we are stalling in extend, start timing, otherwise stop timing
-    if (isStallingExtend() && (stallExtendTimer.get() == 0)) {
-      stallExtendTimer.start();
-    } else if (!isStallingExtend()) {
-      stallExtendTimer.stop();
-      stallExtendTimer.reset();
-    }
-
-    // If we are not stalled extended but the timer has exceeded the stall time, set to stalled
-    if (stallExtendTimer.get() > STALL_TIME) {
-      stalledExtend = true;
-      stallExtendTimer.stop();
-      stallExtendTimer.reset();
-      io.resetExtendEncoder(EXTEND_POS);
-      isExtended = true;
-    }
-
-    // If we are stalling in collapse, start timing, otherwise stop timing
-    if (isStallingCollapse() && (stallCollapseTimer.get() == 0)) {
-      stallCollapseTimer.start();
-    } else if (!isStallingCollapse()) {
-      stallCollapseTimer.stop();
-      stallCollapseTimer.reset();
-    }
-
-    // If we are not stalled collapsed but the timer has exceeded the stall time, set to stalled
-    if (stallCollapseTimer.get() > STALL_TIME) {
-      stalledCollapse = true;
-      stallCollapseTimer.stop();
-      stallCollapseTimer.reset();
-      io.resetExtendEncoder(0);
-      isStowed = true;
-    }
+    //    if (stalledExtend) {
+    //      stalledExtend = false;
+    //    }
+    //    if (stalledCollapse) {
+    //      stalledCollapse = false;
+    //    }
+    //    // Non-slipping control calibration based on the limit switch state
+    //    if (!limitSwitchDisabled.getAsBoolean() && isHopperCollapsed()) {
+    //      io.resetExtendEncoder(0);
+    //      isStowed = true;
+    //      stalledCollapse = false;
+    //    }
+    //
+    //    // If we are stalling in extend, start timing, otherwise stop timing
+    //    if (isStallingExtend() && (stallExtendTimer.get() == 0)) {
+    //      stallExtendTimer.start();
+    //    } else if (!isStallingExtend()) {
+    //      stallExtendTimer.stop();
+    //      stallExtendTimer.reset();
+    //    }
+    //
+    //    // If we are not stalled extended but the timer has exceeded the stall time, set to
+    // stalled
+    //    if (stallExtendTimer.get() > STALL_TIME) {
+    //      stalledExtend = true;
+    //      stallExtendTimer.stop();
+    //      stallExtendTimer.reset();
+    //      io.resetExtendEncoder(EXTEND_POS);
+    //      isExtended = true;
+    //    }
+    //
+    //    // If we are stalling in collapse, start timing, otherwise stop timing
+    //    if (isStallingCollapse() && (stallCollapseTimer.get() == 0)) {
+    //      stallCollapseTimer.start();
+    //    } else if (!isStallingCollapse()) {
+    //      stallCollapseTimer.stop();
+    //      stallCollapseTimer.reset();
+    //    }
+    //
+    //    // If we are not stalled collapsed but the timer has exceeded the stall time, set to
+    // stalled
+    //    if (stallCollapseTimer.get() > STALL_TIME) {
+    //      stalledCollapse = true;
+    //      stallCollapseTimer.stop();
+    //      stallCollapseTimer.reset();
+    //      io.resetExtendEncoder(0);
+    //      isStowed = true;
+    //    }
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("Intake/IntakeExtend/StalledExtend", stalledExtend);
@@ -97,6 +98,9 @@ public class IntakeExtend extends SubsystemBase {
     }
     if (inputs.getExtendPos <= EXTEND_POS / 2) {
       RobotState.getInstance().intakePosition = IntakePosition.DEPLOYED;
+    }
+    if (inputs.isCollapsed) {
+      io.resetExtendEncoder(0.0);
     }
   }
 

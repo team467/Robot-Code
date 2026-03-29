@@ -18,9 +18,7 @@ public class Intake {
   }
 
   public Command extendToAngleAndIntake(double angle) {
-    return extend
-        .extendToAngle(angle)
-        .andThen(Commands.parallel(extend.holdAngle(angle), rollers.intake()))
+    return Commands.parallel(extend.extendToAngle(angle), rollers.intake())
         .withName("extendToAngleAndIntake");
   }
 

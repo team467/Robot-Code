@@ -358,7 +358,7 @@ public class RobotContainer {
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
         .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+        .toggleOnTrue(intakeExtend.extendToAngle(IntakeConstants.EXTEND_POS));
 
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intakeRollers.intake());
