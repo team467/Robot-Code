@@ -9,6 +9,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -50,7 +51,7 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
     extendConfig.apply(extendEnc);
 
     pidController = extendMotor.getClosedLoopController();
-    extendMotorEncoder = extendMotor.getEncoder();
+    extendMotorEncoder = extendMotor.getAlternateEncoder();
 
     extendMotor.configure(
         extendConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

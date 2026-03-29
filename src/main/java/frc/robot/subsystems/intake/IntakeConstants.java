@@ -8,7 +8,7 @@ public class IntakeConstants {
   public static final double EXTEND_POSITION_CONVERSION = 1;
   public static final double EXTEND_VELOCITY_CONVERSION = 1;
 
-  public static final double STALL_TIME = 0.1;
+  public static final double STALL_TIME = 0.05;
   public static final double STALL_VELOCITY = 0.1;
   public static final double INTAKE_VOLTS = 12;
   public static final double OUTTAKE_VOLTS = -10;
