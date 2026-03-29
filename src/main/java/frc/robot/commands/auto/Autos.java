@@ -121,7 +121,7 @@ public class Autos {
         Commands.deadline(
             intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
             drive.getAutonomousCommand("A-Cycle-Left"),
-            orchestrator.spinUpShooterHub()),
+            orchestrator.spinUpShooterHub()).withTimeout(8.0),
         orchestrator.alignToHub(),
         Commands.parallel(orchestrator.spinUpShooterHub(), orchestrator.feedUp()).withTimeout(4.0),
         Commands.parallel(
