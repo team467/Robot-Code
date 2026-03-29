@@ -79,6 +79,8 @@ public class Autos {
 
   private static final Supplier<Pose2d> startAside =
       () -> AllianceFlipUtil.apply(new Pose2d(3.645, 5.520, new Rotation2d(0.000)));
+  private static final Supplier<Pose2d> startBside =
+      () -> AllianceFlipUtil.apply(new Pose2d(3.645, 2.516, new Rotation2d(0.000)));
 
   public Command CenterA() {
     return Commands.sequence(
@@ -121,6 +123,23 @@ public class Autos {
         Commands.deadline(
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
                 drive.getAutonomousCommand("A-Cycle-LeftSweep"),
+                orchestrator.spinUpShooterHub())
+            .withTimeout(11.0),
+        orchestrator.alignToHub(),
+        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+        orchestrator.feedUp()
+            .withTimeout(4.0),
+        Commands.parallel(
+            intake.extendToAngleAndIntake(0),
+            orchestrator.spinUpShooterHub(),
+            orchestrator.feedUp()));
+  }
+  public Command ppBCycleRight() {
+    return Commands.sequence(
+        Commands.runOnce(() -> drive.setPose(startBside.get())),
+        Commands.deadline(
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
+                drive.getAutonomousCommand("B-Cycle-RightSweep"),
                 orchestrator.spinUpShooterHub())
             .withTimeout(11.0),
         orchestrator.alignToHub(),
