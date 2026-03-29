@@ -75,6 +75,11 @@ public class Autos {
   private static final Supplier<Pose2d> depotPose =
       () -> new Pose2d(0.45501017570495605, 5.983600616455078, Rotation2d.fromDegrees(180));
 
+  // pp
+
+  private static final Supplier<Pose2d> startAside =
+      () -> AllianceFlipUtil.apply(new Pose2d(3.645, 5.520, new Rotation2d(0.000)));
+
   public Command CenterA() {
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(AllianceFlipUtil.apply(CenterA.get()))),
@@ -108,6 +113,21 @@ public class Autos {
         new DriveToPose(
             drive,
             () -> AllianceFlipUtil.apply(new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(0)))));
+  }
+
+  public Command ppACycleLeft() {
+    return Commands.sequence(
+        Commands.runOnce(() -> drive.setPose(startAside.get())),
+        Commands.deadline(
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
+            drive.getAutonomousCommand("A-Cycle-Left"),
+            orchestrator.spinUpShooterHub()),
+        orchestrator.alignToHub(),
+        Commands.parallel(orchestrator.spinUpShooterHub(), orchestrator.feedUp()).withTimeout(4.0),
+        Commands.parallel(
+            intake.extendToAngleAndIntake(0),
+            orchestrator.spinUpShooterHub(),
+            orchestrator.feedUp()));
   }
 
   public Command EightBalls() {
