@@ -120,11 +120,13 @@ public class Autos {
         Commands.runOnce(() -> drive.setPose(startAside.get())),
         Commands.deadline(
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
-                drive.getAutonomousCommand("A-Cycle-Left"),
+                drive.getAutonomousCommand("A-Cycle-LeftSweep"),
                 orchestrator.spinUpShooterHub())
-            .withTimeout(8.0),
+            .withTimeout(11.0),
         orchestrator.alignToHub(),
-        Commands.parallel(orchestrator.spinUpShooterHub(), orchestrator.feedUp()).withTimeout(4.0),
+        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+        orchestrator.feedUp()
+            .withTimeout(4.0),
         Commands.parallel(
             intake.extendToAngleAndIntake(0),
             orchestrator.spinUpShooterHub(),
@@ -143,9 +145,7 @@ public class Autos {
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
                 .withTimeout(5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())),
+            Commands.parallel(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS))),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAlliancePoseA.get()))
             .withTimeout(5),
         rollers.stopIntakeCommand().withTimeout(0.05),
@@ -169,9 +169,7 @@ public class Autos {
                 new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeComplexThirdPoseA.get()))
                     .withTimeout(3),
                 new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpNeutralPoseA.get()))),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())),
+            Commands.parallel(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS))),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseA.get()))
             .withTimeout(3.5),
         rollers.stopIntakeCommand().withTimeout(0.05),
@@ -191,9 +189,7 @@ public class Autos {
             .withTimeout(2),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(depotPose.get())).withTimeout(3.5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())),
+            Commands.parallel(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS))),
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(shootFromCornerPoseA.get()))
@@ -212,7 +208,7 @@ public class Autos {
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
                 .withTimeout(3.5),
             Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
                 orchestrator.preloadBalls())));
   }
 
@@ -221,9 +217,7 @@ public class Autos {
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
                 .withTimeout(5),
-            Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.preloadBalls())),
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseA.get()))
             .withTimeout(3.5),
         rollers.stopIntakeCommand().withTimeout(0.05),
