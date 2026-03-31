@@ -128,7 +128,7 @@ public class Autos {
         orchestrator.aimToHub().withTimeout(2.5),
         Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
         Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+            intake.extendToAngle(IntakeConstants.COLLAPSE_POS),
             orchestrator.spinUpShooter(1214),
             orchestrator.feedUp()));
   }
