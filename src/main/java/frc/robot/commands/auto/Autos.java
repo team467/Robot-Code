@@ -122,30 +122,30 @@ public class Autos {
         Commands.runOnce(() -> drive.setPose(startAside.get())),
         Commands.deadline(
                 drive.getAutonomousCommand("A-Cycle-LeftSweep"),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.4),
                 orchestrator.spinUpShooterHub())
-            .withTimeout(11.0),
-        Commands.parallel(orchestrator.spinUpShooter(1270), orchestrator.feedUp()).withTimeout(2.5),
+            .withTimeout(14.5),
+        orchestrator.aimToHub().withTimeout(2.5),
+        Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
         Commands.parallel(
             intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooter(1270),
+            orchestrator.spinUpShooter(1215),
             orchestrator.feedUp()));
   }
 
   public Command ppBCycleRight() {
     return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startBside.get())),
+        Commands.runOnce(() -> drive.setPose(startAside.get())),
         Commands.deadline(
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
                 drive.getAutonomousCommand("B-Cycle-RightSweep"),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.9),
                 orchestrator.spinUpShooterHub())
-            .withTimeout(11.0),
-        orchestrator.alignToHub(),
-        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-        orchestrator.feedUp().withTimeout(4.0),
+            .withTimeout(14.0),
+        orchestrator.aimToHub().withTimeout(2.5),
+        Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
         Commands.parallel(
-            intake.extendToAngleAndIntake(0),
-            orchestrator.spinUpShooterHub(),
+            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+            orchestrator.spinUpShooter(1215),
             orchestrator.feedUp()));
   }
 

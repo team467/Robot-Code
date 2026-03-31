@@ -31,5 +31,5 @@ public class IntakeConstants {
   public static final double POSITION_TOLERANCE = 0.01;
 
   public static final double INTAKE_EXTEND_MOTOR_CURRENT_LIMIT = 20;
-  public static final double INTAKE_ROLLERS_MOTOR_CURRENT_LIMIT = 20;
+  public static final double INTAKE_ROLLERS_MOTOR_CURRENT_LIMIT = 40;
 }
