@@ -122,14 +122,14 @@ public class Autos {
         Commands.runOnce(() -> drive.setPose(startAside.get())),
         Commands.deadline(
                 drive.getAutonomousCommand("A-Cycle-LeftSweep"),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.4),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
                 orchestrator.spinUpShooterHub())
             .withTimeout(14.5),
         orchestrator.aimToHub().withTimeout(2.5),
         Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
         Commands.parallel(
             intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooter(1215),
+            orchestrator.spinUpShooter(1214),
             orchestrator.feedUp()));
   }
 
