@@ -37,6 +37,7 @@ public class IntakeRollersIOSparkMax implements IntakeRollersIO {
     inputs.intakePercentOutput = intakeMotor.get();
     inputs.intakeVolts = intakeMotor.getAppliedOutput();
     inputs.intakeAmps = intakeMotor.getOutputCurrent();
+    inputs.intakeRPM = intakeMotor.getEncoder().getVelocity();
   }
 
   @Override

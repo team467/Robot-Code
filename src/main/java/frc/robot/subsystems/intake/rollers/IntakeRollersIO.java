@@ -8,6 +8,7 @@ public interface IntakeRollersIO {
     public double intakePercentOutput = 0.0;
     public double intakeVolts = 0.0;
     public double intakeAmps = 0.0;
+    public double intakeRPM = 0.0;
     // public boolean manualModeInput;
   }
 

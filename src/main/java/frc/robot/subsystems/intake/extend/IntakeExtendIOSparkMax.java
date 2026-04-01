@@ -10,13 +10,14 @@ import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.EncoderConfig;
+import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -32,7 +33,10 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
 
   public IntakeExtendIOSparkMax() {
     extendMotor = new SparkMax(intakeExtendCanId, MotorType.kBrushless);
-
+    AlternateEncoderConfig extendEnc = new AlternateEncoderConfig();
+    extendEnc.positionConversionFactor(EXTEND_POSITION_CONVERSION);
+    extendEnc.velocityConversionFactor(EXTEND_VELOCITY_CONVERSION);
+    extendEnc.inverted(true);
     var extendConfig = new SparkMaxConfig();
     extendConfig
         .inverted(false)
@@ -40,17 +44,12 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
         .voltageCompensation(12)
         .smartCurrentLimit((int) Math.round(INTAKE_EXTEND_MOTOR_CURRENT_LIMIT))
         .closedLoop
-        .pid(PID_P, PID_I, PID_D);
-
-    EncoderConfig intakeEnc = new EncoderConfig();
-
-    EncoderConfig extendEnc = new EncoderConfig();
-    extendEnc.positionConversionFactor(EXTEND_POSITION_CONVERSION);
-    extendEnc.velocityConversionFactor(EXTEND_VELOCITY_CONVERSION);
-    extendConfig.apply(extendEnc);
+        .pid(PID_P, PID_I, PID_D)
+        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder);
+    extendConfig.alternateEncoder.apply(extendEnc);
 
     pidController = extendMotor.getClosedLoopController();
-    extendMotorEncoder = extendMotor.getEncoder();
+    extendMotorEncoder = extendMotor.getAlternateEncoder();
 
     extendMotor.configure(
         extendConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
