@@ -1,6 +1,7 @@
 package frc.robot;
 
 import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
+import static frc.robot.subsystems.shooter.ShooterConstants.kShooterOffsetFromRobotCenter;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -113,6 +114,11 @@ public class Orchestrator {
             Rotation2d.fromDegrees(0)));
     Logger.recordOutput("Orchestrator/DistanceToHub", shootWhileDrivingResult.distance());
     Logger.recordOutput("Orchestrator/ShooterPosition", shooterLeadCompensator.shooterPose());
+    Logger.recordOutput(
+        "Orchestrator/ShooterTranslation",
+        new Pose2d(
+            drive.getPose().transformBy(kShooterOffsetFromRobotCenter).getTranslation(),
+            Rotation2d.fromDegrees(0)));
   }
 
   public Command driveToHub() {
@@ -215,8 +221,10 @@ public class Orchestrator {
             new Pose2d(
                 drive.getPose().getX(),
                 drive.getPose().getY(),
-                AllianceFlipUtil.apply(Hub.blueCenter)
-                    .minus(drive.getPose().getTranslation())
+                AllianceFlipUtil.apply(Hub.innerCenterPoint)
+                    .toTranslation2d()
+                    .minus(
+                        drive.getPose().transformBy(kShooterOffsetFromRobotCenter).getTranslation())
                     .getAngle()));
   }
 

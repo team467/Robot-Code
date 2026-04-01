@@ -43,6 +43,7 @@ public class IntakeRollersIOKraken implements IntakeRollersIO {
     BaseStatusSignal.refreshAll(intakeAppliedVolts, intakeCurrent);
     inputs.intakeVolts = intakeAppliedVolts.getValueAsDouble();
     inputs.intakeAmps = intakeCurrent.getValueAsDouble();
+    inputs.intakeRPM = intakeMotor.getVelocity().getValueAsDouble() * 60;
   }
 
   @Override
