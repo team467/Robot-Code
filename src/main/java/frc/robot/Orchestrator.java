@@ -19,6 +19,7 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
@@ -32,6 +33,7 @@ public class Orchestrator {
   private final MagicCarpet magicCarpet;
   private final Indexer indexer;
   private final Intake intake;
+  private final IntakeRollers rollers;
   private final RobotState robotState = RobotState.getInstance();
   private final ShooterLeadCompensator shooterLeadCompensator;
   private final CommandXboxController driverController;
@@ -52,12 +54,14 @@ public class Orchestrator {
       Shooter shooter,
       Indexer indexer,
       Intake intake,
+      IntakeRollers rollers,
       CommandXboxController driverController) {
     this.drive = drive;
     this.magicCarpet = hopperBelt;
     this.shooter = shooter;
     this.indexer = indexer;
     this.intake = intake;
+    this.rollers = rollers;
     this.shooterLeadCompensator = new ShooterLeadCompensator(drive, shooter);
     this.driverController = driverController;
   }
@@ -141,15 +145,14 @@ public class Orchestrator {
   public Command feedUp() {
     return Commands.repeatingSequence(
             preloadBalls().until(() -> RobotState.getInstance().shooterAtSpeed),
-            Commands.parallel(magicCarpet.run(), indexer.run())
-                .until(() -> !RobotState.getInstance().shooterAtSpeed))
+            indexer.run().until(() -> !RobotState.getInstance().shooterAtSpeed))
         .onlyIf(() -> shooter.getSetpoint() > 0)
         .onlyWhile(() -> shooter.getSetpoint() > 0)
         .withName("feedUp");
   }
 
   public Command spinUpShooterTest() {
-    SmartDashboard.putNumber("Shooter/TestRPM", 1000.0);
+    SmartDashboard.putNumber("Shooter/TestRPM", CLOSE_HUB_SHOOTER_RPM);
     return shooter
         .setTargetVelocityRadians(
             () ->
@@ -160,7 +163,9 @@ public class Orchestrator {
 
   public Command spinUpShooterDistance(DoubleSupplier targetDistance) {
     return shooter.setTargetVelocityRadians(
-        () -> shooter.calculateSetpoint(targetDistance).getAsDouble());
+        () ->
+            Units.rotationsPerMinuteToRadiansPerSecond(
+                shooter.calculateSetpoint(targetDistance).getAsDouble()));
   }
 
   public Command spinUpShooterHub() {
@@ -174,7 +179,7 @@ public class Orchestrator {
   }
 
   public Command preloadBalls() {
-    return Commands.parallel(magicCarpet.run(), indexer.runPreloadSpeeds())
+    return Commands.run(() -> indexer.runPreloadSpeeds())
         .onlyWhile(() -> !RobotState.getInstance().indexerHasFuel)
         .onlyIf(() -> !RobotState.getInstance().indexerHasFuel)
         .until(() -> RobotState.getInstance().indexerHasFuel)
@@ -192,11 +197,10 @@ public class Orchestrator {
             driverController::getLeftX,
             driverController::getLeftY,
             () ->
-                filteredHubAngle(
-                    (getShootWhileDrivingResultPose()
-                        .getTranslation()
-                        .minus(drive.getPose().getTranslation())
-                        .getAngle()))));
+                (getShootWhileDrivingResultPose()
+                    .getTranslation()
+                    .minus(drive.getPose().getTranslation())
+                    .getAngle())));
   }
 
   public Command spinUpShooterWhileDriving() {
@@ -205,16 +209,18 @@ public class Orchestrator {
   }
 
   public Command aimToHub() {
-    return DriveCommands.joystickDriveAtAngle(
+    return new DriveToPose(
         drive,
-        () -> 0.0,
-        () -> 0.0,
-        () -> {
-          Rotation2d rawAngle =
-              AllianceFlipUtil.apply(Hub.blueCenter)
-                  .minus(drive.getPose().getTranslation())
-                  .getAngle();
-          return filteredHubAngle(rawAngle);
-        });
+        () ->
+            new Pose2d(
+                drive.getPose().getX(),
+                drive.getPose().getY(),
+                AllianceFlipUtil.apply(Hub.blueCenter)
+                    .minus(drive.getPose().getTranslation())
+                    .getAngle()));
+  }
+
+  public Command preloadWhileIntaking() {
+    return Commands.parallel(rollers.intake(), preloadBalls());
   }
 }
