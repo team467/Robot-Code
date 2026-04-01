@@ -308,6 +308,7 @@ public class RobotContainer {
 
     autoChooser.addOption("pp", autos.ppACycleLeft());
     autoChooser.addOption("ppB", autos.ppBCycleRight());
+    autoChooser.addOption("ppB Cycle Right Regression", autos.ppBCycleRightRegression());
     // Configure the button bindings
     configureButtonBindings();
   }

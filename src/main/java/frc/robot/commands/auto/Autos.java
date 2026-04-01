@@ -149,6 +149,22 @@ public class Autos {
             orchestrator.feedUp()));
   }
 
+  public Command ppBCycleRightRegression() {
+    return Commands.sequence(
+        Commands.runOnce(() -> drive.setPose(startBside.get())),
+        Commands.deadline(
+                drive.getAutonomousCommand("B-Cycle-RightSweep"),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
+            .withTimeout(14.5),
+        orchestrator.aimToHub().withTimeout(2.5),
+        Commands.parallel(orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()), orchestrator.feedUp()).withTimeout(2.5),
+        Commands.parallel(
+            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+            orchestrator.feedUp()));
+  }
+
   public Command EightBalls() {
     return Commands.sequence(
         Commands.deadline(
