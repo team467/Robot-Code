@@ -135,17 +135,17 @@ public class Autos {
 
   public Command ppBCycleRight() {
     return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startAside.get())),
+        Commands.runOnce(() -> drive.setPose(startBside.get())),
         Commands.deadline(
                 drive.getAutonomousCommand("B-Cycle-RightSweep"),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.9),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
                 orchestrator.spinUpShooterHub())
-            .withTimeout(14.0),
+            .withTimeout(14.5),
         orchestrator.aimToHub().withTimeout(2.5),
         Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
         Commands.parallel(
             intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooter(1215),
+            orchestrator.spinUpShooter(1214),
             orchestrator.feedUp()));
   }
 
