@@ -28,8 +28,8 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
-  private static final TunableNumber testRPM =
-      new TunableNumber("Shooter/TestRPM", CLOSE_HUB_SHOOTER_RPM);
+  private static final TunableNumber testRadPerSec =
+      new TunableNumber("Shooter/TestRadPerSec", CLOSE_HUB_SHOOTER_RPM);
 
   private final double FRONT_HUB_OFFSET = Units.inchesToMeters(40.0);
   private final Drive drive;
@@ -161,7 +161,11 @@ public class Orchestrator {
   }
 
   public Command spinUpShooterTest() {
+<<<<<<< HEAD
     return shooter.setTargetVelocityRadians(() -> testRPM.get()).withName("spinUpShooterTest");
+=======
+    return shooter.setTargetVelocityRadians(testRadPerSec).withName("spinUpShooterTest");
+>>>>>>> refs/remotes/origin/regression
   }
 
   public Command spinUpShooterDistance(DoubleSupplier targetDistance) {
