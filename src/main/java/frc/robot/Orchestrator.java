@@ -161,9 +161,7 @@ public class Orchestrator {
   }
 
   public Command spinUpShooterTest() {
-    return shooter
-        .setTargetVelocityRadians(() -> Units.rotationsPerMinuteToRadiansPerSecond(testRPM.get()))
-        .withName("spinUpShooterTest");
+    return shooter.setTargetVelocityRadians(() -> testRPM.get()).withName("spinUpShooterTest");
   }
 
   public Command spinUpShooterDistance(DoubleSupplier targetDistance) {
