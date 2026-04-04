@@ -15,8 +15,8 @@ import frc.robot.Constants;
 public class DriveConstants {
   public static final double maxSpeedMetersPerSec = 11.8;
   public static final double odometryFrequency = 100.0; // Hz
-  public static final double trackWidth = 0.273 * 2;
-  public static final double wheelBase = 0.488;
+  public static final double trackWidth =0.5969;
+  public static final double wheelBase =0.5271;
   public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
   public static final Translation2d[] moduleTranslations =
       new Translation2d[] {
@@ -59,9 +59,9 @@ public class DriveConstants {
   // Drive motor configuration
   public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
       ClosedLoopOutputType.Voltage;
-  public static final int driveMotorCurrentLimit = 50;
+  public static final int driveMotorCurrentLimit = 54;
   public static final double wheelRadiusMeters = Units.inchesToMeters(1.905);
-  public static final double driveMotorReduction = 8.16;
+  public static final double driveMotorReduction = 7.03;
   public static final DCMotor driveGearbox = DCMotor.getKrakenX60Foc(1);
 
   // Drive encoder configuration
