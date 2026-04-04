@@ -95,8 +95,8 @@ public class Schematic {
 
         frontLeftAbsoluteEncoderCanId = 18;
         frontRightAbsoluteEncoderCanId = 19;
-        backRightAbsoluteEncoderCanId = 21;
-        backLeftAbsoluteEncoderCanId = 20;
+        backRightAbsoluteEncoderCanId = 20;
+        backLeftAbsoluteEncoderCanId = 21;
 
         // Shooter (CAN Ids)
         shooterTopMotorCanId = 11;
