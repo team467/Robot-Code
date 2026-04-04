@@ -55,7 +55,7 @@ public class DriveToPose extends Command {
     switch (Constants.getRobot()) {
       case ROBOT_2025_TEST:
       case ROBOT_2026_COMP:
-        driveKp.initDefault(2.5);
+        driveKp.initDefault(3.6);
         driveKd.initDefault(0.0);
         thetaKp.initDefault(3.0);
         thetaKd.initDefault(0.01);

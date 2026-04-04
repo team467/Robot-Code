@@ -279,6 +279,7 @@ public class RobotContainer {
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     autoChooser.addOption("CL auto", autos.CenterA());
     autoChooser.addOption("8 Ball Auto", autos.EightBalls());
+    autoChooser.addOption("Manual A-CC Complex Intake", autos.ACCManuelImprovedComplexIntake());
 
     autoChooser.addOption(
         "runCharacterizationQuasistatic", shooter.sysIdQuasistatic(Direction.kForward));
@@ -304,6 +305,11 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption("pp", autos.ppACycleLeft());
+    autoChooser.addOption("ppB", autos.ppBCycleRight());
+    autoChooser.addOption("ppB Cycle Right Regression", autos.ppBCycleRightRegression());
+    autoChooser.addOption("ppA Cycle Left Regression", autos.ppACycleLeftRegression());
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -355,7 +361,7 @@ public class RobotContainer {
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
         .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+        .toggleOnTrue(intakeExtend.extendToAngle(IntakeConstants.EXTEND_POS));
 
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intakeRollers.intake());
