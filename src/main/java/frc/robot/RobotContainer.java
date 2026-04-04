@@ -383,8 +383,7 @@ public class RobotContainer {
     operatorController
         .rightTrigger(0.1)
         .and(() -> !operatorController.pov(0).getAsBoolean())
-        .toggleOnTrue(
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()));
+        .toggleOnTrue(orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()));
     operatorController
         .rightTrigger(0.1)
         .and(operatorController.pov(0))
