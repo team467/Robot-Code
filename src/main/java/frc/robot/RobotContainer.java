@@ -345,7 +345,14 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    driverController.x().toggleOnTrue(orchestrator.aimToHub());
+    driverController
+        .x()
+        .and(() -> !RobotState.getInstance().feedingMode)
+        .toggleOnTrue(orchestrator.aimToHub());
+    driverController
+        .x()
+        .and(() -> RobotState.getInstance().feedingMode)
+        .toggleOnTrue(orchestrator.aimFeed());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     driverController
         .leftBumper()
@@ -388,17 +395,9 @@ public class RobotContainer {
         .rightTrigger(0.1)
         .and(operatorController.pov(0))
         .toggleOnTrue(orchestrator.spinUpShooterHub());
-    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
+    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterFeeding());
     operatorController.y().whileTrue(indexer.reverse());
     operatorController.x().whileTrue(intakeRollers.outtake());
-
-    operatorController
-        .leftTrigger()
-        .whileTrue(
-            shooter.setTargetVelocityRadians(
-                () ->
-                    operatorController.getLeftY()
-                        * Units.rotationsPerMinuteToRadiansPerSecond(5600)));
   }
 
   /**

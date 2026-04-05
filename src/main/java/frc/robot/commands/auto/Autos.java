@@ -155,18 +155,20 @@ public class Autos {
         Commands.deadline(
                 drive.getAutonomousCommand("B-Cycle-RightSweep"),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-            .withTimeout(14.5),
+            .withTimeout(16),
         Commands.deadline(
             orchestrator.aimToHub().withTimeout(2.5),
             orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
         Commands.parallel(
                 orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                orchestrator.feedUp())
-            .withTimeout(2.5),
+                orchestrator.feedUp(),
+                orchestrator.aimToHub().withTimeout(2.5).repeatedly())
+            .withTimeout(3.3),
         Commands.parallel(
             intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
             orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-            orchestrator.feedUp()));
+            orchestrator.feedUp(),
+            orchestrator.aimToHub().withTimeout(2.5).repeatedly()));
   }
 
   public Command ppACycleLeftRegression() {
@@ -175,25 +177,29 @@ public class Autos {
         Commands.deadline(
                 drive.getAutonomousCommand("A-Cycle-LeftSweep"),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-            .withTimeout(14.5),
+            .withTimeout(16),
         Commands.deadline(
             orchestrator.aimToHub().withTimeout(2.5),
             orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
         Commands.parallel(
                 orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                orchestrator.feedUp())
-            .withTimeout(2.5),
+                orchestrator.feedUp(),
+                orchestrator.aimToHub().withTimeout(2.5).repeatedly())
+            .withTimeout(3.3),
         Commands.parallel(
             intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
             orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-            orchestrator.feedUp()));
+            orchestrator.feedUp(),
+            orchestrator.aimToHub().withTimeout(2.5).repeatedly()));
   }
 
   public Command EightBalls() {
     return Commands.sequence(
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3.0), orchestrator.spinUpShooterHub()),
-        Commands.parallel(orchestrator.spinUpShooterHub(), orchestrator.feedUp()));
+        Commands.parallel(
+            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+            orchestrator.feedUp()));
   }
 
   public Command ACCManuelAuto() {

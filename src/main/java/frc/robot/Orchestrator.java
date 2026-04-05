@@ -231,4 +231,22 @@ public class Orchestrator {
   public Command preloadWhileIntaking() {
     return Commands.parallel(rollers.intake(), preloadBalls());
   }
+
+  public Command aimFeed() {
+    return DriveCommands.joystickDriveAtAngle(
+        drive, driverController::getLeftX, driverController::getLeftY, () -> Rotation2d.k180deg);
+  }
+
+  public Command spinUpShooterFeeding() {
+    return Commands.runOnce(() -> RobotState.getInstance().feedingMode = true)
+        .andThen(
+            spinUpShooterDistance(
+                () ->
+                    Math.abs(
+                        drive.getPose().getX()
+                            - AllianceFlipUtil.apply(
+                                    FieldConstants.Hub.innerCenterPoint.toTranslation2d())
+                                .getX())))
+        .finallyDo(() -> RobotState.getInstance().feedingMode = false);
+  }
 }
