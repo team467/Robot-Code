@@ -6,17 +6,21 @@ public interface ShooterIO {
 
   @AutoLog
   class ShooterIOInputs {
-    public double middleMotorVelocityRadPerSec;
-    public double middleMotorAppliedVolts;
-    public double middleMotorCurrentAmps;
+    public double topLeftMotorVelocityRadPerSec;
+    public double topLeftMotorAppliedVolts;
+    public double topLeftMotorCurrentAmps;
 
-    public double bottomMotorVelocityRadPerSec;
-    public double bottomMotorAppliedVolts;
-    public double bottomMotorCurrentAmps;
+    public double topRightMotorVelocityRadPerSec;
+    public double topRightMotorAppliedVolts;
+    public double topRightMotorCurrentAmps;
 
-    public double topMotorVelocityRadPerSec;
-    public double topMotorAppliedVolts;
-    public double topMotorCurrentAmps;
+    public double bottomLeftMotorVelocityRadPerSec;
+    public double bottomLeftMotorAppliedVolts;
+    public double bottomLeftMotorCurrentAmps;
+
+    public double bottomRightMotorVelocityRadPerSec;
+    public double bottomRightMotorAppliedVolts;
+    public double bottomRightMotorCurrentAmps;
 
     public boolean atSetpoint = false;
     public double setpointRPM = 0;

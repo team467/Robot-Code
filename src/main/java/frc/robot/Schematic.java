@@ -20,9 +20,10 @@ public class Schematic {
   public static final int backRightAbsoluteEncoderCanId;
 
   // shooter subsystem
-  public static final int shooterBottomMotorCanId;
-  public static final int shooterTopMotorCanId;
-  public static final int shooterMiddleMotorCanId;
+  public static final int shooterTopLeftMotorCanId;
+  public static final int shooterTopRightMotorCanId;
+  public static final int shooterBottomLeftMotorCanId;
+  public static final int shooterBottomRightMotorCanId;
   // magic carpet sub-system
   public static final int magicCarpetCanId;
 
@@ -60,9 +61,10 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 20;
 
         // Shooter (CAN Ids)
-        shooterBottomMotorCanId = 0;
-        shooterTopMotorCanId = 0;
-        shooterMiddleMotorCanId = 0;
+        shooterTopLeftMotorCanId = 0;
+        shooterTopRightMotorCanId = 0;
+        shooterBottomLeftMotorCanId = 0;
+        shooterBottomRightMotorCanId = 0;
 
         // Magic Carpet (CAN Ids)
         magicCarpetCanId = 0;
@@ -99,9 +101,10 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 21;
 
         // Shooter (CAN Ids)
-        shooterTopMotorCanId = 11;
-        shooterMiddleMotorCanId = 12;
-        shooterBottomMotorCanId = 13;
+        shooterTopLeftMotorCanId = 11;
+        shooterTopRightMotorCanId = 12;
+        shooterBottomLeftMotorCanId = 13;
+        shooterBottomRightMotorCanId = 14;
 
         // Hopper (CAN Ids)
         magicCarpetCanId = 15;
@@ -137,9 +140,10 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 0;
 
         // Shooter (CAN Ids)
-        shooterBottomMotorCanId = 0;
-        shooterTopMotorCanId = 0;
-        shooterMiddleMotorCanId = 0;
+        shooterTopLeftMotorCanId = 0;
+        shooterTopRightMotorCanId = 0;
+        shooterBottomLeftMotorCanId = 0;
+        shooterBottomRightMotorCanId = 0;
 
         // Magic Carpet (CAN Ids)
         magicCarpetCanId = 0;
@@ -175,9 +179,10 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 0;
 
         // Shooter (CAN Ids)
-        shooterBottomMotorCanId = 0;
-        shooterTopMotorCanId = 0;
-        shooterMiddleMotorCanId = 0;
+        shooterTopLeftMotorCanId = 0;
+        shooterTopRightMotorCanId = 0;
+        shooterBottomLeftMotorCanId = 0;
+        shooterBottomRightMotorCanId = 0;
 
         // Magic Carpet (CAN Ids)
         magicCarpetCanId = 0;
