@@ -24,8 +24,14 @@ public class ShooterIOSparkMax implements ShooterIO {
   private final RelativeEncoder topRightMotorEncoder;
   private final RelativeEncoder bottomLeftMotorEncoder;
   private final RelativeEncoder bottomRightMotorEncoder;
+  private final boolean independentMode;
 
   public ShooterIOSparkMax() {
+    this(false);
+  }
+
+  public ShooterIOSparkMax(boolean independentMode) {
+    this.independentMode = independentMode;
     topLeftMotor = new SparkMax(shooterTopLeftMotorCanId, MotorType.kBrushless);
     topRightMotor = new SparkMax(shooterTopRightMotorCanId, MotorType.kBrushless);
     bottomLeftMotor = new SparkMax(shooterBottomLeftMotorCanId, MotorType.kBrushless);
@@ -49,7 +55,7 @@ public class ShooterIOSparkMax implements ShooterIO {
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
-    topLeftMotorConfig.follow(bottomLeftMotor.getDeviceId(), false);
+    if (!independentMode) topLeftMotorConfig.follow(bottomLeftMotor.getDeviceId(), false);
     topLeftMotorConfig.apply(enc);
 
     var bottomRightMotorConfig = new SparkMaxConfig();
@@ -58,7 +64,7 @@ public class ShooterIOSparkMax implements ShooterIO {
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
-    bottomRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
+    if (!independentMode) bottomRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
     bottomRightMotorConfig.apply(enc);
 
     var topRightMotorConfig = new SparkMaxConfig();
@@ -67,7 +73,7 @@ public class ShooterIOSparkMax implements ShooterIO {
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
-    topRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
+    if (!independentMode) topRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
     topRightMotorConfig.apply(enc);
 
     bottomLeftMotor.configure(
@@ -127,8 +133,31 @@ public class ShooterIOSparkMax implements ShooterIO {
   }
 
   @Override
+  public void setTopLeftVoltage(double volts) {
+    topLeftMotor.setVoltage(volts);
+  }
+
+  @Override
+  public void setTopRightVoltage(double volts) {
+    topRightMotor.setVoltage(volts);
+  }
+
+  @Override
+  public void setBottomLeftVoltage(double volts) {
+    bottomLeftMotor.setVoltage(volts);
+  }
+
+  @Override
+  public void setBottomRightVoltage(double volts) {
+    bottomRightMotor.setVoltage(volts);
+  }
+
+  @Override
   public void stop() {
+    topLeftMotor.set(0);
+    topRightMotor.set(0);
     bottomLeftMotor.set(0);
+    bottomRightMotor.set(0);
   }
 
   private double distanceToRPM(double distanceMeters) {
