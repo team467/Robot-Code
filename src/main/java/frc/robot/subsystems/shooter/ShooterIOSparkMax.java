@@ -1,8 +1,9 @@
 package frc.robot.subsystems.shooter;
 
-import static frc.robot.Schematic.shooterBottomMotorCanId;
-import static frc.robot.Schematic.shooterMiddleMotorCanId;
-import static frc.robot.Schematic.shooterTopMotorCanId;
+import static frc.robot.Schematic.shooterBottomLeftMotorCanId;
+import static frc.robot.Schematic.shooterBottomRightMotorCanId;
+import static frc.robot.Schematic.shooterTopLeftMotorCanId;
+import static frc.robot.Schematic.shooterTopRightMotorCanId;
 import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import com.revrobotics.RelativeEncoder;
@@ -15,94 +16,125 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class ShooterIOSparkMax implements ShooterIO {
 
-  private final SparkMax middleMotor;
-  private final SparkMax bottomMotor;
-  private final SparkMax topMotor;
-  private final RelativeEncoder middleMotorEncoder;
-  private final RelativeEncoder bottomMotorEncoder;
-  private final RelativeEncoder topMotorEncoder;
+  private final SparkMax topLeftMotor;
+  private final SparkMax topRightMotor;
+  private final SparkMax bottomLeftMotor;
+  private final SparkMax bottomRightMotor;
+  private final RelativeEncoder topLeftMotorEncoder;
+  private final RelativeEncoder topRightMotorEncoder;
+  private final RelativeEncoder bottomLeftMotorEncoder;
+  private final RelativeEncoder bottomRightMotorEncoder;
+  private final boolean independentMode;
 
   public ShooterIOSparkMax() {
-    middleMotor = new SparkMax(shooterMiddleMotorCanId, MotorType.kBrushless);
-    bottomMotor = new SparkMax(shooterBottomMotorCanId, MotorType.kBrushless);
-    topMotor = new SparkMax(shooterTopMotorCanId, MotorType.kBrushless);
+    this(false);
+  }
 
-    var middleMotorConfig = new SparkMaxConfig();
-    middleMotorConfig
-        .inverted(false)
-        .idleMode(IDLE_MODE)
-        .voltageCompensation(VOLTAGE_COMPENSATION)
-        .smartCurrentLimit(CURRENT_LIMIT);
-
-    var bottomMotorConfig = new SparkMaxConfig();
-    bottomMotorConfig
-        .inverted(true)
-        .idleMode(IDLE_MODE)
-        .voltageCompensation(VOLTAGE_COMPENSATION)
-        .smartCurrentLimit(CURRENT_LIMIT);
-
-    var topMotorConfig = new SparkMaxConfig();
-    topMotorConfig
-        .inverted(false)
-        .idleMode(IDLE_MODE)
-        .voltageCompensation(VOLTAGE_COMPENSATION)
-        .smartCurrentLimit(CURRENT_LIMIT);
-
-    topMotorConfig.follow(bottomMotor.getDeviceId(), false);
-    middleMotorConfig.follow(bottomMotor.getDeviceId(), true);
+  public ShooterIOSparkMax(boolean independentMode) {
+    this.independentMode = independentMode;
+    topLeftMotor = new SparkMax(shooterTopLeftMotorCanId, MotorType.kBrushless);
+    topRightMotor = new SparkMax(shooterTopRightMotorCanId, MotorType.kBrushless);
+    bottomLeftMotor = new SparkMax(shooterBottomLeftMotorCanId, MotorType.kBrushless);
+    bottomRightMotor = new SparkMax(shooterBottomRightMotorCanId, MotorType.kBrushless);
 
     EncoderConfig enc = new EncoderConfig();
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
     enc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
-    middleMotorConfig.apply(enc);
-    bottomMotorConfig.apply(enc);
-    topMotorConfig.apply(enc);
 
-    middleMotor.configure(
-        middleMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    bottomMotor.configure(
-        bottomMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    topMotor.configure(
-        topMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    var bottomLeftMotorConfig = new SparkMaxConfig();
+    bottomLeftMotorConfig
+        .inverted(false)
+        .idleMode(IDLE_MODE)
+        .voltageCompensation(VOLTAGE_COMPENSATION)
+        .smartCurrentLimit(CURRENT_LIMIT);
+    bottomLeftMotorConfig.apply(enc);
 
-    middleMotorEncoder = middleMotor.getEncoder();
-    bottomMotorEncoder = bottomMotor.getEncoder();
-    topMotorEncoder = topMotor.getEncoder();
+    var topLeftMotorConfig = new SparkMaxConfig();
+    topLeftMotorConfig
+        .inverted(true)
+        .idleMode(IDLE_MODE)
+        .voltageCompensation(VOLTAGE_COMPENSATION)
+        .smartCurrentLimit(CURRENT_LIMIT);
+    topLeftMotorConfig.follow(bottomLeftMotor.getDeviceId(), false);
+    topLeftMotorConfig.apply(enc);
+
+    var bottomRightMotorConfig = new SparkMaxConfig();
+    bottomRightMotorConfig
+        .inverted(true)
+        .idleMode(IDLE_MODE)
+        .voltageCompensation(VOLTAGE_COMPENSATION)
+        .smartCurrentLimit(CURRENT_LIMIT);
+    bottomRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
+    bottomRightMotorConfig.apply(enc);
+
+    var topRightMotorConfig = new SparkMaxConfig();
+    topRightMotorConfig
+        .inverted(false)
+        .idleMode(IDLE_MODE)
+        .voltageCompensation(VOLTAGE_COMPENSATION)
+        .smartCurrentLimit(CURRENT_LIMIT);
+    topRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
+    topRightMotorConfig.apply(enc);
+
+    bottomLeftMotor.configure(
+        bottomLeftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    topLeftMotor.configure(
+        topLeftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    bottomRightMotor.configure(
+        bottomRightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    topRightMotor.configure(
+        topRightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    topLeftMotorEncoder = topLeftMotor.getEncoder();
+    topRightMotorEncoder = topRightMotor.getEncoder();
+    bottomLeftMotorEncoder = bottomLeftMotor.getEncoder();
+    bottomRightMotorEncoder = bottomRightMotor.getEncoder();
   }
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.middleMotorCurrentAmps = middleMotor.getOutputCurrent();
-    inputs.middleMotorAppliedVolts = middleMotor.getBusVoltage() * middleMotor.getAppliedOutput();
-    inputs.middleMotorVelocityRadPerSec = middleMotorEncoder.getVelocity();
+    inputs.topLeftMotorCurrentAmps = topLeftMotor.getOutputCurrent();
+    inputs.topLeftMotorAppliedVolts =
+        topLeftMotor.getBusVoltage() * topLeftMotor.getAppliedOutput();
+    inputs.topLeftMotorVelocityRadPerSec = topLeftMotorEncoder.getVelocity();
 
-    inputs.bottomMotorCurrentAmps = bottomMotor.getOutputCurrent();
-    inputs.bottomMotorAppliedVolts = bottomMotor.getBusVoltage() * bottomMotor.getAppliedOutput();
-    inputs.bottomMotorVelocityRadPerSec = bottomMotorEncoder.getVelocity();
+    inputs.topRightMotorCurrentAmps = topRightMotor.getOutputCurrent();
+    inputs.topRightMotorAppliedVolts =
+        topRightMotor.getBusVoltage() * topRightMotor.getAppliedOutput();
+    inputs.topRightMotorVelocityRadPerSec = topRightMotorEncoder.getVelocity();
 
-    inputs.topMotorCurrentAmps = topMotor.getOutputCurrent();
-    inputs.topMotorAppliedVolts = topMotor.getBusVoltage() * topMotor.getAppliedOutput();
-    inputs.topMotorVelocityRadPerSec = topMotorEncoder.getVelocity();
+    inputs.bottomLeftMotorCurrentAmps = bottomLeftMotor.getOutputCurrent();
+    inputs.bottomLeftMotorAppliedVolts =
+        bottomLeftMotor.getBusVoltage() * bottomLeftMotor.getAppliedOutput();
+    inputs.bottomLeftMotorVelocityRadPerSec = bottomLeftMotorEncoder.getVelocity();
+
+    inputs.bottomRightMotorCurrentAmps = bottomRightMotor.getOutputCurrent();
+    inputs.bottomRightMotorAppliedVolts =
+        bottomRightMotor.getBusVoltage() * bottomRightMotor.getAppliedOutput();
+    inputs.bottomRightMotorVelocityRadPerSec = bottomRightMotorEncoder.getVelocity();
 
     inputs.totalAmps =
-        inputs.middleMotorCurrentAmps + inputs.bottomMotorCurrentAmps + inputs.topMotorCurrentAmps;
+        inputs.topLeftMotorCurrentAmps
+            + inputs.topRightMotorCurrentAmps
+            + inputs.bottomLeftMotorCurrentAmps
+            + inputs.bottomRightMotorCurrentAmps;
 
     inputs.shooterWheelVelocityRadPerSec =
-        inputs.bottomMotorVelocityRadPerSec / SHOOTER_WHEEL_GEAR_RATIO;
-    inputs.shooterWheelPosition = bottomMotorEncoder.getPosition() / SHOOTER_WHEEL_GEAR_RATIO;
-
-    inputs.setpointRPM = bottomMotor.getClosedLoopController().getSetpoint();
-    inputs.atSetpoint = bottomMotor.getClosedLoopController().isAtSetpoint();
+        inputs.bottomLeftMotorVelocityRadPerSec / SHOOTER_WHEEL_GEAR_RATIO;
+    inputs.shooterWheelPosition = bottomLeftMotorEncoder.getPosition() / SHOOTER_WHEEL_GEAR_RATIO;
   }
 
   @Override
   public void setVoltage(double volts) {
-    bottomMotor.setVoltage(volts);
+    bottomLeftMotor.setVoltage(volts);
   }
 
   @Override
   public void stop() {
-    bottomMotor.set(0);
+    topLeftMotor.set(0);
+    topRightMotor.set(0);
+    bottomLeftMotor.set(0);
+    bottomRightMotor.set(0);
   }
 
   private double distanceToRPM(double distanceMeters) {
