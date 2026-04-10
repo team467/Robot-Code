@@ -375,7 +375,7 @@ public class RobotContainer {
         .rightTrigger(0.1)
         .and(operatorController.pov(0))
         .toggleOnTrue(orchestrator.spinUpShooterHub());
-    operatorController.leftTrigger(0.1).toggleOnTrue(shooter.setVoltage(12));
+    operatorController.leftTrigger(0.1).toggleOnTrue(shooter.setVoltage(4));
     operatorController.y().whileTrue(indexer.reverse());
     //    operatorController.x().whileTrue(intake.outtake());
   }

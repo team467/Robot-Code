@@ -24,19 +24,17 @@ public class ShooterIOSparkMax implements ShooterIO {
   private final RelativeEncoder topRightMotorEncoder;
   private final RelativeEncoder bottomLeftMotorEncoder;
   private final RelativeEncoder bottomRightMotorEncoder;
-  private final boolean independentMode;
 
   public ShooterIOSparkMax() {
     this(false);
   }
 
   public ShooterIOSparkMax(boolean independentMode) {
-    this.independentMode = independentMode;
     topLeftMotor = new SparkMax(shooterTopLeftMotorCanId, MotorType.kBrushless);
     topRightMotor = new SparkMax(shooterTopRightMotorCanId, MotorType.kBrushless);
     bottomLeftMotor = new SparkMax(shooterBottomLeftMotorCanId, MotorType.kBrushless);
     bottomRightMotor = new SparkMax(shooterBottomRightMotorCanId, MotorType.kBrushless);
-
+    //
     EncoderConfig enc = new EncoderConfig();
     enc.positionConversionFactor(ENCODER_POSITION_CONVERSION);
     enc.velocityConversionFactor(ENCODER_VELOCITY_CONVERSION);
@@ -47,24 +45,25 @@ public class ShooterIOSparkMax implements ShooterIO {
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
+    bottomLeftMotorConfig.follow(shooterTopRightMotorCanId, false);
     bottomLeftMotorConfig.apply(enc);
 
     var topLeftMotorConfig = new SparkMaxConfig();
     topLeftMotorConfig
-        .inverted(true)
+        .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
-    topLeftMotorConfig.follow(bottomLeftMotor.getDeviceId(), false);
+    topLeftMotorConfig.follow(shooterTopRightMotorCanId, true);
     topLeftMotorConfig.apply(enc);
 
     var bottomRightMotorConfig = new SparkMaxConfig();
     bottomRightMotorConfig
-        .inverted(true)
+        .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
-    bottomRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
+    bottomRightMotorConfig.follow(shooterTopRightMotorCanId, true);
     bottomRightMotorConfig.apply(enc);
 
     var topRightMotorConfig = new SparkMaxConfig();
@@ -73,7 +72,6 @@ public class ShooterIOSparkMax implements ShooterIO {
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
-    topRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
     topRightMotorConfig.apply(enc);
 
     bottomLeftMotor.configure(
@@ -120,13 +118,13 @@ public class ShooterIOSparkMax implements ShooterIO {
             + inputs.bottomRightMotorCurrentAmps;
 
     inputs.shooterWheelVelocityRadPerSec =
-        inputs.bottomLeftMotorVelocityRadPerSec / SHOOTER_WHEEL_GEAR_RATIO;
-    inputs.shooterWheelPosition = bottomLeftMotorEncoder.getPosition() / SHOOTER_WHEEL_GEAR_RATIO;
+        inputs.topRightMotorVelocityRadPerSec / SHOOTER_WHEEL_GEAR_RATIO;
+    inputs.shooterWheelPosition = topRightMotorEncoder.getPosition() / SHOOTER_WHEEL_GEAR_RATIO;
   }
 
   @Override
   public void setVoltage(double volts) {
-    bottomLeftMotor.setVoltage(volts);
+    topRightMotor.setVoltage(volts);
   }
 
   @Override
