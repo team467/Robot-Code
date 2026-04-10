@@ -337,9 +337,7 @@ public class RobotContainer {
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     driverController
         .leftBumper()
-        .and(operatorController.pov(180))
-        .whileTrue(intake.runIntakeExtendVolts(-4))
-        .onFalse(intake.stopExtendingCommand());
+        .onTrue(Commands.runOnce(() -> orchestrator.executeCurrentZoneLogic().schedule()));
     CustomTriggers.toggleIntakeUp(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
