@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.lib.utils.LocalADStarAK;
-import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.drive.DriveCommands;
@@ -47,12 +46,10 @@ import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
 import frc.robot.subsystems.magicCarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import frc.robot.util.CustomTriggers;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -150,7 +147,7 @@ public class RobotContainer {
           //          leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           leds = new Leds();
-          shooter = new Shooter(new ShooterIOSparkMax(true));
+          shooter = new Shooter(new ShooterIOSparkMax(false));
         }
       }
     }
@@ -335,28 +332,30 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    driverController.x().toggleOnTrue(orchestrator.aimToHub());
-    driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
-    driverController
-        .leftBumper()
-        .and(operatorController.pov(180))
-        .whileTrue(intake.runIntakeExtendVolts(-4))
-        .onFalse(intake.stopExtendingCommand());
-    CustomTriggers.toggleIntakeUp(
-            driverController.leftBumper(),
-            () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
-        .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(intake.extendToAngle(IntakeConstants.COLLAPSE_POS));
-    CustomTriggers.toggleIntakeDown(
-            driverController.leftBumper(),
-            () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
-        .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+    //    driverController.x().toggleOnTrue(orchestrator.aimToHub());
+    //
+    // driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
+    //    driverController
+    //        .leftBumper()
+    //        .and(operatorController.pov(180))
+    //        .whileTrue(intake.runIntakeExtendVolts(-4))
+    //        .onFalse(intake.stopExtendingCommand());
+    //    CustomTriggers.toggleIntakeUp(
+    //            driverController.leftBumper(),
+    //            () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
+    //        .and(() -> !operatorController.pov(180).getAsBoolean())
+    //        .toggleOnTrue(intake.extendToAngle(IntakeConstants.COLLAPSE_POS));
+    //    CustomTriggers.toggleIntakeDown(
+    //            driverController.leftBumper(),
+    //            () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
+    //        .and(() -> !operatorController.pov(180).getAsBoolean())
+    //        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
 
     // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
-    driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
+    //    driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
-    driverController.a().and(operatorController.pov(180)).onTrue(intake.resetExtendPosition());
+    //
+    // driverController.a().and(operatorController.pov(180)).onTrue(intake.resetExtendPosition());
     driverController
         .rightBumper()
         .and(() -> !operatorController.pov(180).getAsBoolean())
@@ -376,69 +375,9 @@ public class RobotContainer {
         .rightTrigger(0.1)
         .and(operatorController.pov(0))
         .toggleOnTrue(orchestrator.spinUpShooterHub());
-    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
+    operatorController.leftTrigger(0.1).toggleOnTrue(shooter.setVoltage(12));
     operatorController.y().whileTrue(indexer.reverse());
     //    operatorController.x().whileTrue(intake.outtake());
-
-    operatorController
-        .leftTrigger()
-        .whileTrue(
-            shooter.setTargetVelocityRadians(
-                () ->
-                    operatorController.getLeftY()
-                        * Units.rotationsPerMinuteToRadiansPerSecond(5600)));
-
-    if (Constants.getRobot() == Constants.RobotType.ROBOT_BRIEFCASE) {
-      // All 4 motors at max: A (forward) / back+A (reverse)
-      driverController
-          .a()
-          .and(() -> !driverController.back().getAsBoolean())
-          .whileTrue(shooter.setVoltage(ShooterConstants.MAX_VOLTAGE));
-      driverController
-          .a()
-          .and(driverController.back())
-          .whileTrue(shooter.setVoltage(-ShooterConstants.MAX_VOLTAGE));
-
-      // Bottom-left: B (forward) / back+B (reverse)
-      driverController
-          .b()
-          .and(() -> !driverController.back().getAsBoolean())
-          .whileTrue(shooter.setBottomLeftVoltage(ShooterConstants.MAX_VOLTAGE));
-      driverController
-          .b()
-          .and(driverController.back())
-          .whileTrue(shooter.setBottomLeftVoltage(-ShooterConstants.MAX_VOLTAGE));
-
-      // Top-left: X (forward) / back+X (reverse)
-      driverController
-          .x()
-          .and(() -> !driverController.back().getAsBoolean())
-          .whileTrue(shooter.setTopLeftVoltage(ShooterConstants.MAX_VOLTAGE));
-      driverController
-          .x()
-          .and(driverController.back())
-          .whileTrue(shooter.setTopLeftVoltage(-ShooterConstants.MAX_VOLTAGE));
-
-      // Top-right: Y (forward) / back+Y (reverse)
-      driverController
-          .y()
-          .and(() -> !driverController.back().getAsBoolean())
-          .whileTrue(shooter.setTopRightVoltage(ShooterConstants.MAX_VOLTAGE));
-      driverController
-          .y()
-          .and(driverController.back())
-          .whileTrue(shooter.setTopRightVoltage(-ShooterConstants.MAX_VOLTAGE));
-
-      // Bottom-right: left bumper (forward) / back+left bumper (reverse)
-      driverController
-          .leftBumper()
-          .and(() -> !driverController.back().getAsBoolean())
-          .whileTrue(shooter.setBottomRightVoltage(ShooterConstants.MAX_VOLTAGE));
-      driverController
-          .leftBumper()
-          .and(driverController.back())
-          .whileTrue(shooter.setBottomRightVoltage(-ShooterConstants.MAX_VOLTAGE));
-    }
   }
 
   /**

@@ -22,9 +22,6 @@ public interface ShooterIO {
     public double bottomRightMotorAppliedVolts;
     public double bottomRightMotorCurrentAmps;
 
-    public boolean atSetpoint = false;
-    public double setpointRPM = 0;
-
     public double totalAmps;
 
     public double shooterWheelVelocityRadPerSec;

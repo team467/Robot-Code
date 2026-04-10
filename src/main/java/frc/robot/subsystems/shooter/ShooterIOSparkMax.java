@@ -51,11 +51,11 @@ public class ShooterIOSparkMax implements ShooterIO {
 
     var topLeftMotorConfig = new SparkMaxConfig();
     topLeftMotorConfig
-        .inverted(false)
+        .inverted(true)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
-    if (!independentMode) topLeftMotorConfig.follow(bottomLeftMotor.getDeviceId(), false);
+    topLeftMotorConfig.follow(bottomLeftMotor.getDeviceId(), false);
     topLeftMotorConfig.apply(enc);
 
     var bottomRightMotorConfig = new SparkMaxConfig();
@@ -64,16 +64,16 @@ public class ShooterIOSparkMax implements ShooterIO {
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
-    if (!independentMode) bottomRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
+    bottomRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
     bottomRightMotorConfig.apply(enc);
 
     var topRightMotorConfig = new SparkMaxConfig();
     topRightMotorConfig
-        .inverted(true)
+        .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT);
-    if (!independentMode) topRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
+    topRightMotorConfig.follow(bottomLeftMotor.getDeviceId(), true);
     topRightMotorConfig.apply(enc);
 
     bottomLeftMotor.configure(
@@ -122,34 +122,11 @@ public class ShooterIOSparkMax implements ShooterIO {
     inputs.shooterWheelVelocityRadPerSec =
         inputs.bottomLeftMotorVelocityRadPerSec / SHOOTER_WHEEL_GEAR_RATIO;
     inputs.shooterWheelPosition = bottomLeftMotorEncoder.getPosition() / SHOOTER_WHEEL_GEAR_RATIO;
-
-    inputs.setpointRPM = bottomLeftMotor.getClosedLoopController().getSetpoint();
-    inputs.atSetpoint = bottomLeftMotor.getClosedLoopController().isAtSetpoint();
   }
 
   @Override
   public void setVoltage(double volts) {
     bottomLeftMotor.setVoltage(volts);
-  }
-
-  @Override
-  public void setTopLeftVoltage(double volts) {
-    topLeftMotor.setVoltage(volts);
-  }
-
-  @Override
-  public void setTopRightVoltage(double volts) {
-    topRightMotor.setVoltage(volts);
-  }
-
-  @Override
-  public void setBottomLeftVoltage(double volts) {
-    bottomLeftMotor.setVoltage(volts);
-  }
-
-  @Override
-  public void setBottomRightVoltage(double volts) {
-    bottomRightMotor.setVoltage(volts);
   }
 
   @Override
