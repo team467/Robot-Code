@@ -40,8 +40,12 @@ import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
-import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOKraken;
+import frc.robot.subsystems.intake.extend.IntakeExtend;
+import frc.robot.subsystems.intake.extend.IntakeExtendIO;
+import frc.robot.subsystems.intake.extend.IntakeExtendIOSparkMax;
+import frc.robot.subsystems.intake.rollers.IntakeRollers;
+import frc.robot.subsystems.intake.rollers.IntakeRollersIO;
+import frc.robot.subsystems.intake.rollers.IntakeRollersIOKraken;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
@@ -73,6 +77,8 @@ public class RobotContainer {
   private Shooter shooter;
   private Climber climber;
   private Intake intake;
+  private IntakeRollers intakeRollers;
+  private IntakeExtend intakeExtend;
   private RobotState robotState = RobotState.getInstance();
   private boolean isRobotOriented = true; // Workaround, change if needed
 
@@ -101,8 +107,7 @@ public class RobotContainer {
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1),
-                  new VisionIOPhotonVision(camera2Name, robotToCamera2),
-                  new VisionIOPhotonVision(camera3Name, robotToCamera3));
+                  new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
         }
         case ROBOT_2026_COMP -> {
@@ -118,18 +123,14 @@ public class RobotContainer {
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1),
-                  new VisionIOPhotonVision(camera2Name, robotToCamera2),
-                  new VisionIOPhotonVision(camera3Name, robotToCamera3));
+                  new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
-          // TODO: GET THE ACTUAL BUTTON BINDINGS FOR THE OP SWITCHES
-          intake =
-              new Intake(
-                  new IntakeIOKraken(),
-                  operatorController.rightTrigger(),
-                  operatorController.leftBumper());
+          intakeRollers = new IntakeRollers(new IntakeRollersIOKraken());
+          intakeExtend =
+              new IntakeExtend(new IntakeExtendIOSparkMax(), operatorController.rightTrigger());
           //                    climber = new Climber(new ClimberIOPhysical());
         }
 
@@ -149,6 +150,7 @@ public class RobotContainer {
           //          leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           leds = new Leds();
+          shooter = new Shooter(new ShooterIOSparkMax(false));
         }
       }
     }
@@ -163,9 +165,13 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
-    if (intake == null) {
-      intake = new Intake(new IntakeIO() {}, () -> false, () -> false);
+    if (intakeRollers == null) {
+      intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
     }
+    if (intakeExtend == null) {
+      intakeExtend = new IntakeExtend(new IntakeExtendIO() {}, () -> false);
+    }
+    intake = new Intake(intakeRollers, intakeExtend);
     if (magicCarpet == null) {
       magicCarpet = new MagicCarpet(new MagicCarpetIO() {});
     }
@@ -179,14 +185,16 @@ public class RobotContainer {
       climber = new Climber(new ClimberIO() {});
     }
 
-    orchestrator = new Orchestrator(drive, magicCarpet, shooter, indexer, intake, driverController);
-    Autos autos = new Autos(drive, orchestrator, intake, shooter);
+    orchestrator =
+        new Orchestrator(
+            drive, magicCarpet, shooter, indexer, intake, intakeRollers, driverController);
+    Autos autos = new Autos(drive, orchestrator, intake, intakeRollers, shooter);
     NamedCommands.registerCommand(
         "startIntake", intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(10.0));
     NamedCommands.registerCommand(
         "endIntake",
         Commands.parallel(
-                intake.stopIntakeCommand().withTimeout(0.05),
+                intakeRollers.stopIntakeCommand().withTimeout(0.05),
                 magicCarpet.stop().withTimeout(0.05),
                 indexer.stop().withTimeout(0.05))
             .withTimeout(0.05));
@@ -206,7 +214,7 @@ public class RobotContainer {
                         .setTargetVelocityRadiansRepeatedly(
                             Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM))
                         .withTimeout(0.8),
-                    intake.stopIntakeCommand(),
+                    intakeRollers.stopIntakeCommand(),
                     magicCarpet.stop(),
                     indexer.stop())
                 .withTimeout(0.8),
@@ -260,8 +268,6 @@ public class RobotContainer {
 
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
-    autoChooser.addOption("test path", autos.testPath());
-    autoChooser.addOption("Bummmmpar", autos.Bummmmpar());
     autoChooser.addOption("Manual A-CC", autos.ACCManuelAuto());
     autoChooser.addOption("Manual A-CC-Improved", autos.ACCManuelAutoAlt());
     autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManuelAutoOverBump());
@@ -270,7 +276,6 @@ public class RobotContainer {
     autoChooser.addOption("Manual B-CC-Improved", autos.BCCManuelAutoAlt());
     autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManuelAutoOverBump());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
-    autoChooser.addOption("CL auto", autos.CenterA());
     autoChooser.addOption("8 Ball Auto", autos.EightBalls());
 
     autoChooser.addOption(
@@ -297,6 +302,11 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    // pp
+
+    autoChooser.addOption("A-side", autos.ppA2CycleRightRegression());
+    autoChooser.addOption("B-side", autos.ppB2CycleRightRegression());
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -337,22 +347,28 @@ public class RobotContainer {
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     driverController
         .leftBumper()
-        .onTrue(Commands.runOnce(() -> orchestrator.executeCurrentZoneLogic().schedule()));
+        .and(operatorController.pov(180))
+        .whileTrue(intakeExtend.runIntakeExtendVolts(-4))
+        .onFalse(intakeExtend.stopExtendingCommand());
     CustomTriggers.toggleIntakeUp(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
         .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(intake.extendToAngle(IntakeConstants.COLLAPSE_POS));
+        .toggleOnTrue(intakeExtend.extendToAngle(IntakeConstants.COLLAPSE_POS));
     CustomTriggers.toggleIntakeDown(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
         .and(() -> !operatorController.pov(180).getAsBoolean())
         .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
 
-    // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
-    driverController.leftTrigger(0.2).toggleOnTrue(intake.intake());
+    //     VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
+    driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
-    driverController.a().and(operatorController.pov(180)).onTrue(intake.resetExtendPosition());
+
+    driverController
+        .a()
+        .and(operatorController.pov(180))
+        .onTrue(intakeExtend.resetExtendPosition());
     driverController
         .rightBumper()
         .and(() -> !operatorController.pov(180).getAsBoolean())
@@ -360,8 +376,8 @@ public class RobotContainer {
     driverController
         .rightBumper()
         .and(operatorController.pov(180))
-        .whileTrue(intake.runIntakeExtendVolts(4))
-        .onFalse(intake.stopExtendingCommand());
+        .whileTrue(intakeExtend.runIntakeExtendVolts(4))
+        .onFalse(intakeExtend.stopExtendingCommand());
     //    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController
         .rightTrigger(0.1)
@@ -372,17 +388,9 @@ public class RobotContainer {
         .rightTrigger(0.1)
         .and(operatorController.pov(0))
         .toggleOnTrue(orchestrator.spinUpShooterHub());
-    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
+    operatorController.leftTrigger(0.1).toggleOnTrue(shooter.setVoltage(4));
     operatorController.y().whileTrue(indexer.reverse());
     //    operatorController.x().whileTrue(intake.outtake());
-
-    operatorController
-        .leftTrigger()
-        .whileTrue(
-            shooter.setTargetVelocityRadians(
-                () ->
-                    operatorController.getLeftY()
-                        * Units.rotationsPerMinuteToRadiansPerSecond(5600)));
   }
 
   /**

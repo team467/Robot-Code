@@ -10,6 +10,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
@@ -19,15 +21,22 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
 import frc.robot.util.Zone;
 import frc.robot.util.Zone.Tuple2d;
+import java.util.Map;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
+  private final Pose2d BBumpClosePose =
+      new Pose2d(4.415811061859131, 5.599213600158691, new Rotation2d());
+  private final Pose2d BBumpFarPose =
+      new Pose2d(11.334761619567871, 5.599213600158691, new Rotation2d());
+
   public enum ZoneId {
     NONE,
     ZONE_1,
@@ -42,6 +51,7 @@ public class Orchestrator {
   private final MagicCarpet magicCarpet;
   private final Indexer indexer;
   private final Intake intake;
+  private final IntakeRollers rollers;
   private final ShooterLeadCompensator shooterLeadCompensator;
   private final CommandXboxController driverController;
 
@@ -66,12 +76,14 @@ public class Orchestrator {
       Shooter shooter,
       Indexer indexer,
       Intake intake,
+      IntakeRollers rollers,
       CommandXboxController driverController) {
     this.drive = drive;
     this.magicCarpet = hopperBelt;
     this.shooter = shooter;
     this.indexer = indexer;
     this.intake = intake;
+    this.rollers = rollers;
     this.shooterLeadCompensator = new ShooterLeadCompensator(drive, shooter);
     this.driverController = driverController;
 
@@ -121,49 +133,28 @@ public class Orchestrator {
     return ZoneId.NONE;
   }
 
-  public Command executeCurrentZoneLogic() {
-    double allianceY = AllianceFlipUtil.applyY(drive.getPose().getY());
+  public Command zoneBasedAim() {
+    DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
 
-    return switch (getCurrentZone()) {
-      case ZONE_1 ->
-          new RotateToOrientation(
-              drive,
-              AllianceFlipUtil.apply(
-                  new Pose2d(4.621539115905762, 4.040013313293457, new Rotation2d())));
-      case ZONE_2 -> {
-        if (allianceY > 4.029185771942139) {
-          yield new RotateToOrientation(
-              drive,
-              AllianceFlipUtil.apply(
-                  new Pose2d(4.415811061859131, 5.599213600158691, new Rotation2d())));
-        } else {
-          yield new RotateToOrientation(
-              drive,
-              AllianceFlipUtil.apply(
-                  new Pose2d(4.415811061859131, 2.534952402114868, new Rotation2d())));
-        }
-      }
-      case ZONE_3 ->
-          new RotateToOrientation(
-              drive,
-              AllianceFlipUtil.apply(
-                  new Pose2d(11.334761619567871, 5.599213600158691, new Rotation2d())));
-      case ZONE_4 ->
-          new RotateToOrientation(
-              drive,
-              AllianceFlipUtil.apply(
-                  new Pose2d(11.334761619567871, 2.534952402114868, new Rotation2d())));
-      case NONE -> Commands.none();
-    };
-  }
-
-  public Command zoneBasedShoot() {
-    return Commands.deadline(
-            executeCurrentZoneLogic(),
-            indexer.run(),
-            Commands.run(
-                () -> Logger.recordOutput("Orchestrator/CurrentZone", getCurrentZone().name())))
-        .withName("zoneBasedShoot");
+    return new SelectCommand<>(
+        Map.ofEntries(
+            Map.entry(ZoneId.ZONE_1, aimToHub()),
+            Map.entry(
+                ZoneId.ZONE_2,
+                new ConditionalCommand(
+                    new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpClosePose)),
+                    new RotateToOrientation(
+                        drive,
+                        () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))),
+                    () -> allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)),
+            Map.entry(
+                ZoneId.ZONE_3,
+                new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpFarPose))),
+            Map.entry(
+                ZoneId.ZONE_4,
+                new RotateToOrientation(
+                    drive, () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))))),
+        this::getCurrentZone);
   }
 
   public Pose2d getShootWhileDrivingResultPose() {
@@ -239,6 +230,7 @@ public class Orchestrator {
             Commands.parallel(magicCarpet.run(), indexer.run())
                 .until(() -> !RobotState.getInstance().shooterAtSpeed))
         .onlyIf(() -> shooter.getSetpoint() > 0)
+        .onlyIf(() -> RobotState.getInstance().shooterAtSpeed)
         .onlyWhile(() -> shooter.getSetpoint() > 0)
         .withName("feedUp");
   }
