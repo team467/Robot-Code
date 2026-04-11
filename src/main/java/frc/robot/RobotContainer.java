@@ -195,7 +195,6 @@ public class RobotContainer {
         "endIntake",
         Commands.parallel(
                 intakeRollers.stopIntakeCommand().withTimeout(0.05),
-                magicCarpet.stop().withTimeout(0.05),
                 indexer.stop().withTimeout(0.05))
             .withTimeout(0.05));
     NamedCommands.registerCommand(
@@ -215,7 +214,6 @@ public class RobotContainer {
                             Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM))
                         .withTimeout(0.8),
                     intakeRollers.stopIntakeCommand(),
-                    magicCarpet.stop(),
                     indexer.stop())
                 .withTimeout(0.8),
             Commands.deadline(
@@ -223,9 +221,7 @@ public class RobotContainer {
                 shooter.setTargetVelocityRadiansRepeatedly(
                     Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)),
                 orchestrator.feedUp()),
-            Commands.parallel(
-                    magicCarpet.stop().withTimeout(0.05), indexer.stop().withTimeout(0.05))
-                .withTimeout(0.05)));
+            Commands.parallel(indexer.stop().withTimeout(0.05)).withTimeout(0.05)));
     AutoBuilder.configure(
         drive::getPose,
         drive::setPose,
@@ -318,7 +314,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    magicCarpet.setDefaultCommand(magicCarpet.stop());
     indexer.setDefaultCommand(indexer.stop());
     shooter.setDefaultCommand(shooter.stop());
     //    shooter.setDefaultCommand(shooter.stop());
@@ -363,7 +358,8 @@ public class RobotContainer {
 
     //     VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
-    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
+    //    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
+    driverController.rightTrigger(0.1).toggleOnTrue(indexer.run());
 
     driverController
         .a()
