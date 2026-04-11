@@ -81,9 +81,17 @@ public class Autos {
   // pp
 
   private static final Supplier<Pose2d> startAside =
-      () -> AllianceFlipUtil.apply(new Pose2d(3.645, 5.520, new Rotation2d(0.000)));
+      () -> AllianceFlipUtil.apply(new Pose2d(4.295, 7.531, new Rotation2d(0.000)));
   private static final Supplier<Pose2d> startBside =
-      () -> AllianceFlipUtil.apply(new Pose2d(3.645, 2.516, new Rotation2d(0.000)));
+      () -> AllianceFlipUtil.apply(new Pose2d(4.295, 0.538, new Rotation2d(0.000)));
+  private static final Supplier<Pose2d> connectBside =
+      () ->
+          AllianceFlipUtil.apply(
+              new Pose2d(3.175, 2.404, new Rotation2d(Units.degreesToRadians(-118.29 + 180))));
+  private static final Supplier<Pose2d> connectAside =
+      () ->
+          AllianceFlipUtil.apply(
+              new Pose2d(3.256, 5.665, new Rotation2d(Units.degreesToRadians(115.83 + 180))));
 
   // Helper functions that extract common code for pathplanner atuos
   private Command ppCycle(String path, Supplier<Pose2d> startPose) {
@@ -122,10 +130,11 @@ public class Autos {
             orchestrator.feedUp()));
   }
 
-  private Command pp2CycleRegression(String path1, String path2, Supplier<Pose2d> startPose) {
+  private Command pp2CycleRegression(
+      String path1, String path2, Supplier<Pose2d> startPose, Supplier<Pose2d> startPose2) {
     return ppCycleRegression(path1, startPose)
-        .withTimeout(2.5)
-        .andThen(ppCycleRegression(path2, startPose));
+        .withTimeout(10.5)
+        .andThen(ppCycleRegression(path2, startPose2));
   }
 
   // Pathplanner autos using the helper functions
@@ -138,11 +147,11 @@ public class Autos {
   }
 
   public Command ppB2CycleRightRegression() {
-    return pp2CycleRegression("B-Cycle1", "B-Cycle2", startBside);
+    return pp2CycleRegression("B-Cycle1", "B-Cycle2", startBside, connectBside);
   }
 
   public Command ppA2CycleRightRegression() {
-    return pp2CycleRegression("A-Cycle1", "A-Cycle2", startBside);
+    return pp2CycleRegression("A-Cycle1", "A-Cycle2", startAside, connectAside);
   }
 
   public Command ppBCycleRightRegression() {
