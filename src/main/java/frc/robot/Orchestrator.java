@@ -145,7 +145,7 @@ public class Orchestrator {
                     new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpClosePose)),
                     new RotateToOrientation(
                         drive,
-                        () -> AllianceFlipUtil.apply(AllianceFlipUtil.ReflectY(BBumpClosePose))),
+                        () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))),
                     () -> allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)),
             Map.entry(
                 ZoneId.ZONE_3,
@@ -153,7 +153,7 @@ public class Orchestrator {
             Map.entry(
                 ZoneId.ZONE_4,
                 new RotateToOrientation(
-                    drive, () -> AllianceFlipUtil.apply(AllianceFlipUtil.ReflectY(BBumpFarPose))))),
+                    drive, () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))))),
         this::getCurrentZone);
   }
 

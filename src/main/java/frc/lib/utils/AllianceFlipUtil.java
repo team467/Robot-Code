@@ -27,7 +27,7 @@ public class AllianceFlipUtil {
     return shouldFlip() ? FieldConstants.fieldWidth - y : y;
   }
 
-  public static Pose2d ReflectY(Pose2d pose) {
+  public static Pose2d reflectY(Pose2d pose) {
     return new Pose2d(
         pose.getX(),
         FieldConstants.fieldWidth - pose.getY(),
