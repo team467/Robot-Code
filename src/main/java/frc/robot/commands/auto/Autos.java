@@ -117,11 +117,11 @@ public class Autos {
             () -> AllianceFlipUtil.apply(new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(0)))));
   }
 
-  public Command ppACycleLeft() {
+  private Command ppCycle(String path) {
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(startAside.get())),
         Commands.deadline(
-                drive.getAutonomousCommand("A-Cycle-LeftSweep"),
+                drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
                 orchestrator.spinUpShooterHub())
             .withTimeout(14.5),
@@ -131,107 +131,68 @@ public class Autos {
             intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
             orchestrator.spinUpShooter(1214),
             orchestrator.feedUp()));
+  }
+
+  public Command ppACycleLeft() {
+    return ppCycle("A-Cycle-LeftSweep");
   }
 
   public Command ppBCycleRight() {
+    return ppCycle("B-Cycle-RightSweep");
+  }
+
+  private Command pp2CycleRegression(String path1, String path2) {
     return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startBside.get())),
-        Commands.deadline(
-                drive.getAutonomousCommand("B-Cycle-RightSweep"),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                orchestrator.spinUpShooterHub())
-            .withTimeout(14.5),
-        orchestrator.aimToHub().withTimeout(2.5),
-        Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
-        Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooter(1214),
-            orchestrator.feedUp()));
+            Commands.runOnce(() -> drive.setPose(startBside.get())),
+            Commands.deadline(
+                    drive.getAutonomousCommand(path1),
+                    intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+                .withTimeout(14.5),
+            Commands.deadline(
+                orchestrator.aimToHub().withTimeout(2.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+            Commands.parallel(
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                    orchestrator.feedUp())
+                .withTimeout(2.5),
+            Commands.parallel(
+                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                orchestrator.feedUp()))
+        .withTimeout(2.5)
+        .andThen(
+            Commands.sequence(
+                Commands.runOnce(() -> drive.setPose(startBside.get())),
+                Commands.deadline(
+                        drive.getAutonomousCommand(path2),
+                        intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+                    .withTimeout(14.5),
+                Commands.deadline(
+                    orchestrator.aimToHub().withTimeout(2.5),
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+                Commands.parallel(
+                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                        orchestrator.feedUp())
+                    .withTimeout(2.5),
+                Commands.parallel(
+                    intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                    orchestrator.feedUp())));
   }
 
   public Command ppB2CycleRightRegression() {
-    return Commands.sequence(
-            Commands.runOnce(() -> drive.setPose(startBside.get())),
-            Commands.deadline(
-                    drive.getAutonomousCommand("B-Cycle1"),
-                    intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-                .withTimeout(14.5),
-            Commands.deadline(
-                orchestrator.aimToHub().withTimeout(2.5),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-            Commands.parallel(
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                    orchestrator.feedUp())
-                .withTimeout(2.5),
-            Commands.parallel(
-                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                orchestrator.feedUp()))
-        .withTimeout(2.5)
-        .andThen(
-            Commands.sequence(
-                Commands.runOnce(() -> drive.setPose(startBside.get())),
-                Commands.deadline(
-                        drive.getAutonomousCommand("B-Cycle2"),
-                        intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-                    .withTimeout(14.5),
-                Commands.deadline(
-                    orchestrator.aimToHub().withTimeout(2.5),
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-                Commands.parallel(
-                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                        orchestrator.feedUp())
-                    .withTimeout(2.5),
-                Commands.parallel(
-                    intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                    orchestrator.feedUp())));
+    return pp2CycleRegression("B-Cycle1", "B-Cycle2");
   }
 
   public Command ppA2CycleRightRegression() {
-    return Commands.sequence(
-            Commands.runOnce(() -> drive.setPose(startBside.get())),
-            Commands.deadline(
-                    drive.getAutonomousCommand("A-Cycle1"),
-                    intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-                .withTimeout(14.5),
-            Commands.deadline(
-                orchestrator.aimToHub().withTimeout(2.5),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-            Commands.parallel(
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                    orchestrator.feedUp())
-                .withTimeout(2.5),
-            Commands.parallel(
-                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                orchestrator.feedUp()))
-        .withTimeout(2.5)
-        .andThen(
-            Commands.sequence(
-                Commands.runOnce(() -> drive.setPose(startBside.get())),
-                Commands.deadline(
-                        drive.getAutonomousCommand("A-Cycle2"),
-                        intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-                    .withTimeout(14.5),
-                Commands.deadline(
-                    orchestrator.aimToHub().withTimeout(2.5),
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-                Commands.parallel(
-                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                        orchestrator.feedUp())
-                    .withTimeout(2.5),
-                Commands.parallel(
-                    intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                    orchestrator.feedUp())));
+    return pp2CycleRegression("A-Cycle1", "A-Cycle2");
   }
 
-  public Command ppBCycleRightRegression() {
+  private Command ppCycleRegression(String path) {
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(startBside.get())),
         Commands.deadline(
-                drive.getAutonomousCommand("B-Cycle-RightSweep"),
+                drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
             .withTimeout(14.5),
         Commands.deadline(
@@ -247,24 +208,12 @@ public class Autos {
             orchestrator.feedUp()));
   }
 
+  public Command ppBCycleRightRegression() {
+    return ppCycleRegression("B-Cycle-RightSweep");
+  }
+
   public Command ppACycleLeftRegression() {
-    return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startAside.get())),
-        Commands.deadline(
-                drive.getAutonomousCommand("A-Cycle-LeftSweep"),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-            .withTimeout(14.5),
-        Commands.deadline(
-            orchestrator.aimToHub().withTimeout(2.5),
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-        Commands.parallel(
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                orchestrator.feedUp())
-            .withTimeout(2.5),
-        Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-            orchestrator.feedUp()));
+    return ppCycleRegression("A-Cycle-LeftSweep");
   }
 
   public Command EightBalls() {
