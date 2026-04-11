@@ -15,6 +15,9 @@ import frc.robot.subsystems.shooter.Shooter;
 import java.util.function.Supplier;
 
 public class Autos {
+  public record AutoPositions(
+      Pose2d intakeSimplePose, Pose2d overBumpAllianceAlt, Pose2d shootFromCorner) {}
+
   private final Drive drive;
   private final Orchestrator orchestrator;
   private final Intake intake;
@@ -82,46 +85,12 @@ public class Autos {
   private static final Supplier<Pose2d> startBside =
       () -> AllianceFlipUtil.apply(new Pose2d(3.645, 2.516, new Rotation2d(0.000)));
 
-  public Command CenterA() {
+  // Helper functions that extract common code for pathplanner atuos
+  private Command ppCycle(String path, Supplier<Pose2d> startPose) {
     return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(AllianceFlipUtil.apply(CenterA.get()))),
-        drive.getAutonomousCommand("CA-out-intake"),
-        new StraightDriveToPose(climb.get(), drive).withTimeout(2.0));
-  }
-
-  public Command testPath() {
-    return Commands.sequence(
-        Commands.runOnce(
-            () ->
-                drive.setPose(
-                    AllianceFlipUtil.apply(
-                        new Pose2d(3.213, 5.600, new Rotation2d(Units.degreesToRadians(0)))))),
-        drive.getAutonomousCommand("test path"));
-  }
-
-  public Command Bummmmpar() {
-    return Commands.sequence(
-        Commands.runOnce(
-            () ->
-                drive.setPose(
-                    AllianceFlipUtil.apply(
-                        new Pose2d(3.213, 5.600, new Rotation2d(Units.degreesToRadians(0)))))),
-        new DriveToPose(
-            drive,
-            () -> AllianceFlipUtil.apply(new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(0)))),
-        new DriveToPose(
-            drive,
-            () -> AllianceFlipUtil.apply(new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(0)))),
-        new DriveToPose(
-            drive,
-            () -> AllianceFlipUtil.apply(new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(0)))));
-  }
-
-  public Command ppACycleLeft() {
-    return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startAside.get())),
+        Commands.runOnce(() -> drive.setPose(startPose.get())),
         Commands.deadline(
-                drive.getAutonomousCommand("A-Cycle-LeftSweep"),
+                drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
                 orchestrator.spinUpShooterHub())
             .withTimeout(14.5),
@@ -131,164 +100,175 @@ public class Autos {
             intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
             orchestrator.spinUpShooter(1214),
             orchestrator.feedUp()));
+  }
+
+  private Command ppCycleRegression(String path, Supplier<Pose2d> startPose) {
+    return Commands.sequence(
+        Commands.runOnce(() -> drive.setPose(startPose.get())),
+        Commands.deadline(
+                drive.getAutonomousCommand(path),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+            .withTimeout(14.5),
+        Commands.deadline(
+            orchestrator.aimToHub().withTimeout(2.5),
+            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+        Commands.parallel(
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                orchestrator.feedUp())
+            .withTimeout(2.5),
+        Commands.parallel(
+            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+            orchestrator.feedUp()));
+  }
+
+  private Command pp2CycleRegression(String path1, String path2, Supplier<Pose2d> startPose) {
+    return ppCycleRegression(path1, startPose)
+        .withTimeout(2.5)
+        .andThen(ppCycleRegression(path2, startPose));
+  }
+
+  // Pathplanner autos using the helper functions
+  public Command ppACycleLeft() {
+    return ppCycle("A-Cycle-LeftSweep", startAside);
   }
 
   public Command ppBCycleRight() {
-    return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startBside.get())),
-        Commands.deadline(
-                drive.getAutonomousCommand("B-Cycle-RightSweep"),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                orchestrator.spinUpShooterHub())
-            .withTimeout(14.5),
-        orchestrator.aimToHub().withTimeout(2.5),
-        Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
-        Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooter(1214),
-            orchestrator.feedUp()));
+    return ppCycle("B-Cycle-RightSweep", startBside);
   }
 
   public Command ppB2CycleRightRegression() {
-    return Commands.sequence(
-            Commands.runOnce(() -> drive.setPose(startBside.get())),
-            Commands.deadline(
-                    drive.getAutonomousCommand("B-Cycle1"),
-                    intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-                .withTimeout(14.5),
-            Commands.deadline(
-                orchestrator.aimToHub().withTimeout(2.5),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-            Commands.parallel(
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                    orchestrator.feedUp())
-                .withTimeout(2.5),
-            Commands.parallel(
-                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                orchestrator.feedUp()))
-        .withTimeout(2.5)
-        .andThen(
-            Commands.sequence(
-                Commands.runOnce(() -> drive.setPose(startBside.get())),
-                Commands.deadline(
-                        drive.getAutonomousCommand("B-Cycle2"),
-                        intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-                    .withTimeout(14.5),
-                Commands.deadline(
-                    orchestrator.aimToHub().withTimeout(2.5),
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-                Commands.parallel(
-                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                        orchestrator.feedUp())
-                    .withTimeout(2.5),
-                Commands.parallel(
-                    intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                    orchestrator.feedUp())));
+    return pp2CycleRegression("B-Cycle1", "B-Cycle2", startBside);
   }
 
   public Command ppA2CycleRightRegression() {
-    return Commands.sequence(
-            Commands.runOnce(() -> drive.setPose(startBside.get())),
-            Commands.deadline(
-                    drive.getAutonomousCommand("A-Cycle1"),
-                    intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-                .withTimeout(14.5),
-            Commands.deadline(
-                orchestrator.aimToHub().withTimeout(2.5),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-            Commands.parallel(
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                    orchestrator.feedUp())
-                .withTimeout(2.5),
-            Commands.parallel(
-                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                orchestrator.feedUp()))
-        .withTimeout(2.5)
-        .andThen(
-            Commands.sequence(
-                Commands.runOnce(() -> drive.setPose(startBside.get())),
-                Commands.deadline(
-                        drive.getAutonomousCommand("A-Cycle2"),
-                        intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-                    .withTimeout(14.5),
-                Commands.deadline(
-                    orchestrator.aimToHub().withTimeout(2.5),
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-                Commands.parallel(
-                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                        orchestrator.feedUp())
-                    .withTimeout(2.5),
-                Commands.parallel(
-                    intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                    orchestrator.feedUp())));
+    return pp2CycleRegression("A-Cycle1", "A-Cycle2", startBside);
   }
 
   public Command ppBCycleRightRegression() {
-    return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startBside.get())),
-        Commands.deadline(
-                drive.getAutonomousCommand("B-Cycle-RightSweep"),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-            .withTimeout(14.5),
-        Commands.deadline(
-            orchestrator.aimToHub().withTimeout(2.5),
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-        Commands.parallel(
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                orchestrator.feedUp())
-            .withTimeout(2.5),
-        Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-            orchestrator.feedUp()));
+    return ppCycleRegression("B-Cycle-RightSweep", startBside);
   }
 
   public Command ppACycleLeftRegression() {
-    return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startAside.get())),
-        Commands.deadline(
-                drive.getAutonomousCommand("A-Cycle-LeftSweep"),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-            .withTimeout(14.5),
-        Commands.deadline(
-            orchestrator.aimToHub().withTimeout(2.5),
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-        Commands.parallel(
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                orchestrator.feedUp())
-            .withTimeout(2.5),
-        Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-            orchestrator.feedUp()));
+    return ppCycleRegression("A-Cycle-LeftSweep", startAside);
   }
 
+  // Misc helper functions for manual autos
+  private Command shootPullIntake() {
+    return Commands.parallel(
+        orchestrator.spinUpShooterHub(),
+        orchestrator.feedUp(),
+        Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0)));
+  }
+
+  AutoPositions getPoses(boolean isA) {
+    if (isA) {
+      return new AutoPositions(
+          intakeSimplePoseA.get(), overBumpAllianceAltPoseA.get(), shootFromCornerPoseA.get());
+    }
+    return new AutoPositions(
+        intakeSimplePoseB.get(), overBumpAllianceAltPoseB.get(), shootFromCornerPoseB.get());
+  }
+
+  // Helper functions that extract common code for manual autos
+  private Command ccManualAuto(boolean isA) {
+    AutoPositions poses = getPoses(isA);
+
+    return Commands.sequence(
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimplePose))
+                .withTimeout(5),
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.overBumpAllianceAlt))
+            .withTimeout(5),
+        rollers.stopIntakeCommand().withTimeout(0.05),
+        Commands.deadline(
+            orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
+        shootPullIntake());
+  }
+
+  private Command ccManualAutoAlt(boolean isA) {
+    AutoPositions poses = getPoses(isA);
+
+    return Commands.sequence(
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimplePose))
+                .withTimeout(5),
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.overBumpAllianceAlt))
+            .withTimeout(3.5),
+        rollers.stopIntakeCommand().withTimeout(0.05),
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.shootFromCorner))
+                .withTimeout(2),
+            orchestrator.spinUpShooter(1240)),
+        Commands.parallel(
+            orchestrator.spinUpShooter(1240),
+            orchestrator.feedUp(),
+            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
+  }
+
+  private Command ccManualAutoOverBump(boolean isA) {
+    AutoPositions poses = getPoses(isA);
+
+    return Commands.sequence(
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimplePose))
+                .withTimeout(5),
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.overBumpAllianceAlt))
+            .withTimeout(3.5),
+        rollers.stopIntakeCommand().withTimeout(0.05),
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.shootFromCorner))
+                .withTimeout(2),
+            orchestrator.spinUpShooter(1250)),
+        Commands.deadline(
+            Commands.waitSeconds(5),
+            orchestrator.spinUpShooter(1250),
+            orchestrator.feedUp(),
+            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
+        rollers.stopIntakeCommand().withTimeout(0.05),
+        shooter.stop(),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.overBumpAllianceAlt))
+            .withTimeout(2),
+        Commands.deadline(
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimplePose))
+                .withTimeout(3.5),
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)));
+  }
+
+  // Manual autos using the helper functions
+  public Command ACCManuelAuto() {
+    return ccManualAuto(true);
+  }
+
+  public Command BCCManuelAuto() {
+    return ccManualAuto(false);
+  }
+
+  public Command ACCManuelAutoAlt() {
+    return ccManualAutoAlt(true);
+  }
+
+  public Command BCCManuelAutoAlt() {
+    return ccManualAutoAlt(false);
+  }
+
+  public Command ACCManuelAutoOverBump() {
+    return ccManualAutoOverBump(true);
+  }
+
+  public Command BCCManuelAutoOverBump() {
+    return ccManualAutoOverBump(false);
+  }
+
+  // Other manual autos
   public Command EightBalls() {
     return Commands.sequence(
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3.0), orchestrator.spinUpShooterHub()),
         Commands.parallel(orchestrator.spinUpShooterHub(), orchestrator.feedUp()));
-  }
-
-  public Command ACCManuelAuto() {
-    return Commands.sequence(
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
-                .withTimeout(5),
-            Commands.parallel(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS))),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAlliancePoseA.get()))
-            .withTimeout(5),
-        rollers.stopIntakeCommand().withTimeout(0.05),
-        Commands.deadline(
-            orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
-        Commands.parallel(
-            orchestrator.spinUpShooterHub(),
-            orchestrator.feedUp(),
-            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
 
   public Command ACCManuelImprovedComplexIntake() {
@@ -311,10 +291,7 @@ public class Autos {
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(shootFromCornerPoseA.get()))
                 .withTimeout(4),
             orchestrator.spinUpShooter(1240)),
-        Commands.parallel(
-            orchestrator.spinUpShooter(1240),
-            orchestrator.feedUp(),
-            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
+        shootPullIntake());
   }
 
   public Command ADepot() {
@@ -342,116 +319,5 @@ public class Autos {
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
                 .withTimeout(3.5),
             intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)));
-  }
-
-  public Command ACCManuelAutoAlt() {
-    return Commands.sequence(
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
-                .withTimeout(5),
-            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseA.get()))
-            .withTimeout(3.5),
-        rollers.stopIntakeCommand().withTimeout(0.05),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(shootFromCornerPoseA.get()))
-                .withTimeout(2),
-            orchestrator.spinUpShooter(1240)),
-        Commands.parallel(
-            orchestrator.spinUpShooter(1240),
-            orchestrator.feedUp(),
-            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
-  }
-
-  public Command ACCManuelAutoOverBump() {
-    return Commands.sequence(
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
-                .withTimeout(5),
-            intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseA.get()))
-            .withTimeout(3.5),
-        rollers.stopIntakeCommand().withTimeout(0.05),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(shootFromCornerPoseA.get()))
-                .withTimeout(2),
-            orchestrator.spinUpShooter(1250)),
-        Commands.deadline(
-            Commands.waitSeconds(5),
-            orchestrator.spinUpShooter(1250),
-            orchestrator.feedUp(),
-            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
-        rollers.stopIntakeCommand().withTimeout(0.05),
-        shooter.stop(),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseA.get()))
-            .withTimeout(2),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
-                .withTimeout(3.5),
-            intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)));
-  }
-
-  public Command BCCManuelAuto() {
-    return Commands.sequence(
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseB.get()))
-                .withTimeout(5),
-            intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseB.get()))
-            .withTimeout(5),
-        rollers.stopIntakeCommand().withTimeout(0.05),
-        Commands.deadline(
-            orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
-        Commands.parallel(
-            orchestrator.spinUpShooterHub(),
-            orchestrator.feedUp(),
-            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
-  }
-
-  public Command BCCManuelAutoAlt() {
-    return Commands.sequence(
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseB.get()))
-                .withTimeout(5),
-            intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseB.get()))
-            .withTimeout(3.5),
-        rollers.stopIntakeCommand().withTimeout(0.05),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(shootFromCornerPoseB.get()))
-                .withTimeout(2),
-            orchestrator.spinUpShooter(1240)),
-        Commands.parallel(
-            orchestrator.spinUpShooter(1240),
-            orchestrator.feedUp(),
-            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
-  }
-
-  public Command BCCManuelAutoOverBump() {
-    return Commands.sequence(
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseB.get()))
-                .withTimeout(5),
-            intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseB.get()))
-            .withTimeout(3.5),
-        rollers.stopIntakeCommand().withTimeout(0.05),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(shootFromCornerPoseB.get()))
-                .withTimeout(2),
-            orchestrator.spinUpShooter(1250)),
-        Commands.deadline(
-            Commands.waitSeconds(5),
-            orchestrator.spinUpShooter(1250),
-            orchestrator.feedUp(),
-            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
-        rollers.stopIntakeCommand().withTimeout(0.05),
-        shooter.stop(),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseB.get()))
-            .withTimeout(2),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseB.get()))
-                .withTimeout(3.5),
-            intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)));
   }
 }
