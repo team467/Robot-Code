@@ -192,7 +192,7 @@ public class Shooter extends SubsystemBase {
                   controllerEnabled = true;
                 },
                 this),
-            Commands.waitSeconds(0.2))
+            Commands.waitSeconds(0.02))
         .withName("setTargetVelocityRepeatedly");
   }
 
