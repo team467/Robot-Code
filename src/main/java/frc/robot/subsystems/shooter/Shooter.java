@@ -37,6 +37,11 @@ public class Shooter extends SubsystemBase {
   // This prevents current spikes that cause oscillation with a 20A limit
   private final SlewRateLimiter targetRamper = new SlewRateLimiter(800);
 
+  /**
+   * Initializes the shooter with a Shooter IO
+   *
+   * @param io A ShooterIO implementing instance
+   */
   public Shooter(ShooterIO io) {
     this.io = io;
     sysId =
@@ -78,22 +83,44 @@ public class Shooter extends SubsystemBase {
     RobotState.getInstance().shooterAtSpeed = isAtSetpoint();
   }
 
+  /**
+   * Runs characterization voltage (used for FF)
+   *
+   * @param voltage The voltage to apply
+   */
   public void runCharacterization(double voltage) {
     io.setVoltage(voltage);
   }
 
+  /**
+   * Runs SysID Quasistatic for feed forward
+   *
+   * @param direction The direction to run it in
+   * @return A command that runs SysID Quasistatic
+   */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return Commands.runOnce(() -> controllerEnabled = false, this)
         .andThen(run(() -> runCharacterization(0.0)).withTimeout(1.0))
         .andThen(sysId.quasistatic(direction));
   }
 
+  /**
+   * Runs SysID Quasistatic for feed forward
+   *
+   * @param direction The direction to run it in
+   * @return A command that runs SysID Dynamic
+   */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return Commands.runOnce(() -> controllerEnabled = false, this)
         .andThen(run(() -> runCharacterization(0.0)).withTimeout(1.0))
         .andThen(sysId.dynamic(direction));
   }
 
+  /**
+   * Stop the shooter
+   *
+   * @return A command that stops the shooter
+   */
   public Command stop() {
     return Commands.runOnce(
             () -> {
@@ -107,11 +134,23 @@ public class Shooter extends SubsystemBase {
         .withName("shooter_stop_please");
   }
 
+  /**
+   * Sets raw voltage for the shooter
+   *
+   * @param volts The volts amount to set it to (max 12)
+   * @return A Command that sets the shooter voltage
+   */
   public Command setVoltage(double volts) {
     return Commands.runOnce(() -> controllerEnabled = false, this)
         .andThen(Commands.run(() -> io.setVoltage(volts), this));
   }
 
+  /**
+   * Sets the target velocity in rotations per minute (RPM) for the shooter which it will speed up to
+   *
+   * @param rpm The RPM to set to
+   * @return A command that sets the target RPM
+   */
   public Command setTargetVelocityRPM(double rpm) {
     return Commands.run(
             () -> {
@@ -122,6 +161,12 @@ public class Shooter extends SubsystemBase {
         .withName("setTargetVelocityRPM");
   }
 
+  /**
+   * Sets the target velocity in radians per second for the shooter which it will speed up to
+   *
+   * @param radPerSec The radians per second to set to
+   * @return A command that sets the target radians per second
+   */
   public Command setTargetVelocityRadians(double radPerSec) {
     return Commands.run(
             () -> {
@@ -132,6 +177,12 @@ public class Shooter extends SubsystemBase {
         .withName("setTargetVelocityRadians");
   }
 
+  /**
+   * Sets the target velocity in radians per second for the shooter which it will speed up to
+   *
+   * @param radPerSec A supplier that returns the radians per second to set to
+   * @return A command that sets the target radians per second
+   */
   public Command setTargetVelocityRadians(DoubleSupplier radPerSec) {
     return Commands.run(
             () -> {
@@ -145,8 +196,10 @@ public class Shooter extends SubsystemBase {
   /**
    * Continuously re-asserts shooter target while scheduled.
    *
-   * <p>Useful for toggle/manual control flows where another command may temporarily disable the
+   * Useful for toggle/manual control flows where another command may temporarily disable the
    * shooter controller.
+   *
+   * @param radPerSec The radians per second to set it to
    */
   public Command setTargetVelocityRadiansRepeatedly(double radPerSec) {
     return Commands.repeatingSequence(
@@ -160,6 +213,11 @@ public class Shooter extends SubsystemBase {
         .withName("setTargetVelocityRadiansRepeatedly");
   }
 
+  /**
+   * Check if the shooter is at setpoint (+- TOLERANCE)
+   *
+   * @return A boolean asserting whether the shooter is at setpoint (true for yes)
+   */
   public boolean isAtSetpoint() {
     return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetRadPerSec)) < TOLERANCE;
   }
