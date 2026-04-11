@@ -207,7 +207,6 @@ public class Orchestrator {
             Rotation2d.fromDegrees(0)));
     Logger.recordOutput("Orchestrator/DistanceToHub", shootWhileDrivingResult.distance());
     Logger.recordOutput("Orchestrator/ShooterPosition", shooterLeadCompensator.shooterPose());
-    Logger.recordOutput("Orchestrator/Zone", getCurrentZone());
   }
 
   public Command driveToHub() {
