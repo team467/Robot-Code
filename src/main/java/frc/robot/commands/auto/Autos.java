@@ -14,16 +14,37 @@ import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.shooter.Shooter;
 import java.util.function.Supplier;
 
+/**
+ * Contains all autos
+ */
 public class Autos {
+
+  /**
+   * A helper class that tracks poses needed for manual autos. It simplifies switching between left and right sides.
+   *
+   * @param intakeSimplePose The position to intake at
+   * @param overBumpAllianceAlt The position to go over the bump
+   * @param shootFromCorner The position to shoot at the hub from
+   */
   public record AutoPositions(
       Pose2d intakeSimplePose, Pose2d overBumpAllianceAlt, Pose2d shootFromCorner) {}
 
+  // Relevant subsystems for the autos
   private final Drive drive;
   private final Orchestrator orchestrator;
   private final Intake intake;
   private final IntakeRollers rollers;
   private final Shooter shooter;
 
+  /**
+   * Basic constructor, takes in all initialized subsystems and stores them
+   *
+   * @param drive Drive subsystem
+   * @param orchestrator Orchestrator subsystem
+   * @param intake Intake subsystem
+   * @param rollers Intake rollers subsystem
+   * @param shooter Shooter subsystem
+   */
   public Autos(
       Drive drive,
       Orchestrator orchestrator,
