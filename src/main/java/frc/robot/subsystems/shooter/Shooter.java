@@ -7,6 +7,10 @@ import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,7 +19,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.RobotState;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
+import edu.wpi.first.units.*;
 
 public class Shooter extends SubsystemBase {
   private final ShooterIO io;
@@ -23,7 +29,7 @@ public class Shooter extends SubsystemBase {
   private final SysIdRoutine sysId;
 
   public boolean controllerEnabled = true;
-  private double targetRadPerSec = 0.0;
+  private AngularVelocity targetSpeed = RadiansPerSecond.of(0);
   private double rampedTarget = 0.0;
 
   // Feedforward: handles steady-state voltage (V = KS + KV * velocity)
@@ -57,10 +63,10 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    RobotState.getInstance().shooterAtSpeed = isAtSetpoint() && targetRadPerSec > 0;
+    RobotState.getInstance().shooterAtSpeed = isAtSetpoint() && targetSpeed.gt(RadiansPerSecond.of(0));
     if (controllerEnabled) {
       // Ramp toward the target to avoid current spikes
-      rampedTarget = targetRamper.calculate(targetRadPerSec);
+      rampedTarget = targetRamper.calculate(targetSpeed.in(RadiansPerSecond));
 
       double ff = feedforward.calculate(rampedTarget);
       double pidOutput = pid.calculate(inputs.shooterWheelVelocityRadPerSec, rampedTarget);
@@ -75,7 +81,7 @@ public class Shooter extends SubsystemBase {
       Logger.recordOutput("Shooter/PIDVoltage", pidOutput);
       Logger.recordOutput("Shooter/CommandedVoltage", voltage);
       Logger.recordOutput("Shooter/RampedTargetRadPerSec", rampedTarget);
-      Logger.recordOutput("Shooter/Setpoint", targetRadPerSec);
+      Logger.recordOutput("Shooter/Setpoint", targetSpeed.in(RadiansPerSecond));
     }
 
     Logger.processInputs("Shooter", inputs);
@@ -125,7 +131,7 @@ public class Shooter extends SubsystemBase {
     return Commands.runOnce(
             () -> {
               controllerEnabled = false;
-              targetRadPerSec = 0.0;
+              targetSpeed = RadiansPerSecond.of(0);
               rampedTarget = 0.0;
               targetRamper.reset(0.0);
               io.stop();
@@ -146,71 +152,34 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * Sets the target velocity in rotations per minute (RPM) for the shooter which it will speed up to
+   * Set the target velocity of the shooter
    *
-   * @param rpm The RPM to set to
-   * @return A command that sets the target RPM
+   * @param velocity A supplier that returns the target velocity of the shooter
+   * @return A command that sets the target velocity of the shooter to the value returned by the supplier
    */
-  public Command setTargetVelocityRPM(double rpm) {
-    return Commands.run(
-            () -> {
-              targetRadPerSec = ((rpm / 2 * Math.PI) * 60.0);
-              controllerEnabled = true;
-            },
-            this)
-        .withName("setTargetVelocityRPM");
+  public Command setTargetVelocity(Supplier<AngularVelocity> velocity) {
+    return Commands.run(() -> {targetSpeed = velocity.get(); controllerEnabled=true;}, this).withName("setTargetVelocity");
   }
 
   /**
-   * Sets the target velocity in radians per second for the shooter which it will speed up to
+   * Set the target velocity of the shooter
    *
-   * @param radPerSec The radians per second to set to
-   * @return A command that sets the target radians per second
+   * @param velocity The target velocity of the shooter
+   * @return A command that sets the target velocity of the shooter to the specified value
    */
-  public Command setTargetVelocityRadians(double radPerSec) {
-    return Commands.run(
-            () -> {
-              targetRadPerSec = radPerSec;
-              controllerEnabled = true;
-            },
-            this)
-        .withName("setTargetVelocityRadians");
+  public Command setTargetVelocity(AngularVelocity velocity) {
+    return Commands.run(() -> {targetSpeed = velocity; controllerEnabled=true;}, this).withName("setTargetVelocity");
   }
 
-  /**
-   * Sets the target velocity in radians per second for the shooter which it will speed up to
-   *
-   * @param radPerSec A supplier that returns the radians per second to set to
-   * @return A command that sets the target radians per second
-   */
-  public Command setTargetVelocityRadians(DoubleSupplier radPerSec) {
-    return Commands.run(
-            () -> {
-              targetRadPerSec = radPerSec.getAsDouble();
-              controllerEnabled = true;
-            },
-            this)
-        .withName("setTargetVelocityRadians");
-  }
-
-  /**
-   * Continuously re-asserts shooter target while scheduled.
-   *
-   * Useful for toggle/manual control flows where another command may temporarily disable the
-   * shooter controller.
-   *
-   * @param radPerSec The radians per second to set it to
-   */
-  public Command setTargetVelocityRadiansRepeatedly(double radPerSec) {
+  public Command setTargetVelocityRepeatedly(AngularVelocity velocity) {
     return Commands.repeatingSequence(
-            Commands.runOnce(
-                () -> {
-                  targetRadPerSec = radPerSec;
-                  controllerEnabled = true;
-                },
-                this),
-            Commands.waitSeconds(0.02))
-        .withName("setTargetVelocityRadiansRepeatedly");
+        Commands.runOnce(
+            () -> {
+              targetSpeed = velocity;
+              controllerEnabled = true;
+            }, this
+        ), Commands.waitSeconds(0.2)
+    ).withName("setTargetVelocityRepeatedly");
   }
 
   /**
@@ -219,27 +188,31 @@ public class Shooter extends SubsystemBase {
    * @return A boolean asserting whether the shooter is at setpoint (true for yes)
    */
   public boolean isAtSetpoint() {
-    return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetRadPerSec)) < TOLERANCE;
+    return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetSpeed.in(RadiansPerSecond))) < TOLERANCE;
   }
 
   // TODO: empirically determine the relationship between distance and air time
-  public double getAirTimeSeconds(DoubleSupplier distance) {
-    return 0.0617 * distance.getAsDouble() + 0.872;
+  public double getAirTimeSeconds(Distance distance) {
+    return 0.0617 * distance.in(Meters) + 0.872;
   }
 
   // TODO: empirically determine the relationship between distance and shooter velocity
-
-  public DoubleSupplier calculateSetpoint(DoubleSupplier distance) {
+  /**
+   * Calculates a setpoint (in radians per second) based on distance
+   * @param distance Distance
+   * @return Setpoint in radians per second
+   */
+  public DoubleSupplier calculateSetpoint(Distance distance) {
     // calculate rad/s depending on distance
     return () -> {
-      double setpoint = 183.35 * distance.getAsDouble() + 750.93;
+      double setpoint = 183.35 * distance.in(Meters) + 750.93;
       if (setpoint > 5000) {
         return 5000;
       } else return setpoint;
     };
   }
 
-  public double getSetpoint() {
-    return targetRadPerSec;
+  public AngularVelocity getSetpoint() {
+    return targetSpeed;
   }
 }

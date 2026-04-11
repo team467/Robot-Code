@@ -246,7 +246,7 @@ public class Orchestrator {
   }
 
   public Command spinUpShooterDistance(DoubleSupplier targetDistance) {
-    return shooter.setTargetVelocityRadians(
+    return shooter.setTargetVelocity(
         () ->
             Units.rotationsPerMinuteToRadiansPerSecond(
                 shooter.calculateSetpoint(targetDistance).getAsDouble()));

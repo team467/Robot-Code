@@ -8,6 +8,8 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.function.Supplier;
 
+import static edu.wpi.first.units.Units.Meters;
+
 public class ShooterLeadCompensator {
 
   private final Supplier<Translation2d> shooterPosition;
@@ -49,7 +51,7 @@ public class ShooterLeadCompensator {
      */
     for (int i = 0; i < 10; i++) {
       double distance = aimPoint.minus(shooterPos).getNorm();
-      double t = shooter.getAirTimeSeconds(() -> distance);
+      double t = shooter.getAirTimeSeconds(Meters.of(distance));
       aimPoint = targetPosition.plus(v.times(t));
     }
 
