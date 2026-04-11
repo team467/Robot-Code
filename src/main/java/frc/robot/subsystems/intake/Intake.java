@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 
-// TODO:rewrite this for v1.5
 public class Intake {
   private final IntakeRollers rollers;
   private final IntakeExtend extend;
@@ -41,14 +40,11 @@ public class Intake {
                 extend.extendToAngle(FUNNEL_POS - SHAKE_POS_OFFSET), rollers.intake()))
         .withName("shakeAndIntake");
   }
-  public Command shake(){
-      return Commands.repeatingSequence(
-                  extend.extendToAngle(FUNNEL_POS + SHAKE_POS_OFFSET),
-                  extend.extendToAngle(FUNNEL_POS - SHAKE_POS_OFFSET))
-          .withName("shake");
-    }
+
+  public Command shake() {
+    return Commands.repeatingSequence(
+            extend.extendToAngle(FUNNEL_POS + SHAKE_POS_OFFSET),
+            extend.extendToAngle(FUNNEL_POS - SHAKE_POS_OFFSET))
+        .withName("shake");
   }
-  // private because it doesn't have requirements and therefore it shouldn't be called beyond the
-  // subsystem
-  // itself
 }
