@@ -23,10 +23,20 @@ import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
+import frc.robot.util.Zone;
+import frc.robot.util.Zone.Tuple2d;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
+  public enum ZoneId {
+    NONE,
+    ZONE_1,
+    ZONE_2,
+    ZONE_3,
+    ZONE_4
+  }
+
   private final double FRONT_HUB_OFFSET = Units.inchesToMeters(40.0);
   private final Drive drive;
   private final Shooter shooter;
@@ -47,6 +57,11 @@ public class Orchestrator {
   private final LinearFilter targetYFilter = LinearFilter.singlePoleIIR(0.06, 0.02);
   private final LinearFilter distanceFilter = LinearFilter.singlePoleIIR(0.06, 0.02);
 
+  private final Zone zone1;
+  private final Zone zone2;
+  private final Zone zone3;
+  private final Zone zone4;
+
   public Orchestrator(
       Drive drive,
       MagicCarpet hopperBelt,
@@ -63,6 +78,96 @@ public class Orchestrator {
     this.rollers = rollers;
     this.shooterLeadCompensator = new ShooterLeadCompensator(drive, shooter);
     this.driverController = driverController;
+
+    this.zone1 = new Zone(drive::getPose);
+    this.zone2 = new Zone(drive::getPose);
+    this.zone3 = new Zone(drive::getPose);
+    this.zone4 = new Zone(drive::getPose);
+    zone1.initializeZone(new Tuple2d(0.0, 0.0), new Tuple2d(3.993527889251709, 8.100430488586426));
+    zone2.initializeZone(
+        new Tuple2d(4.307533264160156, 8.04629135131836), new Tuple2d(11.9086332321167, 0));
+    zone3.initializeZone(
+        new Tuple2d(13.69521713256836, 4.061668872833252),
+        new Tuple2d(16.51043891906738, 8.078774452209473));
+    zone4.initializeZone(
+        new Tuple2d(13.69521713256836, 4.061668872833252), new Tuple2d(16.564579010009766, 0));
+  }
+
+  public Zone getZone1() {
+    return zone1;
+  }
+
+  public Zone getZone2() {
+    return zone2;
+  }
+
+  public Zone getZone3() {
+    return zone3;
+  }
+
+  public Zone getZone4() {
+    return zone4;
+  }
+
+  public ZoneId getCurrentZone() {
+    if (zone1.isInZoneForAlliance()) {
+      return ZoneId.ZONE_1;
+    }
+    if (zone2.isInZoneForAlliance()) {
+      return ZoneId.ZONE_2;
+    }
+    if (zone3.isInZoneForAlliance()) {
+      return ZoneId.ZONE_3;
+    }
+    if (zone4.isInZoneForAlliance()) {
+      return ZoneId.ZONE_4;
+    }
+    return ZoneId.NONE;
+  }
+
+  public Command executeCurrentZoneLogic() {
+    double allianceY = AllianceFlipUtil.applyY(drive.getPose().getY());
+
+    return switch (getCurrentZone()) {
+      case ZONE_1 ->
+          new RotateToOrientation(
+              drive,
+              AllianceFlipUtil.apply(
+                  new Pose2d(4.621539115905762, 4.040013313293457, new Rotation2d())));
+      case ZONE_2 -> {
+        if (allianceY > 4.029185771942139) {
+          yield new RotateToOrientation(
+              drive,
+              AllianceFlipUtil.apply(
+                  new Pose2d(4.415811061859131, 5.599213600158691, new Rotation2d())));
+        } else {
+          yield new RotateToOrientation(
+              drive,
+              AllianceFlipUtil.apply(
+                  new Pose2d(4.415811061859131, 2.534952402114868, new Rotation2d())));
+        }
+      }
+      case ZONE_3 ->
+          new RotateToOrientation(
+              drive,
+              AllianceFlipUtil.apply(
+                  new Pose2d(11.334761619567871, 5.599213600158691, new Rotation2d())));
+      case ZONE_4 ->
+          new RotateToOrientation(
+              drive,
+              AllianceFlipUtil.apply(
+                  new Pose2d(11.334761619567871, 2.534952402114868, new Rotation2d())));
+      case NONE -> Commands.none();
+    };
+  }
+
+  public Command zoneBasedShoot() {
+    return Commands.deadline(
+            executeCurrentZoneLogic(),
+            indexer.run(),
+            Commands.run(
+                () -> Logger.recordOutput("Orchestrator/CurrentZone", getCurrentZone().name())))
+        .withName("zoneBasedShoot");
   }
 
   public Pose2d getShootWhileDrivingResultPose() {
@@ -101,6 +206,9 @@ public class Orchestrator {
   }
 
   public void orchestratorPeriodic() {
+    Logger.recordOutput("Orchestrator/Pose", drive.getPose());
+    Logger.recordOutput("Orchestrator/CurrentZone", getCurrentZone().name());
+
     var shootWhileDrivingResult =
         shooterLeadCompensator.shootWhileDriving(
             AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
@@ -127,17 +235,6 @@ public class Orchestrator {
                   .minus(hubApproachPose.getTranslation())
                   .getAngle();
           return new Pose2d(hubApproachPose.getTranslation(), sameAsAlignAndShootHeading);
-        });
-  }
-
-  public Command alignToHub() {
-    return new RotateToOrientation(
-        drive,
-        () -> {
-          Pose2d hubApproachPose = AllianceFlipUtil.apply(Hub.nearFace);
-          Rotation2d angle =
-              hubApproachPose.getTranslation().minus(drive.getPose().getTranslation()).getAngle();
-          return angle;
         });
   }
 
