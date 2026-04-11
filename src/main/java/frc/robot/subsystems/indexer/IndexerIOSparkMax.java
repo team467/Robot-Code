@@ -1,8 +1,8 @@
 package frc.robot.subsystems.indexer;
 
 import static frc.robot.Schematic.indexerFeedupCanId;
-import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_POSITION_CONVERSION;
-import static frc.robot.subsystems.indexer.IndexConstants.ENCODER_FEEDUP_VELOCITY_CONVERSION;
+import static frc.robot.subsystems.indexer.IndexerConstants.ENCODER_FEEDUP_POSITION_CONVERSION;
+import static frc.robot.subsystems.indexer.IndexerConstants.ENCODER_FEEDUP_VELOCITY_CONVERSION;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
