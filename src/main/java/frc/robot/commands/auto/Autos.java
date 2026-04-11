@@ -22,12 +22,36 @@ public class Autos {
   /**
    * A helper class that tracks poses needed for manual autos. It simplifies switching between left and right sides.
    *
-   * @param intakeSimplePose The position to intake at
+   * @param intakeSimple The position to intake at
    * @param overBumpAllianceAlt The position to go over the bump
    * @param shootFromCorner The position to shoot at the hub from
    */
   public record AutoPositions(
-      Pose2d intakeSimplePose, Pose2d overBumpAllianceAlt, Pose2d shootFromCorner) {}
+      Pose2d center, Pose2d intakeSimple, Pose2d overBumpNeutral, Pose2d intakeComplexFirst, Pose2d intakeComplexSecond,
+      Pose2d intakeComplexThird, Pose2d overBumpAlliance, Pose2d overBumpAllianceAlt, Pose2d shootFromCorner) {}
+
+  private final AutoPositions poseA = new AutoPositions(
+      new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305))),
+      new Pose2d(7.7052903175354, 5.8276801109313965, Rotation2d.fromDegrees(0.0)),
+      new Pose2d(6.1, 5.574310302734375, Rotation2d.fromDegrees(0)),
+      new Pose2d(6.862, 6.877, Rotation2d.fromDegrees(-90.0)),
+      new Pose2d(7.825, 6.877, Rotation2d.fromDegrees(-90)),
+      new Pose2d(7.805, 4.461, Rotation2d.fromDegrees(-90)),
+      new Pose2d(3.0666706562042236, 5.574310302734375, Rotation2d.fromDegrees(0.0)),
+      new Pose2d(3.086160182952881, 5.437880039215088, Rotation2d.fromDegrees(0)),
+      new Pose2d(3.086160182952881, 5.437880039215088, Rotation2d.fromRadians(-0.7553977556351216))
+  );
+  private final AutoPositions poseB = new AutoPositions(
+      AllianceFlipUtil.reflectY(poseA.center),
+      AllianceFlipUtil.reflectY(poseA.intakeSimple),
+      AllianceFlipUtil.reflectY(poseA.overBumpNeutral),
+      AllianceFlipUtil.reflectY(poseA.intakeComplexFirst),
+      AllianceFlipUtil.reflectY(poseA.intakeComplexSecond),
+      AllianceFlipUtil.reflectY(poseA.intakeComplexThird),
+      AllianceFlipUtil.reflectY(poseA.overBumpAlliance),
+      AllianceFlipUtil.reflectY(poseA.overBumpAllianceAlt),
+      AllianceFlipUtil.reflectY(poseA.shootFromCorner)
+  );
 
   // Relevant subsystems for the autos
   private final Drive drive;
@@ -58,42 +82,7 @@ public class Autos {
     this.shooter = shooter;
   }
 
-  private static final Supplier<Pose2d> climb =
-      () -> new Pose2d(1.583, 3.750, new Rotation2d(Units.degreesToRadians(180.000)));
   private static final Supplier<Pose2d> center = () -> new Pose2d(3.504, 4.019, new Rotation2d(0));
-  private static final Supplier<Pose2d> CenterA =
-      () -> new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305)));
-  private static final Supplier<Pose2d> intakeSimplePoseA =
-      () -> new Pose2d(7.7052903175354, 5.8276801109313965, Rotation2d.fromDegrees(0.0));
-  private static final Supplier<Pose2d> overBumpNeutralPoseA =
-      () -> new Pose2d(6.1, 5.574310302734375, Rotation2d.fromDegrees(0));
-
-  private static final Supplier<Pose2d> intakeComplexFirstPoseA =
-      () -> new Pose2d(6.862, 6.877, Rotation2d.fromDegrees(-90.0));
-  // 6.862
-  private static final Supplier<Pose2d> intakeComplexSecondPoseA =
-      () -> new Pose2d(7.825, 6.877, Rotation2d.fromDegrees(-90));
-
-  private static final Supplier<Pose2d> intakeComplexThirdPoseA =
-      () -> new Pose2d(7.805, 4.461, Rotation2d.fromDegrees(-90));
-  private static final Supplier<Pose2d> overBumpAlliancePoseA =
-      () -> new Pose2d(3.0666706562042236, 5.574310302734375, Rotation2d.fromDegrees(0.0));
-  private static final Supplier<Pose2d> overBumpAllianceAltPoseA =
-      () -> new Pose2d(3.086160182952881, 5.437880039215088, Rotation2d.fromDegrees(0));
-  private static final Supplier<Pose2d> shootFromCornerPoseA =
-      () ->
-          new Pose2d(
-              3.086160182952881, 5.437880039215088, Rotation2d.fromRadians(-0.7553977556351216));
-  private static final Supplier<Pose2d> intakeSimplePoseB =
-      () -> new Pose2d(7.724780082702637, 2.436420202255249, Rotation2d.fromDegrees(0.0));
-  private static final Supplier<Pose2d> overBumpAlliancePoseB =
-      () -> new Pose2d(3.1251401901245117, 2.397440195083618, Rotation2d.fromDegrees(0.0));
-  private static final Supplier<Pose2d> overBumpAllianceAltPoseB =
-      () -> new Pose2d(3.1251401901245117, 2.397440195083618, Rotation2d.fromDegrees(0));
-  private static final Supplier<Pose2d> shootFromCornerPoseB =
-      () ->
-          new Pose2d(
-              3.1251401901245117, 2.397440195083618, Rotation2d.fromRadians(0.7358299996216245));
   private static final Supplier<Pose2d> depotPoseStopPoint =
       () -> new Pose2d(1.7998201847076416, 5.983600616455078, Rotation2d.fromDegrees(180));
   private static final Supplier<Pose2d> depotPose =
@@ -243,11 +232,9 @@ public class Autos {
    */
   AutoPositions getPoses(boolean isA) {
     if (isA) {
-      return new AutoPositions(
-          intakeSimplePoseA.get(), overBumpAllianceAltPoseA.get(), shootFromCornerPoseA.get());
+      return poseA;
     }
-    return new AutoPositions(
-        intakeSimplePoseB.get(), overBumpAllianceAltPoseB.get(), shootFromCornerPoseB.get());
+    return poseB;
   }
 
   /**
@@ -262,7 +249,7 @@ public class Autos {
 
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimplePose))
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimple))
                 .withTimeout(5),
             intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.overBumpAllianceAlt))
@@ -306,7 +293,7 @@ public class Autos {
 
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimplePose))
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimple))
                 .withTimeout(5),
             intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.overBumpAllianceAlt))
@@ -352,7 +339,7 @@ public class Autos {
 
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimplePose))
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimple))
                 .withTimeout(5),
             intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.overBumpAllianceAlt))
@@ -372,7 +359,7 @@ public class Autos {
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.overBumpAllianceAlt))
             .withTimeout(2),
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimplePose))
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimple))
                 .withTimeout(3.5),
             intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)));
   }
