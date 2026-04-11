@@ -142,7 +142,7 @@ public class Autos {
   }
 
   public Command ppA2CycleRightRegression() {
-    return pp2CycleRegression("A-Cycle1", "A-Cycle2", startBside);
+    return pp2CycleRegression("A-Cycle1", "A-Cycle2", startAside);
   }
 
   public Command ppBCycleRightRegression() {
