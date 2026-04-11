@@ -361,7 +361,7 @@ public class RobotContainer {
         .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
 
     //     VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
-    driverController.leftTrigger(0.2).toggleOnTrue(intakeRollers.intake());
+    driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
 
     driverController
