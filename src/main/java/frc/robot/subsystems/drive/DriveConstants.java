@@ -35,10 +35,10 @@ public class DriveConstants {
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2026_COMP -> {
-        frontLeftZeroRotation = Rotation2d.fromDegrees(-2.46);
-        frontRightZeroRotation = Rotation2d.fromDegrees(-10.63);
-        backLeftZeroRotation = Rotation2d.fromDegrees(17.11 + 180);
-        backRightZeroRotation = Rotation2d.fromDegrees(-45.27 + 180);
+        frontLeftZeroRotation = Rotation2d.fromDegrees(0);
+        frontRightZeroRotation = Rotation2d.fromDegrees(0);
+        backLeftZeroRotation = Rotation2d.fromDegrees(0);
+        backRightZeroRotation = Rotation2d.fromDegrees(0);
       }
       case ROBOT_2025_COMP -> {
         frontLeftZeroRotation = Rotation2d.fromDegrees(88.42 - 45);
@@ -103,7 +103,7 @@ public class DriveConstants {
   public static final double turnPIDMaxInput = Math.PI; // Radians
 
   // PathPlanner configuration
-  public static final double robotMassKg = 74.088;
+  public static final double robotMassKg = 51.00;
   public static final double robotMOI = 6.883;
   public static final double wheelCOF = 1.2;
   public static final RobotConfig ppConfig =
