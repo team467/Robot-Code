@@ -30,5 +30,6 @@ public class IntakeConstants {
   public static final double COLLAPSE_POS = 4.0;
   public static final double POSITION_TOLERANCE = 7;
 
-  public static final double INTAKE_INTAKE_MOTOR_CURRENT_LIMIT = 45;
+  public static final double INTAKE_EXTEND_MOTOR_CURRENT_LIMIT = 20;
+  public static final double INTAKE_ROLLERS_MOTOR_CURRENT_LIMIT = 45;
 }
