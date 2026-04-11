@@ -18,12 +18,12 @@ public class IntakeConstants {
 
   public static final int EXTEND_LIMIT_ID = 1;
 
-  public static final double PID_P = 0.023; // arbritrary values
+  public static final double PID_P = 0.0023; // arbritrary values
   public static final double PID_I = 0.000004;
   public static final double PID_D = 0.00001;
 
-  public static final double EXTEND_POS = -33; // TODO: change the actual values
-  public static final double FUNNEL_POS = -16.5;
+  public static final double EXTEND_POS = -13; // TODO: change the actual values
+  public static final double FUNNEL_POS = -7;
 
   // shake around the funnel pos by this much
   public static final double SHAKE_POS_OFFSET = 1;
