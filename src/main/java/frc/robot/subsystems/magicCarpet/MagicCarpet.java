@@ -11,11 +11,21 @@ public class MagicCarpet extends SubsystemBase {
   private final MagicCarpetIOInputsAutoLogged inputs = new MagicCarpetIOInputsAutoLogged();
   public boolean manualRun;
 
+  /**
+   * Initializes the magic carpet
+   *
+   * @param io The implementation of the hardware
+   */
   public MagicCarpet(MagicCarpetIO io) {
     this.io = io;
     this.manualRun = false;
   }
 
+  /**
+   * Runs the magic carpet at a constant speed
+   *
+   * @return A command to run the magic carpet at a constant speed
+   */
   public Command run() {
     return setManualControl(true)
         .andThen(Commands.run(() -> io.setSpeed(MagicCarpetConstants.BELT_SPEED), this))
@@ -23,6 +33,11 @@ public class MagicCarpet extends SubsystemBase {
         .withName("start");
   }
 
+  /**
+  * Control whether to run magic carpet through commands or periodic
+  *
+  * @param manual Call run manually instead of through periodic
+  */
   public Command setManualControl(boolean manual) {
     return Commands.runOnce(() -> this.manualRun = manual, this);
   }

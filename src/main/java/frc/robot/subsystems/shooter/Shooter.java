@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
@@ -7,6 +8,10 @@ import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.units.*;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.RobotState;
-import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -23,7 +28,7 @@ public class Shooter extends SubsystemBase {
   private final SysIdRoutine sysId;
 
   public boolean controllerEnabled = true;
-  private double targetRadPerSec = 0.0;
+  private AngularVelocity targetSpeed = RadiansPerSecond.of(0);
   private double rampedTarget = 0.0;
 
   // Feedforward: handles steady-state voltage (V = KS + KV * velocity)
@@ -37,6 +42,11 @@ public class Shooter extends SubsystemBase {
   // This prevents current spikes that cause oscillation with a 20A limit
   private final SlewRateLimiter targetRamper = new SlewRateLimiter(800);
 
+  /**
+   * Initializes the shooter with a Shooter IO
+   *
+   * @param io A ShooterIO implementing instance
+   */
   public Shooter(ShooterIO io) {
     this.io = io;
     sysId =
@@ -52,10 +62,11 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    RobotState.getInstance().shooterAtSpeed = isAtSetpoint() && targetRadPerSec > 0;
+    RobotState.getInstance().shooterAtSpeed =
+        isAtSetpoint() && targetSpeed.gt(RadiansPerSecond.of(0));
     if (controllerEnabled) {
       // Ramp toward the target to avoid current spikes
-      rampedTarget = targetRamper.calculate(targetRadPerSec);
+      rampedTarget = targetRamper.calculate(targetSpeed.in(RadiansPerSecond));
 
       double ff = feedforward.calculate(rampedTarget);
       double pidOutput = pid.calculate(inputs.shooterWheelVelocityRadPerSec, rampedTarget);
@@ -70,7 +81,7 @@ public class Shooter extends SubsystemBase {
       Logger.recordOutput("Shooter/PIDVoltage", pidOutput);
       Logger.recordOutput("Shooter/CommandedVoltage", voltage);
       Logger.recordOutput("Shooter/RampedTargetRadPerSec", rampedTarget);
-      Logger.recordOutput("Shooter/Setpoint", targetRadPerSec);
+      Logger.recordOutput("Shooter/Setpoint", targetSpeed.in(RadiansPerSecond));
     }
 
     Logger.processInputs("Shooter", inputs);
@@ -78,27 +89,49 @@ public class Shooter extends SubsystemBase {
     RobotState.getInstance().shooterAtSpeed = isAtSetpoint();
   }
 
+  /**
+   * Runs characterization voltage (used for FF)
+   *
+   * @param voltage The voltage to apply
+   */
   public void runCharacterization(double voltage) {
     io.setVoltage(voltage);
   }
 
+  /**
+   * Runs SysID Quasistatic for feed forward
+   *
+   * @param direction The direction to run it in
+   * @return A command that runs SysID Quasistatic
+   */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return Commands.runOnce(() -> controllerEnabled = false, this)
         .andThen(run(() -> runCharacterization(0.0)).withTimeout(1.0))
         .andThen(sysId.quasistatic(direction));
   }
 
+  /**
+   * Runs SysID Quasistatic for feed forward
+   *
+   * @param direction The direction to run it in
+   * @return A command that runs SysID Dynamic
+   */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return Commands.runOnce(() -> controllerEnabled = false, this)
         .andThen(run(() -> runCharacterization(0.0)).withTimeout(1.0))
         .andThen(sysId.dynamic(direction));
   }
 
+  /**
+   * Stop the shooter
+   *
+   * @return A command that stops the shooter
+   */
   public Command stop() {
     return Commands.runOnce(
             () -> {
               controllerEnabled = false;
-              targetRadPerSec = 0.0;
+              targetSpeed = RadiansPerSecond.of(0);
               rampedTarget = 0.0;
               targetRamper.reset(0.0);
               io.stop();
@@ -107,81 +140,100 @@ public class Shooter extends SubsystemBase {
         .withName("shooter_stop_please");
   }
 
+  /**
+   * Sets raw voltage for the shooter
+   *
+   * @param volts The volts amount to set it to (max 12)
+   * @return A Command that sets the shooter voltage
+   */
   public Command setVoltage(double volts) {
     return Commands.runOnce(() -> controllerEnabled = false, this)
         .andThen(Commands.run(() -> io.setVoltage(volts), this));
   }
 
-  public Command setTargetVelocityRPM(double rpm) {
+  /**
+   * Set the target velocity of the shooter
+   *
+   * @param velocity A supplier that returns the target velocity of the shooter
+   * @return A command that sets the target velocity of the shooter to the value returned by the
+   *     supplier
+   */
+  public Command setTargetVelocity(Supplier<AngularVelocity> velocity) {
     return Commands.run(
             () -> {
-              targetRadPerSec = ((rpm / 2 * Math.PI) * 60.0);
+              targetSpeed = velocity.get();
               controllerEnabled = true;
             },
             this)
-        .withName("setTargetVelocityRPM");
-  }
-
-  public Command setTargetVelocityRadians(double radPerSec) {
-    return Commands.run(
-            () -> {
-              targetRadPerSec = radPerSec;
-              controllerEnabled = true;
-            },
-            this)
-        .withName("setTargetVelocityRadians");
-  }
-
-  public Command setTargetVelocityRadians(DoubleSupplier radPerSec) {
-    return Commands.run(
-            () -> {
-              targetRadPerSec = radPerSec.getAsDouble();
-              controllerEnabled = true;
-            },
-            this)
-        .withName("setTargetVelocityRadians");
+        .withName("setTargetVelocity");
   }
 
   /**
-   * Continuously re-asserts shooter target while scheduled.
+   * Set the target velocity of the shooter
    *
-   * <p>Useful for toggle/manual control flows where another command may temporarily disable the
-   * shooter controller.
+   * @param velocity The target velocity of the shooter
+   * @return A command that sets the target velocity of the shooter to the specified value
    */
-  public Command setTargetVelocityRadiansRepeatedly(double radPerSec) {
+  public Command setTargetVelocity(AngularVelocity velocity) {
+    return Commands.run(
+            () -> {
+              targetSpeed = velocity;
+              controllerEnabled = true;
+            },
+            this)
+        .withName("setTargetVelocity");
+  }
+
+  public Command setTargetVelocityRepeatedly(AngularVelocity velocity) {
     return Commands.repeatingSequence(
             Commands.runOnce(
                 () -> {
-                  targetRadPerSec = radPerSec;
+                  targetSpeed = velocity;
                   controllerEnabled = true;
                 },
                 this),
             Commands.waitSeconds(0.02))
-        .withName("setTargetVelocityRadiansRepeatedly");
+        .withName("setTargetVelocityRepeatedly");
   }
 
+  /**
+   * Check if the shooter is at setpoint (+- TOLERANCE)
+   *
+   * @return A boolean asserting whether the shooter is at setpoint (true for yes)
+   */
   public boolean isAtSetpoint() {
-    return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetRadPerSec)) < TOLERANCE;
+    return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetSpeed.in(RadiansPerSecond)))
+        < TOLERANCE;
   }
 
   // TODO: empirically determine the relationship between distance and air time
-  public double getAirTimeSeconds(DoubleSupplier distance) {
-    return 0.0617 * distance.getAsDouble() + 0.872;
+  public Time getAirTimeSeconds(Distance distance) {
+    return Seconds.of(0.0617 * distance.in(Meters) + 0.872);
   }
 
   // TODO: empirically determine the relationship between distance and shooter velocity
-
-  public DoubleSupplier calculateSetpoint(DoubleSupplier distance) {
+  /**
+   * Calculates a setpoint (in radians per second) based on distance
+   *
+   * @param distance Distance
+   * @return Setpoint in radians per second
+   */
+  public Supplier<AngularVelocity> calculateSetpoint(Supplier<Distance> distance) {
     // calculate rad/s depending on distance
     return () -> {
-      double setpoint = 183.35 * distance.getAsDouble() + 750.93;
-      if (setpoint > 5000) {
-        return 5000;
-      } else return setpoint;
+      AngularVelocity velocity = RadiansPerSecond.of(183.35 * distance.get().in(Meters) + 750.93);
+      if (velocity.gt(RadiansPerSecond.of(5000))) {
+        return RadiansPerSecond.of(5000);
+      } else return velocity;
     };
   }
 
-  public double getSetpoint() {
-    return targetRadPerSec;
+  /**
+   * Get the current target velocity of the shooter
+   *
+   * @return The target velocity of the shooter
+   */
+  public AngularVelocity getSetpoint() {
+    return targetSpeed;
   }
 }

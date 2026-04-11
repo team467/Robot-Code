@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
 import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
 import static frc.robot.subsystems.vision.VisionConstants.*;
@@ -15,7 +16,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -32,8 +32,6 @@ import frc.robot.commands.auto.Autos;
 import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
@@ -75,7 +73,6 @@ public class RobotContainer {
   private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
-  private Climber climber;
   private Intake intake;
   private IntakeRollers intakeRollers;
   private IntakeExtend intakeExtend;
@@ -181,9 +178,6 @@ public class RobotContainer {
     if (indexer == null) {
       indexer = new Indexer(new IndexerIO() {});
     }
-    if (climber == null) {
-      climber = new Climber(new ClimberIO() {});
-    }
 
     orchestrator =
         new Orchestrator(
@@ -199,8 +193,7 @@ public class RobotContainer {
             .withTimeout(0.05));
     NamedCommands.registerCommand(
         "spinUp",
-        shooter.setTargetVelocityRadiansRepeatedly(
-            Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)));
+        shooter.setTargetVelocityRepeatedly(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM)));
     NamedCommands.registerCommand("feedShooter", orchestrator.feedUp());
     NamedCommands.registerCommand("bringInIntake", intake.extendToAngleAndIntake(0));
     NamedCommands.registerCommand("driveToHub", orchestrator.driveToHub());
@@ -210,16 +203,16 @@ public class RobotContainer {
         Commands.sequence(
             Commands.parallel(
                     shooter
-                        .setTargetVelocityRadiansRepeatedly(
-                            Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM))
+                        .setTargetVelocityRepeatedly(
+                            Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM))
                         .withTimeout(0.8),
                     intakeRollers.stopIntakeCommand(),
                     indexer.stop())
                 .withTimeout(0.8),
             Commands.deadline(
                 Commands.waitSeconds(3.2),
-                shooter.setTargetVelocityRadiansRepeatedly(
-                    Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)),
+                shooter.setTargetVelocityRepeatedly(
+                    Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM)),
                 orchestrator.feedUp()),
             Commands.parallel(indexer.stop().withTimeout(0.05)).withTimeout(0.05)));
     AutoBuilder.configure(
@@ -264,13 +257,12 @@ public class RobotContainer {
 
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
 
-    autoChooser.addOption("Manual A-CC", autos.ACCManuelAuto());
+    autoChooser.addOption("Manual A-CC", autos.ACCManualAuto());
     autoChooser.addOption("Manual A-CC-Improved", autos.ACCManuelAutoAlt());
-    autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManuelAutoOverBump());
-    autoChooser.addOption("Manual ADepot", autos.ADepot());
-    autoChooser.addOption("Manual B-CC", autos.BCCManuelAuto());
+    autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManualAutoOverBump());
+    autoChooser.addOption("Manual B-CC", autos.BCCManualAuto());
     autoChooser.addOption("Manual B-CC-Improved", autos.BCCManuelAutoAlt());
-    autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManuelAutoOverBump());
+    autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManualAutoOverBump());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     autoChooser.addOption("8 Ball Auto", autos.EightBalls());
 

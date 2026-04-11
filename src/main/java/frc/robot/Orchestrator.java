@@ -1,5 +1,9 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Minute;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
 
 import edu.wpi.first.math.filter.LinearFilter;
@@ -7,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -29,6 +34,7 @@ import frc.robot.util.Zone;
 import frc.robot.util.Zone.Tuple2d;
 import java.util.Map;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
@@ -167,19 +173,20 @@ public class Orchestrator {
         Rotation2d.fromDegrees(0));
   }
 
-  public DoubleSupplier getShootWhileDrivingResultDistance() {
+  public Supplier<Distance> getShootWhileDrivingResultDistance() {
     return () -> {
       var shootWhileDrivingResult =
           shooterLeadCompensator.shootWhileDriving(
               AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d()));
-      return shootWhileDrivingResult.distance();
+      return Meters.of(shootWhileDrivingResult.distance());
     };
   }
 
-  public DoubleSupplier getHubDistance() {
+  public Supplier<Distance> getHubDistance() {
     return () ->
-        AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())
-            .getDistance(drive.getPose().getTranslation());
+        Meters.of(
+            AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())
+                .getDistance(drive.getPose().getTranslation()));
   }
 
   private Rotation2d filteredHubAngle(Rotation2d raw) {
@@ -229,37 +236,30 @@ public class Orchestrator {
     return Commands.repeatingSequence(
             Commands.parallel(magicCarpet.run(), indexer.run())
                 .until(() -> !RobotState.getInstance().shooterAtSpeed))
-        .onlyIf(() -> shooter.getSetpoint() > 0)
+        .onlyIf(() -> shooter.getSetpoint().gt(RadiansPerSecond.of(0)))
         .onlyIf(() -> RobotState.getInstance().shooterAtSpeed)
-        .onlyWhile(() -> shooter.getSetpoint() > 0)
+        .onlyWhile(() -> shooter.getSetpoint().gt(RadiansPerSecond.of(0)))
         .withName("feedUp");
   }
 
   public Command spinUpShooterTest() {
     SmartDashboard.putNumber("Shooter/TestRPM", CLOSE_HUB_SHOOTER_RPM);
     return shooter
-        .setTargetVelocityRadians(
-            () ->
-                Units.rotationsPerMinuteToRadiansPerSecond(
-                    SmartDashboard.getNumber("Shooter/TestRPM", 1000.0)))
+        .setTargetVelocity(
+            () -> Rotations.per(Minute).of(SmartDashboard.getNumber("Shooter/TestRPM", 1000.0)))
         .withName("spinUpShooterTest");
   }
 
-  public Command spinUpShooterDistance(DoubleSupplier targetDistance) {
-    return shooter.setTargetVelocityRadians(
-        () ->
-            Units.rotationsPerMinuteToRadiansPerSecond(
-                shooter.calculateSetpoint(targetDistance).getAsDouble()));
+  public Command spinUpShooterDistance(Supplier<Distance> targetDistance) {
+    return shooter.setTargetVelocity(shooter.calculateSetpoint(targetDistance));
   }
 
   public Command spinUpShooterHub() {
-    return shooter.setTargetVelocityRadians(
-        Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM));
+    return shooter.setTargetVelocity(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM));
   }
 
   public Command spinUpShooter(double velocityRPM) {
-    return shooter.setTargetVelocityRadians(
-        Units.rotationsPerMinuteToRadiansPerSecond(velocityRPM));
+    return shooter.setTargetVelocity(Rotations.per(Minute).of(velocityRPM));
   }
 
   public Command driveShootAtAngle() {
@@ -280,8 +280,8 @@ public class Orchestrator {
   }
 
   public Command spinUpShooterWhileDriving() {
-    return shooter.setTargetVelocityRadians(
-        () -> shooter.calculateSetpoint(this.getShootWhileDrivingResultDistance()).getAsDouble());
+    return shooter.setTargetVelocity(
+        shooter.calculateSetpoint(this.getShootWhileDrivingResultDistance()));
   }
 
   public Command aimToHub() {
