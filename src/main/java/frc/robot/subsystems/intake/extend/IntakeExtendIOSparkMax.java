@@ -17,7 +17,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.AlternateEncoderConfig;
+import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -33,10 +33,9 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
 
   public IntakeExtendIOSparkMax() {
     extendMotor = new SparkMax(intakeExtendCanId, MotorType.kBrushless);
-    AlternateEncoderConfig extendEnc = new AlternateEncoderConfig();
+    EncoderConfig extendEnc = new EncoderConfig();
     extendEnc.positionConversionFactor(EXTEND_POSITION_CONVERSION);
     extendEnc.velocityConversionFactor(EXTEND_VELOCITY_CONVERSION);
-    extendEnc.inverted(true);
     var extendConfig = new SparkMaxConfig();
     extendConfig
         .inverted(false)
@@ -45,11 +44,11 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
         .smartCurrentLimit((int) Math.round(INTAKE_EXTEND_MOTOR_CURRENT_LIMIT))
         .closedLoop
         .pid(PID_P, PID_I, PID_D)
-        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder);
-    extendConfig.alternateEncoder.apply(extendEnc);
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+    extendConfig.encoder.apply(extendEnc);
 
     pidController = extendMotor.getClosedLoopController();
-    extendMotorEncoder = extendMotor.getAlternateEncoder();
+    extendMotorEncoder = extendMotor.getEncoder();
 
     extendMotor.configure(
         extendConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -62,7 +61,7 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
     inputs.extendVelocity = extendMotorEncoder.getVelocity();
     inputs.extendVolts = extendMotor.getAppliedOutput();
     inputs.extendAmps = extendMotor.getOutputCurrent();
-    inputs.isCollapsed = collapsedLimitSwitch.get();
+    inputs.isCollapsed = false;
     inputs.getExtendPos = extendMotorEncoder.getPosition();
     inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint() && usingPID;
     inputs.hasSetpoint = usingPID;
