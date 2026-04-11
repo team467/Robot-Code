@@ -26,47 +26,35 @@ public class VisionConstants {
   public static Transform3d robotToCamera0 =
       new Transform3d( // front camera
           new Translation3d(
-                  Units.inchesToMeters(8.779),
-                  Units.inchesToMeters(10.445),
-                  Units.inchesToMeters(27.152 + 1.75))
+                  Units.inchesToMeters(-8.931),
+                  Units.inchesToMeters(12.349),
+                  Units.inchesToMeters(15.2025))
               .rotateBy(RotationCorrection),
           new Rotation3d(
               Units.degreesToRadians(0.0),
-              Units.degreesToRadians(-25.2),
-              Units.degreesToRadians(0.0)));
+              Units.degreesToRadians(0.0),
+              Units.degreesToRadians(-158.771)));
   public static Transform3d robotToCamera1 =
       new Transform3d( // rear left camera
           new Translation3d(
-                  Units.inchesToMeters(9.562), // x
-                  Units.inchesToMeters(10.974), // y
-                  Units.inchesToMeters(17.035 + 1.75)) // z
+                  Units.inchesToMeters(8.931), // x
+                  Units.inchesToMeters(12.349), // y
+                  Units.inchesToMeters(15.2025)) // z
               .rotateBy(RotationCorrection),
           new Rotation3d(
               Units.degreesToRadians(0.0),
-              Units.degreesToRadians(-11.32),
-              Units.degreesToRadians(155.3)));
+              Units.degreesToRadians(0.0),
+              Units.degreesToRadians(-201.229)));
 
   public static Transform3d robotToCamera2 =
       new Transform3d( // rear right camera
           new Translation3d(
-                  Units.inchesToMeters(-9.562),
-                  Units.inchesToMeters(10.974),
-                  Units.inchesToMeters(17.035 + 1.75))
+                  Units.inchesToMeters(11.425),
+                  Units.inchesToMeters(-2.361),
+                  Units.inchesToMeters(20.5805))
               .rotateBy(RotationCorrection),
           new Rotation3d(
-              Units.degreesToRadians(0),
-              Units.degreesToRadians(-11.32),
-              Units.degreesToRadians(-155.3)));
-
-  public static Transform3d robotToCamera3 =
-      new Transform3d( // left camera
-          new Translation3d(
-                  Units.inchesToMeters(9.669),
-                  Units.inchesToMeters(10.961),
-                  Units.inchesToMeters(24.656 + 1.75))
-              .rotateBy(RotationCorrection),
-          new Rotation3d(
-              Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(75)));
+              Units.degreesToRadians(0), Units.degreesToRadians(-30), Units.degreesToRadians(0)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -85,6 +73,5 @@ public class VisionConstants {
         1.0, // Camera 0
         1.0, // Camera 1
         1.0, // CAMERA 2
-        1.0 // Camera 3
       };
 }
