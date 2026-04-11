@@ -101,10 +101,10 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 21;
 
         // Shooter (CAN Ids)
-        shooterTopLeftMotorCanId = 11;
-        shooterTopRightMotorCanId = 12;
-        shooterBottomLeftMotorCanId = 13;
-        shooterBottomRightMotorCanId = 14;
+        shooterTopLeftMotorCanId = 33;
+        shooterTopRightMotorCanId = 35;
+        shooterBottomLeftMotorCanId = 34;
+        shooterBottomRightMotorCanId = 36;
 
         // Hopper (CAN Ids)
         magicCarpetCanId = 15;
