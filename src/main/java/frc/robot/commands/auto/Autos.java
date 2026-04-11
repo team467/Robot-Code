@@ -85,41 +85,6 @@ public class Autos {
   private static final Supplier<Pose2d> startBside =
       () -> AllianceFlipUtil.apply(new Pose2d(3.645, 2.516, new Rotation2d(0.000)));
 
-  public Command CenterA() {
-    return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(AllianceFlipUtil.apply(CenterA.get()))),
-        drive.getAutonomousCommand("CA-out-intake"),
-        new StraightDriveToPose(climb.get(), drive).withTimeout(2.0));
-  }
-
-  public Command testPath() {
-    return Commands.sequence(
-        Commands.runOnce(
-            () ->
-                drive.setPose(
-                    AllianceFlipUtil.apply(
-                        new Pose2d(3.213, 5.600, new Rotation2d(Units.degreesToRadians(0)))))),
-        drive.getAutonomousCommand("test path"));
-  }
-
-  public Command Bummmmpar() {
-    return Commands.sequence(
-        Commands.runOnce(
-            () ->
-                drive.setPose(
-                    AllianceFlipUtil.apply(
-                        new Pose2d(3.213, 5.600, new Rotation2d(Units.degreesToRadians(0)))))),
-        new DriveToPose(
-            drive,
-            () -> AllianceFlipUtil.apply(new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(0)))),
-        new DriveToPose(
-            drive,
-            () -> AllianceFlipUtil.apply(new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(0)))),
-        new DriveToPose(
-            drive,
-            () -> AllianceFlipUtil.apply(new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(0)))));
-  }
-
   // Helper functions that extract common code for pathplanner atuos
   private Command ppCycle(String path, Supplier<Pose2d> startPose) {
     return Commands.sequence(
