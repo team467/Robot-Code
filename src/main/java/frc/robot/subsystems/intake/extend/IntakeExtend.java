@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.RobotState.IntakePosition;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeExtend extends SubsystemBase {
@@ -63,6 +64,10 @@ public class IntakeExtend extends SubsystemBase {
 
   public boolean isHopperCollapsed() {
     return io.isCollapsed();
+  }
+
+  public DoubleSupplier getAngle(){
+    return () -> inputs.getExtendPos;
   }
 
   private boolean isStallingExtend() {

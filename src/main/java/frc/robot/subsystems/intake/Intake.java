@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
+import java.util.function.DoubleSupplier;
 
 public class Intake {
   private final IntakeRollers rollers;
@@ -31,7 +32,9 @@ public class Intake {
   }
 
   // Jack's Chugga Chugga mode
-
+  public Command runIntakeMotor(){
+    return rollers.intake().onlyWhile(() -> extend.getAngle().getAsDouble() < COLLAPSE_POS + SAFETY_TOLERANCE);
+  }
   public Command shakeAndIntake() {
     return Commands.repeatingSequence(
             Commands.deadline(

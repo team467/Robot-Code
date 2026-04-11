@@ -28,6 +28,7 @@ public class IntakeConstants {
   // shake around the funnel pos by this much
   public static final double SHAKE_POS_OFFSET = 1;
   public static final double COLLAPSE_POS = 4.0;
+  public static final double SAFETY_TOLERANCE = 2;
   public static final double POSITION_TOLERANCE = 7;
 
   public static final double INTAKE_EXTEND_MOTOR_CURRENT_LIMIT = 20;
