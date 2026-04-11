@@ -204,7 +204,8 @@ public class RobotContainer {
         Commands.sequence(
             Commands.parallel(
                     shooter
-                        .setTargetVelocityRepeatedly(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM))
+                        .setTargetVelocityRepeatedly(
+                            Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM))
                         .withTimeout(0.8),
                     intakeRollers.stopIntakeCommand(),
                     magicCarpet.stop(),
@@ -212,7 +213,8 @@ public class RobotContainer {
                 .withTimeout(0.8),
             Commands.deadline(
                 Commands.waitSeconds(3.2),
-                shooter.setTargetVelocityRepeatedly(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM)),
+                shooter.setTargetVelocityRepeatedly(
+                    Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM)),
                 orchestrator.feedUp()),
             Commands.parallel(
                     magicCarpet.stop().withTimeout(0.05), indexer.stop().withTimeout(0.05))

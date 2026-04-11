@@ -184,8 +184,9 @@ public class Orchestrator {
 
   public Supplier<Distance> getHubDistance() {
     return () ->
-        Meters.of(AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())
-            .getDistance(drive.getPose().getTranslation()));
+        Meters.of(
+            AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())
+                .getDistance(drive.getPose().getTranslation()));
   }
 
   private Rotation2d filteredHubAngle(Rotation2d raw) {
@@ -245,25 +246,20 @@ public class Orchestrator {
     SmartDashboard.putNumber("Shooter/TestRPM", CLOSE_HUB_SHOOTER_RPM);
     return shooter
         .setTargetVelocity(
-            () ->
-                Rotations.per(Minute).of(
-                    SmartDashboard.getNumber("Shooter/TestRPM", 1000.0)))
+            () -> Rotations.per(Minute).of(SmartDashboard.getNumber("Shooter/TestRPM", 1000.0)))
         .withName("spinUpShooterTest");
   }
 
   public Command spinUpShooterDistance(Supplier<Distance> targetDistance) {
-    return shooter.setTargetVelocity(
-        shooter.calculateSetpoint(targetDistance.get()));
+    return shooter.setTargetVelocity(shooter.calculateSetpoint(targetDistance.get()));
   }
 
   public Command spinUpShooterHub() {
-    return shooter.setTargetVelocity(
-        Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM));
+    return shooter.setTargetVelocity(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM));
   }
 
   public Command spinUpShooter(double velocityRPM) {
-    return shooter.setTargetVelocity(
-        Rotations.per(Minute).of(velocityRPM));
+    return shooter.setTargetVelocity(Rotations.per(Minute).of(velocityRPM));
   }
 
   public Command driveShootAtAngle() {
