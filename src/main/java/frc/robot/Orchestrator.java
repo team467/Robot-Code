@@ -32,6 +32,11 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Orchestrator {
+  private final Pose2d BBumpClosePose =
+      new Pose2d(4.415811061859131, 5.599213600158691, new Rotation2d());
+  private final Pose2d BBumpFarPose =
+      new Pose2d(11.334761619567871, 5.599213600158691, new Rotation2d());
+
   public enum ZoneId {
     NONE,
     ZONE_1,
@@ -133,43 +138,22 @@ public class Orchestrator {
 
     return new SelectCommand<>(
         Map.ofEntries(
-            Map.entry(
-                ZoneId.ZONE_1,
-                new RotateToOrientation(
-                    drive,
-                    () ->
-                        AllianceFlipUtil.apply(
-                            new Pose2d(4.621539115905762, 4.040013313293457, new Rotation2d())))),
+            Map.entry(ZoneId.ZONE_1, aimToHub()),
             Map.entry(
                 ZoneId.ZONE_2,
                 new ConditionalCommand(
+                    new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpClosePose)),
                     new RotateToOrientation(
                         drive,
-                        () ->
-                            AllianceFlipUtil.apply(
-                                new Pose2d(
-                                    4.415811061859131, 5.599213600158691, new Rotation2d()))),
-                    new RotateToOrientation(
-                        drive,
-                        () ->
-                            AllianceFlipUtil.apply(
-                                new Pose2d(
-                                    4.415811061859131, 2.534952402114868, new Rotation2d()))),
-                    () -> allianceY.getAsDouble() > 4.029185771942139)),
+                        () -> AllianceFlipUtil.apply(AllianceFlipUtil.ReflectY(BBumpClosePose))),
+                    () -> allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)),
             Map.entry(
                 ZoneId.ZONE_3,
-                new RotateToOrientation(
-                    drive,
-                    () ->
-                        AllianceFlipUtil.apply(
-                            new Pose2d(11.334761619567871, 5.599213600158691, new Rotation2d())))),
+                new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpFarPose))),
             Map.entry(
                 ZoneId.ZONE_4,
                 new RotateToOrientation(
-                    drive,
-                    () ->
-                        AllianceFlipUtil.apply(
-                            new Pose2d(11.334761619567871, 2.534952402114868, new Rotation2d()))))),
+                    drive, () -> AllianceFlipUtil.apply(AllianceFlipUtil.ReflectY(BBumpFarPose))))),
         this::getCurrentZone);
   }
 

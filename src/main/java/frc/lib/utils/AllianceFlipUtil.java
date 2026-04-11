@@ -27,6 +27,13 @@ public class AllianceFlipUtil {
     return shouldFlip() ? FieldConstants.fieldWidth - y : y;
   }
 
+  public static Pose2d ReflectY(Pose2d pose) {
+    return new Pose2d(
+        pose.getX(),
+        FieldConstants.fieldWidth - pose.getY(),
+        Rotation2d.kZero.minus(pose.getRotation()));
+  }
+
   /** Flips a translation to the correct side of the field based on the current alliance color. */
   public static Translation2d apply(Translation2d translation) {
     return new Translation2d(applyX(translation.getX()), applyY(translation.getY()));
