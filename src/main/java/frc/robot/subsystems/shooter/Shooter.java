@@ -75,6 +75,7 @@ public class Shooter extends SubsystemBase {
 
     Logger.processInputs("Shooter", inputs);
     Logger.recordOutput("Shooter/AtSetpoint", isAtSetpoint());
+    RobotState.getInstance().shooterAtSpeed = isAtSetpoint();
   }
 
   public void runCharacterization(double voltage) {
@@ -107,9 +108,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command setVoltage(double volts) {
-    return Commands.sequence(
-        Commands.runOnce(() -> controllerEnabled = false, this),
-        Commands.run(() -> io.setVoltage(volts), this));
+    return Commands.runOnce(() -> controllerEnabled = false, this)
+        .andThen(Commands.run(() -> io.setVoltage(volts), this));
   }
 
   public Command setTargetVelocityRPM(double rpm) {
