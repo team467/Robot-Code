@@ -211,7 +211,7 @@ public class Autos {
     return Commands.sequence(
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0))).withTimeout(5),
-            intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)),
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1))).withTimeout(5),
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
@@ -225,7 +225,7 @@ public class Autos {
     return Commands.sequence(
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0))).withTimeout(5),
-            intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)),
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1))).withTimeout(3.5),
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
@@ -243,7 +243,7 @@ public class Autos {
     return Commands.sequence(
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0))).withTimeout(5),
-            intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)),
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1))).withTimeout(3.5),
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
@@ -259,7 +259,7 @@ public class Autos {
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1))).withTimeout(2),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0))).withTimeout(3.5),
-            intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)));
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)));
   }
 
   // Manual autos using the helper functions
