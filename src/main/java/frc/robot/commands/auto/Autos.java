@@ -14,47 +14,54 @@ import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.shooter.Shooter;
 import java.util.function.Supplier;
 
-/**
- * Contains all autos
- */
+/** Contains all autos */
 public class Autos {
 
   /**
-   * A helper class that tracks poses needed for manual autos. It simplifies switching between left and right sides.
+   * A helper class that tracks poses needed for manual autos. It simplifies switching between left
+   * and right sides.
    *
    * @param intakeSimple The position to intake at
    * @param overBumpAllianceAlt The position to go over the bump
    * @param shootFromCorner The position to shoot at the hub from
    */
   public record AutoPositions(
-      Pose2d center, Pose2d intakeSimple, Pose2d overBumpNeutral, Pose2d intakeComplexFirst, Pose2d intakeComplexSecond,
-      Pose2d intakeComplexThird, Pose2d overBumpAlliance, Pose2d overBumpAllianceAlt, Pose2d shootFromCorner) {}
+      Pose2d center,
+      Pose2d intakeSimple,
+      Pose2d overBumpNeutral,
+      Pose2d intakeComplexFirst,
+      Pose2d intakeComplexSecond,
+      Pose2d intakeComplexThird,
+      Pose2d overBumpAlliance,
+      Pose2d overBumpAllianceAlt,
+      Pose2d shootFromCorner) {}
 
   // The necessary poses for autos on left side
-  private final AutoPositions poseA = new AutoPositions(
-      new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305))),
-      new Pose2d(7.7052903175354, 5.8276801109313965, Rotation2d.fromDegrees(0.0)),
-      new Pose2d(6.1, 5.574310302734375, Rotation2d.fromDegrees(0)),
-      new Pose2d(6.862, 6.877, Rotation2d.fromDegrees(-90.0)),
-      new Pose2d(7.825, 6.877, Rotation2d.fromDegrees(-90)),
-      new Pose2d(7.805, 4.461, Rotation2d.fromDegrees(-90)),
-      new Pose2d(3.0666706562042236, 5.574310302734375, Rotation2d.fromDegrees(0.0)),
-      new Pose2d(3.086160182952881, 5.437880039215088, Rotation2d.fromDegrees(0)),
-      new Pose2d(3.086160182952881, 5.437880039215088, Rotation2d.fromRadians(-0.7553977556351216))
-  );
+  private final AutoPositions poseA =
+      new AutoPositions(
+          new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305))),
+          new Pose2d(7.7052903175354, 5.8276801109313965, Rotation2d.fromDegrees(0.0)),
+          new Pose2d(6.1, 5.574310302734375, Rotation2d.fromDegrees(0)),
+          new Pose2d(6.862, 6.877, Rotation2d.fromDegrees(-90.0)),
+          new Pose2d(7.825, 6.877, Rotation2d.fromDegrees(-90)),
+          new Pose2d(7.805, 4.461, Rotation2d.fromDegrees(-90)),
+          new Pose2d(3.0666706562042236, 5.574310302734375, Rotation2d.fromDegrees(0.0)),
+          new Pose2d(3.086160182952881, 5.437880039215088, Rotation2d.fromDegrees(0)),
+          new Pose2d(
+              3.086160182952881, 5.437880039215088, Rotation2d.fromRadians(-0.7553977556351216)));
 
   // The necessary poses for autos on right side
-  private final AutoPositions poseB = new AutoPositions(
-      AllianceFlipUtil.reflectY(poseA.center),
-      AllianceFlipUtil.reflectY(poseA.intakeSimple),
-      AllianceFlipUtil.reflectY(poseA.overBumpNeutral),
-      AllianceFlipUtil.reflectY(poseA.intakeComplexFirst),
-      AllianceFlipUtil.reflectY(poseA.intakeComplexSecond),
-      AllianceFlipUtil.reflectY(poseA.intakeComplexThird),
-      AllianceFlipUtil.reflectY(poseA.overBumpAlliance),
-      AllianceFlipUtil.reflectY(poseA.overBumpAllianceAlt),
-      AllianceFlipUtil.reflectY(poseA.shootFromCorner)
-  );
+  private final AutoPositions poseB =
+      new AutoPositions(
+          AllianceFlipUtil.reflectY(poseA.center),
+          AllianceFlipUtil.reflectY(poseA.intakeSimple),
+          AllianceFlipUtil.reflectY(poseA.overBumpNeutral),
+          AllianceFlipUtil.reflectY(poseA.intakeComplexFirst),
+          AllianceFlipUtil.reflectY(poseA.intakeComplexSecond),
+          AllianceFlipUtil.reflectY(poseA.intakeComplexThird),
+          AllianceFlipUtil.reflectY(poseA.overBumpAlliance),
+          AllianceFlipUtil.reflectY(poseA.overBumpAllianceAlt),
+          AllianceFlipUtil.reflectY(poseA.shootFromCorner));
 
   // Relevant subsystems for the autos
   private final Drive drive;
@@ -252,8 +259,7 @@ public class Autos {
 
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimple))
-                .withTimeout(5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimple)).withTimeout(5),
             intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.overBumpAllianceAlt))
             .withTimeout(5),
@@ -267,7 +273,8 @@ public class Autos {
   }
 
   /**
-   * Left side straight drive to pose auto that does one cycle with support for any shooting distance
+   * Left side straight drive to pose auto that does one cycle with support for any shooting
+   * distance
    *
    * @return A command that calls the auto
    */
@@ -276,7 +283,8 @@ public class Autos {
   }
 
   /**
-   * Right side straight drive to pose auto that does one cycle with support for any shooting distance
+   * Right side straight drive to pose auto that does one cycle with support for any shooting
+   * distance
    *
    * @return A command that calls the auto
    */
@@ -296,8 +304,7 @@ public class Autos {
 
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimple))
-                .withTimeout(5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimple)).withTimeout(5),
             intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.overBumpAllianceAlt))
             .withTimeout(3.5),
@@ -314,7 +321,7 @@ public class Autos {
 
   /**
    * Left side straight drive to pose auto that does one cycle with fixed shooting distance
-   * 
+   *
    * @return A command that calls the auto
    */
   public Command ACCManuelAutoAlt() {
@@ -323,7 +330,7 @@ public class Autos {
 
   /**
    * Right side straight drive to pose auto that does one cycle with fixed shooting distance
-   * 
+   *
    * @return A command that calls the auto
    */
   public Command BCCManuelAutoAlt() {
@@ -342,8 +349,7 @@ public class Autos {
 
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimple))
-                .withTimeout(5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.intakeSimple)).withTimeout(5),
             intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.overBumpAllianceAlt))
             .withTimeout(3.5),
@@ -368,7 +374,8 @@ public class Autos {
   }
 
   /**
-   * Left side straight drive to pose auto that does one cycle with fixed shooting distance and then goes back to pick up more balls from the center.
+   * Left side straight drive to pose auto that does one cycle with fixed shooting distance and then
+   * goes back to pick up more balls from the center.
    *
    * @return A command that cals the auto
    */
@@ -377,7 +384,8 @@ public class Autos {
   }
 
   /**
-   * Right side straight drive to pose auto that does one cycle with fixed shooting distance and then goes back to pick up more balls from the center.
+   * Right side straight drive to pose auto that does one cycle with fixed shooting distance and
+   * then goes back to pick up more balls from the center.
    *
    * @return A command that cals the auto
    */
@@ -387,7 +395,7 @@ public class Autos {
 
   /**
    * Center auto that shoots the 8 balls we preload with and nothing else
-   * 
+   *
    * @return A command that calls the auto
    */
   public Command EightBalls() {

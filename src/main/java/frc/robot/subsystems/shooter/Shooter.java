@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
@@ -7,10 +8,10 @@ import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import static edu.wpi.first.units.Units.*;
-
+import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,10 +19,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.RobotState;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.units.*;
 
 public class Shooter extends SubsystemBase {
   private final ShooterIO io;
@@ -63,7 +62,8 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    RobotState.getInstance().shooterAtSpeed = isAtSetpoint() && targetSpeed.gt(RadiansPerSecond.of(0));
+    RobotState.getInstance().shooterAtSpeed =
+        isAtSetpoint() && targetSpeed.gt(RadiansPerSecond.of(0));
     if (controllerEnabled) {
       // Ramp toward the target to avoid current spikes
       rampedTarget = targetRamper.calculate(targetSpeed.in(RadiansPerSecond));
@@ -155,10 +155,17 @@ public class Shooter extends SubsystemBase {
    * Set the target velocity of the shooter
    *
    * @param velocity A supplier that returns the target velocity of the shooter
-   * @return A command that sets the target velocity of the shooter to the value returned by the supplier
+   * @return A command that sets the target velocity of the shooter to the value returned by the
+   *     supplier
    */
   public Command setTargetVelocity(Supplier<AngularVelocity> velocity) {
-    return Commands.run(() -> {targetSpeed = velocity.get(); controllerEnabled=true;}, this).withName("setTargetVelocity");
+    return Commands.run(
+            () -> {
+              targetSpeed = velocity.get();
+              controllerEnabled = true;
+            },
+            this)
+        .withName("setTargetVelocity");
   }
 
   /**
@@ -168,18 +175,25 @@ public class Shooter extends SubsystemBase {
    * @return A command that sets the target velocity of the shooter to the specified value
    */
   public Command setTargetVelocity(AngularVelocity velocity) {
-    return Commands.run(() -> {targetSpeed = velocity; controllerEnabled=true;}, this).withName("setTargetVelocity");
+    return Commands.run(
+            () -> {
+              targetSpeed = velocity;
+              controllerEnabled = true;
+            },
+            this)
+        .withName("setTargetVelocity");
   }
 
   public Command setTargetVelocityRepeatedly(AngularVelocity velocity) {
     return Commands.repeatingSequence(
-        Commands.runOnce(
-            () -> {
-              targetSpeed = velocity;
-              controllerEnabled = true;
-            }, this
-        ), Commands.waitSeconds(0.2)
-    ).withName("setTargetVelocityRepeatedly");
+            Commands.runOnce(
+                () -> {
+                  targetSpeed = velocity;
+                  controllerEnabled = true;
+                },
+                this),
+            Commands.waitSeconds(0.2))
+        .withName("setTargetVelocityRepeatedly");
   }
 
   /**
@@ -188,30 +202,37 @@ public class Shooter extends SubsystemBase {
    * @return A boolean asserting whether the shooter is at setpoint (true for yes)
    */
   public boolean isAtSetpoint() {
-    return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetSpeed.in(RadiansPerSecond))) < TOLERANCE;
+    return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetSpeed.in(RadiansPerSecond)))
+        < TOLERANCE;
   }
 
   // TODO: empirically determine the relationship between distance and air time
-  public double getAirTimeSeconds(Distance distance) {
-    return 0.0617 * distance.in(Meters) + 0.872;
+  public Time getAirTimeSeconds(Distance distance) {
+    return Seconds.of(0.0617 * distance.in(Meters) + 0.872);
   }
 
   // TODO: empirically determine the relationship between distance and shooter velocity
   /**
    * Calculates a setpoint (in radians per second) based on distance
+   *
    * @param distance Distance
    * @return Setpoint in radians per second
    */
-  public DoubleSupplier calculateSetpoint(Distance distance) {
+  public Supplier<AngularVelocity> calculateSetpoint(Distance distance) {
     // calculate rad/s depending on distance
     return () -> {
-      double setpoint = 183.35 * distance.in(Meters) + 750.93;
-      if (setpoint > 5000) {
-        return 5000;
-      } else return setpoint;
+      AngularVelocity velocity = RadiansPerSecond.of(183.35 * distance.in(Meters) + 750.93);
+      if (velocity.gt(RadiansPerSecond.of(5000))) {
+        return RadiansPerSecond.of(5000);
+      } else return velocity;
     };
   }
 
+  /**
+   * Get the current target velocity of the shooter
+   *
+   * @return The target velocity of the shooter
+   */
   public AngularVelocity getSetpoint() {
     return targetSpeed;
   }
