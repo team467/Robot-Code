@@ -1,15 +1,13 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.intake.extend;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface IntakeIO {
+public interface IntakeExtendIO {
+
   @AutoLog
-  class IntakeIOInputs {
-    public double intakePercentOutput = 0.0;
+  class IntakeExtendIOInputs {
     public double extendPercentOutput = 0.0;
-    public double intakeVolts = 0.0;
     public double extendVolts = 0.0;
-    public double intakeAmps = 0.0;
     public double extendVelocity = 0.0;
     public double extendAmps = 0.0;
     public boolean isCollapsed = false;
@@ -22,15 +20,12 @@ public interface IntakeIO {
     public boolean stalledCollapsed = false;
     public double stallExtendTimer = 0.0;
     public double stallCollapseTimer = 0.0;
+    public boolean stowed = false;
   }
 
-  default void updateInputs(IntakeIOInputs inputs) {}
-
-  default void setPercentIntake(double intakePercent) {}
+  default void updateInputs(IntakeExtendIOInputs inputs) {}
 
   default void setPercentExtend(double extendPercent) {}
-
-  default void setVoltageIntake(double intakeVolts) {}
 
   default void setVoltageExtend(double extendVolts) {}
 

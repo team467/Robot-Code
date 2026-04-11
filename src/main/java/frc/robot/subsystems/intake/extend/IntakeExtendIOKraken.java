@@ -1,20 +1,15 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.intake.extend;
 
-import static frc.lib.utils.PhoenixUtil.tryUntilOk;
 import static frc.robot.Schematic.intakeExtendCanId;
-import static frc.robot.Schematic.intakeMotorCanId;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_LIMIT_ID;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POSITION_CONVERSION;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_VELOCITY_CONVERSION;
-import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_INTAKE_MOTOR_CURRENT_LIMIT;
+import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_EXTEND_MOTOR_CURRENT_LIMIT;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
@@ -27,13 +22,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class IntakeIOKraken implements IntakeIO {
-
-  private final TalonFX intakeMotor;
+public class IntakeExtendIOKraken implements IntakeExtendIO {
   private final SparkMax extendMotor;
   private final DigitalInput collapsedLimitSwitch;
   private final RelativeEncoder extendMotorEncoder;
@@ -41,17 +32,13 @@ public class IntakeIOKraken implements IntakeIO {
   private double setPos = 0;
   private boolean usingPID = false;
 
-  private final StatusSignal<Voltage> intakeAppliedVolts;
-  private final StatusSignal<Current> intakeCurrent;
-
-  public IntakeIOKraken() {
-    intakeMotor = new TalonFX(intakeMotorCanId);
+  public IntakeExtendIOKraken() {
     extendMotor = new SparkMax(intakeExtendCanId, MotorType.kBrushless);
 
     var intakeConfig = new TalonFXConfiguration();
-    intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     intakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    intakeConfig.CurrentLimits.StatorCurrentLimit = INTAKE_INTAKE_MOTOR_CURRENT_LIMIT;
+    intakeConfig.CurrentLimits.StatorCurrentLimit = INTAKE_EXTEND_MOTOR_CURRENT_LIMIT;
     intakeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     var extendConfig = new SparkMaxConfig();
@@ -62,13 +49,6 @@ public class IntakeIOKraken implements IntakeIO {
         .smartCurrentLimit(30)
         .closedLoop
         .pid(PID_P, PID_I, PID_D);
-
-    tryUntilOk(5, () -> intakeMotor.getConfigurator().apply(intakeConfig));
-
-    intakeAppliedVolts = intakeMotor.getMotorVoltage();
-    intakeCurrent = intakeMotor.getStatorCurrent();
-
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0, intakeAppliedVolts, intakeCurrent);
 
     EncoderConfig extendEnc = new EncoderConfig();
     extendEnc.positionConversionFactor(EXTEND_POSITION_CONVERSION);
@@ -84,14 +64,10 @@ public class IntakeIOKraken implements IntakeIO {
   }
 
   @Override
-  public void updateInputs(IntakeIOInputs inputs) {
-    BaseStatusSignal.refreshAll(intakeAppliedVolts, intakeCurrent);
-
+  public void updateInputs(IntakeExtendIOInputs inputs) {
     inputs.extendPercentOutput = extendMotor.get();
     inputs.extendVelocity = extendMotorEncoder.getVelocity();
-    inputs.intakeVolts = intakeAppliedVolts.getValueAsDouble();
     inputs.extendVolts = extendMotor.getAppliedOutput();
-    inputs.intakeAmps = intakeCurrent.getValueAsDouble();
     inputs.extendAmps = extendMotor.getOutputCurrent();
     inputs.isCollapsed = !collapsedLimitSwitch.get();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
@@ -106,18 +82,8 @@ public class IntakeIOKraken implements IntakeIO {
   }
 
   @Override
-  public void setPercentIntake(double intakePercent) {
-    intakeMotor.set(intakePercent);
-  }
-
-  @Override
   public void setPercentExtend(double extendPercent) {
     extendMotor.set(extendPercent);
-  }
-
-  @Override
-  public void setVoltageIntake(double intakeVolts) {
-    intakeMotor.setVoltage(intakeVolts);
   }
 
   @Override
