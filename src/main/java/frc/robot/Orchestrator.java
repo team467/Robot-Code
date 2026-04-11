@@ -243,6 +243,7 @@ public class Orchestrator {
             Commands.parallel(magicCarpet.run(), indexer.run())
                 .until(() -> !RobotState.getInstance().shooterAtSpeed))
         .onlyIf(() -> shooter.getSetpoint() > 0)
+        .onlyIf(() -> RobotState.getInstance().shooterAtSpeed)
         .onlyWhile(() -> shooter.getSetpoint() > 0)
         .withName("feedUp");
   }
