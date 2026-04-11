@@ -149,6 +149,81 @@ public class Autos {
             orchestrator.feedUp()));
   }
 
+  public Command ppB2CycleRightRegression() {
+    return Commands.sequence(
+        Commands.runOnce(() -> drive.setPose(startBside.get())),
+        Commands.deadline(
+                drive.getAutonomousCommand("B-Cycle1"),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+            .withTimeout(14.5),
+        Commands.deadline(
+            orchestrator.aimToHub().withTimeout(2.5),
+            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+        Commands.parallel(
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                orchestrator.feedUp())
+            .withTimeout(2.5),
+        Commands.parallel(
+            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+            orchestrator.feedUp()))
+        .withTimeout(2.5)
+        .andThen(Commands.sequence(
+            Commands.runOnce(() -> drive.setPose(startBside.get())),
+            Commands.deadline(
+                    drive.getAutonomousCommand("B-Cycle2"),
+                    intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+                .withTimeout(14.5),
+            Commands.deadline(
+                orchestrator.aimToHub().withTimeout(2.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+            Commands.parallel(
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                    orchestrator.feedUp())
+                .withTimeout(2.5),
+            Commands.parallel(
+                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                orchestrator.feedUp())));
+  }
+  public Command ppA2CycleRightRegression() {
+    return Commands.sequence(
+            Commands.runOnce(() -> drive.setPose(startBside.get())),
+            Commands.deadline(
+                    drive.getAutonomousCommand("A-Cycle1"),
+                    intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+                .withTimeout(14.5),
+            Commands.deadline(
+                orchestrator.aimToHub().withTimeout(2.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+            Commands.parallel(
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                    orchestrator.feedUp())
+                .withTimeout(2.5),
+            Commands.parallel(
+                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                orchestrator.feedUp()))
+        .withTimeout(2.5)
+        .andThen(Commands.sequence(
+            Commands.runOnce(() -> drive.setPose(startBside.get())),
+            Commands.deadline(
+                    drive.getAutonomousCommand("A-Cycle2"),
+                    intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+                .withTimeout(14.5),
+            Commands.deadline(
+                orchestrator.aimToHub().withTimeout(2.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+            Commands.parallel(
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                    orchestrator.feedUp())
+                .withTimeout(2.5),
+            Commands.parallel(
+                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                orchestrator.feedUp())));
+  }
+
   public Command ppBCycleRightRegression() {
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(startBside.get())),
