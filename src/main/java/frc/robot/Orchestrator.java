@@ -133,7 +133,7 @@ public class Orchestrator {
     return ZoneId.NONE;
   }
 
-  public Command executeCurrentZoneLogic() {
+  public Command zoneBasedAim() {
     DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
 
     return new SelectCommand<>(
@@ -155,15 +155,6 @@ public class Orchestrator {
                 new RotateToOrientation(
                     drive, () -> AllianceFlipUtil.apply(AllianceFlipUtil.ReflectY(BBumpFarPose))))),
         this::getCurrentZone);
-  }
-
-  public Command zoneBasedShoot() {
-    return Commands.deadline(
-            executeCurrentZoneLogic(),
-            feedUp(),
-            Commands.run(
-                () -> Logger.recordOutput("Orchestrator/CurrentZone", getCurrentZone().name())))
-        .withName("zoneBasedShoot");
   }
 
   public Pose2d getShootWhileDrivingResultPose() {
