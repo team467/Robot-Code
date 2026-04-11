@@ -85,7 +85,13 @@ public class Autos {
   private static final Supplier<Pose2d> startBside =
       () -> AllianceFlipUtil.apply(new Pose2d(3.645, 2.516, new Rotation2d(0.000)));
 
-  // Helper functions that extract common code for pathplanner atuos
+  /**
+   * Helper function for a single cycle auto with a constant shooting speed
+   *
+   * @param path The pathplanner path file name to use
+   * @param startPose A supplier that returns that starting position of the robot for this path
+   * @return A command that follows the path and shoots
+   */
   private Command ppCycle(String path, Supplier<Pose2d> startPose) {
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(startPose.get())),
@@ -102,6 +108,13 @@ public class Autos {
             orchestrator.feedUp()));
   }
 
+  /**
+   * Helper function for a single cycle auto that uses shooter regression to shoot into the hub
+   *
+   * @param path The pathplanner path file name to use
+   * @param startPose A Supplier that returns the starting position of the robot for this path
+   * @return A command that follows the path and shoots
+   */
   private Command ppCycleRegression(String path, Supplier<Pose2d> startPose) {
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(startPose.get())),
@@ -122,6 +135,16 @@ public class Autos {
             orchestrator.feedUp()));
   }
 
+  /**
+   * Helper function for a double cycle auto that uses shooter regression to shoot into the hub
+   * twice (once after each cycle)
+   *
+   * @param path1 The pathplanner path file name to use for the first cycle
+   * @param path2 The pathplanner path file name to use for the second cycle
+   * @param startPose The starting position of the robot for the first path and the position it ends
+   *     up in after the path
+   * @return A command that follows the paths and shoots
+   */
   private Command pp2CycleRegression(String path1, String path2, Supplier<Pose2d> startPose) {
     return ppCycleRegression(path1, startPose)
         .withTimeout(2.5)
@@ -129,38 +152,67 @@ public class Autos {
   }
 
   // Pathplanner autos using the helper functions
+
+  /**
+   * Left side pathplanner auto for a single cycle with fixed shooting distance
+   *
+   * @return A command that executes the auto
+   */
   public Command ppACycleLeft() {
     return ppCycle("A-Cycle-LeftSweep", startAside);
   }
 
+  /**
+   * Right side pathplanner auto for a single cycle with fixed shooting distance
+   *
+   * @return A command that executes the auto
+   */
   public Command ppBCycleRight() {
     return ppCycle("B-Cycle-RightSweep", startBside);
   }
 
-  public Command ppB2CycleRightRegression() {
-    return pp2CycleRegression("B-Cycle1", "B-Cycle2", startBside);
-  }
-
-  public Command ppA2CycleRightRegression() {
-    return pp2CycleRegression("A-Cycle1", "A-Cycle2", startBside);
-  }
-
-  public Command ppBCycleRightRegression() {
-    return ppCycleRegression("B-Cycle-RightSweep", startBside);
-  }
-
+  /**
+   * Left side pathplanner auto for a single cycle that supports any shooting distance
+   *
+   * @return A command that executes the auto
+   */
   public Command ppACycleLeftRegression() {
     return ppCycleRegression("A-Cycle-LeftSweep", startAside);
   }
 
-  // Misc helper functions for manual autos
-  private Command shootPullIntake() {
-    return Commands.parallel(
-        orchestrator.spinUpShooterHub(),
-        orchestrator.feedUp(),
-        Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0)));
+  /**
+   * Right side pathplanner auto for a single cycle that supports any shooting distance
+   *
+   * @return A command that executes the auto
+   */
+  public Command ppBCycleRightRegression() {
+    return ppCycleRegression("B-Cycle-RightSweep", startBside);
   }
 
+  /**
+   * Left side pathplanner auto for 2 cycles that support any shooting distance
+   *
+   * @return A comand that executes the auto
+   */
+  public Command ppA2CycleRightRegression() {
+    return pp2CycleRegression("A-Cycle1", "A-Cycle2", startBside);
+  }
+
+  /**
+   * Right side pathplanner auto for 2 cycles that support any shooting distance
+   *
+   * @return A comand that executes the auto
+   */
+  public Command ppB2CycleRightRegression() {
+    return pp2CycleRegression("B-Cycle1", "B-Cycle2", startBside);
+  }
+
+  /**
+   * Gets relevant poses for the autos
+   *
+   * @param isA Whether to get the poses for A path or B path (true for A, false for B)
+   * @return The relevant poses for the calling auto
+   */
   AutoPositions getPoses(boolean isA) {
     if (isA) {
       return new AutoPositions(
@@ -170,7 +222,6 @@ public class Autos {
         intakeSimplePoseB.get(), overBumpAllianceAltPoseB.get(), shootFromCornerPoseB.get());
   }
 
-  // Helper functions that extract common code for manual autos
   private Command ccManualAuto(boolean isA) {
     AutoPositions poses = getPoses(isA);
 
@@ -184,7 +235,10 @@ public class Autos {
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
-        shootPullIntake());
+        Commands.parallel(
+            orchestrator.spinUpShooterHub(),
+            orchestrator.feedUp(),
+            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
 
   private Command ccManualAutoAlt(boolean isA) {
@@ -269,55 +323,5 @@ public class Autos {
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3.0), orchestrator.spinUpShooterHub()),
         Commands.parallel(orchestrator.spinUpShooterHub(), orchestrator.feedUp()));
-  }
-
-  public Command ACCManuelImprovedComplexIntake() {
-    return Commands.sequence(
-        Commands.deadline(
-            Commands.sequence(
-                new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpNeutralPoseA.get()))
-                    .withTimeout(2),
-                new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeComplexFirstPoseA.get())),
-                new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeComplexSecondPoseA.get()))
-                    .withTimeout(1.9),
-                new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeComplexThirdPoseA.get()))
-                    .withTimeout(3),
-                new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpNeutralPoseA.get()))),
-            Commands.parallel(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS))),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseA.get()))
-            .withTimeout(3.5),
-        rollers.stopIntakeCommand().withTimeout(0.05),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(shootFromCornerPoseA.get()))
-                .withTimeout(4),
-            orchestrator.spinUpShooter(1240)),
-        shootPullIntake());
-  }
-
-  public Command ADepot() {
-    return Commands.sequence(
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(depotPoseStopPoint.get()))
-            .withTimeout(2),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(depotPose.get())).withTimeout(3.5),
-            Commands.parallel(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS))),
-        rollers.stopIntakeCommand().withTimeout(0.05),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(shootFromCornerPoseA.get()))
-                .withTimeout(2),
-            orchestrator.spinUpShooter(1250)),
-        Commands.deadline(
-            Commands.waitSeconds(5),
-            orchestrator.spinUpShooter(1250),
-            orchestrator.feedUp(),
-            Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
-        rollers.stopIntakeCommand().withTimeout(0.05),
-        shooter.stop(),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseA.get()))
-            .withTimeout(2),
-        Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
-                .withTimeout(3.5),
-            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)));
   }
 }

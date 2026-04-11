@@ -271,7 +271,6 @@ public class RobotContainer {
     autoChooser.addOption("Manual A-CC", autos.ACCManuelAuto());
     autoChooser.addOption("Manual A-CC-Improved", autos.ACCManuelAutoAlt());
     autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManuelAutoOverBump());
-    autoChooser.addOption("Manual ADepot", autos.ADepot());
     autoChooser.addOption("Manual B-CC", autos.BCCManuelAuto());
     autoChooser.addOption("Manual B-CC-Improved", autos.BCCManuelAutoAlt());
     autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManuelAutoOverBump());
