@@ -38,10 +38,16 @@ public class Intake {
             Commands.deadline(
                 extend.extendToAngle(FUNNEL_POS + SHAKE_POS_OFFSET), rollers.intake()),
             Commands.deadline(
-                extend.extendToAngle(FUNNEL_POS + SHAKE_POS_OFFSET), rollers.intake()))
+                extend.extendToAngle(FUNNEL_POS - SHAKE_POS_OFFSET), rollers.intake()))
         .withName("shakeAndIntake");
   }
-
+  public Command shake(){
+      return Commands.repeatingSequence(
+                  extend.extendToAngle(FUNNEL_POS + SHAKE_POS_OFFSET),
+                  extend.extendToAngle(FUNNEL_POS - SHAKE_POS_OFFSET))
+          .withName("shake");
+    }
+  }
   // private because it doesn't have requirements and therefore it shouldn't be called beyond the
   // subsystem
   // itself
