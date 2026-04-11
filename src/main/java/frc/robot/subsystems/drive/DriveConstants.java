@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drive;
 
 import static frc.robot.Schematic.*;
+import static java.lang.Math.PI;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
@@ -35,10 +36,10 @@ public class DriveConstants {
   static {
     switch (Constants.getRobot()) {
       case ROBOT_2026_COMP -> {
-        frontLeftZeroRotation = Rotation2d.fromDegrees(-2.46);
-        frontRightZeroRotation = Rotation2d.fromDegrees(-10.63);
-        backLeftZeroRotation = Rotation2d.fromDegrees(17.11 + 180);
-        backRightZeroRotation = Rotation2d.fromDegrees(-45.27 + 180);
+        frontLeftZeroRotation = Rotation2d.fromRadians(0.126 + PI);
+        frontRightZeroRotation = Rotation2d.fromRadians(0.759 + 0.03);
+        backLeftZeroRotation = Rotation2d.fromRadians(-1.630);
+        backRightZeroRotation = Rotation2d.fromRadians(-2.072);
       }
       case ROBOT_2025_COMP -> {
         frontLeftZeroRotation = Rotation2d.fromDegrees(88.42 - 45);
@@ -66,9 +67,9 @@ public class DriveConstants {
 
   // Drive encoder configuration
   public static final double driveEncoderPositionFactor =
-      2 * Math.PI / driveMotorReduction; // Rotor Rotations -> Wheel Radians
+      2 * PI / driveMotorReduction; // Rotor Rotations -> Wheel Radians
   public static final double driveEncoderVelocityFactor =
-      (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
+      (2 * PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
 
   // Drive PID configuration
   public static final double driveKp = 2.525;
@@ -84,26 +85,26 @@ public class DriveConstants {
   // Turn motor configuration
   public static final boolean turnInverted = false;
   public static final int turnMotorCurrentLimit = 10;
-  public static final double turnMotorReduction = 12.8;
+  public static final double turnMotorReduction = 26;
   public static final DCMotor turnGearbox = DCMotor.getNEO(1);
 
   // Turn encoder configuration
   public static final boolean turnEncoderInverted = false;
   public static final double turnEncoderPositionFactor =
-      2 * Math.PI / turnMotorReduction; // Rotations -> Radians
+      2 * PI / turnMotorReduction; // Rotations -> Radians
   public static final double turnEncoderVelocityFactor =
-      (2 * Math.PI) / 60.0 / turnMotorReduction; // RPM -> Rad/Sec
+      (2 * PI) / 60.0 / turnMotorReduction; // RPM -> Rad/Sec
 
   // Turn PID configuration
   public static final double turnKp = 3.5;
   public static final double turnKd = 0.0;
   public static final double turnSimP = 9.0;
   public static final double turnSimD = 0.0;
-  public static final double turnPIDMinInput = -Math.PI; // Radians
-  public static final double turnPIDMaxInput = Math.PI; // Radians
+  public static final double turnPIDMinInput = -PI; // Radians
+  public static final double turnPIDMaxInput = PI; // Radians
 
   // PathPlanner configuration
-  public static final double robotMassKg = 74.088;
+  public static final double robotMassKg = 51.00;
   public static final double robotMOI = 6.883;
   public static final double wheelCOF = 1.2;
   public static final RobotConfig ppConfig =
