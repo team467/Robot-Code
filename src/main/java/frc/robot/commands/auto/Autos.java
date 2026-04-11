@@ -119,9 +119,9 @@ public class Autos {
   }
 
   // Helper functions that extract common code for pathplanner atuos
-  private Command ppCycle(String path) {
+  private Command ppCycle(String path, Supplier<Pose2d> startPose) {
     return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startAside.get())),
+        Commands.runOnce(() -> drive.setPose(startPose.get())),
         Commands.deadline(
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
@@ -135,9 +135,9 @@ public class Autos {
             orchestrator.feedUp()));
   }
 
-  private Command ppCycleRegression(String path) {
+  private Command ppCycleRegression(String path, Supplier<Pose2d> startPose) {
     return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startBside.get())),
+        Commands.runOnce(() -> drive.setPose(startPose.get())),
         Commands.deadline(
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
@@ -155,34 +155,36 @@ public class Autos {
             orchestrator.feedUp()));
   }
 
-  private Command pp2CycleRegression(String path1, String path2) {
-    return ppCycleRegression(path1).withTimeout(2.5).andThen(ppCycleRegression(path2));
+  private Command pp2CycleRegression(String path1, String path2, Supplier<Pose2d> startPose) {
+    return ppCycleRegression(path1, startPose)
+        .withTimeout(2.5)
+        .andThen(ppCycleRegression(path2, startPose));
   }
 
   // Pathplanner autos using the helper functions
 
   public Command ppACycleLeft() {
-    return ppCycle("A-Cycle-LeftSweep");
+    return ppCycle("A-Cycle-LeftSweep", startAside);
   }
 
   public Command ppBCycleRight() {
-    return ppCycle("B-Cycle-RightSweep");
+    return ppCycle("B-Cycle-RightSweep", startBside);
   }
 
   public Command ppB2CycleRightRegression() {
-    return pp2CycleRegression("B-Cycle1", "B-Cycle2");
+    return pp2CycleRegression("B-Cycle1", "B-Cycle2", startBside);
   }
 
   public Command ppA2CycleRightRegression() {
-    return pp2CycleRegression("A-Cycle1", "A-Cycle2");
+    return pp2CycleRegression("A-Cycle1", "A-Cycle2", startBside);
   }
 
   public Command ppBCycleRightRegression() {
-    return ppCycleRegression("B-Cycle-RightSweep");
+    return ppCycleRegression("B-Cycle-RightSweep", startBside);
   }
 
   public Command ppACycleLeftRegression() {
-    return ppCycleRegression("A-Cycle-LeftSweep");
+    return ppCycleRegression("A-Cycle-LeftSweep", startAside);
   }
 
   // Misc helper functions for manual autos
