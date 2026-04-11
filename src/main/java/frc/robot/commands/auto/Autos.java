@@ -11,7 +11,6 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
-import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.shooter.Shooter;
 import java.util.function.Supplier;
 
@@ -19,7 +18,6 @@ public class Autos {
   private final Drive drive;
   private final Orchestrator orchestrator;
   private final Intake intake;
-  private final IntakeRollers rollers;
   private final IntakeRollers rollers;
   private final Shooter shooter;
 
@@ -32,7 +30,6 @@ public class Autos {
     this.drive = drive;
     this.orchestrator = orchestrator;
     this.intake = intake;
-    this.rollers = rollers;
     this.rollers = rollers;
     this.shooter = shooter;
   }
@@ -152,6 +149,81 @@ public class Autos {
             orchestrator.feedUp()));
   }
 
+  public Command ppB2CycleRightRegression() {
+    return Commands.sequence(
+        Commands.runOnce(() -> drive.setPose(startBside.get())),
+        Commands.deadline(
+                drive.getAutonomousCommand("B-Cycle1"),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+            .withTimeout(14.5),
+        Commands.deadline(
+            orchestrator.aimToHub().withTimeout(2.5),
+            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+        Commands.parallel(
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                orchestrator.feedUp())
+            .withTimeout(2.5),
+        Commands.parallel(
+            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+            orchestrator.feedUp()))
+        .withTimeout(2.5)
+        .andThen(Commands.sequence(
+            Commands.runOnce(() -> drive.setPose(startBside.get())),
+            Commands.deadline(
+                    drive.getAutonomousCommand("B-Cycle2"),
+                    intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+                .withTimeout(14.5),
+            Commands.deadline(
+                orchestrator.aimToHub().withTimeout(2.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+            Commands.parallel(
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                    orchestrator.feedUp())
+                .withTimeout(2.5),
+            Commands.parallel(
+                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                orchestrator.feedUp())));
+  }
+  public Command ppA2CycleRightRegression() {
+    return Commands.sequence(
+            Commands.runOnce(() -> drive.setPose(startBside.get())),
+            Commands.deadline(
+                    drive.getAutonomousCommand("A-Cycle1"),
+                    intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+                .withTimeout(14.5),
+            Commands.deadline(
+                orchestrator.aimToHub().withTimeout(2.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+            Commands.parallel(
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                    orchestrator.feedUp())
+                .withTimeout(2.5),
+            Commands.parallel(
+                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                orchestrator.feedUp()))
+        .withTimeout(2.5)
+        .andThen(Commands.sequence(
+            Commands.runOnce(() -> drive.setPose(startBside.get())),
+            Commands.deadline(
+                    drive.getAutonomousCommand("A-Cycle2"),
+                    intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+                .withTimeout(14.5),
+            Commands.deadline(
+                orchestrator.aimToHub().withTimeout(2.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+            Commands.parallel(
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                    orchestrator.feedUp())
+                .withTimeout(2.5),
+            Commands.parallel(
+                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                orchestrator.feedUp())));
+  }
+
   public Command ppBCycleRightRegression() {
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(startBside.get())),
@@ -202,9 +274,11 @@ public class Autos {
   public Command ACCManuelAuto() {
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseA.get())).withTimeout(5),
-            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseA.get())).withTimeout(5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
+                .withTimeout(5),
+            Commands.parallel(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS))),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAlliancePoseA.get()))
+            .withTimeout(5),
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
@@ -246,7 +320,7 @@ public class Autos {
             .withTimeout(2),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(depotPose.get())).withTimeout(3.5),
-            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))),
+            Commands.parallel(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS))),
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(shootFromCornerPoseA.get()))
@@ -317,9 +391,11 @@ public class Autos {
   public Command BCCManuelAuto() {
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(firstPoseB.get())).withTimeout(5),
-            Commands.parallel(intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS))),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(secondPoseB.get())).withTimeout(5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseB.get()))
+                .withTimeout(5),
+                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseB.get()))
+            .withTimeout(5),
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
