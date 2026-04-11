@@ -118,7 +118,6 @@ public class Autos {
             () -> AllianceFlipUtil.apply(new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(0)))));
   }
 
-
   // Helper functions that extract common code for pathplanner atuos
   private Command ppCycle(String path) {
     return Commands.sequence(
@@ -157,10 +156,7 @@ public class Autos {
   }
 
   private Command pp2CycleRegression(String path1, String path2) {
-    return ppCycleRegression(path1)
-        .withTimeout(2.5)
-        .andThen(
-            ppCycleRegression(path2));
+    return ppCycleRegression(path1).withTimeout(2.5).andThen(ppCycleRegression(path2));
   }
 
   // Pathplanner autos using the helper functions
@@ -199,9 +195,11 @@ public class Autos {
 
   List<Pose2d> getPoses(boolean isA) {
     if (isA) {
-      return List.of(intakeSimplePoseA.get(), overBumpAllianceAltPoseA.get(), shootFromCornerPoseA.get());
+      return List.of(
+          intakeSimplePoseA.get(), overBumpAllianceAltPoseA.get(), shootFromCornerPoseA.get());
     }
-    return List.of(intakeSimplePoseB.get(), overBumpAllianceAltPoseB.get(), shootFromCornerPoseB.get());
+    return List.of(
+        intakeSimplePoseB.get(), overBumpAllianceAltPoseB.get(), shootFromCornerPoseB.get());
   }
 
   // Helper functions that extract common code for manual autos
@@ -210,11 +208,9 @@ public class Autos {
 
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0)))
-                .withTimeout(5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0))).withTimeout(5),
             intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1)))
-            .withTimeout(5),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1))).withTimeout(5),
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
             orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
@@ -224,17 +220,14 @@ public class Autos {
   private Command ccManualAutoAlt(boolean isA) {
     List<Pose2d> poses = getPoses(isA);
 
-   return Commands.sequence(
+    return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0)))
-                .withTimeout(5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0))).withTimeout(5),
             intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1)))
-            .withTimeout(3.5),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1))).withTimeout(3.5),
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(2)))
-                .withTimeout(2),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(2))).withTimeout(2),
             orchestrator.spinUpShooter(1240)),
         Commands.parallel(
             orchestrator.spinUpShooter(1240),
@@ -247,15 +240,12 @@ public class Autos {
 
     return Commands.sequence(
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0)))
-                .withTimeout(5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0))).withTimeout(5),
             intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1)))
-            .withTimeout(3.5),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1))).withTimeout(3.5),
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(2)))
-                .withTimeout(2),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(2))).withTimeout(2),
             orchestrator.spinUpShooter(1250)),
         Commands.deadline(
             Commands.waitSeconds(5),
@@ -264,11 +254,9 @@ public class Autos {
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
         rollers.stopIntakeCommand().withTimeout(0.05),
         shooter.stop(),
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1)))
-            .withTimeout(2),
+        new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(1))).withTimeout(2),
         Commands.deadline(
-            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0)))
-                .withTimeout(3.5),
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.get(0))).withTimeout(3.5),
             intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS)));
   }
 
@@ -301,7 +289,7 @@ public class Autos {
   public Command EightBalls() {
     return Commands.sequence(
         Commands.deadline(
-        orchestrator.driveToHub().withTimeout(3.0), orchestrator.spinUpShooterHub()),
+            orchestrator.driveToHub().withTimeout(3.0), orchestrator.spinUpShooterHub()),
         Commands.parallel(orchestrator.spinUpShooterHub(), orchestrator.feedUp()));
   }
 
@@ -350,9 +338,8 @@ public class Autos {
         new DriveToPose(drive, () -> AllianceFlipUtil.apply(overBumpAllianceAltPoseA.get()))
             .withTimeout(2),
         Commands.deadline(
-        new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
-            .withTimeout(3.5),
-        intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)));
+            new DriveToPose(drive, () -> AllianceFlipUtil.apply(intakeSimplePoseA.get()))
+                .withTimeout(3.5),
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)));
   }
-
 }
