@@ -229,6 +229,13 @@ public class Autos {
         intakeSimplePoseB.get(), overBumpAllianceAltPoseB.get(), shootFromCornerPoseB.get());
   }
 
+  /**
+   * A helper function for a manual, straightDriveToPose auto that does one cycle with support for
+   * any shooting distance
+   *
+   * @param isA Whether to get the poses for A path or B path (true for A, false for B)
+   * @return A command that calls the auto
+   */
   private Command ccManualAuto(boolean isA) {
     AutoPositions poses = getPoses(isA);
 
@@ -248,6 +255,31 @@ public class Autos {
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
 
+  /**
+   * Left side straight drive to pose auto that does one cycle with support for any shooting distance
+   *
+   * @return A command that calls the auto
+   */
+  public Command ACCManualAuto() {
+    return ccManualAuto(true);
+  }
+
+  /**
+   * Right side straight drive to pose auto that does one cycle with support for any shooting distance
+   *
+   * @return A command that calls the auto
+   */
+  public Command BCCManualAuto() {
+    return ccManualAuto(false);
+  }
+
+  /**
+   * A helper function for a manual, straightDriveToPose auto that does one cycle with fixed
+   * shooting distance
+   *
+   * @param isA Whether to get the poses for A path or B path (true for A, false for B)
+   * @return A command that calls the auto
+   */
   private Command ccManualAutoAlt(boolean isA) {
     AutoPositions poses = getPoses(isA);
 
@@ -269,6 +301,31 @@ public class Autos {
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
 
+  /**
+   * Left side straight drive to pose auto that does one cycle with fixed shooting distance
+   * 
+   * @return A command that calls the auto
+   */
+  public Command ACCManuelAutoAlt() {
+    return ccManualAutoAlt(true);
+  }
+
+  /**
+   * Right side straight drive to pose auto that does one cycle with fixed shooting distance
+   * 
+   * @return A command that calls the auto
+   */
+  public Command BCCManuelAutoAlt() {
+    return ccManualAutoAlt(false);
+  }
+
+  /**
+   * A helper function for a manual, straightDriveToPose auto that does one cycle with fixed
+   * shooting distance and then goes back to pick up more balls from the center.
+   *
+   * @param isA Whether to get the poses for A path or B path (true for A, false for B)
+   * @return A command that calls the auto
+   */
   private Command ccManualAutoOverBump(boolean isA) {
     AutoPositions poses = getPoses(isA);
 
@@ -299,32 +356,29 @@ public class Autos {
             intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)));
   }
 
-  // Manual autos using the helper functions
-  public Command ACCManuelAuto() {
-    return ccManualAuto(true);
-  }
-
-  public Command BCCManuelAuto() {
-    return ccManualAuto(false);
-  }
-
-  public Command ACCManuelAutoAlt() {
-    return ccManualAutoAlt(true);
-  }
-
-  public Command BCCManuelAutoAlt() {
-    return ccManualAutoAlt(false);
-  }
-
-  public Command ACCManuelAutoOverBump() {
+  /**
+   * Left side straight drive to pose auto that does one cycle with fixed shooting distance and then goes back to pick up more balls from the center.
+   *
+   * @return A command that cals the auto
+   */
+  public Command ACCManualAutoOverBump() {
     return ccManualAutoOverBump(true);
   }
 
-  public Command BCCManuelAutoOverBump() {
+  /**
+   * Right side straight drive to pose auto that does one cycle with fixed shooting distance and then goes back to pick up more balls from the center.
+   *
+   * @return A command that cals the auto
+   */
+  public Command BCCManualAutoOverBump() {
     return ccManualAutoOverBump(false);
   }
 
-  // Other manual autos
+  /**
+   * Center auto that shoots the 8 balls we preload with and nothing else
+   * 
+   * @return A command that calls the auto
+   */
   public Command EightBalls() {
     return Commands.sequence(
         Commands.deadline(
