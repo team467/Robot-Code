@@ -70,6 +70,10 @@ public class IntakeExtend extends SubsystemBase {
     return () -> inputs.getExtendPos;
   }
 
+  public Command setPose(double pose) {
+    return Commands.runOnce(() -> io.resetExtendEncoder(pose), this);
+  }
+
   private boolean isStallingExtend() {
     // For our volts, we are not getting the right velocity
     return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts < -0.01;
