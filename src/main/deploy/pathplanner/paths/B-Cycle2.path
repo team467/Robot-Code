@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.256350626118068,
-        "y": 5.664652951699464
+        "x": 3.1752236135957066,
+        "y": 2.4043470483005365
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.6674363972882924,
-        "y": 5.700870815202079
+        "x": 3.586309384765931,
+        "y": 2.4405649118031514
       },
       "isLocked": false,
       "linkedName": "B-Cycle1-End"
@@ -187,7 +187,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -54.28065125914318
+    "rotation": 51.952957468173956
   },
   "useDefaultConstraints": true
 }

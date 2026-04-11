@@ -12,7 +12,7 @@
         "y": 5.6284350881968495
       },
       "isLocked": false,
-      "linkedName": "B-Cycle1-End"
+      "linkedName": "A-Cycle1-End"
     },
     {
       "anchor": {
@@ -181,13 +181,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -49.60011881716068
+    "rotation": -51.09865544424842
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -54.28065125914318
+    "rotation": -51.09865544424842
   },
   "useDefaultConstraints": true
 }
