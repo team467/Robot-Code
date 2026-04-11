@@ -10,6 +10,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
@@ -25,6 +27,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShooterLeadCompensator;
 import frc.robot.util.Zone;
 import frc.robot.util.Zone.Tuple2d;
+import java.util.Map;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -126,45 +129,47 @@ public class Orchestrator {
   }
 
   public Command executeCurrentZoneLogic() {
-    double allianceY = AllianceFlipUtil.applyY(drive.getPose().getY());
+    DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
 
-    return switch (getCurrentZone()) {
-      case ZONE_1 ->
-          new RotateToOrientation(
-              drive,
-              AllianceFlipUtil.apply(
-                  new Pose2d(4.621539115905762, 4.040013313293457, new Rotation2d())));
-      case ZONE_2 -> {
-        if (allianceY > 4.029185771942139) {
-          yield new RotateToOrientation(
-              drive,
-              AllianceFlipUtil.apply(
-                  new Pose2d(4.415811061859131, 5.599213600158691, new Rotation2d())));
-        } else {
-          yield new RotateToOrientation(
-              drive,
-              AllianceFlipUtil.apply(
-                  new Pose2d(4.415811061859131, 2.534952402114868, new Rotation2d())));
-        }
-      }
-      case ZONE_3 ->
-          new RotateToOrientation(
-              drive,
-              AllianceFlipUtil.apply(
-                  new Pose2d(11.334761619567871, 5.599213600158691, new Rotation2d())));
-      case ZONE_4 ->
-          new RotateToOrientation(
-              drive,
-              AllianceFlipUtil.apply(
-                  new Pose2d(11.334761619567871, 2.534952402114868, new Rotation2d())));
-      case NONE -> Commands.none();
-    };
+    return new SelectCommand<>(
+        Map.ofEntries(
+            Map.entry(
+                ZoneId.ZONE_1,
+                new RotateToOrientation(
+                    drive,
+                    AllianceFlipUtil.apply(
+                        new Pose2d(4.621539115905762, 4.040013313293457, new Rotation2d())))),
+            Map.entry(
+                ZoneId.ZONE_2,
+                new ConditionalCommand(
+                    new RotateToOrientation(
+                        drive,
+                        AllianceFlipUtil.apply(
+                            new Pose2d(4.415811061859131, 5.599213600158691, new Rotation2d()))),
+                    new RotateToOrientation(
+                        drive,
+                        AllianceFlipUtil.apply(
+                            new Pose2d(4.415811061859131, 2.534952402114868, new Rotation2d()))),
+                    () -> allianceY.getAsDouble() > 4.029185771942139)),
+            Map.entry(
+                ZoneId.ZONE_3,
+                new RotateToOrientation(
+                    drive,
+                    AllianceFlipUtil.apply(
+                        new Pose2d(11.334761619567871, 5.599213600158691, new Rotation2d())))),
+            Map.entry(
+                ZoneId.ZONE_4,
+                new RotateToOrientation(
+                    drive,
+                    AllianceFlipUtil.apply(
+                        new Pose2d(11.334761619567871, 2.534952402114868, new Rotation2d()))))),
+        this::getCurrentZone);
   }
 
   public Command zoneBasedShoot() {
     return Commands.deadline(
             executeCurrentZoneLogic(),
-            indexer.run(),
+            feedUp(),
             Commands.run(
                 () -> Logger.recordOutput("Orchestrator/CurrentZone", getCurrentZone().name())))
         .withName("zoneBasedShoot");
