@@ -66,7 +66,7 @@ public class IntakeExtend extends SubsystemBase {
     return io.isCollapsed();
   }
 
-  public DoubleSupplier getAngle(){
+  public DoubleSupplier getAngle() {
     return () -> inputs.getExtendPos;
   }
 
