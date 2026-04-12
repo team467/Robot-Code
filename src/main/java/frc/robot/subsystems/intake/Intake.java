@@ -31,8 +31,7 @@ public class Intake {
   }
 
   public Command runIntakeMotor() {
-    return rollers
-        .intake();
+    return rollers.intake();
   }
 
   // Jack's Chugga Chugga mode
