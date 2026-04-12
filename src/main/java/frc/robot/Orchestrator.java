@@ -10,6 +10,7 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,6 +30,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.util.ShooterLeadCompensator;
 import frc.robot.util.Zone;
 import frc.robot.util.Zone.Tuple2d;
@@ -186,7 +188,11 @@ public class Orchestrator {
     return () ->
         Meters.of(
             AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())
-                .getDistance(drive.getPose().getTranslation()));
+                .getDistance(
+                    drive
+                        .getPose()
+                        .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
+                        .getTranslation()));
   }
 
   private Rotation2d filteredHubAngle(Rotation2d raw) {
@@ -291,7 +297,12 @@ public class Orchestrator {
                 drive.getPose().getX(),
                 drive.getPose().getY(),
                 AllianceFlipUtil.apply(Hub.blueCenter)
-                    .minus(drive.getPose().getTranslation())
+                    .plus(new Translation2d(-0.6, 0))
+                    .minus(
+                        drive
+                            .getPose()
+                            .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
+                            .getTranslation())
                     .getAngle()));
   }
 }

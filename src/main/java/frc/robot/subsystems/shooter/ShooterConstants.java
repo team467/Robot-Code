@@ -32,5 +32,5 @@ public class ShooterConstants {
       Units.rotationsPerMinuteToRadiansPerSecond(100); // measured in radians
 
   public static Transform2d kShooterOffsetFromRobotCenter =
-      new Transform2d(new Translation2d(-0.1839, 0.0), new Rotation2d(0.0));
+      new Transform2d(new Translation2d(-0.1585, 0.0), new Rotation2d(0.0));
 }
