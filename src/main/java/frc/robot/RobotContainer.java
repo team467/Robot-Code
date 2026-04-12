@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -285,7 +284,11 @@ public class RobotContainer {
             () -> -driverController.getRightX()));
 
     // Lock to 0 degrees when A button is held
-
+    Trigger intaking = new Trigger(() -> RobotState.getInstance().intaking);
+    intaking.onTrue(
+        Commands.runOnce(() -> driverController.setRumble(RumbleType.kBothRumble, 0.2)));
+    intaking.onFalse(
+        Commands.runOnce(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
     driverController
         .start()
         .onTrue(
@@ -319,11 +322,7 @@ public class RobotContainer {
     // driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
 
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
-    driverController
-        .leftTrigger(0.2)
-        .toggleOnTrue(
-            Commands.parallel(rumblePulse(0.5, 0.2), intake.runIntakeMotor())
-                .finallyDo(() -> CommandScheduler.getInstance().schedule(rumblePulse(0.3, 0.15))));
+    driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
 
     driverController
         .a()
