@@ -251,7 +251,7 @@ public class Orchestrator {
   }
 
   public Command spinUpShooterDistance(Supplier<Distance> targetDistance) {
-    return shooter.setTargetVelocity(shooter.calculateSetpoint(targetDistance.get()));
+    return shooter.setTargetVelocity(shooter.calculateSetpoint(targetDistance));
   }
 
   public Command spinUpShooterHub() {
@@ -281,7 +281,7 @@ public class Orchestrator {
 
   public Command spinUpShooterWhileDriving() {
     return shooter.setTargetVelocity(
-        shooter.calculateSetpoint(this.getShootWhileDrivingResultDistance().get()));
+        shooter.calculateSetpoint(this.getShootWhileDrivingResultDistance()));
   }
 
   public Command aimToHub() {

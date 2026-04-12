@@ -218,10 +218,10 @@ public class Shooter extends SubsystemBase {
    * @param distance Distance
    * @return Setpoint in radians per second
    */
-  public Supplier<AngularVelocity> calculateSetpoint(Distance distance) {
+  public Supplier<AngularVelocity> calculateSetpoint(Supplier<Distance> distance) {
     // calculate rad/s depending on distance
     return () -> {
-      AngularVelocity velocity = RadiansPerSecond.of(183.35 * distance.in(Meters) + 750.93);
+      AngularVelocity velocity = RadiansPerSecond.of(183.35 * distance.get().in(Meters) + 750.93);
       if (velocity.gt(RadiansPerSecond.of(5000))) {
         return RadiansPerSecond.of(5000);
       } else return velocity;
