@@ -6,7 +6,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
-import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
