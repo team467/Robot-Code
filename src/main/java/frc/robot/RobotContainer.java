@@ -9,7 +9,6 @@ import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
@@ -28,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
-import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
@@ -120,7 +118,7 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1),
                   new VisionIOPhotonVision(camera2Name, robotToCamera2));
-          leds = new Leds();
+          //          leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
@@ -202,12 +200,12 @@ public class RobotContainer {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
 
-    NamedCommands.registerCommand(
-        "Drive Back Left",
-        new DriveToPose(drive, () -> new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(180))));
-    NamedCommands.registerCommand(
-        "Drive Over Left",
-        new DriveToPose(drive, () -> new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(180))));
+    //    NamedCommands.registerCommand(
+    //        "Drive Back Left",
+    //        new DriveToPose(drive, () -> new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(180))));
+    //    NamedCommands.registerCommand(
+    //        "Drive Over Left",
+    //        new DriveToPose(drive, () -> new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(180))));
 
     //
     // NamedCommands.registerCommand("startShooter",Commands.parallel(orchestrator.preloadBalls(),orchestrator.prepShooter()));
@@ -276,7 +274,6 @@ public class RobotContainer {
   private void configureButtonBindings() {
     indexer.setDefaultCommand(indexer.stop());
     shooter.setDefaultCommand(shooter.stop());
-    //    shooter.setDefaultCommand(shooter.stop());
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -316,7 +313,7 @@ public class RobotContainer {
         .and(() -> !operatorController.pov(180).getAsBoolean())
         .toggleOnTrue(intake.extendToAngle(IntakeConstants.EXTEND_POS));
 
-    //     VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
+    //         VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
 
@@ -333,7 +330,7 @@ public class RobotContainer {
         .and(operatorController.pov(180))
         .whileTrue(intakeExtend.runIntakeExtendVolts(4))
         .onFalse(intakeExtend.stopExtendingCommand());
-    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
+    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController
         .rightTrigger(0.1)
         .and(() -> !operatorController.pov(0).getAsBoolean())
@@ -343,7 +340,6 @@ public class RobotContainer {
         .rightTrigger(0.1)
         .and(operatorController.pov(0))
         .toggleOnTrue(orchestrator.spinUpShooterHub());
-    operatorController.leftTrigger(0.1).toggleOnTrue(shooter.setVoltage(4));
     operatorController.y().whileTrue(indexer.reverse());
     operatorController.x().whileTrue(intakeRollers.outtake());
   }

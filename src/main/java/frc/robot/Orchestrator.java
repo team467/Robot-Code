@@ -234,8 +234,7 @@ public class Orchestrator {
 
   public Command feedUp() {
     return Commands.repeatingSequence(
-            Commands.parallel(magicCarpet.run(), indexer.run())
-                .until(() -> !RobotState.getInstance().shooterAtSpeed))
+            Commands.parallel(indexer.run()).until(() -> !RobotState.getInstance().shooterAtSpeed))
         .onlyIf(() -> shooter.getSetpoint().gt(RadiansPerSecond.of(0)))
         .onlyIf(() -> RobotState.getInstance().shooterAtSpeed)
         .onlyWhile(() -> shooter.getSetpoint().gt(RadiansPerSecond.of(0)))

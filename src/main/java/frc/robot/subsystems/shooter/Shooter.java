@@ -3,6 +3,10 @@ package frc.robot.subsystems.shooter;
 import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.subsystems.shooter.ShooterConstants.FF_SCALAR;
+import static frc.robot.subsystems.shooter.ShooterConstants.KA;
+import static frc.robot.subsystems.shooter.ShooterConstants.KS;
+import static frc.robot.subsystems.shooter.ShooterConstants.KV;
 import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -12,6 +16,7 @@ import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,15 +37,15 @@ public class Shooter extends SubsystemBase {
   private double rampedTarget = 0.0;
 
   // Feedforward: handles steady-state voltage (V = KS + KV * velocity)
-  private final SimpleMotorFeedforward feedforward =
-      new SimpleMotorFeedforward(ShooterConstants.KS, ShooterConstants.KV);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV, KA);
   // PID: handles error correction on top of feedforward
   // P only — no I term (causes integral windup oscillation)
   private final PIDController pid = new PIDController(0.001, 0.1, 0.1, 0.02);
 
   // Slew rate limiter: ramps the target velocity gradually (rad/s per second)
   // This prevents current spikes that cause oscillation with a 20A limit
-  private final SlewRateLimiter targetRamper = new SlewRateLimiter(2400);
+  private final SlewRateLimiter targetRamper = new SlewRateLimiter(1600);
+  private double feedForwardScalar;
 
   /**
    * Initializes the shooter with a Shooter IO
@@ -48,6 +53,11 @@ public class Shooter extends SubsystemBase {
    * @param io A ShooterIO implementing instance
    */
   public Shooter(ShooterIO io) {
+    SmartDashboard.putNumber("Shooter/KS", KS * FF_SCALAR);
+    SmartDashboard.putNumber("Shooter/KA", KA * FF_SCALAR);
+    SmartDashboard.putNumber("Shooter/KV", KV * FF_SCALAR);
+    SmartDashboard.putNumber("Shooter/FeedForward_Scalar", FF_SCALAR);
+    feedForwardScalar = FF_SCALAR;
     this.io = io;
     sysId =
         new SysIdRoutine(
@@ -61,6 +71,37 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    if (SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
+            != feedForwardScalar
+        || SmartDashboard.getNumber(
+                    "Shooter/KS",
+                    feedforward.getKs()
+                        * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
+                * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
+            != feedforward.getKs()
+        || SmartDashboard.getNumber("Shooter/KA", feedforward.getKa()) != feedforward.getKa()
+        || SmartDashboard.getNumber(
+                    "Shooter/KV",
+                    feedforward.getKv()
+                        * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
+                * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
+            != feedforward.getKv()) {
+      feedForwardScalar = SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar);
+      feedforward.setKa(SmartDashboard.getNumber("Shooter/KA", feedforward.getKa()));
+      feedforward.setKv(
+          SmartDashboard.getNumber(
+                  "Shooter/KV",
+                  feedforward.getKv()
+                      * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
+              * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar));
+      feedforward.setKa(
+          SmartDashboard.getNumber(
+                  "Shooter/KS",
+                  feedforward.getKs()
+                      * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
+              * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar));
+    }
     io.updateInputs(inputs);
     RobotState.getInstance().shooterAtSpeed =
         isAtSetpoint() && targetSpeed.gt(RadiansPerSecond.of(0));
@@ -165,6 +206,7 @@ public class Shooter extends SubsystemBase {
               controllerEnabled = true;
             },
             this)
+        .finallyDo(io::stop)
         .withName("setTargetVelocity");
   }
 

@@ -24,7 +24,7 @@ public class IndexerIOSparkMax implements IndexerIO {
         .inverted(false)
         .idleMode(IdleMode.kBrake)
         .voltageCompensation(12)
-        .smartCurrentLimit(30);
+        .smartCurrentLimit(20);
 
     EncoderConfig feederUpEnc = new EncoderConfig();
 

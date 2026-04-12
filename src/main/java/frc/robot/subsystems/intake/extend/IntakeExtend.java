@@ -141,7 +141,7 @@ public class IntakeExtend extends SubsystemBase {
     return Commands.run(
             () -> {
               io.setPIDEnabled(false);
-              io.setVoltageExtend(-HOME_VOLTAGE);
+              io.setVoltageExtend(HOME_VOLTAGE);
             },
             this)
         .beforeStarting(() -> Logger.recordOutput("Intake/IntakeExtend/HomeStarted", true))
