@@ -17,8 +17,10 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -314,8 +316,17 @@ public class RobotContainer {
         .toggleOnTrue(intake.extendToAngle(IntakeConstants.EXTEND_POS));
 
     //         VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
-    driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
+    // driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
+  
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
+    driverController.leftTrigger(0.2).toggleOnTrue(
+    Commands.parallel(
+        rumblePulse(0.5, 0.2),
+        intake.runIntakeMotor()
+    ).finallyDo(() ->
+        CommandScheduler.getInstance().schedule(rumblePulse(0.3, 0.15))
+    )
+);
 
     driverController
         .a()
@@ -357,4 +368,12 @@ public class RobotContainer {
     RobotState.getInstance().updateLEDState();
     orchestrator.orchestratorPeriodic();
   }
+
+  private Command rumblePulse(double intensity, double seconds) {
+    return Commands.sequence(
+        Commands.runOnce(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, intensity)),
+        Commands.waitSeconds(seconds),
+        Commands.runOnce(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0))
+    );
+}
 }
