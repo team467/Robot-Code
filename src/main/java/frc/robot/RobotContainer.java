@@ -104,7 +104,7 @@ public class RobotContainer {
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1),
-                  new VisionIOPhotonVision(camera2Name, robotToCamera2));
+                new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
         }
         case ROBOT_2026_COMP -> {
@@ -331,12 +331,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    //    driverController.x().toggleOnTrue(orchestrator.aimToHub());
-    //
-    // driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
-    driverController.x().toggleOnTrue(shooter.setTargetVelocity(RadiansPerSecond.of(20)));
-    driverController.y().toggleOnTrue(shooter.setTargetVelocity(RadiansPerSecond.of(60)));
-    driverController.a().toggleOnTrue(shooter.setTargetVelocity(RadiansPerSecond.of(110)));
+    driverController.x().toggleOnTrue(orchestrator.aimToHub());
+    driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     driverController
         .leftBumper()
         .and(operatorController.pov(180))
@@ -351,16 +347,16 @@ public class RobotContainer {
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
         .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+        .toggleOnTrue(intake.extendToAngle(IntakeConstants.EXTEND_POS));
 
     //     VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
 
-    //    driverController
-    //        .a()
-    //        .and(operatorController.pov(180))
-    //        .onTrue(intakeExtend.resetExtendPosition());
+    driverController
+        .a()
+        .and(operatorController.pov(180))
+        .onTrue(intakeExtend.resetExtendPosition());
     driverController
         .rightBumper()
         .and(() -> !operatorController.pov(180).getAsBoolean())
@@ -370,7 +366,7 @@ public class RobotContainer {
         .and(operatorController.pov(180))
         .whileTrue(intakeExtend.runIntakeExtendVolts(4))
         .onFalse(intakeExtend.stopExtendingCommand());
-    //    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
+    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController
         .rightTrigger(0.1)
         .and(() -> !operatorController.pov(0).getAsBoolean())

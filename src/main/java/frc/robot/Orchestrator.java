@@ -51,7 +51,7 @@ public class Orchestrator {
     ZONE_4
   }
 
-  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(40.0);
+  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(58.0);
   private final Drive drive;
   private final Shooter shooter;
   private final MagicCarpet magicCarpet;

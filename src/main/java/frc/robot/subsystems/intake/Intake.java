@@ -32,9 +32,7 @@ public class Intake {
 
   public Command runIntakeMotor() {
     return rollers
-        .intake()
-        .onlyWhile(() -> extend.getAngle().getAsDouble() < COLLAPSE_POS - SAFETY_TOLERANCE)
-        .onlyIf(() -> extend.getAngle().getAsDouble() < COLLAPSE_POS - SAFETY_TOLERANCE);
+        .intake();
   }
 
   // Jack's Chugga Chugga mode
