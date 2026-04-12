@@ -17,7 +17,7 @@ public class ShooterConstants {
   public static final double KA = 0.031259;
   public static final double KS = 0.615;
 
-  public static final double SHOOTER_WHEEL_GEAR_RATIO = 2.5;
+  public static final double SHOOTER_WHEEL_GEAR_RATIO = 3.5;
   public static final double CLOSE_HUB_SHOOTER_RPM = 1085;
 
   public static final double MAX_VOLTAGE = 12.0;
