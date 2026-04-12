@@ -317,16 +317,13 @@ public class RobotContainer {
 
     //         VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     // driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
-  
+
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
-    driverController.leftTrigger(0.2).toggleOnTrue(
-    Commands.parallel(
-        rumblePulse(0.5, 0.2),
-        intake.runIntakeMotor()
-    ).finallyDo(() ->
-        CommandScheduler.getInstance().schedule(rumblePulse(0.3, 0.15))
-    )
-);
+    driverController
+        .leftTrigger(0.2)
+        .toggleOnTrue(
+            Commands.parallel(rumblePulse(0.5, 0.2), intake.runIntakeMotor())
+                .finallyDo(() -> CommandScheduler.getInstance().schedule(rumblePulse(0.3, 0.15))));
 
     driverController
         .a()
@@ -371,9 +368,9 @@ public class RobotContainer {
 
   private Command rumblePulse(double intensity, double seconds) {
     return Commands.sequence(
-        Commands.runOnce(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, intensity)),
+        Commands.runOnce(
+            () -> driverController.getHID().setRumble(RumbleType.kBothRumble, intensity)),
         Commands.waitSeconds(seconds),
-        Commands.runOnce(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0))
-    );
-}
+        Commands.runOnce(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0)));
+  }
 }
