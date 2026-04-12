@@ -55,10 +55,14 @@ public class IntakeExtend extends SubsystemBase {
       RobotState.getInstance().intakePosition = IntakePosition.DEPLOYED;
     }
     if (inputs.isCollapsed) {
+      if (!hasPose) {
+        Logger.recordOutput("Intake/IntakeExtend/HomeCompleted", true);
+      }
       io.resetExtendEncoder(0.0);
       hasPose = true;
     }
     inputs.hasPose = hasPose;
+    Logger.recordOutput("Intake/IntakeExtend/HasPose", hasPose);
   }
 
   public IntakeExtend(IntakeExtendIO io, BooleanSupplier limitSwitchDisabled) {
@@ -139,6 +143,7 @@ public class IntakeExtend extends SubsystemBase {
               io.setVoltageExtend(-HOME_VOLTAGE);
             },
             this)
+        .beforeStarting(() -> Logger.recordOutput("Intake/IntakeExtend/HomeStarted", true))
         .until(() -> inputs.isCollapsed)
         .finallyDo(this::stopExtend)
         .withName("homeExtend");
@@ -157,6 +162,7 @@ public class IntakeExtend extends SubsystemBase {
             .withName("extendToAngle");
 
     if (!hasPose) {
+      Logger.recordOutput("Intake/IntakeExtend/AutoHoming", true);
       return homeExtend().andThen(extendCommand);
     }
     return extendCommand;
@@ -174,6 +180,7 @@ public class IntakeExtend extends SubsystemBase {
             .withName("holdAngle");
 
     if (!hasPose) {
+      Logger.recordOutput("Intake/IntakeExtend/AutoHoming", true);
       return homeExtend().andThen(holdCommand);
     }
     return holdCommand;
