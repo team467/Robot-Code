@@ -25,11 +25,6 @@ public class Intake {
     return extend.extendToAngle(angle);
   }
 
-  public Command holdAngleAndIntake(double angle) {
-    return Commands.parallel(extend.holdAngle(angle), runIntakeMotor())
-        .withName("holdAngleAndIntake");
-  }
-
   public Command runIntakeMotor() {
     return rollers.intake();
   }

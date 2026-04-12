@@ -163,22 +163,4 @@ public class IntakeExtend extends SubsystemBase {
                 .finallyDo(this::stopExtend)
                 .withName("extendToAngle"));
   }
-
-  public Command holdAngle(double angle) {
-    Command holdCommand =
-        Commands.run(
-                () -> {
-                  io.setPIDEnabled(true);
-                  io.goToPos(angle);
-                },
-                this)
-            .finallyDo(this::stopExtend)
-            .withName("holdAngle");
-
-    if (!hasPose) {
-      Logger.recordOutput("Intake/IntakeExtend/AutoHoming", true);
-      return homeExtend().andThen(holdCommand);
-    }
-    return holdCommand;
-  }
 }
