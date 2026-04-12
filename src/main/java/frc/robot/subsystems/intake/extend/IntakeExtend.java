@@ -151,16 +151,17 @@ public class IntakeExtend extends SubsystemBase {
   }
 
   public Command extendToAngle(double angle) {
-    return
-        new ConditionalCommand(homeExtend(), Commands.none(), () -> hasPose).andThen(Commands.run(
-                () -> {
-                  io.setPIDEnabled(true);
-                  io.goToPos(angle);
-                },
-                this)
-            .until(() -> inputs.atSetpoint)
-            .finallyDo(this::stopExtend)
-            .withName("extendToAngle"));
+    return new ConditionalCommand(homeExtend(), Commands.none(), () -> !hasPose)
+        .andThen(
+            Commands.run(
+                    () -> {
+                      io.setPIDEnabled(true);
+                      io.goToPos(angle);
+                    },
+                    this)
+                .until(() -> inputs.atSetpoint)
+                .finallyDo(this::stopExtend)
+                .withName("extendToAngle"));
   }
 
   public Command holdAngle(double angle) {
