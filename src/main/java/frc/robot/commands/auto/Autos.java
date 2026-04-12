@@ -29,9 +29,6 @@ public class Autos {
       Pose2d center,
       Pose2d intakeSimple,
       Pose2d overBumpNeutral,
-      Pose2d intakeComplexFirst,
-      Pose2d intakeComplexSecond,
-      Pose2d intakeComplexThird,
       Pose2d overBumpAlliance,
       Pose2d overBumpAllianceAlt,
       Pose2d shootFromCorner) {}
@@ -39,15 +36,15 @@ public class Autos {
   // The necessary poses for autos on left side
   private final AutoPositions poseA =
       new AutoPositions(
-          new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305))),
-          new Pose2d(7.7052903175354, 5.8276801109313965, Rotation2d.fromDegrees(0.0)),
-          new Pose2d(6.1, 5.574310302734375, Rotation2d.fromDegrees(0)),
-          new Pose2d(6.862, 6.877, Rotation2d.fromDegrees(-90.0)),
-          new Pose2d(7.825, 6.877, Rotation2d.fromDegrees(-90)),
-          new Pose2d(7.805, 4.461, Rotation2d.fromDegrees(-90)),
-          new Pose2d(3.0666706562042236, 5.574310302734375, Rotation2d.fromDegrees(0.0)),
-          new Pose2d(3.086160182952881, 5.437880039215088, Rotation2d.fromDegrees(0)),
-          new Pose2d(
+          /* center */ new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305))),
+          /* intakeSimple */ new Pose2d(
+              7.7052903175354, 5.8276801109313965, Rotation2d.fromDegrees(0.0)),
+          /* overBumpNeutral */ new Pose2d(6.1, 5.574310302734375, Rotation2d.fromDegrees(0)),
+          /* overBumpAlliance */ new Pose2d(
+              3.0666706562042236, 5.574310302734375, Rotation2d.fromDegrees(0.0)),
+          /* overBumpAllianceAlt */ new Pose2d(
+              3.086160182952881, 5.437880039215088, Rotation2d.fromDegrees(0)),
+          /* shootFromCorner */ new Pose2d(
               3.086160182952881, 5.437880039215088, Rotation2d.fromRadians(-0.7553977556351216)));
 
   // The necessary poses for autos on right side
@@ -56,9 +53,6 @@ public class Autos {
           AllianceFlipUtil.reflectY(poseA.center),
           AllianceFlipUtil.reflectY(poseA.intakeSimple),
           AllianceFlipUtil.reflectY(poseA.overBumpNeutral),
-          AllianceFlipUtil.reflectY(poseA.intakeComplexFirst),
-          AllianceFlipUtil.reflectY(poseA.intakeComplexSecond),
-          AllianceFlipUtil.reflectY(poseA.intakeComplexThird),
           AllianceFlipUtil.reflectY(poseA.overBumpAlliance),
           AllianceFlipUtil.reflectY(poseA.overBumpAllianceAlt),
           AllianceFlipUtil.reflectY(poseA.shootFromCorner));
