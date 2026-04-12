@@ -9,6 +9,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.STALL_VELOCITY;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.RobotState.IntakePosition;
@@ -150,8 +151,8 @@ public class IntakeExtend extends SubsystemBase {
   }
 
   public Command extendToAngle(double angle) {
-    Command extendCommand =
-        Commands.run(
+    return
+        new ConditionalCommand(homeExtend(), Commands.none(), () -> hasPose).andThen(Commands.run(
                 () -> {
                   io.setPIDEnabled(true);
                   io.goToPos(angle);
@@ -159,13 +160,7 @@ public class IntakeExtend extends SubsystemBase {
                 this)
             .until(() -> inputs.atSetpoint)
             .finallyDo(this::stopExtend)
-            .withName("extendToAngle");
-
-    if (!hasPose) {
-      Logger.recordOutput("Intake/IntakeExtend/AutoHoming", true);
-      return homeExtend().andThen(extendCommand);
-    }
-    return extendCommand;
+            .withName("extendToAngle"));
   }
 
   public Command holdAngle(double angle) {
