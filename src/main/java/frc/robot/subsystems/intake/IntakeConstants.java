@@ -10,13 +10,13 @@ public class IntakeConstants {
 
   public static final double STALL_TIME = 0.1;
   public static final double STALL_VELOCITY = 0.1;
-  public static final double INTAKE_VOLTS = 12;
-  public static final double OUTTAKE_VOLTS = -10;
+  public static final double INTAKE_VOLTS = 8;
+  public static final double OUTTAKE_VOLTS = -12;
   public static final double EXTEND_VOLTS = 0.01;
   public static final double COLLAPSE_VOLTS = -0.01;
   public static final double INTAKE_MAX_VELOCITY = 200;
 
-  public static final int EXTEND_LIMIT_ID = 1;
+  public static final int EXTEND_LIMIT_ID = 0;
 
   public static final double PID_P = 0.023; // arbritrary values
   public static final double PID_I = 0.000004;

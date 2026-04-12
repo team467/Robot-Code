@@ -70,6 +70,10 @@ public class IntakeExtend extends SubsystemBase {
     return () -> inputs.getExtendPos;
   }
 
+  public void setIdleMode(boolean idleMode) {
+    io.setIdleMode(idleMode);
+  }
+
   public Command setPose(double pose) {
     return Commands.runOnce(() -> io.resetExtendEncoder(pose), this);
   }

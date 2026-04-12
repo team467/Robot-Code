@@ -256,7 +256,8 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
-
+    autoChooser.addOption(
+        "RunIntakeOut", intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
     autoChooser.addOption("Manual A-CC", autos.ACCManualAuto());
     autoChooser.addOption("Manual A-CC-Improved", autos.ACCManuelAutoAlt());
     autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManualAutoOverBump());
@@ -330,8 +331,12 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    driverController.x().toggleOnTrue(orchestrator.aimToHub());
-    driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
+    //    driverController.x().toggleOnTrue(orchestrator.aimToHub());
+    //
+    // driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
+    driverController.x().toggleOnTrue(shooter.setTargetVelocity(RadiansPerSecond.of(20)));
+    driverController.y().toggleOnTrue(shooter.setTargetVelocity(RadiansPerSecond.of(60)));
+    driverController.a().toggleOnTrue(shooter.setTargetVelocity(RadiansPerSecond.of(110)));
     driverController
         .leftBumper()
         .and(operatorController.pov(180))
@@ -350,13 +355,12 @@ public class RobotContainer {
 
     //     VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
-    //    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
-    driverController.rightTrigger(0.1).toggleOnTrue(indexer.run());
+    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
 
-    driverController
-        .a()
-        .and(operatorController.pov(180))
-        .onTrue(intakeExtend.resetExtendPosition());
+    //    driverController
+    //        .a()
+    //        .and(operatorController.pov(180))
+    //        .onTrue(intakeExtend.resetExtendPosition());
     driverController
         .rightBumper()
         .and(() -> !operatorController.pov(180).getAsBoolean())
@@ -378,7 +382,7 @@ public class RobotContainer {
         .toggleOnTrue(orchestrator.spinUpShooterHub());
     operatorController.leftTrigger(0.1).toggleOnTrue(shooter.setVoltage(4));
     operatorController.y().whileTrue(indexer.reverse());
-    //    operatorController.x().whileTrue(intake.outtake());
+    operatorController.x().whileTrue(intakeRollers.outtake());
   }
 
   /**

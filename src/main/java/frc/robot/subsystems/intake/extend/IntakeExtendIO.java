@@ -35,6 +35,9 @@ public interface IntakeExtendIO {
 
   default void setPIDEnabled(boolean enabled) {}
 
+  default void setIdleMode(boolean cost) {}
+  ;
+
   default boolean getPIDEnabled() {
     return false;
   }
