@@ -34,10 +34,10 @@ public class MagicCarpet extends SubsystemBase {
   }
 
   /**
-  * Control whether to run magic carpet through commands or periodic
-  *
-  * @param manual Call run manually instead of through periodic
-  */
+   * Control whether to run magic carpet through commands or periodic
+   *
+   * @param manual Call run manually instead of through periodic
+   */
   public Command setManualControl(boolean manual) {
     return Commands.runOnce(() -> this.manualRun = manual, this);
   }
