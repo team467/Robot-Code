@@ -27,6 +27,7 @@ public class IntakeConstants {
 
   // shake around the funnel pos by this much
   public static final double SHAKE_POS_OFFSET = 1;
+  public static final double HOME_VOLTAGE = 6;
   public static final double COLLAPSE_POS = 4.0;
   // How close we need to be to collapse position to stop the intake rollers
   public static final double SAFETY_TOLERANCE = 2;

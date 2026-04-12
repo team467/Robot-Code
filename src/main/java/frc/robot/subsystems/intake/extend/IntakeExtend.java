@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake.extend;
 
 import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POS;
+import static frc.robot.subsystems.intake.IntakeConstants.HOME_VOLTAGE;
 import static frc.robot.subsystems.intake.IntakeConstants.POSITION_TOLERANCE;
 import static frc.robot.subsystems.intake.IntakeConstants.STALL_VELOCITY;
 
@@ -25,6 +26,7 @@ public class IntakeExtend extends SubsystemBase {
   private boolean stalledCollapse = false;
   private boolean isStowed = false;
   private boolean isExtended = false;
+  private boolean hasPose = false;
 
   private double targetExtendPosition = 0;
 
@@ -54,7 +56,9 @@ public class IntakeExtend extends SubsystemBase {
     }
     if (inputs.isCollapsed) {
       io.resetExtendEncoder(0.0);
+      hasPose = true;
     }
+    inputs.hasPose = hasPose;
   }
 
   public IntakeExtend(IntakeExtendIO io, BooleanSupplier limitSwitchDisabled) {
@@ -128,26 +132,50 @@ public class IntakeExtend extends SubsystemBase {
     return Commands.run(this::stopExtend, this);
   }
 
-  public Command extendToAngle(double angle) {
+  public Command homeExtend() {
     return Commands.run(
             () -> {
-              io.setPIDEnabled(true);
-              io.goToPos(angle);
+              io.setPIDEnabled(false);
+              io.setVoltageExtend(-HOME_VOLTAGE);
             },
             this)
-        .until(() -> inputs.atSetpoint)
+        .until(() -> inputs.isCollapsed)
         .finallyDo(this::stopExtend)
-        .withName("extendToAngle");
+        .withName("homeExtend");
+  }
+
+  public Command extendToAngle(double angle) {
+    Command extendCommand =
+        Commands.run(
+                () -> {
+                  io.setPIDEnabled(true);
+                  io.goToPos(angle);
+                },
+                this)
+            .until(() -> inputs.atSetpoint)
+            .finallyDo(this::stopExtend)
+            .withName("extendToAngle");
+
+    if (!hasPose) {
+      return homeExtend().andThen(extendCommand);
+    }
+    return extendCommand;
   }
 
   public Command holdAngle(double angle) {
-    return Commands.run(
-            () -> {
-              io.setPIDEnabled(true);
-              io.goToPos(angle);
-            },
-            this)
-        .finallyDo(this::stopExtend)
-        .withName("holdAngle");
+    Command holdCommand =
+        Commands.run(
+                () -> {
+                  io.setPIDEnabled(true);
+                  io.goToPos(angle);
+                },
+                this)
+            .finallyDo(this::stopExtend)
+            .withName("holdAngle");
+
+    if (!hasPose) {
+      return homeExtend().andThen(holdCommand);
+    }
+    return holdCommand;
   }
 }
