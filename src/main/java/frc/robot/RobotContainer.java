@@ -183,36 +183,6 @@ public class RobotContainer {
         new Orchestrator(
             drive, magicCarpet, shooter, indexer, intake, intakeRollers, driverController);
     Autos autos = new Autos(drive, orchestrator, intake, intakeRollers, shooter);
-    NamedCommands.registerCommand(
-        "endIntake",
-        Commands.parallel(
-                intakeRollers.stopIntakeCommand().withTimeout(0.05),
-                indexer.stop().withTimeout(0.05))
-            .withTimeout(0.05));
-    NamedCommands.registerCommand(
-        "spinUp",
-        shooter.setTargetVelocityRepeatedly(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM)));
-    NamedCommands.registerCommand("feedShooter", orchestrator.feedUp());
-    NamedCommands.registerCommand("bringInIntake", intake.extendToAngleAndIntake(0));
-    NamedCommands.registerCommand("driveToHub", orchestrator.driveToHub());
-    NamedCommands.registerCommand("driveToHubAuto", orchestrator.driveToHub().withTimeout(3.0));
-    NamedCommands.registerCommand(
-        "shootAuto",
-        Commands.sequence(
-            Commands.parallel(
-                    shooter
-                        .setTargetVelocityRepeatedly(
-                            Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM))
-                        .withTimeout(0.8),
-                    intakeRollers.stopIntakeCommand(),
-                    indexer.stop())
-                .withTimeout(0.8),
-            Commands.deadline(
-                Commands.waitSeconds(3.2),
-                shooter.setTargetVelocityRepeatedly(
-                    Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM)),
-                orchestrator.feedUp()),
-            Commands.parallel(indexer.stop().withTimeout(0.05)).withTimeout(0.05)));
     AutoBuilder.configure(
         drive::getPose,
         drive::setPose,
