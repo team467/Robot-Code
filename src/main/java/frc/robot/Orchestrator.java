@@ -270,9 +270,7 @@ public class Orchestrator {
 
   public Command shootWhileRetractingIntake(Command shooterCommand) {
     return Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            shooterCommand,
-            feedUp())
+            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS), shooterCommand, feedUp())
         .withName("shootWhileRetractingIntake");
   }
 
@@ -314,7 +312,7 @@ public class Orchestrator {
                 drive.getPose().getX(),
                 drive.getPose().getY(),
                 AllianceFlipUtil.apply(Hub.blueCenter)
-                    .plus(new Translation2d(-0.6, 0))
+                    .plus(new Translation2d(-0.55, 0))
                     .minus(
                         drive
                             .getPose()

@@ -7,7 +7,7 @@ public class LedConstants {
   public static final int LED_COUNT;
 
   /* num LEDs - change the first two numbers based on actual led strip */
-  public static final int FULL_LENGTH = 11; // 2026 robot LED count
+  public static final int FULL_LENGTH = 43; // 2026 robot LED count
   public static final int BAR_LENGTH = Math.min(10, FULL_LENGTH);
   public static final int BASE_LENGTH = (FULL_LENGTH - BAR_LENGTH) / 2;
 

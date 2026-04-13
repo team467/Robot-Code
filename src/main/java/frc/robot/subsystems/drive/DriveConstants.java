@@ -96,7 +96,7 @@ public class DriveConstants {
       (2 * PI) / 60.0 / turnMotorReduction; // RPM -> Rad/Sec
 
   // Turn PID configuration
-  public static final double turnKp = 3.5;
+  public static final double turnKp = 12.0;
   public static final double turnKd = 0.0;
   public static final double turnSimP = 9.0;
   public static final double turnSimD = 0.0;

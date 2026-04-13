@@ -33,6 +33,6 @@ public class IntakeConstants {
   public static final double SAFETY_TOLERANCE = 2;
   public static final double POSITION_TOLERANCE = 7;
 
-  public static final double INTAKE_EXTEND_MOTOR_CURRENT_LIMIT = 20;
+  public static final double INTAKE_EXTEND_MOTOR_CURRENT_LIMIT = 30;
   public static final double INTAKE_ROLLERS_MOTOR_CURRENT_LIMIT = 45;
 }
