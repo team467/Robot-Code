@@ -27,6 +27,7 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
@@ -265,6 +266,22 @@ public class Orchestrator {
 
   public Command spinUpShooter(double velocityRPM) {
     return shooter.setTargetVelocity(Rotations.per(Minute).of(velocityRPM));
+  }
+
+  public Command shootWhileRetractingIntake(Command shooterCommand) {
+    return Commands.parallel(
+            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+            shooterCommand,
+            feedUp())
+        .withName("shootWhileRetractingIntake");
+  }
+
+  public Command shootWhileRetractingIntakeHub() {
+    return shootWhileRetractingIntake(spinUpShooterHub());
+  }
+
+  public Command shootWhileRetractingIntakeDistance(Supplier<Distance> targetDistance) {
+    return shootWhileRetractingIntake(spinUpShooterDistance(targetDistance));
   }
 
   public Command driveShootAtAngle() {
