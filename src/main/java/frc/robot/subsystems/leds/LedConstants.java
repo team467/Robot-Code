@@ -7,7 +7,7 @@ public class LedConstants {
   public static final int LED_COUNT;
 
   /* num LEDs - change the first two numbers based on actual led strip */
-  public static final int FULL_LENGTH = 42; // 2026 robot LED count
+  public static final int FULL_LENGTH = 11; // 2026 robot LED count
   public static final int BAR_LENGTH = Math.min(10, FULL_LENGTH);
   public static final int BASE_LENGTH = (FULL_LENGTH - BAR_LENGTH) / 2;
 
@@ -45,6 +45,10 @@ public class LedConstants {
       case ROBOT_BRIEFCASE -> {
         LED_CHANNEL = 0;
         LED_COUNT = 14;
+      }
+      case ROBOT_2026_COMP -> {
+        LED_CHANNEL = 0;
+        LED_COUNT = FULL_LENGTH;
       }
       default -> {
         LED_CHANNEL = 0;

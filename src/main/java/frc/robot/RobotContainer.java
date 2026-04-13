@@ -119,7 +119,7 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera0Name, robotToCamera0),
                   new VisionIOPhotonVision(camera1Name, robotToCamera1),
                   new VisionIOPhotonVision(camera2Name, robotToCamera2));
-          //          leds = new Leds();
+          leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
@@ -186,7 +186,7 @@ public class RobotContainer {
         drive::setPose,
         drive::getChassisSpeeds,
         drive::runVelocity,
-        new PPHolonomicDriveController(new PIDConstants(12, 0, 0), new PIDConstants(9, 0, 0)),
+        new PPHolonomicDriveController(new PIDConstants(9.0, 0, 0), new PIDConstants(6, 0, 0)),
         ppConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         drive);

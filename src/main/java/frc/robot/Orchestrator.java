@@ -305,4 +305,8 @@ public class Orchestrator {
                             .getTranslation())
                     .getAngle()));
   }
+
+  public Command stopShootingAuto() {
+    return Commands.parallel(indexer.stop(), shooter.stop());
+  }
 }

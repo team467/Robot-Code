@@ -195,7 +195,8 @@ public class Autos {
    */
   private Command pp2CycleRegression(String path1, String path2, Supplier<Pose2d> startPose) {
     return ppCycleRegression(path1, startPose)
-        .withTimeout(10.5)
+        .withTimeout(14.5)
+        .andThen(orchestrator.stopShootingAuto().withTimeout(0.1))
         .andThen(ppCycleRegressionConnect(path2));
   }
 
