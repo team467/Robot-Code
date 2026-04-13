@@ -98,6 +98,45 @@ public class Autos {
       () -> AllianceFlipUtil.apply(new Pose2d(4.295, 7.531, new Rotation2d(0.000)));
   private static final Supplier<Pose2d> startBside =
       () -> AllianceFlipUtil.apply(new Pose2d(4.295, 0.538, new Rotation2d(0.000)));
+  private static final Supplier<Pose2d> FrontBumpASide =
+      () ->
+          AllianceFlipUtil.apply(
+              new Pose2d(5.775780200958252, 5.496349811553955, new Rotation2d()));
+  private static final Supplier<Pose2d> BackBumpASide =
+      () -> AllianceFlipUtil.apply(new Pose2d(3.3, 5.496349811553955, new Rotation2d()));
+  private static final Supplier<Pose2d> BackTrenchASide =
+      () ->
+          AllianceFlipUtil.apply(
+              new Pose2d(
+                  3.3395299911499023,
+                  7.367389678955078,
+                  new Rotation2d(Units.degreesToRadians(-90))));
+  private static final Supplier<Pose2d> FrontTrenchASide =
+      () ->
+          AllianceFlipUtil.apply(
+              new Pose2d(5.9, 7.367389678955078, new Rotation2d(Units.degreesToRadians(-90))));
+  private static final Supplier<Pose2d> BackHubASide =
+      () ->
+          AllianceFlipUtil.apply(
+              new Pose2d(5.9, 4.367389678955078, new Rotation2d(Units.degreesToRadians(-90))));
+
+  private Command ppCycleAlternate(String path, Supplier<Pose2d> startPose) {
+    return Commands.sequence(
+        Commands.runOnce(() -> drive.setPose(startAside.get())),
+        Commands.deadline(
+                drive.getAutonomousCommand(path),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
+                orchestrator.spinUpShooterHub())
+            .withTimeout(14.5),
+        new StraightDriveToPose(drive, FrontBumpASide).withTimeout(2.0),
+        new StraightDriveToPose(drive, BackBumpASide).withTimeout(2.1),
+        orchestrator.aimToHub().withTimeout(2.5),
+        Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
+        Commands.parallel(
+            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+            orchestrator.spinUpShooter(1214),
+            orchestrator.feedUp()));
+  }
 
   /**
    * Helper function for a single cycle auto with a constant shooting speed
@@ -132,9 +171,10 @@ public class Autos {
         orchestrator.aimToHub().withTimeout(2.5),
         Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
         Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooter(1214),
-            orchestrator.feedUp()));
+                intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+                orchestrator.spinUpShooter(1214),
+                orchestrator.feedUp())
+            .withTimeout(2.5));
   }
 
   /**
@@ -198,6 +238,32 @@ public class Autos {
         .withTimeout(14.5)
         .andThen(orchestrator.stopShootingAuto().withTimeout(0.1))
         .andThen(ppCycleRegressionConnect(path2));
+  }
+
+  public Command ppACycleAlternate() {
+    return Commands.sequence(
+        ppCycleAlternate("A-Cycle1", startAside).withTimeout(10.5),
+        shooter.stop(),
+        new StraightDriveToPose(drive, BackTrenchASide).withTimeout(1.8),
+        new StraightDriveToPose(drive, FrontTrenchASide).withTimeout(1.8),
+        Commands.parallel(
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
+                new StraightDriveToPose(drive, BackHubASide))
+            .withTimeout(2.0),
+        new StraightDriveToPose(drive, FrontBumpASide).withTimeout(1.5),
+        Commands.parallel(
+                new StraightDriveToPose(drive, BackBumpASide),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
+            .withTimeout(3.0),
+        orchestrator.aimToHub().withTimeout(3),
+        Commands.parallel(
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                orchestrator.feedUp())
+            .withTimeout(2.0),
+        Commands.parallel(
+            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+            orchestrator.feedUp()));
   }
 
   /**
