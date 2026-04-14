@@ -149,9 +149,7 @@ public class Autos {
         Commands.runOnce(() -> drive.setPose(startPose.get())),
         Commands.deadline(
                 drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                Commands.waitSeconds(12.5)
-                    .andThen(orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())))
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
             .withTimeout(14.5),
         Commands.deadline(
             orchestrator.aimToHub().withTimeout(2.5),
@@ -170,9 +168,7 @@ public class Autos {
     return Commands.sequence(
         Commands.deadline(
                 drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                Commands.waitSeconds(12.5)
-                    .andThen(orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())))
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
             .withTimeout(14.5),
         Commands.deadline(
             orchestrator.aimToHub().withTimeout(2.5),

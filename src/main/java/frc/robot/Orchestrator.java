@@ -260,7 +260,6 @@ public class Orchestrator {
     return shooter.setTargetVelocity(shooter.calculateSetpoint(targetDistance));
   }
 
-
   public Command spinUpShooterHub() {
     return shooter.setTargetVelocity(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM));
   }
