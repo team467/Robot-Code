@@ -29,6 +29,11 @@ public class Intake {
     return rollers.intake();
   }
 
+  public Command slowlyBringInIntake() {
+    return Commands.parallel(rollers.intake(), extend.runIntakeExtendVolts(SLOW_VOLTS))
+        .andThen(extend.extendToAngle(COLLAPSE_POS).repeatedly());
+  }
+
   // Jack's Chugga Chugga mode
   public Command shakeAndIntake() {
     return Commands.repeatingSequence(

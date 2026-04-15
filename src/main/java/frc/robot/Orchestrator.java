@@ -142,6 +142,47 @@ public class Orchestrator {
     return ZoneId.NONE;
   }
 
+  public Command zoneBasedShooter() {
+    DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
+
+    return new SelectCommand<>(
+        Map.ofEntries(
+            Map.entry(ZoneId.ZONE_1, spinUpShooterDistance(getHubDistance())),
+            Map.entry(
+                ZoneId.ZONE_2,
+                new ConditionalCommand(
+                    spinUpShooterDistance(
+                        () ->
+                            Meters.of(
+                                AllianceFlipUtil.apply(BBumpClosePose)
+                                    .getTranslation()
+                                    .getDistance((drive.getPose().getTranslation())))),
+                    spinUpShooterDistance(
+                        () ->
+                            Meters.of(
+                                AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))
+                                    .getTranslation()
+                                    .getDistance(drive.getPose().getTranslation()))),
+                    () -> allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)),
+            Map.entry(
+                ZoneId.ZONE_3,
+                spinUpShooterDistance(
+                    () ->
+                        Meters.of(
+                            AllianceFlipUtil.apply(BBumpFarPose)
+                                .getTranslation()
+                                .getDistance(drive.getPose().getTranslation())))),
+            Map.entry(
+                ZoneId.ZONE_4,
+                spinUpShooterDistance(
+                    () ->
+                        Meters.of(
+                            AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))
+                                .getTranslation()
+                                .getDistance(drive.getPose().getTranslation()))))),
+        this::getCurrentZone);
+  }
+
   public Command zoneBasedAim() {
     DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
 
@@ -312,7 +353,7 @@ public class Orchestrator {
                 drive.getPose().getX(),
                 drive.getPose().getY(),
                 AllianceFlipUtil.apply(Hub.blueCenter)
-                    .plus(new Translation2d(-0.55, 0))
+                    .plus(new Translation2d(-0.4, 0))
                     .minus(
                         drive
                             .getPose()

@@ -24,7 +24,7 @@ public class VisionConstants {
   private static Rotation3d RotationCorrection =
       new Rotation3d(0, 0, Math.PI / 2); // 90 degree roation around z-axis
   public static Transform3d robotToCamera0 =
-      new Transform3d( // front camera
+      new Transform3d(
           new Translation3d(
                   Units.inchesToMeters(-8.931),
                   Units.inchesToMeters(12.349),
@@ -35,7 +35,7 @@ public class VisionConstants {
               Units.degreesToRadians(0.0),
               Units.degreesToRadians(-158.771)));
   public static Transform3d robotToCamera1 =
-      new Transform3d( // rear left camera
+      new Transform3d(
           new Translation3d(
                   Units.inchesToMeters(8.931), // x
                   Units.inchesToMeters(12.349), // y
@@ -44,7 +44,7 @@ public class VisionConstants {
           new Rotation3d(
               Units.degreesToRadians(0.0),
               Units.degreesToRadians(0.0),
-              Units.degreesToRadians(-201.229)));
+              Units.degreesToRadians(158.771)));
 
   public static Transform3d robotToCamera2 =
       new Transform3d( // rear right camera

@@ -44,7 +44,7 @@ public class Shooter extends SubsystemBase {
 
   // Slew rate limiter: ramps the target velocity gradually (rad/s per second)
   // This prevents current spikes that cause oscillation with a 20A limit
-  private final SlewRateLimiter targetRamper = new SlewRateLimiter(1600);
+  private final SlewRateLimiter targetRamper = new SlewRateLimiter(800);
   private double feedForwardScalar;
 
   /**
@@ -263,7 +263,11 @@ public class Shooter extends SubsystemBase {
   public Supplier<AngularVelocity> calculateSetpoint(Supplier<Distance> distance) {
     // calculate rpm depending on distance
     return () -> {
-      AngularVelocity velocity = RPM.of(102.4367 * distance.get().in(Meters) + 799.60799);
+      AngularVelocity velocity =
+          RPM.of(
+              25.30184 * Math.pow(distance.get().in(Meters), 2)
+                  - 47.12642 * distance.get().in(Meters)
+                  + 1001.70713);
       if (velocity.gt(RPM.of(1550))) {
         return RPM.of(1550);
       } else return velocity;

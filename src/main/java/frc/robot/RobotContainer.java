@@ -186,7 +186,7 @@ public class RobotContainer {
         drive::setPose,
         drive::getChassisSpeeds,
         drive::runVelocity,
-        new PPHolonomicDriveController(new PIDConstants(9.0, 0, 0), new PIDConstants(6, 0, 0)),
+        new PPHolonomicDriveController(new PIDConstants(14.0, 0, 0), new PIDConstants(7, 0, 0)),
         ppConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         drive);
@@ -300,7 +300,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    driverController.x().toggleOnTrue(orchestrator.aimToHub());
+    driverController.x().toggleOnTrue(orchestrator.zoneBasedAim());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     driverController
         .leftBumper()
@@ -341,8 +341,7 @@ public class RobotContainer {
     operatorController
         .rightTrigger(0.1)
         .and(() -> !operatorController.pov(0).getAsBoolean())
-        .toggleOnTrue(
-            orchestrator.spinUpShooterDistance(orchestrator.getShootWhileDrivingResultDistance()));
+        .toggleOnTrue(orchestrator.zoneBasedShooter());
     operatorController
         .rightTrigger(0.1)
         .and(operatorController.pov(0))

@@ -12,6 +12,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.function.Supplier;
 
 /** Contains all autos */
@@ -149,38 +150,39 @@ public class Autos {
         Commands.runOnce(() -> drive.setPose(startPose.get())),
         Commands.deadline(
                 drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
-            .withTimeout(14.5),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
+                Commands.waitSeconds(5)
+                    .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
+            .withTimeout(15.5),
         Commands.deadline(
-            orchestrator.aimToHub().withTimeout(2.5),
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-        Commands.parallel(
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                orchestrator.feedUp())
-            .withTimeout(2.5),
-        Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-            orchestrator.feedUp()));
+                orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
+            .andThen(
+                Commands.parallel(
+                        Commands.waitSeconds(0.7).andThen(intake.slowlyBringInIntake()),
+                        orchestrator.aimToHub().withTimeout(1).repeatedly(),
+                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                        Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))
+                    .withTimeout(1.6)));
   }
 
   private Command ppCycleRegressionConnect(String path) {
     return Commands.sequence(
         Commands.deadline(
                 drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5))
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
+                Commands.waitSeconds(5)
+                    .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
             .withTimeout(14.5),
         Commands.deadline(
-            orchestrator.aimToHub().withTimeout(2.5),
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
-        Commands.parallel(
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                orchestrator.feedUp())
-            .withTimeout(2.5),
-        Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-            orchestrator.feedUp()));
+                orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
+            .andThen(
+                Commands.parallel(
+                    Commands.waitSeconds(0.7).andThen(intake.slowlyBringInIntake()),
+                    orchestrator.aimToHub().withTimeout(1).repeatedly(),
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                    Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))));
   }
 
   /**
