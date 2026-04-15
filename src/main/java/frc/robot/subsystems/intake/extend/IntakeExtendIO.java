@@ -21,6 +21,7 @@ public interface IntakeExtendIO {
     public double stallExtendTimer = 0.0;
     public double stallCollapseTimer = 0.0;
     public boolean stowed = false;
+    public boolean hasPose = false;
   }
 
   default void updateInputs(IntakeExtendIOInputs inputs) {}
@@ -34,6 +35,9 @@ public interface IntakeExtendIO {
   default void goToPos(double pos) {}
 
   default void setPIDEnabled(boolean enabled) {}
+
+  default void setIdleMode(boolean cost) {}
+  ;
 
   default boolean getPIDEnabled() {
     return false;

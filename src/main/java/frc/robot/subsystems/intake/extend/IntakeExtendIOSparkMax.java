@@ -33,6 +33,16 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
 
   public IntakeExtendIOSparkMax() {
     extendMotor = new SparkMax(intakeExtendCanId, MotorType.kBrushless);
+
+    pidController = extendMotor.getClosedLoopController();
+    extendMotorEncoder = extendMotor.getEncoder();
+
+    extendMotor.configure(
+        getSparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    collapsedLimitSwitch = new DigitalInput(EXTEND_LIMIT_ID);
+  }
+
+  public SparkMaxConfig getSparkMaxConfig() {
     EncoderConfig extendEnc = new EncoderConfig();
     extendEnc.positionConversionFactor(EXTEND_POSITION_CONVERSION);
     extendEnc.velocityConversionFactor(EXTEND_VELOCITY_CONVERSION);
@@ -46,13 +56,7 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
         .pid(PID_P, PID_I, PID_D)
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
     extendConfig.encoder.apply(extendEnc);
-
-    pidController = extendMotor.getClosedLoopController();
-    extendMotorEncoder = extendMotor.getEncoder();
-
-    extendMotor.configure(
-        extendConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    collapsedLimitSwitch = new DigitalInput(EXTEND_LIMIT_ID);
+    return extendConfig;
   }
 
   @Override
@@ -61,7 +65,7 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
     inputs.extendVelocity = extendMotorEncoder.getVelocity();
     inputs.extendVolts = extendMotor.getAppliedOutput();
     inputs.extendAmps = extendMotor.getOutputCurrent();
-    inputs.isCollapsed = false;
+    inputs.isCollapsed = isCollapsed();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
     inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint() && usingPID;
     inputs.hasSetpoint = usingPID;
@@ -98,6 +102,21 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
 
   public void setPIDEnabled(boolean enabled) {
     this.usingPID = enabled;
+  }
+
+  @Override
+  public void setIdleMode(boolean coast) {
+    if (coast) {
+      extendMotor.configure(
+          getSparkMaxConfig().idleMode(IdleMode.kCoast),
+          ResetMode.kResetSafeParameters,
+          PersistMode.kNoPersistParameters);
+    } else {
+      extendMotor.configure(
+          getSparkMaxConfig().idleMode(IdleMode.kBrake),
+          ResetMode.kResetSafeParameters,
+          PersistMode.kNoPersistParameters);
+    }
   }
 
   @Override

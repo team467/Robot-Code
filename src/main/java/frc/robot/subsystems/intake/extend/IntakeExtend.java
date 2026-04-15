@@ -2,12 +2,14 @@ package frc.robot.subsystems.intake.extend;
 
 import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POS;
+import static frc.robot.subsystems.intake.IntakeConstants.HOME_VOLTAGE;
 import static frc.robot.subsystems.intake.IntakeConstants.POSITION_TOLERANCE;
 import static frc.robot.subsystems.intake.IntakeConstants.STALL_VELOCITY;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.RobotState.IntakePosition;
@@ -25,6 +27,7 @@ public class IntakeExtend extends SubsystemBase {
   private boolean stalledCollapse = false;
   private boolean isStowed = false;
   private boolean isExtended = false;
+  private boolean hasPose = false;
 
   private double targetExtendPosition = 0;
 
@@ -53,8 +56,14 @@ public class IntakeExtend extends SubsystemBase {
       RobotState.getInstance().intakePosition = IntakePosition.DEPLOYED;
     }
     if (inputs.isCollapsed) {
+      if (!hasPose) {
+        Logger.recordOutput("Intake/IntakeExtend/HomeCompleted", true);
+      }
       io.resetExtendEncoder(0.0);
+      hasPose = true;
     }
+    inputs.hasPose = hasPose;
+    Logger.recordOutput("Intake/IntakeExtend/HasPose", hasPose);
   }
 
   public IntakeExtend(IntakeExtendIO io, BooleanSupplier limitSwitchDisabled) {
@@ -68,6 +77,10 @@ public class IntakeExtend extends SubsystemBase {
 
   public DoubleSupplier getAngle() {
     return () -> inputs.getExtendPos;
+  }
+
+  public void setIdleMode(boolean idleMode) {
+    io.setIdleMode(idleMode);
   }
 
   public Command setPose(double pose) {
@@ -124,26 +137,30 @@ public class IntakeExtend extends SubsystemBase {
     return Commands.run(this::stopExtend, this);
   }
 
-  public Command extendToAngle(double angle) {
+  public Command homeExtend() {
     return Commands.run(
             () -> {
-              io.setPIDEnabled(true);
-              io.goToPos(angle);
+              io.setPIDEnabled(false);
+              io.setVoltageExtend(HOME_VOLTAGE);
             },
             this)
-        .until(() -> inputs.atSetpoint)
+        .beforeStarting(() -> Logger.recordOutput("Intake/IntakeExtend/HomeStarted", true))
+        .until(() -> inputs.isCollapsed)
         .finallyDo(this::stopExtend)
-        .withName("extendToAngle");
+        .withName("homeExtend");
   }
 
-  public Command holdAngle(double angle) {
-    return Commands.run(
-            () -> {
-              io.setPIDEnabled(true);
-              io.goToPos(angle);
-            },
-            this)
-        .finallyDo(this::stopExtend)
-        .withName("holdAngle");
+  public Command extendToAngle(double angle) {
+    return new ConditionalCommand(homeExtend(), Commands.none(), () -> !hasPose)
+        .andThen(
+            Commands.run(
+                    () -> {
+                      io.setPIDEnabled(true);
+                      io.goToPos(angle);
+                    },
+                    this)
+                .until(() -> inputs.atSetpoint)
+                .finallyDo(this::stopExtend)
+                .withName("extendToAngle"));
   }
 }

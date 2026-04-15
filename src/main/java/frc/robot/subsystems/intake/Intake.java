@@ -25,16 +25,13 @@ public class Intake {
     return extend.extendToAngle(angle);
   }
 
-  public Command holdAngleAndIntake(double angle) {
-    return Commands.parallel(extend.holdAngle(angle), runIntakeMotor())
-        .withName("holdAngleAndIntake");
+  public Command runIntakeMotor() {
+    return rollers.intake();
   }
 
-  public Command runIntakeMotor() {
-    return rollers
-        .intake()
-        .onlyWhile(() -> extend.getAngle().getAsDouble() < COLLAPSE_POS - SAFETY_TOLERANCE)
-        .onlyIf(() -> extend.getAngle().getAsDouble() < COLLAPSE_POS - SAFETY_TOLERANCE);
+  public Command slowlyBringInIntake() {
+    return Commands.parallel(rollers.intake(), extend.runIntakeExtendVolts(SLOW_VOLTS))
+        .andThen(extend.extendToAngle(COLLAPSE_POS).repeatedly());
   }
 
   // Jack's Chugga Chugga mode

@@ -61,7 +61,7 @@ public class DriveConstants {
   public static final SwerveModuleConstants.ClosedLoopOutputType driveClosedLoopOutput =
       ClosedLoopOutputType.Voltage;
   public static final int driveMotorCurrentLimit = 50;
-  public static final double wheelRadiusMeters = Units.inchesToMeters(1.905);
+  public static final double wheelRadiusMeters = Units.inchesToMeters(2);
   public static final double driveMotorReduction = 8.16;
   public static final DCMotor driveGearbox = DCMotor.getKrakenX60Foc(1);
 
@@ -96,7 +96,7 @@ public class DriveConstants {
       (2 * PI) / 60.0 / turnMotorReduction; // RPM -> Rad/Sec
 
   // Turn PID configuration
-  public static final double turnKp = 3.5;
+  public static final double turnKp = 12.0;
   public static final double turnKd = 0.0;
   public static final double turnSimP = 9.0;
   public static final double turnSimD = 0.0;

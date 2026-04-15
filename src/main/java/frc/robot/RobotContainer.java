@@ -6,11 +6,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
-import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
@@ -19,6 +17,7 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -29,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
-import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
@@ -183,44 +181,12 @@ public class RobotContainer {
         new Orchestrator(
             drive, magicCarpet, shooter, indexer, intake, intakeRollers, driverController);
     Autos autos = new Autos(drive, orchestrator, intake, intakeRollers, shooter);
-    NamedCommands.registerCommand(
-        "startIntake", intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(10.0));
-    NamedCommands.registerCommand(
-        "endIntake",
-        Commands.parallel(
-                intakeRollers.stopIntakeCommand().withTimeout(0.05),
-                indexer.stop().withTimeout(0.05))
-            .withTimeout(0.05));
-    NamedCommands.registerCommand(
-        "spinUp",
-        shooter.setTargetVelocityRepeatedly(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM)));
-    NamedCommands.registerCommand("feedShooter", orchestrator.feedUp());
-    NamedCommands.registerCommand("bringInIntake", intake.extendToAngleAndIntake(0));
-    NamedCommands.registerCommand("driveToHub", orchestrator.driveToHub());
-    NamedCommands.registerCommand("driveToHubAuto", orchestrator.driveToHub().withTimeout(3.0));
-    NamedCommands.registerCommand(
-        "shootAuto",
-        Commands.sequence(
-            Commands.parallel(
-                    shooter
-                        .setTargetVelocityRepeatedly(
-                            Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM))
-                        .withTimeout(0.8),
-                    intakeRollers.stopIntakeCommand(),
-                    indexer.stop())
-                .withTimeout(0.8),
-            Commands.deadline(
-                Commands.waitSeconds(3.2),
-                shooter.setTargetVelocityRepeatedly(
-                    Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM)),
-                orchestrator.feedUp()),
-            Commands.parallel(indexer.stop().withTimeout(0.05)).withTimeout(0.05)));
     AutoBuilder.configure(
         drive::getPose,
         drive::setPose,
         drive::getChassisSpeeds,
         drive::runVelocity,
-        new PPHolonomicDriveController(new PIDConstants(12, 0, 0), new PIDConstants(9, 0, 0)),
+        new PPHolonomicDriveController(new PIDConstants(14.0, 0, 0), new PIDConstants(7, 0, 0)),
         ppConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         drive);
@@ -235,12 +201,12 @@ public class RobotContainer {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
 
-    NamedCommands.registerCommand(
-        "Drive Back Left",
-        new DriveToPose(drive, () -> new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(180))));
-    NamedCommands.registerCommand(
-        "Drive Over Left",
-        new DriveToPose(drive, () -> new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(180))));
+    //    NamedCommands.registerCommand(
+    //        "Drive Back Left",
+    //        new DriveToPose(drive, () -> new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(180))));
+    //    NamedCommands.registerCommand(
+    //        "Drive Over Left",
+    //        new DriveToPose(drive, () -> new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(180))));
 
     //
     // NamedCommands.registerCommand("startShooter",Commands.parallel(orchestrator.preloadBalls(),orchestrator.prepShooter()));
@@ -256,7 +222,8 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
-
+    autoChooser.addOption(
+        "RunIntakeOut", intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
     autoChooser.addOption("Manual A-CC", autos.ACCManualAuto());
     autoChooser.addOption("Manual A-CC-Improved", autos.ACCManuelAutoAlt());
     autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManualAutoOverBump());
@@ -308,7 +275,6 @@ public class RobotContainer {
   private void configureButtonBindings() {
     indexer.setDefaultCommand(indexer.stop());
     shooter.setDefaultCommand(shooter.stop());
-    //    shooter.setDefaultCommand(shooter.stop());
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -318,7 +284,11 @@ public class RobotContainer {
             () -> -driverController.getRightX()));
 
     // Lock to 0 degrees when A button is held
-
+    Trigger intaking = new Trigger(() -> RobotState.getInstance().intaking);
+    intaking.onTrue(
+        Commands.runOnce(() -> driverController.setRumble(RumbleType.kBothRumble, 0.2)));
+    intaking.onFalse(
+        Commands.runOnce(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
     driverController
         .start()
         .onTrue(
@@ -330,7 +300,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    driverController.x().toggleOnTrue(orchestrator.aimToHub());
+    driverController.x().toggleOnTrue(orchestrator.zoneBasedAim());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     driverController
         .leftBumper()
@@ -346,12 +316,13 @@ public class RobotContainer {
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
         .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+        .toggleOnTrue(intake.extendToAngle(IntakeConstants.EXTEND_POS));
 
-    //     VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
+    //         VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
+    // driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
+
+    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
     driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
-    //    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
-    driverController.rightTrigger(0.1).toggleOnTrue(indexer.run());
 
     driverController
         .a()
@@ -366,19 +337,17 @@ public class RobotContainer {
         .and(operatorController.pov(180))
         .whileTrue(intakeExtend.runIntakeExtendVolts(4))
         .onFalse(intakeExtend.stopExtendingCommand());
-    //    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
+    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController
         .rightTrigger(0.1)
         .and(() -> !operatorController.pov(0).getAsBoolean())
-        .toggleOnTrue(
-            orchestrator.spinUpShooterDistance(orchestrator.getShootWhileDrivingResultDistance()));
+        .toggleOnTrue(orchestrator.zoneBasedShooter());
     operatorController
         .rightTrigger(0.1)
         .and(operatorController.pov(0))
         .toggleOnTrue(orchestrator.spinUpShooterHub());
-    operatorController.leftTrigger(0.1).toggleOnTrue(shooter.setVoltage(4));
     operatorController.y().whileTrue(indexer.reverse());
-    //    operatorController.x().whileTrue(intake.outtake());
+    operatorController.x().whileTrue(intakeRollers.outtake());
   }
 
   /**
@@ -393,5 +362,13 @@ public class RobotContainer {
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
     orchestrator.orchestratorPeriodic();
+  }
+
+  private Command rumblePulse(double intensity, double seconds) {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> driverController.getHID().setRumble(RumbleType.kBothRumble, intensity)),
+        Commands.waitSeconds(seconds),
+        Commands.runOnce(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0)));
   }
 }

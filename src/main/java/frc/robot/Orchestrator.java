@@ -10,6 +10,7 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,9 +27,11 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.util.ShooterLeadCompensator;
 import frc.robot.util.Zone;
 import frc.robot.util.Zone.Tuple2d;
@@ -51,7 +54,7 @@ public class Orchestrator {
     ZONE_4
   }
 
-  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(40.0);
+  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(58.0);
   private final Drive drive;
   private final Shooter shooter;
   private final MagicCarpet magicCarpet;
@@ -139,6 +142,47 @@ public class Orchestrator {
     return ZoneId.NONE;
   }
 
+  public Command zoneBasedShooter() {
+    DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
+
+    return new SelectCommand<>(
+        Map.ofEntries(
+            Map.entry(ZoneId.ZONE_1, spinUpShooterDistance(getHubDistance())),
+            Map.entry(
+                ZoneId.ZONE_2,
+                new ConditionalCommand(
+                    spinUpShooterDistance(
+                        () ->
+                            Meters.of(
+                                AllianceFlipUtil.apply(BBumpClosePose)
+                                    .getTranslation()
+                                    .getDistance((drive.getPose().getTranslation())))),
+                    spinUpShooterDistance(
+                        () ->
+                            Meters.of(
+                                AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))
+                                    .getTranslation()
+                                    .getDistance(drive.getPose().getTranslation()))),
+                    () -> allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)),
+            Map.entry(
+                ZoneId.ZONE_3,
+                spinUpShooterDistance(
+                    () ->
+                        Meters.of(
+                            AllianceFlipUtil.apply(BBumpFarPose)
+                                .getTranslation()
+                                .getDistance(drive.getPose().getTranslation())))),
+            Map.entry(
+                ZoneId.ZONE_4,
+                spinUpShooterDistance(
+                    () ->
+                        Meters.of(
+                            AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))
+                                .getTranslation()
+                                .getDistance(drive.getPose().getTranslation()))))),
+        this::getCurrentZone);
+  }
+
   public Command zoneBasedAim() {
     DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
 
@@ -186,7 +230,11 @@ public class Orchestrator {
     return () ->
         Meters.of(
             AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())
-                .getDistance(drive.getPose().getTranslation()));
+                .getDistance(
+                    drive
+                        .getPose()
+                        .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
+                        .getTranslation()));
   }
 
   private Rotation2d filteredHubAngle(Rotation2d raw) {
@@ -234,8 +282,7 @@ public class Orchestrator {
 
   public Command feedUp() {
     return Commands.repeatingSequence(
-            Commands.parallel(magicCarpet.run(), indexer.run())
-                .until(() -> !RobotState.getInstance().shooterAtSpeed))
+            Commands.parallel(indexer.run()).until(() -> !RobotState.getInstance().shooterAtSpeed))
         .onlyIf(() -> shooter.getSetpoint().gt(RadiansPerSecond.of(0)))
         .onlyIf(() -> RobotState.getInstance().shooterAtSpeed)
         .onlyWhile(() -> shooter.getSetpoint().gt(RadiansPerSecond.of(0)))
@@ -260,6 +307,20 @@ public class Orchestrator {
 
   public Command spinUpShooter(double velocityRPM) {
     return shooter.setTargetVelocity(Rotations.per(Minute).of(velocityRPM));
+  }
+
+  public Command shootWhileRetractingIntake(Command shooterCommand) {
+    return Commands.parallel(
+            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS), shooterCommand, feedUp())
+        .withName("shootWhileRetractingIntake");
+  }
+
+  public Command shootWhileRetractingIntakeHub() {
+    return shootWhileRetractingIntake(spinUpShooterHub());
+  }
+
+  public Command shootWhileRetractingIntakeDistance(Supplier<Distance> targetDistance) {
+    return shootWhileRetractingIntake(spinUpShooterDistance(targetDistance));
   }
 
   public Command driveShootAtAngle() {
@@ -292,7 +353,16 @@ public class Orchestrator {
                 drive.getPose().getX(),
                 drive.getPose().getY(),
                 AllianceFlipUtil.apply(Hub.blueCenter)
-                    .minus(drive.getPose().getTranslation())
+                    .plus(new Translation2d(-0.4, 0))
+                    .minus(
+                        drive
+                            .getPose()
+                            .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
+                            .getTranslation())
                     .getAngle()));
+  }
+
+  public Command stopShootingAuto() {
+    return Commands.parallel(indexer.stop(), shooter.stop());
   }
 }

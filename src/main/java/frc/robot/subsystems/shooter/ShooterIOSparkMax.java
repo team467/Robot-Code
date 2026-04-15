@@ -44,26 +44,26 @@ public class ShooterIOSparkMax implements ShooterIO {
         .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
-        .smartCurrentLimit(CURRENT_LIMIT);
-    bottomLeftMotorConfig.follow(shooterTopRightMotorCanId, false);
+        .smartCurrentLimit(CURRENT_LIMIT)
+        .secondaryCurrentLimit(CURRENT_LIMIT);
     bottomLeftMotorConfig.apply(enc);
 
     var topLeftMotorConfig = new SparkMaxConfig();
     topLeftMotorConfig
-        .inverted(false)
+        .inverted(true)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
-        .smartCurrentLimit(CURRENT_LIMIT);
-    topLeftMotorConfig.follow(shooterTopRightMotorCanId, true);
+        .smartCurrentLimit(CURRENT_LIMIT)
+        .secondaryCurrentLimit(CURRENT_LIMIT);
     topLeftMotorConfig.apply(enc);
 
     var bottomRightMotorConfig = new SparkMaxConfig();
     bottomRightMotorConfig
-        .inverted(false)
+        .inverted(true)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
-        .smartCurrentLimit(CURRENT_LIMIT);
-    bottomRightMotorConfig.follow(shooterTopRightMotorCanId, true);
+        .smartCurrentLimit(CURRENT_LIMIT)
+        .secondaryCurrentLimit(CURRENT_LIMIT);
     bottomRightMotorConfig.apply(enc);
 
     var topRightMotorConfig = new SparkMaxConfig();
@@ -71,7 +71,8 @@ public class ShooterIOSparkMax implements ShooterIO {
         .inverted(false)
         .idleMode(IDLE_MODE)
         .voltageCompensation(VOLTAGE_COMPENSATION)
-        .smartCurrentLimit(CURRENT_LIMIT);
+        .smartCurrentLimit(CURRENT_LIMIT)
+        .secondaryCurrentLimit(CURRENT_LIMIT);
     topRightMotorConfig.apply(enc);
 
     bottomLeftMotor.configure(
@@ -125,6 +126,9 @@ public class ShooterIOSparkMax implements ShooterIO {
   @Override
   public void setVoltage(double volts) {
     topRightMotor.setVoltage(volts);
+    topLeftMotor.setVoltage(volts);
+    bottomRightMotor.setVoltage(volts);
+    bottomLeftMotor.setVoltage(volts);
   }
 
   @Override
