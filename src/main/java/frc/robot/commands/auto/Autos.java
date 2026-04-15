@@ -166,6 +166,27 @@ public class Autos {
                     .withTimeout(1.6)));
   }
 
+  private Command ppCycleRegressionDepo(String path, Supplier<Pose2d> startPose) {
+    return Commands.sequence(
+        Commands.runOnce(() -> drive.setPose(startPose.get())),
+        Commands.deadline(
+                drive.getAutonomousCommand(path),
+                intake.extendToAngleAndIntake(IntakeConstants.FUNNEL_POS).withTimeout(5.5),
+                Commands.waitSeconds(5)
+                    .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
+            .withTimeout(15.5),
+        Commands.deadline(
+                orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
+            .andThen(
+                Commands.parallel(
+                        Commands.waitSeconds(0.7).andThen(intake.slowlyBringInIntake()),
+                        orchestrator.aimToHub().withTimeout(1).repeatedly(),
+                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                        Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))
+                    .withTimeout(1.6)));
+  }
+
   private Command ppCycleRegressionConnect(String path) {
     return Commands.sequence(
         Commands.deadline(

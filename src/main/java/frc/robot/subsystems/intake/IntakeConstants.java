@@ -23,7 +23,7 @@ public class IntakeConstants {
   public static final double PID_D = 0.00001;
 
   public static final double EXTEND_POS = -13; // TODO: change the actual values
-  public static final double FUNNEL_POS = -7;
+  public static final double FUNNEL_POS = -10;
 
   // shake around the funnel pos by this much
   public static final double SHAKE_POS_OFFSET = 1;
