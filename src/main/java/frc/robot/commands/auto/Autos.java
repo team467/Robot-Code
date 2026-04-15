@@ -99,7 +99,8 @@ public class Autos {
       () -> AllianceFlipUtil.apply(new Pose2d(4.295, 7.531, new Rotation2d(0.000)));
   private static final Supplier<Pose2d> startBside =
       () -> AllianceFlipUtil.apply(new Pose2d(4.295, 0.538, new Rotation2d(0.000)));
-  private static final Supplier<Pose2d> startDepot = ()->AllianceFlipUtil.apply(new Pose2d(3.630,5.844,new Rotation2d(0.000)));
+  private static final Supplier<Pose2d> startDepot =
+      () -> AllianceFlipUtil.apply(new Pose2d(3.630, 5.844, new Rotation2d(0.000)));
 
   /**
    * Helper function for a single cycle auto with a constant shooting speed
@@ -224,12 +225,12 @@ public class Autos {
         .andThen(ppCycleRegressionConnect(path2));
   }
 
-  /**
-   *
-   * Depot Auto
-   *
-   */
-  public Command ppDepot(){return ppCycleRegression("A-Cycle-LeftSweep",startDepot);};
+  /** Depot Auto */
+  public Command ppDepot() {
+    return ppCycleRegression("A-Cycle-LeftSweep", startDepot);
+  }
+  ;
+
   /**
    * Left side pathplanner auto for a single cycle with fixed shooting distance
    *
