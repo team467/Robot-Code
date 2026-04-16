@@ -267,7 +267,7 @@ public class Shooter extends SubsystemBase {
       AngularVelocity velocity =
           RPM.of(
               25.30184 * Math.pow(distance.get().in(Meters), 2)
-                  - 47.12642 * distance.get().in(Meters)
+                  - 65.12642 * distance.get().in(Meters)
                   + 1001.70713);
       if (velocity.gt(RPM.of(1550))) {
         return RPM.of(1550);
