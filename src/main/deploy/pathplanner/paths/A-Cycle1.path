@@ -65,15 +65,15 @@
     {
       "anchor": {
         "x": 2.533,
-        "y": 5.611267806267806
+        "y": 5.611
       },
       "prevControl": {
         "x": 3.3340541310541307,
-        "y": 5.675868945868947
+        "y": 5.675601139601141
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "A-Cycle1-End"
+      "linkedName": "ACycleEnd"
     }
   ],
   "rotationTargets": [
@@ -99,7 +99,7 @@
     },
     {
       "waypointRelativePos": 3.7526652452025653,
-      "rotationDegrees": -0.15502232751999445
+      "rotationDegrees": -0.15502232751999448
     }
   ],
   "constraintZones": [
@@ -142,7 +142,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -37.18470645323313
+    "rotation": -38.82347239526609
   },
   "reversed": false,
   "folder": null,

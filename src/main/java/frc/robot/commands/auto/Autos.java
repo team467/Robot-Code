@@ -156,7 +156,7 @@ public class Autos {
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
                 Commands.waitSeconds(5)
-                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(2.62))))
+                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(2.6201))))
             .withTimeout(15.5),
         Commands.deadline(
                 orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
