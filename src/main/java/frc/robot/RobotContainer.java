@@ -299,7 +299,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    driverController.x().toggleOnTrue(orchestrator.aimToHub());
+    driverController.x().toggleOnTrue(orchestrator.zoneBasedAim());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     driverController
         .leftBumper()
