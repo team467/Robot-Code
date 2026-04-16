@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Minute;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
+import static frc.robot.subsystems.shooter.ShooterConstants.kShooterOffsetFromRobotCenter;
+import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -233,7 +235,7 @@ public class Orchestrator {
                 .getDistance(
                     drive
                         .getPose()
-                        .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
+                        .transformBy(kShooterOffsetFromRobotCenter)
                         .getTranslation()));
   }
 
@@ -352,12 +354,10 @@ public class Orchestrator {
             new Pose2d(
                 drive.getPose().getX(),
                 drive.getPose().getY(),
-                AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())
+                AllianceFlipUtil.apply(Hub.innerCenterPoint)
+                    .toTranslation2d()
                     .minus(
-                        drive
-                            .getPose()
-                            .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
-                            .getTranslation())
+                        drive.getPose().transformBy(kShooterOffsetFromRobotCenter).getTranslation())
                     .getAngle()));
   }
 

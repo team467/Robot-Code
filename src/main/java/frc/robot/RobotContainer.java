@@ -124,8 +124,7 @@ public class RobotContainer {
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           intakeRollers = new IntakeRollers(new IntakeRollersIOKraken());
-          intakeExtend =
-              new IntakeExtend(new IntakeExtendIOSparkMax(), () -> false);
+          intakeExtend = new IntakeExtend(new IntakeExtendIOSparkMax(), () -> false);
           //                    climber = new Climber(new ClimberIOPhysical());
         }
 
@@ -311,7 +310,14 @@ public class RobotContainer {
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
         .and(() -> !operatorController.pov(180).getAsBoolean())
+        .and(() -> !RobotState.getInstance().shooterAtSpeed)
         .toggleOnTrue(intakeExtend.extendToAngle(IntakeConstants.COLLAPSE_POS));
+    CustomTriggers.toggleIntakeUp(
+            driverController.leftBumper(),
+            () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
+        .and(() -> !operatorController.pov(180).getAsBoolean())
+        .and(() -> RobotState.getInstance().shooterAtSpeed)
+        .toggleOnTrue(intake.slowlyBringInIntakeWithoutRollers());
     CustomTriggers.toggleIntakeDown(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
@@ -337,7 +343,9 @@ public class RobotContainer {
         .and(operatorController.pov(180))
         .whileTrue(intakeExtend.runIntakeExtendVolts(4))
         .onFalse(intakeExtend.stopExtendingCommand());
-    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()));
+    operatorController
+        .leftTrigger(0.1)
+        .toggleOnTrue(orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()));
     operatorController
         .rightTrigger(0.1)
         .and(() -> !operatorController.pov(0).getAsBoolean())

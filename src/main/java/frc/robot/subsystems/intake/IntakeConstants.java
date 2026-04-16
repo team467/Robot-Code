@@ -29,7 +29,7 @@ public class IntakeConstants {
   public static final double SHAKE_POS_OFFSET = 1;
   public static final double HOME_VOLTAGE = 3;
   public static final double COLLAPSE_POS = 4.0;
-  public static final double SLOW_VOLTS = 2;
+  public static final double SLOW_VOLTS = 1.2;
   // How close we need to be to collapse position to stop the intake rollers
   public static final double SAFETY_TOLERANCE = 2;
   public static final double POSITION_TOLERANCE = 7;

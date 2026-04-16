@@ -245,7 +245,8 @@ public class Shooter extends SubsystemBase {
    */
   public boolean isAtSetpoint() {
     return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetSpeed.in(RadiansPerSecond)))
-        < TOLERANCE;
+            < TOLERANCE
+        && targetSpeed.gt(RadiansPerSecond.of(0));
   }
 
   // TODO: empirically determine the relationship between distance and air time

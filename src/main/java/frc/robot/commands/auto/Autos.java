@@ -1,5 +1,7 @@
 package frc.robot.commands.auto;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -14,8 +16,6 @@ import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.function.Supplier;
-
-import static edu.wpi.first.units.Units.Meters;
 
 /** Contains all autos */
 public class Autos {

@@ -30,7 +30,18 @@ public class Intake {
   }
 
   public Command slowlyBringInIntake() {
-    return Commands.parallel(rollers.intake(), extend.runIntakeExtendVolts(SLOW_VOLTS))
+    return Commands.parallel(
+        rollers.intake(),
+        extend
+            .runIntakeExtendVolts(SLOW_VOLTS)
+            .until(extend::isHopperCollapsed)
+            .andThen(extend.extendToAngle(COLLAPSE_POS).repeatedly()));
+  }
+
+  public Command slowlyBringInIntakeWithoutRollers() {
+    return extend
+        .runIntakeExtendVolts(SLOW_VOLTS)
+        .until(extend::isHopperCollapsed)
         .andThen(extend.extendToAngle(COLLAPSE_POS).repeatedly());
   }
 
