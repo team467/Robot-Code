@@ -15,6 +15,8 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.function.Supplier;
 
+import static edu.wpi.first.units.Units.Meters;
+
 /** Contains all autos */
 public class Autos {
 
@@ -154,7 +156,7 @@ public class Autos {
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
                 Commands.waitSeconds(5)
-                    .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
+                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(2.62))))
             .withTimeout(15.5),
         Commands.deadline(
                 orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
@@ -175,8 +177,8 @@ public class Autos {
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.FUNNEL_POS).withTimeout(5.5),
                 Commands.waitSeconds(5)
-                    .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
-            .withTimeout(15.5),
+                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(2.62))))
+            .withTimeout(16.5),
         Commands.deadline(
                 orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
                 orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))

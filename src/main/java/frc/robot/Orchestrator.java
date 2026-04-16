@@ -352,8 +352,7 @@ public class Orchestrator {
             new Pose2d(
                 drive.getPose().getX(),
                 drive.getPose().getY(),
-                AllianceFlipUtil.apply(Hub.blueCenter)
-                    .plus(new Translation2d(-0.4, 0))
+                AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())
                     .minus(
                         drive
                             .getPose()
