@@ -274,7 +274,7 @@ public class Shooter extends SubsystemBase {
           RPM.of(
               SmartDashboard.getNumber("Shooter/ACONST", 25.30184)
                       * Math.pow(distance.get().in(Meters), 2)
-                  - SmartDashboard.getNumber("Shooter/BCONST", -65.12642)
+                  + SmartDashboard.getNumber("Shooter/BCONST", -65.12642)
                       * distance.get().in(Meters)
                   + SmartDashboard.getNumber("Shooter/CCONST", 1001.70713));
       if (velocity.gt(RPM.of(1550))) {
