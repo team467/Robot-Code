@@ -155,15 +155,15 @@ public class Autos {
         Commands.deadline(
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                Commands.waitSeconds(5)
-                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(2.9774))))
+                Commands.waitSeconds(5.7)
+                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(2.769))))
             .withTimeout(15.5),
         Commands.deadline(
                 orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
                 orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
             .andThen(
                 Commands.parallel(
-                        Commands.waitSeconds(0.7).andThen(intake.slowlyBringInIntake()),
+                        Commands.waitSeconds(0.4).andThen(intake.slowlyBringInIntake()),
                         orchestrator.aimToHub().withTimeout(1).repeatedly(),
                         orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
                         Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))
@@ -184,7 +184,7 @@ public class Autos {
                 orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
             .andThen(
                 Commands.parallel(
-                        Commands.waitSeconds(0.7).andThen(intake.slowlyBringInIntake()),
+                        Commands.waitSeconds(0.4).andThen(intake.slowlyBringInIntake()),
                         orchestrator.aimToHub().withTimeout(1).repeatedly(),
                         orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
                         Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))
