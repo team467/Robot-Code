@@ -9,6 +9,9 @@ import edu.wpi.first.math.util.Units;
 public class ShooterConstants {
   public static final double ENCODER_POSITION_CONVERSION = 1;
   public static final double ENCODER_VELOCITY_CONVERSION = (2 * Math.PI) / 60;
+  public static final double ACONST =25.30184;
+  public static final double BCONST = - 65.12642;
+  public static final double CCONST = 1001.70713;
 
   public static final double VOLTAGE_COMPENSATION = 12.0;
   public static final int CURRENT_LIMIT = 35;

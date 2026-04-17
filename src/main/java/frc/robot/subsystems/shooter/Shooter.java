@@ -3,6 +3,9 @@ package frc.robot.subsystems.shooter;
 import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.subsystems.shooter.ShooterConstants.ACONST;
+import static frc.robot.subsystems.shooter.ShooterConstants.BCONST;
+import static frc.robot.subsystems.shooter.ShooterConstants.CCONST;
 import static frc.robot.subsystems.shooter.ShooterConstants.FF_SCALAR;
 import static frc.robot.subsystems.shooter.ShooterConstants.KA;
 import static frc.robot.subsystems.shooter.ShooterConstants.KS;
@@ -57,6 +60,9 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter/KA", KA * FF_SCALAR);
     SmartDashboard.putNumber("Shooter/KV", KV * FF_SCALAR);
     SmartDashboard.putNumber("Shooter/FeedForward_Scalar", FF_SCALAR);
+    SmartDashboard.putNumber("Shooter/AConst",ACONST );
+    SmartDashboard.putNumber("Shooter/BCONST", BCONST);
+    SmartDashboard.putNumber("Shooter/CCONST", CCONST);
     feedForwardScalar = FF_SCALAR;
     this.io = io;
     sysId =
@@ -266,9 +272,9 @@ public class Shooter extends SubsystemBase {
     return () -> {
       AngularVelocity velocity =
           RPM.of(
-              25.30184 * Math.pow(distance.get().in(Meters), 2)
-                  - 65.12642 * distance.get().in(Meters)
-                  + 1001.70713);
+              SmartDashboard.getNumber("Shooter/ACONST",25.30184) * Math.pow(distance.get().in(Meters), 2)
+                  - SmartDashboard.getNumber("Shooter/BCONST",- 65.12642) * distance.get().in(Meters)
+                  + SmartDashboard.getNumber("Shooter/CCONST",1001.70713));
       if (velocity.gt(RPM.of(1550))) {
         return RPM.of(1550);
       } else return velocity;
