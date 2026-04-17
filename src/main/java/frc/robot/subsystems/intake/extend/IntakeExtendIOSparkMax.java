@@ -10,6 +10,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -54,7 +55,8 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
         .smartCurrentLimit((int) Math.round(INTAKE_EXTEND_MOTOR_CURRENT_LIMIT))
         .closedLoop
         .pid(PID_P, PID_I, PID_D)
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .allowedClosedLoopError(0.5, ClosedLoopSlot.kSlot0);
     extendConfig.encoder.apply(extendEnc);
     return extendConfig;
   }
