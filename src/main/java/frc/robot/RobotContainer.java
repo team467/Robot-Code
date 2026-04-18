@@ -257,6 +257,7 @@ public class RobotContainer {
 
     autoChooser.addOption("A-side", autos.ppA2CycleRightRegression());
     autoChooser.addOption("B-side", autos.ppB2CycleRightRegression());
+    autoChooser.addOption("Depot+Outpost", autos.ppDepotOutpost());
     // Configure the button bindings
     configureButtonBindings();
   }
