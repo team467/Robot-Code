@@ -102,7 +102,7 @@ public class Autos {
   private static final Supplier<Pose2d> startDepot =
       () -> AllianceFlipUtil.apply(new Pose2d(3.630, 5.844, new Rotation2d(0.000)));
   private static final Supplier<Pose2d> center =
-      () -> AllianceFlipUtil.apply(new Pose2d(3.532, 4.027, Rotation2d.k180deg));
+      () -> AllianceFlipUtil.apply(new Pose2d(3.581, 4.027, Rotation2d.k180deg));
 
   /**
    * Helper function for a single cycle auto with a constant shooting speed
@@ -176,7 +176,10 @@ public class Autos {
         Commands.runOnce(() -> drive.setPose(startPose.get())),
         Commands.deadline(
                 drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
+                intake
+                    .extendToAngleAndIntake(IntakeConstants.FUNNEL_POS)
+                    .withTimeout(4.5)
+                    .andThen(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
                 Commands.waitSeconds(5.7)
                     .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(endDistance))))
             .withTimeout(15.5),
@@ -192,25 +195,22 @@ public class Autos {
                     .withTimeout(1.6)));
   }
 
-  private Command ppCycleRegressionDepo(String path, Supplier<Pose2d> startPose) {
+  private Command ppCycleRegressionDepo(String path) {
     return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startPose.get())),
         Commands.deadline(
                 drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.FUNNEL_POS).withTimeout(5.5),
-                Commands.waitSeconds(5)
-                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(2.62))))
-            .withTimeout(16.5),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
+                orchestrator.spinUpShooterDistance(() -> Meters.of(3.185)))
+            .withTimeout(14.5),
         Commands.deadline(
                 orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
                 orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
             .andThen(
                 Commands.parallel(
-                        Commands.waitSeconds(0.4).andThen(intake.slowlyBringInIntake()),
-                        orchestrator.aimToHub().withTimeout(1).repeatedly(),
-                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                        Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))
-                    .withTimeout(1.6)));
+                    Commands.waitSeconds(0.9).andThen(intake.slowlyBringInIntake()),
+                    orchestrator.aimToHub().withTimeout(1).repeatedly(),
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                    Commands.waitSeconds(0.9).andThen(orchestrator.feedUp()))));
   }
 
   private Command ppCycleRegressionConnect(String path) {
@@ -251,7 +251,7 @@ public class Autos {
 
   /** Depot Auto */
   public Command ppDepot() {
-    return ppCycleRegression("A-Cycle-LeftSweep", startDepot);
+    return Commands.sequence(EightBalls().withTimeout(8.2), ppCycleRegressionDepo("Depot+Outpost"));
   }
   ;
 
@@ -310,7 +310,7 @@ public class Autos {
   }
 
   public Command ppDepotOutpost() {
-    return ppCycleRegressionCustom("Depot+Outpost", center, 4);
+    return ppCycleRegressionCustom("Depot+Outpost", center, 4.285);
   }
 
   /**
@@ -480,7 +480,11 @@ public class Autos {
   public Command EightBalls() {
     return Commands.sequence(
         Commands.deadline(
-            orchestrator.driveToHub().withTimeout(3.0), orchestrator.spinUpShooterHub()),
-        Commands.parallel(orchestrator.spinUpShooterHub(), orchestrator.feedUp()));
+            orchestrator.driveToHub().withTimeout(3.0),
+            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+        Commands.parallel(
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                Commands.waitSeconds(1).andThen(orchestrator.feedUp()))
+            .withTimeout(5.2));
   }
 }
