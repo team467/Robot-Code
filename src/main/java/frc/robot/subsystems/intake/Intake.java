@@ -11,24 +11,29 @@ public class Intake {
   private final IntakeRollers rollers;
   private final IntakeExtend extend;
 
+  /** Creates the intake facade from the roller and extension subsystems. */
   public Intake(IntakeRollers rollers, IntakeExtend extend) {
     this.rollers = rollers;
     this.extend = extend;
   }
 
+  /** Extends to the requested angle while running the rollers inward. */
   public Command extendToAngleAndIntake(double angle) {
     return Commands.parallel(extend.extendToAngle(angle), runIntakeMotor())
         .withName("extendToAngleAndIntake");
   }
 
+  /** Moves the intake extension to the requested angle. */
   public Command extendToAngle(double angle) {
     return extend.extendToAngle(angle);
   }
 
+  /** Runs the intake rollers inward. */
   public Command runIntakeMotor() {
     return rollers.intake();
   }
 
+  /** Collapses the intake slowly while keeping the rollers running. */
   public Command slowlyBringInIntake() {
     return Commands.parallel(
         rollers.intake(),
@@ -38,6 +43,7 @@ public class Intake {
             .andThen(extend.extendToAngle(COLLAPSE_POS).repeatedly()));
   }
 
+  /** Collapses the intake slowly without moving the rollers. */
   public Command slowlyBringInIntakeWithoutRollers() {
     return extend
         .runIntakeExtendVolts(SLOW_VOLTS)
@@ -45,7 +51,7 @@ public class Intake {
         .andThen(extend.extendToAngle(COLLAPSE_POS).repeatedly());
   }
 
-  // Jack's Chugga Chugga mode
+  /** Alternates the extension around the funnel position while intaking game pieces. */
   public Command shakeAndIntake() {
     return Commands.repeatingSequence(
             Commands.deadline(
@@ -55,6 +61,7 @@ public class Intake {
         .withName("shakeAndIntake");
   }
 
+  /** Alternates the extension around the funnel position without running the rollers. */
   public Command shake() {
     return Commands.repeatingSequence(
             extend.extendToAngle(FUNNEL_POS + SHAKE_POS_OFFSET),

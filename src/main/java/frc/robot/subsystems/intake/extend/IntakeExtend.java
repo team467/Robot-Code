@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.RobotState.IntakePosition;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -26,17 +25,10 @@ public class IntakeExtend extends SubsystemBase {
   private boolean stalledExtend = false;
   private boolean stalledCollapse = false;
   private boolean isStowed = false;
-  private boolean isExtended = false;
   private boolean hasPose = false;
 
-  private double targetExtendPosition = 0;
-
-  /**
-   * @param limitSwitchDisabled A supplier to return whether the limit switch is currently disabled
-   *     or not. If disabled, uses slipping to control intake.
-   */
-  private final BooleanSupplier limitSwitchDisabled;
-
+  /** Updates logged inputs and keeps robot-wide intake state in sync with the extension encoder. */
+  @Override
   public void periodic() {
     inputs.stalledExtended = stalledExtend;
     inputs.stalledCollapsed = stalledCollapse;
@@ -49,10 +41,10 @@ public class IntakeExtend extends SubsystemBase {
     Logger.recordOutput("Intake/IntakeExtended/StalledCollapse", stalledCollapse);
     Logger.recordOutput("Intake/stallingExtend", isStallingExtend());
     Logger.recordOutput("Intake/stallingCollapse", isStallingCollapse());
-    if (inputs.getExtendPos > EXTEND_POS / 2) {
+    if (inputs.extendPosition > EXTEND_POS / 2) {
       RobotState.getInstance().intakePosition = IntakePosition.STOWED;
     }
-    if (inputs.getExtendPos <= EXTEND_POS / 2) {
+    if (inputs.extendPosition <= EXTEND_POS / 2) {
       RobotState.getInstance().intakePosition = IntakePosition.DEPLOYED;
     }
     if (inputs.isCollapsed) {
@@ -66,64 +58,71 @@ public class IntakeExtend extends SubsystemBase {
     Logger.recordOutput("Intake/IntakeExtend/HasPose", hasPose);
   }
 
-  public IntakeExtend(IntakeExtendIO io, BooleanSupplier limitSwitchDisabled) {
+  /** Creates an intake extension subsystem using the selected hardware abstraction. */
+  public IntakeExtend(IntakeExtendIO io) {
     this.io = io;
-    this.limitSwitchDisabled = limitSwitchDisabled;
   }
 
+  /** Returns whether the extension is currently on the collapsed limit switch. */
   public boolean isHopperCollapsed() {
     return io.isCollapsed();
   }
 
+  /** Supplies the current extension position for commands that need a live sensor reading. */
   public DoubleSupplier getAngle() {
-    return () -> inputs.getExtendPos;
+    return () -> inputs.extendPosition;
   }
 
+  /** Sets the motor idle behavior through the IO layer. */
   public void setIdleMode(boolean idleMode) {
     io.setIdleMode(idleMode);
   }
 
+  /** Resets the extension encoder to a known pose. */
   public Command setPose(double pose) {
     return Commands.runOnce(() -> io.resetExtendEncoder(pose), this);
   }
 
+  /** Returns true when the extension is being driven outward but the encoder is barely moving. */
   private boolean isStallingExtend() {
-    // For our volts, we are not getting the right velocity
     return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts < -0.01;
   }
 
+  /** Returns true when the extension is being collapsed but the encoder is barely moving. */
   private boolean isStallingCollapse() {
     return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts > 0.01;
   }
 
-  private void setPercentExtend(double extendPercent) {
-    io.setPercentExtend(extendPercent);
-  }
-
+  /** Drives the extension motor with open-loop voltage. */
   public void setVoltageExtend(double extendVolts) {
     io.setVoltageExtend(extendVolts);
   }
 
+  /** Stops the extension motor immediately. */
   public void stopExtend() {
     io.setVoltageExtend(0);
   }
 
+  /** Creates a one-shot command that zeros the extension encoder. */
   public Command resetExtendPosition() {
     return Commands.runOnce(() -> io.resetExtendEncoder(0), this);
   }
 
+  /** Moves the extension to the configured deployed position and finishes at tolerance. */
   public Command moveToExtendedPosition() {
     return Commands.run(() -> io.extendToPosition(EXTEND_POS))
-        .until(() -> Math.abs(inputs.getExtendPos - EXTEND_POS) <= POSITION_TOLERANCE)
+        .until(() -> Math.abs(inputs.extendPosition - EXTEND_POS) <= POSITION_TOLERANCE)
         .withName("moveToExtendedPosition");
   }
 
+  /** Moves the extension to the configured collapsed position and finishes at tolerance. */
   public Command moveToCollapsedPosition() {
     return Commands.run(() -> io.extendToPosition(COLLAPSE_POS))
-        .until(() -> Math.abs(inputs.getExtendPos - COLLAPSE_POS) <= POSITION_TOLERANCE)
+        .until(() -> Math.abs(inputs.extendPosition - COLLAPSE_POS) <= POSITION_TOLERANCE)
         .withName("moveToCollapsedPosition");
   }
 
+  /** Creates a manual voltage command for operator-controlled extension movement. */
   public Command runIntakeExtendVolts(double volts) {
     return Commands.run(
         () -> {
@@ -133,10 +132,12 @@ public class IntakeExtend extends SubsystemBase {
         this);
   }
 
+  /** Creates a command that keeps the extension stopped while scheduled. */
   public Command stopExtendingCommand() {
     return Commands.run(this::stopExtend, this);
   }
 
+  /** Homes the extension by driving until the collapsed limit switch is reached. */
   public Command homeExtend() {
     return Commands.run(
             () -> {
@@ -150,6 +151,7 @@ public class IntakeExtend extends SubsystemBase {
         .withName("homeExtend");
   }
 
+  /** Homes first if needed, then moves the extension to the requested encoder angle. */
   public Command extendToAngle(double angle) {
     return new ConditionalCommand(homeExtend(), Commands.none(), () -> !hasPose)
         .andThen(

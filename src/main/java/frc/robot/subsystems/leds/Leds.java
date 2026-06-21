@@ -18,10 +18,10 @@ import frc.robot.RobotState;
 import frc.robot.RobotState.Mode;
 
 public class Leds extends SubsystemBase {
-  private static final boolean debug = false;
-  private RobotState state = RobotState.getInstance();
+  private static final boolean DEBUG = false;
+  private final RobotState state = RobotState.getInstance();
   private final AddressableLED leds;
-  public static final AddressableLEDBuffer buffer =
+  private static final AddressableLEDBuffer buffer =
       new AddressableLEDBuffer(LedConstants.FULL_LENGTH);
 
   public enum Animations {
@@ -71,42 +71,45 @@ public class Leds extends SubsystemBase {
         LedConstants.BASE2_FOURTH_QUARTER_START,
         LedConstants.BASE2_FOURTH_QUARTER_END);
 
-    private final AddressableLEDBufferView buf_view_1;
-    private final AddressableLEDBufferView buf_view_2;
+    private final AddressableLEDBufferView primaryBufferView;
+    private final AddressableLEDBufferView secondaryBufferView;
 
-    private Sections(int start_1, int end_1, int start_2, int end_2) {
-      if (debug) {
+    /** Creates a section with mirrored LED ranges. */
+    private Sections(int primaryStart, int primaryEnd, int secondaryStart, int secondaryEnd) {
+      if (DEBUG) {
         System.out.println(
             "create section "
                 + toString()
-                + " start_1: "
-                + start_1
-                + " end_1: "
-                + end_1
-                + " start_2: "
-                + start_2
-                + " end_2:"
-                + end_2);
+                + " primaryStart: "
+                + primaryStart
+                + " primaryEnd: "
+                + primaryEnd
+                + " secondaryStart: "
+                + secondaryStart
+                + " secondaryEnd:"
+                + secondaryEnd);
       }
-      this.buf_view_1 = buffer.createView(start_1, end_1);
-      this.buf_view_2 = buffer.createView(start_2, end_2);
+      primaryBufferView = buffer.createView(primaryStart, primaryEnd);
+      secondaryBufferView = buffer.createView(secondaryStart, secondaryEnd);
     }
 
-    private Sections(int start_1, int end_1) {
-      if (debug) {
-        System.out.println(
-            "create section " + toString() + " start_1: " + start_1 + " end_1: " + end_1);
+    /** Creates a section with one contiguous LED range. */
+    private Sections(int start, int end) {
+      if (DEBUG) {
+        System.out.println("create section " + toString() + " start: " + start + " end: " + end);
       }
-      this.buf_view_1 = buffer.createView(start_1, end_1);
-      this.buf_view_2 = null;
+      primaryBufferView = buffer.createView(start, end);
+      secondaryBufferView = null;
     }
 
-    public AddressableLEDBufferView getBufferView_1() {
-      return buf_view_1;
+    /** Returns the first LED range for this section. */
+    public AddressableLEDBufferView getPrimaryBufferView() {
+      return primaryBufferView;
     }
 
-    public AddressableLEDBufferView getBufferView_2() {
-      return buf_view_2;
+    /** Returns the mirrored LED range, or null when this section only has one range. */
+    public AddressableLEDBufferView getSecondaryBufferView() {
+      return secondaryBufferView;
     }
   }
 
@@ -122,10 +125,10 @@ public class Leds extends SubsystemBase {
 
   private LEDPattern currentPattern = LedPatterns.BLACK.colorPatternOnly();
   private Sections applySection = Sections.FULL;
-  private Boolean isReversed = false;
+  private boolean isReversed = false;
 
+  /** Creates and starts the addressable LED strip and Shuffleboard controls. */
   public Leds() {
-
     leds = new AddressableLED(LedConstants.LED_CHANNEL);
     leds.setLength(LedConstants.FULL_LENGTH);
     leds.setColorOrder(ColorOrder.kRGB);
@@ -135,15 +138,14 @@ public class Leds extends SubsystemBase {
     initLedModeTabInShuffleboard();
   }
 
+  /** Selects the current LED pattern from test controls or the robot state, then applies it. */
   @Override
   public void periodic() {
-
     if (enableTestEntry.getBoolean(false)) {
       processLedPatternTestInputs();
     } else if (enableLedModeTestEntry.getBoolean(false)) {
       processLedModeTestInputs();
     } else {
-      /* get from robot state  */
       Mode ledMode = state.getMode();
       currentPattern = ledMode.ledPattern;
       applySection = ledMode.ledSection;
@@ -154,11 +156,9 @@ public class Leds extends SubsystemBase {
       loadLedPatterns();
       leds.setData(buffer);
     }
-    // else no op for simulation
-
   }
 
-  // tests led patterns from shuffleboard gui
+  /** Reads Shuffleboard controls that directly test LED colors and animations. */
   private void processLedPatternTestInputs() {
     try {
       LedPatterns pattern = testPattern.getSelected();
@@ -178,36 +178,37 @@ public class Leds extends SubsystemBase {
         case BREATHE_OVERLAY -> currentPattern = pattern.breathe().overlayOn(pattern2.breathe());
         default -> currentPattern = pattern.colorPatternOnly();
       }
-    } catch (IllegalArgumentException E) {
+    } catch (IllegalArgumentException exception) {
       currentPattern = LedPatterns.RED.blink();
     }
   }
 
-  // process test inputs for led mode based on robot state
+  /** Reads Shuffleboard controls that preview a full robot LED mode. */
   private void processLedModeTestInputs() {
     try {
       Mode mode = testMode.getSelected();
       applySection = mode.ledSection;
       currentPattern = mode.ledPattern;
-    } catch (IllegalArgumentException E) {
+    } catch (IllegalArgumentException exception) {
       currentPattern = LedPatterns.RED.blink();
     }
   }
 
+  /** Clears the strip and applies the selected pattern to the selected section. */
   private void loadLedPatterns() {
     LedPatterns.BLACK.colorPatternOnly().applyTo(buffer);
     if (isReversed) {
-      currentPattern.applyTo(applySection.getBufferView_1().reversed());
+      currentPattern.applyTo(applySection.getPrimaryBufferView().reversed());
     } else {
-      currentPattern.applyTo(applySection.getBufferView_1());
+      currentPattern.applyTo(applySection.getPrimaryBufferView());
     }
-    if (applySection.getBufferView_2() != null) {
-      currentPattern.applyTo(applySection.getBufferView_2().reversed());
+    if (applySection.getSecondaryBufferView() != null) {
+      currentPattern.applyTo(applySection.getSecondaryBufferView().reversed());
     }
   }
 
+  /** Builds Shuffleboard controls for manually testing LED patterns. */
   private void initLedTabInShuffleboard() {
-
     ShuffleboardTab ledTab = Shuffleboard.getTab("LEDs");
     ShuffleboardLayout ledTestingLayout =
         ledTab
@@ -277,6 +278,7 @@ public class Leds extends SubsystemBase {
             .getEntry();
   }
 
+  /** Builds Shuffleboard controls for previewing robot LED modes. */
   private void initLedModeTabInShuffleboard() {
     ShuffleboardTab ledModeTab = Shuffleboard.getTab("LED Modes");
     ShuffleboardLayout ledModeTestingLayout =

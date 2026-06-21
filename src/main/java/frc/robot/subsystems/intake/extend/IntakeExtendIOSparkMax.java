@@ -29,9 +29,9 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
   private final DigitalInput collapsedLimitSwitch;
   private final RelativeEncoder extendMotorEncoder;
   private final SparkClosedLoopController pidController;
-  private double setPos = 0;
   private boolean usingPID = false;
 
+  /** Configures the Spark Max-backed extension motor, encoder, PID, and limit switch. */
   public IntakeExtendIOSparkMax() {
     extendMotor = new SparkMax(intakeExtendCanId, MotorType.kBrushless);
 
@@ -43,6 +43,7 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
     collapsedLimitSwitch = new DigitalInput(EXTEND_LIMIT_ID);
   }
 
+  /** Builds the Spark Max configuration shared by startup and idle-mode changes. */
   public SparkMaxConfig getSparkMaxConfig() {
     EncoderConfig extendEnc = new EncoderConfig();
     extendEnc.positionConversionFactor(EXTEND_POSITION_CONVERSION);
@@ -68,7 +69,7 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
     inputs.extendVolts = extendMotor.getAppliedOutput();
     inputs.extendAmps = extendMotor.getOutputCurrent();
     inputs.isCollapsed = isCollapsed();
-    inputs.getExtendPos = extendMotorEncoder.getPosition();
+    inputs.extendPosition = extendMotorEncoder.getPosition();
     inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint() && usingPID;
     inputs.hasSetpoint = usingPID;
     inputs.setpointValue = extendMotor.getClosedLoopController().getSetpoint();
@@ -95,10 +96,9 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
   }
 
   @Override
-  public void goToPos(double setPos) {
-    this.setPos = setPos;
+  public void goToPos(double targetPosition) {
     if (usingPID) {
-      pidController.setSetpoint(setPos, ControlType.kPosition);
+      pidController.setSetpoint(targetPosition, ControlType.kPosition);
     }
   }
 

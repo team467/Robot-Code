@@ -74,8 +74,6 @@ public class RobotContainer {
   private Intake intake;
   private IntakeRollers intakeRollers;
   private IntakeExtend intakeExtend;
-  private RobotState robotState = RobotState.getInstance();
-  private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -120,7 +118,7 @@ public class RobotContainer {
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           intakeRollers = new IntakeRollers(new IntakeRollersIOKraken());
-          intakeExtend = new IntakeExtend(new IntakeExtendIOSparkMax(), () -> false);
+          intakeExtend = new IntakeExtend(new IntakeExtendIOSparkMax());
           //                    climber = new Climber(new ClimberIOPhysical());
         }
 
@@ -159,7 +157,7 @@ public class RobotContainer {
       intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
     }
     if (intakeExtend == null) {
-      intakeExtend = new IntakeExtend(new IntakeExtendIO() {}, () -> false);
+      intakeExtend = new IntakeExtend(new IntakeExtendIO() {});
     }
     intake = new Intake(intakeRollers, intakeExtend);
     if (magicCarpet == null) {
@@ -368,13 +366,5 @@ public class RobotContainer {
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
     orchestrator.orchestratorPeriodic();
-  }
-
-  private Command rumblePulse(double intensity, double seconds) {
-    return Commands.sequence(
-        Commands.runOnce(
-            () -> driverController.getHID().setRumble(RumbleType.kBothRumble, intensity)),
-        Commands.waitSeconds(seconds),
-        Commands.runOnce(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0)));
   }
 }
