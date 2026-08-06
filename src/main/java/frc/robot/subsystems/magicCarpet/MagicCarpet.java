@@ -3,13 +3,22 @@ package frc.robot.subsystems.magicCarpet;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotState;
+import frc.robot.subsystems.intake.extend.IntakeExtend.State;
 import org.littletonrobotics.junction.Logger;
 
 public class MagicCarpet extends SubsystemBase {
   private final MagicCarpetIO io;
   private final MagicCarpetIOInputsAutoLogged inputs = new MagicCarpetIOInputsAutoLogged();
   public boolean manualRun;
+
+  private enum State {
+    IDLE,
+    RUNNING,
+    REVERSE,
+    MANUAL
+  }
+
+  public State carpetState = State.IDLE;
 
   /**
    * Initializes the magic carpet
@@ -18,7 +27,6 @@ public class MagicCarpet extends SubsystemBase {
    */
   public MagicCarpet(MagicCarpetIO io) {
     this.io = io;
-    this.manualRun = false;
   }
 
   /**
@@ -39,19 +47,28 @@ public class MagicCarpet extends SubsystemBase {
    * @param manual Call run manually instead of through periodic
    */
   public Command setManualControl(boolean manual) {
-    return Commands.runOnce(() -> this.manualRun = manual, this);
+    return Commands.runOnce(() -> carpetState = State.MANUAL, this);
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("magicCarpet", inputs);
-    if (!manualRun) {
-      if (RobotState.getInstance().indexerRunning) {
-        io.setSpeed(MagicCarpetConstants.BELT_SPEED);
-      } else {
-        io.setSpeed(0.0);
-      }
+    switch (carpetState) {
+      case IDLE -> Commands.run(io::stop);
+      case REVERSE -> Commands.run(() -> io.setSpeed(-MagicCarpetConstants.BELT_SPEED));
+      case RUNNING -> Commands.run(() -> io.setSpeed(MagicCarpetConstants.BELT_SPEED));
+      case MANUAL -> Commands.none();
     }
+
+    /**
+     * if (!carpetState.equals(State.MANUAL)) { if (RobotState.getInstance().indexerRunning) {
+     * io.setSpeed(MagicCarpetConstants.BELT_SPEED); } else { io.setSpeed(0.0); }*
+     */
+  }
+
+  // CAUTION: Do not use unless absolutely necessary, may cause unexpected behavior
+  public void overrideState(State newState) {
+    carpetState = newState;
   }
 }

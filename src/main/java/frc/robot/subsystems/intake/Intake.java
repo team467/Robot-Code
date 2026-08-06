@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
+import frc.robot.subsystems.intake.rollers.IntakeRollers.State;
 
 public class Intake {
   private final IntakeRollers rollers;
@@ -17,9 +18,20 @@ public class Intake {
     this.extend = extend;
   }
 
+  public IntakeRollers rollerInstance() {
+    return this.rollers;
+  }
+
+  public IntakeExtend extendInstance() {
+    return this.extend;
+  }
+
   /** Extends to the requested angle while running the rollers inward. */
   public Command extendToAngleAndIntake(double angle) {
-    return Commands.parallel(extend.extendToAngle(angle), runIntakeMotor())
+    return Commands.run(
+            () -> {
+              rollers.rollerState = State.RUNNING;
+            })
         .withName("extendToAngleAndIntake");
   }
 
@@ -30,13 +42,18 @@ public class Intake {
 
   /** Runs the intake rollers inward. */
   public Command runIntakeMotor() {
-    return rollers.intake();
+    return Commands.runEnd(
+            () -> rollers.rollerState = State.RUNNING, () -> rollers.rollerState = State.IDLE)
+        .withName("runIntakeMotor");
   }
 
   /** Collapses the intake slowly while keeping the rollers running. */
   public Command slowlyBringInIntake() {
     return Commands.parallel(
-        rollers.intake(),
+        Commands.run(
+            () -> {
+              rollers.rollerState = State.RUNNING;
+            }),
         extend
             .runIntakeExtendVolts(SLOW_VOLTS)
             .until(extend::isHopperCollapsed)

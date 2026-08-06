@@ -14,7 +14,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -29,9 +28,11 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
+import frc.robot.subsystems.intake.extend.IntakeExtend;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.Shooter.State;
 import frc.robot.util.ShooterLeadCompensator;
 import frc.robot.util.Zone;
 import frc.robot.util.Zone.Tuple2d;
@@ -259,6 +260,13 @@ public class Orchestrator {
             Rotation2d.fromDegrees(0)));
     Logger.recordOutput("Orchestrator/DistanceToHub", shootWhileDrivingResult.distance());
     Logger.recordOutput("Orchestrator/ShooterPosition", shooterLeadCompensator.shooterPose());
+    // Declare logic regarding inter-subsystem logic here.
+    if (indexer.indexerState == Indexer.State.RUNNING) {
+      magicCarpet.run();
+    }
+    if (intake.extendInstance().state == IntakeExtend.State.COLLAPSING) {
+      intake.runIntakeMotor();
+    }
   }
 
   public Command driveToHub() {
@@ -279,31 +287,26 @@ public class Orchestrator {
 
   public Command feedUp() {
     return Commands.repeatingSequence(
-            Commands.parallel(indexer.run()).until(() -> !RobotState.getInstance().shooterAtSpeed))
+            Commands.parallel(indexer.run()).until(() -> shooter.shooterState == State.ATSPEED))
         .onlyIf(() -> shooter.getSetpoint().gt(RadiansPerSecond.of(0)))
-        .onlyIf(() -> RobotState.getInstance().shooterAtSpeed)
+        .onlyIf(() -> shooter.shooterState == State.ATSPEED)
         .onlyWhile(() -> shooter.getSetpoint().gt(RadiansPerSecond.of(0)))
         .withName("feedUp");
   }
 
-  public Command spinUpShooterTest() {
-    SmartDashboard.putNumber("Shooter/TestRPM", CLOSE_HUB_SHOOTER_RPM);
-    return shooter
-        .setTargetVelocity(
-            () -> Rotations.per(Minute).of(SmartDashboard.getNumber("Shooter/TestRPM", 1000.0)))
-        .withName("spinUpShooterTest");
-  }
-
   public Command spinUpShooterDistance(Supplier<Distance> targetDistance) {
-    return shooter.setTargetVelocity(shooter.calculateSetpoint(targetDistance));
+    return Commands.run(
+        () -> {
+          shooter.spinUpDistance(targetDistance);
+        });
   }
 
   public Command spinUpShooterHub() {
-    return shooter.setTargetVelocity(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM));
+    return shooter.spinUpRpm(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM).magnitude());
   }
 
   public Command spinUpShooter(double velocityRPM) {
-    return shooter.setTargetVelocity(Rotations.per(Minute).of(velocityRPM));
+    return shooter.spinUpRpm(Rotations.per(Minute).of(velocityRPM).magnitude());
   }
 
   public Command shootWhileRetractingIntake(Command shooterCommand) {

@@ -194,24 +194,6 @@ public class RobotContainer {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
 
-    //    NamedCommands.registerCommand(
-    //        "Drive Back Left",
-    //        new DriveToPose(drive, () -> new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(180))));
-    //    NamedCommands.registerCommand(
-    //        "Drive Over Left",
-    //        new DriveToPose(drive, () -> new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(180))));
-
-    //
-    // NamedCommands.registerCommand("startShooter",Commands.parallel(orchestrator.preloadBalls(),orchestrator.prepShooter()));
-    //        NamedCommands.registerCommand("shoot",orchestrator.shootBalls());
-    //        NamedCommands.registerCommand("shootClimb",orchestrator.shootBallsonClimb());
-    //        NamedCommands.registerCommand("shootDistance",orchestrator.shootBallsAtDistance());
-    //        NamedCommands.registerCommand("extend hopper and intake",intake.extendAndIntake());
-    //
-    //
-    // NamedCommands.registerCommand("stopIntake",Commands.sequence(intake.collapseAndIntake(),Commands.waitSeconds(0.3),intake.stopIntakeCommand()));
-    //        NamedCommands.registerCommand("climb",Commands.none());
-    // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     autoChooser.addDefaultOption("Do Nothing", Commands.none());

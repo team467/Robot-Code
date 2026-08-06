@@ -12,7 +12,6 @@ import static frc.robot.subsystems.shooter.ShooterConstants.KS;
 import static frc.robot.subsystems.shooter.ShooterConstants.KV;
 import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.units.*;
@@ -27,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.RobotState;
+import frc.robot.subsystems.intake.extend.IntakeExtend.State;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -41,14 +41,19 @@ public class Shooter extends SubsystemBase {
 
   // Feedforward: handles steady-state voltage (V = KS + KV * velocity)
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV, KA);
-  // PID: handles error correction on top of feedforward
-  // P only — no I term (causes integral windup oscillation)
-  private final PIDController pid = new PIDController(0.001, 0.1, 0.1, 0.02);
-
   // Slew rate limiter: ramps the target velocity gradually (rad/s per second)
   // This prevents current spikes that cause oscillation with a 20A limit
   private final SlewRateLimiter targetRamper = new SlewRateLimiter(800);
   private double feedForwardScalar;
+
+  public enum State {
+    IDLE,
+    APPROACHING,
+    ATSPEED,
+    STOP
+  }
+
+  public State shooterState = State.STOP;
 
   /**
    * Initializes the shooter with a Shooter IO
@@ -77,58 +82,53 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-    if (SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
-            != feedForwardScalar
-        || SmartDashboard.getNumber(
-                    "Shooter/KS",
-                    feedforward.getKs()
-                        * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
-                * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
-            != feedforward.getKs()
-        || SmartDashboard.getNumber("Shooter/KA", feedforward.getKa()) != feedforward.getKa()
-        || SmartDashboard.getNumber(
-                    "Shooter/KV",
-                    feedforward.getKv()
-                        * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
-                * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
-            != feedforward.getKv()) {
-      feedForwardScalar = SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar);
-      feedforward.setKa(SmartDashboard.getNumber("Shooter/KA", feedforward.getKa()));
-      feedforward.setKv(
-          SmartDashboard.getNumber(
-                  "Shooter/KV",
-                  feedforward.getKv()
-                      * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
-              * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar));
-      feedforward.setKa(
-          SmartDashboard.getNumber(
-                  "Shooter/KS",
-                  feedforward.getKs()
-                      * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
-              * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar));
-    }
+    /**
+     * THIS IS FOR TUNING ONLY if (SmartDashboard.getNumber("Shooter/FeedForward_Scalar",
+     * feedForwardScalar) != feedForwardScalar || SmartDashboard.getNumber( "Shooter/KS",
+     * feedforward.getKs() SmartDashboard.getNumber("Shooter/FeedForward_Scalar",
+     * feedForwardScalar)) SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
+     * != feedforward.getKs() || SmartDashboard.getNumber("Shooter/KA", feedforward.getKa()) !=
+     * feedforward.getKa() || SmartDashboard.getNumber( "Shooter/KV", feedforward.getKv()
+     * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
+     * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar) !=
+     * feedforward.getKv()) { feedForwardScalar =
+     * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar);
+     * feedforward.setKa(SmartDashboard.getNumber("Shooter/KA", feedforward.getKa()));
+     * feedforward.setKv( SmartDashboard.getNumber( "Shooter/KV", feedforward.getKv()
+     * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
+     * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar));
+     * feedforward.setKa( SmartDashboard.getNumber( "Shooter/KS", feedforward.getKs()
+     * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
+     * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)); }
+     */
     io.updateInputs(inputs);
-    RobotState.getInstance().shooterAtSpeed =
-        isAtSetpoint() && targetSpeed.gt(RadiansPerSecond.of(0));
-    if (controllerEnabled) {
-      // Ramp toward the target to avoid current spikes
-      rampedTarget = targetRamper.calculate(targetSpeed.in(RadiansPerSecond));
+    if (isAtSetpoint() && targetSpeed.gt(RadiansPerSecond.of(0))) {
+      shooterState = State.ATSPEED;
+    }
+    switch (shooterState) {
+      case IDLE -> setVoltage(0.4);
+      case APPROACHING -> {
+        if (controllerEnabled) {
+          // Ramp toward the target to avoid current spikes
+          rampedTarget = targetRamper.calculate(targetSpeed.in(RadiansPerSecond));
 
-      double ff = feedforward.calculate(rampedTarget);
-      double pidOutput = pid.calculate(inputs.shooterWheelVelocityRadPerSec, rampedTarget);
-      double voltage = ff;
+          double ff = feedforward.calculate(rampedTarget);
+          double voltage = ff;
 
-      // Clamp to valid voltage range
-      voltage =
-          Math.max(-ShooterConstants.MAX_VOLTAGE, Math.min(ShooterConstants.MAX_VOLTAGE, voltage));
-      io.setVoltage(voltage);
+          // Clamp to valid voltage range
+          voltage =
+              Math.max(
+                  -ShooterConstants.MAX_VOLTAGE, Math.min(ShooterConstants.MAX_VOLTAGE, voltage));
+          io.setVoltage(voltage);
 
-      Logger.recordOutput("Shooter/FFVoltage", ff);
-      Logger.recordOutput("Shooter/PIDVoltage", pidOutput);
-      Logger.recordOutput("Shooter/CommandedVoltage", voltage);
-      Logger.recordOutput("Shooter/RampedTargetRadPerSec", rampedTarget);
-      Logger.recordOutput("Shooter/Setpoint", targetSpeed.in(RadiansPerSecond));
+          Logger.recordOutput("Shooter/FFVoltage", ff);
+          Logger.recordOutput("Shooter/CommandedVoltage", voltage);
+          Logger.recordOutput("Shooter/RampedTargetRadPerSec", rampedTarget);
+          Logger.recordOutput("Shooter/Setpoint", targetSpeed.in(RadiansPerSecond));
+        }
+      }
+      case ATSPEED -> io.setVoltage(feedforward.calculate(targetSpeed.in(RadiansPerSecond)));
+      case STOP -> io.setVoltage(0.0);
     }
 
     Logger.processInputs("Shooter", inputs);
@@ -232,18 +232,6 @@ public class Shooter extends SubsystemBase {
         .withName("setTargetVelocity");
   }
 
-  public Command setTargetVelocityRepeatedly(AngularVelocity velocity) {
-    return Commands.repeatingSequence(
-            Commands.runOnce(
-                () -> {
-                  targetSpeed = velocity;
-                  controllerEnabled = true;
-                },
-                this),
-            Commands.waitSeconds(0.02))
-        .withName("setTargetVelocityRepeatedly");
-  }
-
   /**
    * Check if the shooter is at setpoint (+- TOLERANCE)
    *
@@ -290,5 +278,38 @@ public class Shooter extends SubsystemBase {
    */
   public AngularVelocity getSetpoint() {
     return targetSpeed;
+  }
+
+  /**
+   * Spins up shooter to a distance-based setpoint.
+   *
+   * @param targetDistance Supplier returning the target distance
+   * @return A command that sets the shooter to the distance-based setpoint
+   */
+  public Command spinUpDistance(Supplier<Distance> targetDistance) {
+    return Commands.run(
+        () -> {
+          setTargetVelocity(calculateSetpoint(targetDistance).get());
+          shooterState = State.APPROACHING;
+        });
+  }
+
+  /**
+   * Spins up shooter to a specific RPM.
+   *
+   * @param rpm Target RPM
+   * @return A command that sets the shooter to the given RPM
+   */
+  public Command spinUpRpm(double rpm) {
+    return Commands.run(
+        () -> {
+          setTargetVelocity(RPM.of(rpm));
+          shooterState = State.APPROACHING;
+        });
+  }
+
+  // CAUTION: Do not use unless absolutely necessary, may cause unexpected behavior
+  public void overrideState(State newState) {
+    shooterState = newState;
   }
 }
