@@ -34,24 +34,30 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
+import frc.robot.subsystems.indexer.IndexerIOSim;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
 import frc.robot.subsystems.intake.extend.IntakeExtendIO;
+import frc.robot.subsystems.intake.extend.IntakeExtendIOSim;
 import frc.robot.subsystems.intake.extend.IntakeExtendIOSparkMax;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.intake.rollers.IntakeRollersIO;
 import frc.robot.subsystems.intake.rollers.IntakeRollersIOKraken;
+import frc.robot.subsystems.intake.rollers.IntakeRollersIOSim;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
+import frc.robot.subsystems.magicCarpet.MagicCarpetIOSim;
 import frc.robot.subsystems.magicCarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -145,6 +151,13 @@ public class RobotContainer {
                   new ModuleIOSim());
 
           leds = new Leds();
+          shooter = new Shooter(new ShooterIOSim());
+          magicCarpet = new MagicCarpet(new MagicCarpetIOSim());
+          indexer = new Indexer(new IndexerIOSim());
+          intakeRollers = new IntakeRollers(new IntakeRollersIOSim());
+          intakeExtend =
+              new IntakeExtend(new IntakeExtendIOSim(), operatorController.rightTrigger());
+          climber = new Climber(new ClimberIOSim());
         }
 
         case ROBOT_BRIEFCASE -> {
@@ -276,7 +289,7 @@ public class RobotContainer {
     autoChooser.addOption("Manual B-CC", autos.BCCManuelAuto());
     autoChooser.addOption("Manual B-CC-Improved", autos.BCCManuelAutoAlt());
     autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManuelAutoOverBump());
-    autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
+    autoChooser.addOption("Test Circle", drive.getAutonomousCommand("Test Circle"));
     autoChooser.addOption("CL auto", autos.CenterA());
     autoChooser.addOption("8 Ball Auto", autos.EightBalls());
     autoChooser.addOption("Manual A-CC Complex Intake", autos.ACCManuelImprovedComplexIntake());
@@ -413,5 +426,33 @@ public class RobotContainer {
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
     orchestrator.orchestratorPeriodic();
+  }
+
+  public Drive getDrive() {
+    return drive;
+  }
+
+  public Shooter getShooter() {
+    return shooter;
+  }
+
+  public Indexer getIndexer() {
+    return indexer;
+  }
+
+  public MagicCarpet getMagicCarpet() {
+    return magicCarpet;
+  }
+
+  public IntakeRollers getIntakeRollers() {
+    return intakeRollers;
+  }
+
+  public IntakeExtend getIntakeExtend() {
+    return intakeExtend;
+  }
+
+  public Climber getClimber() {
+    return climber;
   }
 }

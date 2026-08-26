@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.sim.BallSimulator;
+import frc.robot.sim.SimDashboardWindow;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -250,9 +252,26 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    SimDashboardWindow.launch(
+        robotContainer.getDrive(),
+        robotContainer.getShooter(),
+        robotContainer.getIndexer(),
+        robotContainer.getMagicCarpet(),
+        robotContainer.getIntakeRollers(),
+        robotContainer.getIntakeExtend());
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    BallSimulator.getInstance()
+        .update(
+            robotContainer.getDrive(),
+            robotContainer.getShooter(),
+            robotContainer.getIndexer(),
+            robotContainer.getMagicCarpet(),
+            robotContainer.getIntakeRollers(),
+            robotContainer.getIntakeExtend());
+  }
 }

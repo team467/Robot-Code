@@ -85,7 +85,7 @@ public class Autos {
   public Command CenterA() {
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(AllianceFlipUtil.apply(CenterA.get()))),
-        drive.getAutonomousCommand("CA-out-intake"),
+        drive.getAutonomousCommand("A-Cycle-Center"),
         new StraightDriveToPose(climb.get(), drive).withTimeout(2.0));
   }
 
@@ -96,7 +96,7 @@ public class Autos {
                 drive.setPose(
                     AllianceFlipUtil.apply(
                         new Pose2d(3.213, 5.600, new Rotation2d(Units.degreesToRadians(0)))))),
-        drive.getAutonomousCommand("test path"));
+        drive.getAutonomousCommand("Test Straight"));
   }
 
   public Command Bummmmpar() {

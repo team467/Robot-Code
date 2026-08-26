@@ -54,6 +54,12 @@ public class Constants {
                 + "'.");
       }
     } catch (IOException e) {
+      if (!RobotBase.isReal()) {
+        System.out.println(
+            "Could not load robot type file in simulation, defaulting to ROBOT_SIMBOT");
+        cachedRobotTypeFromRoborio = RobotType.ROBOT_SIMBOT;
+        return RobotType.ROBOT_SIMBOT;
+      }
       throw new RuntimeException("Could not load robot type from file '" + ROBOT_FILENAME + "'.");
     }
     System.out.println("Using RobotType '" + robot + "'");
