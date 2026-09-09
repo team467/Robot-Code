@@ -30,6 +30,7 @@ import frc.lib.utils.LocalADStarAK;
 import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.auto.DriveToPose;
+import frc.robot.commands.auto.SimAutos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.climber.Climber;
@@ -202,6 +203,7 @@ public class RobotContainer {
         new Orchestrator(
             drive, magicCarpet, shooter, indexer, intake, intakeRollers, driverController);
     Autos autos = new Autos(drive, orchestrator, intake, intakeRollers, shooter);
+    SimAutos simAutos = new SimAutos(drive, orchestrator, intake, intakeRollers, shooter);
     NamedCommands.registerCommand(
         "startIntake",
         Commands.parallel(
@@ -278,7 +280,9 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    autoChooser.addDefaultOption("Do Nothing", Commands.none());
+    autoChooser.addDefaultOption("SIM 1", simAutos.sim1());
+
+    autoChooser.addOption("Do Nothing 1", Commands.none());
 
     autoChooser.addOption("test path", autos.testPath());
     autoChooser.addOption("Bummmmpar", autos.Bummmmpar());
