@@ -203,7 +203,7 @@ public class RobotContainer {
         new Orchestrator(
             drive, magicCarpet, shooter, indexer, intake, intakeRollers, driverController);
     Autos autos = new Autos(drive, orchestrator, intake, intakeRollers, shooter);
-    SimAutos simAutos = new SimAutos(drive, orchestrator, intake, intakeRollers, shooter);
+    SimAutos simAutos = new SimAutos(drive, orchestrator, intake, intakeRollers, indexer, shooter);
     NamedCommands.registerCommand(
         "startIntake",
         Commands.parallel(

@@ -396,12 +396,6 @@ public class SimDashboardWindow extends JFrame {
                   RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED;
 
               int y = 18;
-              drawStatusRow(
-                  g2, "Magic Carpet Conveyor:", carpetOn ? "RUNNING" : "STOPPED", carpetOn, y);
-              y += 24;
-              drawStatusRow(
-                  g2, "Indexer Feed-Up:", indexerOn ? "RUNNING" : "STOPPED", indexerOn, y);
-              y += 24;
               drawStatusRow(g2, "Intake Rollers:", intaking ? "SPINNING" : "OFF", intaking, y);
               y += 24;
               drawStatusRow(
@@ -410,7 +404,12 @@ public class SimDashboardWindow extends JFrame {
                   intakeDeployed ? "DEPLOYED" : "STOWED",
                   intakeDeployed,
                   y);
-
+              y += 30;
+              drawStatusRow(
+                  g2, "Magic Carpet Conveyor:", carpetOn ? "RUNNING" : "STOPPED", carpetOn, y);
+              y += 24;
+              drawStatusRow(
+                  g2, "Indexer Feed-Up:", indexerOn ? "RUNNING" : "STOPPED", indexerOn, y);
               g2.dispose();
             }
 
