@@ -490,9 +490,33 @@ public class SimDashboardWindow extends JFrame {
 
   /** 2D Field Top-Down Visualizer Panel */
   private class FieldVisualizerPanel extends JPanel {
+    // Mouse position in screen pixels (null when outside panel)
+    private Point mousePos = null;
+
     public FieldVisualizerPanel() {
       setBackground(new Color(20, 21, 25));
       setBorder(new LineBorder(new Color(45, 48, 56), 1, true));
+
+      addMouseMotionListener(
+          new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(java.awt.event.MouseEvent e) {
+              mousePos = e.getPoint();
+            }
+
+            @Override
+            public void mouseDragged(java.awt.event.MouseEvent e) {
+              mousePos = e.getPoint();
+            }
+          });
+
+      addMouseListener(
+          new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+              mousePos = null;
+            }
+          });
     }
 
     @Override
@@ -594,10 +618,12 @@ public class SimDashboardWindow extends JFrame {
         g2.translate(rx, ry);
         g2.rotate(-pose.getRotation().getRadians());
 
-        // Robot Body
-        g2.setColor(new Color(50, 55, 68));
+        // Robot Body — color by alliance
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+        boolean isRed = alliance == Alliance.Red;
+        g2.setColor(isRed ? new Color(80, 30, 30) : new Color(30, 40, 80));
         g2.fill(new Rectangle2D.Double(-rSize / 2, -rSize / 2, rSize, rSize));
-        g2.setColor(new Color(120, 180, 255));
+        g2.setColor(isRed ? new Color(220, 60, 60) : new Color(120, 180, 255));
         g2.setStroke(new BasicStroke(2.0f));
         g2.draw(new Rectangle2D.Double(-rSize / 2, -rSize / 2, rSize, rSize));
 
@@ -629,6 +655,49 @@ public class SimDashboardWindow extends JFrame {
           g2.setColor(Color.WHITE);
           g2.drawOval((int) bx - bSize / 2, (int) by - bSize / 2, bSize, bSize);
         }
+      }
+
+      // 5. Overlay: Robot Position & Mouse Field Position
+      g2.setStroke(new BasicStroke(1.0f));
+      g2.setFont(new Font("Monospaced", Font.PLAIN, 11));
+      int overlayX = (int) originX + 5;
+      int overlayY = (int) (originY + fieldW * scale) - 8;
+
+      // Robot position label (bottom-left corner of field)
+      if (drive != null) {
+        Pose2d rPose = drive.getPose();
+        String robotText =
+            String.format(
+                "Robot: (%.2f, %.2f) m  %.1f\u00b0",
+                rPose.getX(), rPose.getY(), rPose.getRotation().getDegrees());
+        g2.setColor(new Color(0, 0, 0, 160));
+        g2.fillRoundRect(overlayX - 3, overlayY - 14, 265, 19, 5, 5);
+        g2.setColor(new Color(120, 180, 255));
+        g2.drawString(robotText, overlayX, overlayY);
+        overlayY -= 22;
+      }
+
+      // Mouse field position label (above robot label) + dashed crosshair
+      if (mousePos != null) {
+        double mFieldX = (mousePos.x - originX) / scale;
+        double mFieldY = fieldW - (mousePos.y - originY) / scale;
+        mFieldX = Math.max(0, Math.min(fieldL, mFieldX));
+        mFieldY = Math.max(0, Math.min(fieldW, mFieldY));
+        String mouseText = String.format("Cursor: (%.2f, %.2f) m", mFieldX, mFieldY);
+        g2.setColor(new Color(0, 0, 0, 160));
+        g2.fillRoundRect(overlayX - 3, overlayY - 14, 200, 19, 5, 5);
+        g2.setColor(new Color(220, 220, 100));
+        g2.drawString(mouseText, overlayX, overlayY);
+
+        // Dashed crosshair
+        g2.setColor(new Color(220, 220, 100, 140));
+        g2.setStroke(
+            new BasicStroke(
+                1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {4, 4}, 0));
+        int fieldRight = (int) (originX + fieldL * scale);
+        int fieldBottom = (int) (originY + fieldW * scale);
+        g2.drawLine(mousePos.x, (int) originY, mousePos.x, fieldBottom);
+        g2.drawLine((int) originX, mousePos.y, fieldRight, mousePos.y);
       }
 
       g2.dispose();
