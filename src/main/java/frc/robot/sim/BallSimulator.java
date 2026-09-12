@@ -409,11 +409,6 @@ public class BallSimulator {
     }
 
     lastShotSuccess = hit;
-    if (hit) {
-      ballsScoredInHub++;
-    } else {
-      totalShotsMissed++;
-    }
 
     // Register flying projectile for visual UI animation
     FlyingBall projectile =
@@ -432,13 +427,29 @@ public class BallSimulator {
     activeFlyingBalls.add(projectile);
   }
 
-  /** Updates all active ball projectile animations and removes expired ones. */
+  /**
+   * Updates all active ball projectile animations and records scored goals when hitting the hub.
+   */
   private void updateFlyingBalls(double now) {
     synchronized (activeFlyingBalls) {
       Iterator<FlyingBall> iterator = activeFlyingBalls.iterator();
       while (iterator.hasNext()) {
         FlyingBall ball = iterator.next();
         double elapsed = now - ball.startTime;
+
+        // Score goal or record miss when ball reaches the hub landing point
+        if (elapsed >= ball.flightDuration && !ball.scored) {
+          ball.scored = true;
+          if (ball.isHit) {
+            ballsScoredInHub++;
+            lastShotSuccess = true;
+            Logger.recordOutput("BallSim/HubGoalScored", true);
+          } else {
+            totalShotsMissed++;
+            lastShotSuccess = false;
+          }
+        }
+
         // Balls that score disappear when they land in the hub
         if (ball.isHit && elapsed >= ball.flightDuration) {
           iterator.remove();
@@ -560,6 +571,7 @@ public class BallSimulator {
     this.ballsScoredInHub = 0;
     this.totalShotsAttempted = 0;
     this.totalShotsMissed = 0;
+    activeFlyingBalls.clear();
     resetFieldBalls();
   }
 
@@ -604,6 +616,7 @@ public class BallSimulator {
     public final double vy;
     public final double vz0;
     public final boolean isHit;
+    public boolean scored = false;
 
     public FlyingBall(
         Translation2d startPos,
