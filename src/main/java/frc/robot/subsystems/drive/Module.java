@@ -73,6 +73,12 @@ public class Module {
     io.setTurnOpenLoop(0.0);
   }
 
+  /** Resets module internal state and zeros motor velocities. */
+  public void reset() {
+    io.reset();
+    stop();
+  }
+
   /** Returns the current turn angle of the module. */
   public Rotation2d getAngle() {
     return inputs.turnPosition;

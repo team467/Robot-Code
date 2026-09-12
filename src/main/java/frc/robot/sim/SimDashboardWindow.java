@@ -249,6 +249,10 @@ public class SimDashboardWindow extends JFrame {
           } else {
             ballSimulator.setBallsInRobot(8);
             ballSimulator.resetBallsScored();
+            ballSimulator.resetFieldBalls();
+            if (drive != null) {
+              drive.stop();
+            }
             DriverStationSim.setAutonomous(true);
             DriverStationSim.setEnabled(true);
             DriverStationSim.notifyNewData();
@@ -623,9 +627,13 @@ public class SimDashboardWindow extends JFrame {
       fillBallsBtn.addActionListener(
           e -> ballSimulator.setBallsInRobot(BallSimulator.MAX_CAPACITY));
 
-      JButton resetScoreBtn = new JButton("Reset Score");
+      JButton resetScoreBtn = new JButton("Reset Balls/Score");
       styleButton(resetScoreBtn, new Color(80, 85, 95));
-      resetScoreBtn.addActionListener(e -> ballSimulator.resetBallsScored());
+      resetScoreBtn.addActionListener(
+          e -> {
+            ballSimulator.resetBallsScored();
+            ballSimulator.resetFieldBalls();
+          });
 
       JButton autoCardBtn = new JButton("Start Auto");
       styleButton(autoCardBtn, new Color(35, 140, 60));
@@ -633,6 +641,10 @@ public class SimDashboardWindow extends JFrame {
           e -> {
             ballSimulator.setBallsInRobot(8);
             ballSimulator.resetBallsScored();
+            ballSimulator.resetFieldBalls();
+            if (drive != null) {
+              drive.stop();
+            }
             DriverStationSim.setAutonomous(true);
             DriverStationSim.setEnabled(true);
             DriverStationSim.notifyNewData();
@@ -742,19 +754,68 @@ public class SimDashboardWindow extends JFrame {
       // Zone Labels
       g2.setFont(new Font("SansSerif", Font.PLAIN, 10));
       g2.setColor(new Color(70, 130, 220, 140));
-      g2.drawString("BLUE ALLIANCE ZONE (Low Intake %)", (int) originX + 15, (int) originY + 18);
+      g2.drawString("BLUE ALLIANCE ZONE", (int) originX + 15, (int) originY + 18);
 
       g2.setColor(new Color(220, 180, 60, 140));
-      g2.drawString("NEUTRAL ZONE (High Intake %)", (int) nzNearX + 15, (int) originY + 18);
+      g2.drawString("NEUTRAL ZONE", (int) nzNearX + 15, (int) originY + 18);
 
       g2.setColor(new Color(220, 80, 80, 140));
-      g2.drawString("RED ALLIANCE ZONE (Low Intake %)", (int) nzFarX + 15, (int) originY + 18);
+      g2.drawString("RED ALLIANCE ZONE", (int) nzFarX + 15, (int) originY + 18);
 
       // 2. Draw Hubs
       drawHub(
           g2, Hub.blueCenter, new Color(40, 120, 240), originX, originY, fieldW, scale, "BLUE HUB");
       drawHub(
           g2, Hub.redCenter, new Color(230, 60, 60), originX, originY, fieldW, scale, "RED HUB");
+
+      // 2.5 Draw Field Depot Corrals & Physical Field Balls
+      g2.setStroke(new BasicStroke(1.5f));
+      // Red Upper Depot (R1/R2)
+      g2.setColor(new Color(220, 60, 60, 180));
+      g2.drawRect(
+          (int) originX,
+          (int) (originY + (fieldW - 6.45) * scale),
+          (int) (0.75 * scale),
+          (int) (1.30 * scale));
+      // Red Lower Depot (R3)
+      g2.drawRect(
+          (int) originX,
+          (int) (originY + (fieldW - 1.40) * scale),
+          (int) (0.55 * scale),
+          (int) (1.10 * scale));
+
+      // Blue Lower Depot (B1/B2)
+      g2.setColor(new Color(50, 120, 230, 180));
+      g2.drawRect(
+          (int) (originX + (fieldL - 0.75) * scale),
+          (int) (originY + (fieldW - 3.15) * scale),
+          (int) (0.75 * scale),
+          (int) (1.30 * scale));
+      // Blue Upper Depot (B3)
+      g2.drawRect(
+          (int) (originX + (fieldL - 0.55) * scale),
+          (int) (originY + (fieldW - 7.95) * scale),
+          (int) (0.55 * scale),
+          (int) (1.10 * scale));
+
+      // Draw all active physical field balls on the carpet
+      List<BallSimulator.FieldBall> fieldBalls = ballSimulator.getFieldBalls();
+      synchronized (fieldBalls) {
+        double rScreen = BallSimulator.FieldBall.RADIUS * scale;
+        int dScreen = (int) Math.max(5, rScreen * 2.0);
+        for (BallSimulator.FieldBall ball : fieldBalls) {
+          if (!ball.inPlay) continue;
+          double bx = originX + ball.x * scale;
+          double by = originY + (fieldW - ball.y) * scale;
+
+          // Yellow sphere with gold border
+          g2.setColor(new Color(248, 220, 32));
+          g2.fillOval((int) (bx - dScreen / 2), (int) (by - dScreen / 2), dScreen, dScreen);
+          g2.setColor(new Color(180, 145, 12));
+          g2.setStroke(new BasicStroke(1.0f));
+          g2.drawOval((int) (bx - dScreen / 2), (int) (by - dScreen / 2), dScreen, dScreen);
+        }
+      }
 
       // 3. Draw Robot Pose & Aim
       if (drive != null) {
@@ -806,6 +867,19 @@ public class SimDashboardWindow extends JFrame {
         g2.setColor(isRed ? new Color(220, 60, 60) : new Color(120, 180, 255));
         g2.setStroke(new BasicStroke(2.0f));
         g2.draw(new Rectangle2D.Double(-rSize / 2, -rSize / 2, rSize, rSize));
+
+        // Intake visual indicator on front bumper (+X)
+        boolean isDeployed = RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED;
+        if (isDeployed) {
+          boolean isIntaking = DriverStation.isEnabled() && RobotState.getInstance().intaking;
+          g2.setColor(isIntaking ? new Color(50, 240, 100) : new Color(220, 200, 60));
+          double intakeExt = 0.22 * scale;
+          double rollerW = 0.70 * scale;
+          g2.fill(new RoundRectangle2D.Double(rSize / 2, -rollerW / 2, intakeExt, rollerW, 4, 4));
+          g2.setColor(Color.WHITE);
+          g2.setStroke(new BasicStroke(1.2f));
+          g2.draw(new RoundRectangle2D.Double(rSize / 2, -rollerW / 2, intakeExt, rollerW, 4, 4));
+        }
 
         // Heading Indicator Arrow (Pointing in forward X)
         g2.setColor(new Color(255, 200, 50));

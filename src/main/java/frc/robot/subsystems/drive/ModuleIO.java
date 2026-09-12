@@ -39,4 +39,7 @@ public interface ModuleIO {
 
   /** Run the turn motor to the specified rotation. */
   public default void setTurnPosition(Rotation2d rotation) {}
+
+  /** Resets module internal state and zeros velocities. */
+  public default void reset() {}
 }

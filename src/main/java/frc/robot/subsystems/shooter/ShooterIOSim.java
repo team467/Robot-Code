@@ -3,8 +3,10 @@ package frc.robot.subsystems.shooter;
 import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
 public class ShooterIOSim implements ShooterIO {
@@ -22,31 +24,39 @@ public class ShooterIOSim implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    flywheelSim.setInputVoltage(MathUtil.clamp(appliedVolts, -MAX_VOLTAGE, MAX_VOLTAGE));
-    flywheelSim.update(0.02);
+    if (DriverStation.isDisabled()) {
+      appliedVolts = 0.0;
+      flywheelSim.setInputVoltage(0.0);
+      flywheelSim.setState(VecBuilder.fill(0.0));
+    } else {
+      flywheelSim.setInputVoltage(MathUtil.clamp(appliedVolts, -MAX_VOLTAGE, MAX_VOLTAGE));
+      flywheelSim.update(0.02);
+    }
 
-    double wheelRadPerSec = flywheelSim.getAngularVelocityRadPerSec();
+    boolean disabled = DriverStation.isDisabled();
+    double wheelRadPerSec = disabled ? 0.0 : flywheelSim.getAngularVelocityRadPerSec();
     wheelPositionRad += wheelRadPerSec * 0.02;
 
     double motorRadPerSec = wheelRadPerSec * SHOOTER_WHEEL_GEAR_RATIO;
-    double currentAmpsPerMotor = Math.abs(flywheelSim.getCurrentDrawAmps()) / 3.0;
+    double currentAmpsPerMotor =
+        disabled ? 0.0 : (Math.abs(flywheelSim.getCurrentDrawAmps()) / 3.0);
 
     inputs.shooterWheelVelocityRadPerSec = wheelRadPerSec;
     inputs.shooterWheelPosition = wheelPositionRad;
 
     inputs.bottomMotorVelocityRadPerSec = motorRadPerSec;
-    inputs.bottomMotorAppliedVolts = appliedVolts;
+    inputs.bottomMotorAppliedVolts = disabled ? 0.0 : appliedVolts;
     inputs.bottomMotorCurrentAmps = currentAmpsPerMotor;
 
     inputs.middleMotorVelocityRadPerSec = motorRadPerSec;
-    inputs.middleMotorAppliedVolts = appliedVolts;
+    inputs.middleMotorAppliedVolts = disabled ? 0.0 : appliedVolts;
     inputs.middleMotorCurrentAmps = currentAmpsPerMotor;
 
     inputs.topMotorVelocityRadPerSec = motorRadPerSec;
-    inputs.topMotorAppliedVolts = appliedVolts;
+    inputs.topMotorAppliedVolts = disabled ? 0.0 : appliedVolts;
     inputs.topMotorCurrentAmps = currentAmpsPerMotor;
 
-    inputs.totalAmps = flywheelSim.getCurrentDrawAmps();
+    inputs.totalAmps = disabled ? 0.0 : flywheelSim.getCurrentDrawAmps();
   }
 
   @Override
@@ -57,5 +67,7 @@ public class ShooterIOSim implements ShooterIO {
   @Override
   public void stop() {
     appliedVolts = 0.0;
+    flywheelSim.setInputVoltage(0.0);
+    flywheelSim.setState(VecBuilder.fill(0.0));
   }
 }

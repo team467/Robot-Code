@@ -7,6 +7,9 @@ public class MagicCarpetIOSim implements MagicCarpetIO {
 
   @Override
   public void updateInputs(MagicCarpetIOInputs inputs) {
+    if (edu.wpi.first.wpilibj.DriverStation.isDisabled()) {
+      speed = 0.0;
+    }
     inputs.appliedVolts = speed * 12.0;
     inputs.motorVelocity = speed * 5676.0;
     inputs.currentAmps = Math.abs(speed) * 8.0;

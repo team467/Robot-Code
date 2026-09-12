@@ -8,6 +8,10 @@ public class IntakeRollersIOSim implements IntakeRollersIO {
 
   @Override
   public void updateInputs(IntakeRollersIOInputs inputs) {
+    if (edu.wpi.first.wpilibj.DriverStation.isDisabled()) {
+      intakeVolts = 0.0;
+      intakePercent = 0.0;
+    }
     inputs.intakeVolts = intakeVolts;
     inputs.intakePercentOutput = intakePercent;
     inputs.intakeAmps = Math.abs(intakeVolts) * 2.0;

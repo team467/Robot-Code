@@ -224,6 +224,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     CommandScheduler.getInstance().cancelAll();
+    if (robotContainer != null && robotContainer.getDrive() != null) {
+      robotContainer.getDrive().stop();
+    }
     if (SimDashboardWindow.getInstance() != null) {
       SimDashboardWindow.getInstance().stopAllSubsystems();
     }
@@ -231,15 +234,27 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if (robotContainer != null && robotContainer.getDrive() != null) {
+      robotContainer.getDrive().stop();
+    }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    needsPoseReset = true;
     autoStart = Timer.getTimestamp();
     BallSimulator.getInstance().resetBallsScored();
     BallSimulator.getInstance().setBallsInRobot(8);
+    BallSimulator.getInstance().resetFieldBalls();
+
+    // Position the robot and zero velocity BEFORE scheduling autonomous command
+    if (robotContainer != null && robotContainer.getDrive() != null) {
+      robotContainer.getDrive().setPose(startPose.get());
+      robotContainer.getDrive().stop();
+    }
+    needsPoseReset = false;
+
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -252,7 +267,10 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousPeriodic() {
     if (needsPoseReset) {
-      robotContainer.getDrive().setPose(startPose.get());
+      if (robotContainer != null && robotContainer.getDrive() != null) {
+        robotContainer.getDrive().setPose(startPose.get());
+        robotContainer.getDrive().stop();
+      }
       needsPoseReset = false;
     }
   }

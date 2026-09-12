@@ -11,6 +11,10 @@ public class IndexerIOSim implements IndexerIO {
 
   @Override
   public void updateInputs(IndexerIOInputs inputs) {
+    if (edu.wpi.first.wpilibj.DriverStation.isDisabled()) {
+      feedUpVolts = 0.0;
+      feedUpPercent = 0.0;
+    }
     inputs.feedUpVolts = feedUpVolts;
     inputs.feedUpPercentOutput = feedUpPercent;
     inputs.feedUpAmps = Math.abs(feedUpVolts) * 1.5;

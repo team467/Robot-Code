@@ -251,6 +251,9 @@ public class Drive extends SubsystemBase {
   /** Returns the measured chassis speeds of the robot. */
   @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
   public ChassisSpeeds getChassisSpeeds() {
+    if (DriverStation.isDisabled()) {
+      return new ChassisSpeeds();
+    }
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 
@@ -302,9 +305,21 @@ public class Drive extends SubsystemBase {
     return getPose().getRotation();
   }
 
-  /** Resets the current odometry pose. */
+  /** Resets the current odometry pose and zeros module velocity. */
   public void setPose(Pose2d pose) {
-    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+    for (var module : modules) {
+      module.reset();
+    }
+    stop();
+    if (!gyroInputs.connected) {
+      rawGyroRotation = pose.getRotation();
+    }
+    SwerveModulePosition[] positions = getModulePositions();
+    for (int i = 0; i < 4; i++) {
+      lastModulePositions[i] =
+          new SwerveModulePosition(positions[i].distanceMeters, positions[i].angle);
+    }
+    poseEstimator.resetPosition(rawGyroRotation, positions, pose);
   }
 
   /** Adds a new timestamped vision measurement. */

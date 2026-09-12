@@ -19,14 +19,21 @@ public class IntakeExtendIOSim implements IntakeExtendIO {
 
   @Override
   public void updateInputs(IntakeExtendIOInputs inputs) {
-    if (usingPID) {
+    if (edu.wpi.first.wpilibj.DriverStation.isDisabled()) {
+      usingPID = false;
+      appliedVolts = 0.0;
+      extendPercent = 0.0;
+      pidController.reset();
+    } else if (usingPID) {
       double pidOutput = pidController.calculate(currentPos, setpoint);
       appliedVolts = MathUtil.clamp(pidOutput * 12.0, -12.0, 12.0);
       extendPercent = appliedVolts / 12.0;
     }
 
+    boolean disabled = edu.wpi.first.wpilibj.DriverStation.isDisabled();
+
     // Update position based on applied output (max speed ~ 3.5 pos units per second)
-    double velocity = (appliedVolts / 12.0) * 3.5;
+    double velocity = disabled ? 0.0 : ((appliedVolts / 12.0) * 3.5);
     currentPos += velocity * 0.02;
 
     // Physical stops
@@ -34,13 +41,14 @@ public class IntakeExtendIOSim implements IntakeExtendIO {
 
     inputs.getExtendPos = currentPos;
     inputs.extendVelocity = velocity;
-    inputs.extendVolts = appliedVolts;
-    inputs.extendPercentOutput = extendPercent;
-    inputs.extendAmps = Math.abs(appliedVolts) * 1.2;
+    inputs.extendVolts = disabled ? 0.0 : appliedVolts;
+    inputs.extendPercentOutput = disabled ? 0.0 : extendPercent;
+    inputs.extendAmps = disabled ? 0.0 : (Math.abs(appliedVolts) * 1.2);
     inputs.isCollapsed = Math.abs(currentPos - COLLAPSE_POS) < 0.05;
-    inputs.hasSetpoint = usingPID;
+    inputs.hasSetpoint = usingPID && !disabled;
     inputs.setpointValue = setpoint;
-    inputs.atSetpoint = usingPID && (Math.abs(currentPos - setpoint) <= POSITION_TOLERANCE);
+    inputs.atSetpoint =
+        usingPID && !disabled && (Math.abs(currentPos - setpoint) <= POSITION_TOLERANCE);
     inputs.stowed = inputs.isCollapsed;
   }
 
