@@ -2,6 +2,7 @@ package frc.robot.commands.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants;
@@ -47,12 +48,21 @@ public class SimAutos {
   public Command sim1() {
     return Commands.sequence(
         Commands.race(
-            intake.extendToAngleAndIntake(-2), new StraightDriveToPose(drive, centerOfField)),
-        Commands.parallel(intake.extendToAngle(0), new StraightDriveToPose(drive, shootPose)),
-        Commands.parallel(shooter.setTargetVelocityRadians(140), indexer.run()).withTimeout(1),
+                intake.extendToAngleAndIntake(-2), new StraightDriveToPose(drive, centerOfField))
+            .withName("center of field"),
+        Commands.parallel(intake.extendToAngle(0), new StraightDriveToPose(drive, shootPose))
+            .withName("drive to shoot pose"),
+        Commands.parallel(shooter.setTargetVelocityRadians(140), indexer.run()).withTimeout(4),
+        shooter.setTargetVelocityRadians(0).withName("stop shooter").withTimeout(0.1),
         Commands.race(
-            intake.extendToAngleAndIntake(-2), new StraightDriveToPose(drive, centerOfField)),
-        Commands.parallel(intake.extendToAngle(0), new StraightDriveToPose(drive, shootPose)),
-        Commands.parallel(shooter.setTargetVelocityRadians(140), indexer.run()).withTimeout(1));
+                intake.extendToAngleAndIntake(-2),
+                new StraightDriveToPose(
+                    drive, centerOfField.get().plus(new Transform2d(0, 1, new Rotation2d(0)))))
+            .withName("move to center"),
+        Commands.parallel(intake.extendToAngle(0), new StraightDriveToPose(drive, shootPose))
+            .withName("drive to shoot pose"),
+        Commands.parallel(shooter.setTargetVelocityRadians(140), indexer.run())
+            .withTimeout(10)
+            .withName("shoot 2nd ball"));
   }
 }
