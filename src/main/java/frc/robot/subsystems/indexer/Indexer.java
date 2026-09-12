@@ -3,6 +3,7 @@ package frc.robot.subsystems.indexer;
 import static frc.robot.subsystems.indexer.IndexConstants.FEEDUP_VOLT;
 import static frc.robot.subsystems.indexer.IndexConstants.PRELOAD_VOLT;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,9 +21,16 @@ public class Indexer extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    if (DriverStation.isDisabled()) {
+      stopIndexer();
+    }
     RobotState.getInstance().indexerHasFuel = inputs.ballAtLeftSwitch || inputs.ballAtRightSwitch;
-    RobotState.getInstance().indexerRunning = inputs.feedUpVolts > 0;
+    RobotState.getInstance().indexerRunning = DriverStation.isEnabled() && inputs.feedUpVolts > 0;
     Logger.processInputs("Index", inputs);
+  }
+
+  public void stopIndexer() {
+    io.stop();
   }
 
   private void setPercent(double indexPercent, double feedUpPercent) {

@@ -1,10 +1,15 @@
 package frc.robot.sim;
 
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.FieldConstants.LinesVertical;
@@ -169,9 +174,86 @@ public class SimDashboardWindow extends JFrame {
 
     panel.add(titleBox, BorderLayout.WEST);
 
-    // Right Status Badges (Match State, Mode, Time)
+    // Right Status Badges & Controls (Auto Toggle, Match State, Mode)
     JPanel statusBox = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
     statusBox.setOpaque(false);
+
+    // Alliance & Position Station Dropdown (Blue 1, 2, 3 / Red 1, 2, 3) - Default to Blue 3
+    JLabel stationLabel = new JLabel("Station:");
+    stationLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+    stationLabel.setForeground(new Color(170, 175, 185));
+
+    String[] stationOptions = {"Blue 1", "Blue 2", "Blue 3", "Red 1", "Red 2", "Red 3"};
+    JComboBox<String> stationCombo = new JComboBox<>(stationOptions);
+    stationCombo.setFont(new Font("SansSerif", Font.BOLD, 11));
+    stationCombo.setBackground(new Color(40, 44, 54));
+    stationCombo.setForeground(Color.WHITE);
+    stationCombo.setFocusable(false);
+    stationCombo.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+    // Default to Blue 3
+    DriverStationSim.setAllianceStationId(AllianceStationID.Blue3);
+    DriverStationSim.notifyNewData();
+    stationCombo.setSelectedItem("Blue 3");
+    if (drive != null && !DriverStation.isEnabled()) {
+      drive.setPose(AllianceFlipUtil.apply(new Pose2d(3.645, 2.0, new Rotation2d(0))));
+    }
+
+    stationCombo.addActionListener(
+        e -> {
+          String selected = (String) stationCombo.getSelectedItem();
+          if (selected == null) return;
+          AllianceStationID id =
+              switch (selected) {
+                case "Blue 1" -> AllianceStationID.Blue1;
+                case "Blue 2" -> AllianceStationID.Blue2;
+                case "Blue 3" -> AllianceStationID.Blue3;
+                case "Red 1" -> AllianceStationID.Red1;
+                case "Red 2" -> AllianceStationID.Red2;
+                case "Red 3" -> AllianceStationID.Red3;
+                default -> AllianceStationID.Blue3;
+              };
+          DriverStationSim.setAllianceStationId(id);
+          DriverStationSim.notifyNewData();
+
+          // If robot is disabled, immediately update starting position on field
+          if (drive != null && !DriverStation.isEnabled()) {
+            double y = 2.0;
+            double x = 3.645;
+            if (id == AllianceStationID.Red2 || id == AllianceStationID.Blue2) {
+              y = FieldConstants.fieldWidth / 2.0;
+              x = 2.0;
+            } else if (id == AllianceStationID.Red1 || id == AllianceStationID.Blue1) {
+              y = FieldConstants.fieldWidth - y;
+            }
+            drive.setPose(AllianceFlipUtil.apply(new Pose2d(x, y, new Rotation2d(0))));
+          }
+        });
+
+    JButton autoBtn = new JButton("Start Auto");
+    autoBtn.setFont(new Font("SansSerif", Font.BOLD, 12));
+    autoBtn.setForeground(Color.WHITE);
+    autoBtn.setBackground(new Color(35, 140, 60));
+    autoBtn.setFocusPainted(false);
+    autoBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    autoBtn.setBorder(new EmptyBorder(5, 12, 5, 12));
+
+    autoBtn.addActionListener(
+        e -> {
+          boolean isAuto = DriverStation.isEnabled() && DriverStation.isAutonomous();
+          if (isAuto) {
+            DriverStationSim.setAutonomous(false);
+            DriverStationSim.setEnabled(false);
+            DriverStationSim.notifyNewData();
+            stopAllSubsystems();
+          } else {
+            ballSimulator.setBallsInRobot(8);
+            ballSimulator.resetBallsScored();
+            DriverStationSim.setAutonomous(true);
+            DriverStationSim.setEnabled(true);
+            DriverStationSim.notifyNewData();
+          }
+        });
 
     JLabel modeBadge =
         new JLabel() {
@@ -195,22 +277,67 @@ public class SimDashboardWindow extends JFrame {
     modeBadge.setForeground(Color.WHITE);
     modeBadge.setBorder(new EmptyBorder(4, 10, 4, 10));
 
-    // Dynamic timer updater for header
+    // Dynamic timer updater for header & auto button
+    boolean[] wasEnabledState = new boolean[] {false};
     new javax.swing.Timer(
             100,
             e -> {
               boolean enabled = DriverStation.isEnabled();
               boolean auto = DriverStation.isAutonomous();
+              if (wasEnabledState[0] && !enabled) {
+                stopAllSubsystems();
+              }
+              wasEnabledState[0] = enabled;
+
               String modeText = !enabled ? "DISABLED" : (auto ? "AUTO" : "TELEOP");
               Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
               modeBadge.setText(alliance.toString().toUpperCase() + " | " + modeText);
+
+              if (enabled && auto) {
+                autoBtn.setText("Stop Auto");
+                autoBtn.setBackground(new Color(180, 45, 45));
+              } else {
+                autoBtn.setText("Start Auto");
+                autoBtn.setBackground(new Color(35, 140, 60));
+              }
             })
         .start();
 
+    statusBox.add(stationLabel);
+    statusBox.add(stationCombo);
+    statusBox.add(autoBtn);
     statusBox.add(modeBadge);
     panel.add(statusBox, BorderLayout.EAST);
 
     return panel;
+  }
+
+  /** Immediately stops all commands, mechanisms, and subsystem motors when disabled */
+  public void stopAllSubsystems() {
+    CommandScheduler.getInstance().cancelAll();
+    if (drive != null) {
+      drive.stop();
+    }
+    if (shooter != null) {
+      shooter.stopMotor();
+    }
+    if (intakeRollers != null) {
+      intakeRollers.stopIntake();
+    }
+    if (intakeExtend != null) {
+      intakeExtend.stopExtend();
+    }
+    if (indexer != null) {
+      indexer.stopIndexer();
+    }
+    if (magicCarpet != null) {
+      magicCarpet.manualRun = false;
+    }
+    RobotState state = RobotState.getInstance();
+    state.intaking = false;
+    state.indexerRunning = false;
+    state.shooterAtSpeed = false;
+    state.shooterSetpoint = 0.0;
   }
 
   /** Subsystems Telemetry & Ball Storage Side Panel */
@@ -224,15 +351,11 @@ public class SimDashboardWindow extends JFrame {
       add(createBallInventoryCard());
       add(Box.createVerticalStrut(10));
 
-      // 2. Shooter Diagnostics Card
-      add(createShooterCard());
-      add(Box.createVerticalStrut(10));
-
-      // 3. Feeder & Subsystems Status Card
+      // 2. Mechanism & Feeder Status Card (includes Drive, Shooter, Intake, Carpet, Indexer)
       add(createSubsystemsCard());
       add(Box.createVerticalStrut(10));
 
-      // 4. Interactive Learning Controls Card
+      // 3. Practice & Override Controls Card
       add(createStudentControlsCard());
     }
 
@@ -269,17 +392,18 @@ public class SimDashboardWindow extends JFrame {
               g2.setFont(new Font("SansSerif", Font.PLAIN, 11));
               g2.drawString("HUB GOALS SCORED", 15, 52);
 
-              // Draw Magazine Hopper
-              int startX = 160;
-              int startY = 18;
-              int radius = 18;
-              int spacing = 22;
+              // Draw Magazine Hopper (2 rows of 10 for 20 balls)
+              int startX = 140;
+              int startY = 16;
+              int radius = 10;
+              int spacingX = 14;
+              int spacingY = 14;
 
               g2.drawString(
-                  "Hopper: " + balls + " / " + BallSimulator.MAX_CAPACITY, startX, startY - 4);
+                  "Hopper: " + balls + " / " + BallSimulator.MAX_CAPACITY, startX, startY - 2);
               for (int i = 0; i < BallSimulator.MAX_CAPACITY; i++) {
-                int cx = startX + (i % 4) * spacing;
-                int cy = startY + 6 + (i / 4) * spacing;
+                int cx = startX + (i % 10) * spacingX;
+                int cy = startY + 5 + (i / 10) * spacingY;
                 if (i < balls) {
                   // Glowing orange ball
                   g2.setColor(new Color(255, 140, 20));
@@ -296,75 +420,6 @@ public class SimDashboardWindow extends JFrame {
             }
           };
       content.setPreferredSize(new Dimension(300, 75));
-      content.setOpaque(false);
-      card.add(content, BorderLayout.CENTER);
-
-      return card;
-    }
-
-    private JPanel createShooterCard() {
-      JPanel card = new JPanel(new BorderLayout(8, 8));
-      card.setBackground(new Color(38, 40, 48));
-      card.setBorder(
-          BorderFactory.createCompoundBorder(
-              new LineBorder(new Color(55, 58, 68), 1, true), new EmptyBorder(10, 12, 10, 12)));
-
-      JLabel title = new JLabel("SHOOTER SUBSYSTEM");
-      title.setFont(new Font("SansSerif", Font.BOLD, 13));
-      title.setForeground(new Color(90, 175, 255));
-      card.add(title, BorderLayout.NORTH);
-
-      JPanel content =
-          new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-              super.paintComponent(g);
-              Graphics2D g2 = (Graphics2D) g.create();
-              g2.setRenderingHint(
-                  RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-              double setpointRadPerSec = shooter != null ? shooter.getSetpoint() : 0.0;
-              double setpointRPM = setpointRadPerSec * 60.0 / (2 * Math.PI);
-              boolean atSpeed = RobotState.getInstance().shooterAtSpeed;
-
-              // Status indicator dot
-              Color dotColor =
-                  (setpointRPM <= 10.0)
-                      ? new Color(90, 95, 105)
-                      : (atSpeed ? new Color(50, 220, 100) : new Color(255, 170, 30));
-              g2.setColor(dotColor);
-              g2.fillOval(10, 10, 14, 14);
-
-              g2.setColor(Color.WHITE);
-              g2.setFont(new Font("SansSerif", Font.BOLD, 13));
-              String statusText =
-                  (setpointRPM <= 10.0)
-                      ? "IDLE"
-                      : (atSpeed ? "READY / AT SPEED" : "SPINNING UP...");
-              g2.drawString(statusText, 32, 22);
-
-              // RPM Readout
-              g2.setColor(new Color(200, 205, 215));
-              g2.setFont(new Font("SansSerif", Font.PLAIN, 12));
-              g2.drawString(String.format("Target Setpoint:  %.0f RPM", setpointRPM), 10, 48);
-              g2.drawString(String.format("Velocity:  %.1f rad/s", setpointRadPerSec), 10, 68);
-
-              // Mini Speed Progress Bar
-              int barX = 10;
-              int barY = 78;
-              int barW = 270;
-              int barH = 10;
-              g2.setColor(new Color(50, 53, 62));
-              g2.fillRoundRect(barX, barY, barW, barH, 6, 6);
-
-              double progress = Math.min(1.0, setpointRPM / 4500.0);
-              g2.setColor(atSpeed ? new Color(50, 205, 100) : new Color(90, 175, 255));
-              g2.fillRoundRect(barX, barY, (int) (barW * progress), barH, 6, 6);
-
-              g2.dispose();
-            }
-          };
-      content.setPreferredSize(new Dimension(300, 95));
       content.setOpaque(false);
       card.add(content, BorderLayout.CENTER);
 
@@ -392,49 +447,141 @@ public class SimDashboardWindow extends JFrame {
               g2.setRenderingHint(
                   RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-              boolean carpetOn =
-                  RobotState.getInstance().indexerRunning; // Magic carpet follows indexer
-              boolean indexerOn = RobotState.getInstance().indexerRunning;
-              boolean intaking = RobotState.getInstance().intaking;
-              boolean intakeDeployed =
-                  RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED;
+              int y = 14;
+              // Column Headers
+              g2.setFont(new Font("SansSerif", Font.PLAIN, 10));
+              g2.setColor(new Color(140, 145, 155));
+              g2.drawString("SUBSYSTEM", 8, y);
+              g2.drawString("ACTIVE COMMAND", 95, y);
+              g2.drawString("STATUS", 232, y);
 
-              int y = 18;
-              drawStatusRow(g2, "Intake Rollers:", intaking ? "SPINNING" : "OFF", intaking, y);
+              // 1. Drive
+              boolean isEnabled = DriverStation.isEnabled();
+
+              // 1. Drive
+              String driveCmd =
+                  (isEnabled && drive != null && drive.getCurrentCommand() != null)
+                      ? drive.getCurrentCommand().getName()
+                      : "None";
+              double speed =
+                  (isEnabled && drive != null)
+                      ? Math.hypot(
+                          drive.getChassisSpeeds().vxMetersPerSecond,
+                          drive.getChassisSpeeds().vyMetersPerSecond)
+                      : 0.0;
+              String driveStatus = speed > 0.05 ? String.format("%.1f m/s", speed) : "STOPPED";
               y += 24;
-              drawStatusRow(
+              drawSubsystemRow(g2, "Drive", driveCmd, driveStatus, isEnabled && speed > 0.05, y);
+
+              // 2. Shooter
+              String shooterCmd =
+                  (isEnabled && shooter != null && shooter.getCurrentCommand() != null)
+                      ? shooter.getCurrentCommand().getName()
+                      : "None";
+              double rpm =
+                  (isEnabled && shooter != null && shooter.getSetpoint() > 10.0)
+                      ? (shooter.getSetpoint() * 60.0 / (2 * Math.PI))
+                      : 0.0;
+              String shooterStatus = rpm > 10.0 ? String.format("%.0f RPM", rpm) : "IDLE";
+              y += 24;
+              drawSubsystemRow(
+                  g2, "Shooter", shooterCmd, shooterStatus, isEnabled && rpm > 10.0, y);
+
+              // 3. IntakeRollers
+              String rollersCmd =
+                  (isEnabled && intakeRollers != null && intakeRollers.getCurrentCommand() != null)
+                      ? intakeRollers.getCurrentCommand().getName()
+                      : "None";
+              boolean intaking = isEnabled && RobotState.getInstance().intaking;
+              y += 24;
+              drawSubsystemRow(
+                  g2, "IntakeRollers", rollersCmd, intaking ? "SPINNING" : "OFF", intaking, y);
+
+              // 4. IntakeExtend
+              String extendCmd =
+                  (isEnabled && intakeExtend != null && intakeExtend.getCurrentCommand() != null)
+                      ? intakeExtend.getCurrentCommand().getName()
+                      : "None";
+              boolean deployed =
+                  isEnabled && RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED;
+              y += 24;
+              drawSubsystemRow(
+                  g2, "IntakeExtend", extendCmd, deployed ? "DEPLOYED" : "STOWED", deployed, y);
+
+              // 5. MagicCarpet
+              String carpetCmd =
+                  (isEnabled && magicCarpet != null && magicCarpet.getCurrentCommand() != null)
+                      ? magicCarpet.getCurrentCommand().getName()
+                      : "None";
+              boolean carpetRunning =
+                  isEnabled
+                      && ((magicCarpet != null && magicCarpet.manualRun)
+                          || RobotState.getInstance().indexerRunning);
+              y += 24;
+              drawSubsystemRow(
                   g2,
-                  "Intake Position:",
-                  intakeDeployed ? "DEPLOYED" : "STOWED",
-                  intakeDeployed,
+                  "MagicCarpet",
+                  carpetCmd,
+                  carpetRunning ? "RUNNING" : "STOPPED",
+                  carpetRunning,
                   y);
-              y += 30;
-              drawStatusRow(
-                  g2, "Magic Carpet Conveyor:", carpetOn ? "RUNNING" : "STOPPED", carpetOn, y);
+
+              // 6. Indexer
+              String indexerCmd =
+                  (isEnabled && indexer != null && indexer.getCurrentCommand() != null)
+                      ? indexer.getCurrentCommand().getName()
+                      : "None";
+              boolean indexerRunning = isEnabled && RobotState.getInstance().indexerRunning;
               y += 24;
-              drawStatusRow(
-                  g2, "Indexer Feed-Up:", indexerOn ? "RUNNING" : "STOPPED", indexerOn, y);
+              drawSubsystemRow(
+                  g2,
+                  "Indexer",
+                  indexerCmd,
+                  indexerRunning ? "RUNNING" : "STOPPED",
+                  indexerRunning,
+                  y);
+
               g2.dispose();
             }
 
-            private void drawStatusRow(
-                Graphics2D g2, String label, String state, boolean active, int y) {
-              g2.setColor(new Color(180, 185, 195));
-              g2.setFont(new Font("SansSerif", Font.PLAIN, 12));
-              g2.drawString(label, 10, y);
+            private void drawSubsystemRow(
+                Graphics2D g2,
+                String subName,
+                String cmdName,
+                String status,
+                boolean active,
+                int y) {
+              // Subsystem code name
+              g2.setColor(new Color(220, 225, 235));
+              g2.setFont(new Font("SansSerif", Font.BOLD, 11));
+              g2.drawString(subName, 8, y);
 
-              Color badgeColor = active ? new Color(40, 160, 80) : new Color(75, 78, 88);
+              // Active command name
+              boolean hasCmd = cmdName != null && !cmdName.equals("None");
+              g2.setColor(hasCmd ? new Color(90, 190, 255) : new Color(110, 115, 125));
+              g2.setFont(new Font("Monospaced", Font.PLAIN, 10));
+              String displayCmd = cmdName != null ? cmdName : "None";
+              if (displayCmd.length() > 16) {
+                displayCmd = displayCmd.substring(0, 14) + "..";
+              }
+              g2.drawString(displayCmd, 95, y);
+
+              // Status badge pill
+              Color badgeColor = active ? new Color(35, 140, 70) : new Color(60, 63, 72);
               g2.setColor(badgeColor);
-              g2.fillRoundRect(190, y - 13, 90, 18, 8, 8);
+              int pillX = 218;
+              int pillW = 74;
+              int pillH = 17;
+              g2.fillRoundRect(pillX, y - 12, pillW, pillH, 6, 6);
 
               g2.setColor(Color.WHITE);
-              g2.setFont(new Font("SansSerif", Font.BOLD, 10));
+              g2.setFont(new Font("SansSerif", Font.BOLD, 9));
               FontMetrics fm = g2.getFontMetrics();
-              int tx = 190 + (90 - fm.stringWidth(state)) / 2;
-              g2.drawString(state, tx, y);
+              int tx = pillX + (pillW - fm.stringWidth(status)) / 2;
+              g2.drawString(status, tx, y);
             }
           };
-      content.setPreferredSize(new Dimension(300, 105));
+      content.setPreferredSize(new Dimension(300, 170));
       content.setOpaque(false);
       card.add(content, BorderLayout.CENTER);
 
@@ -453,7 +600,7 @@ public class SimDashboardWindow extends JFrame {
       title.setForeground(new Color(220, 140, 240));
       card.add(title, BorderLayout.NORTH);
 
-      JPanel btnGrid = new JPanel(new GridLayout(2, 2, 6, 6));
+      JPanel btnGrid = new JPanel(new GridLayout(3, 2, 6, 6));
       btnGrid.setOpaque(false);
 
       JButton addBallBtn = new JButton("+ Add Ball");
@@ -464,7 +611,7 @@ public class SimDashboardWindow extends JFrame {
       styleButton(removeBallBtn, new Color(150, 60, 60));
       removeBallBtn.addActionListener(e -> ballSimulator.removeBall());
 
-      JButton fillBallsBtn = new JButton("Fill Hopper (8)");
+      JButton fillBallsBtn = new JButton("Fill Hopper (" + BallSimulator.MAX_CAPACITY + ")");
       styleButton(fillBallsBtn, new Color(180, 120, 30));
       fillBallsBtn.addActionListener(
           e -> ballSimulator.setBallsInRobot(BallSimulator.MAX_CAPACITY));
@@ -473,10 +620,32 @@ public class SimDashboardWindow extends JFrame {
       styleButton(resetScoreBtn, new Color(80, 85, 95));
       resetScoreBtn.addActionListener(e -> ballSimulator.resetBallsScored());
 
+      JButton autoCardBtn = new JButton("Start Auto");
+      styleButton(autoCardBtn, new Color(35, 140, 60));
+      autoCardBtn.addActionListener(
+          e -> {
+            ballSimulator.setBallsInRobot(8);
+            ballSimulator.resetBallsScored();
+            DriverStationSim.setAutonomous(true);
+            DriverStationSim.setEnabled(true);
+            DriverStationSim.notifyNewData();
+          });
+
+      JButton disableCardBtn = new JButton("Disable Robot");
+      styleButton(disableCardBtn, new Color(150, 50, 50));
+      disableCardBtn.addActionListener(
+          e -> {
+            DriverStationSim.setEnabled(false);
+            DriverStationSim.notifyNewData();
+            stopAllSubsystems();
+          });
+
       btnGrid.add(addBallBtn);
       btnGrid.add(removeBallBtn);
       btnGrid.add(fillBallsBtn);
       btnGrid.add(resetScoreBtn);
+      btnGrid.add(autoCardBtn);
+      btnGrid.add(disableCardBtn);
 
       card.add(btnGrid, BorderLayout.CENTER);
 
@@ -734,6 +903,23 @@ public class SimDashboardWindow extends JFrame {
       // Center mark
       g2.fill(new Ellipse2D.Double(hx - 3, hy - 3, 6, 6));
 
+      // Backboard (visual wall facing the neutral zone to show shots cannot enter from neutral
+      // zone)
+      boolean isBlueHub = hubPos.getX() < FieldConstants.fieldLength / 2.0;
+      double bbX = isBlueHub ? (hx + r) : (hx - r);
+      double bbLen = r * 1.8;
+
+      // Thick backboard barrier
+      g2.setColor(new Color(250, 250, 255));
+      g2.setStroke(new BasicStroke(5.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+      g2.drawLine((int) bbX, (int) (hy - bbLen / 2), (int) bbX, (int) (hy + bbLen / 2));
+
+      // Backboard hazard/block outline
+      g2.setColor(new Color(230, 60, 60));
+      g2.setStroke(new BasicStroke(1.5f));
+      int barX = isBlueHub ? (int) bbX - 1 : (int) bbX - 3;
+      g2.drawRect(barX, (int) (hy - bbLen / 2), 4, (int) bbLen);
+
       g2.setFont(new Font("SansSerif", Font.BOLD, 10));
       g2.setColor(color);
       g2.drawString(name, (int) (hx - 25), (int) (hy - r - 4));
@@ -756,21 +942,24 @@ public class SimDashboardWindow extends JFrame {
       int width = getWidth();
       int height = getHeight();
 
-      double padX = 60.0;
-      double padY = 40.0;
-      double graphW = width - 2 * padX;
-      double graphH = height - 2 * padY;
+      double padLeft = 44.0;
+      double padRight = 16.0;
+      double padTop = 66.0;
+      double padBottom = 26.0;
 
-      // Distance range: 0 to 7 meters
-      // Height range: 0 to 3.5 meters
+      double graphW = width - padLeft - padRight;
+      double graphH = height - padTop - padBottom;
+
+      // Distance range: 0 to 6.5 meters
+      // Height range: 0 to 3.2 meters
       double maxDist = 6.5;
       double maxHeight = 3.2;
 
       double scaleX = graphW / maxDist;
       double scaleY = graphH / maxHeight;
 
-      double originX = padX;
-      double originY = height - padY;
+      double originX = padLeft;
+      double originY = height - padBottom;
 
       // 1. Draw Grid Lines & Axes
       g2.setColor(new Color(40, 43, 52));
@@ -813,21 +1002,44 @@ public class SimDashboardWindow extends JFrame {
         double v0h = pred.v0h();
         double v0z = pred.v0z();
         boolean willHit = pred.willHit();
+        boolean inAllianceZone = ballSimulator.isInAllianceZone(pose);
 
-        // Draw Hub Target Basket at Distance D and Height H
+        // Draw Hub Target Basket at Distance D and Height H (if within graph range)
         int hubScreenX = (int) (originX + distToHub * scaleX);
         int hubScreenY = (int) (originY - BallSimulator.HUB_HEIGHT_M * scaleY);
-
-        // Hub Basket Funnel Graphic
         int hubW = (int) (Hub.width * scaleX);
-        g2.setColor(new Color(60, 140, 255, 90));
-        g2.fillRect(hubScreenX - hubW / 2, hubScreenY, hubW, (int) (0.6 * scaleY));
-        g2.setColor(new Color(80, 160, 255));
-        g2.setStroke(new BasicStroke(2.0f));
-        g2.drawRect(hubScreenX - hubW / 2, hubScreenY, hubW, (int) (0.6 * scaleY));
 
-        g2.setFont(new Font("SansSerif", Font.BOLD, 10));
-        g2.drawString("HUB OPENING", hubScreenX - 35, hubScreenY - 6);
+        if (distToHub <= maxDist + 0.2) {
+          // Hub Basket Funnel Graphic
+          g2.setColor(new Color(60, 140, 255, 90));
+          g2.fillRect(hubScreenX - hubW / 2, hubScreenY, hubW, (int) (0.6 * scaleY));
+          g2.setColor(new Color(80, 160, 255));
+          g2.setStroke(new BasicStroke(2.0f));
+          g2.drawRect(hubScreenX - hubW / 2, hubScreenY, hubW, (int) (0.6 * scaleY));
+
+          // Hub Backboard Graphic on the far rim of the target basket
+          int bbW = 5;
+          int bbH = (int) (1.2 * scaleY);
+          int bbX = hubScreenX + hubW / 2 - 2;
+          int bbY = hubScreenY - bbH + (int) (0.5 * scaleY);
+          g2.setColor(new Color(245, 245, 250));
+          g2.fillRect(bbX, bbY, bbW, bbH);
+          g2.setColor(new Color(230, 60, 60));
+          g2.setStroke(new BasicStroke(1.5f));
+          g2.drawRect(bbX, bbY, bbW, bbH);
+
+          g2.setFont(new Font("SansSerif", Font.BOLD, 10));
+          g2.setColor(new Color(80, 160, 255));
+          g2.drawString("HUB OPENING", hubScreenX - 35, hubScreenY - 6);
+        } else {
+          // Hub is beyond the current graph distance range
+          g2.setColor(new Color(80, 160, 255, 180));
+          g2.setFont(new Font("SansSerif", Font.ITALIC, 10));
+          g2.drawString(
+              String.format("Hub Target: %.1fm \u2192", distToHub),
+              (int) (originX + graphW - 95),
+              hubScreenY - 6);
+        }
 
         // Draw Parabolic Arc
         Path2D.Double arcPath = new Path2D.Double();
@@ -847,28 +1059,101 @@ public class SimDashboardWindow extends JFrame {
             arcPath.lineTo(sx, sy);
           }
 
-          // Arc Color (Green if scores in Hub, Orange/Red if misses)
-          Color arcColor = willHit ? new Color(50, 230, 110) : new Color(255, 90, 70);
+          // Arc Color
+          Color arcColor;
+          if (!inAllianceZone) {
+            arcColor = new Color(255, 75, 75); // Blocked by backboard
+          } else if (willHit) {
+            arcColor = new Color(50, 230, 110); // Will score
+          } else {
+            arcColor = new Color(255, 130, 60); // Miss
+          }
           g2.setColor(arcColor);
           g2.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
           g2.draw(arcPath);
         }
 
-        // Diagnostic HUD Overlays
-        g2.setFont(new Font("SansSerif", Font.BOLD, 13));
-        String trajStatus =
-            willHit ? "TRAJECTORY STATUS: ON TARGET" : "TRAJECTORY STATUS: OFF TARGET";
-        g2.setColor(willHit ? new Color(50, 230, 110) : new Color(255, 90, 70));
-        g2.drawString(trajStatus, (int) originX + 20, (int) (originY - graphH) + 20);
+        // 3. Top Diagnostic HUD Card (Structured across 3 distinct rows so nothing overlaps)
+        int hudX = 8;
+        int hudY = 6;
+        int hudW = width - 16;
+        int hudH = 54;
 
-        g2.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        g2.setColor(new Color(200, 205, 215));
-        g2.drawString(
+        g2.setColor(new Color(26, 28, 35, 235));
+        g2.fillRoundRect(hudX, hudY, hudW, hudH, 6, 6);
+        g2.setColor(new Color(48, 52, 62));
+        g2.setStroke(new BasicStroke(1.0f));
+        g2.drawRoundRect(hudX, hudY, hudW, hudH, 6, 6);
+
+        // Row 1: Trajectory Status
+        g2.setFont(new Font("SansSerif", Font.BOLD, 11));
+        String trajStatus;
+        Color statusColor;
+        if (!inAllianceZone) {
+          trajStatus = "TRAJECTORY STATUS: BLOCKED";
+          statusColor = new Color(255, 80, 80);
+        } else if (willHit) {
+          trajStatus = "TRAJECTORY STATUS: ON TARGET";
+          statusColor = new Color(50, 230, 110);
+        } else {
+          trajStatus = "TRAJECTORY STATUS: OFF TARGET";
+          statusColor = new Color(255, 140, 60);
+        }
+        g2.setColor(statusColor);
+        g2.drawString(trajStatus, hudX + 8, hudY + 15);
+
+        // Row 2: Target & Trajectory Metrics
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 10));
+        g2.setColor(new Color(190, 195, 205));
+        String metricsText =
             String.format(
-                "Hub Distance: %.2f m   |   Shooter Speed: %.0f RPM   |   Angle Error: %.1f deg",
-                distToHub, currentRPM, Math.toDegrees(pred.angleErrorRad())),
-            (int) originX + 20,
-            (int) (originY - graphH) + 38);
+                "Hub Dist: %.2fm   |   Angle Err: %.1f\u00b0   |   Flight Time: %.2fs",
+                distToHub, Math.toDegrees(pred.angleErrorRad()), pred.timeToHub());
+        g2.drawString(metricsText, hudX + 8, hudY + 30);
+
+        // Row 3: Shooter Subsystem Indicators
+        double setpointRadPerSec = shooter != null ? shooter.getSetpoint() : 0.0;
+        double setpointRPM = setpointRadPerSec * 60.0 / (2 * Math.PI);
+        boolean atSpeed = RobotState.getInstance().shooterAtSpeed;
+
+        int row3Y = hudY + 45;
+
+        // Status indicator dot
+        Color dotColor =
+            (setpointRPM <= 10.0)
+                ? new Color(110, 115, 125)
+                : (atSpeed ? new Color(50, 220, 100) : new Color(255, 170, 30));
+        g2.setColor(dotColor);
+        g2.fillOval(hudX + 8, row3Y - 8, 8, 8);
+
+        // Shooter state label
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("SansSerif", Font.BOLD, 10));
+        String shooterStateText =
+            (setpointRPM <= 10.0)
+                ? "SHOOTER: IDLE"
+                : (atSpeed ? "SHOOTER: READY" : "SHOOTER: SPINNING...");
+        g2.drawString(shooterStateText, hudX + 20, row3Y);
+
+        // Setpoint readout
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 10));
+        g2.setColor(new Color(170, 175, 185));
+        int shooterTextWidth = g2.getFontMetrics().stringWidth(shooterStateText);
+        int setpointX = hudX + 20 + shooterTextWidth + 10;
+        String setpointText = String.format("Setpoint: %.0f RPM", setpointRPM);
+        g2.drawString(setpointText, setpointX, row3Y);
+
+        // Mini Speed Progress Bar
+        int setpointTextWidth = g2.getFontMetrics().stringWidth(setpointText);
+        int barX = setpointX + setpointTextWidth + 8;
+        int barW = Math.max(30, hudX + hudW - barX - 8);
+        int barH = 5;
+        g2.setColor(new Color(42, 45, 54));
+        g2.fillRoundRect(barX, row3Y - 6, barW, barH, 3, 3);
+
+        double progress = Math.min(1.0, Math.max(0.0, setpointRPM / 4500.0));
+        g2.setColor(atSpeed ? new Color(50, 205, 100) : new Color(90, 175, 255));
+        g2.fillRoundRect(barX, row3Y - 6, (int) (barW * progress), barH, 3, 3);
       }
 
       g2.dispose();
@@ -896,15 +1181,17 @@ public class SimDashboardWindow extends JFrame {
       double now = Timer.getFPGATimestamp();
 
       // --- Read robot state ---
+      boolean isEnabled = DriverStation.isEnabled();
       RobotState state = RobotState.getInstance();
-      boolean intakeDeployed = state.intakePosition == IntakePosition.DEPLOYED;
-      boolean intakeSpinning = state.intaking;
-      boolean indexerRunning = state.indexerRunning;
-      boolean carpetRunning = indexerRunning || (magicCarpet != null && magicCarpet.manualRun);
-      boolean shooterSpinning = shooter != null && shooter.getSetpoint() > 10.0;
+      boolean intakeDeployed = isEnabled && state.intakePosition == IntakePosition.DEPLOYED;
+      boolean intakeSpinning = isEnabled && state.intaking;
+      boolean indexerRunning = isEnabled && state.indexerRunning;
+      boolean carpetRunning =
+          isEnabled && (indexerRunning || (magicCarpet != null && magicCarpet.manualRun));
+      boolean shooterSpinning = isEnabled && shooter != null && shooter.getSetpoint() > 10.0;
       int ballCount = ballSimulator.getBallsInRobot();
       double shooterRPM =
-          (shooter != null && shooter.getSetpoint() > 0)
+          (isEnabled && shooter != null && shooter.getSetpoint() > 0)
               ? shooter.getSetpoint() * 60.0 / (2 * Math.PI)
               : 0;
 
@@ -1189,15 +1476,20 @@ public class SimDashboardWindow extends JFrame {
       }
 
       // --- Shot ball animations (arc upward and to the LEFT) ---
-      int currentShots = ballSimulator.getTotalShotsAttempted();
-      if (currentShots > lastShotsAttempted && lastShotsAttempted >= 0) {
-        int newShots = Math.min(currentShots - lastShotsAttempted, 3);
-        for (int ns = 0; ns < newShots; ns++) {
-          // {startTime, exitScreenX, exitScreenY}
-          shotAnims.add(new double[] {now + ns * 0.12, exitX, exitY - shooterWheelR * 1.5});
+      if (!isEnabled) {
+        shotAnims.clear();
+        lastShotsAttempted = ballSimulator.getTotalShotsAttempted();
+      } else {
+        int currentShots = ballSimulator.getTotalShotsAttempted();
+        if (currentShots > lastShotsAttempted && lastShotsAttempted >= 0) {
+          int newShots = Math.min(currentShots - lastShotsAttempted, 3);
+          for (int ns = 0; ns < newShots; ns++) {
+            // {startTime, exitScreenX, exitScreenY}
+            shotAnims.add(new double[] {now + ns * 0.12, exitX, exitY - shooterWheelR * 1.5});
+          }
         }
+        lastShotsAttempted = currentShots;
       }
-      lastShotsAttempted = currentShots;
 
       // Draw shot balls flying upward and to the left
       java.util.Iterator<double[]> it = shotAnims.iterator();

@@ -79,17 +79,21 @@ public class BallSimulator {
     if (drive == null) return;
 
     double now = Timer.getFPGATimestamp();
-    Pose2d robotPose = drive.getPose();
-    double chassisSpeed =
-        Math.hypot(
-            drive.getChassisSpeeds().vxMetersPerSecond, drive.getChassisSpeeds().vyMetersPerSecond);
 
-    // 1. Process Intake Logic
+    // Do not intake or shoot when the robot is disabled
+    if (DriverStation.isDisabled()) {
+      updateFlyingBalls(now);
+      return;
+    }
+
+    Pose2d robotPose = drive.getPose();
+
+    // 1. Process Intake Logic (only when driving forward into balls)
     boolean isIntakeRunning = RobotState.getInstance().intaking;
     boolean isIntakeDeployed = RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED;
-    boolean isMoving = chassisSpeed > 0.08;
+    boolean isDrivingForward = drive.getChassisSpeeds().vxMetersPerSecond > 0.08;
 
-    if (isIntakeRunning && isIntakeDeployed && isMoving && ballsInRobot < MAX_CAPACITY) {
+    if (isIntakeRunning && isIntakeDeployed && isDrivingForward && ballsInRobot < MAX_CAPACITY) {
       double intakeProbability = getIntakeProbability(robotPose.getX());
       if (random.nextDouble() < intakeProbability) {
         ballsInRobot++;

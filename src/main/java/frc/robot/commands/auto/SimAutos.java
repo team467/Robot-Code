@@ -37,14 +37,14 @@ public class SimAutos {
   }
 
   private static final Supplier<Pose2d> shootPose =
-      () -> new Pose2d(FieldConstants.fieldLength - 2.8, 7, new Rotation2d(Math.PI * 4 / 3));
+      () -> new Pose2d(2.8, 7, new Rotation2d(Math.PI * 5 / 3));
 
   private static final Supplier<Pose2d> centerOfField =
       () ->
           new Pose2d(
               FieldConstants.fieldLength / 2.0,
               FieldConstants.fieldWidth / 2.0,
-              new Rotation2d(Math.PI));
+              new Rotation2d(0));
 
   public Command sim1() {
     return Commands.sequence(

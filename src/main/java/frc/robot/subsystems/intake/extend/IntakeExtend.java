@@ -5,6 +5,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.POSITION_TOLERANCE;
 import static frc.robot.subsystems.intake.IntakeConstants.STALL_VELOCITY;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -93,6 +94,9 @@ public class IntakeExtend extends SubsystemBase {
     Logger.recordOutput("Intake/IntakeExtended/StalledCollapse", stalledCollapse);
     Logger.recordOutput("Intake/stallingExtend", isStallingExtend());
     Logger.recordOutput("Intake/stallingCollapse", isStallingCollapse());
+    if (DriverStation.isDisabled()) {
+      stopExtend();
+    }
     if (inputs.getExtendPos > EXTEND_POS / 2) {
       RobotState.getInstance().intakePosition = IntakePosition.STOWED;
     }

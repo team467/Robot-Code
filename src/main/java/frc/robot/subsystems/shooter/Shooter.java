@@ -7,6 +7,7 @@ import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,6 +53,9 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    if (DriverStation.isDisabled()) {
+      stopMotor();
+    }
     RobotState.getInstance().shooterAtSpeed = isAtSetpoint() && targetRadPerSec > 0;
     if (controllerEnabled) {
       // Ramp toward the target to avoid current spikes
@@ -93,16 +97,17 @@ public class Shooter extends SubsystemBase {
         .andThen(sysId.dynamic(direction));
   }
 
+  public void stopMotor() {
+    controllerEnabled = false;
+    targetRadPerSec = 0.0;
+    rampedTarget = 0.0;
+    targetRamper.reset(0.0);
+    io.stop();
+  }
+
   public Command stop() {
-    return Commands.runOnce(
-            () -> {
-              controllerEnabled = false;
-              targetRadPerSec = 0.0;
-              rampedTarget = 0.0;
-              targetRamper.reset(0.0);
-              io.stop();
-            },
-            this)
+    return Commands.runOnce(this::stopMotor, this)
+        .ignoringDisable(true)
         .withName("shooter_stop_please");
   }
 

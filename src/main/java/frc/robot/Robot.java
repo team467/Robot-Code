@@ -222,7 +222,12 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    CommandScheduler.getInstance().cancelAll();
+    if (SimDashboardWindow.getInstance() != null) {
+      SimDashboardWindow.getInstance().stopAllSubsystems();
+    }
+  }
 
   /** This function is called periodically when disabled. */
   @Override
@@ -233,6 +238,8 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     needsPoseReset = true;
     autoStart = Timer.getTimestamp();
+    BallSimulator.getInstance().resetBallsScored();
+    BallSimulator.getInstance().setBallsInRobot(8);
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)

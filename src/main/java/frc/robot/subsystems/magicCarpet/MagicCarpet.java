@@ -1,5 +1,6 @@
 package frc.robot.subsystems.magicCarpet;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,6 +32,11 @@ public class MagicCarpet extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("magicCarpet", inputs);
+    if (DriverStation.isDisabled()) {
+      manualRun = false;
+      io.setSpeed(0.0);
+      return;
+    }
     if (!manualRun) {
       if (RobotState.getInstance().indexerRunning) {
         io.setSpeed(MagicCarpetConstants.BELT_SPEED);
