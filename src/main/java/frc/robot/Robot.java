@@ -50,14 +50,16 @@ public class Robot extends LoggedRobot {
   private static final Supplier<Pose2d> startPose =
       () -> {
         double y = 2.0;
+        double x = 3.645;
         if (DriverStationSim.getAllianceStationId() == AllianceStationID.Red2
             || DriverStationSim.getAllianceStationId() == AllianceStationID.Blue2) {
           y = FieldConstants.fieldWidth / 2.0;
+          x = 2.0;
         } else if (DriverStationSim.getAllianceStationId() == AllianceStationID.Red1
             || DriverStationSim.getAllianceStationId() == AllianceStationID.Blue1) {
           y = FieldConstants.fieldWidth - y;
         }
-        return AllianceFlipUtil.apply(new Pose2d(3.645, y, new Rotation2d(0)));
+        return AllianceFlipUtil.apply(new Pose2d(x, y, new Rotation2d(0)));
       };
 
   boolean needsPoseReset = true;
