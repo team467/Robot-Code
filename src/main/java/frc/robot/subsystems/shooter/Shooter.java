@@ -35,8 +35,8 @@ public class Shooter extends SubsystemBase {
   private final PIDController pid = new PIDController(0.001, 0.1, 0.1, 0.02);
 
   // Slew rate limiter: ramps the target velocity gradually (rad/s per second)
-  // This prevents current spikes that cause oscillation with a 20A limit
-  private final SlewRateLimiter targetRamper = new SlewRateLimiter(800);
+  // This prevents current spikes and gives the flywheel realistic acceleration time
+  private final SlewRateLimiter targetRamper = new SlewRateLimiter(250);
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -166,7 +166,16 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return Math.abs(inputs.shooterWheelVelocityRadPerSec - (targetRadPerSec)) < TOLERANCE;
+    return targetRadPerSec > 10.0
+        && Math.abs(inputs.shooterWheelVelocityRadPerSec - targetRadPerSec) < TOLERANCE;
+  }
+
+  public double getVelocityRadPerSec() {
+    return inputs.shooterWheelVelocityRadPerSec;
+  }
+
+  public double getVelocityRPM() {
+    return inputs.shooterWheelVelocityRadPerSec * 60.0 / (2 * Math.PI);
   }
 
   // TODO: empirically determine the relationship between distance and air time

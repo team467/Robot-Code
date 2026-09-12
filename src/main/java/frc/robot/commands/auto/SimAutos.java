@@ -42,9 +42,7 @@ public class SimAutos {
   private static final Supplier<Pose2d> centerOfField =
       () ->
           new Pose2d(
-              FieldConstants.fieldLength / 2.0,
-              FieldConstants.fieldWidth / 2.0,
-              new Rotation2d(0));
+              FieldConstants.fieldLength / 2.0, FieldConstants.fieldWidth / 2.0, new Rotation2d(0));
 
   public Command sim1() {
     return Commands.sequence(

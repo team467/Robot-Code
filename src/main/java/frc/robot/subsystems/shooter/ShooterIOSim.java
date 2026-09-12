@@ -13,10 +13,10 @@ public class ShooterIOSim implements ShooterIO {
   private double wheelPositionRad = 0.0;
 
   public ShooterIOSim() {
-    // 3 NEOs driving the flywheel mechanism through the gear ratio
+    // 3 NEOs driving the flywheel mechanism through the gear ratio with realistic wheel inertia
     flywheelSim =
         new FlywheelSim(
-            LinearSystemId.createFlywheelSystem(DCMotor.getNEO(3), 0.003, SHOOTER_WHEEL_GEAR_RATIO),
+            LinearSystemId.createFlywheelSystem(DCMotor.getNEO(3), 0.028, SHOOTER_WHEEL_GEAR_RATIO),
             DCMotor.getNEO(3));
   }
 

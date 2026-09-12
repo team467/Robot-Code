@@ -478,14 +478,21 @@ public class SimDashboardWindow extends JFrame {
                   (isEnabled && shooter != null && shooter.getCurrentCommand() != null)
                       ? shooter.getCurrentCommand().getName()
                       : "None";
-              double rpm =
-                  (isEnabled && shooter != null && shooter.getSetpoint() > 10.0)
+              double actualRpm = (isEnabled && shooter != null) ? shooter.getVelocityRPM() : 0.0;
+              double targetRpm =
+                  (isEnabled && shooter != null)
                       ? (shooter.getSetpoint() * 60.0 / (2 * Math.PI))
                       : 0.0;
-              String shooterStatus = rpm > 10.0 ? String.format("%.0f RPM", rpm) : "IDLE";
+              boolean atSpeed = RobotState.getInstance().shooterAtSpeed;
+              String shooterStatus =
+                  targetRpm > 10.0
+                      ? (atSpeed
+                          ? String.format("%.0f RPM", actualRpm)
+                          : String.format("%.0f RPM...", actualRpm))
+                      : "IDLE";
               y += 24;
               drawSubsystemRow(
-                  g2, "Shooter", shooterCmd, shooterStatus, isEnabled && rpm > 10.0, y);
+                  g2, "Shooter", shooterCmd, shooterStatus, isEnabled && actualRpm > 10.0, y);
 
               // 3. IntakeRollers
               String rollersCmd =
@@ -1112,6 +1119,8 @@ public class SimDashboardWindow extends JFrame {
         g2.drawString(metricsText, hudX + 8, hudY + 30);
 
         // Row 3: Shooter Subsystem Indicators
+        double actualRadPerSec = shooter != null ? shooter.getVelocityRadPerSec() : 0.0;
+        double actualRPM = actualRadPerSec * 60.0 / (2 * Math.PI);
         double setpointRadPerSec = shooter != null ? shooter.getSetpoint() : 0.0;
         double setpointRPM = setpointRadPerSec * 60.0 / (2 * Math.PI);
         boolean atSpeed = RobotState.getInstance().shooterAtSpeed;
@@ -1132,15 +1141,18 @@ public class SimDashboardWindow extends JFrame {
         String shooterStateText =
             (setpointRPM <= 10.0)
                 ? "SHOOTER: IDLE"
-                : (atSpeed ? "SHOOTER: READY" : "SHOOTER: SPINNING...");
+                : (atSpeed ? "SHOOTER: READY" : "SHOOTER: SPINNING UP...");
         g2.drawString(shooterStateText, hudX + 20, row3Y);
 
-        // Setpoint readout
+        // Setpoint readout: show actual RPM / target RPM
         g2.setFont(new Font("SansSerif", Font.PLAIN, 10));
         g2.setColor(new Color(170, 175, 185));
         int shooterTextWidth = g2.getFontMetrics().stringWidth(shooterStateText);
         int setpointX = hudX + 20 + shooterTextWidth + 10;
-        String setpointText = String.format("Setpoint: %.0f RPM", setpointRPM);
+        String setpointText =
+            (setpointRPM > 10.0)
+                ? String.format("%.0f / %.0f RPM", actualRPM, setpointRPM)
+                : String.format("Setpoint: %.0f RPM", setpointRPM);
         g2.drawString(setpointText, setpointX, row3Y);
 
         // Mini Speed Progress Bar
@@ -1151,8 +1163,9 @@ public class SimDashboardWindow extends JFrame {
         g2.setColor(new Color(42, 45, 54));
         g2.fillRoundRect(barX, row3Y - 6, barW, barH, 3, 3);
 
-        double progress = Math.min(1.0, Math.max(0.0, setpointRPM / 4500.0));
-        g2.setColor(atSpeed ? new Color(50, 205, 100) : new Color(90, 175, 255));
+        double targetMax = Math.max(setpointRPM, 3500.0);
+        double progress = Math.min(1.0, Math.max(0.0, actualRPM / targetMax));
+        g2.setColor(atSpeed ? new Color(50, 205, 100) : new Color(255, 170, 30));
         g2.fillRoundRect(barX, row3Y - 6, (int) (barW * progress), barH, 3, 3);
       }
 
@@ -1188,12 +1201,9 @@ public class SimDashboardWindow extends JFrame {
       boolean indexerRunning = isEnabled && state.indexerRunning;
       boolean carpetRunning =
           isEnabled && (indexerRunning || (magicCarpet != null && magicCarpet.manualRun));
-      boolean shooterSpinning = isEnabled && shooter != null && shooter.getSetpoint() > 10.0;
+      double shooterRPM = (isEnabled && shooter != null) ? shooter.getVelocityRPM() : 0.0;
+      boolean shooterSpinning = isEnabled && shooterRPM > 10.0;
       int ballCount = ballSimulator.getBallsInRobot();
-      double shooterRPM =
-          (isEnabled && shooter != null && shooter.getSetpoint() > 0)
-              ? shooter.getSetpoint() * 60.0 / (2 * Math.PI)
-              : 0;
 
       Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
       boolean isRed = alliance == Alliance.Red;

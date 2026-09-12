@@ -101,9 +101,8 @@ public class BallSimulator {
       }
     }
 
-    // 2. Process Shooting Logic
-    boolean isShooterRunning =
-        RobotState.getInstance().shooterAtSpeed || shooter.getSetpoint() > 10.0;
+    // 2. Process Shooting Logic (only fire when shooter is up to speed)
+    boolean isShooterRunning = RobotState.getInstance().shooterAtSpeed;
     boolean isIndexerRunning =
         RobotState.getInstance().indexerRunning || indexer.getVoltage() > 1.0;
     boolean isCarpetRunning = magicCarpet != null; // Magic carpet runs with indexer
