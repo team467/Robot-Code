@@ -45,11 +45,29 @@ public class SimDashboardWindow extends JFrame {
 
   private final BallSimulator ballSimulator = BallSimulator.getInstance();
 
+  // Autonomous countdown tracking
+  public static final double AUTO_DURATION_SECONDS = 20.0;
+  private double autoStartTime = 0.0;
+  private boolean autoRunning = false;
+  private JButton autoCardBtn;
+
   // UI Panels
   private FieldVisualizerPanel fieldPanel;
   private TrajectoryVisualizerPanel trajectoryPanel;
   private SubsystemsPanel telemetryPanel;
   private RobotAnimationPanel robotAnimPanel;
+
+  public double getAutoRemainingSeconds() {
+    if (!DriverStation.isEnabled() || !DriverStation.isAutonomous()) {
+      return AUTO_DURATION_SECONDS;
+    }
+    double elapsed = Timer.getFPGATimestamp() - autoStartTime;
+    return Math.max(0.0, AUTO_DURATION_SECONDS - elapsed);
+  }
+
+  public boolean isAutoRunning() {
+    return DriverStation.isEnabled() && DriverStation.isAutonomous();
+  }
 
   public static synchronized void launch(
       Drive drive,
@@ -253,11 +271,42 @@ public class SimDashboardWindow extends JFrame {
             if (drive != null) {
               drive.stop();
             }
+            autoStartTime = Timer.getFPGATimestamp();
+            autoRunning = true;
             DriverStationSim.setAutonomous(true);
             DriverStationSim.setEnabled(true);
             DriverStationSim.notifyNewData();
           }
         });
+
+    JLabel autoTimerBadge =
+        new JLabel("AUTO: 20.0s") {
+          @Override
+          protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            boolean isAuto = isAutoRunning();
+            double rem = getAutoRemainingSeconds();
+            Color bg;
+            if (isAuto) {
+              bg = (rem <= 3.0) ? new Color(200, 45, 45) : new Color(210, 130, 20);
+            } else {
+              bg = new Color(50, 53, 62);
+            }
+            g2.setColor(bg);
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+            if (isAuto) {
+              g2.setColor(Color.WHITE);
+              g2.setStroke(new BasicStroke(1.2f));
+              g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
+            }
+            g2.dispose();
+            super.paintComponent(g);
+          }
+        };
+    autoTimerBadge.setFont(new Font("Monospaced", Font.BOLD, 12));
+    autoTimerBadge.setForeground(Color.WHITE);
+    autoTimerBadge.setBorder(new EmptyBorder(4, 10, 4, 10));
 
     JLabel modeBadge =
         new JLabel() {
@@ -284,7 +333,7 @@ public class SimDashboardWindow extends JFrame {
     // Dynamic timer updater for header & auto button
     boolean[] wasEnabledState = new boolean[] {false};
     new javax.swing.Timer(
-            100,
+            40,
             e -> {
               boolean enabled = DriverStation.isEnabled();
               boolean auto = DriverStation.isAutonomous();
@@ -293,23 +342,53 @@ public class SimDashboardWindow extends JFrame {
               }
               wasEnabledState[0] = enabled;
 
+              boolean isAuto = enabled && auto;
+              if (isAuto && !autoRunning) {
+                autoRunning = true;
+                autoStartTime = Timer.getFPGATimestamp();
+              } else if (!isAuto && autoRunning) {
+                autoRunning = false;
+              }
+
+              double remaining = getAutoRemainingSeconds();
+
+              if (isAuto) {
+                if (remaining <= 0.0) {
+                  DriverStationSim.setAutonomous(false);
+                  DriverStationSim.setEnabled(false);
+                  DriverStationSim.notifyNewData();
+                  stopAllSubsystems();
+                  autoRunning = false;
+                  autoTimerBadge.setText("AUTO: 0.0s");
+                } else {
+                  autoTimerBadge.setText(String.format("AUTO: %4.1fs", remaining));
+                }
+                autoBtn.setText("Stop Auto");
+                autoBtn.setBackground(new Color(180, 45, 45));
+                if (autoCardBtn != null) {
+                  autoCardBtn.setText("Stop Auto");
+                  autoCardBtn.setBackground(new Color(180, 45, 45));
+                }
+              } else {
+                autoTimerBadge.setText("AUTO: 15.0s");
+                autoBtn.setText("Start Auto");
+                autoBtn.setBackground(new Color(35, 140, 60));
+                if (autoCardBtn != null) {
+                  autoCardBtn.setText("Start Auto");
+                  autoCardBtn.setBackground(new Color(35, 140, 60));
+                }
+              }
+
               String modeText = !enabled ? "DISABLED" : (auto ? "AUTO" : "TELEOP");
               Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
               modeBadge.setText(alliance.toString().toUpperCase() + " | " + modeText);
-
-              if (enabled && auto) {
-                autoBtn.setText("Stop Auto");
-                autoBtn.setBackground(new Color(180, 45, 45));
-              } else {
-                autoBtn.setText("Start Auto");
-                autoBtn.setBackground(new Color(35, 140, 60));
-              }
             })
         .start();
 
     statusBox.add(stationLabel);
     statusBox.add(stationCombo);
     statusBox.add(autoBtn);
+    statusBox.add(autoTimerBadge);
     statusBox.add(modeBadge);
     panel.add(statusBox, BorderLayout.EAST);
 
@@ -318,6 +397,7 @@ public class SimDashboardWindow extends JFrame {
 
   /** Immediately stops all commands, mechanisms, and subsystem motors when disabled */
   public void stopAllSubsystems() {
+    autoRunning = false;
     CommandScheduler.getInstance().cancelAll();
     if (drive != null) {
       drive.stop();
@@ -635,19 +715,29 @@ public class SimDashboardWindow extends JFrame {
             ballSimulator.resetFieldBalls();
           });
 
-      JButton autoCardBtn = new JButton("Start Auto");
+      autoCardBtn = new JButton("Start Auto");
       styleButton(autoCardBtn, new Color(35, 140, 60));
       autoCardBtn.addActionListener(
           e -> {
-            ballSimulator.setBallsInRobot(8);
-            ballSimulator.resetBallsScored();
-            ballSimulator.resetFieldBalls();
-            if (drive != null) {
-              drive.stop();
+            boolean isAuto = DriverStation.isEnabled() && DriverStation.isAutonomous();
+            if (isAuto) {
+              DriverStationSim.setAutonomous(false);
+              DriverStationSim.setEnabled(false);
+              DriverStationSim.notifyNewData();
+              stopAllSubsystems();
+            } else {
+              ballSimulator.setBallsInRobot(8);
+              ballSimulator.resetBallsScored();
+              ballSimulator.resetFieldBalls();
+              if (drive != null) {
+                drive.stop();
+              }
+              autoStartTime = Timer.getFPGATimestamp();
+              autoRunning = true;
+              DriverStationSim.setAutonomous(true);
+              DriverStationSim.setEnabled(true);
+              DriverStationSim.notifyNewData();
             }
-            DriverStationSim.setAutonomous(true);
-            DriverStationSim.setEnabled(true);
-            DriverStationSim.notifyNewData();
           });
 
       JButton disableCardBtn = new JButton("Disable Robot");
