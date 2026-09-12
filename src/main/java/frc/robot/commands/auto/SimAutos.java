@@ -11,6 +11,7 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.shooter.Shooter;
+import java.util.function.Supplier;
 
 public class SimAutos {
   private final Drive drive;
@@ -35,21 +36,18 @@ public class SimAutos {
     this.shooter = shooter;
   }
 
-  private static final Pose2d startAside =
-      new Pose2d(FieldConstants.fieldLength - 3.645, 6, new Rotation2d(Math.PI));
+  private static final Supplier<Pose2d> shootPose =
+      () -> new Pose2d(FieldConstants.fieldLength - 2.8, 7, new Rotation2d(Math.PI * 4 / 3));
 
-  private static final Pose2d shootPose =
-      new Pose2d(FieldConstants.fieldLength - 2.8, 7, new Rotation2d(Math.PI * 4 / 3));
-
-  private static final Pose2d centerOfField =
-      new Pose2d(
-          FieldConstants.fieldLength / 2.0,
-          FieldConstants.fieldWidth / 2.0,
-          new Rotation2d(Math.PI));
+  private static final Supplier<Pose2d> centerOfField =
+      () ->
+          new Pose2d(
+              FieldConstants.fieldLength / 2.0,
+              FieldConstants.fieldWidth / 2.0,
+              new Rotation2d(Math.PI));
 
   public Command sim1() {
     return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startAside)),
         Commands.race(
             intake.extendToAngleAndIntake(-2), new StraightDriveToPose(drive, centerOfField)),
         Commands.parallel(intake.extendToAngle(0), new StraightDriveToPose(drive, shootPose)),

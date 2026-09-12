@@ -4,20 +4,26 @@
 
 package frc.robot;
 
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.sim.BallSimulator;
 import frc.robot.sim.SimDashboardWindow;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -40,6 +46,21 @@ public class Robot extends LoggedRobot {
   private RobotContainer robotContainer;
   private RobotState state = RobotState.getInstance();
   private LinearFilter batteryFilter = LinearFilter.movingAverage(15);
+
+  private static final Supplier<Pose2d> startPose =
+      () -> {
+        double y = 2.0;
+        if (DriverStationSim.getAllianceStationId() == AllianceStationID.Red2
+            || DriverStationSim.getAllianceStationId() == AllianceStationID.Blue2) {
+          y = FieldConstants.fieldWidth / 2.0;
+        } else if (DriverStationSim.getAllianceStationId() == AllianceStationID.Red1
+            || DriverStationSim.getAllianceStationId() == AllianceStationID.Blue1) {
+          y = FieldConstants.fieldWidth - y;
+        }
+        return AllianceFlipUtil.apply(new Pose2d(3.645, y, new Rotation2d(0)));
+      };
+
+  boolean needsPoseReset = true;
 
   private static final int LOW_VOLTAGE = 9;
 
@@ -208,6 +229,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    needsPoseReset = true;
     autoStart = Timer.getTimestamp();
     autonomousCommand = robotContainer.getAutonomousCommand();
 
@@ -219,7 +241,12 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    if (needsPoseReset) {
+      robotContainer.getDrive().setPose(startPose.get());
+      needsPoseReset = false;
+    }
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override
@@ -253,6 +280,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {
+    robotContainer.getDrive().setPose(startPose.get());
     SimDashboardWindow.launch(
         robotContainer.getDrive(),
         robotContainer.getShooter(),
