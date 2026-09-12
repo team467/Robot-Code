@@ -370,7 +370,7 @@ public class SimDashboardWindow extends JFrame {
                   autoCardBtn.setBackground(new Color(180, 45, 45));
                 }
               } else {
-                autoTimerBadge.setText("AUTO: 15.0s");
+                autoTimerBadge.setText("AUTO: 20.0s");
                 autoBtn.setText("Start Auto");
                 autoBtn.setBackground(new Color(35, 140, 60));
                 if (autoCardBtn != null) {
