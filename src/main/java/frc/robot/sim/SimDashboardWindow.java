@@ -44,6 +44,7 @@ public class SimDashboardWindow extends JFrame {
   private FieldVisualizerPanel fieldPanel;
   private TrajectoryVisualizerPanel trajectoryPanel;
   private SubsystemsPanel telemetryPanel;
+  private RobotAnimationPanel robotAnimPanel;
 
   public static synchronized void launch(
       Drive drive,
@@ -127,16 +128,24 @@ public class SimDashboardWindow extends JFrame {
     telemetryScroll.getVerticalScrollBar().setUnitIncrement(12);
     add(telemetryScroll, BorderLayout.WEST);
 
-    // Center Graphical Area: Split Field View & Trajectory Arc
-    JPanel centerPanel = new JPanel(new GridLayout(2, 1, 8, 8));
+    // Center Graphical Area: Field View on top, Trajectory Arc + Robot Animation on bottom
+    JPanel centerPanel = new JPanel(new BorderLayout(8, 8));
     centerPanel.setBackground(new Color(24, 24, 28));
     centerPanel.setBorder(new EmptyBorder(0, 0, 10, 10));
 
     fieldPanel = new FieldVisualizerPanel();
     trajectoryPanel = new TrajectoryVisualizerPanel();
+    robotAnimPanel = new RobotAnimationPanel();
 
-    centerPanel.add(fieldPanel);
-    centerPanel.add(trajectoryPanel);
+    centerPanel.add(fieldPanel, BorderLayout.CENTER);
+
+    // Bottom row: trajectory on the left, robot animation on the right
+    JPanel bottomRow = new JPanel(new GridLayout(1, 2, 8, 0));
+    bottomRow.setBackground(new Color(24, 24, 28));
+    bottomRow.setPreferredSize(new Dimension(0, 280));
+    bottomRow.add(trajectoryPanel);
+    bottomRow.add(robotAnimPanel);
+    centerPanel.add(bottomRow, BorderLayout.SOUTH);
 
     add(centerPanel, BorderLayout.CENTER);
 
@@ -154,14 +163,9 @@ public class SimDashboardWindow extends JFrame {
     titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
     titleLabel.setForeground(new Color(240, 240, 245));
 
-    JLabel subLabel = new JLabel("Interactive Learning & Subsystem Telemetry");
-    subLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-    subLabel.setForeground(new Color(160, 165, 175));
-
-    JPanel titleBox = new JPanel(new GridLayout(2, 1));
+    JPanel titleBox = new JPanel(new GridLayout(1, 1));
     titleBox.setOpaque(false);
     titleBox.add(titleLabel);
-    titleBox.add(subLabel);
 
     panel.add(titleBox, BorderLayout.WEST);
 
@@ -643,6 +647,10 @@ public class SimDashboardWindow extends JFrame {
       List<BallSimulator.FlyingBall> flyingBalls = ballSimulator.getActiveFlyingBalls();
       synchronized (flyingBalls) {
         for (BallSimulator.FlyingBall ball : flyingBalls) {
+          double elapsed = now - ball.startTime;
+          if (ball.isHit && elapsed >= ball.flightDuration) {
+            continue; // Disappear when landing in the hub
+          }
           double[] pos = ball.getPositionAtTime(now);
           double bx = originX + pos[0] * scale;
           double by = originY + (fieldW - pos[1]) * scale;
@@ -849,9 +857,7 @@ public class SimDashboardWindow extends JFrame {
         // Diagnostic HUD Overlays
         g2.setFont(new Font("SansSerif", Font.BOLD, 13));
         String trajStatus =
-            willHit
-                ? "TRAJECTORY STATUS: ON TARGET (WILL SCORE)"
-                : "TRAJECTORY STATUS: OFF TARGET (TOO WEAK / OVER / MISALIGNED)";
+            willHit ? "TRAJECTORY STATUS: ON TARGET" : "TRAJECTORY STATUS: OFF TARGET";
         g2.setColor(willHit ? new Color(50, 230, 110) : new Color(255, 90, 70));
         g2.drawString(trajStatus, (int) originX + 20, (int) (originY - graphH) + 20);
 
@@ -864,6 +870,379 @@ public class SimDashboardWindow extends JFrame {
             (int) originX + 20,
             (int) (originY - graphH) + 38);
       }
+
+      g2.dispose();
+    }
+  }
+
+  /** Animated 2D side-view cutaway of the robot showing mechanisms and ball flow */
+  private class RobotAnimationPanel extends JPanel {
+    private final java.util.ArrayList<double[]> shotAnims = new java.util.ArrayList<>();
+    private int lastShotsAttempted = 0;
+
+    public RobotAnimationPanel() {
+      setBackground(new Color(20, 21, 25));
+      setBorder(new LineBorder(new Color(45, 48, 56), 1, true));
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+      super.paintComponent(g);
+      Graphics2D g2 = (Graphics2D) g.create();
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+      int w = getWidth();
+      int h = getHeight();
+      double now = Timer.getFPGATimestamp();
+
+      // --- Read robot state ---
+      RobotState state = RobotState.getInstance();
+      boolean intakeDeployed = state.intakePosition == IntakePosition.DEPLOYED;
+      boolean intakeSpinning = state.intaking;
+      boolean indexerRunning = state.indexerRunning;
+      boolean carpetRunning = indexerRunning || (magicCarpet != null && magicCarpet.manualRun);
+      boolean shooterSpinning = shooter != null && shooter.getSetpoint() > 10.0;
+      int ballCount = ballSimulator.getBallsInRobot();
+      double shooterRPM =
+          (shooter != null && shooter.getSetpoint() > 0)
+              ? shooter.getSetpoint() * 60.0 / (2 * Math.PI)
+              : 0;
+
+      Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+      boolean isRed = alliance == Alliance.Red;
+
+      // --- Key geometry (all proportional to panel size) ---
+      double margin = 12;
+      double groundY = h * 0.92;
+
+      // Chassis rectangle (the main robot body)
+      double chassisL = w * 0.22;
+      double chassisR = w * 0.82;
+      double chassisT = h * 0.34;
+      double chassisB = h * 0.68;
+      double chassisW = chassisR - chassisL;
+      double chassisH = chassisB - chassisT;
+
+      // When intake deploys, the whole robot expands (front extends outward to the left)
+      double frontExtension = intakeDeployed ? chassisW * 0.12 : 0;
+      double effectiveChassisL = chassisL - frontExtension;
+
+      // Bumper (colored band below chassis)
+      double bumperH = h * 0.065;
+      double bumperT = chassisB;
+      double bumperB = bumperT + bumperH;
+
+      // --- Ground line ---
+      g2.setColor(new Color(55, 58, 68));
+      g2.setStroke(new BasicStroke(2.0f));
+      g2.drawLine((int) margin, (int) groundY, w - (int) margin, (int) groundY);
+
+      // --- Drive wheels ---
+      double wheelR = h * 0.042;
+      double wheel1X = effectiveChassisL + chassisW * 0.20;
+      double wheel2X = chassisR - chassisW * 0.15;
+      double wheelY = bumperB + wheelR * 0.4;
+      g2.setColor(new Color(42, 45, 52));
+      g2.fill(new Ellipse2D.Double(wheel1X - wheelR, wheelY - wheelR, wheelR * 2, wheelR * 2));
+      g2.fill(new Ellipse2D.Double(wheel2X - wheelR, wheelY - wheelR, wheelR * 2, wheelR * 2));
+      g2.setColor(new Color(75, 80, 90));
+      g2.setStroke(new BasicStroke(1.5f));
+      g2.draw(new Ellipse2D.Double(wheel1X - wheelR, wheelY - wheelR, wheelR * 2, wheelR * 2));
+      g2.draw(new Ellipse2D.Double(wheel2X - wheelR, wheelY - wheelR, wheelR * 2, wheelR * 2));
+
+      // --- Chassis body background (cutaway view) ---
+      g2.setColor(new Color(30, 33, 42));
+      g2.fill(
+          new Rectangle2D.Double(
+              effectiveChassisL, chassisT, chassisR - effectiveChassisL, chassisH));
+
+      // --- Bumper ---
+      g2.setColor(isRed ? new Color(150, 25, 25) : new Color(25, 55, 150));
+      g2.fill(
+          new Rectangle2D.Double(
+              effectiveChassisL - 3, bumperT, chassisR - effectiveChassisL + 6, bumperH));
+      g2.setColor(isRed ? new Color(210, 55, 55) : new Color(65, 125, 230));
+      g2.setStroke(new BasicStroke(2.0f));
+      g2.draw(
+          new Rectangle2D.Double(
+              effectiveChassisL - 3, bumperT, chassisR - effectiveChassisL + 6, bumperH));
+
+      // "467" label on bumper
+      int fontSize = Math.max(9, (int) (bumperH * 0.72));
+      g2.setFont(new Font("SansSerif", Font.BOLD, fontSize));
+      g2.setColor(Color.WHITE);
+      FontMetrics fm = g2.getFontMetrics();
+      String teamLabel = "467";
+      int labelW = fm.stringWidth(teamLabel);
+      double bumperCenterX = effectiveChassisL + (chassisR - effectiveChassisL) / 2.0;
+      g2.drawString(
+          teamLabel, (int) (bumperCenterX - labelW / 2.0), (int) (bumperT + bumperH * 0.8));
+
+      // --- Conveyor belt (magic carpet) inside chassis ---
+      double conveyorY = chassisB - chassisH * 0.2;
+      double conveyorL = effectiveChassisL + (intakeDeployed ? 12 : chassisW * 0.18);
+      double conveyorR = chassisR - chassisW * 0.22;
+
+      g2.setColor(new Color(52, 55, 65));
+      g2.setStroke(new BasicStroke(3.0f));
+      g2.draw(new Line2D.Double(conveyorL, conveyorY, conveyorR, conveyorY));
+
+      // Animated magic carpet moving from LEFT TO RIGHT
+      if (carpetRunning) {
+        double speed = 55.0; // px/sec
+        double spacing = 16.0;
+        double offset = (now * speed) % spacing;
+        g2.setColor(new Color(255, 170, 40));
+        g2.setStroke(new BasicStroke(1.8f));
+        for (double cx = conveyorL + offset; cx < conveyorR - 3; cx += spacing) {
+          int x = (int) cx;
+          int y = (int) (conveyorY + 3);
+          g2.drawLine(x - 3, y - 3, x + 1, y);
+          g2.drawLine(x - 3, y + 3, x + 1, y);
+        }
+      }
+
+      // --- Indexer channel (vertical feed section) ---
+      double indexerX = conveyorR + 3;
+      double indexerW = chassisW * 0.1;
+      double indexerTop = chassisT + chassisH * 0.06;
+      double indexerBot = conveyorY;
+
+      g2.setColor(new Color(42, 46, 56));
+      g2.fill(new Rectangle2D.Double(indexerX, indexerTop, indexerW, indexerBot - indexerTop));
+      g2.setColor(new Color(65, 70, 80));
+      g2.setStroke(new BasicStroke(1.5f));
+      g2.draw(new Rectangle2D.Double(indexerX, indexerTop, indexerW, indexerBot - indexerTop));
+
+      if (indexerRunning) {
+        // Upward-moving arrow indicators
+        g2.setColor(new Color(85, 170, 255));
+        g2.setStroke(new BasicStroke(1.5f));
+        double arrowOff = (now * 45) % 18;
+        double arrowCX = indexerX + indexerW / 2;
+        for (double ay = indexerBot - arrowOff; ay > indexerTop + 6; ay -= 18) {
+          int ax = (int) arrowCX;
+          int ayI = (int) ay;
+          g2.drawLine(ax, ayI, ax, ayI - 7);
+          g2.drawLine(ax - 3, ayI - 4, ax, ayI - 7);
+          g2.drawLine(ax + 3, ayI - 4, ax, ayI - 7);
+        }
+      }
+
+      // --- Shooter wheels (at top of indexer exit) ---
+      double shooterWheelR = h * 0.038;
+      double exitX = indexerX + indexerW / 2;
+      double exitY = indexerTop;
+
+      // Two wheels flanking the exit channel
+      double sw1cx = exitX - shooterWheelR * 0.9;
+      double sw1cy = exitY - shooterWheelR * 0.5;
+      double sw2cx = exitX + shooterWheelR * 0.9;
+      double sw2cy = exitY - shooterWheelR * 0.5;
+
+      // Shooter housing
+      g2.setColor(new Color(45, 50, 60));
+      double housingW = shooterWheelR * 3.8;
+      double housingH = shooterWheelR * 2.2;
+      g2.fill(
+          new RoundRectangle2D.Double(
+              exitX - housingW / 2, exitY - housingH - 3, housingW, housingH, 6, 6));
+      g2.setColor(new Color(65, 70, 82));
+      g2.setStroke(new BasicStroke(1.5f));
+      g2.draw(
+          new RoundRectangle2D.Double(
+              exitX - housingW / 2, exitY - housingH - 3, housingW, housingH, 6, 6));
+
+      // Draw each shooter wheel
+      double[] swcxs = {sw1cx, sw2cx};
+      double[] swcys = {sw1cy, sw2cy};
+      for (int wi = 0; wi < 2; wi++) {
+        double wcx = swcxs[wi];
+        double wcy = swcys[wi];
+        g2.setColor(new Color(55, 58, 68));
+        g2.fill(
+            new Ellipse2D.Double(
+                wcx - shooterWheelR, wcy - shooterWheelR, shooterWheelR * 2, shooterWheelR * 2));
+
+        if (shooterSpinning) {
+          g2.setColor(new Color(255, 200, 70));
+          g2.setStroke(new BasicStroke(2.0f));
+          double spinRate = Math.min(shooterRPM / 60.0 * 2 * Math.PI * 0.08, 18);
+          double spin = (now * spinRate) % (2 * Math.PI);
+          for (int si = 0; si < 3; si++) {
+            double a = spin + si * 2 * Math.PI / 3;
+            g2.draw(
+                new Line2D.Double(
+                    wcx + shooterWheelR * 0.2 * Math.cos(a),
+                    wcy + shooterWheelR * 0.2 * Math.sin(a),
+                    wcx + shooterWheelR * 0.8 * Math.cos(a),
+                    wcy + shooterWheelR * 0.8 * Math.sin(a)));
+          }
+        }
+
+        g2.setColor(new Color(95, 100, 112));
+        g2.setStroke(new BasicStroke(1.5f));
+        g2.draw(
+            new Ellipse2D.Double(
+                wcx - shooterWheelR, wcy - shooterWheelR, shooterWheelR * 2, shooterWheelR * 2));
+      }
+
+      // --- Intake arm & rollers ---
+      // When stowed, arm is completely inside the robot rectangle; when deployed, it lowers forward
+      double intakeRollerR = h * 0.032;
+      double intakePivotX;
+      double intakePivotY;
+      double armEndX;
+      double armEndY;
+
+      if (intakeDeployed) {
+        // Deployed: arm swings out forward (left) and lowers to the carpet
+        intakePivotX = effectiveChassisL + 8;
+        intakePivotY = chassisB - chassisH * 0.15;
+        armEndX = effectiveChassisL - chassisW * 0.12;
+        armEndY = groundY - intakeRollerR - 2;
+      } else {
+        // Stowed: arm is folded completely INSIDE the robot rectangle
+        intakePivotX = chassisL + chassisW * 0.06;
+        intakePivotY = chassisB - chassisH * 0.15;
+        armEndX = chassisL + chassisW * 0.11;
+        armEndY = chassisT + chassisH * 0.38;
+      }
+
+      // Arm strut
+      g2.setColor(new Color(95, 100, 110));
+      g2.setStroke(new BasicStroke(3.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+      g2.draw(new Line2D.Double(intakePivotX, intakePivotY, armEndX, armEndY));
+
+      // Roller circle at end of arm
+      g2.setColor(new Color(55, 58, 65));
+      g2.fill(
+          new Ellipse2D.Double(
+              armEndX - intakeRollerR,
+              armEndY - intakeRollerR,
+              intakeRollerR * 2,
+              intakeRollerR * 2));
+
+      if (intakeSpinning) {
+        // Spinning indicator lines on roller
+        g2.setColor(new Color(50, 220, 100));
+        g2.setStroke(new BasicStroke(2.0f));
+        double spin = (now * 10) % (2 * Math.PI);
+        for (int i = 0; i < 4; i++) {
+          double a = spin + i * Math.PI / 2;
+          g2.draw(
+              new Line2D.Double(
+                  armEndX + intakeRollerR * 0.25 * Math.cos(a),
+                  armEndY + intakeRollerR * 0.25 * Math.sin(a),
+                  armEndX + intakeRollerR * 0.85 * Math.cos(a),
+                  armEndY + intakeRollerR * 0.85 * Math.sin(a)));
+        }
+      }
+
+      // Roller outline (alliance-colored)
+      g2.setColor(isRed ? new Color(200, 55, 55) : new Color(100, 160, 240));
+      g2.setStroke(new BasicStroke(2.0f));
+      g2.draw(
+          new Ellipse2D.Double(
+              armEndX - intakeRollerR,
+              armEndY - intakeRollerR,
+              intakeRollerR * 2,
+              intakeRollerR * 2));
+
+      // --- Chassis body border (drawn over interior for clean cutaway outline) ---
+      g2.setColor(isRed ? new Color(170, 45, 45) : new Color(70, 130, 210));
+      g2.setStroke(new BasicStroke(2.5f));
+      g2.draw(
+          new Rectangle2D.Double(
+              effectiveChassisL, chassisT, chassisR - effectiveChassisL, chassisH));
+
+      // --- Balls inside the robot (supports up to 20 balls in 2 rows) ---
+      double ballR = Math.min(chassisH * 0.13, (conveyorR - conveyorL) / 22.0);
+      double ballBaseY = conveyorY - ballR - 2;
+      double availableW = conveyorR - conveyorL - ballR * 2 - 4;
+      int ballsPerRow = 10;
+
+      for (int bi = 0; bi < ballCount && bi < BallSimulator.MAX_CAPACITY; bi++) {
+        int col = bi % ballsPerRow;
+        int row = bi / ballsPerRow; // 0 = bottom row, 1 = stacked row
+        double spacing = availableW / (ballsPerRow - 1);
+        double bx = conveyorL + ballR + 2 + col * spacing;
+        double by = ballBaseY - row * (ballR * 1.8);
+
+        // Bounce when magic carpet is active
+        if (carpetRunning) {
+          by -= Math.abs(Math.sin(now * 5.5 + bi * 1.3)) * ballR * 0.6;
+        }
+
+        // Yellow ball with highlight
+        g2.setColor(new Color(215, 195, 35));
+        g2.fill(new Ellipse2D.Double(bx - ballR, by - ballR, ballR * 2, ballR * 2));
+        g2.setColor(new Color(255, 240, 70));
+        g2.setStroke(new BasicStroke(1.5f));
+        g2.draw(new Ellipse2D.Double(bx - ballR, by - ballR, ballR * 2, ballR * 2));
+        // Small highlight dot
+        g2.setColor(new Color(255, 255, 200, 160));
+        double hlR = ballR * 0.25;
+        g2.fill(
+            new Ellipse2D.Double(
+                bx - ballR * 0.3 - hlR, by - ballR * 0.35 - hlR, hlR * 2, hlR * 2));
+      }
+
+      // --- Shot ball animations (arc upward and to the LEFT) ---
+      int currentShots = ballSimulator.getTotalShotsAttempted();
+      if (currentShots > lastShotsAttempted && lastShotsAttempted >= 0) {
+        int newShots = Math.min(currentShots - lastShotsAttempted, 3);
+        for (int ns = 0; ns < newShots; ns++) {
+          // {startTime, exitScreenX, exitScreenY}
+          shotAnims.add(new double[] {now + ns * 0.12, exitX, exitY - shooterWheelR * 1.5});
+        }
+      }
+      lastShotsAttempted = currentShots;
+
+      // Draw shot balls flying upward and to the left
+      java.util.Iterator<double[]> it = shotAnims.iterator();
+      double launchAngle = Math.toRadians(68);
+      double shotSpeed = h * 0.55;
+      double shotGravity = h * 0.20;
+      while (it.hasNext()) {
+        double[] shot = it.next();
+        double elapsed = now - shot[0];
+        if (elapsed < 0) continue;
+        if (elapsed > 1.4) {
+          it.remove();
+          continue;
+        }
+        // Clearly animates to the left (negative X)
+        double sx = shot[1] - shotSpeed * Math.cos(launchAngle) * elapsed * 0.9;
+        double sy =
+            shot[2]
+                - shotSpeed * Math.sin(launchAngle) * elapsed
+                + 0.5 * shotGravity * elapsed * elapsed;
+
+        int alpha = (int) Math.max(0, 255 * (1.0 - elapsed / 1.4));
+        g2.setColor(new Color(215, 195, 35, alpha));
+        g2.fill(new Ellipse2D.Double(sx - ballR, sy - ballR, ballR * 2, ballR * 2));
+        g2.setColor(new Color(255, 240, 70, alpha));
+        g2.setStroke(new BasicStroke(1.0f));
+        g2.draw(new Ellipse2D.Double(sx - ballR, sy - ballR, ballR * 2, ballR * 2));
+      }
+
+      // --- Panel title ---
+      g2.setFont(new Font("SansSerif", Font.BOLD, 11));
+      g2.setColor(new Color(170, 175, 185));
+      g2.drawString("ROBOT SIDE VIEW", (int) margin + 2, 16);
+
+      // --- Status readout at bottom ---
+      g2.setFont(new Font("Monospaced", Font.PLAIN, 10));
+      g2.setColor(new Color(130, 135, 145));
+      String statusLine =
+          String.format(
+              "Balls: %d/%d  Shooter: %.0f RPM  Scored: %d",
+              ballCount,
+              BallSimulator.MAX_CAPACITY,
+              shooterRPM,
+              ballSimulator.getBallsScoredInHub());
+      g2.drawString(statusLine, (int) margin + 2, h - (int) margin);
 
       g2.dispose();
     }

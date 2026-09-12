@@ -31,7 +31,7 @@ import org.littletonrobotics.junction.Logger;
 public class BallSimulator {
   private static BallSimulator instance;
 
-  public static final int MAX_CAPACITY = 8;
+  public static final int MAX_CAPACITY = 20;
   public static final double GRAVITY = 9.81; // m/s^2
   public static final double LAUNCH_ANGLE_RAD = Math.toRadians(65.0); // 65 deg hood angle
   public static final double SHOOTER_HEIGHT_M = 0.50; // Initial release height off the carpet
@@ -44,7 +44,7 @@ public class BallSimulator {
   private static final double NEUTRAL_ZONE_INTAKE_PROB = 0.055; // ~2.75 balls/sec
   private static final double ALLIANCE_ZONE_INTAKE_PROB = 0.015; // ~0.75 balls/sec
 
-  private int ballsInRobot = 0;
+  private int ballsInRobot = 8;
   private int ballsScoredInHub = 0;
   private int totalShotsAttempted = 0;
   private int totalShotsMissed = 0;
@@ -175,7 +175,9 @@ public class BallSimulator {
       landingPos = new Translation2d(landX, landY);
 
       double landingError = landingPos.getDistance(hubTarget);
-      if (landingError <= HUB_TARGET_RADIUS_M) {
+      // Ball can only score if shot from the robot's own alliance zone (backboard blocks
+      // neutral/opponent zone shots)
+      if (landingError <= HUB_TARGET_RADIUS_M && isInAllianceZone(robotPose)) {
         hit = true;
       }
     }
@@ -210,10 +212,24 @@ public class BallSimulator {
       Iterator<FlyingBall> iterator = activeFlyingBalls.iterator();
       while (iterator.hasNext()) {
         FlyingBall ball = iterator.next();
-        if (now - ball.startTime > ball.flightDuration + 0.5) {
+        double elapsed = now - ball.startTime;
+        // Balls that score disappear when they land in the hub
+        if (ball.isHit && elapsed >= ball.flightDuration) {
+          iterator.remove();
+        } else if (elapsed > ball.flightDuration + 0.5) {
           iterator.remove();
         }
       }
+    }
+  }
+
+  /** Checks if the robot is located in its own alliance zone (outside neutral zone). */
+  public boolean isInAllianceZone(Pose2d robotPose) {
+    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+    if (alliance == Alliance.Red) {
+      return robotPose.getX() > LinesVertical.neutralZoneFar;
+    } else {
+      return robotPose.getX() < LinesVertical.neutralZoneNear;
     }
   }
 
@@ -265,7 +281,7 @@ public class BallSimulator {
       double landY = shooterPos.getY() + ballVy * timeToHub;
       landingPos = new Translation2d(landX, landY);
       landingError = landingPos.getDistance(hubTarget);
-      if (landingError <= HUB_TARGET_RADIUS_M) {
+      if (landingError <= HUB_TARGET_RADIUS_M && isInAllianceZone(robotPose)) {
         willHit = true;
       }
     }
