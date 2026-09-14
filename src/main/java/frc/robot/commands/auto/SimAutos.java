@@ -52,8 +52,10 @@ public class SimAutos {
             .withName("center of field"),
         Commands.parallel(intake.extendToAngle(0), new StraightDriveToPose(drive, shootPose))
             .withName("drive to shoot pose"),
-        Commands.parallel(shooter.setTargetVelocityRadians(140), indexer.run()).withTimeout(4),
-        shooter.setTargetVelocityRadians(0).withName("stop shooter").withTimeout(0.1),
+        Commands.parallel(shooter.setTargetVelocityRadians(140), indexer.run())
+            .withTimeout(3)
+            .withName("shoot 1st ball"),
+        shooter.setTargetVelocityRadians(0).withName("stop shooter"),
         Commands.race(
                 intake.extendToAngleAndIntake(-2),
                 new StraightDriveToPose(
@@ -62,7 +64,6 @@ public class SimAutos {
         Commands.parallel(intake.extendToAngle(0), new StraightDriveToPose(drive, shootPose))
             .withName("drive to shoot pose"),
         Commands.parallel(shooter.setTargetVelocityRadians(140), indexer.run())
-            .withTimeout(10)
             .withName("shoot 2nd ball"));
   }
 }

@@ -114,11 +114,11 @@ public class Shooter extends SubsystemBase {
   public Command setVoltage(double volts) {
     return Commands.sequence(
         Commands.runOnce(() -> controllerEnabled = false, this),
-        Commands.run(() -> io.setVoltage(volts), this));
+        Commands.runOnce(() -> io.setVoltage(volts), this));
   }
 
   public Command setTargetVelocityRPM(double rpm) {
-    return Commands.run(
+    return Commands.runOnce(
             () -> {
               targetRadPerSec = ((rpm / 2 * Math.PI) * 60.0);
               controllerEnabled = true;
@@ -128,7 +128,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command setTargetVelocityRadians(double radPerSec) {
-    return Commands.run(
+    return Commands.runOnce(
             () -> {
               targetRadPerSec = radPerSec;
               controllerEnabled = true;
@@ -138,7 +138,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command setTargetVelocityRadians(DoubleSupplier radPerSec) {
-    return Commands.run(
+    return Commands.runOnce(
             () -> {
               targetRadPerSec = radPerSec.getAsDouble();
               controllerEnabled = true;
