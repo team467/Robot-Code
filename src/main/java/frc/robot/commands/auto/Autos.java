@@ -8,7 +8,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utils.AllianceFlipUtil;
-import frc.robot.Orchestrator;
+import frc.robot.Superstructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
@@ -61,7 +61,7 @@ public class Autos {
 
   // Relevant subsystems for the autos
   private final Drive drive;
-  private final Orchestrator orchestrator;
+  private final Superstructure superstructure;
   private final Intake intake;
   private final IntakeRollers rollers;
   private final Shooter shooter;
@@ -70,19 +70,19 @@ public class Autos {
    * Basic constructor, takes in all initialized subsystems and stores them
    *
    * @param drive Drive subsystem
-   * @param orchestrator Orchestrator subsystem
+   * @param superstructure Superstructure subsystem
    * @param intake Intake subsystem
    * @param rollers Intake rollers subsystem
    * @param shooter Shooter subsystem
    */
   public Autos(
       Drive drive,
-      Orchestrator orchestrator,
+      Superstructure superstructure,
       Intake intake,
       IntakeRollers rollers,
       Shooter shooter) {
     this.drive = drive;
-    this.orchestrator = orchestrator;
+    this.superstructure = superstructure;
     this.intake = intake;
     this.rollers = rollers;
     this.shooter = shooter;
@@ -117,14 +117,15 @@ public class Autos {
         Commands.deadline(
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                orchestrator.spinUpShooterHub())
+                superstructure.spinUpShooterHub())
             .withTimeout(14.5),
-        orchestrator.aimToHub().withTimeout(2.5),
-        Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
+        superstructure.aimToHub().withTimeout(2.5),
+        Commands.parallel(superstructure.spinUpShooter(1215), superstructure.feedUp())
+            .withTimeout(2.5),
         Commands.parallel(
             intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooter(1214),
-            orchestrator.feedUp()));
+            superstructure.spinUpShooter(1214),
+            superstructure.feedUp()));
   }
 
   private Command ppCycleConnect(String path) {
@@ -132,14 +133,15 @@ public class Autos {
         Commands.deadline(
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                orchestrator.spinUpShooterHub())
+                superstructure.spinUpShooterHub())
             .withTimeout(14.5),
-        orchestrator.aimToHub().withTimeout(2.5),
-        Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
+        superstructure.aimToHub().withTimeout(2.5),
+        Commands.parallel(superstructure.spinUpShooter(1215), superstructure.feedUp())
+            .withTimeout(2.5),
         Commands.parallel(
             intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooter(1214),
-            orchestrator.feedUp()));
+            superstructure.spinUpShooter(1214),
+            superstructure.feedUp()));
   }
 
   /**
@@ -156,17 +158,17 @@ public class Autos {
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
                 Commands.waitSeconds(5.7)
-                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(2.769))))
+                    .andThen(superstructure.spinUpShooterDistance(() -> Meters.of(2.769))))
             .withTimeout(15.5),
         Commands.deadline(
-                orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
+                superstructure.aimToHub().withTimeout(1).withTimeout(2.5),
+                superstructure.spinUpShooterDistance(superstructure.getHubDistance()))
             .andThen(
                 Commands.parallel(
                         Commands.waitSeconds(0.4).andThen(intake.slowlyBringInIntake()),
-                        orchestrator.aimToHub().withTimeout(1).repeatedly(),
-                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                        Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))
+                        superstructure.aimToHub().withTimeout(1).repeatedly(),
+                        superstructure.spinUpShooterDistance(superstructure.getHubDistance()),
+                        Commands.waitSeconds(0.4).andThen(superstructure.feedUp()))
                     .withTimeout(1.6)));
   }
 
@@ -181,17 +183,17 @@ public class Autos {
                     .withTimeout(4.5)
                     .andThen(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
                 Commands.waitSeconds(5.7)
-                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(endDistance))))
+                    .andThen(superstructure.spinUpShooterDistance(() -> Meters.of(endDistance))))
             .withTimeout(15.5),
         Commands.deadline(
-                orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
+                superstructure.aimToHub().withTimeout(1).withTimeout(2.5),
+                superstructure.spinUpShooterDistance(superstructure.getHubDistance()))
             .andThen(
                 Commands.parallel(
                         Commands.waitSeconds(0.4).andThen(intake.slowlyBringInIntake()),
-                        orchestrator.aimToHub().withTimeout(1).repeatedly(),
-                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                        Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))
+                        superstructure.aimToHub().withTimeout(1).repeatedly(),
+                        superstructure.spinUpShooterDistance(superstructure.getHubDistance()),
+                        Commands.waitSeconds(0.4).andThen(superstructure.feedUp()))
                     .withTimeout(1.6)));
   }
 
@@ -200,17 +202,17 @@ public class Autos {
         Commands.deadline(
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
-                orchestrator.spinUpShooterDistance(() -> Meters.of(3.185)))
+                superstructure.spinUpShooterDistance(() -> Meters.of(3.185)))
             .withTimeout(14.5),
         Commands.deadline(
-                orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
+                superstructure.aimToHub().withTimeout(1).withTimeout(2.5),
+                superstructure.spinUpShooterDistance(superstructure.getHubDistance()))
             .andThen(
                 Commands.parallel(
                     Commands.waitSeconds(0.9).andThen(intake.slowlyBringInIntake()),
-                    orchestrator.aimToHub().withTimeout(1).repeatedly(),
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                    Commands.waitSeconds(0.9).andThen(orchestrator.feedUp()))));
+                    superstructure.aimToHub().withTimeout(1).repeatedly(),
+                    superstructure.spinUpShooterDistance(superstructure.getHubDistance()),
+                    Commands.waitSeconds(0.9).andThen(superstructure.feedUp()))));
   }
 
   private Command ppCycleRegressionConnect(String path) {
@@ -219,17 +221,17 @@ public class Autos {
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
                 Commands.waitSeconds(5.5)
-                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(2.869))))
+                    .andThen(superstructure.spinUpShooterDistance(() -> Meters.of(2.869))))
             .withTimeout(14.5),
         Commands.deadline(
-                orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
+                superstructure.aimToHub().withTimeout(1).withTimeout(2.5),
+                superstructure.spinUpShooterDistance(superstructure.getHubDistance()))
             .andThen(
                 Commands.parallel(
                     Commands.waitSeconds(0.7).andThen(intake.slowlyBringInIntake()),
-                    orchestrator.aimToHub().withTimeout(1).repeatedly(),
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                    Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))));
+                    superstructure.aimToHub().withTimeout(1).repeatedly(),
+                    superstructure.spinUpShooterDistance(superstructure.getHubDistance()),
+                    Commands.waitSeconds(0.4).andThen(superstructure.feedUp()))));
   }
 
   /**
@@ -245,7 +247,7 @@ public class Autos {
   private Command pp2CycleRegression(String path1, String path2, Supplier<Pose2d> startPose) {
     return ppCycleRegression(path1, startPose)
         .withTimeout(14.5)
-        .andThen(orchestrator.stopShootingAuto().withTimeout(0.1))
+        .andThen(superstructure.stopShootingAuto().withTimeout(0.1))
         .andThen(ppCycleRegressionConnect(path2));
   }
 
@@ -344,10 +346,10 @@ public class Autos {
             .withTimeout(5),
         rollers.stopIntakeCommand().withTimeout(0.05),
         Commands.deadline(
-            orchestrator.driveToHub().withTimeout(3), orchestrator.spinUpShooterHub()),
+            superstructure.driveToHub().withTimeout(3), superstructure.spinUpShooterHub()),
         Commands.parallel(
-            orchestrator.spinUpShooterHub(),
-            orchestrator.feedUp(),
+            superstructure.spinUpShooterHub(),
+            superstructure.feedUp(),
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
 
@@ -391,10 +393,10 @@ public class Autos {
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.shootFromCorner))
                 .withTimeout(2),
-            orchestrator.spinUpShooter(1240)),
+            superstructure.spinUpShooter(1240)),
         Commands.parallel(
-            orchestrator.spinUpShooter(1240),
-            orchestrator.feedUp(),
+            superstructure.spinUpShooter(1240),
+            superstructure.feedUp(),
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))));
   }
 
@@ -436,11 +438,11 @@ public class Autos {
         Commands.deadline(
             new DriveToPose(drive, () -> AllianceFlipUtil.apply(poses.shootFromCorner))
                 .withTimeout(2),
-            orchestrator.spinUpShooter(1250)),
+            superstructure.spinUpShooter(1250)),
         Commands.deadline(
             Commands.waitSeconds(5),
-            orchestrator.spinUpShooter(1250),
-            orchestrator.feedUp(),
+            superstructure.spinUpShooter(1250),
+            superstructure.feedUp(),
             Commands.waitSeconds(2).andThen(intake.extendToAngleAndIntake(0.0))),
         rollers.stopIntakeCommand().withTimeout(0.05),
         shooter.stop(),
@@ -480,11 +482,11 @@ public class Autos {
   public Command EightBalls() {
     return Commands.sequence(
         Commands.deadline(
-            orchestrator.driveToHub().withTimeout(3.0),
-            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+            superstructure.driveToHub().withTimeout(3.0),
+            superstructure.spinUpShooterDistance(superstructure.getHubDistance())),
         Commands.parallel(
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                Commands.waitSeconds(1).andThen(orchestrator.feedUp()))
+                superstructure.spinUpShooterDistance(superstructure.getHubDistance()),
+                Commands.waitSeconds(1).andThen(superstructure.feedUp()))
             .withTimeout(5.2));
   }
 }

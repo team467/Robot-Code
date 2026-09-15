@@ -71,7 +71,7 @@ public class RobotContainer {
   private Leds leds;
   private MagicCarpet magicCarpet;
   private Indexer indexer;
-  private final Orchestrator orchestrator;
+  private final Superstructure superstructure;
   private Shooter shooter;
   private Intake intake;
   private IntakeRollers intakeRollers;
@@ -177,8 +177,8 @@ public class RobotContainer {
       indexer = new Indexer(new IndexerIO() {});
     }
 
-    orchestrator =
-        new Orchestrator(
+    superstructure =
+        new Superstructure(
             drive,
             magicCarpet,
             shooter,
@@ -187,7 +187,7 @@ public class RobotContainer {
             intakeRollers,
             driverController,
             ballVision);
-    Autos autos = new Autos(drive, orchestrator, intake, intakeRollers, shooter);
+    Autos autos = new Autos(drive, superstructure, intake, intakeRollers, shooter);
     AutoBuilder.configure(
         drive::getPose,
         drive::setPose,
@@ -291,7 +291,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    driverController.x().toggleOnTrue(orchestrator.zoneBasedAim());
+    driverController.x().toggleOnTrue(superstructure.zoneBasedAim());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     driverController
         .leftBumper()
@@ -319,7 +319,7 @@ public class RobotContainer {
     //         VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     // driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
 
-    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
+    driverController.rightTrigger(0.1).toggleOnTrue(superstructure.feedUp());
     driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
 
     driverController
@@ -329,7 +329,7 @@ public class RobotContainer {
     driverController
         .rightBumper()
         .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(orchestrator.driveToHub());
+        .toggleOnTrue(superstructure.driveToHub());
     driverController
         .rightBumper()
         .and(operatorController.pov(180))
@@ -337,15 +337,15 @@ public class RobotContainer {
         .onFalse(intakeExtend.stopExtendingCommand());
     operatorController
         .leftTrigger(0.1)
-        .toggleOnTrue(orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()));
+        .toggleOnTrue(superstructure.spinUpShooterDistance(superstructure.getHubDistance()));
     operatorController
         .rightTrigger(0.1)
         .and(() -> !operatorController.pov(0).getAsBoolean())
-        .toggleOnTrue(orchestrator.zoneBasedShooter());
+        .toggleOnTrue(superstructure.zoneBasedShooter());
     operatorController
         .rightTrigger(0.1)
         .and(operatorController.pov(0))
-        .toggleOnTrue(orchestrator.spinUpShooterHub());
+        .toggleOnTrue(superstructure.spinUpShooterHub());
     operatorController.y().whileTrue(indexer.reverse());
     operatorController.x().whileTrue(intakeRollers.outtake());
   }
@@ -361,6 +361,6 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
-    orchestrator.orchestratorPeriodic();
+    superstructure.superstructurePeriodic();
   }
 }
