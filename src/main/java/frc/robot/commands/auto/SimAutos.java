@@ -61,7 +61,7 @@ public class SimAutos {
                 new StraightDriveToPose(
                     drive, centerOfField.get().plus(new Transform2d(0, 1, new Rotation2d(0)))))
             .withName("move to center"),
-        Commands.parallel(intake.moveToCollapsedPositionAndStop(), new StraightDriveToPose(drive, shootPose))
+        Commands.race(intake.moveToCollapsedPositionAndStop(), new StraightDriveToPose(drive, shootPose))
             .withName("drive to shoot pose"),
         Commands.parallel(shooter.setTargetVelocityRadians(140), indexer.run())
             .withTimeout(3)
