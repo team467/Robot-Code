@@ -23,6 +23,7 @@ import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.auto.RotateToOrientation;
+import frc.robot.commands.customVision.ballVision;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
@@ -64,6 +65,7 @@ public class Orchestrator {
   private final IntakeRollers rollers;
   private final ShooterLeadCompensator shooterLeadCompensator;
   private final CommandXboxController driverController;
+  private final ballVision ballVision;
 
   // Wraparound-safe angle filter
   private double filteredAngleRad = Double.NaN;
@@ -88,6 +90,18 @@ public class Orchestrator {
       Intake intake,
       IntakeRollers rollers,
       CommandXboxController driverController) {
+    this(drive, hopperBelt, shooter, indexer, intake, rollers, driverController, null);
+  }
+
+  public Orchestrator(
+      Drive drive,
+      MagicCarpet hopperBelt,
+      Shooter shooter,
+      Indexer indexer,
+      Intake intake,
+      IntakeRollers rollers,
+      CommandXboxController driverController,
+      ballVision ballVision) {
     this.drive = drive;
     this.magicCarpet = hopperBelt;
     this.shooter = shooter;
@@ -96,6 +110,7 @@ public class Orchestrator {
     this.rollers = rollers;
     this.shooterLeadCompensator = new ShooterLeadCompensator(drive, shooter);
     this.driverController = driverController;
+    this.ballVision = ballVision;
 
     this.zone1 = new Zone(drive::getPose);
     this.zone2 = new Zone(drive::getPose);
@@ -260,13 +275,54 @@ public class Orchestrator {
             Rotation2d.fromDegrees(0)));
     Logger.recordOutput("Orchestrator/DistanceToHub", shootWhileDrivingResult.distance());
     Logger.recordOutput("Orchestrator/ShooterPosition", shooterLeadCompensator.shooterPose());
-    // Declare logic regarding inter-subsystem logic here.
     if (indexer.indexerState == Indexer.State.RUNNING) {
       magicCarpet.run();
     }
     if (intake.extendInstance().state == IntakeExtend.State.COLLAPSING) {
       intake.runIntakeMotor();
     }
+    if (ballVision != null) {
+      Logger.recordOutput("Orchestrator/BallVision/HasTarget", ballVision.hasTarget());
+      getClosestBallFieldPose()
+          .get()
+          .ifPresent(
+              pose -> Logger.recordOutput("Orchestrator/BallVision/ClosestBallFieldPose", pose));
+    }
+  }
+
+  public ballVision getBallVision() {
+    return ballVision;
+  }
+
+  public Supplier<java.util.Optional<Pose2d>> getClosestBallFieldPose() {
+    return () -> {
+      if (ballVision == null || !ballVision.hasTarget()) {
+        return java.util.Optional.empty();
+      }
+      return ballVision
+          .getClosestBallTranslation2d()
+          .map(
+              relTrans -> {
+                Transform2d relTransform =
+                    new Transform2d(relTrans, new Rotation2d(relTrans.getX(), relTrans.getY()));
+                return drive.getPose().transformBy(relTransform);
+              });
+    };
+  }
+
+  public Command aimToBall() {
+    return new RotateToOrientation(
+        drive, () -> getClosestBallFieldPose().get().orElseGet(drive::getPose));
+  }
+
+  public Command driveToBall() {
+    return new DriveToPose(drive, () -> getClosestBallFieldPose().get().orElseGet(drive::getPose));
+  }
+
+  public Command autoIntakeBall() {
+    return Commands.parallel(
+            intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS), driveToBall())
+        .withName("autoIntakeBall");
   }
 
   public Command driveToHub() {

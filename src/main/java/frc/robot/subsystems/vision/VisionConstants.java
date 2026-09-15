@@ -17,6 +17,13 @@ public class VisionConstants {
   public static String camera1Name = "camera_1";
   public static String camera2Name = "camera_2";
   public static String camera3Name = "camera_3";
+  public static String ballCameraName = "ball_camera";
+
+  public static Transform3d robotToBallCamera =
+      new Transform3d(
+          new Translation3d(
+              Units.inchesToMeters(10.0), Units.inchesToMeters(0.0), Units.inchesToMeters(15.0)),
+          new Rotation3d(0.0, Units.degreesToRadians(15.0), 0.0));
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)

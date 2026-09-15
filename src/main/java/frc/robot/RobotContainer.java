@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
+import frc.robot.commands.customVision.ballVision;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
 import frc.robot.subsystems.drive.*;
@@ -66,6 +67,7 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
+  private ballVision ballVision;
   private Leds leds;
   private MagicCarpet magicCarpet;
   private Indexer indexer;
@@ -99,6 +101,7 @@ public class RobotContainer {
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera2Name, robotToCamera2));
+          ballVision = new ballVision(ballCameraName, robotToBallCamera);
           leds = new Leds();
         }
         case ROBOT_2026_COMP -> {
@@ -113,6 +116,7 @@ public class RobotContainer {
               new Vision(
                   drive::addVisionMeasurement,
                   new VisionIOPhotonVision(camera2Name, robotToCamera2));
+          ballVision = new ballVision(ballCameraName, robotToBallCamera);
           leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
@@ -153,6 +157,9 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
+    if (ballVision == null) {
+      ballVision = new ballVision(ballCameraName, robotToBallCamera);
+    }
     if (intakeRollers == null) {
       intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
     }
@@ -172,7 +179,14 @@ public class RobotContainer {
 
     orchestrator =
         new Orchestrator(
-            drive, magicCarpet, shooter, indexer, intake, intakeRollers, driverController);
+            drive,
+            magicCarpet,
+            shooter,
+            indexer,
+            intake,
+            intakeRollers,
+            driverController,
+            ballVision);
     Autos autos = new Autos(drive, orchestrator, intake, intakeRollers, shooter);
     AutoBuilder.configure(
         drive::getPose,
