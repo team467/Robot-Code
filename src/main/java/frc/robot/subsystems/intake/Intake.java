@@ -1,6 +1,8 @@
 package frc.robot.subsystems.intake;
 
 import static frc.robot.subsystems.intake.IntakeConstants.*;
+import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_POS;
+import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POS;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -20,6 +22,16 @@ public class Intake {
   public Command extendToAngleAndIntake(double angle) {
     return Commands.parallel(extend.extendToAngle(angle), rollers.intake())
         .withName("extendToAngleAndIntake");
+  }
+
+  public Command moveToExtendedPositionAndIntake() {
+    return Commands.parallel(extend.extendToAngle(EXTEND_POS), rollers.intake())
+        .withName("moveToExtendedPositionAndIntake");
+  }
+
+  public Command moveToCollapsedPositionAndStop() {
+    return Commands.race(extend.extendToAngle(COLLAPSE_POS), rollers.stopIntakeCommand())
+        .withName("moveToCollapsedPositionAndStop");
   }
 
   public Command extendToAngle(double angle) {
