@@ -8,13 +8,13 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import org.wpilib.driverstation.Alert.Level;
+import org.wpilib.util.Alert.Level;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.util.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearAcceleration;
-import org.wpilib.driverstation.Alert;
+import org.wpilib.util.Alert;
 import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */

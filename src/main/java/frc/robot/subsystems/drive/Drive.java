@@ -5,7 +5,7 @@ import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
-import org.wpilib.driverstation.Alert.Level;
+import org.wpilib.util.Alert.Level;
 import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
@@ -20,7 +20,7 @@ import org.wpilib.math.kinematics.SwerveModulePosition;
 import org.wpilib.math.kinematics.SwerveModuleState; // Removed or renamed
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
-import org.wpilib.driverstation.Alert;
+import org.wpilib.util.Alert;
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;

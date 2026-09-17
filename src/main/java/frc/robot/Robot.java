@@ -4,9 +4,9 @@
 
 package frc.robot;
 
-import org.wpilib.driverstation.Alert.Level;
+import org.wpilib.util.Alert.Level;
 import org.wpilib.math.filter.LinearFilter;
-import org.wpilib.driverstation.Alert;
+import org.wpilib.util.Alert;
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.system.RobotController;
 import org.wpilib.system.Timer;
