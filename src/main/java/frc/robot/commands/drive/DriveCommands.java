@@ -1,18 +1,18 @@
 package frc.robot.commands.drive;
 
-import org.wpilib.math.MathUtil;
+import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.controller.ProfiledPIDController;
 import org.wpilib.math.filter.SlewRateLimiter;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Transform2d;
 import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.kinematics.ChassisSpeeds;
+import org.wpilib.math.kinematics.ChassisSpeeds; // Removed or renamed
 import org.wpilib.math.trajectory.TrapezoidProfile;
 import org.wpilib.math.util.Units;
-import org.wpilib.wpilibj.DriverStation;
-import org.wpilib.wpilibj.DriverStation.Alliance;
-import org.wpilib.wpilibj.Timer;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.system.Timer;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import frc.robot.subsystems.drive.Drive;
