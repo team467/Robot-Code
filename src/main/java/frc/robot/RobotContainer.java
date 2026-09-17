@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
@@ -13,18 +13,18 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import org.wpilib.math.geometry.*;
+import org.wpilib.wpilibj.DriverStation;
+import org.wpilib.wpilibj.DriverStation.Alliance;
+import org.wpilib.wpilibj.GenericHID;
+import org.wpilib.wpilibj.GenericHID.RumbleType;
+import org.wpilib.wpilibj.XboxController;
+import org.wpilib.wpilibj2.command.Command;
+import org.wpilib.wpilibj2.command.Commands;
+import org.wpilib.wpilibj2.command.button.CommandXboxController;
+import org.wpilib.wpilibj2.command.button.Trigger;
+import org.wpilib.wpilibj2.command.sysid.SysIdRoutine;
+import org.wpilib.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
@@ -269,8 +269,8 @@ public class RobotContainer {
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * org.wpilib.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * org.wpilib.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
     indexer.setDefaultCommand(indexer.stop());

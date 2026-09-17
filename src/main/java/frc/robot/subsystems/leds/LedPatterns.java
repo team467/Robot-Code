@@ -1,12 +1,12 @@
 package frc.robot.subsystems.leds;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
+import static org.wpilib.units.Units.Meters;
+import static org.wpilib.units.Units.MetersPerSecond;
+import static org.wpilib.units.Units.Seconds;
 
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.util.Color;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.wpilibj.LEDPattern;
+import org.wpilib.wpilibj.util.Color;
 import java.util.Map;
 
 public enum LedPatterns {

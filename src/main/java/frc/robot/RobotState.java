@@ -1,9 +1,9 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Percent;
+import static org.wpilib.units.Units.Percent;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.LEDPattern;
+import org.wpilib.wpilibj.DriverStation;
+import org.wpilib.wpilibj.LEDPattern;
 import frc.robot.subsystems.leds.LedPatterns;
 import frc.robot.subsystems.leds.Leds.Sections;
 import org.littletonrobotics.junction.AutoLogOutput;

@@ -1,6 +1,6 @@
 package frc.robot.util;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Pose2d;
 import frc.lib.utils.AllianceFlipUtil;
 import java.util.Objects;
 import java.util.function.Supplier;

@@ -4,14 +4,14 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.wpilib.math.filter.LinearFilter;
+import org.wpilib.wpilibj.Alert;
+import org.wpilib.wpilibj.Alert.AlertType;
+import org.wpilib.wpilibj.DriverStation;
+import org.wpilib.wpilibj.RobotController;
+import org.wpilib.wpilibj.Timer;
+import org.wpilib.wpilibj2.command.Command;
+import org.wpilib.wpilibj2.command.CommandScheduler;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
