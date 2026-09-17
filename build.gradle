@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "org.wpilib.GradleRIO" version "2027.0.0-alpha-5"
+    id "org.wpilib.GradleRIO" version "2027.0.0-alpha-7"
     id "com.peterabeles.gversion" version "1.10"
     id "com.diffplug.spotless" version "6.25.0"
 }
@@ -8,7 +8,7 @@ plugins {
 wpi.maven.useLocal = false
 wpi.maven.useDevelopment = true
 
-wpi.versions.wpilibVersion = providers.gradleProperty('wpilibVersion').orElse('2027.0.0-alpha-6').get()
+wpi.versions.wpilibVersion = providers.gradleProperty('wpilibVersion').orElse('2027.0.0-alpha-7').get()
 
 java {
     sourceCompatibility = JavaVersion.VERSION_25
@@ -78,9 +78,6 @@ if (roborioTargetType != null) {
         deployArtifact = deploy.targets.roborio.artifacts.frcJava
     }
 }
-
-// Set to true to use debug for JNI.
-wpi.java.debugJni = false
 
 // Set this to true to enable desktop support.
 def includeDesktopSupport = true
@@ -156,8 +153,8 @@ jar {
 if (deployArtifact != null) {
     deployArtifact.jarTask = jar
 }
-wpi.java.configureExecutableTasks(jar)
-wpi.java.configureTestTasks(test)
+// IMPORTANT: wpi.java.configureExecutableTasks(jar)
+// IMPORTANT: wpi.java.configureTestTasks(test)
 
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
