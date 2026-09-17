@@ -2,12 +2,12 @@ package frc.robot.subsystems.drive;
 
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
+import org.wpilib.driverstation.Alert.Level;
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.SwerveModulePosition;
 import org.wpilib.math.kinematics.SwerveModuleState; // Removed or renamed (seems like it was broken down into parts)
 import org.wpilib.driverstation.Alert;
-import org.wpilib.wpilibj.Alert.AlertType; // Removed or renamed
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
@@ -25,10 +25,10 @@ public class Module {
     driveDisconnectedAlert =
         new Alert(
             "Disconnected drive motor on module " + Integer.toString(index) + ".",
-            AlertType.kError);
+            Level.HIGH);
     turnDisconnectedAlert =
         new Alert(
-            "Disconnected turn motor on module " + Integer.toString(index) + ".", AlertType.kError);
+            "Disconnected turn motor on module " + Integer.toString(index) + ".", Level.HIGH);
   }
 
   public void periodic() {

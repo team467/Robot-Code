@@ -8,19 +8,19 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import org.wpilib.driverstation.Alert.Level;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.util.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearAcceleration;
 import org.wpilib.driverstation.Alert;
-import org.wpilib.wpilibj.Alert.AlertType; // Removed or renamed
 import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */
 public class GyroIOPigeon2 implements GyroIO {
   private final Alert impactAlert =
-      new Alert("Impact Detected, lowering elevator to prevent flipping.", AlertType.kWarning);
+      new Alert("Impact Detected, lowering elevator to prevent flipping.", Level.MEDIUM);
   private final Pigeon2 pigeon = new Pigeon2(pigeonCanId);
   private final StatusSignal<Angle> yaw = pigeon.getYaw();
   private final Queue<Double> yawPositionQueue;

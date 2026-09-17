@@ -5,6 +5,7 @@ import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import org.wpilib.driverstation.Alert.Level;
 import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
@@ -20,7 +21,6 @@ import org.wpilib.math.kinematics.SwerveModuleState; // Removed or renamed
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
 import org.wpilib.driverstation.Alert;
-import org.wpilib.wpilibj.Alert.AlertType; // Removed or renamed
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
@@ -39,14 +39,14 @@ public class Drive extends SubsystemBase {
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Alert impactAlert =
-      new Alert("Impact Detected, lowering elevator to prevent flipping.", AlertType.kWarning);
+      new Alert("Impact Detected, lowering elevator to prevent flipping.", Level.MEDIUM);
   private final Alert tiltAlert =
       new Alert(
-          ("Tilt Threshold reached, lowering elevator to prevent flipping"), AlertType.kWarning);
+          ("Tilt Threshold reached, lowering elevator to prevent flipping"), Level.MEDIUM);
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
   private final Alert gyroDisconnectedAlert =
-      new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
+      new Alert("Disconnected gyro, using kinematics as fallback.", Level.HIGH);
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
   private Rotation2d rawGyroRotation = Rotation2d.kZero;

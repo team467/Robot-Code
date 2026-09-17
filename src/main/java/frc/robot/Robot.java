@@ -4,9 +4,9 @@
 
 package frc.robot;
 
+import org.wpilib.driverstation.Alert.Level;
 import org.wpilib.math.filter.LinearFilter;
 import org.wpilib.driverstation.Alert;
-import org.wpilib.wpilibj.Alert.AlertType; // Removed or renamed
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.system.RobotController;
 import org.wpilib.system.Timer;
@@ -53,11 +53,11 @@ public class Robot extends LoggedRobot {
   private static int lowBatteryCycleCount = 0;
 
   private final Alert canErrorAlert =
-      new Alert("CAN errors detected, robot may not be controllable.", AlertType.kError);
+      new Alert("CAN errors detected, robot may not be controllable.", Level.HIGH);
   private final Alert lowBatteryAlert =
       new Alert(
           "Battery voltage is very low, consider turning off the robot or replacing the battery.",
-          AlertType.kWarning);
+          Level.MEDIUM);
 
   /**
    * This function is run when the robot is first started up and should be used for any
