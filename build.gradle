@@ -1,75 +1,83 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2026.2.1"
+    id "org.wpilib.GradleRIO" version "2027.0.0-alpha-5"
     id "com.peterabeles.gversion" version "1.10"
     id "com.diffplug.spotless" version "6.25.0"
 }
 
+wpi.maven.useLocal = false
+wpi.maven.useDevelopment = true
+
+wpi.versions.wpilibVersion = providers.gradleProperty('wpilibVersion').orElse('2027.0.0-alpha-6').get()
+
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
-deploy {
-    targets {
-        roborio(getTargetTypeClass('RoboRIO')) {
-            // Team number is loaded either from the .wpilib/wpilib_preferences.json
-            // or from command line. If not found an exception will be thrown.
-            // You can use getTeamOrDefault(team) instead of getTeamNumber if you
-            // want to store a team number in this file.
-            team = project.frc.getTeamNumber()
-            debug = project.frc.getDebugOrDefault(false)
+def roborioTargetType = deploy.getTargetTypeClass('RoboRIO')
+def deployArtifact = null
+if (roborioTargetType != null) {
+    deploy {
+        targets {
+            roborio(roborioTargetType) {
+                // Team number is loaded either from the .wpilib/wpilib_preferences.json
+                // or from command line. If not found an exception will be thrown.
+                // You can use getTeamOrDefault(team) instead of getTeamNumber if you
+                // want to store a team number in this file.
+                team = project.frc.getTeamNumber()
+                debug = project.frc.getDebugOrDefault(false)
 
-            artifacts {
-                // First part is artifact name, 2nd is artifact type
-                // getTargetTypeClass is a shortcut to get the class type using a string
+                artifacts {
+                    // First part is artifact name, 2nd is artifact type
+                    // getTargetTypeClass is a shortcut to get the class type using a string
 
-                frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-                    jvmArgs.add("-XX:+UnlockExperimentalVMOptions")
-                    jvmArgs.add("-XX:GCTimeRatio=5")
-                    jvmArgs.add("-XX:+UseSerialGC")
-                    jvmArgs.add("-XX:MaxGCPauseMillis=50")
+                    frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
+                        jvmArgs.add("-XX:+UnlockExperimentalVMOptions")
+                        jvmArgs.add("-XX:GCTimeRatio=5")
+                        jvmArgs.add("-XX:+UseSerialGC")
+                        jvmArgs.add("-XX:MaxGCPauseMillis=50")
 
-                    // Heap size is set dynamically in predeploy based on robot type
-                    jvmArgs.add("-XX:+AlwaysPreTouch")
+                        // Heap size is set dynamically in predeploy based on robot type
+                        jvmArgs.add("-XX:+AlwaysPreTouch")
 
-                    predeploy << { ctx ->
-                        def robotTypeFile = "/home/lvuser/robot"
-                        def result = ctx.execute("cat " + robotTypeFile)
-                        def robotType = result.result.trim()
-                        println "Detected robot type: " + robotType
+                        predeploy << { ctx ->
+                            def robotTypeFile = "/home/lvuser/robot"
+                            def result = ctx.execute("cat " + robotTypeFile)
+                            def robotType = result.result.trim()
+                            println "Detected robot type: " + robotType
 
-                        def heapSize = 100
-                        if (robotType == "ROBOT_BRIEFCASE") {
-                            heapSize = 10
-                            println "Using reduced heap size for ROBOT_BRIEFCASE: " + heapSize + "MB"
-                        } else {
-                            println "Using default heap size: " + heapSize + "MB"
+                            def heapSize = 100
+                            if (robotType == "ROBOT_BRIEFCASE") {
+                                heapSize = 10
+                                println "Using reduced heap size for ROBOT_BRIEFCASE: " + heapSize + "MB"
+                            } else {
+                                println "Using default heap size: " + heapSize + "MB"
+                            }
+
+                            jvmArgs.add("-Xmx" + heapSize + "M")
+                            jvmArgs.add("-Xms" + heapSize + "M")
                         }
-
-                        jvmArgs.add("-Xmx" + heapSize + "M")
-                        jvmArgs.add("-Xms" + heapSize + "M")
                     }
-                }
 
-                // Static files artifact
-                frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
-                    files = project.fileTree('src/main/deploy')
-                    directory = '/home/lvuser/deploy'
-                    // Change to true to delete files on roboRIO that no
-                    // longer exist in deploy directory on roboRIO
-                    deleteOldFiles = false
+                    // Static files artifact
+                    frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
+                        files = project.fileTree('src/main/deploy')
+                        directory = '/home/lvuser/deploy'
+                        // Change to true to delete files on roboRIO that no
+                        // longer exist in deploy directory on roboRIO
+                        deleteOldFiles = false
+                    }
                 }
             }
         }
+        deployArtifact = deploy.targets.roborio.artifacts.frcJava
     }
 }
-
-def deployArtifact = deploy.targets.roborio.artifacts.frcJava
 
 // Set to true to use debug for JNI.
 wpi.java.debugJni = false
@@ -90,11 +98,13 @@ dependencies {
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 
-    roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
-    roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
+    if (roborioTargetType != null) {
+        roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
+        roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
 
-    roborioRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.roborio)
-    roborioRelease wpi.java.vendor.jniRelease(wpi.platforms.roborio)
+        roborioRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.roborio)
+        roborioRelease wpi.java.vendor.jniRelease(wpi.platforms.roborio)
+    }
 
     nativeDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
     nativeDebug wpi.java.vendor.jniDebug(wpi.platforms.desktop)
@@ -104,14 +114,11 @@ dependencies {
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
 
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    compileOnly 'org.projectlombok:lombok:1.18.44'
+    annotationProcessor 'org.projectlombok:lombok:1.18.44'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
@@ -141,12 +148,14 @@ jar {
         }
     }
     from sourceSets.main.allSource
-    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+    manifest org.wpilib.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 // Configure jar and deploy tasks
-deployArtifact.jarTask = jar
+if (deployArtifact != null) {
+    deployArtifact.jarTask = jar
+}
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
@@ -160,7 +169,9 @@ task(checkRobot, dependsOn: "classes", type: JavaExec) {
     mainClass = "frc.robot.Constants"
     classpath = sourceSets.main.runtimeClasspath
 }
-deployroborio.dependsOn(checkRobot)
+if (deployArtifact != null) {
+    deployroborio.dependsOn(checkRobot)
+}
 
 // Create version file
 project.compileJava.dependsOn(createVersionFile)
@@ -206,8 +217,8 @@ task(eventDeploy) {
 }
 createVersionFile.dependsOn(eventDeploy)
 
-// Spotless formatting
-project.compileJava.dependsOn(spotlessApply)
+// Spotless formatting (disabled for 2027 experimental)
+// project.compileJava.dependsOn(spotlessApply)
 spotless {
     java {
         target fileTree(".") {
