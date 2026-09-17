@@ -1,7 +1,7 @@
 package frc.robot;
 
-import org.wpilib.wpilibj.DriverStation;
-import org.wpilib.wpilibj.RobotBase;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.framework.RobotBase;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;

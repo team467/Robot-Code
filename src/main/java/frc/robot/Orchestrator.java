@@ -13,12 +13,12 @@ import org.wpilib.math.geometry.Transform2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.util.Units;
 import org.wpilib.units.measure.Distance;
-import org.wpilib.wpilibj.smartdashboard.SmartDashboard;
-import org.wpilib.wpilibj2.command.Command;
-import org.wpilib.wpilibj2.command.Commands;
-import org.wpilib.wpilibj2.command.ConditionalCommand;
-import org.wpilib.wpilibj2.command.SelectCommand;
-import org.wpilib.wpilibj2.command.button.CommandXboxController;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.ConditionalCommand;
+import org.wpilib.command2.SelectCommand;
+import org.wpilib.command2.button.CommandXboxController; // Removed
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.commands.auto.DriveToPose;

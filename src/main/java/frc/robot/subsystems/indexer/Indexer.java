@@ -2,9 +2,9 @@ package frc.robot.subsystems.indexer;
 
 import static frc.robot.subsystems.indexer.IndexerConstants.FEEDUP_VOLT;
 
-import org.wpilib.wpilibj2.command.Command;
-import org.wpilib.wpilibj2.command.Commands;
-import org.wpilib.wpilibj2.command.SubsystemBase;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 

@@ -5,8 +5,8 @@ import static org.wpilib.units.Units.MetersPerSecond;
 import static org.wpilib.units.Units.Seconds;
 
 import org.wpilib.units.measure.Distance;
-import org.wpilib.wpilibj.LEDPattern;
-import org.wpilib.wpilibj.util.Color;
+import org.wpilib.hardware.led.LEDPattern;
+import org.wpilib.util.Color;
 import java.util.Map;
 
 public enum LedPatterns {

@@ -4,8 +4,8 @@ import static frc.robot.Schematic.indexerFeedupCanId;
 import static frc.robot.subsystems.indexer.IndexerConstants.ENCODER_FEEDUP_POSITION_CONVERSION;
 import static frc.robot.subsystems.indexer.IndexerConstants.ENCODER_FEEDUP_VELOCITY_CONVERSION;
 
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;

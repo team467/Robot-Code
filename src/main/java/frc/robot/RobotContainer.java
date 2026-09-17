@@ -13,18 +13,17 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import org.wpilib.driverstation.GenericHID.RumbleType;
 import org.wpilib.math.geometry.*;
-import org.wpilib.wpilibj.DriverStation;
-import org.wpilib.wpilibj.DriverStation.Alliance;
-import org.wpilib.wpilibj.GenericHID;
-import org.wpilib.wpilibj.GenericHID.RumbleType;
-import org.wpilib.wpilibj.XboxController;
-import org.wpilib.wpilibj2.command.Command;
-import org.wpilib.wpilibj2.command.Commands;
-import org.wpilib.wpilibj2.command.button.CommandXboxController;
-import org.wpilib.wpilibj2.command.button.Trigger;
-import org.wpilib.wpilibj2.command.sysid.SysIdRoutine;
-import org.wpilib.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.wpilibj.XboxController; // Removed
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.button.CommandXboxController; // Removed
+import org.wpilib.command2.button.Trigger;
+import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.command2.sysid.SysIdRoutine.Direction;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
@@ -270,7 +269,7 @@ public class RobotContainer {
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
    * org.wpilib.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * org.wpilib.wpilibj2.command.button.JoystickButton}.
+   * org.wpilib.command2.button.JoystickButton}.
    */
   private void configureButtonBindings() {
     indexer.setDefaultCommand(indexer.stop());

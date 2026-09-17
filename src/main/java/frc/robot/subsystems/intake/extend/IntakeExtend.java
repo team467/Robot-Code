@@ -6,11 +6,11 @@ import static frc.robot.subsystems.intake.IntakeConstants.HOME_VOLTAGE;
 import static frc.robot.subsystems.intake.IntakeConstants.POSITION_TOLERANCE;
 import static frc.robot.subsystems.intake.IntakeConstants.STALL_VELOCITY;
 
-import org.wpilib.wpilibj.Timer;
-import org.wpilib.wpilibj2.command.Command;
-import org.wpilib.wpilibj2.command.Commands;
-import org.wpilib.wpilibj2.command.ConditionalCommand;
-import org.wpilib.wpilibj2.command.SubsystemBase;
+import org.wpilib.system.Timer;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.ConditionalCommand;
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.RobotState.IntakePosition;
 import java.util.function.BooleanSupplier;

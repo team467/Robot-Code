@@ -2,7 +2,7 @@ package frc.robot.commands.drive;
 
 import org.wpilib.math.kinematics.ChassisSpeeds;
 import org.wpilib.math.util.Units;
-import org.wpilib.wpilibj2.command.Command;
+import org.wpilib.command2.Command;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 

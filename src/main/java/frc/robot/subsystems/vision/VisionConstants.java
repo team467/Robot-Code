@@ -1,6 +1,6 @@
 package frc.robot.subsystems.vision;
 
-import org.wpilib.apriltag.AprilTagFieldLayout;
+import org.wpilib.vision.apriltag.AprilTagFieldLayout;
 import org.wpilib.math.geometry.Rotation3d;
 import org.wpilib.math.geometry.Transform3d;
 import org.wpilib.math.geometry.Translation3d;

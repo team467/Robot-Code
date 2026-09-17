@@ -11,16 +11,16 @@ import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.ControlType;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import org.wpilib.wpilibj.DigitalInput;
+import org.wpilib.hardware.discrete.DigitalInput;
 
 public class IntakeExtendIOSparkMax implements IntakeExtendIO {
 

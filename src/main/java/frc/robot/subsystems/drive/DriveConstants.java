@@ -9,7 +9,7 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.system.plant.DCMotor;
+import org.wpilib.math.system.DCMotor;
 import org.wpilib.math.util.Units;
 import frc.robot.Constants;
 

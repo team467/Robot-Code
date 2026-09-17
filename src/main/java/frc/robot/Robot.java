@@ -5,13 +5,13 @@
 package frc.robot;
 
 import org.wpilib.math.filter.LinearFilter;
-import org.wpilib.wpilibj.Alert;
-import org.wpilib.wpilibj.Alert.AlertType;
-import org.wpilib.wpilibj.DriverStation;
-import org.wpilib.wpilibj.RobotController;
-import org.wpilib.wpilibj.Timer;
-import org.wpilib.wpilibj2.command.Command;
-import org.wpilib.wpilibj2.command.CommandScheduler;
+import org.wpilib.driverstation.Alert;
+import org.wpilib.wpilibj.Alert.AlertType; // Removed or renamed
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.system.RobotController;
+import org.wpilib.system.Timer;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.CommandScheduler;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import org.littletonrobotics.urcl.URCL;
+import org.littletonrobotics.urcl.URCL; // Removed (must use native revrobotics logger)
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to

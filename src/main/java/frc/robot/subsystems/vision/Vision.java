@@ -2,16 +2,16 @@ package frc.robot.subsystems.vision;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
-import org.wpilib.math.Matrix;
-import org.wpilib.math.VecBuilder;
+import org.wpilib.math.linalg.Matrix;
+import org.wpilib.math.linalg.VecBuilder;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
-import org.wpilib.wpilibj.Alert;
-import org.wpilib.wpilibj.Alert.AlertType;
-import org.wpilib.wpilibj2.command.SubsystemBase;
+import org.wpilib.driverstation.Alert;
+import org.wpilib.wpilibj.Alert.AlertType; // Removed or renamed
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.RobotState;
 import java.util.LinkedList;
 import java.util.List;

@@ -9,7 +9,7 @@ import org.wpilib.math.trajectory.TrapezoidProfile;
 import org.wpilib.math.util.Units;
 import org.wpilib.wpilibj.DriverStation;
 import org.wpilib.wpilibj.DriverStation.Alliance;
-import org.wpilib.wpilibj2.command.Command;
+import org.wpilib.command2.Command;
 import frc.lib.utils.GeomUtils;
 import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;

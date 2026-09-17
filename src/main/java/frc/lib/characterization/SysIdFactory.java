@@ -1,9 +1,9 @@
 package frc.lib.characterization;
 
 import org.wpilib.units.measure.Voltage;
-import org.wpilib.wpilibj2.command.Command;
-import org.wpilib.wpilibj2.command.Subsystem;
-import org.wpilib.wpilibj2.command.sysid.SysIdRoutine;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Subsystem;
+import org.wpilib.command2.sysid.SysIdRoutine;
 import java.util.function.Consumer;
 import org.littletonrobotics.junction.Logger;
 

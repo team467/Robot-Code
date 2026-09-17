@@ -6,7 +6,7 @@ import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.ChassisSpeeds;
 import org.wpilib.math.trajectory.TrapezoidProfile.Constraints;
 import org.wpilib.math.util.Units;
-import org.wpilib.wpilibj2.command.Command;
+import org.wpilib.command2.Command;
 import frc.robot.subsystems.drive.Drive;
 import java.util.Objects;
 import java.util.function.Supplier;

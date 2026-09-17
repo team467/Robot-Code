@@ -1,18 +1,22 @@
 package frc.robot.subsystems.leds;
 
 import org.wpilib.networktables.GenericEntry;
-import org.wpilib.wpilibj.AddressableLED;
-import org.wpilib.wpilibj.AddressableLED.ColorOrder;
-import org.wpilib.wpilibj.AddressableLEDBuffer;
-import org.wpilib.wpilibj.AddressableLEDBufferView;
-import org.wpilib.wpilibj.LEDPattern;
+import org.wpilib.hardware.led.AddressableLED;
+import org.wpilib.hardware.led.AddressableLED.ColorOrder;
+import org.wpilib.hardware.led.AddressableLEDBuffer;
+import org.wpilib.hardware.led.AddressableLEDBufferView;
+import org.wpilib.hardware.led.LEDPattern;
+
+// (Begin): Removed or replaced
 import org.wpilib.wpilibj.shuffleboard.BuiltInLayouts;
 import org.wpilib.wpilibj.shuffleboard.BuiltInWidgets;
 import org.wpilib.wpilibj.shuffleboard.Shuffleboard;
 import org.wpilib.wpilibj.shuffleboard.ShuffleboardLayout;
 import org.wpilib.wpilibj.shuffleboard.ShuffleboardTab;
-import org.wpilib.wpilibj.smartdashboard.SendableChooser;
-import org.wpilib.wpilibj2.command.SubsystemBase;
+// (End): Removed or replaced
+
+import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.RobotState.Mode;

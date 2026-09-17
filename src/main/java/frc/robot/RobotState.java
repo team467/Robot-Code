@@ -2,11 +2,11 @@ package frc.robot;
 
 import static org.wpilib.units.Units.Percent;
 
-import org.wpilib.wpilibj.DriverStation;
-import org.wpilib.wpilibj.LEDPattern;
+import org.wpilib.driverstation.DriverStation;
 import frc.robot.subsystems.leds.LedPatterns;
 import frc.robot.subsystems.leds.Leds.Sections;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.wpilib.hardware.led.LEDPattern;
 
 /**
  * Robot state will hold all the global information that is shared across the subsystems, such as

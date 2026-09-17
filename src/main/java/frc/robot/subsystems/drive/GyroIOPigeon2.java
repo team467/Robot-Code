@@ -13,8 +13,8 @@ import org.wpilib.math.util.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearAcceleration;
-import org.wpilib.wpilibj.Alert;
-import org.wpilib.wpilibj.Alert.AlertType;
+import org.wpilib.driverstation.Alert;
+import org.wpilib.wpilibj.Alert.AlertType; // Removed or renamed
 import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */

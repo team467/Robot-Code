@@ -2,12 +2,12 @@ package frc.robot.subsystems.drive;
 
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
-import org.wpilib.math.MathUtil;
+import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.system.plant.LinearSystemId;
-import org.wpilib.wpilibj.Timer;
-import org.wpilib.wpilibj.simulation.DCMotorSim;
+import org.wpilib.math.system.LinearSystemId; // Removed or renamed (likely LinearSystem now)
+import org.wpilib.system.Timer;
+import org.wpilib.simulation.DCMotorSim;
 
 /** Physics sim implementation of module IO. */
 public class ModuleIOSim implements ModuleIO {

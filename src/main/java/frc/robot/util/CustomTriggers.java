@@ -1,7 +1,7 @@
 package frc.robot.util;
 
-import org.wpilib.wpilibj2.command.CommandScheduler;
-import org.wpilib.wpilibj2.command.button.Trigger;
+import org.wpilib.command2.CommandScheduler;
+import org.wpilib.command2.button.Trigger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BooleanSupplier;

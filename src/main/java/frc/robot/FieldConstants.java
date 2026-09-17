@@ -1,12 +1,12 @@
 package frc.robot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.wpilib.apriltag.AprilTagFieldLayout;
+import org.wpilib.vision.apriltag.AprilTagFieldLayout;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.geometry.Translation3d;
 import org.wpilib.math.util.Units;
-import org.wpilib.wpilibj.Filesystem;
+import org.wpilib.system.Filesystem;
 import java.io.IOException;
 import java.nio.file.Path;
 

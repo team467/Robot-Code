@@ -6,7 +6,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.revrobotics.REVLibError;
 import com.revrobotics.spark.SparkBase;
 import org.wpilib.units.measure.Angle;
-import org.wpilib.wpilibj.RobotController;
+import org.wpilib.system.RobotController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;

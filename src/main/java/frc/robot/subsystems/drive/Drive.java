@@ -5,7 +5,7 @@ import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
-import org.wpilib.math.Matrix;
+import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
 import org.wpilib.math.geometry.Pose2d;
@@ -13,19 +13,19 @@ import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Rotation3d;
 import org.wpilib.math.geometry.Twist2d;
-import org.wpilib.math.kinematics.ChassisSpeeds;
+import org.wpilib.math.kinematics.ChassisSpeeds; // Removed or renamed (maybe Velocities)
 import org.wpilib.math.kinematics.SwerveDriveKinematics;
 import org.wpilib.math.kinematics.SwerveModulePosition;
-import org.wpilib.math.kinematics.SwerveModuleState;
+import org.wpilib.math.kinematics.SwerveModuleState; // Removed or renamed
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
-import org.wpilib.wpilibj.Alert;
-import org.wpilib.wpilibj.Alert.AlertType;
-import org.wpilib.wpilibj.DriverStation;
-import org.wpilib.wpilibj2.command.Command;
-import org.wpilib.wpilibj2.command.Commands;
-import org.wpilib.wpilibj2.command.SubsystemBase;
-import org.wpilib.wpilibj2.command.sysid.SysIdRoutine;
+import org.wpilib.driverstation.Alert;
+import org.wpilib.wpilibj.Alert.AlertType; // Removed or renamed
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.subsystems.vision.VisionConstants;

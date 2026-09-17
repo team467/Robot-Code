@@ -3,9 +3,9 @@ package frc.robot.subsystems.intake.rollers;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.OUTTAKE_VOLTS;
 
-import org.wpilib.wpilibj2.command.Command;
-import org.wpilib.wpilibj2.command.Commands;
-import org.wpilib.wpilibj2.command.SubsystemBase;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
