@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static org.wpilib.units.Units.*;
 import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
