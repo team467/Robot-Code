@@ -2,12 +2,15 @@ package frc.robot;
 
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.framework.RobotBase;
+import org.wpilib.math.util.Units;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 
 public class Constants {
+  public static final double SLOW_SPEED = Units.inchesToMeters(20);
+
   // Change this temporarily to override the RobotType, e.g. RobotType.ROBOT_SIMBOT
   private static final RobotType ROBOT_TYPE_OVERRIDE = null;
   public static final boolean tuningMode = false;

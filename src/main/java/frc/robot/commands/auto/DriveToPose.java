@@ -1,28 +1,28 @@
 package frc.robot.commands.auto;
 
-import org.wpilib.math.controller.ProfiledPIDController;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.kinematics.ChassisSpeeds; // Removed or renamed
-import org.wpilib.math.trajectory.TrapezoidProfile;
-import org.wpilib.math.util.Units;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.command2.Command;
 import frc.lib.utils.GeomUtils;
 import frc.lib.utils.TunableNumber;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
-import java.awt.*;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.wpilib.command3.Command;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.math.controller.ProfiledPIDController;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.kinematics.ChassisVelocities; // Removed or renamed
+import org.wpilib.math.trajectory.TrapezoidProfile;
+import org.wpilib.math.util.Units;
 
 /**
  * Command to drive the robot to a specified pose in a straight path. This is useful for very simple
  * autos or for alignment.
  */
 public class DriveToPose extends Command {
+
   private final Drive drive;
   private final Supplier<Pose2d> poseSupplier;
 
@@ -96,7 +96,7 @@ public class DriveToPose extends Command {
    * Drives to the specified pose under full software control.
    *
    * @param drive The drive subsystem
-   * @param pose The target pose
+   * @param pose  The target pose
    */
   public DriveToPose(Drive drive, Pose2d pose) {
     this(drive, () -> pose);
@@ -110,26 +110,26 @@ public class DriveToPose extends Command {
                 new Translation2d(
                     drive.getPose().getTranslation().getX()
                         + (DriverStation.getAlliance().isEmpty()
-                                || DriverStation.getAlliance().get() == Alliance.Blue
-                            ? deltaXMeters
-                            : -deltaXMeters),
+                        || DriverStation.getAlliance().get() == Alliance.Blue
+                        ? deltaXMeters
+                        : -deltaXMeters),
                     drive.getPose().getTranslation().getY()
                         + (DriverStation.getAlliance().isEmpty()
-                                || DriverStation.getAlliance().get() == Alliance.Blue
-                            ? deltaYMeters
-                            : -deltaYMeters)),
+                        || DriverStation.getAlliance().get() == Alliance.Blue
+                        ? deltaYMeters
+                        : -deltaYMeters)),
                 new Rotation2d(
                     drive.getPose().getRotation().getRadians()
                         + (DriverStation.getAlliance().isEmpty()
-                                || DriverStation.getAlliance().get() == Alliance.Blue
-                            ? deltaThetaRad
-                            : -deltaThetaRad))));
+                        || DriverStation.getAlliance().get() == Alliance.Blue
+                        ? deltaThetaRad
+                        : -deltaThetaRad))));
   }
 
   /**
    * Constructs a new DriveToPose command that drives the robot to a specified pose.
    *
-   * @param drive The drive subsystem
+   * @param drive        The drive subsystem
    * @param poseSupplier A supplier that provides the target pose
    */
   public DriveToPose(Drive drive, Supplier<Pose2d> poseSupplier) {
@@ -194,7 +194,9 @@ public class DriveToPose extends Command {
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     driveErrorAbs = currentDistance;
     double driveVelocityScalar = driveController.calculate(driveErrorAbs, 0.0);
-    if (driveController.atGoal()) driveVelocityScalar = 0.0;
+    if (driveController.atGoal()) {
+      driveVelocityScalar = 0.0;
+    }
 
     // Calculate theta speed
     double thetaVelocity =
@@ -202,17 +204,19 @@ public class DriveToPose extends Command {
             currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
     thetaErrorAbs =
         Math.abs(currentPose.getRotation().minus(targetPose.getRotation()).getRadians());
-    if (thetaController.atGoal()) thetaVelocity = 0.0;
+    if (thetaController.atGoal()) {
+      thetaVelocity = 0.0;
+    }
 
     // Command speeds
     var driveVelocity =
         new Pose2d(
-                new Translation2d(),
-                currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
+            new Translation2d(),
+            currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
             .transformBy(GeomUtils.transformFromTranslation(driveVelocityScalar, 0.0))
             .getTranslation();
     drive.runVelocity(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
+        ChassisVelocities.fromFieldRelativeSpeeds(
             driveVelocity.getX(), driveVelocity.getY(), thetaVelocity, currentPose.getRotation()));
   }
 
@@ -227,19 +231,25 @@ public class DriveToPose extends Command {
     return atGoal();
   }
 
-  /** Checks if the robot is stopped at the final pose. */
+  /**
+   * Checks if the robot is stopped at the final pose.
+   */
   public boolean atGoal() {
     return running && driveController.atGoal() && thetaController.atGoal();
   }
 
-  /** Checks if the robot pose is within the allowed drive and theta tolerances. */
+  /**
+   * Checks if the robot pose is within the allowed drive and theta tolerances.
+   */
   public boolean withinTolerance(double driveTolerance, Rotation2d thetaTolerance) {
     return running
         && Math.abs(driveErrorAbs) < driveTolerance
         && Math.abs(thetaErrorAbs) < thetaTolerance.getRadians();
   }
 
-  /** Returns whether the command is actively running. */
+  /**
+   * Returns whether the command is actively running.
+   */
   @AutoLogOutput
   public boolean isRunning() {
     return running;

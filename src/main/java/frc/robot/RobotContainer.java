@@ -4,31 +4,30 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.SLOW_SPEED;
 import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
-import static frc.robot.subsystems.vision.VisionConstants.*;
+import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
+import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
+import static frc.robot.subsystems.vision.VisionConstants.camera2Name;
+import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
+import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
+import static frc.robot.subsystems.vision.VisionConstants.robotToCamera2;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import org.wpilib.driverstation.GenericHID.RumbleType;
-import org.wpilib.math.geometry.*;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.wpilibj.XboxController; // Removed
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.button.CommandXboxController; // Removed
-import org.wpilib.command2.button.Trigger;
-import org.wpilib.command2.sysid.SysIdRoutine;
-import org.wpilib.command2.sysid.SysIdRoutine.Direction;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.commands.drive.DriveWithDpad;
-import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOTalonSpark;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOSparkMax;
@@ -52,6 +51,19 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.CustomTriggers;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.button.CommandXboxController; // Removed
+import org.wpilib.command2.button.Trigger;
+import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.command2.sysid.SysIdRoutine.Direction;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.GenericHID.RumbleType;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.wpilibj.XboxController; // Removed
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -60,6 +72,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
   // Subsystems
   // private final Subsystem subsystem;
   private Drive drive;
@@ -82,7 +95,9 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     // Instantiate active subsystems
     if (Constants.getMode() != Constants.Mode.REPLAY) {
@@ -130,7 +145,8 @@ public class RobotContainer {
         case ROBOT_SIMBOT -> {
           drive =
               new Drive(
-                  new GyroIO() {},
+                  new GyroIO() {
+                  },
                   new ModuleIOSim(),
                   new ModuleIOSim(),
                   new ModuleIOSim(),
@@ -152,27 +168,37 @@ public class RobotContainer {
     if (drive == null) {
       drive =
           new Drive(
-              new GyroIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {});
+              new GyroIO() {
+              },
+              new ModuleIO() {
+              },
+              new ModuleIO() {
+              },
+              new ModuleIO() {
+              },
+              new ModuleIO() {
+              });
     }
     if (intakeRollers == null) {
-      intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
+      intakeRollers = new IntakeRollers(new IntakeRollersIO() {
+      });
     }
     if (intakeExtend == null) {
-      intakeExtend = new IntakeExtend(new IntakeExtendIO() {}, () -> false);
+      intakeExtend = new IntakeExtend(new IntakeExtendIO() {
+      }, () -> false);
     }
     intake = new Intake(intakeRollers, intakeExtend);
     if (magicCarpet == null) {
-      magicCarpet = new MagicCarpet(new MagicCarpetIO() {});
+      magicCarpet = new MagicCarpet(new MagicCarpetIO() {
+      });
     }
     if (shooter == null) {
-      shooter = new Shooter(new ShooterIO() {});
+      shooter = new Shooter(new ShooterIO() {
+      });
     }
     if (indexer == null) {
-      indexer = new Indexer(new IndexerIO() {});
+      indexer = new Indexer(new IndexerIO() {
+      });
     }
 
     orchestrator =
@@ -182,7 +208,7 @@ public class RobotContainer {
     AutoBuilder.configure(
         drive::getPose,
         drive::setPose,
-        drive::getChassisSpeeds,
+        drive::getChassisVelocities,
         drive::runVelocity,
         new PPHolonomicDriveController(new PIDConstants(14.0, 0, 0), new PIDConstants(7, 0, 0)),
         ppConfig,
@@ -266,9 +292,9 @@ public class RobotContainer {
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * org.wpilib.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * org.wpilib.command2.button.JoystickButton}.
+   * instantiating a {@link GenericHID} or one of its subclasses
+   * ({@link org.wpilib.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
+   * {@link org.wpilib.command2.button.JoystickButton}.
    */
   private void configureButtonBindings() {
     indexer.setDefaultCommand(indexer.stop());
@@ -297,7 +323,17 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
-        .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
+        .whileTrue(drive.run(coro -> {
+          int pov = driverController.getHID().getPOV();
+
+          switch (pov) {
+            case 0 -> drive.runVelocity(new ChassisVelocities(SLOW_SPEED, 0, 0));
+            case 90 -> drive.runVelocity(new ChassisVelocities(0, -SLOW_SPEED, 0));
+            case 180 -> drive.runVelocity(new ChassisVelocities(-SLOW_SPEED, 0, 0));
+            case 270 -> drive.runVelocity(new ChassisVelocities(0, SLOW_SPEED, 0));
+            default -> drive.stop();
+          }
+        }).named("DriveWithDpad"));
     driverController.x().toggleOnTrue(orchestrator.zoneBasedAim());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     driverController

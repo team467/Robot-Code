@@ -32,8 +32,8 @@ public class ShooterLeadCompensator {
     this.robotVelocity =
         () ->
             new Translation2d(
-                drive.getChassisSpeeds().vxMetersPerSecond,
-                drive.getChassisSpeeds().vyMetersPerSecond);
+                drive.getChassisVelocities().vxMetersPerSecond,
+                drive.getChassisVelocities().vyMetersPerSecond);
 
     this.shooter = shooter;
   }
