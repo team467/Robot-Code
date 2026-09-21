@@ -2,13 +2,12 @@ package frc.robot.subsystems.indexer;
 
 import static frc.robot.subsystems.indexer.IndexerConstants.FEEDUP_VOLT;
 
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.SubsystemBase;
+import org.wpilib.command3.Command;
+import org.wpilib.command3.Mechanism;
 import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
-public class Indexer extends SubsystemBase {
+public class Indexer implements Mechanism {
   private final IndexerIO io;
   private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 

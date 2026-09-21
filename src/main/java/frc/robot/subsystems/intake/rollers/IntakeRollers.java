@@ -3,13 +3,12 @@ package frc.robot.subsystems.intake.rollers;
 import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_VOLTS;
 import static frc.robot.subsystems.intake.IntakeConstants.OUTTAKE_VOLTS;
 
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.SubsystemBase;
+import org.wpilib.command3.Command;
 import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
+import org.wpilib.command3.Mechanism;
 
-public class IntakeRollers extends SubsystemBase {
+public class IntakeRollers implements Mechanism {
   private final IntakeRollersIO io;
   private final IntakeRollersIOInputsAutoLogged inputs = new IntakeRollersIOInputsAutoLogged();
 

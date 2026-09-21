@@ -8,16 +8,14 @@ import static frc.robot.subsystems.intake.IntakeConstants.STALL_VELOCITY;
 
 import org.wpilib.system.Timer;
 import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.ConditionalCommand;
-import org.wpilib.command2.SubsystemBase;
+import org.wpilib.command3.Mechanism;
 import frc.robot.RobotState;
 import frc.robot.RobotState.IntakePosition;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
-public class IntakeExtend extends SubsystemBase {
+public class IntakeExtend implements Mechanism {
   private final IntakeExtendIO io;
   private final IntakeExtendIOInputsAutoLogged inputs = new IntakeExtendIOInputsAutoLogged();
   private final Timer stallExtendTimer = new Timer();

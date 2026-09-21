@@ -1,12 +1,11 @@
 package frc.robot.subsystems.magicCarpet;
 
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.SubsystemBase;
+import org.wpilib.command3.Command;
 import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
+import org.wpilib.command3.Mechanism;
 
-public class MagicCarpet extends SubsystemBase {
+public class MagicCarpet implements Mechanism {
   private final MagicCarpetIO io;
   private final MagicCarpetIOInputsAutoLogged inputs = new MagicCarpetIOInputsAutoLogged();
   public boolean manualRun;

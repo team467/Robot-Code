@@ -1,5 +1,6 @@
 package frc.robot.subsystems.leds;
 
+import org.wpilib.command3.Mechanism;
 import org.wpilib.networktables.GenericEntry;
 import org.wpilib.hardware.led.AddressableLED;
 import org.wpilib.hardware.led.AddressableLED.ColorOrder;
@@ -16,12 +17,11 @@ import org.wpilib.wpilibj.shuffleboard.ShuffleboardTab;
 // (End): Removed or replaced
 
 import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.command2.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.RobotState.Mode;
 
-public class Leds extends SubsystemBase {
+public class Leds implements Mechanism {
   private static final boolean debug = false;
   private RobotState state = RobotState.getInstance();
   private final AddressableLED leds;

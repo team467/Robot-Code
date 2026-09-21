@@ -17,17 +17,13 @@ import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Time;
 import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.SubsystemBase;
-import org.wpilib.command2.sysid.SysIdRoutine;
-import org.wpilib.command2.sysid.SysIdRoutine.Config;
-import org.wpilib.command2.sysid.SysIdRoutine.Mechanism;
+import org.wpilib.command3.Command;
+import org.wpilib.command3.Mechanism;
 import frc.robot.RobotState;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
-public class Shooter extends SubsystemBase {
+public class Shooter implements Mechanism {
   private final ShooterIO io;
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
   private final SysIdRoutine sysId;
