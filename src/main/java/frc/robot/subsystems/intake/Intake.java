@@ -5,6 +5,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.*;
 import org.wpilib.command3.Command;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
+import org.wpilib.command3.NeedsExecutionBuilderStage;
 
 public class Intake {
   private final IntakeRollers rollers;
@@ -13,6 +14,10 @@ public class Intake {
   public Intake(IntakeRollers rollers, IntakeExtend extend) {
     this.rollers = rollers;
     this.extend = extend;
+  }
+
+  public NeedsExecutionBuilderStage addRequirements(NeedsExecutionBuilderStage coro) {
+    return coro.requiring(rollers, extend);
   }
 
   public Command extendToAngleAndIntake(double angle) {

@@ -1,10 +1,7 @@
 package frc.robot.commands.auto;
 
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.util.Units;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
+import static org.wpilib.units.Units.Second;
+
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.Orchestrator;
 import frc.robot.subsystems.drive.Drive;
@@ -14,17 +11,23 @@ import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.function.Supplier;
+import org.wpilib.command3.Command;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.util.Units;
 
-/** Contains all autos */
+/**
+ * Contains all autos
+ */
 public class Autos {
 
   /**
    * A helper class that tracks poses needed for manual autos. It simplifies switching between left
    * and right sides.
    *
-   * @param intakeSimple The position to intake at
+   * @param intakeSimple        The position to intake at
    * @param overBumpAllianceAlt The position to go over the bump
-   * @param shootFromCorner The position to shoot at the hub from
+   * @param shootFromCorner     The position to shoot at the hub from
    */
   public record AutoPositions(
       Pose2d center,
@@ -32,21 +35,23 @@ public class Autos {
       Pose2d overBumpNeutral,
       Pose2d overBumpAlliance,
       Pose2d overBumpAllianceAlt,
-      Pose2d shootFromCorner) {}
+      Pose2d shootFromCorner) {
+
+  }
 
   // The necessary poses for autos on left side
   private final AutoPositions poseA =
       new AutoPositions(
           /* center */ new Pose2d(3.457, 4.941, new Rotation2d(Units.degreesToRadians(-55.305))),
           /* intakeSimple */ new Pose2d(
-              7.7052903175354, 5.8276801109313965, Rotation2d.fromDegrees(0.0)),
+          7.7052903175354, 5.8276801109313965, Rotation2d.fromDegrees(0.0)),
           /* overBumpNeutral */ new Pose2d(6.1, 5.574310302734375, Rotation2d.fromDegrees(0)),
           /* overBumpAlliance */ new Pose2d(
-              3.0666706562042236, 5.574310302734375, Rotation2d.fromDegrees(0.0)),
+          3.0666706562042236, 5.574310302734375, Rotation2d.fromDegrees(0.0)),
           /* overBumpAllianceAlt */ new Pose2d(
-              3.086160182952881, 5.437880039215088, Rotation2d.fromDegrees(0)),
+          3.086160182952881, 5.437880039215088, Rotation2d.fromDegrees(0)),
           /* shootFromCorner */ new Pose2d(
-              3.086160182952881, 5.437880039215088, Rotation2d.fromRadians(-0.7553977556351216)));
+          3.086160182952881, 5.437880039215088, Rotation2d.fromRadians(-0.7553977556351216)));
 
   // The necessary poses for autos on right side
   private final AutoPositions poseB =
@@ -68,11 +73,11 @@ public class Autos {
   /**
    * Basic constructor, takes in all initialized subsystems and stores them
    *
-   * @param drive Drive subsystem
+   * @param drive        Drive subsystem
    * @param orchestrator Orchestrator subsystem
-   * @param intake Intake subsystem
-   * @param rollers Intake rollers subsystem
-   * @param shooter Shooter subsystem
+   * @param intake       Intake subsystem
+   * @param rollers      Intake rollers subsystem
+   * @param shooter      Shooter subsystem
    */
   public Autos(
       Drive drive,
@@ -105,24 +110,67 @@ public class Autos {
   /**
    * Helper function for a single cycle auto with a constant shooting speed
    *
-   * @param path The pathplanner path file name to use
+   * @param path      The pathplanner path file name to use
    * @param startPose A supplier that returns that starting position of the robot for this path
    * @return A command that follows the path and shoots
    */
   private Command ppCycle(String path, Supplier<Pose2d> startPose) {
-    return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startPose.get())),
-        Commands.deadline(
-                drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                orchestrator.spinUpShooterHub())
-            .withTimeout(14.5),
-        orchestrator.aimToHub().withTimeout(2.5),
-        Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
-        Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooter(1214),
-            orchestrator.feedUp()));
+    return Command.noRequirements(
+        coro -> {
+          drive.setPose(startPose.get());
+
+          coro.fork(
+              Command.noRequirements(_ -> {
+                drive.setPose(startPose.get());
+              }).named("Reset drive pose"),
+              intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
+              orchestrator.spinUpShooterHub(),
+              Command.waitFor(Second.of(15)).named("Drive Deadline")
+          );
+
+          coro.awaitAny(
+              orchestrator.aimToHub(),
+              Command.waitFor(Second.of(2.5)).named("Orchestrator Aim Deadline")
+          );
+
+          coro.awaitAny(
+              coro.fork(
+                  orchestrator.spinUpShooter(1215),
+                  orchestrator.feedUp()
+              ),
+              Command.waitFor(Second.of(2.5)).named("Orchestrator spin up deadline")
+          );
+
+          coro.fork(
+              intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+              orchestrator.spinUpShooter(1214),
+              orchestrator.feedUp()
+          );
+        }
+    );
+  }
+
+  private Command ppCycleConnect(String path) {
+    return Command.noRequirements(
+        coro -> {
+          coro.awaitAny(
+              drive.getAutonomousCommand(path),
+              intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(Second.of(5.5)),
+              orchestrator.spinUpShooterHub()
+          );
+
+          coro.awaitAny(
+              orchestrator.aimToHub(),
+              Command.waitFor(Second.of(2.5)).named("AimToHub timeout")
+          );
+
+          coro.fork(
+              intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
+              orchestrator.spinUpShooter(1214),
+              orchestrator.feedUp()
+          );
+        }
+    ).named("ppCycleConnect");
   }
 
   private Command ppCycleConnect(String path) {
@@ -143,7 +191,7 @@ public class Autos {
   /**
    * Helper function for a single cycle auto that uses shooter regression to shoot into the hub
    *
-   * @param path The pathplanner path file name to use
+   * @param path      The pathplanner path file name to use
    * @param startPose A Supplier that returns the starting position of the robot for this path
    * @return A command that follows the path and shoots
    */
@@ -212,10 +260,10 @@ public class Autos {
    * Helper function for a double cycle auto that uses shooter regression to shoot into the hub
    * twice (once after each cycle)
    *
-   * @param path1 The pathplanner path file name to use for the first cycle
-   * @param path2 The pathplanner path file name to use for the second cycle
+   * @param path1     The pathplanner path file name to use for the first cycle
+   * @param path2     The pathplanner path file name to use for the second cycle
    * @param startPose The starting position of the robot for the first path and the position it ends
-   *     up in after the path
+   *                  up in after the path
    * @return A command that follows the paths and shoots
    */
   private Command pp2CycleRegression(String path1, String path2, Supplier<Pose2d> startPose) {
@@ -225,10 +273,13 @@ public class Autos {
         .andThen(ppCycleRegressionConnect(path2));
   }
 
-  /** Depot Auto */
+  /**
+   * Depot Auto
+   */
   public Command ppDepot() {
     return ppCycleRegression("A-Cycle-LeftSweep", startDepot);
   }
+
   ;
 
   /**
