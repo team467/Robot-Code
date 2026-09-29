@@ -1,10 +1,10 @@
 package frc.robot.subsystems.shooter;
 
-import org.littletonrobotics.junction.AutoLog;
+import edu.wpi.first.epilogue.Logged;
 
 public interface ShooterIO {
 
-  @AutoLog
+  @Logged
   class ShooterIOInputs {
     public double topLeftMotorVelocityRadPerSec;
     public double topLeftMotorAppliedVolts;

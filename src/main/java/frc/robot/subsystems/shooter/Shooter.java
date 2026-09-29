@@ -9,6 +9,7 @@ import static frc.robot.subsystems.shooter.ShooterConstants.KS;
 import static frc.robot.subsystems.shooter.ShooterConstants.KV;
 import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -16,6 +17,12 @@ import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.util.datalog.BooleanLogEntry;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.util.datalog.StringLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -25,11 +32,12 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.RobotState;
 import java.util.function.Supplier;
+import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
   private final ShooterIO io;
-  private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+  private ShooterIOInputs inputs = new ShooterIOInputs();
   private final SysIdRoutine sysId;
 
   public boolean controllerEnabled = true;
@@ -46,6 +54,15 @@ public class Shooter extends SubsystemBase {
   // This prevents current spikes that cause oscillation with a 20A limit
   private final SlewRateLimiter targetRamper = new SlewRateLimiter(800);
   private double feedForwardScalar;
+
+  private final DataLog log = DataLogManager.getLog();
+  private final StringLogEntry sysIdStateLogger = new StringLogEntry(log, "/Shooter/SysIdState");
+  private final DoubleLogEntry ffVoltageLogger = new DoubleLogEntry(log, "/Shooter/FFVoltage");
+  private final DoubleLogEntry pidVoltageLogger = new DoubleLogEntry(log, "/Shooter/PIDVoltage");
+  private final DoubleLogEntry commandedVoltageLogger = new DoubleLogEntry(log, "/Shooter/CommandedVoltage");
+  private final DoubleLogEntry rampedTargetRadPerSecLogger = new DoubleLogEntry(log, "/Shooter/RampedTargetRadPerSec");
+  private final DoubleLogEntry setpointLogger = new DoubleLogEntry(log, "/Shooter/Setpoint");
+  private final BooleanLogEntry isAtSetpointLogger = new BooleanLogEntry(log, "/Shooter/AtSetpoint");
 
   /**
    * Initializes the shooter with a Shooter IO
@@ -65,13 +82,12 @@ public class Shooter extends SubsystemBase {
                 Volts.per(Second).of(1),
                 null,
                 null,
-                (state) -> Logger.recordOutput("Shooter/SysIdState", state.toString())),
+                (state) -> sysIdStateLogger.append(state.toString())),
             new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   @Override
   public void periodic() {
-
     if (SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
             != feedForwardScalar
         || SmartDashboard.getNumber(
@@ -118,15 +134,14 @@ public class Shooter extends SubsystemBase {
           Math.max(-ShooterConstants.MAX_VOLTAGE, Math.min(ShooterConstants.MAX_VOLTAGE, voltage));
       io.setVoltage(voltage);
 
-      Logger.recordOutput("Shooter/FFVoltage", ff);
-      Logger.recordOutput("Shooter/PIDVoltage", pidOutput);
-      Logger.recordOutput("Shooter/CommandedVoltage", voltage);
-      Logger.recordOutput("Shooter/RampedTargetRadPerSec", rampedTarget);
-      Logger.recordOutput("Shooter/Setpoint", targetSpeed.in(RadiansPerSecond));
+      ffVoltageLogger.update(ff);
+      pidVoltageLogger.update(pidOutput);
+      commandedVoltageLogger.update(voltage);
+      rampedTargetRadPerSecLogger.update(rampedTarget);
+      setpointLogger.update(targetSpeed.in(RadiansPerSecond));
     }
 
-    Logger.processInputs("Shooter", inputs);
-    Logger.recordOutput("Shooter/AtSetpoint", isAtSetpoint());
+    isAtSetpointLogger.update(isAtSetpoint());
     RobotState.getInstance().shooterAtSpeed = isAtSetpoint();
   }
 
