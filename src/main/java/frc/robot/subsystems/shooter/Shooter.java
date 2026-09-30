@@ -9,7 +9,6 @@ import static frc.robot.subsystems.shooter.ShooterConstants.KS;
 import static frc.robot.subsystems.shooter.ShooterConstants.KV;
 import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
 
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -22,7 +21,6 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -31,9 +29,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.RobotState;
-import java.util.function.Supplier;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
-import org.littletonrobotics.junction.Logger;
+import java.util.function.Supplier;
 
 public class Shooter extends SubsystemBase {
   private final ShooterIO io;
@@ -59,10 +56,13 @@ public class Shooter extends SubsystemBase {
   private final StringLogEntry sysIdStateLogger = new StringLogEntry(log, "/Shooter/SysIdState");
   private final DoubleLogEntry ffVoltageLogger = new DoubleLogEntry(log, "/Shooter/FFVoltage");
   private final DoubleLogEntry pidVoltageLogger = new DoubleLogEntry(log, "/Shooter/PIDVoltage");
-  private final DoubleLogEntry commandedVoltageLogger = new DoubleLogEntry(log, "/Shooter/CommandedVoltage");
-  private final DoubleLogEntry rampedTargetRadPerSecLogger = new DoubleLogEntry(log, "/Shooter/RampedTargetRadPerSec");
+  private final DoubleLogEntry commandedVoltageLogger =
+      new DoubleLogEntry(log, "/Shooter/CommandedVoltage");
+  private final DoubleLogEntry rampedTargetRadPerSecLogger =
+      new DoubleLogEntry(log, "/Shooter/RampedTargetRadPerSec");
   private final DoubleLogEntry setpointLogger = new DoubleLogEntry(log, "/Shooter/Setpoint");
-  private final BooleanLogEntry isAtSetpointLogger = new BooleanLogEntry(log, "/Shooter/AtSetpoint");
+  private final BooleanLogEntry isAtSetpointLogger =
+      new BooleanLogEntry(log, "/Shooter/AtSetpoint");
 
   /**
    * Initializes the shooter with a Shooter IO
