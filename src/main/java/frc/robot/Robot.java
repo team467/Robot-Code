@@ -98,10 +98,6 @@ public class Robot extends LoggedRobot {
         if (folder != null) {
           Logger.addDataReceiver(new WPILOGWriter(folder));
         }
-
-        // See https://github.com/Mechanical-Advantage/AdvantageScope/blob/main/docs/REV-LOGGING.md
-        Logger.registerURCL(URCL.startExternal());
-        URCL.start();
       }
 
         // Running a physics simulator, log to NT
