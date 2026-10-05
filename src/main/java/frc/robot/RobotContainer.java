@@ -74,8 +74,6 @@ public class RobotContainer {
   private Intake intake;
   private IntakeRollers intakeRollers;
   private IntakeExtend intakeExtend;
-  private RobotState robotState = RobotState.getInstance();
-  private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -100,8 +98,6 @@ public class RobotContainer {
           vision =
               new Vision(
                   drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
                   new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
         }
@@ -116,16 +112,13 @@ public class RobotContainer {
           vision =
               new Vision(
                   drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
                   new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           intakeRollers = new IntakeRollers(new IntakeRollersIOKraken());
-          intakeExtend =
-              new IntakeExtend(new IntakeExtendIOSparkMax(), operatorController.rightTrigger());
+          intakeExtend = new IntakeExtend(new IntakeExtendIOSparkMax());
           //                    climber = new Climber(new ClimberIOPhysical());
         }
 
@@ -164,7 +157,7 @@ public class RobotContainer {
       intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
     }
     if (intakeExtend == null) {
-      intakeExtend = new IntakeExtend(new IntakeExtendIO() {}, () -> false);
+      intakeExtend = new IntakeExtend(new IntakeExtendIO() {});
     }
     intake = new Intake(intakeRollers, intakeExtend);
     if (magicCarpet == null) {
@@ -262,6 +255,8 @@ public class RobotContainer {
 
     autoChooser.addOption("A-side", autos.ppA2CycleRightRegression());
     autoChooser.addOption("B-side", autos.ppB2CycleRightRegression());
+    autoChooser.addOption("Depot+Outpost", autos.ppDepot());
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -311,7 +306,14 @@ public class RobotContainer {
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
         .and(() -> !operatorController.pov(180).getAsBoolean())
+        .and(() -> !RobotState.getInstance().shooterAtSpeed)
         .toggleOnTrue(intakeExtend.extendToAngle(IntakeConstants.COLLAPSE_POS));
+    CustomTriggers.toggleIntakeUp(
+            driverController.leftBumper(),
+            () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
+        .and(() -> !operatorController.pov(180).getAsBoolean())
+        .and(() -> RobotState.getInstance().shooterAtSpeed)
+        .toggleOnTrue(intake.slowlyBringInIntakeWithoutRollers());
     CustomTriggers.toggleIntakeDown(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
@@ -337,7 +339,9 @@ public class RobotContainer {
         .and(operatorController.pov(180))
         .whileTrue(intakeExtend.runIntakeExtendVolts(4))
         .onFalse(intakeExtend.stopExtendingCommand());
-    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
+    operatorController
+        .leftTrigger(0.1)
+        .toggleOnTrue(orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()));
     operatorController
         .rightTrigger(0.1)
         .and(() -> !operatorController.pov(0).getAsBoolean())
@@ -362,13 +366,5 @@ public class RobotContainer {
   public void robotPeriodic() {
     RobotState.getInstance().updateLEDState();
     orchestrator.orchestratorPeriodic();
-  }
-
-  private Command rumblePulse(double intensity, double seconds) {
-    return Commands.sequence(
-        Commands.runOnce(
-            () -> driverController.getHID().setRumble(RumbleType.kBothRumble, intensity)),
-        Commands.waitSeconds(seconds),
-        Commands.runOnce(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0)));
   }
 }

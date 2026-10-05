@@ -29,9 +29,9 @@ public class IntakeExtendIOKraken implements IntakeExtendIO {
   private final DigitalInput collapsedLimitSwitch;
   private final RelativeEncoder extendMotorEncoder;
   private final SparkClosedLoopController pidController;
-  private double setPos = 0;
   private boolean usingPID = false;
 
+  /** Configures the extension motor, encoder, PID, and limit switch for the Kraken variant. */
   public IntakeExtendIOKraken() {
     extendMotor = new SparkMax(intakeExtendCanId, MotorType.kBrushless);
 
@@ -70,7 +70,7 @@ public class IntakeExtendIOKraken implements IntakeExtendIO {
     inputs.extendVolts = extendMotor.getAppliedOutput();
     inputs.extendAmps = extendMotor.getOutputCurrent();
     inputs.isCollapsed = !collapsedLimitSwitch.get();
-    inputs.getExtendPos = extendMotorEncoder.getPosition();
+    inputs.extendPosition = extendMotorEncoder.getPosition();
     inputs.hasSetpoint = usingPID;
     inputs.setpointValue = extendMotor.getClosedLoopController().getSetpoint();
     inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint();
@@ -92,10 +92,9 @@ public class IntakeExtendIOKraken implements IntakeExtendIO {
   }
 
   @Override
-  public void goToPos(double setPos) {
-    this.setPos = setPos;
-    if (usingPID && !((isCollapsed() && (setPos > 0)))) {
-      pidController.setSetpoint(setPos, ControlType.kPosition);
+  public void goToPos(double targetPosition) {
+    if (usingPID && !(isCollapsed() && targetPosition > 0)) {
+      pidController.setSetpoint(targetPosition, ControlType.kPosition);
     }
   }
 

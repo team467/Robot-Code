@@ -5,12 +5,13 @@ import static edu.wpi.first.units.Units.Minute;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
+import static frc.robot.subsystems.shooter.ShooterConstants.kShooterOffsetFromRobotCenter;
+import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,7 +32,6 @@ import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.util.ShooterLeadCompensator;
 import frc.robot.util.Zone;
 import frc.robot.util.Zone.Tuple2d;
@@ -54,7 +54,7 @@ public class Orchestrator {
     ZONE_4
   }
 
-  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(58.0);
+  private final double FRONT_HUB_OFFSET = Units.inchesToMeters(70.0);
   private final Drive drive;
   private final Shooter shooter;
   private final MagicCarpet magicCarpet;
@@ -231,10 +231,7 @@ public class Orchestrator {
         Meters.of(
             AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())
                 .getDistance(
-                    drive
-                        .getPose()
-                        .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
-                        .getTranslation()));
+                    drive.getPose().transformBy(kShooterOffsetFromRobotCenter).getTranslation()));
   }
 
   private Rotation2d filteredHubAngle(Rotation2d raw) {
@@ -352,13 +349,10 @@ public class Orchestrator {
             new Pose2d(
                 drive.getPose().getX(),
                 drive.getPose().getY(),
-                AllianceFlipUtil.apply(Hub.blueCenter)
-                    .plus(new Translation2d(-0.4, 0))
+                AllianceFlipUtil.apply(Hub.innerCenterPoint)
+                    .toTranslation2d()
                     .minus(
-                        drive
-                            .getPose()
-                            .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
-                            .getTranslation())
+                        drive.getPose().transformBy(kShooterOffsetFromRobotCenter).getTranslation())
                     .getAngle()));
   }
 

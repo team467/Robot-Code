@@ -1,5 +1,7 @@
 package frc.robot.commands.auto;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -12,7 +14,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.function.Supplier;
 
 /** Contains all autos */
@@ -87,7 +88,6 @@ public class Autos {
     this.shooter = shooter;
   }
 
-  private static final Supplier<Pose2d> center = () -> new Pose2d(3.504, 4.019, new Rotation2d(0));
   private static final Supplier<Pose2d> depotPoseStopPoint =
       () -> new Pose2d(1.7998201847076416, 5.983600616455078, Rotation2d.fromDegrees(180));
   private static final Supplier<Pose2d> depotPose =
@@ -101,6 +101,8 @@ public class Autos {
       () -> AllianceFlipUtil.apply(new Pose2d(4.295, 0.538, new Rotation2d(0.000)));
   private static final Supplier<Pose2d> startDepot =
       () -> AllianceFlipUtil.apply(new Pose2d(3.630, 5.844, new Rotation2d(0.000)));
+  private static final Supplier<Pose2d> center =
+      () -> AllianceFlipUtil.apply(new Pose2d(3.581, 4.027, Rotation2d.k180deg));
 
   /**
    * Helper function for a single cycle auto with a constant shooting speed
@@ -153,40 +155,62 @@ public class Autos {
         Commands.deadline(
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                Commands.waitSeconds(5)
-                    .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
+                Commands.waitSeconds(5.7)
+                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(2.769))))
             .withTimeout(15.5),
         Commands.deadline(
                 orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
                 orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
             .andThen(
                 Commands.parallel(
-                        Commands.waitSeconds(0.7).andThen(intake.slowlyBringInIntake()),
+                        Commands.waitSeconds(0.4).andThen(intake.slowlyBringInIntake()),
                         orchestrator.aimToHub().withTimeout(1).repeatedly(),
                         orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
                         Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))
                     .withTimeout(1.6)));
   }
 
-  private Command ppCycleRegressionDepo(String path, Supplier<Pose2d> startPose) {
+  private Command ppCycleRegressionCustom(
+      String path, Supplier<Pose2d> startPose, double endDistance) {
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(startPose.get())),
         Commands.deadline(
                 drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.FUNNEL_POS).withTimeout(5.5),
-                Commands.waitSeconds(5)
-                    .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
+                intake
+                    .extendToAngleAndIntake(IntakeConstants.FUNNEL_POS)
+                    .withTimeout(4.5)
+                    .andThen(intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS)),
+                Commands.waitSeconds(5.7)
+                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(endDistance))))
             .withTimeout(15.5),
         Commands.deadline(
                 orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
                 orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
             .andThen(
                 Commands.parallel(
-                        Commands.waitSeconds(0.7).andThen(intake.slowlyBringInIntake()),
+                        Commands.waitSeconds(0.4).andThen(intake.slowlyBringInIntake()),
                         orchestrator.aimToHub().withTimeout(1).repeatedly(),
                         orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
                         Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))
                     .withTimeout(1.6)));
+  }
+
+  private Command ppCycleRegressionDepo(String path) {
+    return Commands.sequence(
+        Commands.deadline(
+                drive.getAutonomousCommand(path),
+                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
+                orchestrator.spinUpShooterDistance(() -> Meters.of(3.185)))
+            .withTimeout(14.5),
+        Commands.deadline(
+                orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
+            .andThen(
+                Commands.parallel(
+                    Commands.waitSeconds(0.9).andThen(intake.slowlyBringInIntake()),
+                    orchestrator.aimToHub().withTimeout(1).repeatedly(),
+                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                    Commands.waitSeconds(0.9).andThen(orchestrator.feedUp()))));
   }
 
   private Command ppCycleRegressionConnect(String path) {
@@ -194,8 +218,8 @@ public class Autos {
         Commands.deadline(
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                Commands.waitSeconds(5)
-                    .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
+                Commands.waitSeconds(5.5)
+                    .andThen(orchestrator.spinUpShooterDistance(() -> Meters.of(2.869))))
             .withTimeout(14.5),
         Commands.deadline(
                 orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
@@ -227,7 +251,7 @@ public class Autos {
 
   /** Depot Auto */
   public Command ppDepot() {
-    return ppCycleRegression("A-Cycle-LeftSweep", startDepot);
+    return Commands.sequence(EightBalls().withTimeout(8.2), ppCycleRegressionDepo("Depot+Outpost"));
   }
   ;
 
@@ -283,6 +307,10 @@ public class Autos {
    */
   public Command ppACycleLeftRegression() {
     return ppCycleRegression("A-Cycle-LeftSweep", startAside);
+  }
+
+  public Command ppDepotOutpost() {
+    return ppCycleRegressionCustom("Depot+Outpost", center, 4.285);
   }
 
   /**
@@ -452,7 +480,11 @@ public class Autos {
   public Command EightBalls() {
     return Commands.sequence(
         Commands.deadline(
-            orchestrator.driveToHub().withTimeout(3.0), orchestrator.spinUpShooterHub()),
-        Commands.parallel(orchestrator.spinUpShooterHub(), orchestrator.feedUp()));
+            orchestrator.driveToHub().withTimeout(3.0),
+            orchestrator.spinUpShooterDistance(orchestrator.getHubDistance())),
+        Commands.parallel(
+                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
+                Commands.waitSeconds(1).andThen(orchestrator.feedUp()))
+            .withTimeout(5.2));
   }
 }

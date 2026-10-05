@@ -17,36 +17,39 @@ public class IntakeRollers extends SubsystemBase {
     this.io = io;
   }
 
+  /** Updates roller telemetry and exposes the active intake state to robot-wide logic. */
+  @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake/IntakeRollers", inputs);
     RobotState.getInstance().intaking = inputs.intakeVolts > 0;
   }
 
-  private void setPercentIntake(double intakePercent) {
-    io.setPercentIntake(intakePercent);
-  }
-
+  /** Drives the intake rollers with open-loop voltage. */
   public void setVoltageIntake(double intakeVolts) {
     io.setVoltageIntake(intakeVolts);
   }
 
+  /** Stops the intake rollers immediately. */
   private void stopIntake() {
     io.setVoltageIntake(0);
   }
 
+  /** Runs the rollers inward until the command ends. */
   public Command intake() {
     return Commands.run(() -> setVoltageIntake(INTAKE_VOLTS), this)
         .finallyDo(this::stopIntake)
         .withName("intake");
   }
 
+  /** Runs the rollers outward until the command ends. */
   public Command outtake() {
     return Commands.run(() -> setVoltageIntake(OUTTAKE_VOLTS), this)
         .finallyDo(this::stopIntake)
         .withName("outtake");
   }
 
+  /** Creates a command that keeps the rollers stopped while scheduled. */
   public Command stopIntakeCommand() {
     return Commands.run(this::stopIntake).withName("stopIntakeCommand");
   }

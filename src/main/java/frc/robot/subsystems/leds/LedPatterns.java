@@ -65,43 +65,59 @@ public enum LedPatterns {
 
   private final LEDPattern colorPattern;
 
+  /** Returns the base LED pattern without adding animation. */
   public LEDPattern colorPatternOnly() {
     return colorPattern;
   }
 
+  /** Blinks the pattern at the default strobe timing. */
   public LEDPattern blink() {
     return colorPattern.blink(Seconds.of(STROBE_TIME));
   }
 
+  /**
+   * Blinks the pattern at the requested timing, falling back to default timing for invalid input.
+   */
   public LEDPattern blink(double time) {
     return colorPattern.blink(Seconds.of(time > 0.0 ? time : STROBE_TIME));
   }
 
+  /** Breathes the pattern at the default timing. */
   public LEDPattern breathe() {
     return colorPattern.breathe(Seconds.of(BREATH_TIME));
   }
 
+  /**
+   * Breathes the pattern at the requested timing, falling back to default timing for invalid input.
+   */
   public LEDPattern breathe(double time) {
     return colorPattern.breathe(Seconds.of(time > 0.0 ? time : BREATH_TIME));
   }
 
+  /** Scrolls the pattern at the default speed. */
   public LEDPattern scroll() {
     return colorPattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
   }
 
+  /**
+   * Scrolls the pattern at the requested speed, falling back to default speed for invalid input.
+   */
   public LEDPattern scroll(double metersPerSecond) {
     return colorPattern.scrollAtAbsoluteSpeed(
         MetersPerSecond.of(metersPerSecond > 0.0 ? metersPerSecond : 1), LED_SPACING);
   }
 
+  /** Overlays this pattern on top of another pattern. */
   public LEDPattern overlayOn(LEDPattern base) {
     return colorPattern.overlayOn(base);
   }
 
+  /** Blends this pattern with another pattern. */
   public LEDPattern blend(LEDPattern other) {
     return colorPattern.blend(other);
   }
 
+  /** Stores the underlying WPILib LED pattern for this enum value. */
   private LedPatterns(LEDPattern colorPattern) {
     this.colorPattern = colorPattern;
   }
