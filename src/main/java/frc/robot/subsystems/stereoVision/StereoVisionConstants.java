@@ -10,7 +10,10 @@ public class StereoVisionConstants {
   public static String camera0Name = "camera_0";
   public static String camera1Name = "camera_1";
 
-  //TODO: get correct
+  private static Rotation3d RotationCorrection =
+      new Rotation3d(0, 0, Math.PI / 2); // 90 degree roation around z-axis
+
+  //TODO: get correct coordinates for cams
   public static Transform3d robotToCamera0 =
       new Transform3d( // front camera
           new Translation3d(
