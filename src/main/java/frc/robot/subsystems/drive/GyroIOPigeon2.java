@@ -4,6 +4,7 @@ import static frc.robot.Schematic.*;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -20,8 +21,8 @@ import java.util.Queue;
 /** IO implementation for Pigeon 2. */
 public class GyroIOPigeon2 implements GyroIO {
   private final Alert impactAlert =
-      new Alert("Impact Detected, lowering elevator to prevent flipping.", Level.MEDIUM);
-  private final Pigeon2 pigeon = new Pigeon2(pigeonCanId);
+      new Alert("Gyro","Impact Detected, lowering elevator to prevent flipping.", Level.MEDIUM);
+  private final Pigeon2 pigeon = new Pigeon2(pigeonCanId,kCANBus);
   private final StatusSignal<Angle> yaw = pigeon.getYaw();
   private final Queue<Double> yawPositionQueue;
   private final Queue<Double> yawTimestampQueue;
