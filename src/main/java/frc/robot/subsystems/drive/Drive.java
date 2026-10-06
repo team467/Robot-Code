@@ -10,8 +10,6 @@ import frc.robot.RobotState;
 import org.wpilib.driverstation.MatchState;
 import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.math.kinematics.SwerveModuleVelocity;
-import org.wpilib.wpiutil.Alert; // 2027 migration: Alert moved from HAL/wpilib into wpiutil
-import org.wpilib.wpiutil.Alert.Level;
 import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
@@ -22,7 +20,7 @@ import org.wpilib.math.geometry.Rotation3d;
 import org.wpilib.math.geometry.Twist2d;
 import org.wpilib.math.kinematics.SwerveDriveKinematics;
 import org.wpilib.math.kinematics.SwerveModulePosition;
-import org.wpilib.math.kinematics.SwerveModuleState;
+
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
 import org.wpilib.driverstation.DriverStation;
@@ -33,7 +31,6 @@ import org.wpilib.command3.Mechanism;
 // expects a v2 Subsystem, but this class now implements the v3 Mechanism interface
 // (see class declaration) instead. Passing `this` there is a real type mismatch that
 // needs a team decision, not a mechanical fix — see summary below.
-import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.subsystems.vision.VisionConstants;
