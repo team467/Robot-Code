@@ -18,8 +18,13 @@ public interface StereoVisionIO {
     public Translation3d rayDirection = new Translation3d();
   }
 
-  /** Represents the angle to a simple target (the game piece), not used for pose estimation. */
-  public static record TargetObservation(Rotation2d yaw, Rotation2d pitch) {}
+  /**
+   * Represents the angle to a simple target (the game piece), not used for pose estimation.
+   *
+   * @param tx -> yaw
+   * @param ty -> pitch
+   */
+  public static record TargetObservation(Rotation2d tx, Rotation2d ty) {}
 
   public default void updateInputs(StereoVisionIOInputs inputs) {}
 }
