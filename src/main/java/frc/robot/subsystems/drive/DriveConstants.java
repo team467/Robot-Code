@@ -3,12 +3,10 @@ package frc.robot.subsystems.drive;
 import static frc.robot.Schematic.*;
 import static java.lang.Math.PI;
 
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
-import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.system.DCMotor;
@@ -122,9 +120,6 @@ public class DriveConstants {
               driveMotorCurrentLimit,
               1),
           moduleTranslations);
-
-  //Pidgeon
-  public static final CANBus kCANBus = new CANBus("can_s17");
   // Requirements for RobotTilt to trigger
   public static final double rollThreshhold = 10.0;
   public static final double pitchThreshold = 10.0;

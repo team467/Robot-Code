@@ -2,12 +2,10 @@ package frc.robot.subsystems.drive;
 
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
-import org.wpilib.math.system.LinearSystemLoop;
-import org.wpilib.math.system.Models;
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.controller.PIDController;
-import org.wpilib.math.geometry.Rotation2d; // Removed or renamed (likely LinearSystem now)
-import org.wpilib.simulation.LinearSystemSim;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.system.LinearSystemId; // Removed or renamed (likely LinearSystem now)
 import org.wpilib.system.Timer;
 import org.wpilib.simulation.DCMotorSim;
 
@@ -28,11 +26,11 @@ public class ModuleIOSim implements ModuleIO {
     // Create drive and turn sim models
     driveSim =
         new DCMotorSim(
-            Models.singleJointedArmFromPhysicalConstants(driveGearbox, 0.025, driveMotorReduction),
+            LinearSystemId.createDCMotorSystem(driveGearbox, 0.025, driveMotorReduction),
             driveGearbox);
     turnSim =
         new DCMotorSim(
-            Models.singleJointedArmFromPhysicalConstants(turnGearbox, 0.004, turnMotorReduction),
+            LinearSystemId.createDCMotorSystem(turnGearbox, 0.004, turnMotorReduction),
             turnGearbox);
 
     // Enable wrapping for turn PID
@@ -44,38 +42,38 @@ public class ModuleIOSim implements ModuleIO {
     // Run closed-loop control
     if (driveClosedLoop) {
       driveAppliedVolts =
-          driveFFVolts + driveController.calculate(driveSim.getAngularVelocity());
+          driveFFVolts + driveController.calculate(driveSim.getAngularVelocityRadPerSec());
     } else {
       driveController.reset();
     }
     if (turnClosedLoop) {
-      turnAppliedVolts = turnController.calculate(turnSim.getAngularPosition());
+      turnAppliedVolts = turnController.calculate(turnSim.getAngularPositionRad());
     } else {
       turnController.reset();
     }
 
     // Update simulation state
-    driveSim.setInputVoltage(MathUtil.inputModulus(driveAppliedVolts, -12.0, 12.0));
-    turnSim.setInputVoltage(MathUtil.inputModulus(turnAppliedVolts, -12.0, 12.0));
+    driveSim.setInputVoltage(MathUtil.clamp(driveAppliedVolts, -12.0, 12.0));
+    turnSim.setInputVoltage(MathUtil.clamp(turnAppliedVolts, -12.0, 12.0));
     driveSim.update(0.02);
     turnSim.update(0.02);
 
     // Update drive inputs
     inputs.driveConnected = true;
-    inputs.drivePositionRad = driveSim.getAngularPosition(); //.getAngularPositionRad();
-    inputs.driveVelocityRadPerSec = driveSim.getAngularVelocity(); //getAngularVelocityRadPerSec();
+    inputs.drivePositionRad = driveSim.getAngularPositionRad();
+    inputs.driveVelocityRadPerSec = driveSim.getAngularVelocityRadPerSec();
     inputs.driveAppliedVolts = driveAppliedVolts;
-    inputs.driveCurrentAmps = Math.abs(driveSim.getCurrentDraw());//getCurrentDrawAmps());
+    inputs.driveCurrentAmps = Math.abs(driveSim.getCurrentDrawAmps());
 
     // Update turn inputs
     inputs.turnConnected = true;
-    inputs.turnPosition = new Rotation2d(turnSim.getAngularPosition()); //getAngularPositionRad());
-    inputs.turnVelocityRadPerSec = turnSim.getAngularVelocity();
+    inputs.turnPosition = new Rotation2d(turnSim.getAngularPositionRad());
+    inputs.turnVelocityRadPerSec = turnSim.getAngularVelocityRadPerSec();
     inputs.turnAppliedVolts = turnAppliedVolts;
-    inputs.turnCurrentAmps = Math.abs(turnSim.getCurrentDraw());
+    inputs.turnCurrentAmps = Math.abs(turnSim.getCurrentDrawAmps());
 
     // Update odometry inputs (50Hz because high-frequency odometry in sim doesn't matter)
-    inputs.odometryTimestamps = new double[] {Timer.getTimestamp()};
+    inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
     inputs.odometryDrivePositionsRad = new double[] {inputs.drivePositionRad};
     inputs.odometryTurnPositions = new Rotation2d[] {inputs.turnPosition};
   }

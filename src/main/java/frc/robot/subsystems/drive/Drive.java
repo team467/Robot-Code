@@ -1,17 +1,12 @@
 package frc.robot.subsystems.drive;
 
-import static org.wpilib.framework.RobotBase.isDisabled;
 import static org.wpilib.units.Units.*;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
-import frc.robot.RobotState;
-import org.wpilib.driverstation.MatchState;
 import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.math.kinematics.SwerveModuleVelocity;
-import org.wpilib.wpiutil.Alert; // 2027 migration: Alert moved from HAL/wpilib into wpiutil
-import org.wpilib.wpiutil.Alert.Level;
+import org.wpilib.util.Alert.Level;
 import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
@@ -20,19 +15,16 @@ import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Rotation3d;
 import org.wpilib.math.geometry.Twist2d;
+import org.wpilib.math.kinematics.ChassisVelocities; // Removed or renamed (maybe Velocities)
 import org.wpilib.math.kinematics.SwerveDriveKinematics;
 import org.wpilib.math.kinematics.SwerveModulePosition;
-import org.wpilib.math.kinematics.SwerveModuleState;
+import org.wpilib.math.kinematics.SwerveModuleState; // Removed or renamed
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
+import org.wpilib.util.Alert;
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.command3.Command;
 import org.wpilib.command3.Mechanism;
-// 2027 migration: SysIdRoutine below is still the Commands v2 class (no v3 equivalent
-// shipped yet as of alpha-7). Its Mechanism.Mechanism(...) constructor's third argument
-// expects a v2 Subsystem, but this class now implements the v3 Mechanism interface
-// (see class declaration) instead. Passing `this` there is a real type mismatch that
-// needs a team decision, not a mechanical fix — see summary below.
 import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
@@ -46,17 +38,24 @@ public class Drive implements Mechanism {
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+  private final Alert impactAlert =
+      new Alert("Impact Detected, lowering elevator to prevent flipping.", Level.MEDIUM);
+  private final Alert tiltAlert =
+      new Alert(
+          ("Tilt Threshold reached, lowering elevator to prevent flipping"), Level.MEDIUM);
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
-  // private final SysIdRoutine sysId;
+  private final SysIdRoutine sysId;
+  private final Alert gyroDisconnectedAlert =
+      new Alert("Disconnected gyro, using kinematics as fallback.", Level.HIGH);
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
-  private Rotation2d rawGyroRotation = Rotation2d.ZERO;
+  private Rotation2d rawGyroRotation = Rotation2d.kZero;
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
-          new SwerveModulePosition(),
-          new SwerveModulePosition(),
-          new SwerveModulePosition(),
-          new SwerveModulePosition()
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition()
       };
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
@@ -84,23 +83,20 @@ public class Drive implements Mechanism {
     // Configure AutoBuilder for PathPlanner
 
     // Configure SysId
-//    sysId =
-//        new SysIdRoutine(
-//            new SysIdRoutine.Config(
-//                null,
-//                null,
-//                null,
-//                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
-//            // 2027 migration: `this` no longer satisfies this constructor's expected type
-//            // (v2 Subsystem) now that Drive implements the v3 Mechanism interface. Needs a
-//            // team decision — see summary.
-//            new SysIdRoutine.Mechanism(
-//                (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+    sysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
 
     headingController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
-
+  @Override
   public void periodic() {
     logCameraPositions(); // uncomment to show camera positions in advantage scope
     odometryLock.lock(); // Prevents odometry updates while reading data
@@ -111,19 +107,16 @@ public class Drive implements Mechanism {
     }
     odometryLock.unlock();
     // Stop moving when disabled
-    // 2027 migration: DriverStation was split into MatchState/RobotState (alpha 5).
-    // isDisabled() reads robot state, so this likely needs to move to RobotState.isDisabled()
-    // — verify the exact package/class against your target alpha before changing this.
-    if (isDisabled()) {
+    if (DriverStation.isDisabled()) {
       for (var module : modules) {
         module.stop();
       }
     }
 
     // Log empty setpoint states when disabled
-    if (isDisabled()) {
-      Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleVelocity[] {});
-      Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleVelocity[] {});
+    if (DriverStation.isDisabled()) {
+      Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
+      Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
     }
 
     // Update odometry
@@ -138,8 +131,8 @@ public class Drive implements Mechanism {
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
         moduleDeltas[moduleIndex] =
             new SwerveModulePosition(
-                modulePositions[moduleIndex].distance
-                    - lastModulePositions[moduleIndex].distance,
+                modulePositions[moduleIndex].distanceMeters
+                    - lastModulePositions[moduleIndex].distanceMeters,
                 modulePositions[moduleIndex].angle);
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
       }
@@ -159,7 +152,7 @@ public class Drive implements Mechanism {
     }
 
     // Update gyro alert
-    //gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.getMode() != Mode.SIM);
+    gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.getMode() != Mode.SIM);
   }
 
   /**
@@ -169,9 +162,9 @@ public class Drive implements Mechanism {
    */
   public void runVelocity(ChassisVelocities speeds) {
     // Calculate module setpoints
-    ChassisVelocities discreteSpeeds = speeds.discretize(0.02);
-    SwerveModuleVelocity[] setpointStates = kinematics.toSwerveModuleVelocities(discreteSpeeds);
-    var desaturatedStates = SwerveDriveKinematics.desaturateWheelVelocities(setpointStates, maxSpeedMetersPerSec);
+    ChassisVelocities discreteSpeeds = ChassisVelocities.discretize(speeds, 0.02);
+    SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, maxSpeedMetersPerSec);
 
     // Log unoptimized setpoints
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
@@ -179,7 +172,7 @@ public class Drive implements Mechanism {
 
     // Send setpoints to modules
     for (int i = 0; i < 4; i++) {
-      modules[i].runSetpoint(desaturatedStates[i]);
+      modules[i].runSetpoint(setpointStates[i]);
     }
 
     // Log optimized setpoints (runSetpoint mutates each state)
@@ -193,26 +186,18 @@ public class Drive implements Mechanism {
     }
   }
 
-//  public Command getAutonomousCommand(String Path) {
-//    try {
-//      // Load the path you want to follow using its name in the GUI
-//      PathPlannerPath path = PathPlannerPath.fromPathFile(Path);
-//
-//      // Create a path following command using AutoBuilder. This will also trigger event markers.
-//      // 2027 migration: PathPlanner is a vendor library — it needs its own 2027-compatible
-//      // vendordep release. Confirm the version you're on returns a command type compatible
-//      // with org.wpilib.command3.Command (this method's return type); pre-2027 PathPlanner
-//      // versions return a Commands v2 command, which will not satisfy this signature.
-//      return AutoBuilder.followPath(path);
-//    } catch (Exception e) {
-//      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-//      // 2027 migration: Commands.none() was already unresolved in the original file (no
-//      // Commands import) — pre-existing bug, not introduced by this migration. If you want a
-//      // no-op Command here, confirm what Commands v3's equivalent factory method is called
-//      // and import it explicitly; v3's API doesn't mirror v2's Commands class 1:1.
-//      return Commands.none();
-//    }
-//  }
+  public Command getAutonomousCommand(String Path) {
+    try {
+      // Load the path you want to follow using its name in the GUI
+      PathPlannerPath path = PathPlannerPath.fromPathFile(Path);
+
+      // Create a path following command using AutoBuilder. This will also trigger event markers.
+      return AutoBuilder.followPath(path);
+    } catch (Exception e) {
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return Commands.none();
+    }
+  }
 
   /** Stops the drive. */
   public void stop() {
@@ -226,28 +211,28 @@ public class Drive implements Mechanism {
   public void stopWithX() {
     Rotation2d[] headings = new Rotation2d[4];
     for (int i = 0; i < 4; i++) {
-      headings[i] = moduleTranslations[i].getAngle().get();
+      headings[i] = moduleTranslations[i].getAngle();
     }
     kinematics.resetHeadings(headings);
     stop();
   }
 
-//  /** Returns a command to run a quasistatic test in the specified direction. */
-//  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-//    return run(() -> runCharacterization(0.0))
-//        .withTimeout(1.0)
-//        .andThen(sysId.quasistatic(direction));
-//  }
-//
-//  /** Returns a command to run a dynamic test in the specified direction. */
-//  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-//    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
-//  }
+  /** Returns a command to run a quasistatic test in the specified direction. */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(0.0))
+        .withTimeout(1.0)
+        .andThen(sysId.quasistatic(direction));
+  }
+
+  /** Returns a command to run a dynamic test in the specified direction. */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+  }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
-  @AutoLogOutput(key = "SwerveVelocities/Measured")
-  private SwerveModuleVelocity[] getModuleStates() {
-    SwerveModuleVelocity[] states = new SwerveModuleVelocity[4];
+  @AutoLogOutput(key = "SwerveStates/Measured")
+  private SwerveModuleState[] getModuleStates() {
+    SwerveModuleState[] states = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
       states[i] = modules[i].getState();
     }
