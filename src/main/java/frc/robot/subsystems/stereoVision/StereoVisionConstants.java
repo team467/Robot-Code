@@ -7,34 +7,35 @@ import edu.wpi.first.math.util.Units;
 
 public class StereoVisionConstants {
   // TODO: chnange names accordingly
-  public static String camera0Name = "camera_0";
-  public static String camera1Name = "camera_1";
+  public static String camera0Name = "stereo_camera_0";
+  public static String camera1Name = "stereo_camera_1";
 
   private static Rotation3d RotationCorrection =
       new Rotation3d(0, 0, Math.PI / 2); // 90 degree roation around z-axis
 
-  //TODO: get correct coordinates for cams
+  // TODO: get correct coordinates for cams
   public static Transform3d robotToCamera0 =
-      new Transform3d( // front camera
+      new Transform3d( // left stereo camera
           new Translation3d(
-              Units.inchesToMeters(8.779),
-              Units.inchesToMeters(10.445),
-              Units.inchesToMeters(27.152 + 1.75))
+                  Units.inchesToMeters(0.0), Units.inchesToMeters(0.0), Units.inchesToMeters(0.0))
               .rotateBy(RotationCorrection),
           new Rotation3d(
               Units.degreesToRadians(0.0),
-              Units.degreesToRadians(-25.2),
+              Units.degreesToRadians(0.0),
               Units.degreesToRadians(0.0)));
 
   public static Transform3d robotToCamera1 =
-      new Transform3d( // rear left camera
+      new Transform3d( // right stereo camera
           new Translation3d(
-              Units.inchesToMeters(9.562), // x
-              Units.inchesToMeters(10.974), // y
-              Units.inchesToMeters(17.035 + 1.75)) // z
+                  Units.inchesToMeters(0.0), // x
+                  Units.inchesToMeters(0.0), // y
+                  Units.inchesToMeters(0.0)) // z
               .rotateBy(RotationCorrection),
           new Rotation3d(
               Units.degreesToRadians(0.0),
-              Units.degreesToRadians(-11.32),
-              Units.degreesToRadians(155.3)));
+              Units.degreesToRadians(0.0),
+              Units.degreesToRadians(0.0)));
+
+  // Basic filtering thresholds
+  public static double minDetectionConfidence = 0.3; // TODO: arbitrary - chnage based on testing
 }
