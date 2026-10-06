@@ -3,9 +3,10 @@ package frc.robot.subsystems.magicCarpet;
 import org.wpilib.command3.Command;
 import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
-import org.wpilib.command3.Mechanism;
 
-public class MagicCarpet implements Mechanism {
+import frc.lib.SubsystemBase;
+
+public class MagicCarpet extends SubsystemBase {
   private final MagicCarpetIO io;
   private final MagicCarpetIOInputsAutoLogged inputs = new MagicCarpetIOInputsAutoLogged();
   public boolean manualRun;
@@ -26,11 +27,14 @@ public class MagicCarpet implements Mechanism {
    * @return A command to run the magic carpet at a constant speed
    */
   public Command run() {
-    return setManualControl(true)
-        .andThen(Commands.run(() -> io.setSpeed(MagicCarpetConstants.BELT_SPEED), this))
-        .finallyDo(() -> setManualControl(false).schedule())
-        .withName("start");
+    return this.run(
+        coro -> {
+          io.setSpeed(MagicCarpetConstants.BELT_SPEED);
+          coro.fork(setManualControl(false));
+        }
+    ).named("MagicCarpet Start");
   }
+
 
   /**
    * Control whether to run magic carpet through commands or periodic
@@ -38,7 +42,7 @@ public class MagicCarpet implements Mechanism {
    * @param manual Call run manually instead of through periodic
    */
   public Command setManualControl(boolean manual) {
-    return Commands.runOnce(() -> this.manualRun = manual, this);
+    return this.run(_ -> this.manualRun = manual).named("MagicCarpet SetManualControl");
   }
 
   @Override
