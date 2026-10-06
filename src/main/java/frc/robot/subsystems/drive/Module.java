@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
 import org.wpilib.util.Alert.Level;
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.geometry.Rotation2d;
@@ -23,11 +24,11 @@ public class Module {
     this.io = io;
     this.index = index;
     driveDisconnectedAlert =
-        new Alert(
+        new Alert("driveDisconnected",
             "Disconnected drive motor on module " + Integer.toString(index) + ".",
             Level.HIGH);
     turnDisconnectedAlert =
-        new Alert(
+        new Alert("driveDisconnected",
             "Disconnected turn motor on module " + Integer.toString(index) + ".", Level.HIGH);
   }
 
@@ -50,21 +51,21 @@ public class Module {
   }
 
   /** Runs the module with the specified setpoint state. Mutates the state to optimize it. */
-  public void runSetpoint(SwerveModuleState state) {
+  public void runSetpoint(SwerveModuleVelocity state) {
     // Optimize velocity setpoint
 
     optimize(state, getAngle());
     state.cosineScale(state.angle);
 
     // Apply setpoints
-    io.setDriveVelocity(state.speedMetersPerSecond / wheelRadiusMeters);
+    io.setDriveVelocity(state.velocity / wheelRadiusMeters);
     io.setTurnPosition(state.angle);
   }
 
   /** Runs the module with the specified output while controlling to zero degrees. */
   public void runCharacterization(double output) {
     io.setDriveOpenLoop(output);
-    io.setTurnPosition(Rotation2d.kZero);
+    io.setTurnPosition(Rotation2d.ZERO);
   }
 
   /** Disables all outputs to motors. */
@@ -93,9 +94,11 @@ public class Module {
     return new SwerveModulePosition(getPositionMeters(), getAngle());
   }
 
-  /** Returns the module state (turn angle and drive velocity). */
-  public SwerveModuleState getState() {
-    return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
+  /**
+   * Returns the module state (turn angle and drive velocity).
+   */
+  public SwerveModuleVelocity getState() {
+    return new SwerveModuleVelocity(getVelocityMetersPerSec(), getAngle());
   }
 
   /** Returns the module positions received this cycle. */
@@ -118,11 +121,12 @@ public class Module {
     return inputs.driveVelocityRadPerSec;
   }
 
-  private static void optimize(SwerveModuleState state, Rotation2d currentAngle) {
+  private static void optimize(
+    SwerveModuleVelocity state, Rotation2d currentAngle) {
     var delta = state.angle.minus(currentAngle);
     if (Math.abs(MathUtil.inputModulus(delta.getDegrees(), -180, 180)) > 90) {
-      state.speedMetersPerSecond *= -1;
-      state.angle = state.angle.rotateBy(Rotation2d.kPi);
+      state.velocity *= -1;
+      state.angle = state.angle.rotateBy(Rotation2d.PI);
     }
   }
 }

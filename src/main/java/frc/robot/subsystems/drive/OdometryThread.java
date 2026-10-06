@@ -137,7 +137,7 @@ public class OdometryThread extends Thread {
       Drive.odometryLock.lock();
       try {
         // Get sample timestamp
-        double timestamp = RobotController.getFPGATime() / 1e6;
+        double timestamp = RobotController.getTime() / 1e6;
 
         // Read Spark values, mark invalid in case of error
         double[] sparkValues = new double[sparkSignals.size()];
