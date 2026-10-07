@@ -53,6 +53,7 @@ import frc.robot.subsystems.magicCarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
+import frc.robot.subsystems.stereoVision.StereoVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.CustomTriggers;
@@ -70,6 +71,7 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
+  private StereoVision stereoVision;
   private Leds leds;
   private MagicCarpet magicCarpet;
   private Indexer indexer;
@@ -126,6 +128,7 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera1Name, robotToCamera1),
                   new VisionIOPhotonVision(camera2Name, robotToCamera2),
                   new VisionIOPhotonVision(camera3Name, robotToCamera3));
+              stereoVision = new StereoVision();
           leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());

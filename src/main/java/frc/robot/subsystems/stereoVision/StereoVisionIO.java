@@ -1,20 +1,19 @@
 package frc.robot.subsystems.stereoVision;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.subsystems.vision.VisionIO.TargetObservation;
-import frc.robot.subsystems.vision.VisionIO.VisionIOInputs;
+import edu.wpi.first.math.geometry.Transform3d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface StereoVisionIO {
   @AutoLog
   public static class StereoVisionIOInputs {
     public boolean connected = false;
-    public TargetObservation latestTargetObservation =
-        new TargetObservation(new Rotation2d(), new Rotation2d());
+    public int[] targetClassIds = new int[0];
+    public double[] targetYawDegrees = new double[0];
+    public double[] targetPitchDegrees = new double[0];
+    public double timestampSeconds = 0.0;
   }
 
-  /** Represents the angle to a simple target, not used for pose estimation. */
-  public static record TargetObservation(Rotation2d tx, Rotation2d ty) {}
+  Transform3d getRobotToCamera();
 
-  public default void updateInputs(VisionIOInputs inputs) {}
+  default void updateInputs(StereoVisionIOInputs inputs) {}
 }
