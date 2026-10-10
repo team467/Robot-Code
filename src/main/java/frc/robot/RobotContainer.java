@@ -47,7 +47,6 @@ import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
 import frc.robot.subsystems.magicCarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
@@ -353,11 +352,6 @@ public class RobotContainer {
         .toggleOnTrue(orchestrator.spinUpShooterHub());
     operatorController.y().whileTrue(indexer.reverse());
     operatorController.x().whileTrue(intakeRollers.outtake());
-
-    operatorController
-        .pov(90)
-        .toggleOnTrue(shooter.setVoltage(ShooterConstants.KS + 1))
-        .toggleOnFalse(Commands.runOnce(() -> shooter.setDefaultCommand(shooter.stop())));
   }
 
   /**
