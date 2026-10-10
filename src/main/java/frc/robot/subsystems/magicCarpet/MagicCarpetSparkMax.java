@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.math.util.MathUtil;
 import frc.robot.Schematic;
 
@@ -20,7 +21,7 @@ public class MagicCarpetSparkMax implements MagicCarpetIO {
 
   public MagicCarpetSparkMax() {
 
-    motor = new SparkMax(Schematic.magicCarpetCanId, MotorType.kBrushless);
+    motor = new SparkMax(CANPort.CAN_D0, Schematic.magicCarpetCanId, MotorType.kBrushless);
 
     SparkMaxConfig config = new SparkMaxConfig();
     config
@@ -37,15 +38,14 @@ public class MagicCarpetSparkMax implements MagicCarpetIO {
   @Override
   public void updateInputs(MagicCarpetIOInputs inputs) {
     // Called every 20 ms by subsystem periodic
-    inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
-    inputs.currentAmps = motor.getOutputCurrent();
-    inputs.motorVelocity = encoder.getVelocity();
+    inputs.appliedVolts = motor.getAppliedOutput().get() * motor.getBusVoltage().get();
+    inputs.currentAmps = motor.getOutputCurrent().get();
+    inputs.motorVelocity = encoder.getVelocity().get();
   }
 
   @Override
   public void setSpeed(double speed) {
-
-    motor.set(MathUtil.clamp(speed, 0.0, 1.0)); // so the is between 0 and 1, 1==100%
+    motor.setVoltage(MagicCarpetConstants.CURRENT_LIMIT * Math.clamp(speed, 0.0, 1.0));
   }
 
   /**
@@ -53,6 +53,6 @@ public class MagicCarpetSparkMax implements MagicCarpetIO {
    */
   @Override
   public void stop() {
-    motor.set(0.0);
+    motor.setVoltage(0);
   }
 }
