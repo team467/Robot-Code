@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.commands.auto.DriveToPose;
-import frc.robot.commands.auto.RotateToOrientation;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
@@ -186,25 +185,30 @@ public class Orchestrator {
   public Command zoneBasedAim() {
     DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
 
-    return new SelectCommand<>(
-        Map.ofEntries(
-            Map.entry(ZoneId.ZONE_1, aimToHub()),
-            Map.entry(
-                ZoneId.ZONE_2,
-                new ConditionalCommand(
-                    new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpClosePose)),
-                    new RotateToOrientation(
-                        drive,
-                        () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))),
-                    () -> allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)),
-            Map.entry(
-                ZoneId.ZONE_3,
-                new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpFarPose))),
-            Map.entry(
-                ZoneId.ZONE_4,
-                new RotateToOrientation(
-                    drive, () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))))),
-        this::getCurrentZone);
+    return aimToHub();
+
+    //    return new SelectCommand<>(
+    //        Map.ofEntries(
+    //            Map.entry(ZoneId.ZONE_1, aimToHub()),
+    //            Map.entry(
+    //                ZoneId.ZONE_2,
+    //                new ConditionalCommand(
+    //                    new RotateToOrientation(drive, () ->
+    // AllianceFlipUtil.apply(BBumpClosePose)),
+    //                    new RotateToOrientation(
+    //                        drive,
+    //                        () ->
+    // AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))),
+    //                    () -> allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)),
+    //            Map.entry(
+    //                ZoneId.ZONE_3,
+    //                new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpFarPose))),
+    //            Map.entry(
+    //                ZoneId.ZONE_4,
+    //                new RotateToOrientation(
+    //                    drive, () ->
+    // AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))))),
+    //        this::getCurrentZone);
   }
 
   public Pose2d getShootWhileDrivingResultPose() {
