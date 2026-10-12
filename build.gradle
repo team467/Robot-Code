@@ -150,6 +150,20 @@ deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
+// Run stereo vision on the laptop
+task(stereoTableTest, type: JavaExec) {
+    mainClass = "frc.robot.subsystems.stereoVision.StereoVisionTableTest"
+    classpath = sourceSets.main.runtimeClasspath
+    dependsOn wpi.java.extractNativeReleaseArtifacts
+    doFirst {
+        def nativeDir = wpi.java.extractNativeReleaseArtifacts.get().destinationDirectory.get().asFile
+        systemProperty 'java.library.path', nativeDir.absolutePath
+        environment 'PATH', nativeDir.absolutePath + File.pathSeparator + System.getenv('PATH')
+        environment 'LD_LIBRARY_PATH', nativeDir.absolutePath
+        environment 'DYLD_LIBRARY_PATH', nativeDir.absolutePath
+    }
+}
+
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'

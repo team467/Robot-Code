@@ -53,20 +53,9 @@ public class StereoVision extends SubsystemBase {
 
   /** Returns triangulated robot-relative positions for detected fuel objects. */
   public List<Translation3d> getFuelPositionsRobotRelative() {
-    var camera0 = inputs[0];
-    var camera1 = inputs[1];
-    if (camera0.targetClassIds.length == 0 || camera1.targetClassIds.length == 0) {
+    if (!getObservationStatus().equals("Ready")) {
       return List.of();
     }
-
-    double now = Timer.getFPGATimestamp();
-    if (now - camera0.timestampSeconds > StereoVisionConstants.maxObservationAgeSeconds
-        || now - camera1.timestampSeconds > StereoVisionConstants.maxObservationAgeSeconds
-        || Math.abs(camera0.timestampSeconds - camera1.timestampSeconds)
-            > StereoVisionConstants.maxTimestampDifferenceSeconds) {
-      return List.of();
-    }
-
     List<RayObservation> camera0Rays = getFuelRays(0);
     List<RayObservation> camera1Rays = getFuelRays(1);
     List<TriangulationCandidate> candidates = new ArrayList<>();
@@ -108,13 +97,17 @@ public class StereoVision extends SubsystemBase {
       Translation3d direction =
           new Translation3d(1.0, 0.0, 0.0)
               .rotateBy(
-                  robotToCamera
-                      .getRotation()
-                      .rotateBy(
-                          new Rotation3d(
-                              0.0,
-                              Math.toRadians(cameraInputs.targetPitchDegrees[i]),
-                              Math.toRadians(cameraInputs.targetYawDegrees[i]))));
+                  // PhotonVision v2026 yaw is positive right; pitch is positive up.
+                  new Rotation3d(
+                      0.0,
+                      -Math.toRadians(cameraInputs.targetPitchDegrees[i]),
+                      -Math.toRadians(cameraInputs.targetYawDegrees[i])))
+              .rotateBy(robotToCamera.getRotation());
+      if (!Double.isFinite(direction.getX())
+          || !Double.isFinite(direction.getY())
+          || !Double.isFinite(direction.getZ())) {
+        continue;
+      }
       rays.add(new RayObservation(i, robotToCamera.getTranslation(), direction));
     }
     return rays;
@@ -160,10 +153,56 @@ public class StereoVision extends SubsystemBase {
       Translation3d position,
       double raySeparation) {}
 
-  @Override
-  public void periodic() {
+  /** Updates cameras without requiring AdvantageKit, for the standalone table test. */
+  public void refreshInputs() {
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
+    }
+  }
+
+  public String getCameraStatus(int index) {
+    var input = inputs[index];
+    long fuelCount =
+        java.util.Arrays.stream(input.targetClassIds)
+            .filter(id -> id == StereoVisionConstants.fuelObjectClassId)
+            .count();
+    return String.format(
+        java.util.Locale.US,
+        "%s, fuel=%d, frame age=%.3f s",
+        input.connected ? "connected" : "DISCONNECTED",
+        fuelCount,
+        Timer.getFPGATimestamp() - input.timestampSeconds);
+  }
+
+  /** Explains why observations cannot currently be triangulated. */
+  public String getObservationStatus() {
+    double now = Timer.getFPGATimestamp();
+    for (int i = 0; i < inputs.length; i++) {
+      var input = inputs[i];
+      if (!input.connected) return "Camera " + i + " disconnected";
+      double age = now - input.timestampSeconds;
+      if (input.timestampSeconds <= 0.0
+          || !Double.isFinite(age)
+          || age < -0.05
+          || age > StereoVisionConstants.maxObservationAgeSeconds) {
+        return "Camera " + i + " frame missing/stale or clocks not synchronized";
+      }
+      if (java.util.Arrays.stream(input.targetClassIds)
+          .noneMatch(id -> id == StereoVisionConstants.fuelObjectClassId)) {
+        return "Camera " + i + " sees no fuel";
+      }
+    }
+    if (Math.abs(inputs[0].timestampSeconds - inputs[1].timestampSeconds)
+        > StereoVisionConstants.maxTimestampDifferenceSeconds) {
+      return "Camera frames too far apart in time";
+    }
+    return "Ready";
+  }
+
+  @Override
+  public void periodic() {
+    refreshInputs();
+    for (int i = 0; i < io.length; i++) {
       Logger.processInputs("StereoVision/Camera" + Integer.toString(i), inputs[i]);
     }
 
