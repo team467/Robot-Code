@@ -53,6 +53,9 @@ import frc.robot.subsystems.magicCarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
+import frc.robot.subsystems.stereoVision.StereoVision;
+import frc.robot.subsystems.stereoVision.StereoVisionIO;
+import frc.robot.subsystems.stereoVision.StereoVisionIOPhotonVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.CustomTriggers;
@@ -80,7 +83,8 @@ public class RobotContainer {
   private IntakeRollers intakeRollers;
   private IntakeExtend intakeExtend;
   private RobotState robotState = RobotState.getInstance();
-  private boolean isRobotOriented = true; // Workaround, change if needed
+  private boolean isRobotOriented = true; // Workaround, change if needed\
+  private StereoVision stereoVision;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -150,7 +154,9 @@ public class RobotContainer {
         case ROBOT_BRIEFCASE -> {
           //          leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
-          leds = new Leds();
+//          leds = new Leds();
+          stereoVision = new StereoVision(new StereoVisionIOPhotonVision(camera0Name, robotToCamera0), new StereoVisionIOPhotonVision(camera1Name, robotToCamera1));
+
         }
       }
     }
