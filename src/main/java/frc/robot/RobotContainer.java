@@ -49,6 +49,9 @@ import frc.robot.subsystems.magicCarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
+import frc.robot.subsystems.stereoVision.StereoVision;
+import frc.robot.subsystems.stereoVision.StereoVisionIO;
+import frc.robot.subsystems.stereoVision.StereoVisionIOPhotonVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.CustomTriggers;
@@ -66,6 +69,7 @@ public class RobotContainer {
   // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
+  private StereoVision stereoVision;
   private Leds leds;
   private MagicCarpet magicCarpet;
   private Indexer indexer;
@@ -135,6 +139,7 @@ public class RobotContainer {
         }
 
         case ROBOT_BRIEFCASE -> {
+          stereoVision = new StereoVision();
           //          leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           leds = new Leds();

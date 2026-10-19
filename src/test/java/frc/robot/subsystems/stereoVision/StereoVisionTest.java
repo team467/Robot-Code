@@ -59,6 +59,35 @@ class StereoVisionTest {
     checkPosition(new Rotation3d(0.05, 0.12, 0.2), new Rotation3d(-0.04, 0.08, -0.1));
   }
 
+  @Test
+  void rejectsUnsynchronizedFrames() {
+    var target = new Translation3d(2.0, 0.0, 0.0);
+    var left = new Camera(new Transform3d(new Translation3d(0, 0.15, 0), new Rotation3d()), target);
+    var right = new Camera(new Transform3d(new Translation3d(0, -0.15, 0), new Rotation3d()), target);
+    left.age = 0.15;
+    var vision = new StereoVision(left, right);
+    vision.refreshInputs();
+    assertEquals("Camera frames too far apart in time", vision.getObservationStatus());
+    assertTrue(vision.getFuelPositionsRobotRelative().isEmpty());
+  }
+
+  @Test
+  void rejectsDegenerateAndInvalidGeometry() {
+    // A target on the baseline gives antiparallel rays; it has no unique stereo depth.
+    var target = new Translation3d(0, 0, 0);
+    var left = new Camera(new Transform3d(new Translation3d(0, 0.15, 0), new Rotation3d()), target);
+    var right = new Camera(new Transform3d(new Translation3d(0, -0.15, 0), new Rotation3d()), target);
+    var vision = new StereoVision(left, right);
+    vision.refreshInputs();
+    assertTrue(vision.getFuelPositionsRobotRelative().isEmpty());
+
+    var invalid = new Camera(
+        new Transform3d(new Translation3d(Double.NaN, 0, 0), new Rotation3d()), target);
+    var invalidVision = new StereoVision(invalid, right);
+    invalidVision.refreshInputs();
+    assertTrue(invalidVision.getFuelPositionsRobotRelative().isEmpty());
+  }
+
   private void checkPosition(Rotation3d leftRotation, Rotation3d rightRotation) {
     var target = new Translation3d(1.8, 0.22, -0.5);
     var left = new Camera(new Transform3d(new Translation3d(0, 0.15, 0), leftRotation), target);

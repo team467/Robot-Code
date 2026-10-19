@@ -1,5 +1,6 @@
 package frc.robot.subsystems.stereoVision;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -122,7 +123,8 @@ public class StereoVision extends SubsystemBase {
     Translation3d betweenOrigins = origin0.minus(origin1);
     double dot = direction0.dot(direction1);
     double denominator = 1.0 - dot * dot;
-    if (denominator < StereoVisionConstants.minimumTriangulationDenominator) {
+    if (!Double.isFinite(denominator)
+        || denominator < StereoVisionConstants.minimumTriangulationDenominator) {
       return Optional.empty();
     }
 
@@ -130,14 +132,18 @@ public class StereoVision extends SubsystemBase {
     double origin1Projection = direction1.dot(betweenOrigins);
     double distance0 = (dot * origin1Projection - origin0Projection) / denominator;
     double distance1 = (origin1Projection - dot * origin0Projection) / denominator;
-    if (distance0 <= 0.0 || distance1 <= 0.0) {
+    if (!Double.isFinite(distance0)
+        || !Double.isFinite(distance1)
+        || distance0 <= 0.0
+        || distance1 <= 0.0) {
       return Optional.empty();
     }
 
     Translation3d point0 = origin0.plus(direction0.times(distance0));
     Translation3d point1 = origin1.plus(direction1.times(distance1));
     double raySeparation = point0.getDistance(point1);
-    if (raySeparation > StereoVisionConstants.maximumRaySeparationMeters) {
+    if (!Double.isFinite(raySeparation)
+        || raySeparation > StereoVisionConstants.maximumRaySeparationMeters) {
       return Optional.empty();
     }
     return Optional.of(
@@ -180,6 +186,10 @@ public class StereoVision extends SubsystemBase {
     for (int i = 0; i < inputs.length; i++) {
       var input = inputs[i];
       if (!input.connected) return "Camera " + i + " disconnected";
+      if (input.targetClassIds.length != input.targetYawDegrees.length
+          || input.targetClassIds.length != input.targetPitchDegrees.length) {
+        return "Camera " + i + " target arrays have inconsistent lengths";
+      }
       double age = now - input.timestampSeconds;
       if (input.timestampSeconds <= 0.0
           || !Double.isFinite(age)
@@ -204,6 +214,9 @@ public class StereoVision extends SubsystemBase {
     refreshInputs();
     for (int i = 0; i < io.length; i++) {
       Logger.processInputs("StereoVision/Camera" + Integer.toString(i), inputs[i]);
+      Logger.recordOutput(
+          "StereoVision/Camera" + i + "/PoseRobotRelative",
+          new Pose3d().transformBy(io[i].getRobotToCamera()));
     }
 
     // Loop over cameras
@@ -213,6 +226,7 @@ public class StereoVision extends SubsystemBase {
     }
 
     List<Translation3d> fuelPositions = getFuelPositionsRobotRelative();
+    Logger.recordOutput("StereoVision/ObservationStatus", getObservationStatus());
     double[] coordinatesMeters = new double[fuelPositions.size() * 3];
     for (int i = 0; i < fuelPositions.size(); i++) {
       Translation3d position = fuelPositions.get(i);
@@ -221,6 +235,11 @@ public class StereoVision extends SubsystemBase {
       coordinatesMeters[i * 3 + 2] = position.getZ();
     }
     Logger.recordOutput("StereoVision/FuelPositionCount", fuelPositions.size());
+    Logger.recordOutput(
+        "StereoVision/FuelPosesRobotRelative",
+        fuelPositions.stream()
+            .map(position -> new Pose3d(position, new Rotation3d()))
+            .toArray(Pose3d[]::new));
     Logger.recordOutput("StereoVision/FuelPositionsRobotRelativeMeters", coordinatesMeters);
   }
 }
