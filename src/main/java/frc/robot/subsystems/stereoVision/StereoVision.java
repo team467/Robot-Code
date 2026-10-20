@@ -1,12 +1,13 @@
 package frc.robot.subsystems.stereoVision;
 
+import static frc.robot.subsystems.stereoVision.StereoVisionConstants.*;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
-import static frc.robot.subsystems.stereoVision.StereoVisionConstants.*;
 
 public class StereoVision extends SubsystemBase {
   private final StereoVisionIO[] io;
@@ -60,7 +61,8 @@ public class StereoVision extends SubsystemBase {
       disconnectedAlerts[cameraIndex].set(!inputs[cameraIndex].connected);
     }
 
-    // performs triangulations calcualtions if both cameras are connected see the fuel and are confident
+    // performs triangulations calcualtions if both cameras are connected see the fuel and are
+    // confident
     lastGamePiecePosition = null;
     if (inputs[0].connected
         && inputs[1].connected
@@ -88,16 +90,17 @@ public class StereoVision extends SubsystemBase {
     double slopeB = rayDirectionB.getY() / rayDirectionB.getX();
 
     //  x pos/distacne forward where the rays have the same y pos/ distance sideways
-    double x = (rayOriginB.getY() - rayOriginA.getY() + rayOriginA.getX() * slopeA - rayOriginB.getX() * slopeB) / (slopeA - slopeB);
+    double x =
+        (rayOriginB.getY()
+                - rayOriginA.getY()
+                + rayOriginA.getX() * slopeA
+                - rayOriginB.getX() * slopeB)
+            / (slopeA - slopeB);
 
     // y pos where rays intersect
     double y = rayOriginA.getY() + (x - rayOriginA.getX()) * slopeA;
 
-    //doesnt return hieght
+    // doesnt return hieght
     return new Translation3d(x, y, 0.0);
   }
 }
-
-
-
-
