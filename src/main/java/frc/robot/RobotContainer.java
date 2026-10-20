@@ -6,6 +6,7 @@ package frc.robot;
 
 import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
 import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
+import static frc.robot.subsystems.stereoVision.StereoVisionConstants.*;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -54,7 +55,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.stereoVision.StereoVision;
-import frc.robot.subsystems.stereoVision.StereoVisionIO;
 import frc.robot.subsystems.stereoVision.StereoVisionIOPhotonVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -154,9 +154,11 @@ public class RobotContainer {
         case ROBOT_BRIEFCASE -> {
           //          leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
-//          leds = new Leds();
-          stereoVision = new StereoVision(new StereoVisionIOPhotonVision(camera0Name, robotToCamera0), new StereoVisionIOPhotonVision(camera1Name, robotToCamera1));
-
+          //          leds = new Leds();
+          stereoVision =
+              new StereoVision(
+                  new StereoVisionIOPhotonVision(stereoCamera0Name, robotToCamera0),
+                  new StereoVisionIOPhotonVision(stereoCamera1Name, robotToCamera1));
         }
       }
     }

@@ -7,14 +7,14 @@ import edu.wpi.first.math.util.Units;
 
 public class StereoVisionConstants {
   // TODO: chnange names accordingly
-  public static String camera0Name = "stereo_camera_0";
-  public static String camera1Name = "stereo_camera_1";
+  public static String stereoCamera0Name = "stereo_camera_0";
+  public static String stereoCamera1Name = "stereo_camera_1";
 
   private static Rotation3d RotationCorrection =
       new Rotation3d(0, 0, Math.PI / 2); // 90 degree roation around z-axis
 
   // TODO: get correct coordinates for cams
-  public static Transform3d robotToCamera0 =
+  public static Transform3d stereoRobotToCamera0 =
       new Transform3d( // left stereo camera
           new Translation3d(
                   Units.inchesToMeters(0.0), Units.inchesToMeters(0.0), Units.inchesToMeters(0.0))
@@ -24,7 +24,7 @@ public class StereoVisionConstants {
               Units.degreesToRadians(0.0),
               Units.degreesToRadians(0.0)));
 
-  public static Transform3d robotToCamera1 =
+  public static Transform3d stereoRobotToCamera1 =
       new Transform3d( // right stereo camera
           new Translation3d(
                   Units.inchesToMeters(0.0), // x
