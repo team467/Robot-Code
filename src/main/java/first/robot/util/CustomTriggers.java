@@ -1,0 +1,96 @@
+package first.robot.util;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+import org.wpilib.command3.Trigger;
+
+public class CustomTriggers {
+  private static final double JOYSTICK_THRESHOLD = 0.2;
+  private static final Map<Trigger, Boolean> mLastTriggerValues = new HashMap<>();
+  private static final Map<Trigger, Boolean> mToggledState = new HashMap<>();
+
+  public static Trigger toggleOnTrueCancelableWithJoystick(
+      Trigger buttonInput, DoubleSupplier X, DoubleSupplier Y) {
+    return new Trigger(
+        () -> {
+          boolean toggledState = mToggledState.getOrDefault(buttonInput, false);
+          boolean joystickEngaged =
+              Math.hypot(Math.abs(X.getAsDouble()), Math.abs(Y.getAsDouble())) > JOYSTICK_THRESHOLD;
+
+          boolean lastValue = mLastTriggerValues.getOrDefault(buttonInput, false);
+          boolean currentValue = buttonInput.getAsBoolean();
+
+          if (joystickEngaged) {
+            toggledState = false;
+            mToggledState.put(buttonInput, toggledState);
+            mLastTriggerValues.put(buttonInput, false);
+            return false;
+          }
+
+          boolean stateChanged = currentValue && !lastValue;
+
+          if (stateChanged) {
+            toggledState = !toggledState;
+          }
+
+          mLastTriggerValues.put(buttonInput, currentValue);
+          mToggledState.put(buttonInput, toggledState);
+          return toggledState;
+        });
+  }
+
+  public static Trigger toggleOnTrueCancelableWithJoysticks(
+      Trigger buttonInput,
+      DoubleSupplier X1,
+      DoubleSupplier Y1,
+      DoubleSupplier X2,
+      DoubleSupplier Y2) {
+    return new Trigger(
+        () -> {
+          boolean toggledState = mToggledState.getOrDefault(buttonInput, false);
+          boolean joystickEngaged =
+              Math.hypot(Math.abs(X1.getAsDouble()), Math.abs(Y1.getAsDouble()))
+                      > JOYSTICK_THRESHOLD
+                  || Math.hypot(Math.abs(X2.getAsDouble()), Math.abs(Y2.getAsDouble()))
+                      > JOYSTICK_THRESHOLD;
+
+          boolean lastValue = mLastTriggerValues.getOrDefault(buttonInput, false);
+          boolean currentValue = buttonInput.getAsBoolean();
+
+          if (joystickEngaged) {
+            toggledState = false;
+            mToggledState.put(buttonInput, toggledState);
+            mLastTriggerValues.put(buttonInput, false);
+            return false;
+          }
+
+          boolean stateChanged = currentValue && !lastValue;
+
+          if (stateChanged) {
+            toggledState = !toggledState;
+          }
+
+          mLastTriggerValues.put(buttonInput, currentValue);
+          mToggledState.put(buttonInput, toggledState);
+          return toggledState;
+        });
+  }
+
+  public static Trigger manualModeInput(Trigger inputButton, BooleanSupplier manualMode) {
+    return new Trigger(() -> inputButton.getAsBoolean() && manualMode.getAsBoolean());
+  }
+
+  public static Trigger autoModeInput(Trigger inputButton, BooleanSupplier manualMode) {
+    return new Trigger(() -> inputButton.getAsBoolean() && !manualMode.getAsBoolean());
+  }
+
+  public static Trigger toggleIntakeUp(Trigger toggle, BooleanSupplier intakeDown) {
+    return new Trigger(() -> (toggle.getAsBoolean() && intakeDown.getAsBoolean()));
+  }
+
+  public static Trigger toggleIntakeDown(Trigger toggle, BooleanSupplier intakeUp) {
+    return new Trigger(() -> (toggle.getAsBoolean() && intakeUp.getAsBoolean()));
+  }
+}
