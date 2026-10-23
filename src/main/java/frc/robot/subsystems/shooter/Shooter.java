@@ -1,46 +1,42 @@
 package frc.robot.subsystems.shooter;
 
-import static org.wpilib.units.Units.*;
-import static org.wpilib.units.Units.Second;
-import static org.wpilib.units.Units.Volts;
 import static frc.robot.subsystems.shooter.ShooterConstants.FF_SCALAR;
 import static frc.robot.subsystems.shooter.ShooterConstants.KA;
 import static frc.robot.subsystems.shooter.ShooterConstants.KS;
 import static frc.robot.subsystems.shooter.ShooterConstants.KV;
 import static frc.robot.subsystems.shooter.ShooterConstants.TOLERANCE;
+import static org.wpilib.units.Units.Meters;
+import static org.wpilib.units.Units.RPM;
+import static org.wpilib.units.Units.RadiansPerSecond;
+import static org.wpilib.units.Units.Seconds;
 
-import org.wpilib.math.controller.PIDController;
-import org.wpilib.math.controller.SimpleMotorFeedforward;
-import org.wpilib.math.filter.SlewRateLimiter;
-import org.wpilib.units.*;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.units.measure.Distance;
-import org.wpilib.units.measure.Time;
-import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.command3.Command;
-import org.wpilib.command3.Mechanism;
 import frc.robot.RobotState;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
+import org.wpilib.command3.Command;
+import org.wpilib.command3.Mechanism;
+import org.wpilib.math.controller.PIDController;
+import org.wpilib.math.controller.SimpleMotorFeedforward;
+import org.wpilib.math.filter.SlewRateLimiter;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.units.measure.Time;
 
 public class Shooter implements Mechanism {
+
   private final ShooterIO io;
-  private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
-  private final SysIdRoutine sysId;
-
-  public boolean controllerEnabled = true;
-  private AngularVelocity targetSpeed = RadiansPerSecond.of(0);
-  private double rampedTarget = 0.0;
-
   // Feedforward: handles steady-state voltage (V = KS + KV * velocity)
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV, KA);
   // PID: handles error correction on top of feedforward
   // P only — no I term (causes integral windup oscillation)
   private final PIDController pid = new PIDController(0.001, 0.1, 0.1, 0.02);
-
   // Slew rate limiter: ramps the target velocity gradually (rad/s per second)
   // This prevents current spikes that cause oscillation with a 20A limit
   private final SlewRateLimiter targetRamper = new SlewRateLimiter(800);
+  public boolean controllerEnabled = true;
+  private AngularVelocity targetSpeed = RadiansPerSecond.of(0);
+  private double rampedTarget = 0.0;
   private double feedForwardScalar;
 
   /**
@@ -49,53 +45,41 @@ public class Shooter implements Mechanism {
    * @param io A ShooterIO implementing instance
    */
   public Shooter(ShooterIO io) {
-    SmartDashboard.putNumber("Shooter/KS", KS * FF_SCALAR);
-    SmartDashboard.putNumber("Shooter/KA", KA * FF_SCALAR);
-    SmartDashboard.putNumber("Shooter/KV", KV * FF_SCALAR);
-    SmartDashboard.putNumber("Shooter/FeedForward_Scalar", FF_SCALAR);
     feedForwardScalar = FF_SCALAR;
     this.io = io;
-    sysId =
-        new SysIdRoutine(
-            new Config(
-                Volts.per(Second).of(1),
-                null,
-                null,
-                (state) -> Logger.recordOutput("Shooter/SysIdState", state.toString())),
-            new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   @Override
   public void periodic() {
 
     if (SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
-            != feedForwardScalar
+        != feedForwardScalar
         || SmartDashboard.getNumber(
-                    "Shooter/KS",
-                    feedforward.getKs()
-                        * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
-                * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
-            != feedforward.getKs()
+        "Shooter/KS",
+        feedforward.getKs()
+            * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
+        * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
+        != feedforward.getKs()
         || SmartDashboard.getNumber("Shooter/KA", feedforward.getKa()) != feedforward.getKa()
         || SmartDashboard.getNumber(
-                    "Shooter/KV",
-                    feedforward.getKv()
-                        * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
-                * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
-            != feedforward.getKv()) {
+        "Shooter/KV",
+        feedforward.getKv()
+            * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
+        * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar)
+        != feedforward.getKv()) {
       feedForwardScalar = SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar);
       feedforward.setKa(SmartDashboard.getNumber("Shooter/KA", feedforward.getKa()));
       feedforward.setKv(
           SmartDashboard.getNumber(
-                  "Shooter/KV",
-                  feedforward.getKv()
-                      * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
+              "Shooter/KV",
+              feedforward.getKv()
+                  * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
               * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar));
       feedforward.setKa(
           SmartDashboard.getNumber(
-                  "Shooter/KS",
-                  feedforward.getKs()
-                      * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
+              "Shooter/KS",
+              feedforward.getKs()
+                  * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar))
               * SmartDashboard.getNumber("Shooter/FeedForward_Scalar", feedForwardScalar));
     }
     io.updateInputs(inputs);
@@ -124,39 +108,6 @@ public class Shooter implements Mechanism {
     Logger.processInputs("Shooter", inputs);
     Logger.recordOutput("Shooter/AtSetpoint", isAtSetpoint());
     RobotState.getInstance().shooterAtSpeed = isAtSetpoint();
-  }
-
-  /**
-   * Runs characterization voltage (used for FF)
-   *
-   * @param voltage The voltage to apply
-   */
-  public void runCharacterization(double voltage) {
-    io.setVoltage(voltage);
-  }
-
-  /**
-   * Runs SysID Quasistatic for feed forward
-   *
-   * @param direction The direction to run it in
-   * @return A command that runs SysID Quasistatic
-   */
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return Commands.runOnce(() -> controllerEnabled = false, this)
-        .andThen(run(() -> runCharacterization(0.0)).withTimeout(1.0))
-        .andThen(sysId.quasistatic(direction));
-  }
-
-  /**
-   * Runs SysID Quasistatic for feed forward
-   *
-   * @param direction The direction to run it in
-   * @return A command that runs SysID Dynamic
-   */
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return Commands.runOnce(() -> controllerEnabled = false, this)
-        .andThen(run(() -> runCharacterization(0.0)).withTimeout(1.0))
-        .andThen(sysId.dynamic(direction));
   }
 
   /**
@@ -193,7 +144,7 @@ public class Shooter implements Mechanism {
    *
    * @param velocity A supplier that returns the target velocity of the shooter
    * @return A command that sets the target velocity of the shooter to the value returned by the
-   *     supplier
+   * supplier
    */
   public Command setTargetVelocity(Supplier<AngularVelocity> velocity) {
     return Commands.run(
@@ -250,6 +201,7 @@ public class Shooter implements Mechanism {
   }
 
   // TODO: empirically determine the relationship between distance and shooter velocity
+
   /**
    * Calculates a setpoint (in radians per second) based on distance
    *
@@ -266,7 +218,9 @@ public class Shooter implements Mechanism {
                   + 1001.70713);
       if (velocity.gt(RPM.of(1550))) {
         return RPM.of(1550);
-      } else return velocity;
+      } else {
+        return velocity;
+      }
     };
   }
 
