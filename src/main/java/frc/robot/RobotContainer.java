@@ -41,8 +41,6 @@ import frc.robot.subsystems.intake.rollers.IntakeRollersIO;
 import frc.robot.subsystems.intake.rollers.IntakeRollersIOKraken;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
-import frc.robot.subsystems.magicCarpet.MagicCarpetIO;
-import frc.robot.subsystems.magicCarpet.MagicCarpetSparkMax;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
@@ -73,6 +71,15 @@ import org.wpilib.wpilibj.XboxController; // Removed
  */
 public class RobotContainer {
 
+  private final Orchestrator orchestrator;
+  // Controller
+  private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
+  // Dashboard inputs
+  private final LoggedDashboardChooser<Command> autoChooser;
+  private final Intake intake;
+  private final RobotState robotState = RobotState.getInstance();
+  private final boolean isRobotOriented = true; // Workaround, change if needed
   // Subsystems
   // private final Subsystem subsystem;
   private Drive drive;
@@ -80,20 +87,9 @@ public class RobotContainer {
   private Leds leds;
   private MagicCarpet magicCarpet;
   private Indexer indexer;
-  private final Orchestrator orchestrator;
   private Shooter shooter;
-  private Intake intake;
   private IntakeRollers intakeRollers;
   private IntakeExtend intakeExtend;
-  private RobotState robotState = RobotState.getInstance();
-  private boolean isRobotOriented = true; // Workaround, change if needed
-
-  // Controller
-  private final CommandXboxController driverController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
-
-  // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

@@ -1,24 +1,34 @@
 package frc.robot.subsystems.magicCarpet;
 
+import static frc.robot.subsystems.magicCarpet.MagicCarpetConstants.BELT_VOLTS;
+import static org.wpilib.units.Units.Volts;
+
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import frc.robot.Schematic;
+import org.littletonrobotics.junction.AutoLog;
 import org.wpilib.command3.Command;
-import frc.robot.RobotState;
-import org.littletonrobotics.junction.Logger;
+import org.wpilib.command3.Mechanism;
+import org.wpilib.hardware.bus.CANPort;
 
-import frc.lib.SubsystemBase;
+@AutoLog
+public class MagicCarpet implements Mechanism {
 
-public class MagicCarpet extends SubsystemBase {
-  private final MagicCarpetIO io;
-  private final MagicCarpetIOInputsAutoLogged inputs = new MagicCarpetIOInputsAutoLogged();
-  public boolean manualRun;
+  private final SparkMax spark;
 
-  /**
-   * Initializes the magic carpet
-   *
-   * @param io The implementation of the hardware
-   */
-  public MagicCarpet(MagicCarpetIO io) {
-    this.io = io;
-    this.manualRun = false;
+  public MagicCarpet() {
+    spark = new SparkMax(CANPort.CAN_D0, Schematic.magicCarpetCanId, MotorType.kBrushless);
+
+    SparkMaxConfig config = new SparkMaxConfig();
+    config
+        .inverted(MagicCarpetConstants.MOTOR_INVERTED)
+        .idleMode(IdleMode.kBrake) // stops motor quickly when set to 0
+        .smartCurrentLimit((int) MagicCarpetConstants.CURRENT_LIMIT.magnitude());
+    spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   /**
@@ -29,32 +39,21 @@ public class MagicCarpet extends SubsystemBase {
   public Command run() {
     return this.run(
         coro -> {
-          io.setSpeed(MagicCarpetConstants.BELT_SPEED);
-          coro.fork(setManualControl(false));
+          while (true) {
+            spark.setVoltage(BELT_VOLTS);
+            coro.yield();
+          }
         }
     ).named("MagicCarpet Start");
   }
 
-
-  /**
-   * Control whether to run magic carpet through commands or periodic
-   *
-   * @param manual Call run manually instead of through periodic
-   */
-  public Command setManualControl(boolean manual) {
-    return this.run(_ -> this.manualRun = manual).named("MagicCarpet SetManualControl");
-  }
-
-  @Override
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("magicCarpet", inputs);
-    if (!manualRun) {
-      if (RobotState.getInstance().indexerRunning) {
-        io.setSpeed(MagicCarpetConstants.BELT_SPEED);
-      } else {
-        io.setSpeed(0.0);
-      }
-    }
+  public Command stop() {
+    return run(
+        coro -> {
+          while (true) {
+            spark.setVoltage(Volts.zero());
+            coro.yield();
+          }
+        }).named("MagicCarpet Stop");
   }
 }
