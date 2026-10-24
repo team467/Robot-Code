@@ -1,8 +1,12 @@
 package frc.robot.util;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Seconds;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Time;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
@@ -49,8 +53,8 @@ public class ShooterLeadCompensator {
      */
     for (int i = 0; i < 10; i++) {
       double distance = aimPoint.minus(shooterPos).getNorm();
-      double t = shooter.getAirTimeSeconds(() -> distance);
-      aimPoint = targetPosition.plus(v.times(t));
+      Time t = shooter.getAirTimeSeconds(Meters.of(distance));
+      aimPoint = targetPosition.plus(v.times(t.in(Seconds)));
     }
 
     double finalDistance = aimPoint.minus(shooterPos).getNorm();

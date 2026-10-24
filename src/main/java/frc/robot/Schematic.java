@@ -20,16 +20,15 @@ public class Schematic {
   public static final int backRightAbsoluteEncoderCanId;
 
   // shooter subsystem
-  public static final int shooterBottomMotorCanId;
-  public static final int shooterTopMotorCanId;
-  public static final int shooterMiddleMotorCanId;
+  public static final int shooterTopLeftMotorCanId;
+  public static final int shooterTopRightMotorCanId;
+  public static final int shooterBottomLeftMotorCanId;
+  public static final int shooterBottomRightMotorCanId;
   // magic carpet sub-system
   public static final int magicCarpetCanId;
 
   //  indexer subsystem
   public static final int indexerFeedupCanId;
-  public static final int indexerLeftLimitSwitchDIO;
-  public static final int indexerRightLimitSwitchDIO;
 
   // intake subsystem
   public static final int intakeMotorCanId;
@@ -62,17 +61,16 @@ public class Schematic {
         backLeftAbsoluteEncoderCanId = 20;
 
         // Shooter (CAN Ids)
-        shooterBottomMotorCanId = 0;
-        shooterTopMotorCanId = 0;
-        shooterMiddleMotorCanId = 0;
+        shooterTopLeftMotorCanId = 0;
+        shooterTopRightMotorCanId = 0;
+        shooterBottomLeftMotorCanId = 0;
+        shooterBottomRightMotorCanId = 0;
 
         // Magic Carpet (CAN Ids)
         magicCarpetCanId = 0;
 
         // Indexer (CAN IDs and DIOs)
         indexerFeedupCanId = 0;
-        indexerLeftLimitSwitchDIO = 0;
-        indexerRightLimitSwitchDIO = 0;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 0;
@@ -87,33 +85,32 @@ public class Schematic {
         pigeonCanId = 17;
 
         // Drive (CAN Ids)
-        frontLeftDriveCanId = 3;
-        frontLeftTurnCanId = 4;
-        frontRightDriveCanId = 1;
-        frontRightTurnCanId = 2;
+        frontLeftDriveCanId = 5;
+        frontLeftTurnCanId = 6;
+        frontRightDriveCanId = 3;
+        frontRightTurnCanId = 4;
 
-        backRightDriveCanId = 7;
-        backRightTurnCanId = 8;
-        backLeftDriveCanId = 5;
-        backLeftTurnCanId = 6;
+        backRightDriveCanId = 1;
+        backRightTurnCanId = 2;
+        backLeftDriveCanId = 7;
+        backLeftTurnCanId = 8;
 
-        frontLeftAbsoluteEncoderCanId = 19;
-        frontRightAbsoluteEncoderCanId = 18;
-        backRightAbsoluteEncoderCanId = 20;
+        frontLeftAbsoluteEncoderCanId = 20;
+        frontRightAbsoluteEncoderCanId = 19;
+        backRightAbsoluteEncoderCanId = 18;
         backLeftAbsoluteEncoderCanId = 21;
 
         // Shooter (CAN Ids)
-        shooterTopMotorCanId = 11;
-        shooterMiddleMotorCanId = 12;
-        shooterBottomMotorCanId = 13;
+        shooterTopLeftMotorCanId = 33;
+        shooterTopRightMotorCanId = 35;
+        shooterBottomLeftMotorCanId = 34;
+        shooterBottomRightMotorCanId = 36;
 
         // Hopper (CAN Ids)
         magicCarpetCanId = 15;
 
         // Indexer (CAN Ids)
         indexerFeedupCanId = 9;
-        indexerLeftLimitSwitchDIO = 0;
-        indexerRightLimitSwitchDIO = 2;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 23;
@@ -143,17 +140,16 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 0;
 
         // Shooter (CAN Ids)
-        shooterBottomMotorCanId = 0;
-        shooterTopMotorCanId = 0;
-        shooterMiddleMotorCanId = 0;
+        shooterTopLeftMotorCanId = 8;
+        shooterTopRightMotorCanId = 1;
+        shooterBottomLeftMotorCanId = 7;
+        shooterBottomRightMotorCanId = 2;
 
         // Magic Carpet (CAN Ids)
         magicCarpetCanId = 0;
 
         // Indexer (CAN IDs and DIOs)
         indexerFeedupCanId = 0;
-        indexerLeftLimitSwitchDIO = 0;
-        indexerRightLimitSwitchDIO = 2;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 0;
@@ -183,17 +179,16 @@ public class Schematic {
         backRightAbsoluteEncoderCanId = 0;
 
         // Shooter (CAN Ids)
-        shooterBottomMotorCanId = 0;
-        shooterTopMotorCanId = 0;
-        shooterMiddleMotorCanId = 0;
+        shooterTopLeftMotorCanId = 0;
+        shooterTopRightMotorCanId = 0;
+        shooterBottomLeftMotorCanId = 0;
+        shooterBottomRightMotorCanId = 0;
 
         // Magic Carpet (CAN Ids)
         magicCarpetCanId = 0;
 
         // Indexer (CAN IDs and DIOs)
         indexerFeedupCanId = 0;
-        indexerLeftLimitSwitchDIO = 0;
-        indexerRightLimitSwitchDIO = 0;
 
         // Intake (CAN IDs)
         intakeMotorCanId = 0;

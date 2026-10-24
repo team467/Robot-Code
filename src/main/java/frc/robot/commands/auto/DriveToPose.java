@@ -64,7 +64,7 @@ public class DriveToPose extends Command {
         thetaMaxVelocity.initDefault(Units.degreesToRadians(360.0));
         thetaMaxAcceleration.initDefault(Units.degreesToRadians(720.0));
         driveTolerance.initDefault(0.01);
-        thetaTolerance.initDefault(Units.degreesToRadians(1.0));
+        thetaTolerance.initDefault(Units.degreesToRadians(0.2));
       case ROBOT_2025_COMP:
         driveKp.initDefault(2.5);
         driveKd.initDefault(0.0);

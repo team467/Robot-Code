@@ -8,12 +8,13 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
+import java.util.Objects;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class RotateToOrientation extends Command {
   private final Drive drive;
-  private final Supplier<Rotation2d> poseSupplier;
+  private final Supplier<Rotation2d> rotationSupplier;
   //  private final ProfiledPIDController driveController =
   //      new ProfiledPIDController(
   //          2.5, 0, 0.0, new Constraints(Units.inchesToMeters(150), Units.inchesToMeters(450.0)));
@@ -40,14 +41,28 @@ public class RotateToOrientation extends Command {
     this(drive, () -> targetPose, DRIVE_TOLERANCE);
   }
 
-  public RotateToOrientation(Drive drive, Supplier<Rotation2d> targetPoseSupplier) {
-    this(drive, targetPoseSupplier, DRIVE_TOLERANCE);
+  public RotateToOrientation(Drive drive, Pose2d targetPose) {
+    this(
+        drive,
+        () -> targetPose.getTranslation().minus(drive.getPose().getTranslation()).getAngle(),
+        DRIVE_TOLERANCE);
+  }
+
+  public RotateToOrientation(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+    this(
+        drive,
+        () ->
+            Objects.requireNonNull(targetPoseSupplier.get(), "targetPoseSupplier.get()")
+                .getTranslation()
+                .minus(drive.getPose().getTranslation())
+                .getAngle(),
+        DRIVE_TOLERANCE);
   }
 
   public RotateToOrientation(
       Drive drive, Supplier<Rotation2d> targetPoseSupplier, double driveTolerance) {
     this.drive = drive;
-    this.poseSupplier = targetPoseSupplier;
+    this.rotationSupplier = Objects.requireNonNull(targetPoseSupplier, "targetPoseSupplier");
     addRequirements(drive);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }
@@ -55,8 +70,8 @@ public class RotateToOrientation extends Command {
   @Override
   public void initialize() {
     Pose2d currentPose = drive.getPose();
-    targetPose = poseSupplier.get();
-    Logger.recordOutput("StraightDriveToPose/TargetPose", targetPose);
+    targetPose = rotationSupplier.get();
+    Logger.recordOutput("RotateToOrientation/TargetPose", targetPose);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     thetaController.setTolerance(THETA_TOLERANCE);
     thetaController.reset(currentPose.getRotation().getRadians());
@@ -65,6 +80,7 @@ public class RotateToOrientation extends Command {
   @Override
   public void execute() {
     Pose2d currentPose = drive.getPose();
+    targetPose = rotationSupplier.get();
 
     // Calculate theta speed
     double thetaVelocity =

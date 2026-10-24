@@ -13,9 +13,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 public class IntakeRollersIOSparkMax implements IntakeRollersIO {
 
   private final SparkMax intakeMotor;
-  private double setPos = 0;
-  private boolean usingPID = false;
 
+  /** Configures the Spark Max-backed intake roller motor. */
   public IntakeRollersIOSparkMax() {
     intakeMotor = new SparkMax(intakeMotorCanId, MotorType.kBrushless);
 
@@ -48,9 +47,5 @@ public class IntakeRollersIOSparkMax implements IntakeRollersIO {
   @Override
   public void setVoltageIntake(double intakeVolts) {
     intakeMotor.setVoltage(intakeVolts);
-  }
-
-  public void setPIDEnabled(boolean enabled) {
-    this.usingPID = enabled;
   }
 }

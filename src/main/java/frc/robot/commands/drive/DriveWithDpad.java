@@ -7,16 +7,19 @@ import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
 public class DriveWithDpad extends Command {
-  private final Drive drive;
-  private final Supplier<Integer> povSupplier;
   public static final double SLOW_SPEED = Units.inchesToMeters(20);
 
+  private final Drive drive;
+  private final Supplier<Integer> povSupplier;
+
+  /** Creates a slow cardinal-direction drive command controlled by the driver's D-pad angle. */
   public DriveWithDpad(Drive drive, Supplier<Integer> povSupplier) {
     this.drive = drive;
     this.povSupplier = povSupplier;
     addRequirements(drive);
   }
 
+  /** Converts the current POV angle into a low-speed chassis movement. */
   @Override
   public void execute() {
     int pov = povSupplier.get();
