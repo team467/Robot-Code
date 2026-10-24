@@ -14,7 +14,6 @@ import edu.wpi.first.math.MathUtil;
 import frc.robot.Schematic;
 
 public class MagicCarpetSparkMax implements MagicCarpetIO {
-
   private final SparkMax motor; // object controlling motor
   private final RelativeEncoder encoder; // reads motor speed
 
