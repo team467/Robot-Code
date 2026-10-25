@@ -12,12 +12,17 @@ import static frc.robot.subsystems.vision.VisionConstants.camera2Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera2;
+import static org.wpilib.units.Units.Amps;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import frc.lib.mechanisms.flywheels.ControlledFlywheel;
+import frc.lib.mechanisms.flywheels.Flywheel;
+import frc.lib.mechanisms.flywheels.ReversibleFlywheel;
+import frc.lib.mechanisms.flywheels.SparkFlywheel;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
@@ -25,43 +30,32 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonSpark;
-import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.indexer.IndexerIO;
-import frc.robot.subsystems.indexer.IndexerIOSparkMax;
+import frc.robot.subsystems.indexer.IndexerConstants;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
-import frc.robot.subsystems.intake.extend.IntakeExtendIO;
 import frc.robot.subsystems.intake.extend.IntakeExtendIOSparkMax;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
-import frc.robot.subsystems.intake.rollers.IntakeRollersIO;
 import frc.robot.subsystems.intake.rollers.IntakeRollersIOKraken;
 import frc.robot.subsystems.leds.Leds;
-import frc.robot.subsystems.magicCarpet.MagicCarpet;
+import frc.robot.subsystems.magicCarpet.MagicCarpetConstants;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterIO;
-import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.CustomTriggers;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.button.CommandXboxController; // Removed
-import org.wpilib.command2.button.Trigger;
-import org.wpilib.command2.sysid.SysIdRoutine;
-import org.wpilib.command2.sysid.SysIdRoutine.Direction;
+import org.wpilib.command3.Command;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.GenericHID.RumbleType;
+import org.wpilib.driverstation.XboxController;
+import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.wpilibj.XboxController; // Removed
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -73,21 +67,20 @@ public class RobotContainer {
 
   private final Orchestrator orchestrator;
   // Controller
-  private final CommandXboxController driverController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+  private final XboxController driverController = new XboxController(0);
+  private final XboxController operatorController = new XboxController(1);
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
   private final Intake intake;
   private final RobotState robotState = RobotState.getInstance();
   private final boolean isRobotOriented = true; // Workaround, change if needed
   // Subsystems
-  // private final Subsystem subsystem;
   private Drive drive;
   private Vision vision;
   private Leds leds;
-  private MagicCarpet magicCarpet;
-  private Indexer indexer;
-  private Shooter shooter;
+  private Flywheel magicCarpet;
+  private ReversibleFlywheel indexer;
+  private ControlledFlywheel shooter;
   private IntakeRollers intakeRollers;
   private IntakeExtend intakeExtend;
 
@@ -98,22 +91,6 @@ public class RobotContainer {
     // Instantiate active subsystems
     if (Constants.getMode() != Constants.Mode.REPLAY) {
       switch (Constants.getRobot()) {
-        case ROBOT_2025_COMP -> {
-          drive =
-              new Drive(
-                  new GyroIOPigeon2(),
-                  new ModuleIOTalonSpark(0),
-                  new ModuleIOTalonSpark(1),
-                  new ModuleIOTalonSpark(2),
-                  new ModuleIOTalonSpark(3));
-          vision =
-              new Vision(
-                  drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
-                  new VisionIOPhotonVision(camera2Name, robotToCamera2));
-          leds = new Leds();
-        }
         case ROBOT_2026_COMP -> {
           drive =
               new Drive(
@@ -129,13 +106,17 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera1Name, robotToCamera1),
                   new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
-          shooter = new Shooter(new ShooterIOSparkMax());
-          magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
-          indexer = new Indexer(new IndexerIOSparkMax());
+          shooter = new Shooter();
+          magicCarpet = new SparkFlywheel("Magic Carpet", CANPort.CAN_D0,
+              Schematic.magicCarpetCanId,
+              MagicCarpetConstants.MOTOR_INVERTED, MagicCarpetConstants.BELT_VOLTS,
+              MagicCarpetConstants.CURRENT_LIMIT);
+          indexer = new SparkFlywheel("Indexer", CANPort.CAN_D0,
+              Schematic.indexerFeedupCanId, false, IndexerConstants.FEEDUP_VOLT,
+              Amps.of(30));
           intakeRollers = new IntakeRollers(new IntakeRollersIOKraken());
           intakeExtend =
               new IntakeExtend(new IntakeExtendIOSparkMax(), operatorController.rightTrigger());
-          //                    climber = new Climber(new ClimberIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -161,41 +142,7 @@ public class RobotContainer {
     }
 
     // Instantiate missing subsystems
-    if (drive == null) {
-      drive =
-          new Drive(
-              new GyroIO() {
-              },
-              new ModuleIO() {
-              },
-              new ModuleIO() {
-              },
-              new ModuleIO() {
-              },
-              new ModuleIO() {
-              });
-    }
-    if (intakeRollers == null) {
-      intakeRollers = new IntakeRollers(new IntakeRollersIO() {
-      });
-    }
-    if (intakeExtend == null) {
-      intakeExtend = new IntakeExtend(new IntakeExtendIO() {
-      }, () -> false);
-    }
     intake = new Intake(intakeRollers, intakeExtend);
-    if (magicCarpet == null) {
-      magicCarpet = new MagicCarpet(new MagicCarpetIO() {
-      });
-    }
-    if (shooter == null) {
-      shooter = new Shooter(new ShooterIO() {
-      });
-    }
-    if (indexer == null) {
-      indexer = new Indexer(new IndexerIO() {
-      });
-    }
 
     orchestrator =
         new Orchestrator(
@@ -221,23 +168,6 @@ public class RobotContainer {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
 
-    //    NamedCommands.registerCommand(
-    //        "Drive Back Left",
-    //        new DriveToPose(drive, () -> new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(180))));
-    //    NamedCommands.registerCommand(
-    //        "Drive Over Left",
-    //        new DriveToPose(drive, () -> new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(180))));
-
-    //
-    // NamedCommands.registerCommand("startShooter",Commands.parallel(orchestrator.preloadBalls(),orchestrator.prepShooter()));
-    //        NamedCommands.registerCommand("shoot",orchestrator.shootBalls());
-    //        NamedCommands.registerCommand("shootClimb",orchestrator.shootBallsonClimb());
-    //        NamedCommands.registerCommand("shootDistance",orchestrator.shootBallsAtDistance());
-    //        NamedCommands.registerCommand("extend hopper and intake",intake.extendAndIntake());
-    //
-    //
-    // NamedCommands.registerCommand("stopIntake",Commands.sequence(intake.collapseAndIntake(),Commands.waitSeconds(0.3),intake.stopIntakeCommand()));
-    //        NamedCommands.registerCommand("climb",Commands.none());
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 

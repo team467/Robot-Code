@@ -125,21 +125,6 @@ public class Autos {
             orchestrator.feedUp()));
   }
 
-  private Command ppCycleConnect(String path) {
-    return Commands.sequence(
-        Commands.deadline(
-                drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                orchestrator.spinUpShooterHub())
-            .withTimeout(14.5),
-        orchestrator.aimToHub().withTimeout(2.5),
-        Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
-        Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooter(1214),
-            orchestrator.feedUp()));
-  }
-
   /**
    * Helper function for a single cycle auto that uses shooter regression to shoot into the hub
    *
@@ -153,27 +138,6 @@ public class Autos {
         Commands.deadline(
                 drive.getAutonomousCommand(path),
                 intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                Commands.waitSeconds(5)
-                    .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
-            .withTimeout(15.5),
-        Commands.deadline(
-                orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
-            .andThen(
-                Commands.parallel(
-                        Commands.waitSeconds(0.7).andThen(intake.slowlyBringInIntake()),
-                        orchestrator.aimToHub().withTimeout(1).repeatedly(),
-                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                        Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))
-                    .withTimeout(1.6)));
-  }
-
-  private Command ppCycleRegressionDepo(String path, Supplier<Pose2d> startPose) {
-    return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startPose.get())),
-        Commands.deadline(
-                drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.FUNNEL_POS).withTimeout(5.5),
                 Commands.waitSeconds(5)
                     .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
             .withTimeout(15.5),
@@ -232,24 +196,6 @@ public class Autos {
   ;
 
   /**
-   * Left side pathplanner auto for a single cycle with fixed shooting distance
-   *
-   * @return A command that executes the auto
-   */
-  public Command ppACycleLeft() {
-    return ppCycle("A-Cycle-LeftSweep", startAside);
-  }
-
-  /**
-   * Right side pathplanner auto for a single cycle with fixed shooting distance
-   *
-   * @return A command that executes the auto
-   */
-  public Command ppBCycleRight() {
-    return ppCycle("B-Cycle-RightSweep", startBside);
-  }
-
-  /**
    * Left side pathplanner auto for a single cycle that supports any shooting distance
    *
    * @return A command that executes the auto
@@ -265,24 +211,6 @@ public class Autos {
    */
   public Command ppA2CycleRightRegression() {
     return pp2CycleRegression("A-Cycle1", "A-Cycle2", startAside);
-  }
-
-  /**
-   * Right side pathplanner auto for a single cycle that supports any shooting distance
-   *
-   * @return A command that executes the auto
-   */
-  public Command ppBCycleRightRegression() {
-    return ppCycleRegression("B-Cycle-RightSweep", startBside);
-  }
-
-  /**
-   * Left side pathplanner auto for a single cycle that supports any shooting distance
-   *
-   * @return A command that executes the auto
-   */
-  public Command ppACycleLeftRegression() {
-    return ppCycleRegression("A-Cycle-LeftSweep", startAside);
   }
 
   /**
