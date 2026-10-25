@@ -7,8 +7,6 @@ import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.util.Units;
 
 public class ShooterConstants {
-  public static final double ENCODER_POSITION_CONVERSION = 1;
-  public static final double ENCODER_VELOCITY_CONVERSION = (2 * Math.PI) / 60;
 
   public static final double VOLTAGE_COMPENSATION = 12.0;
   public static final int CURRENT_LIMIT = 35;
@@ -17,12 +15,6 @@ public class ShooterConstants {
   public static final double KV = 0.0662;
   public static final double KA = 0.028853;
   public static final double KS = 0.2723;
-
-  // for 3.7647 gear ratio
-  //  public static final double KV = 0.0662;
-  //  public static final double KA = 0.028853;
-  //  public static final double KS = 0.2723;
-  public static final double FF_SCALAR = 1;
 
   public static final double SHOOTER_WHEEL_GEAR_RATIO = 3.5;
   public static final double CLOSE_HUB_SHOOTER_RPM = 1100;

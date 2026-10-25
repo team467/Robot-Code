@@ -26,8 +26,6 @@ public interface IntakeExtendIO {
 
   default void updateInputs(IntakeExtendIOInputs inputs) {}
 
-  default void setPercentExtend(double extendPercent) {}
-
   default void setVoltageExtend(double extendVolts) {}
 
   default void stop() {}
@@ -36,18 +34,9 @@ public interface IntakeExtendIO {
 
   default void setPIDEnabled(boolean enabled) {}
 
-  default void setIdleMode(boolean cost) {}
-  ;
-
-  default boolean getPIDEnabled() {
-    return false;
-  }
-
   default void resetExtendEncoder(double position) {}
 
   default boolean isCollapsed() {
     return false;
   }
-
-  default void extendToPosition(double position) {}
 }

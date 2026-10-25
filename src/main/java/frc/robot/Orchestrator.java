@@ -11,8 +11,8 @@ import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.auto.RotateToOrientation;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
+import frc.robot.subsystems.shooter.ShooterSpark;
 import frc.robot.util.ShooterLeadCompensator;
 import frc.robot.util.Zone;
 import frc.robot.util.Zone.Tuple2d;
@@ -41,7 +41,7 @@ public class Orchestrator {
       new Pose2d(11.334761619567871, 5.599213600158691, new Rotation2d());
   private final double FRONT_HUB_OFFSET = Units.inchesToMeters(58.0);
   private final Drive drive;
-  private final Shooter shooter;
+  private final ShooterSpark shooter;
   private final MagicCarpet magicCarpet;
   private final Indexer indexer;
   private final Intake intake;
@@ -56,7 +56,7 @@ public class Orchestrator {
   public Orchestrator(
       Drive drive,
       MagicCarpet hopperBelt,
-      Shooter shooter,
+      ShooterSpark shooter,
       Indexer indexer,
       Intake intake,
       IntakeRollers rollers,

@@ -6,11 +6,12 @@ import static org.wpilib.units.Units.Volts;
 
 import java.util.function.Consumer;
 import org.wpilib.command3.Coroutine;
+import org.wpilib.command3.Mechanism;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Voltage;
 
-abstract public class PIDFlywheel implements ControlledFlywheel {
+abstract public class PIDFlywheel implements ControlledFlywheel, Mechanism {
 
   private final PIDController pid;
 

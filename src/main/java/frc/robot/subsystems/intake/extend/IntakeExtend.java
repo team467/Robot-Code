@@ -1,39 +1,34 @@
 package frc.robot.subsystems.intake.extend;
 
-import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.EXTEND_POS;
 import static frc.robot.subsystems.intake.IntakeConstants.HOME_VOLTAGE;
-import static frc.robot.subsystems.intake.IntakeConstants.POSITION_TOLERANCE;
 import static frc.robot.subsystems.intake.IntakeConstants.STALL_VELOCITY;
 
-import org.wpilib.system.Timer;
-import org.wpilib.command2.Command;
-import org.wpilib.command3.Mechanism;
 import frc.robot.RobotState;
 import frc.robot.RobotState.IntakePosition;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
+import org.wpilib.command3.Command;
+import org.wpilib.command3.Mechanism;
+import org.wpilib.system.Timer;
 
 public class IntakeExtend implements Mechanism {
+
   private final IntakeExtendIO io;
   private final IntakeExtendIOInputsAutoLogged inputs = new IntakeExtendIOInputsAutoLogged();
   private final Timer stallExtendTimer = new Timer();
   private final Timer stallCollapseTimer = new Timer();
 
-  private boolean stalledExtend = false;
-  private boolean stalledCollapse = false;
-  private boolean isStowed = false;
-  private boolean isExtended = false;
+  private final boolean stalledExtend = false;
+  private final boolean stalledCollapse = false;
+  private final boolean isStowed = false;
   private boolean hasPose = false;
 
-  private double targetExtendPosition = 0;
-
-  /**
-   * @param limitSwitchDisabled A supplier to return whether the limit switch is currently disabled
-   *     or not. If disabled, uses slipping to control intake.
-   */
-  private final BooleanSupplier limitSwitchDisabled;
+  public IntakeExtend(IntakeExtendIO io, BooleanSupplier limitSwitchDisabled) {
+    this.io = io;
+    this.limitSwitchDisabled = limitSwitchDisabled;
+  }
 
   public void periodic() {
     inputs.stalledExtended = stalledExtend;
@@ -64,25 +59,8 @@ public class IntakeExtend implements Mechanism {
     Logger.recordOutput("Intake/IntakeExtend/HasPose", hasPose);
   }
 
-  public IntakeExtend(IntakeExtendIO io, BooleanSupplier limitSwitchDisabled) {
-    this.io = io;
-    this.limitSwitchDisabled = limitSwitchDisabled;
-  }
-
-  public boolean isHopperCollapsed() {
-    return io.isCollapsed();
-  }
-
   public DoubleSupplier getAngle() {
     return () -> inputs.getExtendPos;
-  }
-
-  public void setIdleMode(boolean idleMode) {
-    io.setIdleMode(idleMode);
-  }
-
-  public Command setPose(double pose) {
-    return Commands.runOnce(() -> io.resetExtendEncoder(pose), this);
   }
 
   private boolean isStallingExtend() {
@@ -94,32 +72,12 @@ public class IntakeExtend implements Mechanism {
     return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts > 0.01;
   }
 
-  private void setPercentExtend(double extendPercent) {
-    io.setPercentExtend(extendPercent);
-  }
-
-  public void setVoltageExtend(double extendVolts) {
-    io.setVoltageExtend(extendVolts);
-  }
-
   public void stopExtend() {
     io.setVoltageExtend(0);
   }
 
   public Command resetExtendPosition() {
     return Commands.runOnce(() -> io.resetExtendEncoder(0), this);
-  }
-
-  public Command moveToExtendedPosition() {
-    return Commands.run(() -> io.extendToPosition(EXTEND_POS))
-        .until(() -> Math.abs(inputs.getExtendPos - EXTEND_POS) <= POSITION_TOLERANCE)
-        .withName("moveToExtendedPosition");
-  }
-
-  public Command moveToCollapsedPosition() {
-    return Commands.run(() -> io.extendToPosition(COLLAPSE_POS))
-        .until(() -> Math.abs(inputs.getExtendPos - COLLAPSE_POS) <= POSITION_TOLERANCE)
-        .withName("moveToCollapsedPosition");
   }
 
   public Command runIntakeExtendVolts(double volts) {

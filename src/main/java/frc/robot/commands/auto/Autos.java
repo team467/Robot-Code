@@ -5,8 +5,8 @@ import frc.robot.Orchestrator;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
-import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
+import frc.robot.subsystems.shooter.ShooterSpark;
 import java.util.function.Supplier;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
@@ -59,7 +59,7 @@ public class Autos {
   private final IntakeRollers rollers;
 
   // pp
-  private final Shooter shooter;
+  private final ShooterSpark shooter;
 
   /**
    * Basic constructor, takes in all initialized subsystems and stores them
@@ -75,7 +75,7 @@ public class Autos {
       Orchestrator orchestrator,
       Intake intake,
       IntakeRollers rollers,
-      Shooter shooter) {
+      ShooterSpark shooter) {
     this.drive = drive;
     this.orchestrator = orchestrator;
     this.intake = intake;

@@ -3,22 +3,22 @@ package frc.robot.util;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.Seconds;
 
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.shooter.ShooterConstants;
+import frc.robot.subsystems.shooter.ShooterSpark;
+import java.util.function.Supplier;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.units.measure.Time;
-import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterConstants;
-import java.util.function.Supplier;
 
 public class ShooterLeadCompensator {
 
   private final Supplier<Translation2d> shooterPosition;
   private final Supplier<Translation2d> robotVelocity;
-  private final Shooter shooter;
+  private final ShooterSpark shooter;
 
-  public ShooterLeadCompensator(Drive drive, Shooter shooter) {
+  public ShooterLeadCompensator(Drive drive, ShooterSpark shooter) {
     this.shooterPosition =
         () -> {
           Pose2d robotPose = drive.getPose();
@@ -67,5 +67,7 @@ public class ShooterLeadCompensator {
     return new Pose2d(shooterPosition.get().getX(), shooterPosition.get().getY(), Rotation2d.kZero);
   }
 
-  public record ShootWhileDrivingResult(Pose2d target, double distance) {}
+  public record ShootWhileDrivingResult(Pose2d target, double distance) {
+
+  }
 }

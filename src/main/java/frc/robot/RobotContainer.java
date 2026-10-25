@@ -39,7 +39,7 @@ import frc.robot.subsystems.intake.extend.IntakeExtendIOSparkMax;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetSpark;
-import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterSpark;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.CustomTriggers;
@@ -104,7 +104,7 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera1Name, robotToCamera1),
                   new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
-          shooter = new Shooter();
+          shooter = new ShooterSpark();
           magicCarpet = new MagicCarpetSpark();
           indexer = new SparkFlywheel("Indexer", CANPort.CAN_D0,
               Schematic.indexerFeedupCanId, false, IndexerConstants.FEEDUP_VOLT,
@@ -131,7 +131,7 @@ public class RobotContainer {
           //          leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           leds = new Leds();
-          shooter = new Shooter(new ShooterIOSparkMax(false));
+          shooter = new ShooterSpark(new ShooterIOSparkMax(false));
         }
       }
     }

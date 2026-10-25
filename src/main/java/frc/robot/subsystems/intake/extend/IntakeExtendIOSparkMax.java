@@ -28,7 +28,6 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
   private final DigitalInput collapsedLimitSwitch;
   private final RelativeEncoder extendMotorEncoder;
   private final SparkClosedLoopController pidController;
-  private double setPos = 0;
   private boolean usingPID = false;
 
   public IntakeExtendIOSparkMax() {
@@ -73,18 +72,8 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
   }
 
   @Override
-  public void extendToPosition(double position) {
-    pidController.setSetpoint(position, ControlType.kPosition);
-  }
-
-  @Override
   public boolean isCollapsed() {
     return collapsedLimitSwitch.get();
-  }
-
-  @Override
-  public void setPercentExtend(double extendPercent) {
-    extendMotor.set(extendPercent);
   }
 
   @Override
@@ -102,21 +91,6 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
 
   public void setPIDEnabled(boolean enabled) {
     this.usingPID = enabled;
-  }
-
-  @Override
-  public void setIdleMode(boolean coast) {
-    if (coast) {
-      extendMotor.configure(
-          getSparkMaxConfig().idleMode(IdleMode.kCoast),
-          ResetMode.kResetSafeParameters,
-          PersistMode.kNoPersistParameters);
-    } else {
-      extendMotor.configure(
-          getSparkMaxConfig().idleMode(IdleMode.kBrake),
-          ResetMode.kResetSafeParameters,
-          PersistMode.kNoPersistParameters);
-    }
   }
 
   @Override
