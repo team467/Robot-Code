@@ -11,7 +11,6 @@ import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.auto.RotateToOrientation;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.util.ShooterLeadCompensator;

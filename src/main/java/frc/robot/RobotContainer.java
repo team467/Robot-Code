@@ -20,7 +20,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import frc.lib.mechanisms.flywheels.ControlledFlywheel;
-import frc.lib.mechanisms.flywheels.Flywheel;
 import frc.lib.mechanisms.flywheels.ReversibleFlywheel;
 import frc.lib.mechanisms.flywheels.SparkFlywheel;
 import frc.lib.utils.LocalADStarAK;
@@ -37,10 +36,9 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
 import frc.robot.subsystems.intake.extend.IntakeExtendIOSparkMax;
-import frc.robot.subsystems.intake.rollers.IntakeRollers;
-import frc.robot.subsystems.intake.rollers.IntakeRollersIOKraken;
 import frc.robot.subsystems.leds.Leds;
-import frc.robot.subsystems.magicCarpet.MagicCarpetConstants;
+import frc.robot.subsystems.magicCarpet.MagicCarpet;
+import frc.robot.subsystems.magicCarpet.MagicCarpetSpark;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -78,7 +76,7 @@ public class RobotContainer {
   private Drive drive;
   private Vision vision;
   private Leds leds;
-  private Flywheel magicCarpet;
+  private MagicCarpet magicCarpet;
   private ReversibleFlywheel indexer;
   private ControlledFlywheel shooter;
   private IntakeRollers intakeRollers;
@@ -107,10 +105,7 @@ public class RobotContainer {
                   new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
           shooter = new Shooter();
-          magicCarpet = new SparkFlywheel("Magic Carpet", CANPort.CAN_D0,
-              Schematic.magicCarpetCanId,
-              MagicCarpetConstants.MOTOR_INVERTED, MagicCarpetConstants.BELT_VOLTS,
-              MagicCarpetConstants.CURRENT_LIMIT);
+          magicCarpet = new MagicCarpetSpark();
           indexer = new SparkFlywheel("Indexer", CANPort.CAN_D0,
               Schematic.indexerFeedupCanId, false, IndexerConstants.FEEDUP_VOLT,
               Amps.of(30));

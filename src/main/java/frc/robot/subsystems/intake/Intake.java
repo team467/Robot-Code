@@ -1,12 +1,15 @@
 package frc.robot.subsystems.intake;
 
-import static frc.robot.subsystems.intake.IntakeConstants.*;
+import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_POS;
+import static frc.robot.subsystems.intake.IntakeConstants.FUNNEL_POS;
+import static frc.robot.subsystems.intake.IntakeConstants.SHAKE_POS_OFFSET;
+import static frc.robot.subsystems.intake.IntakeConstants.SLOW_VOLTS;
 
-import org.wpilib.command3.Command;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
-import frc.robot.subsystems.intake.rollers.IntakeRollers;
+import org.wpilib.command3.Command;
 
 public class Intake {
+
   private final IntakeRollers rollers;
   private final IntakeExtend extend;
 
