@@ -4,8 +4,24 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeExtendIO {
 
+  default void updateInputs(IntakeExtendIOInputs inputs) {
+  }
+
+  default void setVoltageExtend(double extendVolts) {
+  }
+
+  default void goToPos(double pos) {
+  }
+
+  default void setPIDEnabled(boolean enabled) {
+  }
+
+  default void resetExtendEncoder(double position) {
+  }
+
   @AutoLog
   class IntakeExtendIOInputs {
+
     public double extendPercentOutput = 0.0;
     public double extendVolts = 0.0;
     public double extendVelocity = 0.0;
@@ -22,21 +38,5 @@ public interface IntakeExtendIO {
     public double stallCollapseTimer = 0.0;
     public boolean stowed = false;
     public boolean hasPose = false;
-  }
-
-  default void updateInputs(IntakeExtendIOInputs inputs) {}
-
-  default void setVoltageExtend(double extendVolts) {}
-
-  default void stop() {}
-
-  default void goToPos(double pos) {}
-
-  default void setPIDEnabled(boolean enabled) {}
-
-  default void resetExtendEncoder(double position) {}
-
-  default boolean isCollapsed() {
-    return false;
   }
 }

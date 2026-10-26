@@ -1,12 +1,10 @@
 package frc.robot.subsystems.magicCarpet;
 
-import org.wpilib.command3.Command;
-
 public interface MagicCarpet {
 
-  Command feed();
+  void feed();
 
-  Command reverse();
+  void reverse();
 
-  Command stop();
+  void stop();
 }

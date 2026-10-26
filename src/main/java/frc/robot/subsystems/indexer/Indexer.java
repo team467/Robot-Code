@@ -1,12 +1,14 @@
 package frc.robot.subsystems.indexer;
 
-import org.wpilib.command3.Command;
+import org.wpilib.command3.StateMachine;
 
 public interface Indexer {
 
-  Command feed();
+  void feed();
 
-  Command reverse();
+  void reverse();
 
-  Command stop();
+  void stop();
+
+  StateMachine stateMachine();
 }

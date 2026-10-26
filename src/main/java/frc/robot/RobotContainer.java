@@ -12,16 +12,12 @@ import static frc.robot.subsystems.vision.VisionConstants.camera2Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera2;
-import static org.wpilib.units.Units.Amps;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import frc.lib.mechanisms.flywheels.ControlledFlywheel;
-import frc.lib.mechanisms.flywheels.ReversibleFlywheel;
-import frc.lib.mechanisms.flywheels.SparkFlywheel;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
@@ -31,11 +27,14 @@ import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonSpark;
-import frc.robot.subsystems.indexer.IndexerConstants;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerSpark;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
 import frc.robot.subsystems.intake.extend.IntakeExtendIOSparkMax;
+import frc.robot.subsystems.intake.rollers.IntakeRollers;
+import frc.robot.subsystems.intake.rollers.IntakeRollersKraken;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetSpark;
@@ -46,11 +45,11 @@ import frc.robot.util.CustomTriggers;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.wpilib.command3.Command;
+import org.wpilib.command3.Trigger;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.GenericHID.RumbleType;
 import org.wpilib.driverstation.XboxController;
-import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.ChassisVelocities;
@@ -77,8 +76,8 @@ public class RobotContainer {
   private Vision vision;
   private Leds leds;
   private MagicCarpet magicCarpet;
-  private ReversibleFlywheel indexer;
-  private ControlledFlywheel shooter;
+  private Indexer indexer;
+  private Shooter shooter;
   private IntakeRollers intakeRollers;
   private IntakeExtend intakeExtend;
 
@@ -106,10 +105,8 @@ public class RobotContainer {
           leds = new Leds();
           shooter = new ShooterSpark();
           magicCarpet = new MagicCarpetSpark();
-          indexer = new SparkFlywheel("Indexer", CANPort.CAN_D0,
-              Schematic.indexerFeedupCanId, false, IndexerConstants.FEEDUP_VOLT,
-              Amps.of(30));
-          intakeRollers = new IntakeRollers(new IntakeRollersIOKraken());
+          indexer = new IndexerSpark();
+          intakeRollers = new IntakeRollersKraken();
           intakeExtend =
               new IntakeExtend(new IntakeExtendIOSparkMax(), operatorController.rightTrigger());
         }
@@ -128,10 +125,6 @@ public class RobotContainer {
         }
 
         case ROBOT_BRIEFCASE -> {
-          //          leds = new Leds();
-          //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
-          leds = new Leds();
-          shooter = new ShooterSpark(new ShooterIOSparkMax(false));
         }
       }
     }
@@ -177,15 +170,6 @@ public class RobotContainer {
     autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManualAutoOverBump());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     autoChooser.addOption("8 Ball Auto", autos.EightBalls());
-
-    autoChooser.addOption(
-        "runCharacterizationQuasistatic", shooter.sysIdQuasistatic(Direction.kForward));
-    autoChooser.addOption("runCharacterizationDynamic", shooter.sysIdDynamic(Direction.kForward));
-
-    autoChooser.addOption(
-        "runCharacterizationQuasistaticReverse", shooter.sysIdQuasistatic(Direction.kReverse));
-    autoChooser.addOption(
-        "runCharacterizationDynamicReverse", shooter.sysIdDynamic(Direction.kReverse));
 
     // Drive SysId
     autoChooser.addOption(
@@ -276,7 +260,7 @@ public class RobotContainer {
     //         VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
     // driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
 
-    driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
+    driverController.rightTrigger(0.1).toggleOnTrue(indexer.feed());
     driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
 
     driverController

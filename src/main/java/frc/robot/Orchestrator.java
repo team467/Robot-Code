@@ -8,20 +8,18 @@ import static org.wpilib.units.Units.Rotations;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.commands.auto.DriveToPose;
-import frc.robot.commands.auto.RotateToOrientation;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.rollers.IntakeRollers;
+import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterSpark;
 import frc.robot.util.ShooterLeadCompensator;
 import frc.robot.util.Zone;
 import frc.robot.util.Zone.Tuple2d;
-import java.util.Map;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
-import org.wpilib.command2.ConditionalCommand;
-import org.wpilib.command2.SelectCommand;
 import org.wpilib.command3.Command;
 import org.wpilib.command3.button.CommandGamepad;
 import org.wpilib.math.geometry.Pose2d;
@@ -41,10 +39,11 @@ public class Orchestrator {
       new Pose2d(11.334761619567871, 5.599213600158691, new Rotation2d());
   private final double FRONT_HUB_OFFSET = Units.inchesToMeters(58.0);
   private final Drive drive;
-  private final ShooterSpark shooter;
+  private final Shooter shooter;
   private final MagicCarpet magicCarpet;
   private final Indexer indexer;
   private final Intake intake;
+  private final IntakeRollers rollers;
   private final ShooterLeadCompensator shooterLeadCompensator;
   private final CommandGamepad driverController;
   // Filtering for lead compensator outputs
@@ -103,70 +102,78 @@ public class Orchestrator {
   public Command zoneBasedShooter() {
     DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
 
-    return new SelectCommand<>(
-        Map.ofEntries(
-            Map.entry(ZoneId.ZONE_1, spinUpShooterDistance(getHubDistance())),
-            Map.entry(
-                ZoneId.ZONE_2,
-                new ConditionalCommand(
-                    spinUpShooterDistance(
-                        () ->
-                            Meters.of(
-                                AllianceFlipUtil.apply(BBumpClosePose)
-                                    .getTranslation()
-                                    .getDistance((drive.getPose().getTranslation())))),
-                    spinUpShooterDistance(
-                        () ->
-                            Meters.of(
-                                AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))
-                                    .getTranslation()
-                                    .getDistance(drive.getPose().getTranslation()))),
-                    () -> allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)),
-            Map.entry(
-                ZoneId.ZONE_3,
-                spinUpShooterDistance(
-                    () ->
-                        Meters.of(
-                            AllianceFlipUtil.apply(BBumpFarPose)
-                                .getTranslation()
-                                .getDistance(drive.getPose().getTranslation())))),
-            Map.entry(
-                ZoneId.ZONE_4,
-                spinUpShooterDistance(
-                    () ->
-                        Meters.of(
-                            AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))
-                                .getTranslation()
-                                .getDistance(drive.getPose().getTranslation()))))),
-        this::getCurrentZone);
+    return Command.noRequirements(
+        coro -> {
+          switch (getCurrentZone()) {
+            case ZONE_1 -> coro.await(shooter.shoot(getHubDistance()));
+            case ZONE_2 -> {
+              if (allianceY.getAsDouble() > FieldConstants.fieldWidth / 2) {
+                coro.await(shooter.shoot(
+                    Meters.of(AllianceFlipUtil.apply(BBumpClosePose).getTranslation()
+                        .getDistance((drive.getPose().getTranslation())))));
+              } else {
+                coro.await(shooter.shoot(
+                    Meters.of(
+                        AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))
+                            .getTranslation()
+                            .getDistance(drive.getPose().getTranslation()))));
+              }
+            }
+            case ZONE_3 -> coro.await(shooter.shoot(
+                Meters.of(
+                    AllianceFlipUtil.apply(BBumpFarPose)
+                        .getTranslation()
+                        .getDistance(drive.getPose().getTranslation()))));
+            case ZONE_4 -> coro.await(shooter.shoot(
+                Meters.of(
+                    AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))
+                        .getTranslation()
+                        .getDistance(drive.getPose().getTranslation()))));
+          }
+        }
+    ).named("Zone Based Shooter");
   }
 
   public Command zoneBasedAim() {
     DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
 
-    return new SelectCommand<>(
-        Map.ofEntries(
-            Map.entry(ZoneId.ZONE_1, aimToHub()),
-            Map.entry(
-                ZoneId.ZONE_2,
-                new ConditionalCommand(
-                    new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpClosePose)),
-                    new RotateToOrientation(
-                        drive,
-                        () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))),
-                    () -> allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)),
-            Map.entry(
-                ZoneId.ZONE_3,
-                new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpFarPose))),
-            Map.entry(
-                ZoneId.ZONE_4,
-                new RotateToOrientation(
-                    drive, () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))))),
-        this::getCurrentZone);
+    Command.noRequirements(
+        coro -> {
+          switch (getCurrentZone()) {
+            case ZONE_1 -> coro.await(aimToHub());
+            case ZONE_2 -> {
+              if (allianceY.getAsDouble() > FieldConstants.fieldWidth / 2) {
+                // TODO
+              }
+            }
+            // TODO
+          }
+        }
+    );
+
+//    return new SelectCommand<>(
+//        Map.ofEntries(
+//            Map.entry(ZoneId.ZONE_1, aimToHub()),
+//            Map.entry(
+//                ZoneId.ZONE_2,
+//                new ConditionalCommand(
+//                    new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpClosePose)),
+//                    new RotateToOrientation(
+//                        drive,
+//                        () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))),
+//                    () -> allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)),
+//            Map.entry(
+//                ZoneId.ZONE_3,
+//                new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpFarPose))),
+//            Map.entry(
+//                ZoneId.ZONE_4,
+//                new RotateToOrientation(
+//                    drive, () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))))),
+//        this::getCurrentZone);
   }
 
-  public Supplier<Distance> getHubDistance() {
-    return () ->
+  public Distance getHubDistance() {
+    return
         Meters.of(
             AllianceFlipUtil.apply(Hub.innerCenterPoint.toTranslation2d())
                 .getDistance(
@@ -205,7 +212,7 @@ public class Orchestrator {
               AllianceFlipUtil.apply(Hub.blueCenter)
                   .minus(hubApproachPose.getTranslation())
                   .getAngle();
-          return new Pose2d(hubApproachPose.getTranslation(), sameAsAlignAndShootHeading);
+          return new Pose2d(hubApproachPose.getTranslation(), null);
         });
   }
 
@@ -213,19 +220,15 @@ public class Orchestrator {
     return Command.noRequirements(
         coro -> {
           while (!shooter.atSetpoint()) {
-            indexer.run();
+            indexer.feed();
             coro.yield();
           }
         }
     ).named("Feed Up");
   }
 
-  public Command spinUpShooterDistance(Supplier<Distance> targetDistance) {
-    return shooter.runAtVelocity(shooter.calculateSetpoint(targetDistance).get());
-  }
-
   public Command spinUpShooterHub() {
-    return shooter.runAtVelocity(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM));
+    return shooter.shoot(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM));
   }
 
   public Command aimToHub() {

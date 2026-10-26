@@ -1,10 +1,13 @@
 package frc.robot.subsystems.shooter;
 
+import static org.wpilib.units.Units.RPM;
+
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Transform2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.util.Units;
+import org.wpilib.units.measure.AngularVelocity;
 
 public class ShooterConstants {
 
@@ -17,7 +20,7 @@ public class ShooterConstants {
   public static final double KS = 0.2723;
 
   public static final double SHOOTER_WHEEL_GEAR_RATIO = 3.5;
-  public static final double CLOSE_HUB_SHOOTER_RPM = 1100;
+  public static final AngularVelocity CLOSE_HUB_SHOOTER_RPM = RPM.of(1100);
   public static final double MAX_VOLTAGE = 12.0;
 
   public static final double TOLERANCE =

@@ -5,14 +5,17 @@ import frc.robot.Orchestrator;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
+import frc.robot.subsystems.intake.rollers.IntakeRollers;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
-import frc.robot.subsystems.shooter.ShooterSpark;
 import java.util.function.Supplier;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
+import org.wpilib.command3.Command;
+import org.wpilib.command3.Coroutine.ForkResult;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.util.Units;
+
+import static org.wpilib.units.Units.Seconds;
 
 /**
  * Contains all autos
@@ -59,7 +62,7 @@ public class Autos {
   private final IntakeRollers rollers;
 
   // pp
-  private final ShooterSpark shooter;
+  private final Shooter shooter;
 
   /**
    * Basic constructor, takes in all initialized subsystems and stores them
@@ -75,35 +78,12 @@ public class Autos {
       Orchestrator orchestrator,
       Intake intake,
       IntakeRollers rollers,
-      ShooterSpark shooter) {
+      Shooter shooter) {
     this.drive = drive;
     this.orchestrator = orchestrator;
     this.intake = intake;
     this.rollers = rollers;
     this.shooter = shooter;
-  }
-
-  /**
-   * Helper function for a single cycle auto with a constant shooting speed
-   *
-   * @param path      The pathplanner path file name to use
-   * @param startPose A supplier that returns that starting position of the robot for this path
-   * @return A command that follows the path and shoots
-   */
-  private Command ppCycle(String path, Supplier<Pose2d> startPose) {
-    return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startPose.get())),
-        Commands.deadline(
-                drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                orchestrator.spinUpShooterHub())
-            .withTimeout(14.5),
-        orchestrator.aimToHub().withTimeout(2.5),
-        Commands.parallel(orchestrator.spinUpShooter(1215), orchestrator.feedUp()).withTimeout(2.5),
-        Commands.parallel(
-            intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS),
-            orchestrator.spinUpShooter(1214),
-            orchestrator.feedUp()));
   }
 
   /**
@@ -114,6 +94,36 @@ public class Autos {
    * @return A command that follows the path and shoots
    */
   private Command ppCycleRegression(String path, Supplier<Pose2d> startPose) {
+    return Command.noRequirements(
+        coro -> {
+          drive.setPose(startPose.get());
+
+          coro.awaitAny(
+              drive.getAutonomousCommand(path),
+              Command.noRequirements(
+                  coro2 -> {
+                    ForkResult childTask = coro2.fork(
+                        intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
+                        shooter.shoot(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)
+                    );
+
+                    childTask.awaitCompletion(); // Blocks forever
+                  }
+              ).named("Auto Intake & Shoot")
+          );
+
+          coro.awaitAny(
+              Command.noRequirements(coro2 -> {
+                coro2.await(orchestrator.aimToHub().withTimeout(Seconds.one()));
+              }).named("Auto Feed"),
+              Command.noRequirements(coro2 -> {
+                while (true) {
+                  coro2.await(shooter.shoot(orchestrator.getHubDistance()));
+                }
+              }).named("Auto Shoot")
+          );
+        }
+    );
     return Commands.sequence(
         Commands.runOnce(() -> drive.setPose(startPose.get())),
         Commands.deadline(
@@ -123,7 +133,7 @@ public class Autos {
                     .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
             .withTimeout(15.5),
         Commands.deadline(
-                orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
+                orchestrator.aimToHub().withTimeout(1),
                 orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
             .andThen(
                 Commands.parallel(
@@ -168,13 +178,6 @@ public class Autos {
         .withTimeout(14.5)
         .andThen(orchestrator.stopShootingAuto().withTimeout(0.1))
         .andThen(ppCycleRegressionConnect(path2));
-  }
-
-  /**
-   * Depot Auto
-   */
-  public Command ppDepot() {
-    return ppCycleRegression("A-Cycle-LeftSweep", startDepot);
   }
 
   /**

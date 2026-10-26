@@ -6,42 +6,28 @@ import static frc.robot.subsystems.intake.IntakeConstants.STALL_VELOCITY;
 
 import frc.robot.RobotState;
 import frc.robot.RobotState.IntakePosition;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 import org.wpilib.command3.Command;
 import org.wpilib.command3.Mechanism;
-import org.wpilib.system.Timer;
 
 public class IntakeExtend implements Mechanism {
 
   private final IntakeExtendIO io;
   private final IntakeExtendIOInputsAutoLogged inputs = new IntakeExtendIOInputsAutoLogged();
-  private final Timer stallExtendTimer = new Timer();
-  private final Timer stallCollapseTimer = new Timer();
 
-  private final boolean stalledExtend = false;
-  private final boolean stalledCollapse = false;
-  private final boolean isStowed = false;
   private boolean hasPose = false;
 
-  public IntakeExtend(IntakeExtendIO io, BooleanSupplier limitSwitchDisabled) {
+  public IntakeExtend(IntakeExtendIO io) {
     this.io = io;
-    this.limitSwitchDisabled = limitSwitchDisabled;
   }
 
   public void periodic() {
-    inputs.stalledExtended = stalledExtend;
-    inputs.stalledCollapsed = stalledCollapse;
-    inputs.stowed = isStowed;
-    inputs.stallExtendTimer = stallExtendTimer.get();
-    inputs.stallCollapseTimer = stallCollapseTimer.get();
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-    Logger.recordOutput("Intake/IntakeExtend/StalledExtend", stalledExtend);
-    Logger.recordOutput("Intake/IntakeExtended/StalledCollapse", stalledCollapse);
-    Logger.recordOutput("Intake/stallingExtend", isStallingExtend());
-    Logger.recordOutput("Intake/stallingCollapse", isStallingCollapse());
+    Logger.recordOutput("Intake/stallingExtend",
+        Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts < -0.01);
+    Logger.recordOutput("Intake/stallingCollapse",
+        Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts > 0.01);
     if (inputs.getExtendPos > EXTEND_POS / 2) {
       RobotState.getInstance().intakePosition = IntakePosition.STOWED;
     }
@@ -57,19 +43,6 @@ public class IntakeExtend implements Mechanism {
     }
     inputs.hasPose = hasPose;
     Logger.recordOutput("Intake/IntakeExtend/HasPose", hasPose);
-  }
-
-  public DoubleSupplier getAngle() {
-    return () -> inputs.getExtendPos;
-  }
-
-  private boolean isStallingExtend() {
-    // For our volts, we are not getting the right velocity
-    return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts < -0.01;
-  }
-
-  private boolean isStallingCollapse() {
-    return Math.abs(inputs.extendVelocity) < STALL_VELOCITY && inputs.extendVolts > 0.01;
   }
 
   public void stopExtend() {

@@ -9,12 +9,12 @@ import static frc.robot.subsystems.intake.IntakeConstants.PID_D;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.SparkLowLevel.ControlType;
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
@@ -64,16 +64,11 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
     inputs.extendVelocity = extendMotorEncoder.getVelocity();
     inputs.extendVolts = extendMotor.getAppliedOutput();
     inputs.extendAmps = extendMotor.getOutputCurrent();
-    inputs.isCollapsed = isCollapsed();
+    inputs.isCollapsed = collapsedLimitSwitch.get();
     inputs.getExtendPos = extendMotorEncoder.getPosition();
     inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint() && usingPID;
     inputs.hasSetpoint = usingPID;
     inputs.setpointValue = extendMotor.getClosedLoopController().getSetpoint();
-  }
-
-  @Override
-  public boolean isCollapsed() {
-    return collapsedLimitSwitch.get();
   }
 
   @Override

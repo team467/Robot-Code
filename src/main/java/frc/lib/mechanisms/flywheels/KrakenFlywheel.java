@@ -11,7 +11,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import org.littletonrobotics.junction.AutoLog;
-import org.wpilib.command3.Command;
 import org.wpilib.command3.Mechanism;
 import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.units.measure.Current;
@@ -26,11 +25,9 @@ public class KrakenFlywheel implements ReversibleFlywheel, Mechanism {
   private final StatusSignal<Current> current;
 
   private final Voltage volts;
-  private final String subsystemName;
 
   public KrakenFlywheel(String subsystemName, CANPort can, int port, InvertedValue invertedValue,
       Current currentLimit, Voltage volts) {
-    this.subsystemName = subsystemName;
     this.volts = volts;
 
     kraken = new TalonFX(port, CANBus.systemcore(
@@ -57,38 +54,17 @@ public class KrakenFlywheel implements ReversibleFlywheel, Mechanism {
   }
 
   @Override
-  public Command reverse() {
-    return run(
-        coro -> {
-          while (true) {
-            kraken.setVoltage(volts.times(-1));
-            coro.yield();
-          }
-        }
-    ).named(subsystemName + " Reverse");
+  public void reverse() {
+    kraken.setVoltage(volts.times(-1));
   }
 
   @Override
-  public Command run() {
-    return run(
-        coro -> {
-          while (true) {
-            kraken.setVoltage(volts);
-            coro.yield();
-          }
-        }
-    ).named(subsystemName + " Run");
+  public void run() {
+    kraken.setVoltage(volts);
   }
 
   @Override
-  public Command stop() {
-    return run(
-        coro -> {
-          while (true) {
-            kraken.setVoltage(Volts.zero());
-            coro.yield();
-          }
-        }
-    ).named(subsystemName + " Stop");
+  public void stop() {
+    kraken.setVoltage(Volts.zero());
   }
 }

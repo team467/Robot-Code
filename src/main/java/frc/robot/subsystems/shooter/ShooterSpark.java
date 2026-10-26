@@ -25,8 +25,10 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.util.Signal;
 import frc.lib.mechanisms.flywheels.FeedForwardFlywheel;
+import frc.robot.Bindings;
 import org.littletonrobotics.junction.AutoLog;
-import org.wpilib.command3.Command;
+import org.wpilib.command3.StateMachine;
+import org.wpilib.command3.StateMachine.State;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Time;
@@ -45,7 +47,7 @@ public class ShooterSpark implements Shooter {
   private final FeedForwardFlywheel flywheel;
 
   public ShooterSpark() {
-    flywheel = new FeedForwardFlywheel("Shooter", KS, KV, KA, this::setVoltage, this::getVelocity);
+    flywheel = new FeedForwardFlywheel(KS, KV, KA, this::setVoltage, this::getVelocity);
 
     topLeftMotor = new SparkMax(CAN_D0, shooterTopLeftMotorCanId, MotorType.kBrushless);
     topRightMotor = new SparkMax(CAN_D0, shooterTopRightMotorCanId, MotorType.kBrushless);
@@ -80,18 +82,18 @@ public class ShooterSpark implements Shooter {
   }
 
   @Override
-  public Command stop() {
-    return flywheel.stop();
+  public void stop() {
+    flywheel.stop();
   }
 
   @Override
-  public Command shoot(AngularVelocity velocity) {
-    return flywheel.runAtVelocity(velocity);
+  public void shoot(AngularVelocity velocity) {
+    flywheel.runAtVelocity(velocity);
   }
 
   @Override
-  public Command shoot(Distance distance) {
-    return flywheel.runAtVelocity(calculateSetpoint(distance));
+  public void shoot(Distance distance) {
+    flywheel.runAtVelocity(calculateSetpoint(distance));
   }
 
   public void setVoltage(Voltage voltage) {
@@ -128,5 +130,42 @@ public class ShooterSpark implements Shooter {
     } else {
       return velocity;
     }
+  }
+
+  public StateMachine stateMachine() {
+    StateMachine machine = new StateMachine("Shooter");
+
+    State idle = machine.addState(flywheel.run(coro -> {
+          while (true) {
+            flywheel.stop();
+            coro.yield();
+          }
+        }
+    ).named("Shooter Idle"));
+    State speedingUp = machine.addState(flywheel.run(coro -> {
+      while (!flywheel.atSetpoint()) {
+        flywheel.runAtVelocity(Bindings.shooterSetpoint);
+        coro.yield();
+      }
+    }).named("Shooter Speed Up"));
+    State shooting = machine.addState(flywheel.run(coro -> {
+      while (flywheel.atSetpoint()) {
+        flywheel.runAtVelocity(Bindings.shooterSetpoint);
+        coro.yield();
+      }
+    }).named("Shooter Shoot"));
+
+    idle.switchTo(speedingUp).when(() -> Bindings.shoot);
+
+    speedingUp.switchTo(idle).when(() -> !Bindings.shoot);
+    speedingUp.switchTo(shooting).whenComplete();
+
+    shooting.switchTo(idle).when(() -> !Bindings.shoot);
+    shooting.switchTo(speedingUp).whenComplete();
+
+    shooting.onEnter(() -> Bindings.shooterIsShooting = true);
+    shooting.onExit(() -> Bindings.shooterIsShooting = false);
+
+    return machine;
   }
 }
