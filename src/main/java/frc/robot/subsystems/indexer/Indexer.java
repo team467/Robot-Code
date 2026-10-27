@@ -4,11 +4,5 @@ import org.wpilib.command3.StateMachine;
 
 public interface Indexer {
 
-  void feed();
-
-  void reverse();
-
-  void stop();
-
   StateMachine stateMachine();
 }

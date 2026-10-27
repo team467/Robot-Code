@@ -76,26 +76,6 @@ public class ShooterSpark implements Shooter {
     velocity = encoder.getVelocity();
   }
 
-  @Override
-  public boolean atSetpoint() {
-    return flywheel.atSetpoint();
-  }
-
-  @Override
-  public void stop() {
-    flywheel.stop();
-  }
-
-  @Override
-  public void shoot(AngularVelocity velocity) {
-    flywheel.runAtVelocity(velocity);
-  }
-
-  @Override
-  public void shoot(Distance distance) {
-    flywheel.runAtVelocity(calculateSetpoint(distance));
-  }
-
   public void setVoltage(Voltage voltage) {
     topLeftMotor.setVoltage(Volts.zero());
     topRightMotor.setVoltage(Volts.zero());

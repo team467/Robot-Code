@@ -17,21 +17,6 @@ public class MagicCarpetSpark implements MagicCarpet {
   }
 
   @Override
-  public void feed() {
-    flywheel.run();
-  }
-
-  @Override
-  public void reverse() {
-    flywheel.reverse();
-  }
-
-  @Override
-  public void stop() {
-    flywheel.stop();
-  }
-
-  @Override
   public StateMachine stateMachine() {
     StateMachine machine = new StateMachine("Magic Carpet");
 
