@@ -1,5 +1,7 @@
 package frc.robot.subsystems.magicCarpet;
 
+import org.wpilib.command3.StateMachine;
+
 public interface MagicCarpet {
 
   void feed();
@@ -7,4 +9,6 @@ public interface MagicCarpet {
   void reverse();
 
   void stop();
+
+  StateMachine stateMachine();
 }

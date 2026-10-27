@@ -166,6 +166,8 @@ public class ShooterSpark implements Shooter {
     shooting.onEnter(() -> Bindings.shooterIsShooting = true);
     shooting.onExit(() -> Bindings.shooterIsShooting = false);
 
+    machine.setInitialState(idle);
+
     return machine;
   }
 }

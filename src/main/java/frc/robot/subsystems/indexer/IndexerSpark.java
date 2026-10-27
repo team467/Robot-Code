@@ -44,9 +44,23 @@ public class IndexerSpark implements Indexer {
           }
         }).named("Indexer Feed")
     );
+    State reversing = machine.addState(
+        flywheel.run(coro -> {
+          while (true) {
+            flywheel.reverse();
+            coro.yield();
+          }
+        }).named("Indexer Reverse")
+    );
 
     idle.switchTo(indexing).when(() -> Bindings.index);
-    indexing.switchTo(idle).when(() -> !Bindings.index);
+    idle.switchTo(reversing).when(() -> Bindings.outtake);
+
+    indexing.switchTo(idle).when(() -> !Bindings.index && !Bindings.outtake);
+    indexing.switchTo(reversing).when(() -> Bindings.outtake);
+
+    reversing.switchTo(idle).when(() -> !Bindings.outtake && !Bindings.index);
+    reversing.switchTo(indexing).when(() -> !Bindings.outtake && Bindings.index);
 
     machine.setInitialState(idle);
 
