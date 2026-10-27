@@ -20,6 +20,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import org.wpilib.command3.StateMachine;
+import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.hardware.discrete.DigitalInput;
 
 public class IntakeExtendIOSparkMax implements IntakeExtendIO {
@@ -31,7 +33,7 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
   private boolean usingPID = false;
 
   public IntakeExtendIOSparkMax() {
-    extendMotor = new SparkMax(intakeExtendCanId, MotorType.kBrushless);
+    extendMotor = new SparkMax(CANPort.CAN_D0, intakeExtendCanId, MotorType.kBrushless);
 
     pidController = extendMotor.getClosedLoopController();
     extendMotorEncoder = extendMotor.getEncoder();
@@ -43,8 +45,6 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
 
   public SparkMaxConfig getSparkMaxConfig() {
     EncoderConfig extendEnc = new EncoderConfig();
-    extendEnc.positionConversionFactor(EXTEND_POSITION_CONVERSION);
-    extendEnc.velocityConversionFactor(EXTEND_VELOCITY_CONVERSION);
     var extendConfig = new SparkMaxConfig();
     extendConfig
         .inverted(false)
@@ -58,38 +58,7 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
     return extendConfig;
   }
 
-  @Override
-  public void updateInputs(IntakeExtendIOInputs inputs) {
-    inputs.extendPercentOutput = extendMotor.get();
-    inputs.extendVelocity = extendMotorEncoder.getVelocity();
-    inputs.extendVolts = extendMotor.getAppliedOutput();
-    inputs.extendAmps = extendMotor.getOutputCurrent();
-    inputs.isCollapsed = collapsedLimitSwitch.get();
-    inputs.getExtendPos = extendMotorEncoder.getPosition();
-    inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint() && usingPID;
-    inputs.hasSetpoint = usingPID;
-    inputs.setpointValue = extendMotor.getClosedLoopController().getSetpoint();
-  }
+  public StateMachine stateMachine() {
 
-  @Override
-  public void setVoltageExtend(double extendVolts) {
-    extendMotor.setVoltage(extendVolts);
-  }
-
-  @Override
-  public void goToPos(double setPos) {
-    this.setPos = setPos;
-    if (usingPID) {
-      pidController.setSetpoint(setPos, ControlType.kPosition);
-    }
-  }
-
-  public void setPIDEnabled(boolean enabled) {
-    this.usingPID = enabled;
-  }
-
-  @Override
-  public void resetExtendEncoder(double position) {
-    extendMotorEncoder.setPosition(position);
   }
 }

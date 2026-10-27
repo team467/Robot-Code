@@ -1,12 +1,8 @@
 package frc.robot.subsystems.intake.rollers;
 
-import org.wpilib.command3.Command;
+import org.wpilib.command3.StateMachine;
 
 public interface IntakeRollers {
 
-  Command feed();
-
-  Command reverse();
-
-  Command stop();
+  StateMachine stateMachine();
 }
