@@ -1,11 +1,12 @@
 package frc.robot.commands.auto;
 
+import static org.wpilib.units.Units.Seconds;
+
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.Orchestrator;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
-import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import java.util.function.Supplier;
@@ -14,8 +15,6 @@ import org.wpilib.command3.Coroutine.ForkResult;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.util.Units;
-
-import static org.wpilib.units.Units.Seconds;
 
 /**
  * Contains all autos

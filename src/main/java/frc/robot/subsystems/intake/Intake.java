@@ -1,55 +1,57 @@
 package frc.robot.subsystems.intake;
 
-import static frc.robot.subsystems.intake.IntakeConstants.COLLAPSE_POS;
-import static frc.robot.subsystems.intake.IntakeConstants.FUNNEL_POS;
-import static frc.robot.subsystems.intake.IntakeConstants.SHAKE_POS_OFFSET;
-import static frc.robot.subsystems.intake.IntakeConstants.SLOW_VOLTS;
+import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_ROLLERS_MOTOR_CURRENT_LIMIT;
+import static frc.robot.subsystems.intake.IntakeConstants.INTAKE_VOLTS;
 
+import com.ctre.phoenix6.signals.InvertedValue;
+import frc.lib.mechanisms.flywheels.KrakenFlywheel;
+import frc.lib.mechanisms.flywheels.ReversibleFlywheel;
+import frc.robot.Bindings;
+import frc.robot.Schematic;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
 import org.wpilib.command3.Command;
+import org.wpilib.command3.StateMachine;
+import org.wpilib.hardware.bus.CANPort;
 
 public class Intake {
 
-  private final IntakeRollers rollers;
+  private final ReversibleFlywheel rollers;
   private final IntakeExtend extend;
 
-  public Intake(IntakeRollers rollers, IntakeExtend extend) {
-    this.rollers = rollers;
+  public Intake(IntakeExtend extend) {
+    this.rollers = new KrakenFlywheel("Intake Rollers", CANPort.CAN_D0, Schematic.intakeMotorCanId,
+        InvertedValue.CounterClockwise_Positive, INTAKE_ROLLERS_MOTOR_CURRENT_LIMIT, INTAKE_VOLTS);
     this.extend = extend;
   }
 
-  public Command extendToAngleAndIntake(double angle) {
-    return Commands.parallel(extend.extendToAngle(angle), runIntakeMotor())
-        .withName("extendToAngleAndIntake");
-  }
+  public StateMachine stateMachine() {
+    StateMachine machine = new StateMachine("Intake Machine");
 
-  public Command extendToAngle(double angle) {
-    return extend.extendToAngle(angle);
-  }
+    var idling = machine.addState(extend.retract());
+    var intaking = machine.addState(Command.noRequirements(coro -> {
+      coro.fork(extend.extend()); // Bring out the intake
+      while (true) {
+        rollers.run();
+        coro.yield();
+      }
+    }).named("Intaking"));
+    var outtaking = machine.addState(Command.noRequirements(coro -> {
+      coro.awaitAny(extend.extend()); // Extend first
+      while (true) {
+        rollers.reverse();
+        coro.yield();
+      }
+    }).named("Intake Outtaking"));
 
-  public Command runIntakeMotor() {
-    return rollers.intake();
-  }
+    idling.switchTo(intaking).when(() -> Bindings.intake);
+    idling.switchTo(outtaking).when(() -> Bindings.outtake);
 
-  public Command slowlyBringInIntake() {
-    return Commands.parallel(rollers.intake(), extend.runIntakeExtendVolts(SLOW_VOLTS))
-        .andThen(extend.extendToAngle(COLLAPSE_POS).repeatedly());
-  }
+    intaking.switchTo(idling).when(() -> !Bindings.intake && !Bindings.outtake);
+    intaking.switchTo(outtaking).when(() -> Bindings.outtake);
 
-  // Jack's Chugga Chugga mode
-  public Command shakeAndIntake() {
-    return Commands.repeatingSequence(
-            Commands.deadline(
-                extend.extendToAngle(FUNNEL_POS + SHAKE_POS_OFFSET), runIntakeMotor()),
-            Commands.deadline(
-                extend.extendToAngle(FUNNEL_POS - SHAKE_POS_OFFSET), runIntakeMotor()))
-        .withName("shakeAndIntake");
-  }
+    outtaking.switchTo(idling).when(() -> !Bindings.intake && !Bindings.outtake);
+    outtaking.switchTo(intaking).when(() -> Bindings.intake);
 
-  public Command shake() {
-    return Commands.repeatingSequence(
-            extend.extendToAngle(FUNNEL_POS + SHAKE_POS_OFFSET),
-            extend.extendToAngle(FUNNEL_POS - SHAKE_POS_OFFSET))
-        .withName("shake");
+    return machine;
   }
 }

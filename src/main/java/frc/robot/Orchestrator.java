@@ -11,7 +11,6 @@ import frc.robot.commands.auto.DriveToPose;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterSpark;

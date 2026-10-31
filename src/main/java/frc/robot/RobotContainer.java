@@ -33,7 +33,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
 import frc.robot.subsystems.intake.extend.IntakeExtendSpark;
-import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.intake.rollers.IntakeRollersKraken;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
