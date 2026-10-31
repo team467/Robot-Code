@@ -32,7 +32,7 @@ import frc.robot.subsystems.indexer.IndexerSpark;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
-import frc.robot.subsystems.intake.extend.IntakeExtendIOSparkMax;
+import frc.robot.subsystems.intake.extend.IntakeExtendSpark;
 import frc.robot.subsystems.intake.rollers.IntakeRollers;
 import frc.robot.subsystems.intake.rollers.IntakeRollersKraken;
 import frc.robot.subsystems.leds.Leds;
@@ -108,7 +108,7 @@ public class RobotContainer {
           indexer = new IndexerSpark();
           intakeRollers = new IntakeRollersKraken();
           intakeExtend =
-              new IntakeExtend(new IntakeExtendIOSparkMax(), operatorController.rightTrigger());
+              new IntakeExtend(new IntakeExtendSpark(), operatorController.rightTrigger());
         }
 
         case ROBOT_SIMBOT -> {
