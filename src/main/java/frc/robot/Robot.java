@@ -53,6 +53,7 @@ import org.wpilib.command3.button.CommandGamepad;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.math.filter.LinearFilter;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
@@ -304,35 +305,7 @@ public class Robot extends LoggedRobot {
             default -> drive.stop();
           }
         }).named("DriveWithDpad"));
-    driverController
-        .leftBumper()
-        .and(operatorController.pov(180))
-        .whileTrue(intakeExtend.runIntakeExtendVolts(-4))
-        .onFalse(intakeExtend.stopExtendingCommand());
-    CustomTriggers.toggleIntakeUp(
-            driverController.leftBumper(),
-            () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
-        .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(intakeExtend.extendToAngle(IntakeConstants.COLLAPSE_POS));
-    CustomTriggers.toggleIntakeDown(
-            driverController.leftBumper(),
-            () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
-        .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(intake.extendToAngle(IntakeConstants.EXTEND_POS));
-
-    driverController.rightTrigger(0.1).toggleOnTrue(indexer.feed());
-    driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
-
-    driverController
-        .rightBumper()
-        .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(orchestrator.driveToHub());
-    driverController
-        .rightBumper()
-        .and(operatorController.pov(180))
-        .whileTrue(intakeExtend.runIntakeExtendVolts(4))
-        .onFalse(intakeExtend.stopExtendingCommand());
-}
+  }
 
   public void updateContainerPeriodic() {
     RobotState.getInstance().updateLEDState();
@@ -354,6 +327,10 @@ public class Robot extends LoggedRobot {
     Bindings.outtake = false;
     Bindings.intake = true;
     Bindings.intakeRetract = false;
+  }
+
+  public void stopIntaking() {
+    Bindings.intake = false;
   }
 
   public void shoot() {
@@ -381,29 +358,23 @@ public class Robot extends LoggedRobot {
     Bindings.intakeRetract = true;
   }
 
+  public void stopRetractingIntake() {
+    Bindings.intakeRetract = false;
+  }
+
+  public void driveToHub() {
+    orchestrator.driveToHub();
+  }
+
   /**
    * This function is called periodically during all modes.
    */
   @Override
   public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
     updateContainerPeriodic();
 
-    // Print auto duration
-    if (autonomousCommand != null) {
-      if (!autonomousCommand.isScheduled() && !autoMessagePrinted) {
-        if (DriverStation.isAutonomousEnabled()) {
-          System.out.printf(
-              "*** Auto finished in %.2f secs ***%n", Timer.getTimestamp() - autoStart);
-        } else {
-          System.out.printf(
-              "*** Auto cancelled in %.2f secs ***%n", Timer.getTimestamp() - autoStart);
-        }
-        autoMessagePrinted = true;
-      }
-    }
     // Check CAN status
-    var canStatus = RobotController.getCANStatus();
+    var canStatus = RobotController.getCANStatus(CANPort.CAN_D0);
     if (canStatus.transmitErrorCount > 0 || canStatus.receiveErrorCount > 0) {
       canErrorTimer.restart();
     }
