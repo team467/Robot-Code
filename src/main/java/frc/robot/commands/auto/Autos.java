@@ -4,6 +4,7 @@ import static org.wpilib.units.Units.Seconds;
 
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.Orchestrator;
+import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
@@ -57,11 +58,12 @@ public class Autos {
   // Relevant subsystems for the autos
   private final Drive drive;
   private final Orchestrator orchestrator;
-  private final Intake intake;
+  private final Intake intake
   private final IntakeRollers rollers;
 
   // pp
   private final Shooter shooter;
+  private final Robot r;
 
   /**
    * Basic constructor, takes in all initialized subsystems and stores them
@@ -69,97 +71,55 @@ public class Autos {
    * @param drive        Drive subsystem
    * @param orchestrator Orchestrator subsystem
    * @param intake       Intake subsystem
-   * @param rollers      Intake rollers subsystem
    * @param shooter      Shooter subsystem
    */
   public Autos(
       Drive drive,
       Orchestrator orchestrator,
       Intake intake,
-      IntakeRollers rollers,
-      Shooter shooter) {
+      Shooter shooter,
+  Robot r) {
     this.drive = drive;
     this.orchestrator = orchestrator;
     this.intake = intake;
-    this.rollers = rollers;
     this.shooter = shooter;
+    this.r = r;
   }
 
   /**
    * Helper function for a single cycle auto that uses shooter regression to shoot into the hub
    *
    * @param path      The pathplanner path file name to use
-   * @param startPose A Supplier that returns the starting position of the robot for this path
    * @return A command that follows the path and shoots
    */
-  private Command ppCycleRegression(String path, Supplier<Pose2d> startPose) {
+  private Command ppCycleRegression(String path) {
     return Command.noRequirements(
         coro -> {
-          drive.setPose(startPose.get());
-
           coro.awaitAny(
               drive.getAutonomousCommand(path),
               Command.noRequirements(
                   coro2 -> {
-                    ForkResult childTask = coro2.fork(
-                        intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS),
-                        shooter.shoot(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)
-                    );
-
-                    childTask.awaitCompletion(); // Blocks forever
+                    r.intake();
+                    coro2.wait(Seconds.of(5));
+                    r.shootManual();
+                    while (true) {
+                      coro2.yield();
+                    }
                   }
-              ).named("Auto Intake & Shoot")
+              ).whenCanceled(() -> {r.stopIntaking(); r.stopShooting();}).named("Auto Intake & Shooter Spinup")
           );
 
-          coro.awaitAny(
-              Command.noRequirements(coro2 -> {
-                coro2.await(orchestrator.aimToHub().withTimeout(Seconds.one()));
-              }).named("Auto Feed"),
-              Command.noRequirements(coro2 -> {
+          coro.await(
+          Command.noRequirements(
+              _ -> {
                 while (true) {
-                  coro2.await(shooter.shoot(orchestrator.getHubDistance()));
+                  r.shoot();
+                  coro.yield();
                 }
-              }).named("Auto Shoot")
-          );
+              }
+          ).whenCanceled(r::stopShooting).named("Shoot").withTimeout(Seconds.of(2.6)));
         }
-    );
-    return Commands.sequence(
-        Commands.runOnce(() -> drive.setPose(startPose.get())),
-        Commands.deadline(
-                drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                Commands.waitSeconds(5)
-                    .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
-            .withTimeout(15.5),
-        Commands.deadline(
-                orchestrator.aimToHub().withTimeout(1),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
-            .andThen(
-                Commands.parallel(
-                        Commands.waitSeconds(0.7).andThen(intake.slowlyBringInIntake()),
-                        orchestrator.aimToHub().withTimeout(1).repeatedly(),
-                        orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                        Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))
-                    .withTimeout(1.6)));
-  }
-
-  private Command ppCycleRegressionConnect(String path) {
-    return Commands.sequence(
-        Commands.deadline(
-                drive.getAutonomousCommand(path),
-                intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS).withTimeout(5.5),
-                Commands.waitSeconds(5)
-                    .andThen(orchestrator.spinUpShooter(ShooterConstants.CLOSE_HUB_SHOOTER_RPM)))
-            .withTimeout(14.5),
-        Commands.deadline(
-                orchestrator.aimToHub().withTimeout(1).withTimeout(2.5),
-                orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()))
-            .andThen(
-                Commands.parallel(
-                    Commands.waitSeconds(0.7).andThen(intake.slowlyBringInIntake()),
-                    orchestrator.aimToHub().withTimeout(1).repeatedly(),
-                    orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()),
-                    Commands.waitSeconds(0.4).andThen(orchestrator.feedUp()))));
+    ).named("ppCycleRegression");
   }
 
   /**
@@ -173,10 +133,14 @@ public class Autos {
    * @return A command that follows the paths and shoots
    */
   private Command pp2CycleRegression(String path1, String path2, Supplier<Pose2d> startPose) {
-    return ppCycleRegression(path1, startPose)
-        .withTimeout(14.5)
-        .andThen(orchestrator.stopShootingAuto().withTimeout(0.1))
-        .andThen(ppCycleRegressionConnect(path2));
+    return Command.noRequirements(
+        coro -> {
+          drive.setPose(startPose.get());
+          coro.await(ppCycleRegression(path1).withTimeout(Seconds.of(14.5)));
+          r.stopShooting();
+          coro.await(ppCycleRegression(path2));
+        }
+    ).named("PP 2 Cycle Regression");
   }
 
   /**

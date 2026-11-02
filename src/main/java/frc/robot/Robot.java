@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.SLOW_SPEED;
-import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera2Name;
@@ -14,12 +12,9 @@ import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera2;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import frc.lib.utils.LocalADStarAK;
-import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
@@ -30,7 +25,6 @@ import frc.robot.subsystems.drive.ModuleIOTalonSpark;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerSpark;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.extend.IntakeExtendSpark;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
@@ -48,16 +42,11 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.wpilib.command3.Command;
-import org.wpilib.command3.Trigger;
 import org.wpilib.command3.button.CommandGamepad;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.hardware.bus.CANPort;
-import org.wpilib.math.filter.LinearFilter;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.system.RobotController;
 import org.wpilib.system.Timer;
 import org.wpilib.util.Alert;
@@ -71,32 +60,20 @@ import org.wpilib.util.Alert.Level;
  */
 public class Robot extends LoggedRobot {
 
-  private static final int LOW_VOLTAGE = 9;
-  private static final double loopOverrunWarningTimeout = 0.2;
   private static final double canErrorTimeThreshold = 0.5; // Seconds to disable alert
-  private static final double lowBatteryVoltage = 11.8;
-  private static final double lowBatteryDisabledTime = 1.5;
-  private static final double lowBatteryMinCycleCount = 10;
-  private static int lowBatteryCycleCount = 0;
   private final Timer canInitialErrorTimer = new Timer();
   private final Timer canErrorTimer = new Timer();
-  private final Timer disabledTimer = new Timer();
   private final Alert canErrorAlert =
       new Alert("Init Alerts", "CAN errors detected, robot may not be controllable.", Level.HIGH);
   private final Alert lowBatteryAlert =
       new Alert("Init Alerts",
           "Battery voltage is very low, consider turning off the robot or replacing the battery.",
           Level.MEDIUM);
-  private final RobotState state = RobotState.getInstance();
-  private final LinearFilter batteryFilter = LinearFilter.movingAverage(15);
   private final Orchestrator orchestrator;
   // Controller
   private final CommandGamepad driverController = new CommandGamepad(0);
-  private final CommandGamepad operatorController = new CommandGamepad(1);
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final RobotState robotState = RobotState.getInstance();
-  private final boolean isRobotOriented = true; // Workaround, change if needed
   private Intake intake = null;
   // Subsystems
   private Drive drive;
@@ -105,9 +82,6 @@ public class Robot extends LoggedRobot {
   private MagicCarpet magicCarpet;
   private Indexer indexer;
   private Shooter shooter = null;
-  private Command autonomousCommand;
-  private double autoStart;
-  private boolean autoMessagePrinted;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -169,7 +143,6 @@ public class Robot extends LoggedRobot {
     // Reset alert timers
     canInitialErrorTimer.restart();
     canErrorTimer.restart();
-    disabledTimer.restart();
 
     // Instantiate active subsystems
     if (Constants.getMode() != Constants.Mode.REPLAY) {
@@ -215,22 +188,22 @@ public class Robot extends LoggedRobot {
 
     orchestrator =
         new Orchestrator(
-            drive, magicCarpet, shooter, indexer, intake, driverController);
+            drive, shooter, indexer);
     Autos autos = new Autos(drive, orchestrator, intake, shooter);
-    AutoBuilder.configure(
-        drive::getPose,
-        drive::setPose,
-        drive::getChassisVelocities,
-        drive::runVelocity,
-        new PPHolonomicDriveController(new PIDConstants(14.0, 0, 0), new PIDConstants(7, 0, 0)),
-        ppConfig,
-        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-        drive);
+//    AutoBuilder.configure(
+//        drive::getPose,
+//        drive::setPose,
+//        drive::getChassisVelocities,
+//        drive::runVelocity,
+//        new PPHolonomicDriveController(new PIDConstants(14.0, 0, 0), new PIDConstants(7, 0, 0)),
+//        ppConfig,
+//        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+//        drive);
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
           Logger.recordOutput(
-              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+              "Odometry/Trajectory", activePath.toArray(new Pose2d[0]));
         });
     PathPlannerLogging.setLogTargetPoseCallback(
         (targetPose) -> {
@@ -240,15 +213,9 @@ public class Robot extends LoggedRobot {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    autoChooser.addDefaultOption("Do Nothing", Commands.none());
-    autoChooser.addOption(
-        "RunIntakeOut", intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
-    autoChooser.addOption("Manual A-CC", autos.ACCManualAuto());
-    autoChooser.addOption("Manual A-CC-Improved", autos.ACCManuelAutoAlt());
-    autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManualAutoOverBump());
-    autoChooser.addOption("Manual B-CC", autos.BCCManualAuto());
-    autoChooser.addOption("Manual B-CC-Improved", autos.BCCManuelAutoAlt());
-    autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManualAutoOverBump());
+//    autoChooser.addDefaultOption("Do Nothing", Commands.none());
+//    autoChooser.addOption(
+//        "RunIntakeOut", intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
     autoChooser.addOption("8 Ball Auto", autos.EightBalls());
 
@@ -257,16 +224,16 @@ public class Robot extends LoggedRobot {
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+//    autoChooser.addOption(
+//        "Drive SysId (Quasistatic Forward)",
+//        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+//    autoChooser.addOption(
+//        "Drive SysId (Quasistatic Reverse)",
+//        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+//    autoChooser.addOption(
+//        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+//    autoChooser.addOption(
+//        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // pp
 
@@ -274,6 +241,9 @@ public class Robot extends LoggedRobot {
     autoChooser.addOption("B-side", autos.ppB2CycleRightRegression());
     // Configure the button bindings
     configureButtonBindings();
+
+    drive.setPose(
+        new Pose2d(drive.getPose().getTranslation(), Rotation2d.ZERO));
   }
 
   private void configureButtonBindings() {
@@ -284,27 +254,18 @@ public class Robot extends LoggedRobot {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
 
-    driverController
-        .start()
-        .onTrue(
-            Command.noRequirements(
-                    _ ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.ZERO)))
-                .named("Set Initial Drive Pose"));
-
-    new Trigger(() -> driverController.getHID().getPOV() != -1)
-        .whileTrue(drive.run(coro -> {
-          int pov = driverController.getHID().getPOV();
-
-          switch (pov) {
-            case 0 -> drive.runVelocity(new ChassisVelocities(SLOW_SPEED, 0, 0));
-            case 90 -> drive.runVelocity(new ChassisVelocities(0, -SLOW_SPEED, 0));
-            case 180 -> drive.runVelocity(new ChassisVelocities(-SLOW_SPEED, 0, 0));
-            case 270 -> drive.runVelocity(new ChassisVelocities(0, SLOW_SPEED, 0));
-            default -> drive.stop();
-          }
-        }).named("DriveWithDpad"));
+//    new Trigger(() -> driverController.getHID().getPOV() != -1)
+//        .whileTrue(drive.run(coro -> {
+//          int pov = driverController.getHID().getPOV();
+//
+//          switch (pov) {
+//            case 0 -> drive.runVelocity(new ChassisVelocities(SLOW_SPEED, 0, 0));
+//            case 90 -> drive.runVelocity(new ChassisVelocities(0, -SLOW_SPEED, 0));
+//            case 180 -> drive.runVelocity(new ChassisVelocities(-SLOW_SPEED, 0, 0));
+//            case 270 -> drive.runVelocity(new ChassisVelocities(0, SLOW_SPEED, 0));
+//            default -> drive.stop();
+//          }
+//        }).named("DriveWithDpad"));
   }
 
   public void updateContainerPeriodic() {
@@ -381,20 +342,14 @@ public class Robot extends LoggedRobot {
     canErrorAlert.set(
         !canErrorTimer.hasElapsed(canErrorTimeThreshold)
             && !canInitialErrorTimer.hasElapsed(canErrorTimeThreshold));
+  }
 
-    // Low battery alert
-    lowBatteryCycleCount += 1;
-    if (DriverStation.isEnabled()) {
-      disabledTimer.reset();
-    }
-    if (RobotController.getBatteryVoltage() <= lowBatteryVoltage
-        && disabledTimer.hasElapsed(lowBatteryDisabledTime)
-        && lowBatteryCycleCount >= lowBatteryMinCycleCount) {
-      lowBatteryAlert.set(true);
-    }
+  public void setPose() {
+    drive.setPose(
+        new Pose2d(drive.getPose().getTranslation(), Rotation2d.ZERO));
+  }
 
-    // If robot has low battery, lowbatteryalert will be set to true
-    state.lowBatteryAlert =
-        batteryFilter.calculate(RobotController.getBatteryVoltage()) < LOW_VOLTAGE;
+  public void followPath(String name) {
+    drive.getAutonomousCommand(name);
   }
 }

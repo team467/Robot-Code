@@ -5,8 +5,6 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.revrobotics.REVLibError;
 import com.revrobotics.spark.SparkBase;
-import org.wpilib.units.measure.Angle;
-import org.wpilib.system.RobotController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -14,11 +12,14 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
+import org.wpilib.system.RobotController;
+import org.wpilib.units.measure.Angle;
 
 /**
  * Provides an interface for asynchronously reading high-frequency measurements to a set of queues.
  */
 public class OdometryThread extends Thread {
+
   private final Lock signalsLock =
       new ReentrantLock(); // Prevents conflicts when registering signals
   private final List<SparkBase> sparks = new ArrayList<>();
@@ -46,12 +47,14 @@ public class OdometryThread extends Thread {
   }
 
   public void start() {
-    if (timestampQueues.size() > 0) {
+    if (!timestampQueues.isEmpty()) {
       super.start();
     }
   }
 
-  /** Registers a Spark signal to be read from the thread. */
+  /**
+   * Registers a Spark signal to be read from the thread.
+   */
   public Queue<Double> registerSignal(SparkBase spark, DoubleSupplier signal) {
     Queue<Double> queue = new ArrayBlockingQueue<>(20);
     signalsLock.lock();
@@ -67,7 +70,9 @@ public class OdometryThread extends Thread {
     return queue;
   }
 
-  /** Registers a Phoenix signal to be read from the thread. */
+  /**
+   * Registers a Phoenix signal to be read from the thread.
+   */
   public Queue<Double> registerSignal(StatusSignal<Angle> signal) {
     Queue<Double> queue = new ArrayBlockingQueue<>(20);
     signalsLock.lock();
@@ -85,7 +90,9 @@ public class OdometryThread extends Thread {
     return queue;
   }
 
-  /** Registers a generic signal to be read from the thread. */
+  /**
+   * Registers a generic signal to be read from the thread.
+   */
   public Queue<Double> registerSignal(DoubleSupplier signal) {
     Queue<Double> queue = new ArrayBlockingQueue<>(20);
     signalsLock.lock();
@@ -100,7 +107,9 @@ public class OdometryThread extends Thread {
     return queue;
   }
 
-  /** Returns a new queue that returns timestamp values for each sample. */
+  /**
+   * Returns a new queue that returns timestamp values for each sample.
+   */
   public Queue<Double> makeTimestampQueue() {
     Queue<Double> queue = new ArrayBlockingQueue<>(20);
     Drive.odometryLock.lock();
@@ -125,7 +134,9 @@ public class OdometryThread extends Thread {
           // that is not CAN FD, regardless of Pro licensing. No reasoning for this
           // behavior is provided by the documentation.
           Thread.sleep((long) (1000.0 / DriveConstants.odometryFrequency));
-          if (phoenixSignals.length > 0) BaseStatusSignal.refreshAll(phoenixSignals);
+          if (phoenixSignals.length > 0) {
+            BaseStatusSignal.refreshAll(phoenixSignals);
+          }
         }
       } catch (InterruptedException e) {
         e.printStackTrace();

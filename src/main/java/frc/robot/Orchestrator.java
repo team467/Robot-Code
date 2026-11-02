@@ -10,8 +10,6 @@ import frc.robot.FieldConstants.Hub;
 import frc.robot.commands.auto.DriveToPose;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterSpark;
@@ -21,7 +19,6 @@ import frc.robot.util.Zone.Tuple2d;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 import org.wpilib.command3.Command;
-import org.wpilib.command3.button.CommandGamepad;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Transform2d;
@@ -38,11 +35,8 @@ public class Orchestrator {
   private final double FRONT_HUB_OFFSET = Units.inchesToMeters(58.0);
   private final Drive drive;
   private final Shooter shooter;
-  private final MagicCarpet magicCarpet;
   private final Indexer indexer;
-  private final Intake intake;
   private final ShooterLeadCompensator shooterLeadCompensator;
-  private final CommandGamepad driverController;
   // Filtering for lead compensator outputs
   private final Zone zone1;
   private final Zone zone2;
@@ -51,18 +45,12 @@ public class Orchestrator {
 
   public Orchestrator(
       Drive drive,
-      MagicCarpet hopperBelt,
-      ShooterSpark shooter,
-      Indexer indexer,
-      Intake intake,
-      CommandGamepad driverController) {
+      Shooter shooter,
+      Indexer indexer) {
     this.drive = drive;
-    this.magicCarpet = hopperBelt;
     this.shooter = shooter;
     this.indexer = indexer;
-    this.intake = intake;
     this.shooterLeadCompensator = new ShooterLeadCompensator(drive, shooter);
-    this.driverController = driverController;
 
     this.zone1 = new Zone(drive::getPose);
     this.zone2 = new Zone(drive::getPose);

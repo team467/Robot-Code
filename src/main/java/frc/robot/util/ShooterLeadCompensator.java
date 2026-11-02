@@ -4,8 +4,8 @@ import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.Seconds;
 
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
-import frc.robot.subsystems.shooter.ShooterSpark;
 import java.util.function.Supplier;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
@@ -16,9 +16,9 @@ public class ShooterLeadCompensator {
 
   private final Supplier<Translation2d> shooterPosition;
   private final Supplier<Translation2d> robotVelocity;
-  private final ShooterSpark shooter;
+  private final Shooter shooter;
 
-  public ShooterLeadCompensator(Drive drive, ShooterSpark shooter) {
+  public ShooterLeadCompensator(Drive drive, Shooter shooter) {
     this.shooterPosition =
         () -> {
           Pose2d robotPose = drive.getPose();

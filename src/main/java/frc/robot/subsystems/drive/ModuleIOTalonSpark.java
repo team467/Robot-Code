@@ -1,16 +1,54 @@
 package frc.robot.subsystems.drive;
 
-import static frc.lib.utils.PhoenixUtil.*;
-import static frc.lib.utils.SparkUtil.*;
-import static frc.robot.Schematic.*;
-import static frc.robot.subsystems.drive.DriveConstants.*;
+import static frc.lib.utils.SparkUtil.ifOk;
+import static frc.lib.utils.SparkUtil.sparkStickyFault;
+import static frc.lib.utils.SparkUtil.tryUntilOk;
+import static frc.robot.Schematic.backLeftAbsoluteEncoderCanId;
+import static frc.robot.Schematic.backLeftDriveCanId;
+import static frc.robot.Schematic.backLeftTurnCanId;
+import static frc.robot.Schematic.backRightAbsoluteEncoderCanId;
+import static frc.robot.Schematic.backRightDriveCanId;
+import static frc.robot.Schematic.backRightTurnCanId;
+import static frc.robot.Schematic.frontLeftAbsoluteEncoderCanId;
+import static frc.robot.Schematic.frontLeftDriveCanId;
+import static frc.robot.Schematic.frontLeftTurnCanId;
+import static frc.robot.Schematic.frontRightAbsoluteEncoderCanId;
+import static frc.robot.Schematic.frontRightDriveCanId;
+import static frc.robot.Schematic.frontRightTurnCanId;
+import static frc.robot.subsystems.drive.DriveConstants.backLeftZeroRotation;
+import static frc.robot.subsystems.drive.DriveConstants.backRightZeroRotation;
+import static frc.robot.subsystems.drive.DriveConstants.driveClosedLoopOutput;
+import static frc.robot.subsystems.drive.DriveConstants.driveKa;
+import static frc.robot.subsystems.drive.DriveConstants.driveKd;
+import static frc.robot.subsystems.drive.DriveConstants.driveKp;
+import static frc.robot.subsystems.drive.DriveConstants.driveKs;
+import static frc.robot.subsystems.drive.DriveConstants.driveKv;
+import static frc.robot.subsystems.drive.DriveConstants.driveMotorCurrentLimit;
+import static frc.robot.subsystems.drive.DriveConstants.driveMotorReduction;
+import static frc.robot.subsystems.drive.DriveConstants.frontLeftZeroRotation;
+import static frc.robot.subsystems.drive.DriveConstants.frontRightZeroRotation;
+import static frc.robot.subsystems.drive.DriveConstants.odometryFrequency;
+import static frc.robot.subsystems.drive.DriveConstants.turnEncoderInverted;
+import static frc.robot.subsystems.drive.DriveConstants.turnEncoderPositionFactor;
+import static frc.robot.subsystems.drive.DriveConstants.turnEncoderVelocityFactor;
+import static frc.robot.subsystems.drive.DriveConstants.turnInverted;
+import static frc.robot.subsystems.drive.DriveConstants.turnKd;
+import static frc.robot.subsystems.drive.DriveConstants.turnKp;
+import static frc.robot.subsystems.drive.DriveConstants.turnMotorCurrentLimit;
+import static frc.robot.subsystems.drive.DriveConstants.turnPIDMaxInput;
+import static frc.robot.subsystems.drive.DriveConstants.turnPIDMinInput;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.*;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -18,37 +56,40 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkLowLevel.ControlType;
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import org.wpilib.math.util.MathUtil;
+import frc.lib.mechanisms.flywheels.KrakenFlywheel;
+import frc.lib.utils.PhoenixUtil;
+import java.util.Queue;
+import java.util.function.DoubleSupplier;
 import org.wpilib.math.filter.Debouncer;
 import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.util.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Voltage;
-import frc.lib.utils.PhoenixUtil;
-import java.util.Queue;
-import java.util.function.DoubleSupplier;
 
 /**
  * Module IO implementation for Spark Flex drive motor controller, Spark Max turn motor controller,
  * and duty cycle absolute encoder.
  */
 public class ModuleIOTalonSpark implements ModuleIO {
+
   private final Rotation2d zeroRotation;
 
   // Hardware objects
+  private KrakenFlywheel drive;
   private final TalonFX driveTalon;
   private final SparkBase turnSpark;
   private final RelativeEncoder turnEncoder;
@@ -146,7 +187,7 @@ public class ModuleIOTalonSpark implements ModuleIO {
     driveConfig.withSlot0(slot0config);
     PhoenixUtil.tryUntilOk(5, () -> driveTalon.getConfigurator().apply(driveConfig, 0.25));
     PhoenixUtil.tryUntilOk(5, () -> driveTalon.setPosition(0.0, 0.25));
-
+  
     // Configure turn motor
     var turnConfig = new SparkMaxConfig();
     turnConfig
@@ -244,7 +285,7 @@ public class ModuleIOTalonSpark implements ModuleIO {
     ifOk(turnSpark, turnEncoder::getVelocity, (value) -> inputs.turnVelocityRadPerSec = value);
     ifOk(
         turnSpark,
-        new DoubleSupplier[] {turnSpark::getAppliedOutput, turnSpark::getBusVoltage},
+        new DoubleSupplier[]{turnSpark::getAppliedOutput, turnSpark::getBusVoltage},
         (values) -> inputs.turnAppliedVolts = values[0] * values[1]);
     ifOk(turnSpark, turnSpark::getOutputCurrent, (value) -> inputs.turnCurrentAmps = value);
     inputs.turnPositionAbsolute = Units.rotationsToRadians(turnPositionAbsolute.getValueAsDouble());

@@ -21,7 +21,7 @@ public class ASide extends PeriodicOpMode {
   public void start() {
     Scheduler.getDefault().schedule(Command.noRequirements(
         coro -> {
-          robot.initPose();
+          robot.setPose();
 
           var prepareShoot = Command.noRequirements(coro2 -> {
                 coro2.wait(Seconds.of(5));
@@ -43,7 +43,7 @@ public class ASide extends PeriodicOpMode {
               prepareShoot
           );
 
-          coro.await(robot.shootAtHub());
+          coro.await(robot.shoot());
         }
     ).named("Left Side Auto"));
   }
