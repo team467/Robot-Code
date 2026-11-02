@@ -20,7 +20,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import frc.robot.Bindings;
+import frc.robot.subsystems.intake.IntakeConstants;
 import org.wpilib.command3.Command;
 import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.hardware.discrete.DigitalInput;
@@ -55,14 +55,15 @@ public class IntakeExtendSpark implements IntakeExtend {
   }
 
   private boolean notAtSetpoint() {
-    return !Rotations.of(extendEncoder.getPosition().get()).equals(Bindings.intakePos);
+    return !Rotations.of(extendEncoder.getPosition().get())
+        .equals(Rotations.of(IntakeConstants.EXTEND_POS));
   }
 
   @Override
   public Command extend() {
     return run(coro -> {
       while (notAtSetpoint()) {
-        pidController.setSetpoint(Bindings.intakePos.in(Rotations), ControlType.kPosition);
+        pidController.setSetpoint(IntakeConstants.EXTEND_POS, ControlType.kPosition);
         coro.yield();
       }
     }).named("Intake Extending");

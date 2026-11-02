@@ -38,14 +38,14 @@ public class IndexerSpark implements Indexer {
         }).named("Indexer Reverse")
     );
 
-    idle.switchTo(indexing).when(() -> Bindings.index);
+    idle.switchTo(indexing).when(() -> Bindings.shooterIsShooting);
     idle.switchTo(reversing).when(() -> Bindings.outtake);
 
-    indexing.switchTo(idle).when(() -> !Bindings.index && !Bindings.outtake);
+    indexing.switchTo(idle).when(() -> !Bindings.shooterIsShooting && !Bindings.outtake);
     indexing.switchTo(reversing).when(() -> Bindings.outtake);
 
-    reversing.switchTo(idle).when(() -> !Bindings.outtake && !Bindings.index);
-    reversing.switchTo(indexing).when(() -> !Bindings.outtake && Bindings.index);
+    reversing.switchTo(idle).when(() -> !Bindings.outtake && !Bindings.shooterIsShooting);
+    reversing.switchTo(indexing).when(() -> !Bindings.outtake && Bindings.shooterIsShooting);
 
     machine.setInitialState(idle);
 

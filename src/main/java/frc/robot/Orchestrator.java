@@ -12,6 +12,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterSpark;
 import frc.robot.util.ShooterLeadCompensator;
@@ -30,8 +31,6 @@ import org.wpilib.units.measure.Distance;
 
 public class Orchestrator {
 
-  private static final double ANGLE_ALPHA =
-      0.15; // tune: lower = smoother, higher = more responsive
   private final Pose2d BBumpClosePose =
       new Pose2d(4.415811061859131, 5.599213600158691, new Rotation2d());
   private final Pose2d BBumpFarPose =
@@ -42,7 +41,6 @@ public class Orchestrator {
   private final MagicCarpet magicCarpet;
   private final Indexer indexer;
   private final Intake intake;
-  private final IntakeRollers rollers;
   private final ShooterLeadCompensator shooterLeadCompensator;
   private final CommandGamepad driverController;
   // Filtering for lead compensator outputs
@@ -57,14 +55,12 @@ public class Orchestrator {
       ShooterSpark shooter,
       Indexer indexer,
       Intake intake,
-      IntakeRollers rollers,
       CommandGamepad driverController) {
     this.drive = drive;
     this.magicCarpet = hopperBelt;
     this.shooter = shooter;
     this.indexer = indexer;
     this.intake = intake;
-    this.rollers = rollers;
     this.shooterLeadCompensator = new ShooterLeadCompensator(drive, shooter);
     this.driverController = driverController;
 
@@ -98,39 +94,31 @@ public class Orchestrator {
     return ZoneId.NONE;
   }
 
-  public Command zoneBasedShooter() {
+  public void zoneBasedShooter() {
     DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
 
-    return Command.noRequirements(
-        coro -> {
-          switch (getCurrentZone()) {
-            case ZONE_1 -> coro.await(shooter.shoot(getHubDistance()));
-            case ZONE_2 -> {
-              if (allianceY.getAsDouble() > FieldConstants.fieldWidth / 2) {
-                coro.await(shooter.shoot(
-                    Meters.of(AllianceFlipUtil.apply(BBumpClosePose).getTranslation()
-                        .getDistance((drive.getPose().getTranslation())))));
-              } else {
-                coro.await(shooter.shoot(
-                    Meters.of(
-                        AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))
-                            .getTranslation()
-                            .getDistance(drive.getPose().getTranslation()))));
-              }
-            }
-            case ZONE_3 -> coro.await(shooter.shoot(
-                Meters.of(
-                    AllianceFlipUtil.apply(BBumpFarPose)
-                        .getTranslation()
-                        .getDistance(drive.getPose().getTranslation()))));
-            case ZONE_4 -> coro.await(shooter.shoot(
-                Meters.of(
-                    AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))
-                        .getTranslation()
-                        .getDistance(drive.getPose().getTranslation()))));
-          }
-        }
-    ).named("Zone Based Shooter");
+    Bindings.shooterSetpoint = switch (getCurrentZone()) {
+      case NONE -> null;
+      case ZONE_1 -> ShooterSpark.calculateSetpoint(getHubDistance());
+      case ZONE_2 -> (allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)
+          ? ShooterSpark.calculateSetpoint(
+          Meters.of(AllianceFlipUtil.apply(BBumpClosePose).getTranslation()
+              .getDistance((drive.getPose().getTranslation()))))
+          : ShooterSpark.calculateSetpoint(Meters.of(
+              AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))
+                  .getTranslation()
+                  .getDistance(drive.getPose().getTranslation())));
+      case ZONE_3 -> ShooterSpark.calculateSetpoint(Meters.of(
+          AllianceFlipUtil.apply(BBumpFarPose)
+              .getTranslation()
+              .getDistance(drive.getPose().getTranslation())));
+      case ZONE_4 -> ShooterSpark.calculateSetpoint(Meters.of(
+          AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))
+              .getTranslation()
+              .getDistance(drive.getPose().getTranslation())));
+    };
+
+    Bindings.shoot = true;
   }
 
   public Command zoneBasedAim() {

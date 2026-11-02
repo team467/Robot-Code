@@ -1,14 +1,23 @@
 package frc.robot.subsystems.drive;
 
-import static org.wpilib.units.Units.*;
-import static frc.robot.subsystems.drive.DriveConstants.*;
+import static frc.robot.subsystems.drive.DriveConstants.driveBaseRadius;
+import static frc.robot.subsystems.drive.DriveConstants.maxSpeedMetersPerSec;
+import static frc.robot.subsystems.drive.DriveConstants.moduleTranslations;
+import static org.wpilib.units.Units.Volts;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
-import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.util.Alert.Level;
-import org.wpilib.math.linalg.Matrix;
-import org.wpilib.math.controller.PIDController;
+import frc.robot.Constants;
+import frc.robot.Constants.Mode;
+import frc.robot.subsystems.vision.VisionConstants;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.command3.Command;
+import org.wpilib.command3.Mechanism;
+import org.wpilib.driverstation.DriverStation;
 import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Pose3d;
@@ -19,51 +28,33 @@ import org.wpilib.math.kinematics.ChassisVelocities; // Removed or renamed (mayb
 import org.wpilib.math.kinematics.SwerveDriveKinematics;
 import org.wpilib.math.kinematics.SwerveModulePosition;
 import org.wpilib.math.kinematics.SwerveModuleState; // Removed or renamed
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
+import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
 import org.wpilib.util.Alert;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.command3.Command;
-import org.wpilib.command3.Mechanism;
-import org.wpilib.command2.sysid.SysIdRoutine;
-import frc.robot.Constants;
-import frc.robot.Constants.Mode;
-import frc.robot.subsystems.vision.VisionConstants;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
+import org.wpilib.util.Alert.Level;
 
 public class Drive implements Mechanism {
+
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
-  private final Alert impactAlert =
-      new Alert("Impact Detected, lowering elevator to prevent flipping.", Level.MEDIUM);
-  private final Alert tiltAlert =
-      new Alert(
-          ("Tilt Threshold reached, lowering elevator to prevent flipping"), Level.MEDIUM);
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
   private final Alert gyroDisconnectedAlert =
-      new Alert("Disconnected gyro, using kinematics as fallback.", Level.HIGH);
-
-  private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
-  private Rotation2d rawGyroRotation = Rotation2d.kZero;
-  private SwerveModulePosition[] lastModulePositions = // For delta tracking
-      new SwerveModulePosition[] {
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition()
+      new Alert("Drive Alerts", "Disconnected gyro, using kinematics as fallback.", Level.HIGH);
+  private final SwerveModulePosition[] lastModulePositions = // For delta tracking
+      new SwerveModulePosition[]{
+          new SwerveModulePosition(),
+          new SwerveModulePosition(),
+          new SwerveModulePosition(),
+          new SwerveModulePosition()
       };
-  private SwerveDrivePoseEstimator poseEstimator =
+  private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
+  private Rotation2d rawGyroRotation = Rotation2d.ZERO;
+  private final SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
-
-  // Choreo PIDs
-  private final PIDController xController = new PIDController(3.0, 0.0, 0.5);
-  private final PIDController yController = new PIDController(3.0, 0.0, 0.5);
-  private final PIDController headingController = new PIDController(2.5, 0.0, 0);
 
   public Drive(
       GyroIO gyroIO,
@@ -92,8 +83,6 @@ public class Drive implements Mechanism {
                 (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
-
-    headingController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   @Override
@@ -115,8 +104,8 @@ public class Drive implements Mechanism {
 
     // Log empty setpoint states when disabled
     if (DriverStation.isDisabled()) {
-      Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
-      Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
+      Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[]{});
+      Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[]{});
     }
 
     // Update odometry
@@ -179,7 +168,9 @@ public class Drive implements Mechanism {
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
 
-  /** Runs the drive in a straight line with the specified drive output. */
+  /**
+   * Runs the drive in a straight line with the specified drive output.
+   */
   public void runCharacterization(double output) {
     for (int i = 0; i < 4; i++) {
       modules[i].runCharacterization(output);
@@ -199,7 +190,9 @@ public class Drive implements Mechanism {
     }
   }
 
-  /** Stops the drive. */
+  /**
+   * Stops the drive.
+   */
   public void stop() {
     runVelocity(new ChassisVelocities());
   }
@@ -217,29 +210,37 @@ public class Drive implements Mechanism {
     stop();
   }
 
-  /** Returns a command to run a quasistatic test in the specified direction. */
+  /**
+   * Returns a command to run a quasistatic test in the specified direction.
+   */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(0.0))
         .withTimeout(1.0)
         .andThen(sysId.quasistatic(direction));
   }
 
-  /** Returns a command to run a dynamic test in the specified direction. */
+  /**
+   * Returns a command to run a dynamic test in the specified direction.
+   */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
-  /** Returns the module states (turn angles and drive velocities) for all of the modules. */
+  /**
+   * Returns the module states (turn angles and drive velocities) for all of the modules.
+   */
   @AutoLogOutput(key = "SwerveStates/Measured")
-  private SwerveModuleState[] getModuleStates() {
-    SwerveModuleState[] states = new SwerveModuleState[4];
+  private SwerveModuleVelocity[] getModuleStates() {
+    SwerveModuleVelocity[] states = new SwerveModuleVelocity[4];
     for (int i = 0; i < 4; i++) {
       states[i] = modules[i].getState();
     }
     return states;
   }
 
-  /** Returns the module positions (turn angles and drive positions) for all of the modules. */
+  /**
+   * Returns the module positions (turn angles and drive positions) for all of the modules.
+   */
   private SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] states = new SwerveModulePosition[4];
     for (int i = 0; i < 4; i++) {
@@ -248,13 +249,17 @@ public class Drive implements Mechanism {
     return states;
   }
 
-  /** Returns the measured chassis speeds of the robot. */
+  /**
+   * Returns the measured chassis speeds of the robot.
+   */
   @AutoLogOutput(key = "SwerveChassisVelocities/Measured")
   public ChassisVelocities getChassisVelocities() {
     return kinematics.toChassisVelocities(getModuleStates());
   }
 
-  /** Returns the position of each module in radians. */
+  /**
+   * Returns the position of each module in radians.
+   */
   public double[] getWheelRadiusCharacterizationPositions() {
     double[] values = new double[4];
     for (int i = 0; i < 4; i++) {
@@ -278,7 +283,9 @@ public class Drive implements Mechanism {
             .transformBy(VisionConstants.robotToCamera2));
   }
 
-  /** Returns the average velocity of the modules in rad/sec. */
+  /**
+   * Returns the average velocity of the modules in rad/sec.
+   */
   public double getFFCharacterizationVelocity() {
     double output = 0.0;
     for (int i = 0; i < 4; i++) {
@@ -287,23 +294,31 @@ public class Drive implements Mechanism {
     return output;
   }
 
-  /** Returns the current odometry pose. */
+  /**
+   * Returns the current odometry pose.
+   */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
 
-  /** Returns the current odometry rotation. */
-  public Rotation2d getRotation() {
-    return getPose().getRotation();
-  }
-
-  /** Resets the current odometry pose. */
+  /**
+   * Resets the current odometry pose.
+   */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 
-  /** Adds a new timestamped vision measurement. */
+  /**
+   * Returns the current odometry rotation.
+   */
+  public Rotation2d getRotation() {
+    return getPose().getRotation();
+  }
+
+  /**
+   * Adds a new timestamped vision measurement.
+   */
   public void addVisionMeasurement(
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,
@@ -312,12 +327,16 @@ public class Drive implements Mechanism {
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
   }
 
-  /** Returns the maximum linear speed in meters per sec. */
+  /**
+   * Returns the maximum linear speed in meters per sec.
+   */
   public double getMaxLinearSpeedMetersPerSec() {
     return maxSpeedMetersPerSec;
   }
 
-  /** Returns the maximum angular speed in radians per sec. */
+  /**
+   * Returns the maximum angular speed in radians per sec.
+   */
   public double getMaxAngularSpeedRadPerSec() {
     return maxSpeedMetersPerSec / driveBaseRadius;
   }

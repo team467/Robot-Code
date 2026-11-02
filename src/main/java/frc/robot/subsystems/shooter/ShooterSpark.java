@@ -76,6 +76,26 @@ public class ShooterSpark implements Shooter {
     velocity = encoder.getVelocity();
   }
 
+  /**
+   * Calculates a setpoint (in radians per second) based on distance
+   *
+   * @param distance Distance
+   * @return Setpoint in radians per second
+   */
+  public static AngularVelocity calculateSetpoint(Distance distance) {
+    // calculate rpm depending on distance
+    AngularVelocity velocity =
+        RPM.of(
+            25.30184 * Math.pow(distance.in(Meters), 2)
+                - 47.12642 * distance.in(Meters)
+                + 1001.70713);
+    if (velocity.gt(RPM.of(1550))) {
+      return RPM.of(1550);
+    } else {
+      return velocity;
+    }
+  }
+
   public void setVoltage(Voltage voltage) {
     topLeftMotor.setVoltage(Volts.zero());
     topRightMotor.setVoltage(Volts.zero());
@@ -90,26 +110,6 @@ public class ShooterSpark implements Shooter {
   // TODO: empirically determine the relationship between distance and air time
   public Time getAirTimeSeconds(Distance distance) {
     return Seconds.of(0.0617 * distance.in(Meters) + 0.872);
-  }
-
-  /**
-   * Calculates a setpoint (in radians per second) based on distance
-   *
-   * @param distance Distance
-   * @return Setpoint in radians per second
-   */
-  private AngularVelocity calculateSetpoint(Distance distance) {
-    // calculate rpm depending on distance
-    AngularVelocity velocity =
-        RPM.of(
-            25.30184 * Math.pow(distance.in(Meters), 2)
-                - 47.12642 * distance.in(Meters)
-                + 1001.70713);
-    if (velocity.gt(RPM.of(1550))) {
-      return RPM.of(1550);
-    } else {
-      return velocity;
-    }
   }
 
   public StateMachine stateMachine() {

@@ -39,14 +39,16 @@ public class MagicCarpetSpark implements MagicCarpet {
       }
     }).named("Magic Carpet Reverse"));
 
-    idle.switchTo(run).when(() -> Bindings.intake || Bindings.index);
+    idle.switchTo(run).when(() -> Bindings.intake || Bindings.shooterIsShooting);
     idle.switchTo(reverse).when(() -> Bindings.outtake);
 
-    run.switchTo(idle).when(() -> !Bindings.intake && !Bindings.index);
+    run.switchTo(idle).when(() -> !Bindings.intake && !Bindings.shooterIsShooting);
     run.switchTo(reverse).when(() -> Bindings.outtake);
 
-    reverse.switchTo(idle).when(() -> !Bindings.intake && !Bindings.index && !Bindings.outtake);
-    reverse.switchTo(run).when(() -> !Bindings.outtake && (Bindings.intake || Bindings.index));
+    reverse.switchTo(idle)
+        .when(() -> !Bindings.intake && !Bindings.shooterIsShooting && !Bindings.outtake);
+    reverse.switchTo(run)
+        .when(() -> !Bindings.outtake && (Bindings.intake || Bindings.shooterIsShooting));
 
     machine.setInitialState(idle);
 

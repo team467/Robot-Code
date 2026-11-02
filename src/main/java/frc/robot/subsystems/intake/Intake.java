@@ -27,7 +27,12 @@ public class Intake {
   public StateMachine stateMachine() {
     StateMachine machine = new StateMachine("Intake Machine");
 
-    var idling = machine.addState(extend.retract());
+    var idling = machine.addState(Command.noRequirements(coro -> {
+      while (true) {
+        coro.yield();
+      }
+    }).named("Intake Idle"));
+    var retracting = machine.addState(extend.retract());
     var intaking = machine.addState(Command.noRequirements(coro -> {
       coro.fork(extend.extend()); // Bring out the intake
       while (true) {
@@ -43,14 +48,26 @@ public class Intake {
       }
     }).named("Intake Outtaking"));
 
+    idling.switchTo(retracting).when(() -> Bindings.intakeRetract);
     idling.switchTo(intaking).when(() -> Bindings.intake);
     idling.switchTo(outtaking).when(() -> Bindings.outtake);
 
-    intaking.switchTo(idling).when(() -> !Bindings.intake && !Bindings.outtake);
+    retracting.switchTo(idling)
+        .when(() -> !Bindings.intake && !Bindings.outtake && !Bindings.intakeRetract);
+    retracting.switchTo(intaking).when(() -> Bindings.intake);
+    retracting.switchTo(outtaking).when(() -> Bindings.outtake);
+
+    intaking.switchTo(idling)
+        .when(() -> !Bindings.intake && !Bindings.outtake && !Bindings.intakeRetract);
+    intaking.switchTo(retracting).when(() -> Bindings.intakeRetract);
     intaking.switchTo(outtaking).when(() -> Bindings.outtake);
 
-    outtaking.switchTo(idling).when(() -> !Bindings.intake && !Bindings.outtake);
+    outtaking.switchTo(idling)
+        .when(() -> !Bindings.intake && !Bindings.outtake && !Bindings.intakeRetract);
+    outtaking.switchTo(retracting).when(() -> Bindings.intakeRetract);
     outtaking.switchTo(intaking).when(() -> Bindings.intake);
+
+    machine.setInitialState(retracting);
 
     return machine;
   }
