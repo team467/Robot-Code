@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera2Name;
@@ -12,9 +13,12 @@ import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera2;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import frc.lib.utils.LocalADStarAK;
+import frc.opmodes.AutoOpMode;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
@@ -35,16 +39,18 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import java.io.IOException;
 import org.littletonrobotics.junction.LogFileUtil;
-import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.wpilib.command3.Command;
 import org.wpilib.command3.button.CommandGamepad;
+import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.driverstation.MatchState;
+import org.wpilib.framework.OpModeRobot;
 import org.wpilib.hardware.bus.CANPort;
+import org.wpilib.hardware.hal.RobotMode;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.system.RobotController;
@@ -58,7 +64,7 @@ import org.wpilib.util.Alert.Level;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends LoggedRobot {
+public class Robot extends OpModeRobot {
 
   private static final double canErrorTimeThreshold = 0.5; // Seconds to disable alert
   private final Timer canInitialErrorTimer = new Timer();
@@ -72,10 +78,8 @@ public class Robot extends LoggedRobot {
   private final Orchestrator orchestrator;
   // Controller
   private final CommandGamepad driverController = new CommandGamepad(0);
-  // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
-  private Intake intake = null;
   // Subsystems
+  private Intake intake = null;
   private Drive drive;
   private Vision vision;
   private Leds leds;
@@ -130,7 +134,6 @@ public class Robot extends LoggedRobot {
 
       // Replaying a log, set up replay source
       case REPLAY -> {
-        setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog();
         Logger.setReplaySource(new WPILOGReader(logPath));
         Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
@@ -189,16 +192,16 @@ public class Robot extends LoggedRobot {
     orchestrator =
         new Orchestrator(
             drive, shooter, indexer);
-    Autos autos = new Autos(drive, orchestrator, intake, shooter);
-//    AutoBuilder.configure(
-//        drive::getPose,
-//        drive::setPose,
-//        drive::getChassisVelocities,
-//        drive::runVelocity,
-//        new PPHolonomicDriveController(new PIDConstants(14.0, 0, 0), new PIDConstants(7, 0, 0)),
-//        ppConfig,
-//        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-//        drive);
+    Autos autos = new Autos(this);
+    AutoBuilder.configure(
+        drive::getPose,
+        drive::setPose,
+        drive::getChassisVelocities,
+        drive::runVelocity,
+        new PPHolonomicDriveController(new PIDConstants(14.0, 0, 0), new PIDConstants(7, 0, 0)),
+        ppConfig,
+        () -> MatchState.getAlliance().orElse(Alliance.BLUE) == Alliance.RED
+    );
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
@@ -211,34 +214,13 @@ public class Robot extends LoggedRobot {
         });
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    addOpMode(RobotMode.AUTONOMOUS, "A Side", "Autos",
+        () -> new AutoOpMode(autos.ppA2CycleRightRegression()));
+    addOpMode(RobotMode.AUTONOMOUS, "B Side", "Autos",
+        () -> new AutoOpMode(autos.ppB2CycleRightRegression()));
+    addOpMode(RobotMode.AUTONOMOUS, "8 Ball", "Autos",
+        () -> new AutoOpMode(autos.eightBalls()));
 
-//    autoChooser.addDefaultOption("Do Nothing", Commands.none());
-//    autoChooser.addOption(
-//        "RunIntakeOut", intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
-    autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
-    autoChooser.addOption("8 Ball Auto", autos.EightBalls());
-
-    // Drive SysId
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-//    autoChooser.addOption(
-//        "Drive SysId (Quasistatic Forward)",
-//        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-//    autoChooser.addOption(
-//        "Drive SysId (Quasistatic Reverse)",
-//        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-//    autoChooser.addOption(
-//        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-//    autoChooser.addOption(
-//        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    // pp
-
-    autoChooser.addOption("A-side", autos.ppA2CycleRightRegression());
-    autoChooser.addOption("B-side", autos.ppB2CycleRightRegression());
     // Configure the button bindings
     configureButtonBindings();
 
@@ -334,6 +316,10 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     updateContainerPeriodic();
 
+    vision.periodic();
+    drive.periodic();
+    leds.periodic();
+
     // Check CAN status
     var canStatus = RobotController.getCANStatus(CANPort.CAN_D0);
     if (canStatus.transmitErrorCount > 0 || canStatus.receiveErrorCount > 0) {
@@ -349,7 +335,11 @@ public class Robot extends LoggedRobot {
         new Pose2d(drive.getPose().getTranslation(), Rotation2d.ZERO));
   }
 
-  public void followPath(String name) {
-    drive.getAutonomousCommand(name);
+  public Command followPath(String name) {
+    return drive.getAutonomousCommand(name);
+  }
+
+  public void initPose(Pose2d pose) {
+    drive.setPose(pose);
   }
 }

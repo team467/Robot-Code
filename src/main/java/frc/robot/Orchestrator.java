@@ -2,8 +2,6 @@ package frc.robot;
 
 import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
 import static org.wpilib.units.Units.Meters;
-import static org.wpilib.units.Units.Minute;
-import static org.wpilib.units.Units.Rotations;
 
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
@@ -191,19 +189,8 @@ public class Orchestrator {
         });
   }
 
-  public Command feedUp() {
-    return Command.noRequirements(
-        coro -> {
-          while (!shooter.atSetpoint()) {
-            indexer.feed();
-            coro.yield();
-          }
-        }
-    ).named("Feed Up");
-  }
-
-  public Command spinUpShooterHub() {
-    return shooter.shoot(Rotations.per(Minute).of(CLOSE_HUB_SHOOTER_RPM));
+  public void spinUpShooterHub() {
+    Bindings.shooterSetpoint = CLOSE_HUB_SHOOTER_RPM;
   }
 
   public Command aimToHub() {
@@ -221,15 +208,6 @@ public class Orchestrator {
                             .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
                             .getTranslation())
                     .getAngle()));
-  }
-
-  public Command stopShootingAuto() {
-    return Command.noRequirements(
-        coro -> {
-          coro.fork(indexer.stop());
-          coro.fork(shooter.stop());
-        }
-    ).named("Stop Shooting Auto");
   }
 
   public enum ZoneId {
