@@ -1,61 +1,50 @@
 package frc.robot.subsystems.vision;
 
-import static frc.robot.subsystems.vision.VisionConstants.*;
+import static frc.robot.subsystems.vision.VisionConstants.angularStdDevBaseline;
+import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
+import static frc.robot.subsystems.vision.VisionConstants.cameraStdDevFactors;
+import static frc.robot.subsystems.vision.VisionConstants.linearStdDevBaseline;
+import static frc.robot.subsystems.vision.VisionConstants.maxAmbiguity;
+import static frc.robot.subsystems.vision.VisionConstants.maxZError;
 
-import org.wpilib.command3.Mechanism;
-import org.wpilib.util.Alert.Level;
-import org.wpilib.math.linalg.Matrix;
-import org.wpilib.math.linalg.VecBuilder;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Pose3d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.numbers.N1;
-import org.wpilib.math.numbers.N3;
-import org.wpilib.util.Alert;
 import frc.robot.RobotState;
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
+import org.wpilib.command3.Mechanism;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.linalg.Matrix;
+import org.wpilib.math.linalg.VecBuilder;
+import org.wpilib.math.numbers.N1;
+import org.wpilib.math.numbers.N3;
+import org.wpilib.util.Alert;
+import org.wpilib.util.Alert.Level;
 
 public class Vision implements Mechanism {
+
   private final VisionConsumer consumer;
   private final VisionIO[] io;
-  private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
 
-    // Initialize inputs
-    this.inputs = new VisionIOInputsAutoLogged[io.length];
-    for (int i = 0; i < inputs.length; i++) {
-      inputs[i] = new VisionIOInputsAutoLogged();
-    }
-
     // Initialize disconnected alerts
     this.disconnectedAlerts = new Alert[io.length];
     for (int i = 0; i < inputs.length; i++) {
       disconnectedAlerts[i] =
-          new Alert(
-              "Vision camera " + Integer.toString(i) + " is disconnected.", Level.MEDIUM);
+          new Alert("Vision Alerts",
+              "Vision camera " + i + " is disconnected.", Level.MEDIUM);
     }
-  }
-
-  /**
-   * Returns the X angle to the best target, which can be used for simple servoing with vision.
-   *
-   * @param cameraIndex The index of the camera to use.
-   */
-  public Rotation2d getTargetX(int cameraIndex) {
-    return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
-      Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
+      Logger.processInputs("Vision/Camera" + i, inputs[i]);
     }
 
     // Initialize logging values
@@ -89,9 +78,9 @@ public class Vision implements Mechanism {
         boolean rejectPose =
             observation.tagCount() == 0 // Must have at least one tag
                 || (observation.tagCount() == 1
-                    && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
+                && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ())
-                    > maxZError // Must have realistic Z coordinate
+                > maxZError // Must have realistic Z coordinate
 
                 // Must be within the field boundaries
                 || observation.pose().getX() < 0.0
@@ -130,16 +119,16 @@ public class Vision implements Mechanism {
 
       // Log camera datadata
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
+          "Vision/Camera" + cameraIndex + "/TagPoses",
           tagPoses.toArray(new Pose3d[tagPoses.size()]));
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
+          "Vision/Camera" + cameraIndex + "/RobotPoses",
           robotPoses.toArray(new Pose3d[robotPoses.size()]));
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
+          "Vision/Camera" + cameraIndex + "/RobotPosesAccepted",
           robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
+          "Vision/Camera" + cameraIndex + "/RobotPosesRejected",
           robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
@@ -166,16 +155,18 @@ public class Vision implements Mechanism {
    * updating the robot's state with vision-based information.
    */
   @FunctionalInterface
-  public static interface VisionConsumer {
+  public interface VisionConsumer {
+
     /**
      * Processes incoming vision data to update the robot's state using vision-based measurements.
      *
-     * @param visionRobotPoseMeters The measured robot pose in meters
-     * @param timestampSeconds The timestamp, in seconds, at which the vision measurement was taken.
+     * @param visionRobotPoseMeters    The measured robot pose in meters
+     * @param timestampSeconds         The timestamp, in seconds, at which the vision measurement
+     *                                 was taken.
      * @param visionMeasurementStdDevs The confidence of the measurement in terms of position and
-     *     rotation.
+     *                                 rotation.
      */
-    public void accept(
+    void accept(
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
