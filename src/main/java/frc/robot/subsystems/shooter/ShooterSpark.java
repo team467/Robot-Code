@@ -26,15 +26,15 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.util.Signal;
 import frc.lib.mechanisms.flywheels.FeedForwardFlywheel;
 import frc.robot.Bindings;
-import org.littletonrobotics.junction.AutoLog;
 import org.wpilib.command3.StateMachine;
 import org.wpilib.command3.StateMachine.State;
+import org.wpilib.epilogue.Logged;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Time;
 import org.wpilib.units.measure.Voltage;
 
-@AutoLog
+@Logged
 public class ShooterSpark implements Shooter {
 
   private final SparkMax topLeftMotor;

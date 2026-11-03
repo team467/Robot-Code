@@ -4,7 +4,9 @@ import frc.lib.mechanisms.flywheels.SparkFlywheel;
 import frc.robot.Bindings;
 import org.wpilib.command3.StateMachine;
 import org.wpilib.command3.StateMachine.State;
+import org.wpilib.epilogue.Logged;
 
+@Logged
 public class IndexerSpark implements Indexer {
 
   SparkFlywheel flywheel;

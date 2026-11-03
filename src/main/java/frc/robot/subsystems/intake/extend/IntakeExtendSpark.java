@@ -22,9 +22,11 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.subsystems.intake.IntakeConstants;
 import org.wpilib.command3.Command;
+import org.wpilib.epilogue.Logged;
 import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.hardware.discrete.DigitalInput;
 
+@Logged
 public class IntakeExtendSpark implements IntakeExtend {
 
   private final SparkMax extendMotor;

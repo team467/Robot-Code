@@ -4,8 +4,10 @@ import frc.lib.mechanisms.flywheels.SparkFlywheel;
 import frc.robot.Bindings;
 import frc.robot.Schematic;
 import org.wpilib.command3.StateMachine;
+import org.wpilib.epilogue.Logged;
 import org.wpilib.hardware.bus.CANPort;
 
+@Logged
 public class MagicCarpetSpark implements MagicCarpet {
 
   SparkFlywheel flywheel;

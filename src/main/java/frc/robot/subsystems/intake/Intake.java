@@ -11,8 +11,10 @@ import frc.robot.Schematic;
 import frc.robot.subsystems.intake.extend.IntakeExtend;
 import org.wpilib.command3.Command;
 import org.wpilib.command3.StateMachine;
+import org.wpilib.epilogue.Logged;
 import org.wpilib.hardware.bus.CANPort;
 
+@Logged
 public class Intake {
 
   private final ReversibleFlywheel rollers;
