@@ -4,21 +4,15 @@ import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.RobotState.Mode;
 import org.wpilib.command3.Mechanism;
+import org.wpilib.command3.Scheduler;
 import org.wpilib.hardware.led.AddressableLED;
 import org.wpilib.hardware.led.AddressableLED.ColorOrder;
 import org.wpilib.hardware.led.AddressableLEDBuffer;
 import org.wpilib.hardware.led.AddressableLEDBufferView;
 import org.wpilib.hardware.led.LEDPattern;
 import org.wpilib.networktables.GenericEntry;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.wpilibj.shuffleboard.BuiltInLayouts;
-import org.wpilib.wpilibj.shuffleboard.BuiltInWidgets;
-import org.wpilib.wpilibj.shuffleboard.Shuffleboard;
-import org.wpilib.wpilibj.shuffleboard.ShuffleboardLayout;
-import org.wpilib.wpilibj.shuffleboard.ShuffleboardTab;
-
-// (Begin): Removed or replaced
-// (End): Removed or replaced
+import org.wpilib.tunable.Selectable;
+import org.wpilib.tunable.Tunables;
 
 public class Leds implements Mechanism {
 
@@ -27,15 +21,16 @@ public class Leds implements Mechanism {
   private static final boolean debug = false;
   private final AddressableLED leds;
   private final RobotState state = RobotState.getInstance();
+  private final Selectable<LedPatterns> testPattern = new Selectable<>();
+  private final Selectable<LedPatterns> testPattern2 = new Selectable<>();
+  private final Selectable<Animations> testAnimation = new Selectable<>();
+  private final Selectable<Sections> testSection = new Selectable<>();
+  private final Selectable<Mode> testMode = new Selectable<>();
+  // TODO: Figure out how to properly setup Elastic
   private GenericEntry enableTestEntry;
-  private SendableChooser<LedPatterns> testPattern;
-  private SendableChooser<LedPatterns> testPattern2;
-  private SendableChooser<Animations> testAnimation;
-  private SendableChooser<Sections> testSection;
   private GenericEntry testReverse;
   private GenericEntry testTimer;
   private GenericEntry enableLedModeTestEntry;
-  private SendableChooser<Mode> testMode;
   private LEDPattern currentPattern = LedPatterns.BLACK.colorPatternOnly();
   private Sections applySection = Sections.FULL;
   private Boolean isReversed = false;
@@ -43,16 +38,43 @@ public class Leds implements Mechanism {
   public Leds() {
     leds = new AddressableLED(LedConstants.LED_CHANNEL);
     leds.setLength(LedConstants.FULL_LENGTH);
-    leds.setColorOrder(ColorOrder.kRGB);
+    leds.setColorOrder(ColorOrder.RGB);
     leds.setData(buffer);
-    leds.start();
-    initLedTabInShuffleboard();
-    initLedModeTabInShuffleboard();
+    leds.setStart(0);
+
+    for (LedPatterns pattern : LedPatterns.values()) {
+      testPattern.add(pattern.name(), pattern);
+      testPattern2.add(pattern.name(), pattern);
+    }
+
+    testPattern.setDefault("BLACK");
+    testPattern2.setDefault("BLACK");
+
+    for (Animations animation : Animations.values()) {
+      testAnimation.add(animation.name(), animation);
+    }
+    testAnimation.setDefault("NONE");
+
+    for (Sections section : Sections.values()) {
+      testSection.add(section.name(), section);
+    }
+    testSection.setDefault("FULL");
+
+    for (Mode mode : Mode.values()) {
+      testMode.add(mode.name(), mode);
+    }
+    testMode.setDefault("OFF");
+
+    Tunables.publish("LEDs/Testing/Pattern", testPattern);
+    Tunables.publish("LEDs/Testing/Pattern2", testPattern2);
+    Tunables.publish("LEDs/Testing/Animation", testAnimation);
+    Tunables.publish("LEDs/Testing/Section", testSection);
+    Tunables.publish("LEDs/Modes/Mode", testMode);
+
+    Scheduler.getDefault().addPeriodic(this::periodic);
   }
 
-  @Override
   public void periodic() {
-
     if (enableTestEntry.getBoolean(false)) {
       processLedPatternTestInputs();
     } else if (enableLedModeTestEntry.getBoolean(false)) {
@@ -119,103 +141,6 @@ public class Leds implements Mechanism {
     if (applySection.getBufferView_2() != null) {
       currentPattern.applyTo(applySection.getBufferView_2().reversed());
     }
-  }
-
-  private void initLedTabInShuffleboard() {
-
-    ShuffleboardTab ledTab = Shuffleboard.getTab("LEDs");
-    ShuffleboardLayout ledTestingLayout =
-        ledTab
-            .getLayout("LED Testing Options", BuiltInLayouts.kGrid)
-            .withSize(2, 4)
-            .withPosition(0, 0);
-
-    enableTestEntry =
-        ledTestingLayout
-            .add("Enable Test", "boolean", false)
-            .withWidget(BuiltInWidgets.kToggleButton)
-            .withPosition(0, 0)
-            .getEntry();
-
-    testPattern = new SendableChooser<LedPatterns>();
-    for (LedPatterns pattern : LedPatterns.values()) {
-      testPattern.addOption(pattern.toString(), pattern);
-    }
-    testPattern.setDefaultOption("BLACK", LedPatterns.BLACK);
-    ledTestingLayout
-        .add("Test Pattern", testPattern)
-        .withWidget(BuiltInWidgets.kComboBoxChooser)
-        .withPosition(0, 1);
-
-    testPattern2 = new SendableChooser<LedPatterns>();
-    for (LedPatterns pattern : LedPatterns.values()) {
-      testPattern2.addOption(pattern.toString(), pattern);
-    }
-    testPattern2.setDefaultOption("BLACK", LedPatterns.BLACK);
-    ledTestingLayout
-        .add("Test Pattern2", testPattern2)
-        .withWidget(BuiltInWidgets.kComboBoxChooser)
-        .withPosition(0, 1);
-
-    testAnimation = new SendableChooser<Animations>();
-    for (Animations animation : Animations.values()) {
-      testAnimation.addOption(animation.toString(), animation);
-    }
-    testAnimation.setDefaultOption("None", Animations.NONE);
-    ledTestingLayout
-        .add("Test Animation", testAnimation)
-        .withWidget(BuiltInWidgets.kComboBoxChooser)
-        .withPosition(0, 2);
-
-    testSection = new SendableChooser<Sections>();
-    for (Sections section : Sections.values()) {
-      testSection.addOption(section.toString(), section);
-    }
-    testSection.setDefaultOption("FULL", Sections.FULL);
-    ledTestingLayout
-        .add("Test Section", testSection)
-        .withWidget(BuiltInWidgets.kComboBoxChooser)
-        .withPosition(0, 3);
-
-    testReverse =
-        ledTestingLayout
-            .add("Test Reverse", "boolean", false)
-            .withWidget(BuiltInWidgets.kToggleButton)
-            .withPosition(0, 0)
-            .getEntry();
-
-    testTimer =
-        ledTestingLayout
-            .add("Test Timer", 0)
-            .withWidget(BuiltInWidgets.kNumberSlider)
-            .withPosition(0, 0)
-            .getEntry();
-  }
-
-  private void initLedModeTabInShuffleboard() {
-    ShuffleboardTab ledModeTab = Shuffleboard.getTab("LED Modes");
-    ShuffleboardLayout ledModeTestingLayout =
-        ledModeTab
-            .getLayout("LED Mode Testing Options", BuiltInLayouts.kGrid)
-            .withSize(2, 4)
-            .withPosition(0, 0);
-
-    enableLedModeTestEntry =
-        ledModeTestingLayout
-            .add("Enable LED Mode Test", "boolean", false)
-            .withWidget(BuiltInWidgets.kToggleButton)
-            .withPosition(0, 0)
-            .getEntry();
-
-    testMode = new SendableChooser<Mode>();
-    for (Mode mode : Mode.values()) {
-      testMode.addOption(mode.toString(), mode);
-    }
-    testMode.setDefaultOption("OFF", Mode.OFF);
-    ledModeTestingLayout
-        .add("Test Mode", testMode)
-        .withWidget(BuiltInWidgets.kComboBoxChooser)
-        .withPosition(0, 1);
   }
 
   public enum Animations {
