@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "org.wpilib.GradleRIO" version "2027.0.0-alpha-7"
+    id "org.wpilib.GradleRIO" version "2027.0.0-alpha-8"
     id "com.peterabeles.gversion" version "1.10"
     id "com.diffplug.spotless" version "6.25.0"
 }
@@ -8,7 +8,7 @@ plugins {
 wpi.maven.useLocal = false
 wpi.maven.useDevelopment = true
 
-wpi.versions.wpilibVersion = providers.gradleProperty('wpilibVersion').orElse('2027.0.0-alpha-7').get()
+wpi.versions.wpilibVersion = providers.gradleProperty('wpilibVersion').orElse('2027.0.0-alpha-8').get()
 
 java {
     sourceCompatibility = JavaVersion.VERSION_25
@@ -173,12 +173,12 @@ if (deployArtifact != null) {
 // Create version file
 project.compileJava.dependsOn(createVersionFile)
 gversion {
-    srcDir       = "src/main/java/"
+    srcDir = "src/main/java/"
     classPackage = "frc.robot"
-    className    = "BuildConstants"
-    dateFormat   = "yyyy-MM-dd HH:mm:ss z"
-    timeZone     = "America/New_York"
-    indent       = "  "
+    className = "BuildConstants"
+    dateFormat = "yyyy-MM-dd HH:mm:ss z"
+    timeZone = "America/New_York"
+    indent = "  "
 }
 
 // Create commit with working changes on event branches
