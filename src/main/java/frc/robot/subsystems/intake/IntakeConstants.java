@@ -20,7 +20,6 @@ public class IntakeConstants {
 
   // shake around the funnel pos by this much
   public static final double HOME_VOLTAGE = 3;
-  public static final double COLLAPSE_POS = 4.0;
 
   public static final double INTAKE_EXTEND_MOTOR_CURRENT_LIMIT = 30;
   public static final Current INTAKE_ROLLERS_MOTOR_CURRENT_LIMIT = Amps.of(45);
