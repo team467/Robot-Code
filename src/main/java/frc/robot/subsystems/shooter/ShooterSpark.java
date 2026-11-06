@@ -13,10 +13,7 @@ import static frc.robot.subsystems.shooter.ShooterConstants.VOLTAGE_COMPENSATION
 import static org.wpilib.hardware.bus.CANPort.CAN_D0;
 import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.Meters;
-import static org.wpilib.units.Units.Minute;
 import static org.wpilib.units.Units.RPM;
-import static org.wpilib.units.Units.Revolutions;
-import static org.wpilib.units.Units.Volts;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
@@ -33,7 +30,6 @@ import org.wpilib.command3.StateMachine.State;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
-import org.wpilib.units.measure.Voltage;
 
 @Logged
 public class ShooterSpark implements Shooter, Mechanism {
@@ -44,8 +40,6 @@ public class ShooterSpark implements Shooter, Mechanism {
   private final SparkMax bottomRightMotor;
   private final SparkClosedLoopController controller;
   private final Signal<Boolean> isAtSetpoint;
-
-  private final Signal<Double> velocity;
 
   public ShooterSpark() {
     topLeftMotor = new SparkMax(CAN_D0, shooterTopLeftMotorCanId, MotorType.kBrushless);
@@ -78,9 +72,6 @@ public class ShooterSpark implements Shooter, Mechanism {
     topLeftMotor.configure(new SparkMaxConfig().follow(bottomLeftMotor, true),
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
-
-    var encoder = topLeftMotor.getEncoder();
-    velocity = encoder.getVelocity();
   }
 
   /**
@@ -101,17 +92,6 @@ public class ShooterSpark implements Shooter, Mechanism {
     } else {
       return velocity;
     }
-  }
-
-  public void setVoltage(Voltage voltage) {
-    topLeftMotor.setVoltage(Volts.zero());
-    topRightMotor.setVoltage(Volts.zero());
-    bottomLeftMotor.setVoltage(Volts.zero());
-    bottomRightMotor.setVoltage(Volts.zero());
-  }
-
-  public AngularVelocity getVelocity() {
-    return Revolutions.per(Minute).of(velocity.get());
   }
 
   public StateMachine stateMachine() {
