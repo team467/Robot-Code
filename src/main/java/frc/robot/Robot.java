@@ -44,6 +44,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.wpilib.command3.Command;
+import org.wpilib.command3.Scheduler;
 import org.wpilib.command3.button.CommandGamepad;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStationErrors;
@@ -169,6 +170,12 @@ public class Robot extends OpModeRobot {
           magicCarpet = new MagicCarpetSpark();
           indexer = new IndexerSpark();
           intake = new Intake(new IntakeExtendSpark());
+
+          var scheduler = Scheduler.getDefault();
+          scheduler.schedule(shooter.stateMachine());
+          scheduler.schedule(magicCarpet.stateMachine());
+          scheduler.schedule(indexer.stateMachine());
+          scheduler.schedule(intake.stateMachine());
         }
 
         case ROBOT_SIMBOT -> {
