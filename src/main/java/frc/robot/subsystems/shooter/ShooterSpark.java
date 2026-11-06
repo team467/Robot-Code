@@ -11,44 +11,43 @@ import static frc.robot.subsystems.shooter.ShooterConstants.KS;
 import static frc.robot.subsystems.shooter.ShooterConstants.KV;
 import static frc.robot.subsystems.shooter.ShooterConstants.VOLTAGE_COMPENSATION;
 import static org.wpilib.hardware.bus.CANPort.CAN_D0;
+import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.Minute;
 import static org.wpilib.units.Units.RPM;
 import static org.wpilib.units.Units.Revolutions;
-import static org.wpilib.units.Units.Seconds;
 import static org.wpilib.units.Units.Volts;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.util.Signal;
-import frc.lib.mechanisms.flywheels.FeedForwardFlywheel;
 import frc.robot.Bindings;
+import org.wpilib.command3.Mechanism;
 import org.wpilib.command3.StateMachine;
 import org.wpilib.command3.StateMachine.State;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
-import org.wpilib.units.measure.Time;
 import org.wpilib.units.measure.Voltage;
 
 @Logged
-public class ShooterSpark implements Shooter {
+public class ShooterSpark implements Shooter, Mechanism {
 
   private final SparkMax topLeftMotor;
   private final SparkMax topRightMotor;
   private final SparkMax bottomLeftMotor;
   private final SparkMax bottomRightMotor;
+  private final SparkClosedLoopController controller;
+  private final Signal<Boolean> isAtSetpoint;
 
   private final Signal<Double> velocity;
 
-  private final FeedForwardFlywheel flywheel;
-
   public ShooterSpark() {
-    flywheel = new FeedForwardFlywheel(KS, KV, KA, this::setVoltage, this::getVelocity);
-
     topLeftMotor = new SparkMax(CAN_D0, shooterTopLeftMotorCanId, MotorType.kBrushless);
     topRightMotor = new SparkMax(CAN_D0, shooterTopRightMotorCanId, MotorType.kBrushless);
     bottomLeftMotor = new SparkMax(CAN_D0, shooterBottomLeftMotorCanId, MotorType.kBrushless);
@@ -61,15 +60,23 @@ public class ShooterSpark implements Shooter {
         .voltageCompensation(VOLTAGE_COMPENSATION)
         .smartCurrentLimit(CURRENT_LIMIT)
         .secondaryCurrentLimit(CURRENT_LIMIT);
+    bottomLeftMotorConfig.closedLoop.feedForward.kS(KS).kA(KA).kV(KV);
+
     bottomLeftMotor.configure(bottomLeftMotorConfig, ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
-    topRightMotor.configure(bottomLeftMotorConfig, ResetMode.kResetSafeParameters,
+
+    controller = bottomLeftMotor.getClosedLoopController();
+    isAtSetpoint = controller.isAtSetpoint();
+
+    topRightMotor.configure(new SparkMaxConfig().follow(bottomLeftMotor),
+        ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    var bottomRightMotorConfig = new SparkMaxConfig().apply(bottomLeftMotorConfig).inverted(true);
-    bottomRightMotor.configure(bottomRightMotorConfig, ResetMode.kResetSafeParameters,
+    bottomRightMotor.configure(new SparkMaxConfig().follow(bottomLeftMotor, true),
+        ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
-    topLeftMotor.configure(bottomRightMotorConfig, ResetMode.kResetSafeParameters,
+    topLeftMotor.configure(new SparkMaxConfig().follow(bottomLeftMotor, true),
+        ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
     var encoder = topLeftMotor.getEncoder();
@@ -107,30 +114,25 @@ public class ShooterSpark implements Shooter {
     return Revolutions.per(Minute).of(velocity.get());
   }
 
-  // TODO: empirically determine the relationship between distance and air time
-  public Time getAirTimeSeconds(Distance distance) {
-    return Seconds.of(0.0617 * distance.in(Meters) + 0.872);
-  }
-
   public StateMachine stateMachine() {
     StateMachine machine = new StateMachine("Shooter");
 
-    State idle = machine.addState(flywheel.run(coro -> {
+    State idle = machine.addState(run(coro -> {
           while (true) {
-            flywheel.stop();
+            controller.setSetpoint(Amps.zero().magnitude(), ControlType.kCurrent);
             coro.yield();
           }
         }
     ).named("Shooter Idle"));
-    State speedingUp = machine.addState(flywheel.run(coro -> {
-      while (!flywheel.atSetpoint()) {
-        flywheel.runAtVelocity(Bindings.shooterSetpoint);
+    State speedingUp = machine.addState(run(coro -> {
+      while (!isAtSetpoint.get()) {
+        controller.setSetpoint(Bindings.shooterSetpoint.in(RPM), ControlType.kVelocity);
         coro.yield();
       }
     }).named("Shooter Speed Up"));
-    State shooting = machine.addState(flywheel.run(coro -> {
-      while (flywheel.atSetpoint()) {
-        flywheel.runAtVelocity(Bindings.shooterSetpoint);
+    State shooting = machine.addState(run(coro -> {
+      while (isAtSetpoint.get()) {
+        controller.setSetpoint(Bindings.shooterSetpoint.in(RPM), ControlType.kVelocity);
         coro.yield();
       }
     }).named("Shooter Shoot"));
