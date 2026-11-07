@@ -11,7 +11,6 @@ import static frc.robot.subsystems.shooter.ShooterConstants.KS;
 import static frc.robot.subsystems.shooter.ShooterConstants.KV;
 import static frc.robot.subsystems.shooter.ShooterConstants.VOLTAGE_COMPENSATION;
 import static org.wpilib.hardware.bus.CANPort.CAN_D0;
-import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.RPM;
 
@@ -22,9 +21,10 @@ import com.revrobotics.spark.SparkLowLevel.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.util.Signal;
 import frc.robot.Bindings;
+import java.util.Optional;
 import org.wpilib.command3.Mechanism;
+import org.wpilib.command3.Scheduler;
 import org.wpilib.command3.StateMachine;
 import org.wpilib.command3.StateMachine.State;
 import org.wpilib.epilogue.Logged;
@@ -39,9 +39,8 @@ public class ShooterSpark implements Shooter, Mechanism {
   private final SparkMax bottomLeftMotor;
   private final SparkMax bottomRightMotor;
   private final SparkClosedLoopController controller;
-  private final Signal<Boolean> isAtSetpoint;
 
-  public ShooterSpark() {
+  public ShooterSpark(Optional<ShooterSim> sim) {
     topLeftMotor = new SparkMax(CAN_D0, shooterTopLeftMotorCanId, MotorType.kBrushless);
     topRightMotor = new SparkMax(CAN_D0, shooterTopRightMotorCanId, MotorType.kBrushless);
     bottomLeftMotor = new SparkMax(CAN_D0, shooterBottomLeftMotorCanId, MotorType.kBrushless);
@@ -60,7 +59,6 @@ public class ShooterSpark implements Shooter, Mechanism {
         PersistMode.kPersistParameters);
 
     controller = bottomLeftMotor.getClosedLoopController();
-    isAtSetpoint = controller.isAtSetpoint();
 
     topRightMotor.configure(new SparkMaxConfig().follow(bottomLeftMotor),
         ResetMode.kResetSafeParameters,
@@ -72,6 +70,11 @@ public class ShooterSpark implements Shooter, Mechanism {
     topLeftMotor.configure(new SparkMaxConfig().follow(bottomLeftMotor, true),
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
+
+    if (sim.isPresent()) {
+      sim.get().init(bottomLeftMotor);
+      Scheduler.getDefault().addPeriodic(sim.get()::getPeriodic);
+    }
   }
 
   /**
@@ -99,19 +102,19 @@ public class ShooterSpark implements Shooter, Mechanism {
 
     State idle = machine.addState(run(coro -> {
           while (true) {
-            controller.setSetpoint(Amps.zero().magnitude(), ControlType.kCurrent);
+            bottomLeftMotor.stopMotor();
             coro.yield();
           }
         }
     ).named("Shooter Idle"));
     State speedingUp = machine.addState(run(coro -> {
-      while (!isAtSetpoint.get()) {
+      while (!controller.isAtSetpoint().get(false)) {
         controller.setSetpoint(Bindings.shooterSetpoint.in(RPM), ControlType.kVelocity);
         coro.yield();
       }
     }).named("Shooter Speed Up"));
     State shooting = machine.addState(run(coro -> {
-      while (isAtSetpoint.get()) {
+      while (controller.isAtSetpoint().get(false)) {
         controller.setSetpoint(Bindings.shooterSetpoint.in(RPM), ControlType.kVelocity);
         coro.yield();
       }

@@ -1,5 +1,5 @@
 plugins {
-    id "java"
+    id "application"
     id "org.wpilib.GradleRIO" version "2027.0.0-alpha-8"
     id "com.peterabeles.gversion" version "1.10"
     id "com.diffplug.spotless" version "6.25.0"
@@ -8,14 +8,13 @@ plugins {
 wpi.maven.useLocal = false
 wpi.maven.useDevelopment = true
 
-wpi.versions.wpilibVersion = providers.gradleProperty('wpilibVersion').orElse('2027.0.0-alpha-8').get()
+def ROBOT_MAIN_CLASS = 'frc.robot.Main'
 
+wpi.versions.wpilibVersion = providers.gradleProperty('wpilibVersion').orElse('2027.0.0-alpha-8').get()
 java {
     sourceCompatibility = JavaVersion.VERSION_25
     targetCompatibility = JavaVersion.VERSION_25
 }
-
-def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
@@ -132,7 +131,7 @@ test {
 // AdvantageKit log replay from the command line. Set the
 // value to "true" to enable the sim GUI by default (this
 // is the standard WPILib behavior).
-wpi.sim.addGui().defaultEnabled = true
+wpi.sim.addGui().defaultEnabled = providers.gradleProperty('simGui').map { it.toBoolean() }.orElse(true).get()
 wpi.sim.addDriverstation()
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
@@ -153,8 +152,8 @@ jar {
 if (deployArtifact != null) {
     deployArtifact.jarTask = jar
 }
-// IMPORTANT: wpi.java.configureExecutableTasks(jar)
-// IMPORTANT: wpi.java.configureTestTasks(test)
+application { mainClass = ROBOT_MAIN_CLASS }
+wpi.java.configureApplication(application)
 
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {

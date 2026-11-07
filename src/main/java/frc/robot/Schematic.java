@@ -80,7 +80,7 @@ public class Schematic {
         climberMotorCanId = 0;
       }
 
-      case ROBOT_2026_COMP -> {
+      case ROBOT_2026_COMP, ROBOT_SIMBOT -> {
         // Device CAN Id
         pigeonCanId = 17;
 

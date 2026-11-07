@@ -19,6 +19,7 @@ public class ShooterConstants {
   public static final double KS = 0.2723;
 
   public static final AngularVelocity CLOSE_HUB_SHOOTER_RPM = RPM.of(1100);
+  public static final double GEAR_RATIO = 3.5;
 
   public static Transform2d kShooterOffsetFromRobotCenter =
       new Transform2d(new Translation2d(-0.1585, 0.0), new Rotation2d(0.0));

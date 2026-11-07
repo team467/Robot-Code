@@ -1,6 +1,6 @@
 package frc.robot;
 
-import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.math.util.Units;
 import java.io.BufferedReader;
@@ -19,6 +19,9 @@ public class Constants {
   private static RobotType cachedRobotTypeFromRoborio = null;
 
   public static RobotType getRobot() {
+    if (RobotBase.isSimulation() && Boolean.getBoolean("frc.shooterSim")) {
+      return RobotType.ROBOT_SIMBOT;
+    }
     if (cachedRobotTypeFromRoborio == null) {
       cachedRobotTypeFromRoborio = readRobotTypeFromRoborio();
     }
@@ -26,7 +29,7 @@ public class Constants {
 
     if (RobotBase.isReal()) {
       if (robot == RobotType.ROBOT_SIMBOT) { // Invalid robot
-        DriverStation.reportWarning(
+        DriverStationErrors.reportWarning(
             "Invalid robot selected, using competition robot as default.", false);
         return RobotType.ROBOT_2025_COMP;
       } else {

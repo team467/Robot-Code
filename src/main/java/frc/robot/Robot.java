@@ -22,9 +22,7 @@ import frc.opmodes.AutoOpMode;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonSpark;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerSpark;
@@ -34,10 +32,12 @@ import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.magicCarpet.MagicCarpet;
 import frc.robot.subsystems.magicCarpet.MagicCarpetSpark;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterSim;
 import frc.robot.subsystems.shooter.ShooterSpark;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import java.io.IOException;
+import java.util.Optional;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -166,7 +166,7 @@ public class Robot extends OpModeRobot {
                   new VisionIOPhotonVision(camera1Name, robotToCamera1),
                   new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
-          shooter = new ShooterSpark();
+          shooter = new ShooterSpark(Optional.empty());
           magicCarpet = new MagicCarpetSpark();
           indexer = new IndexerSpark();
           intake = new Intake(new IntakeExtendSpark());
@@ -179,16 +179,17 @@ public class Robot extends OpModeRobot {
         }
 
         case ROBOT_SIMBOT -> {
-          drive =
-              new Drive(
-                  new GyroIO() {
-                  },
-                  new ModuleIOSim(),
-                  new ModuleIOSim(),
-                  new ModuleIOSim(),
-                  new ModuleIOSim());
-
-          leds = new Leds();
+          shooter = new ShooterSpark(Optional.of(new ShooterSim()));
+//          drive =
+//              new Drive(
+//                  new GyroIO() {
+//                  },
+//                  new ModuleIOSim(),
+//                  new ModuleIOSim(),
+//                  new ModuleIOSim(),
+//                  new ModuleIOSim());
+//
+//          leds = new Leds();
         }
 
         case ROBOT_BRIEFCASE -> {
