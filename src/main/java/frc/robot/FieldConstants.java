@@ -1,14 +1,13 @@
 package frc.robot;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
+import java.io.IOException;
+import java.nio.file.Path;
+import org.wpilib.fields.Field;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.geometry.Translation3d;
 import org.wpilib.math.util.Units;
 import org.wpilib.system.Filesystem;
-import java.io.IOException;
-import java.nio.file.Path;
 
 /**
  * Contains information for location of field element and other useful reference points.
@@ -17,6 +16,7 @@ import java.nio.file.Path;
  * perspective of the blue alliance station
  */
 public class FieldConstants {
+
   public static final FieldType fieldType = FieldType.WELDED;
 
   // AprilTag related constants
@@ -28,10 +28,67 @@ public class FieldConstants {
   public static final double fieldLength = AprilTagLayoutType.OFFICIAL.getLayout().getFieldLength();
   public static final double fieldWidth = AprilTagLayoutType.OFFICIAL.getLayout().getFieldWidth();
 
+  public enum FieldType {
+    ANDYMARK("andymark"),
+    WELDED("welded");
+
+    private final String jsonFolder;
+
+    FieldType(String jsonFolder) {
+      this.jsonFolder = jsonFolder;
+    }
+
+    public String getJsonFolder() {
+      return jsonFolder;
+    }
+  }
+
+  public enum AprilTagLayoutType {
+    OFFICIAL("2026-official"),
+    NONE("2026-none");
+
+    private final String name;
+    private volatile Field layout;
+
+    AprilTagLayoutType(String name) {
+      this.name = name;
+    }
+
+    public Field getLayout() {
+      if (layout == null) {
+        synchronized (this) {
+          if (layout == null) {
+            try {
+              Path p =
+                  Constants.disableHAL
+                      ? Path.of(
+                      "src",
+                      "main",
+                      "deploy",
+                      "apriltags",
+                      fieldType.getJsonFolder(),
+                      name + ".json")
+                      : Path.of(
+                          Filesystem.getDeployDirectory().getPath(),
+                          "apriltags",
+                          fieldType.getJsonFolder(),
+                          name + ".json");
+              layout = Field.loadFromFile(p);
+            } catch (IOException e) {
+              throw new RuntimeException(e);
+            }
+          }
+        }
+      }
+      return layout;
+    }
+  }
+
   /**
    * Officially defined and relevant vertical lines found on the field (defined by X-axis offset)
    */
   public static class LinesVertical {
+
     public static final double center = fieldLength / 2.0;
     public static final double starting =
         AprilTagLayoutType.OFFICIAL.getLayout().getTagPose(26).get().getX();
@@ -69,8 +126,11 @@ public class FieldConstants {
     public static final double leftTrenchOpenStart = fieldWidth;
   }
 
-  /** Hub related constants */
+  /**
+   * Hub related constants
+   */
   public static class Hub {
+
     public static final Translation2d blueCenter =
         new Translation2d(Units.inchesToMeters(158.6), fieldWidth / 2.0);
     public static final Translation2d redCenter =
@@ -130,7 +190,9 @@ public class FieldConstants {
         AprilTagLayoutType.OFFICIAL.getLayout().getTagPose(21).get().toPose2d();
   }
 
-  /** Left Bump related constants */
+  /**
+   * Left Bump related constants
+   */
   public static class LeftBump {
 
     // Dimensions
@@ -155,8 +217,11 @@ public class FieldConstants {
     public static final Translation2d oppFarRightCorner = Hub.oppFarLeftCorner;
   }
 
-  /** Right Bump related constants */
+  /**
+   * Right Bump related constants
+   */
   public static class RightBump {
+
     // Dimensions
     public static final double width = Units.inchesToMeters(73.0);
     public static final double height = Units.inchesToMeters(6.513);
@@ -179,8 +244,11 @@ public class FieldConstants {
     public static final Translation2d oppFarRightCorner = Hub.oppFarLeftCorner;
   }
 
-  /** Left Trench related constants */
+  /**
+   * Left Trench related constants
+   */
   public static class LeftTrench {
+
     // Dimensions
     public static final double width = Units.inchesToMeters(65.65);
     public static final double depth = Units.inchesToMeters(47.0);
@@ -223,8 +291,11 @@ public class FieldConstants {
         new Translation3d(LinesVertical.oppHubCenter, 0, openingHeight);
   }
 
-  /** Tower related constants */
+  /**
+   * Tower related constants
+   */
   public static class Tower {
+
     // Dimensions
     public static final double width = Units.inchesToMeters(49.25);
     public static final double depth = Units.inchesToMeters(45.0);
@@ -276,6 +347,7 @@ public class FieldConstants {
   }
 
   public static class Depot {
+
     // Dimensions
     public static final double width = Units.inchesToMeters(42.0);
     public static final double depth = Units.inchesToMeters(27.0);
@@ -292,6 +364,7 @@ public class FieldConstants {
   }
 
   public static class Outpost {
+
     // Dimensions
     public static final double width = Units.inchesToMeters(31.8);
     public static final double openingDistanceFromFloor = Units.inchesToMeters(28.1);
@@ -300,70 +373,5 @@ public class FieldConstants {
     // Relevant reference points on alliance side
     public static final Translation2d centerPoint =
         new Translation2d(0, AprilTagLayoutType.OFFICIAL.getLayout().getTagPose(29).get().getY());
-  }
-
-  public enum FieldType {
-    ANDYMARK("andymark"),
-    WELDED("welded");
-
-    private final String jsonFolder;
-
-    FieldType(String jsonFolder) {
-      this.jsonFolder = jsonFolder;
-    }
-
-    public String getJsonFolder() {
-      return jsonFolder;
-    }
-  }
-
-  public enum AprilTagLayoutType {
-    OFFICIAL("2026-official"),
-    NONE("2026-none");
-
-    private final String name;
-    private volatile AprilTagFieldLayout layout;
-    private volatile String layoutString;
-
-    AprilTagLayoutType(String name) {
-      this.name = name;
-    }
-
-    public AprilTagFieldLayout getLayout() {
-      if (layout == null) {
-        synchronized (this) {
-          if (layout == null) {
-            try {
-              Path p =
-                  Constants.disableHAL
-                      ? Path.of(
-                          "src",
-                          "main",
-                          "deploy",
-                          "apriltags",
-                          fieldType.getJsonFolder(),
-                          name + ".json")
-                      : Path.of(
-                          Filesystem.getDeployDirectory().getPath(),
-                          "apriltags",
-                          fieldType.getJsonFolder(),
-                          name + ".json");
-              layout = new AprilTagFieldLayout(p);
-              layoutString = new ObjectMapper().writeValueAsString(layout);
-            } catch (IOException e) {
-              throw new RuntimeException(e);
-            }
-          }
-        }
-      }
-      return layout;
-    }
-
-    public String getLayoutString() {
-      if (layoutString == null) {
-        getLayout();
-      }
-      return layoutString;
-    }
   }
 }

@@ -5,12 +5,6 @@
 package frc.robot;
 
 import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
-import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
-import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
-import static frc.robot.subsystems.vision.VisionConstants.camera2Name;
-import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
-import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
-import static frc.robot.subsystems.vision.VisionConstants.robotToCamera2;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -35,7 +29,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterSim;
 import frc.robot.subsystems.shooter.ShooterSpark;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import java.io.IOException;
 import java.util.Optional;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -160,11 +153,7 @@ public class Robot extends OpModeRobot {
                   new ModuleIOTalonSpark(2),
                   new ModuleIOTalonSpark(3));
           vision =
-              new Vision(
-                  drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
-                  new VisionIOPhotonVision(camera2Name, robotToCamera2));
+              new Vision(drive::addVisionMeasurement);
           leds = new Leds();
           shooter = new ShooterSpark(Optional.empty());
           magicCarpet = new MagicCarpetSpark();
