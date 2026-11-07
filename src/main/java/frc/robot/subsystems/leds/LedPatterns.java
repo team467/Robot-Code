@@ -4,66 +4,71 @@ import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.MetersPerSecond;
 import static org.wpilib.units.Units.Seconds;
 
-import org.wpilib.units.measure.Distance;
-import org.wpilib.hardware.led.LEDPattern;
-import org.wpilib.util.Color;
 import java.util.Map;
+import org.wpilib.hardware.led.LEDPattern;
+import org.wpilib.hardware.led.LEDPattern.GradientType;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.util.Color;
 
 public enum LedPatterns {
 
   // Solid colors
-  BLACK(LEDPattern.solid(Color.kBlack)),
-  RED(LEDPattern.solid(Color.kRed)),
-  ORANGE(LEDPattern.solid(Color.kOrange)),
-  YELLOW(LEDPattern.solid(Color.kYellow)),
-  GREEN(LEDPattern.solid(Color.kGreen)),
-  CYAN(LEDPattern.solid(Color.kCyan)),
-  BLUE(LEDPattern.solid(Color.kBlue)),
-  PURPLE(LEDPattern.solid(Color.kPurple)),
-  PINK(LEDPattern.solid(Color.kPink)),
-  MAGENTA(LEDPattern.solid(Color.kMagenta)),
-  BROWN(LEDPattern.solid(Color.kBrown)),
-  GRAY(LEDPattern.solid(Color.kGray)),
-  WHITE(LEDPattern.solid(Color.kWhite)),
-  GOLD(LEDPattern.solid(Color.kGold)),
-  SILVER(LEDPattern.solid(Color.kSilver)),
-  INDIAN_RED(LEDPattern.solid(Color.kIndianRed)),
+  BLACK(LEDPattern.solid(Color.BLACK)),
+  RED(LEDPattern.solid(Color.RED)),
+  ORANGE(LEDPattern.solid(Color.ORANGE)),
+  YELLOW(LEDPattern.solid(Color.YELLOW)),
+  GREEN(LEDPattern.solid(Color.GREEN)),
+  CYAN(LEDPattern.solid(Color.CYAN)),
+  BLUE(LEDPattern.solid(Color.BLUE)),
+  PURPLE(LEDPattern.solid(Color.PURPLE)),
+  PINK(LEDPattern.solid(Color.PINK)),
+  MAGENTA(LEDPattern.solid(Color.MAGENTA)),
+  BROWN(LEDPattern.solid(Color.BROWN)),
+  GRAY(LEDPattern.solid(Color.GRAY)),
+  WHITE(LEDPattern.solid(Color.WHITE)),
+  GOLD(LEDPattern.solid(Color.GOLD)),
+  SILVER(LEDPattern.solid(Color.SILVER)),
+  INDIAN_RED(LEDPattern.solid(Color.INDIAN_RED)),
 
   // FRC
-  FRC_BLUE(LEDPattern.solid(Color.kFirstBlue)),
-  FRC_RED(LEDPattern.solid(Color.kFirstRed)),
+  FRC_BLUE(LEDPattern.solid(Color.FIRST_BLUE)),
+  FRC_RED(LEDPattern.solid(Color.FIRST_RED)),
 
   // Center of Mass
-  CENTER_OF_MASS_BLUE(LEDPattern.solid(Color.kDarkBlue)),
-  CENTER_OF_MASS_GOLD(LEDPattern.solid(Color.kDarkGoldenrod)),
+  CENTER_OF_MASS_BLUE(LEDPattern.solid(Color.DARK_BLUE)),
+  CENTER_OF_MASS_GOLD(LEDPattern.solid(Color.DARK_GOLDENROD)),
 
   // Multi-Color Patterns
   RAINBOW(LEDPattern.rainbow(255, 128)),
 
   GRADIENT_COM(
       LEDPattern.gradient(
-          LEDPattern.GradientType.kContinuous, Color.kDarkBlue, Color.kDarkGoldenrod)),
+          GradientType.CONTINUOUS, Color.DARK_BLUE, Color.DARK_GOLDENROD)),
 
-  STRIPE_COM(LEDPattern.steps(Map.of(0, Color.kDarkBlue, 0.50, Color.kDarkGoldenrod))),
+  STRIPE_COM(LEDPattern.steps(Map.of(0, Color.DARK_BLUE, 0.50, Color.DARK_GOLDENROD))),
 
   GRADIENT_FRC(
       LEDPattern.gradient(
-          LEDPattern.GradientType.kContinuous, Color.kFirstBlue, Color.kWhite, Color.kFirstRed)),
+          GradientType.CONTINUOUS, Color.FIRST_BLUE, Color.WHITE, Color.FIRST_RED)),
 
   STRIPE_FRC(
-      LEDPattern.steps(Map.of(0, Color.kFirstBlue, 0.33, Color.kWhite, 0.66, Color.kFirstRed))),
+      LEDPattern.steps(Map.of(0, Color.FIRST_BLUE, 0.33, Color.WHITE, 0.66, Color.FIRST_RED))),
 
   STRIPE_YELOW_WHITE_BLUE(
-      LEDPattern.steps(Map.of(0, Color.kYellow, 0.33, Color.kWhite, 0.66, Color.kBlue))),
-  STRIPE_YELLOW_WHITE(LEDPattern.steps(Map.of(0, Color.kYellow, 0.50, Color.kWhite))),
-  STRIPE_YELLOW_BLUE(LEDPattern.steps(Map.of(0, Color.kYellow, 0.50, Color.kBlue))),
-  STRIPE_BLUE_WHITE(LEDPattern.steps(Map.of(0, Color.kBlue, 0.50, Color.kWhite)));
+      LEDPattern.steps(Map.of(0, Color.YELLOW, 0.33, Color.WHITE, 0.66, Color.BLUE))),
+  STRIPE_YELLOW_WHITE(LEDPattern.steps(Map.of(0, Color.YELLOW, 0.50, Color.WHITE))),
+  STRIPE_YELLOW_BLUE(LEDPattern.steps(Map.of(0, Color.YELLOW, 0.50, Color.BLUE))),
+  STRIPE_BLUE_WHITE(LEDPattern.steps(Map.of(0, Color.BLUE, 0.50, Color.WHITE)));
 
   private static final double BREATH_TIME = 1.0;
   private static final double STROBE_TIME = 1.0;
   private static final Distance LED_SPACING = Meters.of(1 / 60.0);
 
   private final LEDPattern colorPattern;
+
+  LedPatterns(LEDPattern colorPattern) {
+    this.colorPattern = colorPattern;
+  }
 
   public LEDPattern colorPatternOnly() {
     return colorPattern;
@@ -85,12 +90,8 @@ public enum LedPatterns {
     return colorPattern.breathe(Seconds.of(time > 0.0 ? time : BREATH_TIME));
   }
 
-  public LEDPattern scroll() {
-    return colorPattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LED_SPACING);
-  }
-
   public LEDPattern scroll(double metersPerSecond) {
-    return colorPattern.scrollAtAbsoluteSpeed(
+    return colorPattern.scrollAtAbsoluteVelocity(
         MetersPerSecond.of(metersPerSecond > 0.0 ? metersPerSecond : 1), LED_SPACING);
   }
 
@@ -100,9 +101,5 @@ public enum LedPatterns {
 
   public LEDPattern blend(LEDPattern other) {
     return colorPattern.blend(other);
-  }
-
-  private LedPatterns(LEDPattern colorPattern) {
-    this.colorPattern = colorPattern;
   }
 }
