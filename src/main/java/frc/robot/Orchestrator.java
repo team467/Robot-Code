@@ -170,10 +170,6 @@ public class Orchestrator {
           AllianceFlipUtil.apply(
               Hub.nearFace.transformBy(
                   new Transform2d(FRONT_HUB_OFFSET, 0.0, Rotation2d.fromDegrees(0.0))));
-      Rotation2d sameAsAlignAndShootHeading =
-          AllianceFlipUtil.apply(Hub.blueCenter)
-              .minus(hubApproachPose.getTranslation())
-              .getAngle().get();
       return new Pose2d(hubApproachPose.getTranslation(), null);
     });
   }
