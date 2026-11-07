@@ -1,26 +1,25 @@
 package frc.robot.subsystems.drive;
 
-import static frc.robot.Schematic.*;
-import static frc.robot.subsystems.drive.DriveConstants.*;
+import static frc.robot.Schematic.pigeonCanId;
+import static frc.robot.subsystems.drive.DriveConstants.odometryFrequency;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import org.wpilib.util.Alert.Level;
+import java.util.Queue;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.util.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearAcceleration;
-import org.wpilib.util.Alert;
-import java.util.Queue;
 
-/** IO implementation for Pigeon 2. */
+/**
+ * IO implementation for Pigeon 2.
+ */
 public class GyroIOPigeon2 implements GyroIO {
-  private final Alert impactAlert =
-      new Alert("Impact Detected, lowering elevator to prevent flipping.", Level.MEDIUM);
+
   private final Pigeon2 pigeon = new Pigeon2(pigeonCanId);
   private final StatusSignal<Angle> yaw = pigeon.getYaw();
   private final Queue<Double> yawPositionQueue;
@@ -53,7 +52,7 @@ public class GyroIOPigeon2 implements GyroIO {
         yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryYawPositions =
         yawPositionQueue.stream()
-            .map((Double value) -> Rotation2d.fromDegrees(value))
+            .map(Rotation2d::fromDegrees)
             .toArray(Rotation2d[]::new);
     inputs.roll = robotRoll.getValueAsDouble();
     inputs.pitch = robotPitch.getValueAsDouble();
