@@ -10,6 +10,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.PID_I;
 import static frc.robot.subsystems.intake.IntakeConstants.PID_P;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -17,7 +18,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.AlternateEncoderConfig;
+import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -28,15 +29,25 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
   private final DigitalInput collapsedLimitSwitch;
   private final RelativeEncoder extendMotorEncoder;
   private final SparkClosedLoopController pidController;
-  private double setPos = 0;
   private boolean usingPID = false;
 
+  /** Configures the Spark Max-backed extension motor, encoder, PID, and limit switch. */
   public IntakeExtendIOSparkMax() {
     extendMotor = new SparkMax(intakeExtendCanId, MotorType.kBrushless);
-    AlternateEncoderConfig extendEnc = new AlternateEncoderConfig();
+
+    pidController = extendMotor.getClosedLoopController();
+    extendMotorEncoder = extendMotor.getEncoder();
+
+    extendMotor.configure(
+        getSparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    collapsedLimitSwitch = new DigitalInput(EXTEND_LIMIT_ID);
+  }
+
+  /** Builds the Spark Max configuration shared by startup and idle-mode changes. */
+  public SparkMaxConfig getSparkMaxConfig() {
+    EncoderConfig extendEnc = new EncoderConfig();
     extendEnc.positionConversionFactor(EXTEND_POSITION_CONVERSION);
     extendEnc.velocityConversionFactor(EXTEND_VELOCITY_CONVERSION);
-    extendEnc.inverted(true);
     var extendConfig = new SparkMaxConfig();
     extendConfig
         .inverted(false)
@@ -45,15 +56,10 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
         .smartCurrentLimit((int) Math.round(INTAKE_EXTEND_MOTOR_CURRENT_LIMIT))
         .closedLoop
         .pid(PID_P, PID_I, PID_D)
-        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder);
-    extendConfig.alternateEncoder.apply(extendEnc);
-
-    pidController = extendMotor.getClosedLoopController();
-    extendMotorEncoder = extendMotor.getAlternateEncoder();
-
-    extendMotor.configure(
-        extendConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    collapsedLimitSwitch = new DigitalInput(EXTEND_LIMIT_ID);
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .allowedClosedLoopError(0.5, ClosedLoopSlot.kSlot0);
+    extendConfig.encoder.apply(extendEnc);
+    return extendConfig;
   }
 
   @Override
@@ -62,8 +68,8 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
     inputs.extendVelocity = extendMotorEncoder.getVelocity();
     inputs.extendVolts = extendMotor.getAppliedOutput();
     inputs.extendAmps = extendMotor.getOutputCurrent();
-    inputs.isCollapsed = collapsedLimitSwitch.get();
-    inputs.getExtendPos = extendMotorEncoder.getPosition();
+    inputs.isCollapsed = isCollapsed();
+    inputs.extendPosition = extendMotorEncoder.getPosition();
     inputs.atSetpoint = extendMotor.getClosedLoopController().isAtSetpoint() && usingPID;
     inputs.hasSetpoint = usingPID;
     inputs.setpointValue = extendMotor.getClosedLoopController().getSetpoint();
@@ -90,15 +96,29 @@ public class IntakeExtendIOSparkMax implements IntakeExtendIO {
   }
 
   @Override
-  public void goToPos(double setPos) {
-    this.setPos = setPos;
+  public void goToPos(double targetPosition) {
     if (usingPID) {
-      pidController.setSetpoint(setPos, ControlType.kPosition);
+      pidController.setSetpoint(targetPosition, ControlType.kPosition);
     }
   }
 
   public void setPIDEnabled(boolean enabled) {
     this.usingPID = enabled;
+  }
+
+  @Override
+  public void setIdleMode(boolean coast) {
+    if (coast) {
+      extendMotor.configure(
+          getSparkMaxConfig().idleMode(IdleMode.kCoast),
+          ResetMode.kResetSafeParameters,
+          PersistMode.kNoPersistParameters);
+    } else {
+      extendMotor.configure(
+          getSparkMaxConfig().idleMode(IdleMode.kBrake),
+          ResetMode.kResetSafeParameters,
+          PersistMode.kNoPersistParameters);
+    }
   }
 
   @Override

@@ -4,21 +4,20 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
-import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -29,11 +28,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.lib.utils.LocalADStarAK;
 import frc.robot.RobotState.IntakePosition;
 import frc.robot.commands.auto.Autos;
-import frc.robot.commands.auto.DriveToPose;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drive.DriveWithDpad;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
@@ -75,12 +71,9 @@ public class RobotContainer {
   private Indexer indexer;
   private final Orchestrator orchestrator;
   private Shooter shooter;
-  private Climber climber;
-  private final Intake intake;
+  private Intake intake;
   private IntakeRollers intakeRollers;
   private IntakeExtend intakeExtend;
-  private RobotState robotState = RobotState.getInstance();
-  private boolean isRobotOriented = true; // Workaround, change if needed
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -105,10 +98,7 @@ public class RobotContainer {
           vision =
               new Vision(
                   drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
-                  new VisionIOPhotonVision(camera2Name, robotToCamera2),
-                  new VisionIOPhotonVision(camera3Name, robotToCamera3));
+                  new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
         }
         case ROBOT_2026_COMP -> {
@@ -122,17 +112,14 @@ public class RobotContainer {
           vision =
               new Vision(
                   drive::addVisionMeasurement,
-                  new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                  new VisionIOPhotonVision(camera1Name, robotToCamera1),
-                  new VisionIOPhotonVision(camera2Name, robotToCamera2),
-                  new VisionIOPhotonVision(camera3Name, robotToCamera3));
+                  new VisionIOPhotonVision(camera2Name, robotToCamera2));
           leds = new Leds();
           shooter = new Shooter(new ShooterIOSparkMax());
           magicCarpet = new MagicCarpet(new MagicCarpetSparkMax());
           indexer = new Indexer(new IndexerIOSparkMax());
           intakeRollers = new IntakeRollers(new IntakeRollersIOKraken());
-          intakeExtend =
-              new IntakeExtend(new IntakeExtendIOSparkMax(), operatorController.rightTrigger());
+          intakeExtend = new IntakeExtend(new IntakeExtendIOSparkMax());
+          //                    climber = new Climber(new ClimberIOPhysical());
         }
 
         case ROBOT_SIMBOT -> {
@@ -151,6 +138,7 @@ public class RobotContainer {
           //          leds = new Leds();
           //    hopperBelt = new HopperBelt(new HopperBeltSparkMax());
           leds = new Leds();
+          shooter = new Shooter(new ShooterIOSparkMax(false));
         }
       }
     }
@@ -165,6 +153,13 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
     }
+    if (intakeRollers == null) {
+      intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
+    }
+    if (intakeExtend == null) {
+      intakeExtend = new IntakeExtend(new IntakeExtendIO() {});
+    }
+    intake = new Intake(intakeRollers, intakeExtend);
     if (magicCarpet == null) {
       magicCarpet = new MagicCarpet(new MagicCarpetIO() {});
     }
@@ -174,63 +169,17 @@ public class RobotContainer {
     if (indexer == null) {
       indexer = new Indexer(new IndexerIO() {});
     }
-    if (climber == null) {
-      climber = new Climber(new ClimberIO() {});
-    }
-    if (intakeRollers == null) {
-      intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
-    }
-    if (intakeExtend == null) {
-      intakeExtend = new IntakeExtend(new IntakeExtendIO() {}, () -> false);
-    }
 
-    intake = new Intake(intakeRollers, intakeExtend);
     orchestrator =
         new Orchestrator(
             drive, magicCarpet, shooter, indexer, intake, intakeRollers, driverController);
     Autos autos = new Autos(drive, orchestrator, intake, intakeRollers, shooter);
-    NamedCommands.registerCommand(
-        "startIntake",
-        Commands.parallel(
-                intake.holdAngleAndIntake(IntakeConstants.EXTEND_POS), orchestrator.preloadBalls())
-            .withTimeout(10.0));
-    NamedCommands.registerCommand(
-        "endIntake",
-        Commands.parallel(
-                intakeRollers.stopIntakeCommand().withTimeout(0.05),
-                indexer.stop().withTimeout(0.05))
-            .withTimeout(0.05));
-    NamedCommands.registerCommand(
-        "spinUp",
-        shooter.setTargetVelocityRadiansRepeatedly(
-            Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)));
-    NamedCommands.registerCommand("feedShooter", orchestrator.feedUp());
-    NamedCommands.registerCommand("bringInIntake", intake.extendToAngleAndIntake(0));
-    NamedCommands.registerCommand("driveToHub", orchestrator.driveToHub());
-    NamedCommands.registerCommand("driveToHubAuto", orchestrator.driveToHub().withTimeout(3.0));
-    NamedCommands.registerCommand(
-        "shootAuto",
-        Commands.sequence(
-            Commands.parallel(
-                    shooter
-                        .setTargetVelocityRadiansRepeatedly(
-                            Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM))
-                        .withTimeout(0.8),
-                    intakeRollers.stopIntakeCommand(),
-                    indexer.stop())
-                .withTimeout(0.8),
-            Commands.deadline(
-                Commands.waitSeconds(3.2),
-                shooter.setTargetVelocityRadiansRepeatedly(
-                    Units.rotationsPerMinuteToRadiansPerSecond(CLOSE_HUB_SHOOTER_RPM)),
-                orchestrator.feedUp()),
-            Commands.parallel(indexer.stop().withTimeout(0.05)).withTimeout(0.05)));
     AutoBuilder.configure(
         drive::getPose,
         drive::setPose,
         drive::getChassisSpeeds,
         drive::runVelocity,
-        new PPHolonomicDriveController(new PIDConstants(12, 0, 0), new PIDConstants(9, 0, 0)),
+        new PPHolonomicDriveController(new PIDConstants(14.0, 0, 0), new PIDConstants(7, 0, 0)),
         ppConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         drive);
@@ -245,12 +194,12 @@ public class RobotContainer {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
 
-    NamedCommands.registerCommand(
-        "Drive Back Left",
-        new DriveToPose(drive, () -> new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(180))));
-    NamedCommands.registerCommand(
-        "Drive Over Left",
-        new DriveToPose(drive, () -> new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(180))));
+    //    NamedCommands.registerCommand(
+    //        "Drive Back Left",
+    //        new DriveToPose(drive, () -> new Pose2d(2.798, 5.440, Rotation2d.fromDegrees(180))));
+    //    NamedCommands.registerCommand(
+    //        "Drive Over Left",
+    //        new DriveToPose(drive, () -> new Pose2d(6.714, 5.440, Rotation2d.fromDegrees(180))));
 
     //
     // NamedCommands.registerCommand("startShooter",Commands.parallel(orchestrator.preloadBalls(),orchestrator.prepShooter()));
@@ -266,20 +215,16 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     autoChooser.addDefaultOption("Do Nothing", Commands.none());
-
-    autoChooser.addOption("test path", autos.testPath());
-    autoChooser.addOption("Bummmmpar", autos.Bummmmpar());
-    autoChooser.addOption("Manual A-CC", autos.ACCManuelAuto());
+    autoChooser.addOption(
+        "RunIntakeOut", intake.extendToAngleAndIntake(IntakeConstants.EXTEND_POS));
+    autoChooser.addOption("Manual A-CC", autos.ACCManualAuto());
     autoChooser.addOption("Manual A-CC-Improved", autos.ACCManuelAutoAlt());
-    autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManuelAutoOverBump());
-    autoChooser.addOption("Manual ADepot", autos.ADepot());
-    autoChooser.addOption("Manual B-CC", autos.BCCManuelAuto());
+    autoChooser.addOption("Manual A-CC-Over-Bump", autos.ACCManualAutoOverBump());
+    autoChooser.addOption("Manual B-CC", autos.BCCManualAuto());
     autoChooser.addOption("Manual B-CC-Improved", autos.BCCManuelAutoAlt());
-    autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManuelAutoOverBump());
+    autoChooser.addOption("Manual B-CC-Over-Bump", autos.BCCManualAutoOverBump());
     autoChooser.addOption("test path 2", drive.getAutonomousCommand("test path 2"));
-    autoChooser.addOption("CL auto", autos.CenterA());
     autoChooser.addOption("8 Ball Auto", autos.EightBalls());
-    autoChooser.addOption("Manual A-CC Complex Intake", autos.ACCManuelImprovedComplexIntake());
 
     autoChooser.addOption(
         "runCharacterizationQuasistatic", shooter.sysIdQuasistatic(Direction.kForward));
@@ -306,10 +251,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    autoChooser.addOption("pp", autos.ppACycleLeft());
-    autoChooser.addOption("ppB", autos.ppBCycleRight());
-    autoChooser.addOption("ppB Cycle Right Regression", autos.ppBCycleRightRegression());
-    autoChooser.addOption("ppA Cycle Left Regression", autos.ppACycleLeftRegression());
+    // pp
+
+    autoChooser.addOption("A-side", autos.ppA2CycleRightRegression());
+    autoChooser.addOption("B-side", autos.ppB2CycleRightRegression());
+    autoChooser.addOption("Depot+Outpost", autos.ppDepot());
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -323,7 +270,6 @@ public class RobotContainer {
   private void configureButtonBindings() {
     indexer.setDefaultCommand(indexer.stop());
     shooter.setDefaultCommand(shooter.stop());
-    //    shooter.setDefaultCommand(shooter.stop());
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -333,7 +279,11 @@ public class RobotContainer {
             () -> -driverController.getRightX()));
 
     // Lock to 0 degrees when A button is held
-
+    Trigger intaking = new Trigger(() -> RobotState.getInstance().intaking);
+    intaking.onTrue(
+        Commands.runOnce(() -> driverController.setRumble(RumbleType.kBothRumble, 0.2)));
+    intaking.onFalse(
+        Commands.runOnce(() -> driverController.setRumble(RumbleType.kBothRumble, 0.0)));
     driverController
         .start()
         .onTrue(
@@ -345,7 +295,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
     new Trigger(() -> driverController.getHID().getPOV() != -1)
         .whileTrue(new DriveWithDpad(drive, () -> driverController.getHID().getPOV()));
-    driverController.x().toggleOnTrue(orchestrator.aimToHub());
+    driverController.x().toggleOnTrue(orchestrator.zoneBasedAim());
     driverController.y().toggleOnTrue(intake.extendToAngleAndIntake(IntakeConstants.COLLAPSE_POS));
     driverController
         .leftBumper()
@@ -356,16 +306,26 @@ public class RobotContainer {
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
         .and(() -> !operatorController.pov(180).getAsBoolean())
+        .and(() -> !RobotState.getInstance().shooterAtSpeed)
         .toggleOnTrue(intakeExtend.extendToAngle(IntakeConstants.COLLAPSE_POS));
+    CustomTriggers.toggleIntakeUp(
+            driverController.leftBumper(),
+            () -> RobotState.getInstance().intakePosition == IntakePosition.DEPLOYED)
+        .and(() -> !operatorController.pov(180).getAsBoolean())
+        .and(() -> RobotState.getInstance().shooterAtSpeed)
+        .toggleOnTrue(intake.slowlyBringInIntakeWithoutRollers());
     CustomTriggers.toggleIntakeDown(
             driverController.leftBumper(),
             () -> RobotState.getInstance().intakePosition == IntakePosition.STOWED)
         .and(() -> !operatorController.pov(180).getAsBoolean())
-        .toggleOnTrue(intakeExtend.extendToAngle(IntakeConstants.EXTEND_POS));
+        .toggleOnTrue(intake.extendToAngle(IntakeConstants.EXTEND_POS));
 
-    // VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
-    driverController.leftTrigger(0.2).toggleOnTrue(intakeRollers.intake());
+    //         VERY IMPORTANT BECAUSE COMMAND GROUP DOESN'T MESH WITH SHOOTING DON'T COMBINE
+    // driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
+
     driverController.rightTrigger(0.1).toggleOnTrue(orchestrator.feedUp());
+    driverController.leftTrigger(0.2).toggleOnTrue(intake.runIntakeMotor());
+
     driverController
         .a()
         .and(operatorController.pov(180))
@@ -379,26 +339,19 @@ public class RobotContainer {
         .and(operatorController.pov(180))
         .whileTrue(intakeExtend.runIntakeExtendVolts(4))
         .onFalse(intakeExtend.stopExtendingCommand());
-    //    operatorController.rightTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
+    operatorController
+        .leftTrigger(0.1)
+        .toggleOnTrue(orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()));
     operatorController
         .rightTrigger(0.1)
         .and(() -> !operatorController.pov(0).getAsBoolean())
-        .toggleOnTrue(orchestrator.spinUpShooterDistance(orchestrator.getHubDistance()));
+        .toggleOnTrue(orchestrator.zoneBasedShooter());
     operatorController
         .rightTrigger(0.1)
         .and(operatorController.pov(0))
         .toggleOnTrue(orchestrator.spinUpShooterHub());
-    operatorController.leftTrigger(0.1).toggleOnTrue(orchestrator.spinUpShooterTest());
     operatorController.y().whileTrue(indexer.reverse());
     operatorController.x().whileTrue(intakeRollers.outtake());
-
-    operatorController
-        .leftTrigger()
-        .whileTrue(
-            shooter.setTargetVelocityRadians(
-                () ->
-                    operatorController.getLeftY()
-                        * Units.rotationsPerMinuteToRadiansPerSecond(5600)));
   }
 
   /**

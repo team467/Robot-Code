@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A-Cycle-Left"
+            "pathName": "A-Cycle1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "A-Cycle-Right#"
+            "pathName": "A-Cycle2"
           }
         }
       ]

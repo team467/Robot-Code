@@ -16,11 +16,11 @@ import edu.wpi.first.units.measure.Voltage;
 public class IntakeRollersIOKraken implements IntakeRollersIO {
 
   private final TalonFX intakeMotor;
-  private double setPos = 0;
 
   private final StatusSignal<Voltage> intakeAppliedVolts;
   private final StatusSignal<Current> intakeCurrent;
 
+  /** Configures the TalonFX-backed intake roller motor and cached status signals. */
   public IntakeRollersIOKraken() {
     intakeMotor = new TalonFX(intakeMotorCanId);
 

@@ -10,8 +10,6 @@ public interface IndexerIO {
     public double feedUpPercentOutput = 0.0;
     public double feedUpVolts = 0.0;
     public double feedUpAmps = 0.0;
-    public boolean ballAtLeftSwitch = false;
-    public boolean ballAtRightSwitch = false;
   }
 
   default void updateInputs(IndexerIOInputs inputs) {}
@@ -21,12 +19,4 @@ public interface IndexerIO {
   default void setVoltage(double feedUpVolts) {}
 
   default void stop() {}
-
-  default boolean isLeftSwitchPressed() {
-    return false;
-  }
-
-  default boolean isRightSwitchPressed() {
-    return false;
-  }
 }
