@@ -1,15 +1,25 @@
 package frc.robot.subsystems.indexer;
 
+import static frc.robot.subsystems.indexer.IndexerConstants.FEEDUP_VOLT;
+import static org.wpilib.units.Units.Amps;
+
 import frc.lib.mechanisms.flywheels.SparkFlywheel;
 import frc.robot.Bindings;
+import frc.robot.Schematic;
 import org.wpilib.command3.StateMachine;
 import org.wpilib.command3.StateMachine.State;
 import org.wpilib.epilogue.Logged;
+import org.wpilib.hardware.bus.CANPort;
 
 @Logged
 public class IndexerSpark implements Indexer {
 
-  SparkFlywheel flywheel;
+  SparkFlywheel flywheel = new SparkFlywheel(
+      CANPort.CAN_D0,
+      Schematic.indexerFeedupCanId,
+      false,
+      FEEDUP_VOLT,
+      Amps.of(12));
 
   @Override
   public StateMachine stateMachine() {

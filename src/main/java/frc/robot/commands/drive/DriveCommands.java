@@ -88,7 +88,7 @@ public class DriveCommands {
           MatchState.getAlliance().isPresent()
               && MatchState.getAlliance().get() == Alliance.RED;
       drive.runVelocity(
-          speeds.toFieldRelative(isFlipped
+          speeds.toRobotRelative(isFlipped
               ? drive.getRotation().plus(new Rotation2d(Math.PI))
               : drive.getRotation()));
     }).named("Joystick Drive");

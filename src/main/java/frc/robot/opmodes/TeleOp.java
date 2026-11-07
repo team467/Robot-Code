@@ -1,4 +1,4 @@
-package frc.opmodes;
+package frc.robot.opmodes;
 
 import frc.robot.Robot;
 import org.wpilib.command3.Command;

@@ -4,9 +4,9 @@
 
 package frc.robot;
 
-import frc.opmodes.AutoOpMode;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.opmodes.AutoOpMode;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerSpark;
 import frc.robot.subsystems.intake.Intake;
@@ -308,8 +308,11 @@ public class Robot extends OpModeRobot {
     Logger.AdvancedHooks.invokePeriodicBeforeUser();
     long userCodeStart = RobotController.getMonotonicTime();
 
+    Scheduler.getDefault().run();
+
     updateContainerPeriodic();
 
+    drive.applyOutputs();
     leds.periodic();
 
     // Check CAN status
