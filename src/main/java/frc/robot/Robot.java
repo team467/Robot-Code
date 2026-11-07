@@ -18,7 +18,9 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterSim;
 import frc.robot.subsystems.shooter.ShooterSpark;
 import frc.robot.subsystems.swerve.Drive;
+import frc.robot.subsystems.swerve.GyroIO;
 import frc.robot.subsystems.swerve.GyroIOPigeon2;
+import frc.robot.subsystems.swerve.ModuleIOSim;
 import frc.robot.subsystems.swerve.ModuleIOTalonSpark;
 import frc.robot.subsystems.vision.Vision;
 import java.io.IOException;
@@ -125,6 +127,7 @@ public class Robot extends OpModeRobot {
     }
 
     // Start AdvantageKit logger
+    Logger.AdvancedHooks.disableRobotBaseCheck();
     Logger.start();
 
     // Reset alert timers
@@ -159,16 +162,16 @@ public class Robot extends OpModeRobot {
 
         case ROBOT_SIMBOT -> {
           shooter = new ShooterSpark(Optional.of(new ShooterSim()));
-//          drive =
-//              new Drive(
-//                  new GyroIO() {
-//                  },
-//                  new ModuleIOSim(),
-//                  new ModuleIOSim(),
-//                  new ModuleIOSim(),
-//                  new ModuleIOSim());
-//
-//          leds = new Leds();
+          drive =
+              new Drive(
+                  new GyroIO() {
+                  },
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim(),
+                  new ModuleIOSim());
+          vision = new Vision(drive::addVisionMeasurement);
+          leds = new Leds();
         }
 
         case ROBOT_BRIEFCASE -> {
@@ -301,9 +304,12 @@ public class Robot extends OpModeRobot {
    */
   @Override
   public void robotPeriodic() {
+    long periodicBeforeStart = RobotController.getMonotonicTime();
+    Logger.AdvancedHooks.invokePeriodicBeforeUser();
+    long userCodeStart = RobotController.getMonotonicTime();
+
     updateContainerPeriodic();
 
-    vision.periodic();
     leds.periodic();
 
     // Check CAN status
@@ -314,6 +320,11 @@ public class Robot extends OpModeRobot {
     canErrorAlert.set(
         !canErrorTimer.hasElapsed(canErrorTimeThreshold)
             && !canInitialErrorTimer.hasElapsed(canErrorTimeThreshold));
+
+    long userCodeEnd = RobotController.getMonotonicTime();
+    Logger.AdvancedHooks.invokePeriodicAfterUser(
+        userCodeEnd - userCodeStart,
+        userCodeStart - periodicBeforeStart);
   }
 
   public void setPose() {

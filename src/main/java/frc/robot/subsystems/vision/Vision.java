@@ -8,6 +8,8 @@ import static frc.robot.subsystems.vision.VisionConstants.maxAmbiguity;
 import static frc.robot.subsystems.vision.VisionConstants.maxZError;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCameras;
 
+import frc.robot.Constants;
+import frc.robot.Constants.RobotType;
 import frc.robot.RobotState;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,14 +54,16 @@ public class Vision {
     allRobotPosesAccepted = new ArrayList<>();
     allRobotPosesRejected = new ArrayList<>();
 
-    for (int i = 0; i < VisionConstants.numCameras; i++) {
-      cameras[i] = new PhotonCamera(VisionConstants.cameraNames[i]);
-      disconnectedAlerts[i] =
-          new Alert("Vision Alerts", "Vision camera " + i + " is disconnected.", Level.MEDIUM);
-      cameraData.add(new CameraData());
-    }
+    if (Constants.getRobot() != RobotType.ROBOT_SIMBOT) {
+      for (int i = 0; i < VisionConstants.numCameras; i++) {
+        cameras[i] = new PhotonCamera(VisionConstants.cameraNames[i]);
+        disconnectedAlerts[i] =
+            new Alert("Vision Alerts", "Vision camera " + i + " is disconnected.", Level.MEDIUM);
+        cameraData.add(new CameraData());
+      }
 
-    Scheduler.getDefault().addPeriodic(this::periodic);
+      Scheduler.getDefault().addPeriodic(this::periodic);
+    }
   }
 
   public void periodic() {

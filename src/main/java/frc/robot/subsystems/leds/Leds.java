@@ -26,6 +26,7 @@ public class Leds implements Mechanism {
   private final Selectable<Animations> testAnimation = new Selectable<>();
   private final Selectable<Sections> testSection = new Selectable<>();
   private final Selectable<Mode> testMode = new Selectable<>();
+  private final Boolean isReversed = false;
   // TODO: Figure out how to properly setup Elastic
   private GenericEntry enableTestEntry;
   private GenericEntry testReverse;
@@ -33,7 +34,6 @@ public class Leds implements Mechanism {
   private GenericEntry enableLedModeTestEntry;
   private LEDPattern currentPattern = LedPatterns.BLACK.colorPatternOnly();
   private Sections applySection = Sections.FULL;
-  private Boolean isReversed = false;
 
   public Leds() {
     leds = new AddressableLED(LedConstants.LED_CHANNEL);
@@ -75,16 +75,16 @@ public class Leds implements Mechanism {
   }
 
   public void periodic() {
-    if (enableTestEntry.getBoolean(false)) {
-      processLedPatternTestInputs();
-    } else if (enableLedModeTestEntry.getBoolean(false)) {
-      processLedModeTestInputs();
-    } else {
-      /* get from robot state  */
-      Mode ledMode = state.getMode();
-      currentPattern = ledMode.ledPattern;
-      applySection = ledMode.ledSection;
-    }
+//    if (enableTestEntry.getBoolean(false)) {
+//      processLedPatternTestInputs();
+//    } else if (enableLedModeTestEntry.getBoolean(false)) {
+//      processLedModeTestInputs();
+//    } else {
+//      /* get from robot state  */
+//      Mode ledMode = state.getMode();
+//      currentPattern = ledMode.ledPattern;
+//      applySection = ledMode.ledSection;
+//    }
 
     // Load the pattern onto the LEDs
     if (!Robot.isSimulation()) {
@@ -101,14 +101,14 @@ public class Leds implements Mechanism {
       LedPatterns pattern = testPattern.getSelected();
       LedPatterns pattern2 = testPattern2.getSelected();
       Animations animation = testAnimation.getSelected();
-      double timer = testTimer.getDouble(0);
+//      double timer = testTimer.getDouble(0);
       applySection = testSection.getSelected();
-      isReversed = testReverse.getBoolean(false);
+//      isReversed = testReverse.getBoolean(false);
 
       switch (animation) {
-        case BLINK -> currentPattern = pattern.blink(timer);
-        case BREATHE -> currentPattern = pattern.breathe(timer);
-        case SCROLL -> currentPattern = pattern.scroll(timer);
+//        case BLINK -> currentPattern = pattern.blink(timer);
+//        case BREATHE -> currentPattern = pattern.breathe(timer);
+//        case SCROLL -> currentPattern = pattern.scroll(timer);
         case BLEND -> currentPattern = pattern.blend(pattern2.colorPatternOnly());
         case OVERLAY -> currentPattern = pattern.overlayOn(pattern2.colorPatternOnly());
         case BREATHE_BLEND -> currentPattern = pattern.breathe().blend(pattern2.breathe(1.5));

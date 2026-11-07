@@ -1,21 +1,26 @@
 package frc.robot;
 
-import org.wpilib.driverstation.DriverStationErrors;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.math.util.Units;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.math.util.Units;
 
 public class Constants {
+
   public static final double SLOW_SPEED = Units.inchesToMeters(20);
-
-  // Change this temporarily to override the RobotType, e.g. RobotType.ROBOT_SIMBOT
-  private static final RobotType ROBOT_TYPE_OVERRIDE = null;
   public static final boolean tuningMode = false;
-
+  public static final Map<RobotType, String> logFolders =
+      Map.of(
+          RobotType.ROBOT_BRIEFCASE, "/media/sda1",
+          RobotType.ROBOT_2026_COMP, "/media/sda1",
+          RobotType.ROBOT_2025_COMP, "/media/sda1");
+  // Change this temporarily to override the RobotType, e.g. RobotType.ROBOT_SIMBOT
+  private static final RobotType ROBOT_TYPE_OVERRIDE = RobotType.ROBOT_SIMBOT;
   private static final String ROBOT_FILENAME = "/home/lvuser/robot";
+  public static boolean disableHAL = false;
   private static RobotType cachedRobotTypeFromRoborio = null;
 
   public static RobotType getRobot() {
@@ -82,11 +87,19 @@ public class Constants {
     }
   }
 
-  public static final Map<RobotType, String> logFolders =
-      Map.of(
-          RobotType.ROBOT_BRIEFCASE, "/media/sda1",
-          RobotType.ROBOT_2026_COMP, "/media/sda1",
-          RobotType.ROBOT_2025_COMP, "/media/sda1");
+  public static void disableHAL() {
+    disableHAL = true;
+  }
+
+  /**
+   * Checks whether the robot the correct robot is selected when deploying.
+   */
+  static void main(String... args) {
+    if (ROBOT_TYPE_OVERRIDE == RobotType.ROBOT_SIMBOT) {
+      System.err.println("Cannot deploy, invalid robot selected: " + ROBOT_TYPE_OVERRIDE);
+      System.exit(1);
+    }
+  }
 
   public enum RobotType {
     ROBOT_2025_COMP,
@@ -96,23 +109,9 @@ public class Constants {
     ROBOT_SIMBOT
   }
 
-  public static boolean disableHAL = false;
-
-  public static void disableHAL() {
-    disableHAL = true;
-  }
-
   public enum Mode {
     REAL,
     REPLAY,
     SIM
-  }
-
-  /** Checks whether the robot the correct robot is selected when deploying. */
-  public static void main(String... args) {
-    if (ROBOT_TYPE_OVERRIDE == RobotType.ROBOT_SIMBOT) {
-      System.err.println("Cannot deploy, invalid robot selected: " + ROBOT_TYPE_OVERRIDE);
-      System.exit(1);
-    }
   }
 }
