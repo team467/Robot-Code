@@ -10,13 +10,13 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import org.littletonrobotics.junction.AutoLog;
 import org.wpilib.command3.Mechanism;
+import org.wpilib.epilogue.Logged;
 import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Voltage;
 
-@AutoLog
+@Logged
 public class KrakenFlywheel implements ReversibleFlywheel, Mechanism {
 
   private final TalonFX kraken;

@@ -5,13 +5,13 @@ import static org.wpilib.units.Units.Volts;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import org.littletonrobotics.junction.AutoLog;
 import org.wpilib.command3.Mechanism;
+import org.wpilib.epilogue.Logged;
 import org.wpilib.math.controller.SimpleMotorFeedforward;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Voltage;
 
-@AutoLog
+@Logged
 public class FeedForwardFlywheel implements ControlledFlywheel, Mechanism {
 
   private final SimpleMotorFeedforward ff;

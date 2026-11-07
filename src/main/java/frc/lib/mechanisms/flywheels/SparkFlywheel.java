@@ -9,13 +9,13 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import org.littletonrobotics.junction.AutoLog;
 import org.wpilib.command3.Mechanism;
+import org.wpilib.epilogue.Logged;
 import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Voltage;
 
-@AutoLog
+@Logged
 public class SparkFlywheel implements ReversibleFlywheel, Mechanism {
 
   private final SparkMax spark;

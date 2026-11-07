@@ -2,10 +2,11 @@ package frc.robot;
 
 import static org.wpilib.units.Units.Percent;
 
-import org.wpilib.driverstation.DriverStation;
 import frc.robot.subsystems.leds.LedPatterns;
 import frc.robot.subsystems.leds.Leds.Sections;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.hardware.led.LEDPattern;
 
 /**
@@ -14,109 +15,35 @@ import org.wpilib.hardware.led.LEDPattern;
  */
 public class RobotState {
 
-  public enum Mode {
-    // 2026 Specific
-    INTAKING(LedPatterns.YELLOW.blink(0.2).atBrightness(Percent.of(80)), Sections.FULL),
-    // INTAKE_MOVING_IN(LedPatterns.YELLOW.blink(0.5).atBrightness(Percent.of(50)), Sections.FULL),
-    // INTAKE_MOVING_OUT(LedPatterns.YELLOW.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
-    // INTAKE_DEPLOYED(LedPatterns.CENTER_OF_MASS_GOLD.colorPatternOnly().atBrightness(Percent.of(50)),Sections.FULL),
-    // INTAKE_STOWED(LedPatterns.CENTER_OF_MASS_BLUE.colorPatternOnly().atBrightness(Percent.of(50)),Sections.FULL),
-
-    SHOOTER_SPINNING_UP(
-        LedPatterns.WHITE.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
-    SHOOTER_AT_SPEED(LedPatterns.WHITE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
-
-    INDEXER_RUNNING(
-        LedPatterns.CENTER_OF_MASS_BLUE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
-
-    INTAKING_INDEXING_SHOOTING(
-        LedPatterns.STRIPE_YELOW_WHITE_BLUE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
-    INTAKING_INDEXING(
-        LedPatterns.STRIPE_YELLOW_BLUE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
-    INTAKING_SHOOTING(
-        LedPatterns.STRIPE_YELLOW_WHITE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
-    INDEXING_SHOOTING(
-        LedPatterns.STRIPE_BLUE_WHITE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
-
-    BROWNING_OUT(
-        LedPatterns.INDIAN_RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
-    IN_SHOOTING_RANGE(
-        LedPatterns.STRIPE_COM.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
-    OUTOF_SHOOTING_RANGE(LedPatterns.RED.blink().atBrightness(Percent.of(50)), Sections.FULL),
-
-    // Same every year
-    ESTOPPED(LedPatterns.RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
-    AUTO_FINISHED(
-        LedPatterns.STRIPE_COM.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
-    AUTONOMOUS(LedPatterns.RAINBOW.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
-    BLUE_ALLIANCE(
-        LedPatterns.FRC_BLUE.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
-    RED_ALLIANCE(
-        LedPatterns.FRC_RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
-    LOW_BATTERY_ALERT(LedPatterns.RED.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
-    DISABLED(LedPatterns.GRAY.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
-    OFF(LedPatterns.BLACK.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
-    DEFAULT(LedPatterns.BLACK.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL);
-
-    public final LEDPattern ledPattern;
-    public final Sections ledSection;
-
-    private Mode(LEDPattern ledPattern, Sections section) {
-      this.ledPattern = ledPattern;
-      this.ledSection = section;
-    }
-  }
-
-  public enum IntakePosition {
-    STOWED,
-    DEPLOYED,
-    MOVING_OUT,
-    MOVING_IN
-  }
-
-  public enum ClimberPosition {
-    STOWED,
-    DEPLOYED,
-    MOVING_OUT,
-    MOVING_IN
-  }
-
-  @AutoLogOutput(key = "RobotState/Mode")
-  private Mode mode = Mode.OFF;
-
-  /** Set by the robot if the batter is less than 9V */
+  /**
+   * The singleton instance of the RobotState class.
+   */
+  private static RobotState instance = null;
+  /**
+   * Set by the robot if the batter is less than 9V
+   */
   @AutoLogOutput(key = "RobotState/LowBatteryAlert")
   public boolean lowBatteryAlert = false;
-
   @AutoLogOutput(key = "RobotState/PoseConfidence")
   public boolean PoseConfidence = false;
-
   @AutoLogOutput(key = "RobotState/Intaking")
   public boolean intaking = false;
-
   @AutoLogOutput(key = "RobotState/IntakePosition")
   public IntakePosition intakePosition = IntakePosition.STOWED;
-
   @AutoLogOutput(key = "RobotState/ClimberPosition")
   public ClimberPosition climberPosition = ClimberPosition.STOWED;
-
   @AutoLogOutput(key = "RobotState/IndexerHasFuel")
   public boolean indexerHasFuel = false;
-
   @AutoLogOutput(key = "RobotState/IndexerRunning")
   public boolean indexerRunning = false;
-
   @AutoLogOutput(key = "RobotState/ShooterAtSpeed")
   public boolean shooterAtSpeed = false;
-
   @AutoLogOutput(key = "RobotState/IsAlignedToHub")
   public boolean isAlignedToHub = false;
-
   @AutoLogOutput(key = "RobotState/ShooterSetpoint")
   public double shooterSetpoint = 0.0;
-
-  /** The singleton instance of the RobotState class. */
-  private static RobotState instance = null;
+  @AutoLogOutput(key = "RobotState/Mode")
+  private Mode mode = Mode.OFF;
 
   /**
    * Ensures there is only a single instance of the Robot State class.
@@ -132,7 +59,7 @@ public class RobotState {
 
   public void updateLEDState() {
     // Emergency
-    if (DriverStation.isEStopped()) {
+    if (DriverStationBackend.isEStopped()) {
       mode = Mode.ESTOPPED;
       return;
     }
@@ -142,9 +69,9 @@ public class RobotState {
     }
 
     // Disabled
-    if (DriverStation.isDisabled()) {
-      if (DriverStation.getAlliance().isPresent()) {
-        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+    if (DriverStationBackend.isDisabled()) {
+      if (DriverStationBackend.getAlliance().isPresent()) {
+        if (DriverStationBackend.getAlliance().get() == Alliance.BLUE) {
           mode = Mode.BLUE_ALLIANCE;
         } else {
           mode = Mode.RED_ALLIANCE;
@@ -156,7 +83,7 @@ public class RobotState {
     }
 
     // Auto
-    if (DriverStation.isAutonomous()) {
+    if (DriverStationBackend.isAutonomous()) {
       mode = Mode.AUTONOMOUS;
       return;
     }
@@ -208,5 +135,72 @@ public class RobotState {
 
   public Mode getMode() {
     return mode;
+  }
+
+  public enum Mode {
+    // 2026 Specific
+    INTAKING(LedPatterns.YELLOW.blink(0.2).atBrightness(Percent.of(80)), Sections.FULL),
+    // INTAKE_MOVING_IN(LedPatterns.YELLOW.blink(0.5).atBrightness(Percent.of(50)), Sections.FULL),
+    // INTAKE_MOVING_OUT(LedPatterns.YELLOW.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+    // INTAKE_DEPLOYED(LedPatterns.CENTER_OF_MASS_GOLD.colorPatternOnly().atBrightness(Percent.of(50)),Sections.FULL),
+    // INTAKE_STOWED(LedPatterns.CENTER_OF_MASS_BLUE.colorPatternOnly().atBrightness(Percent.of(50)),Sections.FULL),
+
+    SHOOTER_SPINNING_UP(
+        LedPatterns.WHITE.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    SHOOTER_AT_SPEED(LedPatterns.WHITE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+
+    INDEXER_RUNNING(
+        LedPatterns.CENTER_OF_MASS_BLUE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+
+    INTAKING_INDEXING_SHOOTING(
+        LedPatterns.STRIPE_YELOW_WHITE_BLUE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+    INTAKING_INDEXING(
+        LedPatterns.STRIPE_YELLOW_BLUE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+    INTAKING_SHOOTING(
+        LedPatterns.STRIPE_YELLOW_WHITE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+    INDEXING_SHOOTING(
+        LedPatterns.STRIPE_BLUE_WHITE.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+
+    BROWNING_OUT(
+        LedPatterns.INDIAN_RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    IN_SHOOTING_RANGE(
+        LedPatterns.STRIPE_COM.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    OUTOF_SHOOTING_RANGE(LedPatterns.RED.blink().atBrightness(Percent.of(50)), Sections.FULL),
+
+    // Same every year
+    ESTOPPED(LedPatterns.RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    AUTO_FINISHED(
+        LedPatterns.STRIPE_COM.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    AUTONOMOUS(LedPatterns.RAINBOW.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    BLUE_ALLIANCE(
+        LedPatterns.FRC_BLUE.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    RED_ALLIANCE(
+        LedPatterns.FRC_RED.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    LOW_BATTERY_ALERT(LedPatterns.RED.blink(0.2).atBrightness(Percent.of(50)), Sections.FULL),
+    DISABLED(LedPatterns.GRAY.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    OFF(LedPatterns.BLACK.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL),
+    DEFAULT(LedPatterns.BLACK.colorPatternOnly().atBrightness(Percent.of(50)), Sections.FULL);
+
+    public final LEDPattern ledPattern;
+    public final Sections ledSection;
+
+    Mode(LEDPattern ledPattern, Sections section) {
+      this.ledPattern = ledPattern;
+      this.ledSection = section;
+    }
+  }
+
+  public enum IntakePosition {
+    STOWED,
+    DEPLOYED,
+    MOVING_OUT,
+    MOVING_IN
+  }
+
+  public enum ClimberPosition {
+    STOWED,
+    DEPLOYED,
+    MOVING_OUT,
+    MOVING_IN
   }
 }

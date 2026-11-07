@@ -83,6 +83,7 @@ public class IntakeExtendSpark implements IntakeExtend {
           extendMotor.setVoltage(Volts.zero());
           coro.yield();
         }
+        coro.yield();
       }
     }).named("Intake Retracting");
   }

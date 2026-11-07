@@ -87,7 +87,7 @@ public class GeomUtils {
   /**
    * Multiplies a twist by a scaling factor
    *
-   * @param twist The twist to multiply
+   * @param twist  The twist to multiply
    * @param factor The scaling factor for the twist components
    * @return The new twist
    */
@@ -108,14 +108,14 @@ public class GeomUtils {
    *     parameter is returned directly. For t more than or equal to 1, the "rhs" parameter is
    *     returned directly.
    */
-  public static Pose2d interpolate(Pose2d lhs, Pose2d rhs, double t) {
-    if (t <= 0) {
-      return lhs;
-    } else if (t >= 1) {
-      return rhs;
-    }
-    Twist2d twist = lhs.log(rhs);
-    Twist2d scaled = new Twist2d(twist.dx * t, twist.dy * t, twist.dtheta * t);
-    return lhs.exp(scaled);
-  }
+//  public static Pose2d interpolate(Pose2d lhs, Pose2d rhs, double t) {
+//    if (t <= 0) {
+//      return lhs;
+//    } else if (t >= 1) {
+//      return rhs;
+//    }
+//    Twist2d twist = lhs.log(rhs);
+//    Twist2d scaled = new Twist2d(twist.dx * t, twist.dy * t, twist.dtheta * t);
+//    return lhs.exp(scaled);
+//  }
 }

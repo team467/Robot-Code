@@ -32,8 +32,8 @@ public class ShooterLeadCompensator {
     this.robotVelocity =
         () ->
             new Translation2d(
-                drive.getChassisVelocities().vxMetersPerSecond,
-                drive.getChassisVelocities().vyMetersPerSecond);
+                drive.getChassisVelocities().vx,
+                drive.getChassisVelocities().vy);
 
     this.shooter = shooter;
   }
@@ -58,13 +58,13 @@ public class ShooterLeadCompensator {
     }
 
     double finalDistance = aimPoint.minus(shooterPos).getNorm();
-    Pose2d aimPose = new Pose2d(aimPoint, aimPoint.getAngle());
+    Pose2d aimPose = new Pose2d(aimPoint, aimPoint.getAngle().get());
 
     return new ShootWhileDrivingResult(aimPose, finalDistance);
   }
 
   public Pose2d shooterPose() {
-    return new Pose2d(shooterPosition.get().getX(), shooterPosition.get().getY(), Rotation2d.kZero);
+    return new Pose2d(shooterPosition.get().getX(), shooterPosition.get().getY(), Rotation2d.ZERO);
   }
 
   public record ShootWhileDrivingResult(Pose2d target, double distance) {

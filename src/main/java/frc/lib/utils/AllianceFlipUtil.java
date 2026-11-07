@@ -1,13 +1,14 @@
 package frc.lib.utils;
 
+import frc.robot.FieldConstants;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Rotation3d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.geometry.Translation3d;
-import org.wpilib.driverstation.DriverStation;
-import frc.robot.FieldConstants;
 
 /**
  * Utility functions for flipping from the blue to red alliance. By default, all translations and
@@ -15,6 +16,7 @@ import frc.robot.FieldConstants;
  * alliance wall.
  */
 public class AllianceFlipUtil {
+
   private AllianceFlipUtil() {
     throw new IllegalStateException("Utility class");
   }
@@ -31,20 +33,26 @@ public class AllianceFlipUtil {
     return new Pose2d(
         pose.getX(),
         FieldConstants.fieldWidth - pose.getY(),
-        Rotation2d.kZero.minus(pose.getRotation()));
+        Rotation2d.ZERO.minus(pose.getRotation()));
   }
 
-  /** Flips a translation to the correct side of the field based on the current alliance color. */
+  /**
+   * Flips a translation to the correct side of the field based on the current alliance color.
+   */
   public static Translation2d apply(Translation2d translation) {
     return new Translation2d(applyX(translation.getX()), applyY(translation.getY()));
   }
 
-  /** Flips a rotation based on the current alliance color. */
+  /**
+   * Flips a rotation based on the current alliance color.
+   */
   public static Rotation2d apply(Rotation2d rotation) {
-    return shouldFlip() ? rotation.rotateBy(Rotation2d.kPi) : rotation;
+    return shouldFlip() ? rotation.rotateBy(Rotation2d.PI) : rotation;
   }
 
-  /** Flips a pose to the correct side of the field based on the current alliance color. */
+  /**
+   * Flips a pose to the correct side of the field based on the current alliance color.
+   */
   public static Pose2d apply(Pose2d pose) {
     return shouldFlip()
         ? new Pose2d(apply(pose.getTranslation()), apply(pose.getRotation()))
@@ -65,7 +73,7 @@ public class AllianceFlipUtil {
   }
 
   public static boolean shouldFlip() {
-    return DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
+    return DriverStationBackend.getAlliance().isPresent()
+        && DriverStationBackend.getAlliance().get() == Alliance.RED;
   }
 }

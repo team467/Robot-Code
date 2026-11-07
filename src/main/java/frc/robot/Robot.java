@@ -4,12 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.command3.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.pathfinding.Pathfinding;
-import com.pathplanner.lib.util.PathPlannerLogging;
-import frc.lib.utils.LocalADStarAK;
 import frc.opmodes.AutoOpMode;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
@@ -37,9 +31,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.wpilib.command3.Command;
 import org.wpilib.command3.Scheduler;
 import org.wpilib.command3.button.CommandGamepad;
-import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStationErrors;
-import org.wpilib.driverstation.MatchState;
 import org.wpilib.framework.OpModeRobot;
 import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.hardware.hal.RobotMode;
@@ -188,25 +180,25 @@ public class Robot extends OpModeRobot {
         new Orchestrator(
             drive, shooter, indexer);
     Autos autos = new Autos(this);
-    AutoBuilder.configure(
-        drive::getPose,
-        drive::setPose,
-        drive::getChassisVelocities,
-        drive::runVelocity,
-        new PPHolonomicDriveController(new PIDConstants(14.0, 0, 0), new PIDConstants(7, 0, 0)),
-        ppConfig,
-        () -> MatchState.getAlliance().orElse(Alliance.BLUE) == Alliance.RED
-    );
-    Pathfinding.setPathfinder(new LocalADStarAK());
-    PathPlannerLogging.setLogActivePathCallback(
-        (activePath) -> {
-          Logger.recordOutput(
-              "Odometry/Trajectory", activePath.toArray(new Pose2d[0]));
-        });
-    PathPlannerLogging.setLogTargetPoseCallback(
-        (targetPose) -> {
-          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
-        });
+//    AutoBuilder.configure(
+//        drive::getPose,
+//        drive::setPose,
+//        drive::getChassisVelocities,
+//        drive::runVelocity,
+//        new PPHolonomicDriveController(new PIDConstants(14.0, 0, 0), new PIDConstants(7, 0, 0)),
+//        ppConfig,
+//        () -> MatchState.getAlliance().orElse(Alliance.BLUE) == Alliance.RED
+//    );
+//    Pathfinding.setPathfinder(new LocalADStarAK());
+//    PathPlannerLogging.setLogActivePathCallback(
+//        (activePath) -> {
+//          Logger.recordOutput(
+//              "Odometry/Trajectory", activePath.toArray(new Pose2d[0]));
+//        });
+//    PathPlannerLogging.setLogTargetPoseCallback(
+//        (targetPose) -> {
+//          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+//        });
 
     // Set up auto routines
     addOpMode(RobotMode.AUTONOMOUS, "A Side", "Autos",
@@ -275,7 +267,7 @@ public class Robot extends OpModeRobot {
     Bindings.outtake = false;
     Bindings.intake = false;
     Bindings.intakeRetract = false;
-    orchestrator.zoneBasedAim();
+    Scheduler.getDefault().schedule(orchestrator.zoneBasedAim());
     orchestrator.zoneBasedShooter();
   }
 
@@ -312,7 +304,6 @@ public class Robot extends OpModeRobot {
     updateContainerPeriodic();
 
     vision.periodic();
-    drive.periodic();
     leds.periodic();
 
     // Check CAN status
@@ -331,7 +322,8 @@ public class Robot extends OpModeRobot {
   }
 
   public Command followPath(String name) {
-    return drive.getAutonomousCommand(name);
+    return Command.noRequirements(_ -> {
+    }).named("D");
   }
 
   public void initPose(Pose2d pose) {
