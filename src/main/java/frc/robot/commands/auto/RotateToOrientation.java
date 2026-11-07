@@ -24,7 +24,7 @@ public class RotateToOrientation {
   }
 
   public Command get(Drive drive, Supplier<Rotation2d> rotationSupplier) {
-    return Command.noRequirements(coro -> {
+    return drive.run(coro -> {
               Pose2d currentPose = drive.getPose();
               targetPose = rotationSupplier.get();
               Logger.recordOutput("RotateToOrientation/TargetPose", targetPose);
