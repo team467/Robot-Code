@@ -1,10 +1,11 @@
-package frc.robot.subsystems.drive;
+package frc.robot.subsystems.swerve;
 
 import static frc.robot.Schematic.pigeonCanId;
-import static frc.robot.subsystems.drive.DriveConstants.odometryFrequency;
+import static frc.robot.subsystems.swerve.DriveConstants.odometryFrequency;
+import static org.wpilib.hardware.bus.CANPort.CAN_S0;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -15,12 +16,9 @@ import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearAcceleration;
 
-/**
- * IO implementation for Pigeon 2.
- */
 public class GyroIOPigeon2 implements GyroIO {
 
-  private final Pigeon2 pigeon = new Pigeon2(pigeonCanId);
+  private final Pigeon2 pigeon = new Pigeon2(pigeonCanId, CANBus.systemcore(CAN_S0.value));
   private final StatusSignal<Angle> yaw = pigeon.getYaw();
   private final Queue<Double> yawPositionQueue;
   private final Queue<Double> yawTimestampQueue;
@@ -34,18 +32,18 @@ public class GyroIOPigeon2 implements GyroIO {
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
     pigeon.getConfigurator().setYaw(0.0);
     yaw.setUpdateFrequency(odometryFrequency);
-    yawVelocity.setUpdateFrequency(50.0);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0, yawVelocity, accelY, accelX, robotPitch, robotRoll);
     pigeon.optimizeBusUtilization();
     yawTimestampQueue = OdometryThread.getInstance().makeTimestampQueue();
-    yawPositionQueue = OdometryThread.getInstance().registerSignal(yaw::getValueAsDouble);
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0, accelY, accelX, robotPitch, robotRoll);
+    yawPositionQueue = OdometryThread.getInstance().registerSignal(yaw);
   }
 
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(yaw, yawVelocity, accelX, accelY, robotRoll, robotPitch)
-            .equals(StatusCode.OK);
+            .isOK();
     inputs.yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble());
     inputs.yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble());
     inputs.odometryYawTimestamps =

@@ -4,9 +4,7 @@
 
 package frc.robot;
 
-import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
-
-import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.command3.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
@@ -15,9 +13,6 @@ import frc.lib.utils.LocalADStarAK;
 import frc.opmodes.AutoOpMode;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.ModuleIOTalonSpark;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerSpark;
 import frc.robot.subsystems.intake.Intake;
@@ -28,6 +23,9 @@ import frc.robot.subsystems.magicCarpet.MagicCarpetSpark;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterSim;
 import frc.robot.subsystems.shooter.ShooterSpark;
+import frc.robot.subsystems.swerve.Drive;
+import frc.robot.subsystems.swerve.GyroIOPigeon2;
+import frc.robot.subsystems.swerve.ModuleIOTalonSpark;
 import frc.robot.subsystems.vision.Vision;
 import java.io.IOException;
 import java.util.Optional;

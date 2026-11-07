@@ -1,7 +1,14 @@
 package frc.robot;
 
+import com.ctre.phoenix6.CANBus;
+import org.wpilib.hardware.bus.CANPort;
+
 public class Schematic {
+
   // Drive (CAN IDs)
+  public static final CANPort canPort = CANPort.CAN_S0;
+  public static final CANBus canBus = CANBus.systemcore(canPort.value);
+
   public static final int pigeonCanId;
 
   public static final int frontLeftDriveCanId;

@@ -1,37 +1,20 @@
 {
-  "fileName": "PathplannerLibSystemCoreAlpha.json",
-  "name": "PathplannerLib",
-  "version": "2027.0.0-alpha-3",
-  "uuid": "1b42324f-17c6-4875-8e77-1c312bc8c786",
-  "wpilibYear": "2027_alpha7",
-  "mavenUrls": [
-    "https://3015rangerrobotics.github.io/pathplannerlib/repo"
+  "fileName" : "PathplannerLib.json",
+  "name" : "PathplannerLib",
+  "version" : "2027.0.0-alpha-7-commandsv3-2",
+  "uuid" : "1b42324f-17c6-4875-8e77-1c312bc8c786",
+  "wpilibYear" : "2027_alpha7",
+  "mavenUrls" : [
+    "https://raw.githubusercontent.com/JosephTLockwood/pathplanner/vendordep/repo"
   ],
-  "jsonUrl": "https://3015rangerrobotics.github.io/pathplannerlib/PathplannerLibSystemCoreAlpha.json",
-  "javaDependencies": [
+  "jsonUrl" : "https://raw.githubusercontent.com/JosephTLockwood/pathplanner/vendordep/PathplannerLib.json",
+  "javaDependencies" : [
     {
-      "groupId": "com.pathplanner.lib",
-      "artifactId": "PathplannerLib-java",
-      "version": "2027.0.0-alpha-3"
+      "groupId" : "com.pathplanner.lib",
+      "artifactId" : "PathplannerLib-java",
+      "version" : "2027.0.0-alpha-7-commandsv3-2"
     }
   ],
-  "jniDependencies": [],
-  "cppDependencies": [
-    {
-      "groupId": "com.pathplanner.lib",
-      "artifactId": "PathplannerLib-cpp",
-      "version": "2027.0.0-alpha-3",
-      "libName": "PathplannerLib",
-      "headerClassifier": "headers",
-      "sharedLibrary": false,
-      "skipInvalidPlatforms": true,
-      "binaryPlatforms": [
-        "windowsx86-64",
-        "linuxx86-64",
-        "osxuniversal",
-        "linuxsystemcore",
-        "linuxarm64"
-      ]
-    }
-  ]
+  "jniDependencies" : [],
+  "cppDependencies" : []
 }
