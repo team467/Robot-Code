@@ -303,7 +303,7 @@ public class Robot extends OpModeRobot {
   }
 
   public void driveToHub() {
-    orchestrator.driveToHub();
+    Scheduler.getDefault().schedule(orchestrator.driveToHub());
   }
 
   /**

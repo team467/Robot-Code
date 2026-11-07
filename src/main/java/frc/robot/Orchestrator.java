@@ -6,6 +6,7 @@ import static org.wpilib.units.Units.Meters;
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
 import frc.robot.commands.auto.DriveToPose;
+import frc.robot.commands.auto.RotateToOrientation;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.shooter.Shooter;
@@ -110,39 +111,29 @@ public class Orchestrator {
   public Command zoneBasedAim() {
     DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
 
-    Command.noRequirements(
+    return Command.noRequirements(
         coro -> {
           switch (getCurrentZone()) {
             case ZONE_1 -> coro.await(aimToHub());
             case ZONE_2 -> {
               if (allianceY.getAsDouble() > FieldConstants.fieldWidth / 2) {
-                // TODO
+                coro.await(new RotateToOrientation().get(drive,
+                    () -> AllianceFlipUtil.apply(BBumpClosePose)
+                        .getRotation()));
+              } else {
+                coro.await(new RotateToOrientation().get(drive,
+                    () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))
+                        .getRotation()));
               }
             }
-            // TODO
+            case ZONE_3 -> coro.await(new RotateToOrientation().get(drive,
+                () -> AllianceFlipUtil.apply(BBumpFarPose).getRotation()));
+            case ZONE_4 -> coro.await(new RotateToOrientation().get(drive,
+                () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))
+                    .getRotation()));
           }
         }
-    );
-
-//    return new SelectCommand<>(
-//        Map.ofEntries(
-//            Map.entry(ZoneId.ZONE_1, aimToHub()),
-//            Map.entry(
-//                ZoneId.ZONE_2,
-//                new ConditionalCommand(
-//                    new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpClosePose)),
-//                    new RotateToOrientation(
-//                        drive,
-//                        () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))),
-//                    () -> allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)),
-//            Map.entry(
-//                ZoneId.ZONE_3,
-//                new RotateToOrientation(drive, () -> AllianceFlipUtil.apply(BBumpFarPose))),
-//            Map.entry(
-//                ZoneId.ZONE_4,
-//                new RotateToOrientation(
-//                    drive, () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))))),
-//        this::getCurrentZone);
+    ).named("Zone Based Aim");
   }
 
   public Distance getHubDistance() {
@@ -174,19 +165,17 @@ public class Orchestrator {
   }
 
   public Command driveToHub() {
-    return new DriveToPose(
-        drive,
-        () -> {
-          Pose2d hubApproachPose =
-              AllianceFlipUtil.apply(
-                  Hub.nearFace.transformBy(
-                      new Transform2d(FRONT_HUB_OFFSET, 0.0, Rotation2d.fromDegrees(0.0))));
-          Rotation2d sameAsAlignAndShootHeading =
-              AllianceFlipUtil.apply(Hub.blueCenter)
-                  .minus(hubApproachPose.getTranslation())
-                  .getAngle();
-          return new Pose2d(hubApproachPose.getTranslation(), null);
-        });
+    return new DriveToPose().get(drive, () -> {
+      Pose2d hubApproachPose =
+          AllianceFlipUtil.apply(
+              Hub.nearFace.transformBy(
+                  new Transform2d(FRONT_HUB_OFFSET, 0.0, Rotation2d.fromDegrees(0.0))));
+      Rotation2d sameAsAlignAndShootHeading =
+          AllianceFlipUtil.apply(Hub.blueCenter)
+              .minus(hubApproachPose.getTranslation())
+              .getAngle().get();
+      return new Pose2d(hubApproachPose.getTranslation(), null);
+    });
   }
 
   public void spinUpShooterHub() {
@@ -194,20 +183,18 @@ public class Orchestrator {
   }
 
   public Command aimToHub() {
-    return new DriveToPose(
-        drive,
-        () ->
-            new Pose2d(
-                drive.getPose().getX(),
-                drive.getPose().getY(),
-                AllianceFlipUtil.apply(Hub.blueCenter)
-                    .plus(new Translation2d(-0.4, 0))
-                    .minus(
-                        drive
-                            .getPose()
-                            .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
-                            .getTranslation())
-                    .getAngle()));
+    return new DriveToPose().get(drive, () ->
+        new Pose2d(
+            drive.getPose().getX(),
+            drive.getPose().getY(),
+            AllianceFlipUtil.apply(Hub.blueCenter)
+                .plus(new Translation2d(-0.4, 0))
+                .minus(
+                    drive
+                        .getPose()
+                        .transformBy(ShooterConstants.kShooterOffsetFromRobotCenter)
+                        .getTranslation())
+                .getAngle().get()));
   }
 
   public enum ZoneId {
