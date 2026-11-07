@@ -1,104 +1,57 @@
 package frc.robot.commands.auto;
 
+import frc.robot.subsystems.drive.Drive;
+import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
+import org.wpilib.command3.Command;
 import org.wpilib.math.controller.ProfiledPIDController;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.ChassisVelocities; // Removed or renamed
 import org.wpilib.math.trajectory.TrapezoidProfile.Constraints;
 import org.wpilib.math.util.Units;
-import org.wpilib.command2.Command;
-import frc.robot.subsystems.drive.Drive;
-import java.util.Objects;
-import java.util.function.Supplier;
-import org.littletonrobotics.junction.Logger;
 
-public class RotateToOrientation extends Command {
-  private final Drive drive;
-  private final Supplier<Rotation2d> rotationSupplier;
-  //  private final ProfiledPIDController driveController =
-  //      new ProfiledPIDController(
-  //          2.5, 0, 0.0, new Constraints(Units.inchesToMeters(150), Units.inchesToMeters(450.0)));
-  //  private final ProfiledPIDController thetaController =
-  //      new ProfiledPIDController(
-  //          7.0, 0, 0.0, new Constraints(Units.degreesToRadians(360),
-  // Units.degreesToRadians(720.0)));
+public class RotateToOrientation {
 
+  private static final double THETA_TOLERANCE = Units.degreesToRadians(1.0);
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController( // TODO: Tune this
           2.5, 0, .01, new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(720.0)));
-
   private Rotation2d targetPose;
-  private double thetaErrorAbs;
 
-  private static final double DRIVE_TOLERANCE = 0.005;
-  private static final double THETA_TOLERANCE = Units.degreesToRadians(1.0);
-
-  public RotateToOrientation(Rotation2d targetPose, Drive drive) {
-    this(drive, () -> targetPose, DRIVE_TOLERANCE);
-  }
-
-  public RotateToOrientation(Drive drive, Rotation2d targetPose) {
-    this(drive, () -> targetPose, DRIVE_TOLERANCE);
-  }
-
-  public RotateToOrientation(Drive drive, Pose2d targetPose) {
-    this(
-        drive,
-        () -> targetPose.getTranslation().minus(drive.getPose().getTranslation()).getAngle(),
-        DRIVE_TOLERANCE);
-  }
-
-  public RotateToOrientation(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    this(
-        drive,
-        () ->
-            Objects.requireNonNull(targetPoseSupplier.get(), "targetPoseSupplier.get()")
-                .getTranslation()
-                .minus(drive.getPose().getTranslation())
-                .getAngle(),
-        DRIVE_TOLERANCE);
-  }
-
-  public RotateToOrientation(
-      Drive drive, Supplier<Rotation2d> targetPoseSupplier, double driveTolerance) {
-    this.drive = drive;
-    this.rotationSupplier = Objects.requireNonNull(targetPoseSupplier, "targetPoseSupplier");
-    addRequirements(drive);
+  public RotateToOrientation() {
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
-  @Override
-  public void initialize() {
-    Pose2d currentPose = drive.getPose();
-    targetPose = rotationSupplier.get();
-    Logger.recordOutput("RotateToOrientation/TargetPose", targetPose);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    thetaController.setTolerance(THETA_TOLERANCE);
-    thetaController.reset(currentPose.getRotation().getRadians());
-  }
+  public Command get(Drive drive, Supplier<Rotation2d> rotationSupplier) {
+    return Command.noRequirements(coro -> {
+              Pose2d currentPose = drive.getPose();
+              targetPose = rotationSupplier.get();
+              Logger.recordOutput("RotateToOrientation/TargetPose", targetPose);
+              thetaController.enableContinuousInput(-Math.PI, Math.PI);
+              thetaController.setTolerance(THETA_TOLERANCE);
+              thetaController.reset(currentPose.getRotation().getRadians());
 
-  @Override
-  public void execute() {
-    Pose2d currentPose = drive.getPose();
-    targetPose = rotationSupplier.get();
+              while (!thetaController.atGoal()) {
+                currentPose = drive.getPose();
+                targetPose = rotationSupplier.get();
 
-    // Calculate theta speed
-    double thetaVelocity =
-        thetaController.calculate(currentPose.getRotation().getRadians(), targetPose.getRadians());
-    thetaErrorAbs = Math.abs(currentPose.getRotation().minus(targetPose).getRadians());
-    if (thetaController.atGoal()) thetaVelocity = 0.0;
+                // Calculate theta speed
+                double thetaVelocity =
+                    thetaController.calculate(currentPose.getRotation().getRadians(),
+                        targetPose.getRadians());
+                if (thetaController.atGoal()) {
+                  thetaVelocity = 0.0;
+                }
 
-    drive.runVelocity(
-        ChassisVelocities.fromFieldRelativeSpeeds(0, 0, thetaVelocity, currentPose.getRotation()));
-  }
+                drive.runVelocity(
+                    new ChassisVelocities(0, 0, thetaVelocity).toFieldRelative(currentPose.getRotation()));
 
-  @Override
-  public void end(boolean interrupted) {
-    drive.stop();
-  }
-
-  @Override
-  public boolean isFinished() {
-    return thetaController.atGoal();
+                coro.yield();
+              }
+            }
+        ).named("RotateToOrientation Run")
+        .andThen(Command.noRequirements(_ -> drive.stop()).named("Stop Drive"))
+        .named("RotateToOrientation");
   }
 }
