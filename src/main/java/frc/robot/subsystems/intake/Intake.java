@@ -31,6 +31,7 @@ public class Intake {
 
     var idling = machine.addState(Command.noRequirements(coro -> {
       while (true) {
+        rollers.stop();
         coro.yield();
       }
     }).named("Intake Idle"));

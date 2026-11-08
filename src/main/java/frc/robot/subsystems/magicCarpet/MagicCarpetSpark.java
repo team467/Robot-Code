@@ -36,7 +36,7 @@ public class MagicCarpetSpark implements MagicCarpet {
     }).named("Magic Carpet Run"));
     var reverse = machine.addState(flywheel.run(coro -> {
       while (true) {
-        flywheel.run();
+        flywheel.reverse();
         coro.yield();
       }
     }).named("Magic Carpet Reverse"));

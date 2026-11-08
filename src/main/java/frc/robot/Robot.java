@@ -210,6 +210,7 @@ public class Robot extends OpModeRobot {
         () -> new AutoOpMode(autos.ppB2CycleRightRegression()));
     addOpMode(RobotMode.AUTONOMOUS, "8 Ball", "Autos",
         () -> new AutoOpMode(autos.eightBalls()));
+    publishOpModes();
 
     // Configure the button bindings
     configureButtonBindings();
@@ -336,8 +337,7 @@ public class Robot extends OpModeRobot {
   }
 
   public Command followPath(String name) {
-    return Command.noRequirements(_ -> {
-    }).named("D");
+    return drive.followPath(name);
   }
 
   public void initPose(Pose2d pose) {

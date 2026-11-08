@@ -2,6 +2,7 @@ package frc.robot;
 
 import static frc.robot.subsystems.shooter.ShooterConstants.CLOSE_HUB_SHOOTER_RPM;
 import static org.wpilib.units.Units.Meters;
+import static org.wpilib.units.Units.RPM;
 
 import frc.lib.utils.AllianceFlipUtil;
 import frc.robot.FieldConstants.Hub;
@@ -15,6 +16,7 @@ import frc.robot.subsystems.swerve.Drive;
 import frc.robot.util.ShooterLeadCompensator;
 import frc.robot.util.Zone;
 import frc.robot.util.Zone.Tuple2d;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 import org.wpilib.command3.Command;
@@ -85,7 +87,7 @@ public class Orchestrator {
     DoubleSupplier allianceY = () -> AllianceFlipUtil.applyY(drive.getPose().getY());
 
     Bindings.shooterSetpoint = switch (getCurrentZone()) {
-      case NONE -> null;
+      case NONE -> RPM.zero();
       case ZONE_1 -> ShooterSpark.calculateSetpoint(getHubDistance());
       case ZONE_2 -> (allianceY.getAsDouble() > FieldConstants.fieldWidth / 2)
           ? ShooterSpark.calculateSetpoint(
@@ -118,19 +120,18 @@ public class Orchestrator {
             case ZONE_2 -> {
               if (allianceY.getAsDouble() > FieldConstants.fieldWidth / 2) {
                 coro.await(new RotateToOrientation().get(drive,
-                    () -> AllianceFlipUtil.apply(BBumpClosePose)
-                        .getRotation()));
+                    AllianceFlipUtil.apply(BBumpClosePose)));
               } else {
                 coro.await(new RotateToOrientation().get(drive,
-                    () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))
-                        .getRotation()));
+                    AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpClosePose))
+                ));
               }
             }
             case ZONE_3 -> coro.await(new RotateToOrientation().get(drive,
-                () -> AllianceFlipUtil.apply(BBumpFarPose).getRotation()));
+                AllianceFlipUtil.apply(BBumpFarPose)));
             case ZONE_4 -> coro.await(new RotateToOrientation().get(drive,
-                () -> AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))
-                    .getRotation()));
+                AllianceFlipUtil.apply(AllianceFlipUtil.reflectY(BBumpFarPose))
+            ));
           }
         }
     ).named("Zone Based Aim");
@@ -170,11 +171,19 @@ public class Orchestrator {
           AllianceFlipUtil.apply(
               Hub.nearFace.transformBy(
                   new Transform2d(FRONT_HUB_OFFSET, 0.0, Rotation2d.fromDegrees(0.0))));
-      return new Pose2d(hubApproachPose.getTranslation(), null);
+      var sameAsAlignAndShootHeading =
+          AllianceFlipUtil.apply(Hub.blueCenter)
+              .minus(hubApproachPose.getTranslation())
+              .getAngle();
+      if (sameAsAlignAndShootHeading.isEmpty()) {
+        sameAsAlignAndShootHeading = Optional.of(Rotation2d.ZERO);
+      }
+      return new Pose2d(hubApproachPose.getTranslation(), sameAsAlignAndShootHeading.get());
     });
   }
 
   public void spinUpShooterHub() {
+    Bindings.shoot = true;
     Bindings.shooterSetpoint = CLOSE_HUB_SHOOTER_RPM;
   }
 

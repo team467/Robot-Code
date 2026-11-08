@@ -83,10 +83,8 @@ public class Autos {
           coro.await(
               Command.noRequirements(
                   coro2 -> {
-                    while (true) {
-                      r.shoot();
-                      coro2.yield();
-                    }
+                    r.shoot();
+                    coro2.wait(Seconds.of(2.6));
                   }
               ).whenCanceled(r::stopShooting).named("Shoot").withTimeout(Seconds.of(2.6)));
         }

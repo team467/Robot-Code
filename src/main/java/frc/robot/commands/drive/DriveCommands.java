@@ -138,7 +138,7 @@ public class DriveCommands {
                   -linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                   omega);
           drive.runVelocity(
-              speeds.toFieldRelative(
+              speeds.toRobotRelative(
                   isFlipped
                       ? drive.getRotation().plus(new Rotation2d(Math.PI))
                       : drive.getRotation()));

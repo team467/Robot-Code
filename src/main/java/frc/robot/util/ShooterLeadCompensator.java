@@ -30,10 +30,10 @@ public class ShooterLeadCompensator {
         };
 
     this.robotVelocity =
-        () ->
-            new Translation2d(
-                drive.getChassisVelocities().vx,
-                drive.getChassisVelocities().vy);
+        () -> {
+          var fieldVelocity = drive.getChassisVelocities().toFieldRelative(drive.getRotation());
+          return new Translation2d(fieldVelocity.vx, fieldVelocity.vy);
+        };
 
     this.shooter = shooter;
   }
@@ -54,7 +54,8 @@ public class ShooterLeadCompensator {
     for (int i = 0; i < 10; i++) {
       double distance = aimPoint.minus(shooterPos).getNorm();
       Time t = shooter.getAirTimeSeconds(Meters.of(distance));
-      aimPoint = targetPosition.plus(v.times(t.in(Seconds)));
+      // The ball inherits the robot's field velocity, so aim against that motion.
+      aimPoint = targetPosition.minus(v.times(t.in(Seconds)));
     }
 
     double finalDistance = aimPoint.minus(shooterPos).getNorm();

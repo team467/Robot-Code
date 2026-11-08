@@ -81,6 +81,7 @@ public class IntakeExtendSpark implements IntakeExtend {
         }
         while (limitSwitch.get()) {
           extendMotor.setVoltage(Volts.zero());
+          extendEncoder.setPosition(0);
           coro.yield();
         }
         coro.yield();
