@@ -1,7 +1,12 @@
 package frc.robot.commands.auto;
 
+import static org.wpilib.units.Units.MetersPerSecond;
+import static org.wpilib.units.Units.MetersPerSecondPerSecond;
+import static org.wpilib.units.Units.RadiansPerSecond;
+import static org.wpilib.units.Units.RadiansPerSecondPerSecond;
+
 import frc.lib.utils.GeomUtils;
-import frc.lib.utils.TunableNumber;
+import frc.lib.utils.Tunable;
 import frc.robot.Constants;
 import frc.robot.subsystems.swerve.Drive;
 import java.util.Optional;
@@ -14,6 +19,10 @@ import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.kinematics.ChassisVelocities; // Removed or renamed
 import org.wpilib.math.trajectory.TrapezoidProfile;
 import org.wpilib.math.util.Units;
+import org.wpilib.units.measure.AngularAcceleration;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.LinearAcceleration;
+import org.wpilib.units.measure.LinearVelocity;
 
 /**
  * Command to drive the robot to a specified pose in a straight path. This is useful for very simple
@@ -21,59 +30,35 @@ import org.wpilib.math.util.Units;
  */
 public class DriveToPose {
 
-  private static final TunableNumber driveKp = new TunableNumber("DriveToPose/DriveKp");
-  private static final TunableNumber driveKd = new TunableNumber("DriveToPose/DriveKd");
-  private static final TunableNumber thetaKp = new TunableNumber("DriveToPose/ThetaKp");
-  private static final TunableNumber thetaKd = new TunableNumber("DriveToPose/ThetaKd");
-  private static final TunableNumber driveMaxVelocity =
-      new TunableNumber("DriveToPose/DriveMaxVelocity");
-  private static final TunableNumber driveMaxAcceleration =
-      new TunableNumber("DriveToPose/DriveMaxAcceleration");
-  private static final TunableNumber thetaMaxVelocity =
-      new TunableNumber("DriveToPose/ThetaMaxVelocity");
-  private static final TunableNumber thetaMaxAcceleration =
-      new TunableNumber("DriveToPose/ThetaMaxAcceleration");
-  private static final TunableNumber driveTolerance =
-      new TunableNumber("DriveToPose/DriveTolerance");
-  private static final TunableNumber thetaTolerance =
-      new TunableNumber("DriveToPose/ThetaTolerance");
+  private static final Tunable<Double> driveKp;
+  private static final Tunable<Double> driveKd;
+  private static final Tunable<Double> thetaKp;
+  private static final Tunable<Double> thetaKd;
+  private static final Tunable<LinearVelocity> driveMaxVelocity;
+  private static final Tunable<LinearAcceleration> driveMaxAcceleration;
+  private static final Tunable<AngularVelocity> thetaMaxVelocity;
+  private static final Tunable<AngularAcceleration> thetaMaxAcceleration;
+  private static final Tunable<Double> driveTolerance;
+  private static final Tunable<Double> thetaTolerance;
 
   static {
     switch (Constants.getRobot()) {
-      case ROBOT_2025_TEST:
       case ROBOT_2026_COMP:
-        driveKp.initDefault(2.5);
-        driveKd.initDefault(0.0);
-        thetaKp.initDefault(3.0);
-        thetaKd.initDefault(0.01);
-        driveMaxVelocity.initDefault(Units.inchesToMeters(85));
-        driveMaxAcceleration.initDefault(Units.inchesToMeters(450.0));
-        thetaMaxVelocity.initDefault(Units.degreesToRadians(360.0));
-        thetaMaxAcceleration.initDefault(Units.degreesToRadians(720.0));
-        driveTolerance.initDefault(0.01);
-        thetaTolerance.initDefault(Units.degreesToRadians(0.2));
-      case ROBOT_2025_COMP:
-        driveKp.initDefault(2.5);
-        driveKd.initDefault(0.0);
-        thetaKp.initDefault(3.0);
-        thetaKd.initDefault(0.01);
-        driveMaxVelocity.initDefault(Units.inchesToMeters(85));
-        driveMaxAcceleration.initDefault(Units.inchesToMeters(450.0));
-        thetaMaxVelocity.initDefault(Units.degreesToRadians(360.0));
-        thetaMaxAcceleration.initDefault(Units.degreesToRadians(720.0));
-        driveTolerance.initDefault(0.01);
-        thetaTolerance.initDefault(Units.degreesToRadians(1.0));
       default:
-        driveKp.initDefault(2.5);
-        driveKd.initDefault(0.0);
-        thetaKp.initDefault(3.0);
-        thetaKd.initDefault(0.01);
-        driveMaxVelocity.initDefault(Units.inchesToMeters(85));
-        driveMaxAcceleration.initDefault(Units.inchesToMeters(450.0));
-        thetaMaxVelocity.initDefault(Units.degreesToRadians(360.0));
-        thetaMaxAcceleration.initDefault(Units.degreesToRadians(720.0));
-        driveTolerance.initDefault(0.01);
-        thetaTolerance.initDefault(Units.degreesToRadians(1.0));
+        driveKp = new Tunable<>("DriveToPose/DriveKp", 2.5);
+        driveKd = new Tunable<>("DriveToPose/DriveKd", 0.0);
+        thetaKp = new Tunable<>("DriveToPose/ThetaKp", 3.0);
+        thetaKd = new Tunable<>("DriveToPose/ThetaKd", 0.01);
+        driveMaxVelocity = new Tunable<>("DriveToPose/DriveMaxVelocity",
+            MetersPerSecond.of(Units.inchesToMeters(85)));
+        driveMaxAcceleration = new Tunable<>("DriveToPose/DriveMaxAcceleration",
+            MetersPerSecondPerSecond.of(Units.inchesToMeters(450)));
+        thetaMaxVelocity = new Tunable<>("DriveToPose/ThetaMaxVelocity",
+            RadiansPerSecond.of(Units.degreesToRadians(360)));
+        thetaMaxAcceleration = new Tunable<>("DriveToPose/ThetaMaxAcceleration",
+            RadiansPerSecondPerSecond.of(Units.degreesToRadians(720)));
+        driveTolerance = new Tunable<>("DriveToPose/DriveTolerance", 0.01);
+        thetaTolerance = new Tunable<>("DriveToPose/ThetaTolerance", Units.degreesToRadians(0.2));
     }
   }
 
@@ -81,23 +66,12 @@ public class DriveToPose {
       new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(1.0, 1.0));
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(1.0, 1.0));
-  private double driveErrorAbs;
 
   public Command get(Drive drive, Supplier<Pose2d> poseSupplier) {
     return drive.run(coro -> {
           thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-          driveController.setP(driveKp.get());
-          driveController.setD(driveKd.get());
-
-          driveController.setConstraints(
-              new TrapezoidProfile.Constraints(driveMaxVelocity.get(), driveMaxAcceleration.get()));
-          driveController.setTolerance(driveTolerance.get());
-          thetaController.setP(thetaKp.get());
-          thetaController.setD(thetaKd.get());
-          thetaController.setConstraints(
-              new TrapezoidProfile.Constraints(thetaMaxVelocity.get(), thetaMaxAcceleration.get()));
-          thetaController.setTolerance(thetaTolerance.get());
+          updateControllers();
 
           var currentPose = drive.getPose();
           driveController.reset(
@@ -106,34 +80,14 @@ public class DriveToPose {
 
           while (!(driveController.atGoal() && thetaController.atGoal())) {
             // Update from tunable numbers
-            if (driveKp.hasChanged(hashCode())
-                || driveKd.hasChanged(hashCode())
-                || thetaKp.hasChanged(hashCode())
-                || thetaKd.hasChanged(hashCode())
-                || driveMaxVelocity.hasChanged(hashCode())
-                || driveMaxAcceleration.hasChanged(hashCode())
-                || thetaMaxVelocity.hasChanged(hashCode())
-                || thetaMaxAcceleration.hasChanged(hashCode())
-                || driveTolerance.hasChanged(hashCode())
-                || thetaTolerance.hasChanged(hashCode())) {
-              driveController.setP(driveKp.get());
-              driveController.setD(driveKd.get());
-              driveController.setConstraints(
-                  new TrapezoidProfile.Constraints(driveMaxVelocity.get(), driveMaxAcceleration.get()));
-              driveController.setTolerance(driveTolerance.get());
-              thetaController.setP(thetaKp.get());
-              thetaController.setD(thetaKd.get());
-              thetaController.setConstraints(
-                  new TrapezoidProfile.Constraints(thetaMaxVelocity.get(), thetaMaxAcceleration.get()));
-              thetaController.setTolerance(thetaTolerance.get());
-            }
+            updateControllers();
 
             // Get current and target pose
             currentPose = drive.getPose();
             var targetPose = poseSupplier.get();
 
             // Calculate drive speed
-            driveErrorAbs = currentPose.getTranslation()
+            double driveErrorAbs = currentPose.getTranslation()
                 .getDistance(targetPose.getTranslation());
             double driveVelocityScalar = driveController.calculate(driveErrorAbs, 0.0);
             if (driveController.atGoal()) {
@@ -169,5 +123,21 @@ public class DriveToPose {
           }
         }
     ).whenCanceled(drive::stop).named("DriveToPose");
+  }
+
+  private void updateControllers() {
+    driveController.setP(driveKp.get());
+    driveController.setD(driveKd.get());
+
+    driveController.setConstraints(
+        new TrapezoidProfile.Constraints(driveMaxVelocity.get().in(MetersPerSecond),
+            driveMaxAcceleration.get().in(MetersPerSecondPerSecond)));
+    driveController.setTolerance(driveTolerance.get());
+    thetaController.setP(thetaKp.get());
+    thetaController.setD(thetaKd.get());
+    thetaController.setConstraints(
+        new TrapezoidProfile.Constraints(thetaMaxVelocity.get().in(RadiansPerSecond),
+            thetaMaxAcceleration.get().in(RadiansPerSecondPerSecond)));
+    thetaController.setTolerance(thetaTolerance.get());
   }
 }
