@@ -1,6 +1,7 @@
 package frc.robot.subsystems.magicCarpet;
 
 import frc.lib.mechanisms.flywheels.SparkFlywheel;
+import frc.lib.utils.TunableWatcher;
 import frc.robot.Bindings;
 import frc.robot.Schematic;
 import org.wpilib.command3.StateMachine;
@@ -13,6 +14,11 @@ public class MagicCarpetSpark implements MagicCarpet {
   SparkFlywheel flywheel;
 
   public MagicCarpetSpark() {
+    TunableWatcher.registerTunableWatcher(MagicCarpetConstants.class,
+        () -> flywheel = new SparkFlywheel(CANPort.CAN_D0, Schematic.magicCarpetCanId,
+            MagicCarpetConstants.MOTOR_INVERTED, MagicCarpetConstants.BELT_VOLTS,
+            MagicCarpetConstants.CURRENT_LIMIT));
+    
     flywheel = new SparkFlywheel(CANPort.CAN_D0, Schematic.magicCarpetCanId,
         MagicCarpetConstants.MOTOR_INVERTED, MagicCarpetConstants.BELT_VOLTS,
         MagicCarpetConstants.CURRENT_LIMIT);

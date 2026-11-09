@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.lib.utils.MakeTunable;
+import frc.lib.utils.TunableWatcher;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.opmodes.AutoOpMode;
@@ -27,15 +28,10 @@ import frc.robot.subsystems.vision.Vision;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import java.io.IOException;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
@@ -50,7 +46,6 @@ import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.system.RobotController;
 import org.wpilib.system.Timer;
-import org.wpilib.units.Measure;
 import org.wpilib.units.Unit;
 import org.wpilib.units.Units;
 import org.wpilib.util.Alert;
@@ -234,7 +229,7 @@ public class Robot extends OpModeRobot {
   }
 
   private void setupTunables() {
-    TunablesUpdater updater = new TunablesUpdater();
+    TunableWatcher updater = new TunableWatcher();
     try (ScanResult scanResult = new ClassGraph().enableClasspath().acceptPackages("frc.robot")
         .enableClassInfo()
         .enableFieldInfo()
@@ -399,71 +394,5 @@ public class Robot extends OpModeRobot {
 
   public void initPose(Pose2d pose) {
     drive.setPose(pose);
-  }
-
-  public class TunablesUpdater implements Runnable {
-
-    private final List<Tunable> tunables = new ArrayList<>();
-
-    void addTunable(Class<?> parent, String fieldName, String displayName, Class<?> type,
-        Optional<Unit> unit,
-        Object defaultValue) {
-      DriverStationErrors.reportWarning("Add tunable called", false);
-      if (unit.isEmpty() && defaultValue instanceof Measure) {
-        throw new RuntimeException("Units must be provided when using a Measure tunable");
-      }
-
-      try {
-        Field field = parent.getDeclaredField(fieldName);
-        field.setAccessible(true);
-
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
-        MethodHandle setter = lookup.unreflectSetter(field);
-
-        if (defaultValue instanceof Measure value) {
-          DriverStationErrors.reportWarning("Adding tunable", false);
-          tunables.add(
-              new Tunable(new LoggedNetworkNumber("/Tunables/" + displayName, value.in(unit.get())),
-                  type, unit,
-                  setter)
-          );
-        } else {
-          DriverStationErrors.reportWarning("Adding tunable non-Unit", false);
-          tunables.add(
-              new Tunable(
-                  new LoggedNetworkNumber("/Tunables/" + displayName, (Double) defaultValue),
-                  type, unit,
-                  setter));
-        }
-      } catch (NoSuchFieldException | IllegalAccessException e) {
-        throw new RuntimeException(e);
-      }
-    }
-
-    @Override
-    public void run() {
-      while (true) {
-        for (var tunable : tunables) {
-          try {
-            double value = tunable.source.get();
-            if (Measure.class.isAssignableFrom(tunable.type)) {
-              tunable.setter.invoke(tunable.unit.get().of(value));
-            } else {
-              tunable.setter.invoke(value);
-            }
-          } catch (Throwable e) {
-            throw new RuntimeException(e);
-          }
-        }
-
-        Thread.yield();
-      }
-    }
-
-
-    public record Tunable(LoggedNetworkNumber source, Class<?> type, Optional<Unit> unit,
-                          MethodHandle setter) {
-
-    }
   }
 }
