@@ -12,6 +12,7 @@ public class IntakeConstants {
   @MakeTunable
   public static Voltage INTAKE_VOLTS = Volts.of(8);
 
+  @MakeTunable
   public static int EXTEND_LIMIT_ID = 0;
 
   @MakeTunable

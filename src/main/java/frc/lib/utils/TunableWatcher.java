@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
+import org.littletonrobotics.junction.networktables.LoggedNetworkInput;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.units.Measure;
@@ -47,6 +49,18 @@ public class TunableWatcher implements Runnable {
                 type, unit,
                 setter, defaultValue)
         );
+      } else if (defaultValue instanceof Integer) {
+        tunables.add(
+            new Tunable(parent, fieldName,
+                new LoggedNetworkNumber("/Tunables/" + displayName, (Integer) defaultValue),
+                type, unit,
+                setter, defaultValue));
+      } else if (defaultValue instanceof Boolean) {
+        tunables.add(
+            new Tunable(parent, fieldName,
+                new LoggedNetworkBoolean("/Tunables/" + displayName, (Boolean) defaultValue),
+                type, unit,
+                setter, defaultValue));
       } else {
         tunables.add(
             new Tunable(parent, fieldName,
@@ -65,17 +79,24 @@ public class TunableWatcher implements Runnable {
       Set<Class<?>> changedClasses = new HashSet<>();
       for (var tunable : tunables) {
         try {
-          double value = tunable.source.get();
-          if (Measure.class.isAssignableFrom(tunable.type)) {
-            if (!tunable.value.equals(tunable.unit.get().of(value))) {
-              tunable.setter.invoke(tunable.unit.get().of(value));
-              tunable.valueChanged = true;
-              changedClasses.add(tunable.parent);
+          if (tunable.source instanceof LoggedNetworkNumber source) {
+            double value = source.get();
+            if (tunable.setter.type().parameterType(0).equals(int.class)) {
+              tunable.setter.invoke((int) value);
+            } else if (Measure.class.isAssignableFrom(tunable.type)) {
+              if (!tunable.value.equals(tunable.unit.get().of(value))) {
+                tunable.setter.invoke(tunable.unit.get().of(value));
+                changedClasses.add(tunable.parent);
+              }
             } else {
-              tunable.valueChanged = false;
+              tunable.setter.invoke(value);
             }
-          } else {
-            tunable.setter.invoke(value);
+          } else if (tunable.source instanceof LoggedNetworkBoolean source) {
+            boolean value = source.get();
+            if (!tunable.value.equals(value)) {
+              tunable.setter.invoke(value);
+              changedClasses.add(tunable.parent);
+            }
           }
         } catch (Throwable e) {
           throw new RuntimeException(e);
@@ -96,14 +117,13 @@ public class TunableWatcher implements Runnable {
 
     public Class<?> parent;
     public String name;
-    public LoggedNetworkNumber source;
+    public LoggedNetworkInput source;
     public Class<?> type;
     public Optional<Unit> unit;
     public MethodHandle setter;
     public Object value;
-    public boolean valueChanged = false;
 
-    public Tunable(Class<?> parent, String name, LoggedNetworkNumber source, Class<?> type,
+    public Tunable(Class<?> parent, String name, LoggedNetworkInput source, Class<?> type,
         Optional<Unit> unit,
         MethodHandle setter, Object value) {
       this.parent = parent;
