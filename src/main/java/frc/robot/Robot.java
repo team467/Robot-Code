@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.lib.utils.MakeTunable;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.opmodes.AutoOpMode;
@@ -23,10 +24,18 @@ import frc.robot.subsystems.swerve.GyroIOPigeon2;
 import frc.robot.subsystems.swerve.ModuleIOSim;
 import frc.robot.subsystems.swerve.ModuleIOTalonSpark;
 import frc.robot.subsystems.vision.Vision;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
@@ -41,6 +50,9 @@ import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.system.RobotController;
 import org.wpilib.system.Timer;
+import org.wpilib.units.Measure;
+import org.wpilib.units.Unit;
+import org.wpilib.units.Units;
 import org.wpilib.util.Alert;
 import org.wpilib.util.Alert.Level;
 
@@ -78,6 +90,8 @@ public class Robot extends OpModeRobot {
    * initialization code.
    */
   public Robot() {
+    setupTunables();
+
     if (Constants.getMode() == Constants.Mode.REAL) {
       ProcessBuilder builder = new ProcessBuilder();
       builder.command("sudo", "mount", "/dev/sda1", "/media/sda1");
@@ -219,6 +233,49 @@ public class Robot extends OpModeRobot {
         new Pose2d(drive.getPose().getTranslation(), Rotation2d.ZERO));
   }
 
+  private void setupTunables() {
+    TunablesUpdater updater = new TunablesUpdater();
+    try (ScanResult scanResult = new ClassGraph().enableClasspath().acceptPackages("frc.robot")
+        .enableClassInfo()
+        .enableFieldInfo()
+        .enableAnnotationInfo().scan()) {
+      for (var classInfo : scanResult.getClassesWithFieldAnnotation(MakeTunable.class.getName())) {
+        try {
+          for (var fieldInfo : classInfo.getFieldInfoWithAnnotation(MakeTunable.class.getName())) {
+            String displayName = "";
+            Unit unit = null;
+            Class<?> fieldOwner = Class.forName(classInfo.getName());
+            Field field = fieldOwner.getDeclaredField(fieldInfo.getName());
+            field.setAccessible(true);
+            Object defaultValue = field.get(null);
+            for (var parameter : fieldInfo.getAllAnnotationInfo(MakeTunable.class.getName())
+                .getParameterValues()) {
+              if (parameter.getName().equals("name")) {
+                if (parameter.getValue().equals("UseQualifiedName")) {
+                  displayName = classInfo.getName() + "/" + fieldInfo.getName();
+                } else {
+                  displayName = (String) parameter.getValue();
+                }
+              } else if (parameter.getName().equals("unit")) {
+                String unitName = (String) parameter.getValue();
+                if (!unitName.equals("none")) {
+                  unit = (Unit) Units.class.getField(unitName).get(null);
+                }
+              }
+            }
+            updater.addTunable(fieldOwner, fieldInfo.getName(), displayName, field.getType(),
+                Optional.ofNullable(unit), defaultValue);
+          }
+        } catch (NoSuchFieldException | IllegalAccessException | ClassNotFoundException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    }
+    Thread thread = new Thread(updater);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
   private void configureButtonBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -342,5 +399,71 @@ public class Robot extends OpModeRobot {
 
   public void initPose(Pose2d pose) {
     drive.setPose(pose);
+  }
+
+  public class TunablesUpdater implements Runnable {
+
+    private final List<Tunable> tunables = new ArrayList<>();
+
+    void addTunable(Class<?> parent, String fieldName, String displayName, Class<?> type,
+        Optional<Unit> unit,
+        Object defaultValue) {
+      DriverStationErrors.reportWarning("Add tunable called", false);
+      if (unit.isEmpty() && defaultValue instanceof Measure) {
+        throw new RuntimeException("Units must be provided when using a Measure tunable");
+      }
+
+      try {
+        Field field = parent.getDeclaredField(fieldName);
+        field.setAccessible(true);
+
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandle setter = lookup.unreflectSetter(field);
+
+        if (defaultValue instanceof Measure value) {
+          DriverStationErrors.reportWarning("Adding tunable", false);
+          tunables.add(
+              new Tunable(new LoggedNetworkNumber("/Tunables/" + displayName, value.in(unit.get())),
+                  type, unit,
+                  setter)
+          );
+        } else {
+          DriverStationErrors.reportWarning("Adding tunable non-Unit", false);
+          tunables.add(
+              new Tunable(
+                  new LoggedNetworkNumber("/Tunables/" + displayName, (Double) defaultValue),
+                  type, unit,
+                  setter));
+        }
+      } catch (NoSuchFieldException | IllegalAccessException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    @Override
+    public void run() {
+      while (true) {
+        for (var tunable : tunables) {
+          try {
+            double value = tunable.source.get();
+            if (Measure.class.isAssignableFrom(tunable.type)) {
+              tunable.setter.invoke(tunable.unit.get().of(value));
+            } else {
+              tunable.setter.invoke(value);
+            }
+          } catch (Throwable e) {
+            throw new RuntimeException(e);
+          }
+        }
+
+        Thread.yield();
+      }
+    }
+
+
+    public record Tunable(LoggedNetworkNumber source, Class<?> type, Optional<Unit> unit,
+                          MethodHandle setter) {
+
+    }
   }
 }

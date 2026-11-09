@@ -93,6 +93,7 @@ dependencies {
     annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
+    implementation("io.github.classgraph:classgraph:6.0.1")
 
     if (roborioTargetType != null) {
         roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
