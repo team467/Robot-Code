@@ -181,6 +181,7 @@ public class Robot extends OpModeRobot {
                   new ModuleIOSim());
           vision = new Vision(drive::addVisionMeasurement);
           leds = new Leds();
+          magicCarpet = new MagicCarpetSpark();
         }
 
         case ROBOT_BRIEFCASE -> {
@@ -258,7 +259,7 @@ public class Robot extends OpModeRobot {
                 }
               }
             }
-            updater.addTunable(fieldOwner, fieldInfo.getName(), displayName, field.getType(),
+            TunableWatcher.addTunable(fieldOwner, fieldInfo.getName(), displayName, field.getType(),
                 Optional.ofNullable(unit), defaultValue);
           }
         } catch (NoSuchFieldException | IllegalAccessException | ClassNotFoundException e) {

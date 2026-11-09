@@ -41,7 +41,6 @@ public class TunableWatcher implements Runnable {
       MethodHandle setter = lookup.unreflectSetter(field);
 
       if (defaultValue instanceof Measure value) {
-        DriverStationErrors.reportWarning("Adding tunable", false);
         tunables.add(
             new Tunable(parent, fieldName,
                 new LoggedNetworkNumber("/Tunables/" + displayName, value.in(unit.get())),
@@ -49,7 +48,6 @@ public class TunableWatcher implements Runnable {
                 setter, defaultValue)
         );
       } else {
-        DriverStationErrors.reportWarning("Adding tunable non-Unit", false);
         tunables.add(
             new Tunable(parent, fieldName,
                 new LoggedNetworkNumber("/Tunables/" + displayName, (Double) defaultValue),

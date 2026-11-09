@@ -15,10 +15,11 @@ public class MagicCarpetSpark implements MagicCarpet {
 
   public MagicCarpetSpark() {
     TunableWatcher.registerTunableWatcher(MagicCarpetConstants.class,
-        () -> flywheel = new SparkFlywheel(CANPort.CAN_D0, Schematic.magicCarpetCanId,
-            MagicCarpetConstants.MOTOR_INVERTED, MagicCarpetConstants.BELT_VOLTS,
-            MagicCarpetConstants.CURRENT_LIMIT));
-    
+        () -> {
+          flywheel.reconfigure(MagicCarpetConstants.MOTOR_INVERTED, MagicCarpetConstants.BELT_VOLTS,
+              MagicCarpetConstants.CURRENT_LIMIT);
+        });
+
     flywheel = new SparkFlywheel(CANPort.CAN_D0, Schematic.magicCarpetCanId,
         MagicCarpetConstants.MOTOR_INVERTED, MagicCarpetConstants.BELT_VOLTS,
         MagicCarpetConstants.CURRENT_LIMIT);

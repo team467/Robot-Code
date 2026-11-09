@@ -19,7 +19,7 @@ import org.wpilib.units.measure.Voltage;
 public class SparkFlywheel implements ReversibleFlywheel, Mechanism {
 
   private final SparkMax spark;
-  private final Voltage runVolts;
+  private Voltage runVolts;
 
   public SparkFlywheel(CANPort canPort, int port, boolean invert,
       Voltage voltage,
@@ -31,6 +31,16 @@ public class SparkFlywheel implements ReversibleFlywheel, Mechanism {
         .inverted(invert)
         .voltageCompensation(12)
         .idleMode(IdleMode.kCoast)
+        .smartCurrentLimit((int) currentLimit.in(Amps));
+
+    spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    runVolts = voltage;
+  }
+
+  public void reconfigure(boolean invert, Voltage voltage, Current currentLimit) {
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.inverted(invert).voltageCompensation(12).idleMode(IdleMode.kCoast)
         .smartCurrentLimit((int) currentLimit.in(Amps));
 
     spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
