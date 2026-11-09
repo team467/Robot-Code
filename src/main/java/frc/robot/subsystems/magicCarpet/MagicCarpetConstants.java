@@ -7,13 +7,10 @@ import frc.lib.utils.MakeTunable;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Voltage;
 
+@MakeTunable
 public final class MagicCarpetConstants {
 
-  public static final boolean MOTOR_INVERTED = false;
-
-  @MakeTunable(unit = "Volts")
+  public static boolean MOTOR_INVERTED = false;
   public static Voltage BELT_VOLTS = Volts.of(16);
-
-  @MakeTunable(unit = "Amps")
   public static Current CURRENT_LIMIT = Amps.of(20);
 }

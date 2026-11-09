@@ -26,9 +26,12 @@ import frc.robot.subsystems.swerve.ModuleIOSim;
 import frc.robot.subsystems.swerve.ModuleIOTalonSpark;
 import frc.robot.subsystems.vision.Vision;
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.Logger;
@@ -236,10 +239,32 @@ public class Robot extends OpModeRobot {
         .enableClassInfo()
         .enableFieldInfo()
         .enableAnnotationInfo().scan()) {
-      for (var classInfo : scanResult.getClassesWithFieldAnnotation(MakeTunable.class.getName())) {
+      List<ClassInfo> classInfos = new ArrayList<>();
+      classInfos.addAll(
+          scanResult.getClassesWithFieldAnnotation(MakeTunable.class.getName()).stream().toList());
+      classInfos.addAll(
+          scanResult.getClassesWithAnnotation(MakeTunable.class.getName()).stream().toList());
+      for (var classInfo : classInfos) {
         try {
-          if (!classInfo.hasAnnotation(MakeTunable.class.getName())) {
-            classInfo.getFieldInfo();
+          if (classInfo.hasAnnotation(MakeTunable.class.getName())) {
+            for (var fieldInfo : classInfo.getFieldInfo()) {
+              String displayName;
+              Unit unit = null;
+              Class<?> fieldOwner = Class.forName(classInfo.getName());
+              Field field = fieldOwner.getDeclaredField(fieldInfo.getName());
+              field.setAccessible(true);
+              Object defaultValue = field.get(null);
+              displayName = classInfo.getName() + "/" + fieldInfo.getName();
+              if (defaultValue instanceof Measure value) {
+                unit = value.unit();
+                TunableWatcher.addTunable(fieldOwner, fieldInfo.getName(), displayName,
+                    field.getType(), Optional.ofNullable(unit), defaultValue);
+              } else if (defaultValue instanceof Double || defaultValue instanceof Integer
+                  || defaultValue instanceof Boolean) {
+                TunableWatcher.addTunable(fieldOwner, fieldInfo.getName(), displayName,
+                    field.getType(), Optional.empty(), defaultValue);
+              }
+            }
           } else {
             for (var fieldInfo : classInfo.getFieldInfoWithAnnotation(
                 MakeTunable.class.getName())) {
