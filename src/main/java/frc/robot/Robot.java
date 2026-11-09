@@ -238,32 +238,38 @@ public class Robot extends OpModeRobot {
         .enableAnnotationInfo().scan()) {
       for (var classInfo : scanResult.getClassesWithFieldAnnotation(MakeTunable.class.getName())) {
         try {
-          for (var fieldInfo : classInfo.getFieldInfoWithAnnotation(MakeTunable.class.getName())) {
-            String displayName = "";
-            Unit unit = null;
-            Class<?> fieldOwner = Class.forName(classInfo.getName());
-            Field field = fieldOwner.getDeclaredField(fieldInfo.getName());
-            field.setAccessible(true);
-            Object defaultValue = field.get(null);
-            for (var parameter : fieldInfo.getAllAnnotationInfo(MakeTunable.class.getName())
-                .getParameterValues()) {
-              if (parameter.getName().equals("name")) {
-                if (parameter.getValue().equals("UseQualifiedName")) {
-                  displayName = classInfo.getName() + "/" + fieldInfo.getName();
-                } else {
-                  displayName = (String) parameter.getValue();
-                }
-              } else if (parameter.getName().equals("unit")) {
-                String unitName = (String) parameter.getValue();
-                if (!unitName.equals("none")) {
-                  unit = (Unit) Units.class.getField(unitName).get(null);
-                } else if (defaultValue instanceof Measure value) {
-                  unit = value.unit();
+          if (!classInfo.hasAnnotation(MakeTunable.class.getName())) {
+            classInfo.getFieldInfo();
+          } else {
+            for (var fieldInfo : classInfo.getFieldInfoWithAnnotation(
+                MakeTunable.class.getName())) {
+              String displayName = "";
+              Unit unit = null;
+              Class<?> fieldOwner = Class.forName(classInfo.getName());
+              Field field = fieldOwner.getDeclaredField(fieldInfo.getName());
+              field.setAccessible(true);
+              Object defaultValue = field.get(null);
+              for (var parameter : fieldInfo.getAllAnnotationInfo(MakeTunable.class.getName())
+                  .getParameterValues()) {
+                if (parameter.getName().equals("name")) {
+                  if (parameter.getValue().equals("UseQualifiedName")) {
+                    displayName = classInfo.getName() + "/" + fieldInfo.getName();
+                  } else {
+                    displayName = (String) parameter.getValue();
+                  }
+                } else if (parameter.getName().equals("unit")) {
+                  String unitName = (String) parameter.getValue();
+                  if (!unitName.equals("none")) {
+                    unit = (Unit) Units.class.getField(unitName).get(null);
+                  } else if (defaultValue instanceof Measure value) {
+                    unit = value.unit();
+                  }
                 }
               }
+              TunableWatcher.addTunable(fieldOwner, fieldInfo.getName(), displayName,
+                  field.getType(),
+                  Optional.ofNullable(unit), defaultValue);
             }
-            TunableWatcher.addTunable(fieldOwner, fieldInfo.getName(), displayName, field.getType(),
-                Optional.ofNullable(unit), defaultValue);
           }
         } catch (NoSuchFieldException | IllegalAccessException | ClassNotFoundException e) {
           throw new RuntimeException(e);
