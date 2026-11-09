@@ -3,11 +3,11 @@ package frc.robot.subsystems.magicCarpet;
 import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.Volts;
 
-import frc.lib.utils.MakeTunable;
+import frc.lib.utils.Tunable;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Voltage;
 
-@MakeTunable
+@Tunable
 public final class MagicCarpetConstants {
 
   public static boolean MOTOR_INVERTED = false;

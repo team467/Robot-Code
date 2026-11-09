@@ -3,13 +3,13 @@ package frc.robot.subsystems.shooter;
 import static org.wpilib.units.Units.RPM;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import frc.lib.utils.MakeTunable;
+import frc.lib.utils.Tunable;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Transform2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.units.measure.AngularVelocity;
 
-@MakeTunable
+@Tunable
 public class ShooterConstants {
 
   public static double VOLTAGE_COMPENSATION = 12.0;

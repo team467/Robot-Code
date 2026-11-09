@@ -3,11 +3,11 @@ package frc.robot.subsystems.intake;
 import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.Volts;
 
-import frc.lib.utils.MakeTunable;
+import frc.lib.utils.Tunable;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Voltage;
 
-@MakeTunable
+@Tunable
 public class IntakeConstants {
 
   public static Voltage INTAKE_VOLTS = Volts.of(8);

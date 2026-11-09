@@ -7,7 +7,6 @@ import static org.wpilib.units.Units.RadiansPerSecondPerSecond;
 
 import frc.lib.utils.GeomUtils;
 import frc.lib.utils.Tunable;
-import frc.robot.Constants;
 import frc.robot.subsystems.swerve.Drive;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -30,37 +29,30 @@ import org.wpilib.units.measure.LinearVelocity;
  */
 public class DriveToPose {
 
-  private static final Tunable<Double> driveKp;
-  private static final Tunable<Double> driveKd;
-  private static final Tunable<Double> thetaKp;
-  private static final Tunable<Double> thetaKd;
-  private static final Tunable<LinearVelocity> driveMaxVelocity;
-  private static final Tunable<LinearAcceleration> driveMaxAcceleration;
-  private static final Tunable<AngularVelocity> thetaMaxVelocity;
-  private static final Tunable<AngularAcceleration> thetaMaxAcceleration;
-  private static final Tunable<Double> driveTolerance;
-  private static final Tunable<Double> thetaTolerance;
-
-  static {
-    switch (Constants.getRobot()) {
-      case ROBOT_2026_COMP:
-      default:
-        driveKp = new Tunable<>("DriveToPose/DriveKp", 2.5);
-        driveKd = new Tunable<>("DriveToPose/DriveKd", 0.0);
-        thetaKp = new Tunable<>("DriveToPose/ThetaKp", 3.0);
-        thetaKd = new Tunable<>("DriveToPose/ThetaKd", 0.01);
-        driveMaxVelocity = new Tunable<>("DriveToPose/DriveMaxVelocity",
-            MetersPerSecond.of(Units.inchesToMeters(85)));
-        driveMaxAcceleration = new Tunable<>("DriveToPose/DriveMaxAcceleration",
-            MetersPerSecondPerSecond.of(Units.inchesToMeters(450)));
-        thetaMaxVelocity = new Tunable<>("DriveToPose/ThetaMaxVelocity",
-            RadiansPerSecond.of(Units.degreesToRadians(360)));
-        thetaMaxAcceleration = new Tunable<>("DriveToPose/ThetaMaxAcceleration",
-            RadiansPerSecondPerSecond.of(Units.degreesToRadians(720)));
-        driveTolerance = new Tunable<>("DriveToPose/DriveTolerance", 0.01);
-        thetaTolerance = new Tunable<>("DriveToPose/ThetaTolerance", Units.degreesToRadians(0.2));
-    }
-  }
+  @Tunable
+  private static final double driveKp = 2.5;
+  @Tunable
+  private static final double driveKd = 0.0;
+  @Tunable
+  private static final double thetaKp = 3.0;
+  @Tunable
+  private static final double thetaKd = 0.01;
+  @Tunable
+  private static final LinearVelocity driveMaxVelocity = MetersPerSecond.of(
+      Units.inchesToMeters(85));
+  @Tunable
+  private static final LinearAcceleration driveMaxAcceleration = MetersPerSecondPerSecond.of(
+      Units.inchesToMeters(450));
+  @Tunable
+  private static final AngularVelocity thetaMaxVelocity = RadiansPerSecond.of(
+      Units.degreesToRadians(360));
+  @Tunable
+  private static final AngularAcceleration thetaMaxAcceleration = RadiansPerSecondPerSecond.of(
+      Units.degreesToRadians(720));
+  @Tunable
+  private static final double driveTolerance = 0.01;
+  @Tunable
+  private static final double thetaTolerance = Units.degreesToRadians(0.2);
 
   private final ProfiledPIDController driveController =
       new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(1.0, 1.0));
@@ -125,19 +117,19 @@ public class DriveToPose {
     ).whenCanceled(drive::stop).named("DriveToPose");
   }
 
-  private void updateControllers() {
-    driveController.setP(driveKp.get());
-    driveController.setD(driveKd.get());
+  private synchronized void updateControllers() {
+    driveController.setP(driveKp);
+    driveController.setD(driveKd);
 
     driveController.setConstraints(
-        new TrapezoidProfile.Constraints(driveMaxVelocity.get().in(MetersPerSecond),
-            driveMaxAcceleration.get().in(MetersPerSecondPerSecond)));
-    driveController.setTolerance(driveTolerance.get());
-    thetaController.setP(thetaKp.get());
-    thetaController.setD(thetaKd.get());
+        new TrapezoidProfile.Constraints(driveMaxVelocity.in(MetersPerSecond),
+            driveMaxAcceleration.in(MetersPerSecondPerSecond)));
+    driveController.setTolerance(driveTolerance);
+    thetaController.setP(thetaKp);
+    thetaController.setD(thetaKd);
     thetaController.setConstraints(
-        new TrapezoidProfile.Constraints(thetaMaxVelocity.get().in(RadiansPerSecond),
-            thetaMaxAcceleration.get().in(RadiansPerSecondPerSecond)));
-    thetaController.setTolerance(thetaTolerance.get());
+        new TrapezoidProfile.Constraints(thetaMaxVelocity.in(RadiansPerSecond),
+            thetaMaxAcceleration.in(RadiansPerSecondPerSecond)));
+    thetaController.setTolerance(thetaTolerance);
   }
 }

@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import frc.lib.utils.MakeTunable;
+import frc.lib.utils.Tunable;
 import frc.lib.utils.TunableWatcher;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.drive.DriveCommands;
@@ -241,12 +241,12 @@ public class Robot extends OpModeRobot {
         .enableAnnotationInfo().scan()) {
       List<ClassInfo> classInfos = new ArrayList<>();
       classInfos.addAll(
-          scanResult.getClassesWithFieldAnnotation(MakeTunable.class.getName()).stream().toList());
+          scanResult.getClassesWithFieldAnnotation(Tunable.class.getName()).stream().toList());
       classInfos.addAll(
-          scanResult.getClassesWithAnnotation(MakeTunable.class.getName()).stream().toList());
+          scanResult.getClassesWithAnnotation(Tunable.class.getName()).stream().toList());
       for (var classInfo : classInfos) {
         try {
-          if (classInfo.hasAnnotation(MakeTunable.class.getName())) {
+          if (classInfo.hasAnnotation(Tunable.class.getName())) {
             for (var fieldInfo : classInfo.getFieldInfo()) {
               String displayName;
               Unit unit = null;
@@ -267,14 +267,14 @@ public class Robot extends OpModeRobot {
             }
           } else {
             for (var fieldInfo : classInfo.getFieldInfoWithAnnotation(
-                MakeTunable.class.getName())) {
+                Tunable.class.getName())) {
               String displayName = "";
               Unit unit = null;
               Class<?> fieldOwner = Class.forName(classInfo.getName());
               Field field = fieldOwner.getDeclaredField(fieldInfo.getName());
               field.setAccessible(true);
               Object defaultValue = field.get(null);
-              for (var parameter : fieldInfo.getAllAnnotationInfo(MakeTunable.class.getName())
+              for (var parameter : fieldInfo.getAllAnnotationInfo(Tunable.class.getName())
                   .getParameterValues()) {
                 if (parameter.getName().equals("name")) {
                   if (parameter.getValue().equals("UseQualifiedName")) {
