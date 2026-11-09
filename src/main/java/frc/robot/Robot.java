@@ -46,6 +46,7 @@ import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.system.RobotController;
 import org.wpilib.system.Timer;
+import org.wpilib.units.Measure;
 import org.wpilib.units.Unit;
 import org.wpilib.units.Units;
 import org.wpilib.util.Alert;
@@ -256,6 +257,8 @@ public class Robot extends OpModeRobot {
                 String unitName = (String) parameter.getValue();
                 if (!unitName.equals("none")) {
                   unit = (Unit) Units.class.getField(unitName).get(null);
+                } else if (defaultValue instanceof Measure value) {
+                  unit = value.unit();
                 }
               }
             }
