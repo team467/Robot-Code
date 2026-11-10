@@ -2,7 +2,7 @@ package frc.robot.subsystems.swerve;
 
 import static frc.robot.subsystems.swerve.DriveConstants.wheelRadiusMeters;
 
-import org.littletonrobotics.junction.Logger;
+import frc.robot.subsystems.swerve.ModuleIO.ModuleIOInputs;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.SwerveModulePosition;
 import org.wpilib.math.kinematics.SwerveModuleVelocity;
@@ -10,7 +10,7 @@ import org.wpilib.math.kinematics.SwerveModuleVelocity;
 public class Module {
 
   private final ModuleIO io;
-  private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
+  private final ModuleIOInputs inputs = new ModuleIOInputs();
   private final int index;
 
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[]{};
@@ -22,7 +22,6 @@ public class Module {
 
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Drive/Module" + index, inputs);
 
     int sampleCount = inputs.odometryTimestamps.length;
     odometryPositions = new SwerveModulePosition[sampleCount];

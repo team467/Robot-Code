@@ -5,6 +5,7 @@ import frc.robot.RobotState;
 import frc.robot.RobotState.Mode;
 import org.wpilib.command3.Mechanism;
 import org.wpilib.command3.Scheduler;
+import org.wpilib.epilogue.Logged;
 import org.wpilib.hardware.led.AddressableLED;
 import org.wpilib.hardware.led.AddressableLED.ColorOrder;
 import org.wpilib.hardware.led.AddressableLEDBuffer;
@@ -14,6 +15,7 @@ import org.wpilib.networktables.GenericEntry;
 import org.wpilib.tunable.Selectable;
 import org.wpilib.tunable.Tunables;
 
+@Logged
 public class Leds implements Mechanism {
 
   public static final AddressableLEDBuffer buffer =

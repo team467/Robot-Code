@@ -42,6 +42,8 @@ import org.wpilib.command3.Command;
 import org.wpilib.command3.Scheduler;
 import org.wpilib.command3.button.CommandGamepad;
 import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.epilogue.Epilogue;
+import org.wpilib.epilogue.Logged;
 import org.wpilib.framework.OpModeRobot;
 import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.hardware.hal.RobotMode;
@@ -61,6 +63,7 @@ import org.wpilib.util.Alert.Level;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
+@Logged
 public class Robot extends OpModeRobot {
 
   private static final double canErrorTimeThreshold = 0.5; // Seconds to disable alert
@@ -416,6 +419,8 @@ public class Robot extends OpModeRobot {
     Logger.AdvancedHooks.invokePeriodicAfterUser(
         userCodeEnd - userCodeStart,
         userCodeStart - periodicBeforeStart);
+
+    Epilogue.update(this);
   }
 
   public void setPose() {

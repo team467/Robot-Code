@@ -7,6 +7,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import frc.robot.subsystems.swerve.GyroIO.GyroIOInputs;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.driverstation.MatchState;
 import org.wpilib.driverstation.POVDirection;
 import org.wpilib.driverstation.RobotState;
+import org.wpilib.epilogue.Logged;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
 import org.wpilib.math.filter.SlewRateLimiter;
@@ -44,11 +46,12 @@ import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.util.Units;
 import org.wpilib.system.Timer;
 
+@Logged
 public class Drive implements Mechanism {
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
-  private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+  private final GyroIOInputs gyroInputs = new GyroIOInputs();
   private final Module[] modules = new Module[4];
 
   private final SwerveDriveKinematics kinematics =
@@ -107,7 +110,6 @@ public class Drive implements Mechanism {
     odometryLock.lock();
     try {
       gyroIO.updateInputs(gyroInputs);
-      Logger.processInputs("Drive/Gyro", gyroInputs);
       for (var module : modules) {
         module.periodic();
       }
